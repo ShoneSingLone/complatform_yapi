@@ -951,7 +951,10 @@ class InterfaceEditForm extends Component {
             </FormItem>
             <FormItem className='interface-edit-item' {...formItemLayout} label='开启转发'>
               {getFieldDecorator('isProxy', { initialValue: this.state.isProxy })(
-                <Switch checkedChildren='开启' unCheckedChildren='关闭' />
+                <Select>
+                  <Option value={true}>开启</Option>
+                  <Option value={false}>关闭</Option>
+                </Select>
               )}
             </FormItem>
             <FormItem className='interface-edit-item' {...formItemLayout} label='转发环境'>
