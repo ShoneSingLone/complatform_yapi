@@ -9,6 +9,7 @@ const variable = require('../../client/constants/variable.js');
 const httpProxy = require('http-proxy-middleware');
 const k2c = require('koa2-connect');
 const axios = require('axios');
+const https = require('https');
 
 exports.handleProxy = handleProxy;
 
@@ -26,16 +27,21 @@ async function handleProxy(ctx, projectId, domain) {
     headers
   };
 
+  if (/^https/.test(url)) {
+    axiosOptions.httpsAgent = new https.Agent({
+      rejectUnauthorized: false
+    });
+  }
+
   if (['POST', 'PATCH'].includes(String(axiosOptions.method).toUpperCase())) {
     axiosOptions.data = ctx.request.body;
   }
-  console.log('🚀:\n', 'axiosOptions', axiosOptions);
   let body = yapi.commons.resReturn(null, 500, '代理失败');
   try {
     const response = await axios(axiosOptions);
     body = response.data;
   } catch (error) {
-    body = yapi.commons.resReturn(null, 500, error.response.data);
+    body = yapi.commons.resReturn(null, 500, { stack: error.stack, message: error.message });
   }
   body.A_NOTICE = `此response由yAPI代理 ${url}`;
   return (ctx.body = body);
