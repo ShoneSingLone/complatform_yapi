@@ -401,18 +401,22 @@ export default class Run extends Component {
     } else {
       this.setState({ test_valid_msg: '' });
     }
-    this.setState({
-      resStatusCode: result.status,
-      resStatusText: result.statusText,
-      test_res_header: result.header,
-      test_res_body: `${result.body}
-      /* ===============请求参数================= */
-      ${JSON.stringify(
-        _.omit(result.req, ['interfaceData', 'taskId', 'timeout', 'caseId']),
-        null,
-        2
-      )}`
-    });
+    let state = {};
+    try {
+      state = {
+        resStatusCode: result.status,
+        resStatusText: result.statusText,
+        test_res_header: `/* ===============请求参数================= */
+${JSON.stringify(_.omit(result.req, ['interfaceData', 'taskId', 'timeout', 'caseId']), null, 2)}
+/* ===============请求参数================= */
+${JSON.stringify(result.header, null, 2)}
+`,
+        test_res_body: result.body
+      };
+    } catch (error) {
+      console.log(error);
+    }
+    this.setState(state);
   };
 
   // 返回数据与定义数据的比较判断
@@ -660,7 +664,6 @@ export default class Run extends Component {
             })()}
           >
             <Button
-              disabled={!hasPlugin}
               onClick={this.reqRealInterface}
               type='primary'
               style={{ marginLeft: 10 }}

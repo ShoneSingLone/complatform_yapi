@@ -19,7 +19,13 @@ async function handleProxy(ctx, projectId, domain) {
     return { ...ctx.headers };
   })();
 
-  const url = `${domain}${targetURL}`;
+  const url = (() => {
+    /* debugger; */
+    if (headers['yapi-run']) {
+      return headers['yapi-run'];
+    }
+    return `${domain}${targetURL}`;
+  })();
 
   const axiosOptions = {
     method: ctx.method,
@@ -330,7 +336,6 @@ module.exports = async (ctx, next) => {
         ));
       }
     }
-
     if (interfaceData.isProxy) {
       const env = project.env[interfaceData.witchEnv];
       await handleProxy(ctx, project._id, env.domain);

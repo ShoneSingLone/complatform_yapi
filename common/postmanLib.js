@@ -59,10 +59,11 @@ async function httpRequestByServer(options, defaultOptions) {
     `${location.origin}/mock/${project_id}`
   );
   try {
+    /* debugger; */
     let response = await axios({
       method: options.method,
       url: url,
-      headers: options.headers,
+      headers: { ...options.headers, 'yapi-run': defaultOptions.url },
       data: options.data
     });
     return handleRes(response, defaultOptions);
@@ -339,6 +340,7 @@ async function crossRequest(defaultOptions, preScript, afterScript, commonContex
   let data;
 
   if (true) {
+    /* debugger; */
     data = await httpRequestByServer(options, defaultOptions);
     data.req = options;
   } else {
