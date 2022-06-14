@@ -342,7 +342,7 @@ export default class Run extends Component {
     try {
       options.taskId = this.props.curUid;
       options.interfaceData = this.state;
-      debugger;
+      console.log('run crossRequest', options);
       result = await crossRequest(
         options,
         options.pre_script || this.state.pre_script,

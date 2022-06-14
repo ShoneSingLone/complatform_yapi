@@ -269,7 +269,6 @@ class InterfaceColContent extends Component {
         result;
       try {
         result = await this.handleTest(curitem);
-        debugger;
         if (result.code === 400 || result.status === 400) {
           result.code = 400;
           status = 'error';

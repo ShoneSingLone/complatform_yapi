@@ -63,15 +63,22 @@ async function httpRequestByServer(options, defaultOptions, context) {
     url = defaultOptions.url.replace(domain, `${location.origin}/mock/${projectId}`);
   }
 
+  const axiosConfigs = {
+    method: options.method,
+    url: url,
+    headers: { ...options.headers, 'yapi-run': defaultOptions.url }
+  };
+  if (options.data) {
+    axiosConfigs.data = options.data;
+  }
+  console.log('ByServer=>axiosConfigs=> ', axiosConfigs);
+
   try {
-    let response = await axios({
-      method: options.method,
-      url: url,
-      headers: { ...options.headers, 'yapi-run': defaultOptions.url },
-      data: options.data
-    });
+    let response = await axios(axiosConfigs);
+    console.log('ByServer=>response=>', response);
     return handleRes(response, defaultOptions);
   } catch (err) {
+    console.log('ByServer=>err=>', err);
     if (err.response === undefined) {
       return handleRes({
         headers: {},
@@ -314,6 +321,7 @@ async function crossRequest(defaultOptions, preScript, afterScript, commonContex
     promise: false,
     storage: await getStorage(taskId)
   };
+  console.log('after set context', context);
 
   Object.assign(context, commonContext);
 
@@ -331,7 +339,7 @@ async function crossRequest(defaultOptions, preScript, afterScript, commonContex
     unbase64: utils.unbase64,
     axios: axios
   });
-
+  console.log('hooks run preScript', context);
   if (preScript) {
     context = await sandbox(context, preScript);
     defaultOptions.url = options.url = URL.format({
@@ -343,12 +351,14 @@ async function crossRequest(defaultOptions, preScript, afterScript, commonContex
     defaultOptions.headers = options.headers = context.requestHeader;
     defaultOptions.data = options.data = context.requestBody;
   }
+  debugger;
   /* TODO: */
   /* 只用nodejs代理 */
+  console.log('httpRequestByServer');
   let data = await httpRequestByServer(options, defaultOptions, context);
   /* TODO: */
   data.req = options;
-
+  console.log('hooks run preScript');
   if (afterScript) {
     context.responseData = data.res.body;
     context.responseHeader = data.res.header;

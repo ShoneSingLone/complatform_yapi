@@ -13,7 +13,7 @@ const https = require('https');
 
 exports.handleProxy = handleProxy;
 
-async function handleProxy(ctx, projectId, domain) {
+async function handleProxy(ctx, { domain, projectId }) {
   const targetURL = ctx.originalUrl.replace(`/mock/${projectId}`, '');
   const headers = (() => {
     return { ...ctx.headers };
@@ -335,9 +335,14 @@ module.exports = async (ctx, next) => {
         ));
       }
     }
-    if (interfaceData.isProxy) {
+
+    if (interfaceData.isProxy || ctx.headers['yapi-run']) {
       const env = project.env[interfaceData.witchEnv];
-      await handleProxy(ctx, project._id, env.domain);
+      await handleProxy(ctx, {
+        projectId: project._id,
+        domain: env && env.domain,
+        yapiRun: ctx.headers['yapi-run']
+      });
       return ctx.body;
     }
 
