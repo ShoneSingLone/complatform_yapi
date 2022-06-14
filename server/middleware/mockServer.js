@@ -307,7 +307,7 @@ module.exports = async (ctx, next) => {
         return (ctx.body = yapi.commons.resReturn(
           null,
           404,
-          `当前使用yAPI代理，${ctx.method} ${realUrlPath}，但api不存在。请确认是否定义此请求。`
+          `当前使用yAPI代理，${ctx.method} ${realUrlPath}，但API不存在。请确认GET?POST?URL?是否正确`
         ));
       }
       interfaceData = [await interfaceInst.get(findInterface._id)];

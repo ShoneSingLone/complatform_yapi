@@ -9,7 +9,7 @@ const qs = require('qs');
 const CryptoJS = require('crypto-js');
 const jsrsasign = require('jsrsasign');
 const https = require('https');
-
+const lodash = require('lodash');
 const isNode = typeof global == 'object' && global.global === global;
 const ContentTypeMap = {
   'application/json': 'json',
@@ -20,58 +20,87 @@ const ContentTypeMap = {
   other: 'text'
 };
 
-const getStorage = async (id)=>{
-  try{
-    if(isNode){
+const getStorage = async id => {
+  try {
+    if (isNode) {
       let storage = global.storageCreator(id);
       let data = await storage.getItem();
       return {
-        getItem: (name)=> data[name],
-        setItem: (name, value)=>{
+        getItem: name => data[name],
+        setItem: (name, value) => {
           data[name] = value;
-          storage.setItem(name, value)
-        }
-      }
-    }else{
-      return {
-        getItem: (name)=> window.localStorage.getItem(name),
-        setItem: (name, value)=>  window.localStorage.setItem(name, value)
-      }
-    }
-  }catch(e){
-    console.error(e)
-    return {
-      getItem: (name)=>{
-        console.error(name, e)
-      },
-      setItem: (name, value)=>{
-        console.error(name, value, e)
-      }
-    }
-  }
-}
-
-async function httpRequestByNode(options) {
-  function handleRes(response) {
-    if (!response || typeof response !== 'object') {
-      return {
-        res: {
-          status: 500,
-          body: isNode
-            ? '请求出错, 内网服务器自动化测试无法访问到，请检查是否为内网服务器！'
-            : '请求出错'
+          storage.setItem(name, value);
         }
       };
+    } else {
+      return {
+        getItem: name => window.localStorage.getItem(name),
+        setItem: (name, value) => window.localStorage.setItem(name, value)
+      };
     }
+  } catch (e) {
+    console.error(e);
     return {
-      res: {
-        header: response.headers,
-        status: response.status,
-        body: response.data
+      getItem: name => {
+        console.error(name, e);
+      },
+      setItem: (name, value) => {
+        console.error(name, value, e);
       }
     };
   }
+};
 
+async function httpRequestByServer(options, defaultOptions) {
+  const { case_env, env, project_id } = defaultOptions.interfaceData;
+  const selectedEnv = lodash.find(env, { name: case_env });
+  const url = defaultOptions.url.replace(
+    selectedEnv.domain,
+    `${location.origin}/mock/${project_id}`
+  );
+  try {
+    let response = await axios({
+      method: options.method,
+      url: url,
+      headers: options.headers,
+      data: options.data
+    });
+    return handleRes(response, defaultOptions);
+  } catch (err) {
+    if (err.response === undefined) {
+      return handleRes({
+        headers: {},
+        status: null,
+        data: err.message,
+        yapiNodeRequestError: err
+      });
+    }
+    return handleRes(err.response, defaultOptions);
+  }
+}
+
+function handleRes(response, req) {
+  if (!response || typeof response !== 'object') {
+    return {
+      res: {
+        status: 500,
+        body: isNode
+          ? '请求出错, 内网服务器自动化测试无法访问到，请检查是否为内网服务器！'
+          : '请求出错'
+      }
+    };
+  }
+  return {
+    res: {
+      header: response.headers,
+      status: response.status,
+      body: response.data,
+      req
+    }
+  };
+}
+
+async function httpRequestByNode(options) {
   function handleData() {
     let contentTypeItem;
     if (!options) return;
@@ -79,10 +108,7 @@ async function httpRequestByNode(options) {
       Object.keys(options.headers).forEach(key => {
         if (/content-type/i.test(key)) {
           if (options.headers[key]) {
-            contentTypeItem = options.headers[key]
-              .split(';')[0]
-              .trim()
-              .toLowerCase();
+            contentTypeItem = options.headers[key].split(';')[0].trim().toLowerCase();
           }
         }
         if (!options.headers[key]) delete options.headers[key];
@@ -117,7 +143,8 @@ async function httpRequestByNode(options) {
       return handleRes({
         headers: {},
         status: null,
-        data: err.message
+        data: err.message,
+        yapiNodeRequestError: err
       });
     }
     return handleRes(err.response);
@@ -130,10 +157,7 @@ function handleContentType(headers) {
   try {
     Object.keys(headers).forEach(key => {
       if (/content-type/i.test(key)) {
-        contentTypeItem = headers[key]
-          .split(';')[0]
-          .trim()
-          .toLowerCase();
+        contentTypeItem = headers[key].split(';')[0].trim().toLowerCase();
       }
     });
     return ContentTypeMap[contentTypeItem] ? ContentTypeMap[contentTypeItem] : ContentTypeMap.other;
@@ -239,10 +263,10 @@ function sandboxByBrowser(context = {}, script) {
 }
 
 /**
- * 
- * @param {*} defaultOptions 
- * @param {*} preScript 
- * @param {*} afterScript 
+ *
+ * @param {*} defaultOptions
+ * @param {*} preScript
+ * @param {*} afterScript
  * @param {*} commonContext  负责传递一些业务信息，crossRequest 不关注具体传什么，只负责当中间人
  */
 async function crossRequest(defaultOptions, preScript, afterScript, commonContext = {}) {
@@ -283,7 +307,7 @@ async function crossRequest(defaultOptions, preScript, afterScript, commonContex
     storage: await getStorage(taskId)
   };
 
-  Object.assign(context, commonContext)
+  Object.assign(context, commonContext);
 
   context.utils = Object.freeze({
     _: _,
@@ -314,18 +338,20 @@ async function crossRequest(defaultOptions, preScript, afterScript, commonContex
 
   let data;
 
-  if (isNode) {
-    data = await httpRequestByNode(options);
+  if (true) {
+    data = await httpRequestByServer(options, defaultOptions);
     data.req = options;
   } else {
     data = await new Promise((resolve, reject) => {
-      options.error = options.success = function(res, header, data) {
+      options.error = options.success = function (res, header, data) {
         let message = '';
         if (res && typeof res === 'string') {
           res = json_parse(data.res.body);
           data.res.body = res;
         }
-        if (!isNode) message = '请求异常，请检查 chrome network 错误信息... https://juejin.im/post/5c888a3e5188257dee0322af 通过该链接查看教程"）';
+        if (!isNode)
+          message =
+            '请求异常，请检查 chrome network 错误信息... https://juejin.im/post/5c888a3e5188257dee0322af 通过该链接查看教程"）';
         if (isNaN(data.res.status)) {
           reject({
             body: res || message,
