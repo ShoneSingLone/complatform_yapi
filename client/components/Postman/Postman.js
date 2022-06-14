@@ -339,10 +339,10 @@ export default class Run extends Component {
       projectId: this.props.projectId,
       interfaceId: this.props.interfaceId
     });
-
     try {
       options.taskId = this.props.curUid;
       options.interfaceData = this.state;
+      debugger;
       result = await crossRequest(
         options,
         options.pre_script || this.state.pre_script,

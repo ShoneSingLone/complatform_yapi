@@ -20,7 +20,6 @@ async function handleProxy(ctx, projectId, domain) {
   })();
 
   const url = (() => {
-    /* debugger; */
     if (headers['yapi-run']) {
       return headers['yapi-run'];
     }

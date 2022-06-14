@@ -74,28 +74,35 @@ export default class ProjectRequest extends Component {
     };
 
     const { pre_script, after_script } = this.state;
-
+const codeString = `const {isNode, href, hostname, caseId, method, pathname, query, requestHeader, requestBody, promise, storage, uid, projectId, interfaceId, utils, responseData, responseHeader, responseStatus, runTime} = context ;
+const ErrorCode=400;
+`
     return (
-      <div className="project-request">
+      <div className='project-request'>
+        <pre>
+          <code>
+            {codeString}
+          </code>
+        </pre>
         <Form onSubmit={this.handleSubmit}>
-          <FormItem {...formItemLayout} label="Pre-request Script(请求参数处理脚本)">
+          <FormItem {...formItemLayout} label='Pre-request Script(pre_script 请求参数处理脚本)'>
             <AceEditor
               data={pre_script}
               onChange={editor => this.setState({ pre_script: editor.text })}
               fullScreen={true}
-              className="request-editor"
+              className='request-editor'
             />
           </FormItem>
-          <FormItem {...formItemLayout} label="Pre-response Script(响应数据处理脚本)">
+          <FormItem {...formItemLayout} label='Pre-response Script(after_script 响应数据处理脚本)'>
             <AceEditor
               data={after_script}
               onChange={editor => this.setState({ after_script: editor.text })}
               fullScreen={true}
-              className="request-editor"
+              className='request-editor'
             />
           </FormItem>
           <FormItem {...tailFormItemLayout}>
-            <Button onClick={this.handleSubmit} type="primary">
+            <Button onClick={this.handleSubmit} type='primary'>
               保存
             </Button>
           </FormItem>

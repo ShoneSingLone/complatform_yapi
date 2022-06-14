@@ -51,15 +51,19 @@ const getStorage = async id => {
   }
 };
 
-async function httpRequestByServer(options, defaultOptions) {
-  const { case_env, env, project_id } = defaultOptions.interfaceData;
-  const selectedEnv = lodash.find(env, { name: case_env });
-  const url = defaultOptions.url.replace(
-    selectedEnv.domain,
-    `${location.origin}/mock/${project_id}`
-  );
+async function httpRequestByServer(options, defaultOptions, context) {
+  let url;
+  if (defaultOptions.interfaceData) {
+    const { case_env, env, project_id } = defaultOptions.interfaceData;
+    const selectedEnv = lodash.find(env, { name: case_env });
+    url = defaultOptions.url.replace(selectedEnv.domain, `${location.origin}/mock/${project_id}`);
+  } else {
+    const { pathname, projectId } = context;
+    const domain = defaultOptions.url.split(pathname)[0];
+    url = defaultOptions.url.replace(domain, `${location.origin}/mock/${projectId}`);
+  }
+
   try {
-    /* debugger; */
     let response = await axios({
       method: options.method,
       url: url,
@@ -246,6 +250,8 @@ function sandboxByBrowser(context = {}, script) {
   for (var i in context) {
     beginScript += `var ${i} = context.${i};`;
   }
+  beginScript += `const ErrorCode=400;`;
+
   try {
     eval(beginScript + script);
   } catch (err) {
@@ -271,6 +277,7 @@ function sandboxByBrowser(context = {}, script) {
  * @param {*} commonContext  负责传递一些业务信息，crossRequest 不关注具体传什么，只负责当中间人
  */
 async function crossRequest(defaultOptions, preScript, afterScript, commonContext = {}) {
+  /* TODO: */
   let options = Object.assign({}, defaultOptions);
   const taskId = options.taskId || Math.random() + '';
   let urlObj = URL.parse(options.url, true),
@@ -336,37 +343,11 @@ async function crossRequest(defaultOptions, preScript, afterScript, commonContex
     defaultOptions.headers = options.headers = context.requestHeader;
     defaultOptions.data = options.data = context.requestBody;
   }
-
-  let data;
-
-  if (true) {
-    /* debugger; */
-    data = await httpRequestByServer(options, defaultOptions);
-    data.req = options;
-  } else {
-    data = await new Promise((resolve, reject) => {
-      options.error = options.success = function (res, header, data) {
-        let message = '';
-        if (res && typeof res === 'string') {
-          res = json_parse(data.res.body);
-          data.res.body = res;
-        }
-        if (!isNode)
-          message =
-            '请求异常，请检查 chrome network 错误信息... https://juejin.im/post/5c888a3e5188257dee0322af 通过该链接查看教程"）';
-        if (isNaN(data.res.status)) {
-          reject({
-            body: res || message,
-            header,
-            message
-          });
-        }
-        resolve(data);
-      };
-
-      window.crossRequest(options);
-    });
-  }
+  /* TODO: */
+  /* 只用nodejs代理 */
+  let data = await httpRequestByServer(options, defaultOptions, context);
+  /* TODO: */
+  data.req = options;
 
   if (afterScript) {
     context.responseData = data.res.body;

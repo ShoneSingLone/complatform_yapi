@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 //import constants from '../../../../constants/variable.js'
-import { Tooltip, Icon,Input, Button, Row, Col, Spin, Modal, message, Select, Switch } from 'antd';
+import { Tooltip, Icon, Input, Button, Row, Col, Spin, Modal, message, Select, Switch } from 'antd';
 import {
   fetchInterfaceColList,
   fetchCaseList,
@@ -23,7 +23,7 @@ import CaseReport from './CaseReport.js';
 import _ from 'underscore';
 import { initCrossRequest } from 'client/components/Postman/CheckCrossInstall.js';
 import produce from 'immer';
-import {InsertCodeMap} from 'client/components/Postman/Postman.js'
+import { InsertCodeMap } from 'client/components/Postman/Postman.js';
 
 const plugin = require('client/plugin.js');
 const {
@@ -37,13 +37,13 @@ import CaseEnv from 'client/components/CaseEnv';
 import Label from '../../../../components/Label/Label.js';
 
 const Option = Select.Option;
-const createContext = require('common/createContext')
+const createContext = require('common/createContext');
 
 import copy from 'copy-to-clipboard';
 
 const defaultModalStyle = {
   top: 10
-}
+};
 
 function handleReport(json) {
   try {
@@ -134,7 +134,7 @@ class InterfaceColContent extends Component {
           enable: false
         },
         checkResponseSchema: false,
-        checkScript:{
+        checkScript: {
           enable: false,
           content: ''
         }
@@ -144,7 +144,7 @@ class InterfaceColContent extends Component {
     this.onMoveRow = this.onMoveRow.bind(this);
   }
 
-  async handleColIdChange(newColId){
+  async handleColIdChange(newColId) {
     this.props.setColData({
       currColId: +newColId,
       isShowCol: true,
@@ -155,11 +155,11 @@ class InterfaceColContent extends Component {
     if (result.payload.data.errcode === 0) {
       this.reports = handleReport(result.payload.data.colData.test_report);
       this.setState({
-        commonSetting:{
+        commonSetting: {
           ...this.state.commonSetting,
           ...result.payload.data.colData
         }
-      })
+      });
     }
 
     await this.props.fetchCaseList(newColId);
@@ -177,7 +177,7 @@ class InterfaceColContent extends Component {
     this.currColId = currColId = +actionId || result.payload.data.data[0]._id;
     // this.props.history.push('/project/' + params.id + '/interface/col/' + currColId);
     if (currColId && currColId != 0) {
-      await this.handleColIdChange(currColId)
+      await this.handleColIdChange(currColId);
     }
 
     this._crossRequestInterval = initCrossRequest(hasPlugin => {
@@ -234,8 +234,8 @@ class InterfaceColContent extends Component {
       draftRows.map(item => {
         item.id = item._id;
         item._test_status = item.test_status;
-        if(currColEnvObj[item.project_id]){
-          item.case_env =currColEnvObj[item.project_id];
+        if (currColEnvObj[item.project_id]) {
+          item.case_env = currColEnvObj[item.project_id];
         }
         item.req_headers = that.handleReqHeader(item.project_id, item.req_headers, item.case_env);
         return item;
@@ -269,8 +269,9 @@ class InterfaceColContent extends Component {
         result;
       try {
         result = await this.handleTest(curitem);
-
-        if (result.code === 400) {
+        debugger;
+        if (result.code === 400 || result.status === 400) {
+          result.code = 400;
           status = 'error';
         } else if (result.code === 0) {
           status = 'ok';
@@ -312,19 +313,23 @@ class InterfaceColContent extends Component {
       validRes: []
     };
 
-    await plugin.emitHook('before_col_request', Object.assign({}, options, {
-      type: 'col',
-      caseId: options.caseId,
-      projectId: interfaceData.project_id,
-      interfaceId: interfaceData.interface_id
-    }));
+    await plugin.emitHook(
+      'before_col_request',
+      Object.assign({}, options, {
+        type: 'col',
+        caseId: options.caseId,
+        projectId: interfaceData.project_id,
+        interfaceId: interfaceData.interface_id
+      })
+    );
 
     try {
-      let data = await crossRequest(options, interfaceData.pre_script, interfaceData.after_script, createContext(
-        this.props.curUid,
-        this.props.match.params.id,
-        interfaceData.interface_id
-      ));
+      let data = await crossRequest(
+        options,
+        interfaceData.pre_script,
+        interfaceData.after_script,
+        createContext(this.props.curUid, this.props.match.params.id, interfaceData.interface_id)
+      );
       options.taskId = this.props.curUid;
       let res = (data.res.body = json_parse(data.res.body));
       result = {
@@ -332,8 +337,8 @@ class InterfaceColContent extends Component {
         ...result,
         res_header: data.res.header,
         res_body: res,
-        status: data.res.status,
-        statusText: data.res.statusText
+        statusText: data.res.statusText,
+        status: data.res.status
       };
 
       await plugin.emitHook('after_col_request', result, {
@@ -464,7 +469,6 @@ class InterfaceColContent extends Component {
   }
 
   onChangeTest = d => {
-    
     this.setState({
       commonSetting: {
         ...this.state.commonSetting,
@@ -485,7 +489,7 @@ class InterfaceColContent extends Component {
 
     if (newColId && ((this.currColId && newColId !== this.currColId) || nextProps.isRander)) {
       this.currColId = newColId;
-      this.handleColIdChange(newColId)
+      this.handleColIdChange(newColId);
     }
   }
 
@@ -561,8 +565,8 @@ class InterfaceColContent extends Component {
       [project_id]: envName
     };
     this.setState({ currColEnvObj });
-   // this.handleColdata(this.props.currCaseList, envName, project_id);
-   this.handleColdata(this.props.currCaseList,currColEnvObj);
+    // this.handleColdata(this.props.currCaseList, envName, project_id);
+    this.handleColdata(this.props.currCaseList, currColEnvObj);
   };
 
   autoTests = () => {
@@ -605,15 +609,14 @@ class InterfaceColContent extends Component {
     return str;
   };
 
-  handleCommonSetting = ()=>{
+  handleCommonSetting = () => {
     let setting = this.state.commonSetting;
 
     let params = {
       col_id: this.props.currColId,
       ...setting
-
     };
-    console.log(params)
+    console.log(params);
 
     axios.post('/api/col/up_col', params).then(async res => {
       if (res.data.errcode) {
@@ -624,28 +627,28 @@ class InterfaceColContent extends Component {
 
     this.setState({
       commonSettingModalVisible: false
-    })
-  }
+    });
+  };
 
-  cancelCommonSetting = ()=>{
+  cancelCommonSetting = () => {
     this.setState({
       commonSettingModalVisible: false
-    })
-  }
+    });
+  };
 
-  openCommonSetting = ()=>{
+  openCommonSetting = () => {
     this.setState({
       commonSettingModalVisible: true
-    })
-  }
+    });
+  };
 
-  changeCommonFieldSetting = (key)=>{
-    return (e)=>{
+  changeCommonFieldSetting = key => {
+    return e => {
       let value = e;
-      if(typeof e === 'object' && e){
+      if (typeof e === 'object' && e) {
         value = e.target.value;
       }
-      let {checkResponseField} = this.state.commonSetting;
+      let { checkResponseField } = this.state.commonSetting;
       this.setState({
         commonSetting: {
           ...this.state.commonSetting,
@@ -654,10 +657,10 @@ class InterfaceColContent extends Component {
             [key]: value
           }
         }
-      })
-    }
-  }
-  
+      });
+    };
+  };
+
   render() {
     const currProjectId = this.props.currProject._id;
     const columns = [
@@ -698,9 +701,9 @@ class InterfaceColContent extends Component {
                       {' '}
                       每个用例都有唯一的key，用于获取所匹配接口的响应数据，例如使用{' '}
                       <a
-                        href="https://hellosean1025.github.io/yapi/documents/case.html#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%8C%E7%BC%96%E8%BE%91%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B"
-                        className="link-tooltip"
-                        target="blank"
+                        href='https://hellosean1025.github.io/yapi/documents/case.html#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%8C%E7%BC%96%E8%BE%91%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B'
+                        className='link-tooltip'
+                        target='blank'
                       >
                         {' '}
                         变量参数{' '}
@@ -755,12 +758,12 @@ class InterfaceColContent extends Component {
                 case 0:
                   return (
                     <div>
-                      <Tooltip title="Pass">
+                      <Tooltip title='Pass'>
                         <Icon
                           style={{
                             color: '#00a854'
                           }}
-                          type="check-circle"
+                          type='check-circle'
                         />
                       </Tooltip>
                     </div>
@@ -768,9 +771,9 @@ class InterfaceColContent extends Component {
                 case 400:
                   return (
                     <div>
-                      <Tooltip title="请求异常">
+                      <Tooltip title='请求异常'>
                         <Icon
-                          type="info-circle"
+                          type='info-circle'
                           style={{
                             color: '#f04134'
                           }}
@@ -781,9 +784,9 @@ class InterfaceColContent extends Component {
                 case 1:
                   return (
                     <div>
-                      <Tooltip title="验证失败">
+                      <Tooltip title='验证失败'>
                         <Icon
-                          type="exclamation-circle"
+                          type='exclamation-circle'
                           style={{
                             color: '#ffbf00'
                           }}
@@ -798,7 +801,7 @@ class InterfaceColContent extends Component {
                         style={{
                           color: '#00a854'
                         }}
-                        type="check-circle"
+                        type='check-circle'
                       />
                     </div>
                   );
@@ -817,7 +820,7 @@ class InterfaceColContent extends Component {
             (text, { rowData }) => {
               let record = rowData;
               return (
-                <Tooltip title="跳转到对应接口">
+                <Tooltip title='跳转到对应接口'>
                   <Link to={`/project/${record.project_id}/interface/api/${record.interface_id}`}>
                     {record.path.length > 23 ? record.path + '...' : record.path}
                   </Link>
@@ -845,7 +848,7 @@ class InterfaceColContent extends Component {
                 }
                 return <Button onClick={() => this.openReport(rowData.id)}>测试报告</Button>;
               };
-              return <div className="interface-col-table-action">{reportFun()}</div>;
+              return <div className='interface-col-table-action'>{reportFun()}</div>;
             }
           ]
         }
@@ -889,106 +892,152 @@ class InterfaceColContent extends Component {
     }
 
     return (
-      <div className="interface-col">
+      <div className='interface-col'>
         <Modal
-            title="通用规则配置"
-            visible={this.state.commonSettingModalVisible}
-            onOk={this.handleCommonSetting}
-            onCancel={this.cancelCommonSetting}
-            width={'1000px'}
-            style={defaultModalStyle}
-          >
-          <div className="common-setting-modal">
-            <Row className="setting-item">
-              <Col className="col-item" span="4">
-                <label>检查HttpCode:&nbsp;<Tooltip title={'检查 http code 是否为 200'}>
-                  <Icon type="question-circle-o" style={{ width: '10px' }} />
-                </Tooltip></label>
+          title='通用规则配置'
+          visible={this.state.commonSettingModalVisible}
+          onOk={this.handleCommonSetting}
+          onCancel={this.cancelCommonSetting}
+          width={'1000px'}
+          style={defaultModalStyle}
+        >
+          <div className='common-setting-modal'>
+            <Row className='setting-item'>
+              <Col className='col-item' span='4'>
+                <label>
+                  检查HttpCode:&nbsp;
+                  <Tooltip title={'检查 http code 是否为 200'}>
+                    <Icon type='question-circle-o' style={{ width: '10px' }} />
+                  </Tooltip>
+                </label>
               </Col>
-              <Col className="col-item"  span="18">
-                <Switch onChange={e=>{
-                  let {commonSetting} = this.state;
-                  this.setState({
-                    commonSetting :{
-                      ...commonSetting,
-                      checkHttpCodeIs200: e
-                    }
-                  })
-                }} checked={this.state.commonSetting.checkHttpCodeIs200}  checkedChildren="开" unCheckedChildren="关" />
-              </Col>
-            </Row>
-
-            <Row className="setting-item">
-              <Col className="col-item"  span="4">
-                <label>检查返回json:&nbsp;<Tooltip title={'检查接口返回数据字段值，比如检查 code 是不是等于 0'}>
-                  <Icon type="question-circle-o" style={{ width: '10px' }} />
-                </Tooltip></label>
-              </Col>
-              <Col  className="col-item" span="6">
-                <Input value={this.state.commonSetting.checkResponseField.name} onChange={this.changeCommonFieldSetting('name')} placeholder="字段名"  />
-              </Col>
-              <Col  className="col-item" span="6">
-                <Input  onChange={this.changeCommonFieldSetting('value')}  value={this.state.commonSetting.checkResponseField.value}   placeholder="值"  />
-              </Col>
-              <Col  className="col-item" span="6">
-                <Switch  onChange={this.changeCommonFieldSetting('enable')}  checked={this.state.commonSetting.checkResponseField.enable}  checkedChildren="开" unCheckedChildren="关"  />
-              </Col>
-            </Row>
-
-            <Row className="setting-item">
-              <Col className="col-item" span="4">
-                <label>检查返回数据结构:&nbsp;<Tooltip title={'只有 response 基于 json-schema 方式定义，该检查才会生效'}>
-                  <Icon type="question-circle-o" style={{ width: '10px' }} />
-                </Tooltip></label>
-              </Col>
-              <Col className="col-item"  span="18">
-                <Switch onChange={e=>{
-                  let {commonSetting} = this.state;
-                  this.setState({
-                    commonSetting :{
-                      ...commonSetting,
-                      checkResponseSchema: e
-                    }
-                  })
-                }} checked={this.state.commonSetting.checkResponseSchema}  checkedChildren="开" unCheckedChildren="关" />
-              </Col>
-            </Row>
-
-            <Row className="setting-item">
-              <Col className="col-item  " span="4">
-                <label>全局测试脚本:&nbsp;<Tooltip title={'在跑自动化测试时，优先调用全局脚本，只有全局脚本通过测试，才会开始跑case自定义的测试脚本'}>
-                  <Icon type="question-circle-o" style={{ width: '10px' }} />
-                </Tooltip></label>
-              </Col>
-              <Col className="col-item"  span="14">
-                <div><Switch onChange={e=>{
-                  let {commonSetting} = this.state;
-                  this.setState({
-                    commonSetting :{
-                      ...commonSetting,
-                      checkScript: {
-                        ...this.state.checkScript,
-                        enable: e
+              <Col className='col-item' span='18'>
+                <Switch
+                  onChange={e => {
+                    let { commonSetting } = this.state;
+                    this.setState({
+                      commonSetting: {
+                        ...commonSetting,
+                        checkHttpCodeIs200: e
                       }
+                    });
+                  }}
+                  checked={this.state.commonSetting.checkHttpCodeIs200}
+                  checkedChildren='开'
+                  unCheckedChildren='关'
+                />
+              </Col>
+            </Row>
+
+            <Row className='setting-item'>
+              <Col className='col-item' span='4'>
+                <label>
+                  检查返回json:&nbsp;
+                  <Tooltip title={'检查接口返回数据字段值，比如检查 code 是不是等于 0'}>
+                    <Icon type='question-circle-o' style={{ width: '10px' }} />
+                  </Tooltip>
+                </label>
+              </Col>
+              <Col className='col-item' span='6'>
+                <Input
+                  value={this.state.commonSetting.checkResponseField.name}
+                  onChange={this.changeCommonFieldSetting('name')}
+                  placeholder='字段名'
+                />
+              </Col>
+              <Col className='col-item' span='6'>
+                <Input
+                  onChange={this.changeCommonFieldSetting('value')}
+                  value={this.state.commonSetting.checkResponseField.value}
+                  placeholder='值'
+                />
+              </Col>
+              <Col className='col-item' span='6'>
+                <Switch
+                  onChange={this.changeCommonFieldSetting('enable')}
+                  checked={this.state.commonSetting.checkResponseField.enable}
+                  checkedChildren='开'
+                  unCheckedChildren='关'
+                />
+              </Col>
+            </Row>
+
+            <Row className='setting-item'>
+              <Col className='col-item' span='4'>
+                <label>
+                  检查返回数据结构:&nbsp;
+                  <Tooltip title={'只有 response 基于 json-schema 方式定义，该检查才会生效'}>
+                    <Icon type='question-circle-o' style={{ width: '10px' }} />
+                  </Tooltip>
+                </label>
+              </Col>
+              <Col className='col-item' span='18'>
+                <Switch
+                  onChange={e => {
+                    let { commonSetting } = this.state;
+                    this.setState({
+                      commonSetting: {
+                        ...commonSetting,
+                        checkResponseSchema: e
+                      }
+                    });
+                  }}
+                  checked={this.state.commonSetting.checkResponseSchema}
+                  checkedChildren='开'
+                  unCheckedChildren='关'
+                />
+              </Col>
+            </Row>
+
+            <Row className='setting-item'>
+              <Col className='col-item  ' span='4'>
+                <label>
+                  全局测试脚本:&nbsp;
+                  <Tooltip
+                    title={
+                      '在跑自动化测试时，优先调用全局脚本，只有全局脚本通过测试，才会开始跑case自定义的测试脚本'
                     }
-                  })
-                }} checked={this.state.commonSetting.checkScript.enable}  checkedChildren="开" unCheckedChildren="关"  /></div>
+                  >
+                    <Icon type='question-circle-o' style={{ width: '10px' }} />
+                  </Tooltip>
+                </label>
+              </Col>
+              <Col className='col-item' span='14'>
+                <div>
+                  <Switch
+                    onChange={e => {
+                      let { commonSetting } = this.state;
+                      this.setState({
+                        commonSetting: {
+                          ...commonSetting,
+                          checkScript: {
+                            ...this.state.checkScript,
+                            enable: e
+                          }
+                        }
+                      });
+                    }}
+                    checked={this.state.commonSetting.checkScript.enable}
+                    checkedChildren='开'
+                    unCheckedChildren='关'
+                  />
+                </div>
                 <AceEditor
                   onChange={this.onChangeTest}
-                  className="case-script"
+                  className='case-script'
                   data={this.state.commonSetting.checkScript.content}
                   ref={aceEditor => {
                     this.aceEditor = aceEditor;
                   }}
                 />
               </Col>
-              <Col span="6">
-                <div className="insert-code">
+              <Col span='6'>
+                <div className='insert-code'>
                   {InsertCodeMap.map(item => {
                     return (
                       <div
                         style={{ cursor: 'pointer' }}
-                        className="code-item"
+                        className='code-item'
                         key={item.title}
                         onClick={() => {
                           this.handleInsertCode('\n' + item.code);
@@ -1001,26 +1050,25 @@ class InterfaceColContent extends Component {
                 </div>
               </Col>
             </Row>
-
-
           </div>
         </Modal>
-        <Row type="flex" justify="center" align="top">
+        <Row type='flex' justify='center' align='top'>
           <Col span={5}>
             <h2
-              className="interface-title"
+              className='interface-title'
               style={{
                 display: 'inline-block',
                 margin: '8px 20px 16px 0px'
               }}
             >
-              测试集合&nbsp;<a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://hellosean1025.github.io/yapi/documents/case.html"
+              测试集合&nbsp;
+              <a
+                target='_blank'
+                rel='noopener noreferrer'
+                href='https://hellosean1025.github.io/yapi/documents/case.html'
               >
-                <Tooltip title="点击查看文档">
-                  <Icon type="question-circle-o" />
+                <Tooltip title='点击查看文档'>
+                  <Icon type='question-circle-o' />
                 </Tooltip>
               </a>
             </h2>
@@ -1043,7 +1091,7 @@ class InterfaceColContent extends Component {
                 }}
               >
                 {this.props.curProjectRole !== 'guest' && (
-                  <Tooltip title="在 YApi 服务端跑自动化测试，测试环境不能为私有网络，请确保 YApi 服务器可以访问到自动化测试环境domain">
+                  <Tooltip title='在 YApi 服务端跑自动化测试，测试环境不能为私有网络，请确保 YApi 服务器可以访问到自动化测试环境domain'>
                     <Button
                       style={{
                         marginRight: '8px'
@@ -1054,19 +1102,24 @@ class InterfaceColContent extends Component {
                     </Button>
                   </Tooltip>
                 )}
-                <Button onClick={this.openCommonSetting} style={{
-                        marginRight: '8px'
-                      }} >通用规则配置</Button>
+                <Button
+                  onClick={this.openCommonSetting}
+                  style={{
+                    marginRight: '8px'
+                  }}
+                >
+                  通用规则配置
+                </Button>
                 &nbsp;
-                <Button type="primary" onClick={this.executeTests}>
+                <Button type='primary' onClick={this.executeTests}>
                   开始测试
                 </Button>
               </div>
             ) : (
-              <Tooltip title="请安装 cross-request Chrome 插件">
+              <Tooltip title='请安装 cross-request Chrome 插件'>
                 <Button
                   disabled
-                  type="primary"
+                  type='primary'
                   style={{
                     float: 'right',
                     marginTop: '8px'
@@ -1079,7 +1132,7 @@ class InterfaceColContent extends Component {
           </Col>
         </Row>
 
-        <div className="component-label-wrapper">
+        <div className='component-label-wrapper'>
           <Label onChange={val => this.handleChangeInterfaceCol(val, col_name)} desc={col_desc} />
         </div>
 
@@ -1092,20 +1145,20 @@ class InterfaceColContent extends Component {
           }}
         >
           <Table.Header
-            className="interface-col-table-header"
+            className='interface-col-table-header'
             headerRows={resolve.headerRows({ columns })}
           />
 
           <Table.Body
-            className="interface-col-table-body"
+            className='interface-col-table-body'
             rows={resolvedRows}
-            rowKey="id"
+            rowKey='id'
             onRow={this.onRow}
           />
         </Table.Provider>
         <Modal
-          title="测试报告"
-          width="900px"
+          title='测试报告'
+          width='900px'
           style={{
             minHeight: '500px'
           }}
@@ -1117,8 +1170,8 @@ class InterfaceColContent extends Component {
         </Modal>
 
         <Modal
-          title="自定义测试脚本"
-          width="660px"
+          title='自定义测试脚本'
+          width='660px'
           style={{
             minHeight: '500px'
           }}
@@ -1135,28 +1188,28 @@ class InterfaceColContent extends Component {
             />
           </h3>
           <AceEditor
-            className="case-script"
+            className='case-script'
             data={this.state.curScript}
             onChange={this.handleScriptChange}
           />
         </Modal>
         {this.state.autoVisible && (
           <Modal
-            title="服务端自动化测试"
-            width="780px"
+            title='服务端自动化测试'
+            width='780px'
             style={{
               minHeight: '500px'
             }}
             visible={this.state.autoVisible}
             onCancel={this.handleAuto}
-            className="autoTestsModal"
+            className='autoTestsModal'
             footer={null}
           >
-            <Row type="flex" justify="space-around" className="row" align="top">
-              <Col span={3} className="label" style={{ paddingTop: '16px' }}>
+            <Row type='flex' justify='space-around' className='row' align='top'>
+              <Col span={3} className='label' style={{ paddingTop: '16px' }}>
                 选择环境
-                <Tooltip title="默认使用测试用例选择的环境">
-                  <Icon type="question-circle-o" />
+                <Tooltip title='默认使用测试用例选择的环境'>
+                  <Icon type='question-circle-o' />
                 </Tooltip>
                 &nbsp;：
               </Col>
@@ -1170,27 +1223,27 @@ class InterfaceColContent extends Component {
                 />
               </Col>
             </Row>
-            <Row type="flex" justify="space-around" className="row" align="middle">
-              <Col span={3} className="label">
+            <Row type='flex' justify='space-around' className='row' align='middle'>
+              <Col span={3} className='label'>
                 输出格式：
               </Col>
               <Col span={21}>
                 <Select value={this.state.mode} onChange={this.modeChange}>
-                  <Option key="html" value="html">
+                  <Option key='html' value='html'>
                     html
                   </Option>
-                  <Option key="json" value="json">
+                  <Option key='json' value='json'>
                     json
                   </Option>
                 </Select>
               </Col>
             </Row>
-            <Row type="flex" justify="space-around" className="row" align="middle">
-              <Col span={3} className="label">
+            <Row type='flex' justify='space-around' className='row' align='middle'>
+              <Col span={3} className='label'>
                 消息通知
                 <Tooltip title={'测试不通过时，会给项目组成员发送消息通知'}>
                   <Icon
-                    type="question-circle-o"
+                    type='question-circle-o'
                     style={{
                       width: '10px'
                     }}
@@ -1201,18 +1254,18 @@ class InterfaceColContent extends Component {
               <Col span={21}>
                 <Switch
                   checked={this.state.email}
-                  checkedChildren="开"
-                  unCheckedChildren="关"
+                  checkedChildren='开'
+                  unCheckedChildren='关'
                   onChange={this.emailChange}
                 />
               </Col>
             </Row>
-            <Row type="flex" justify="space-around" className="row" align="middle">
-              <Col span={3} className="label">
+            <Row type='flex' justify='space-around' className='row' align='middle'>
+              <Col span={3} className='label'>
                 下载数据
                 <Tooltip title={'开启后，测试数据将被下载到本地'}>
                   <Icon
-                    type="question-circle-o"
+                    type='question-circle-o'
                     style={{
                       width: '10px'
                     }}
@@ -1223,28 +1276,25 @@ class InterfaceColContent extends Component {
               <Col span={21}>
                 <Switch
                   checked={this.state.download}
-                  checkedChildren="开"
-                  unCheckedChildren="关"
+                  checkedChildren='开'
+                  unCheckedChildren='关'
                   onChange={this.downloadChange}
                 />
               </Col>
             </Row>
-            <Row type="flex" justify="space-around" className="row" align="middle">
-              <Col span={21} className="autoTestUrl">
-                <a 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={localUrl + autoTestsUrl} >
+            <Row type='flex' justify='space-around' className='row' align='middle'>
+              <Col span={21} className='autoTestUrl'>
+                <a target='_blank' rel='noopener noreferrer' href={localUrl + autoTestsUrl}>
                   {autoTestsUrl}
                 </a>
               </Col>
               <Col span={3}>
-                <Button className="copy-btn" onClick={() => this.copyUrl(localUrl + autoTestsUrl)}>
+                <Button className='copy-btn' onClick={() => this.copyUrl(localUrl + autoTestsUrl)}>
                   复制
                 </Button>
               </Col>
             </Row>
-            <div className="autoTestMsg">
+            <div className='autoTestMsg'>
               注：访问该URL，可以测试所有用例，请确保YApi服务器可以访问到环境配置的 domain
             </div>
           </Modal>
