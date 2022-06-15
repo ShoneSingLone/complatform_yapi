@@ -351,7 +351,6 @@ async function crossRequest(defaultOptions, preScript, afterScript, commonContex
     defaultOptions.headers = options.headers = context.requestHeader;
     defaultOptions.data = options.data = context.requestBody;
   }
-  debugger;
   /* TODO: */
   /* 只用nodejs代理 */
   console.log('httpRequestByServer');

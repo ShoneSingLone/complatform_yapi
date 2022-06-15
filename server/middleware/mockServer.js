@@ -46,7 +46,10 @@ async function handleProxy(ctx, { domain, projectId }) {
     const response = await axios(axiosOptions);
     body = response.data;
   } catch (error) {
-    body = yapi.commons.resReturn(null, 500, { stack: error.stack, message: error.message });
+    console.clear();
+    console.log('🚀:', 'axios 代理出的错', error);
+    body = yapi.commons.resReturn(null, 500, { message: error.message });
+    body.catchError = error.stack;
   }
   body.A_NOTICE = `此response由yAPI代理 ${url}`;
   return (ctx.body = body);
