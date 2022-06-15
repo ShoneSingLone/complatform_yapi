@@ -41,7 +41,7 @@ export default class AddColModal extends Component {
     super(props);
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.fetchInterfaceColList(this.props.match.params.id);
     this.setState({ caseName: this.props.caseName });
   }

@@ -32,7 +32,7 @@ export default class Run extends Component {
     super(props);
   }
 
-  componentWillMount() {}
+  UNSAFE_componentWillMount() {}
 
   componentWillReceiveProps() {}
 

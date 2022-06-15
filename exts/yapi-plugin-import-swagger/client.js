@@ -1,15 +1,16 @@
 import { message } from 'antd';
 import run from './run';
 
-module.exports = function() {
-  this.bindHook('import_data', function(importDataModule) {
+module.exports = function () {
+  this.bindHook('import_data', function (importDataModule) {
+    debugger;
     if (!importDataModule || typeof importDataModule !== 'object') {
       console.error('importDataModule 参数Must be Object Type');
       return null;
     }
     importDataModule.swagger = {
       name: 'Swagger',
-      run: async function(res) {
+      run: async function (res) {
         try {
           return await run(res);
         } catch (err) {

@@ -122,7 +122,7 @@ class InterfaceList extends Component {
     }, () => this.handleRequest(this.props));
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.actionId = this.props.match.params.actionId;
     this.handleRequest(this.props);
   }

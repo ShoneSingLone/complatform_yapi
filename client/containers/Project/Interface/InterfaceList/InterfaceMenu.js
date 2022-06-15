@@ -108,7 +108,7 @@ class InterfaceMenu extends Component {
     });
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.handleRequest();
   }
 

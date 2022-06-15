@@ -101,7 +101,7 @@ class GroupSetting extends Component {
     });
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     // console.log('custom_field1',this.props.currGroup.custom_field1)
     this.initState(this.props);
   }

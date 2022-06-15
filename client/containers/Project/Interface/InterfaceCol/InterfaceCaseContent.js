@@ -78,7 +78,7 @@ export default class InterfaceCaseContent extends Component {
     return currColId;
   }
 
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     const result = await this.props.fetchInterfaceColList(this.props.match.params.id);
     let { currCaseId } = this.props;
     const params = this.props.match.params;

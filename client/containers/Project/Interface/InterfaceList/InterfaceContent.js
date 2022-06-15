@@ -42,7 +42,7 @@ class Content extends Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const params = this.props.match.params;
     this.actionId = params.actionId;
     this.handleRequest(this.props);

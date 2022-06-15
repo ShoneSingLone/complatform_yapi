@@ -91,7 +91,7 @@ class ProjectData extends Component {
     swaggerUrlData: PropTypes.string
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     axios.get(`/api/interface/getCatMenu?project_id=${this.props.match.params.id}`).then(data => {
       if (data.data.errcode === 0) {
         let menuList = data.data.data;
@@ -105,6 +105,10 @@ class ProjectData extends Component {
     plugin.emitHook('export_data', exportDataModule, this.props.match.params.id);
   }
 
+  getDataModule() {
+    const dataModule = importDataModule[this.state.curImportType];
+    return dataModule || { run() {} };
+  }
   selectChange(value) {
     this.setState({
       selectCatid: +value
@@ -147,7 +151,7 @@ class ProjectData extends Component {
       let reader = new FileReader();
       reader.readAsText(info.file);
       reader.onload = async res => {
-        res = await importDataModule[this.state.curImportType].run(res.target.result);
+        res = await this.getDataModule().run(res.target.result);
         if (this.state.dataSync === 'merge') {
           // 开启同步
           this.showConfirm(res);
@@ -185,17 +189,17 @@ class ProjectData extends Component {
       okText: '确认',
       cancelText: '取消',
       content: (
-        <div className="postman-dataImport-modal">
-          <div className="postman-dataImport-modal-content">
+        <div className='postman-dataImport-modal'>
+          <div className='postman-dataImport-modal-content'>
             {domainData.map((item, index) => {
               return (
-                <div key={index} className="postman-dataImport-show-diff">
-                  <span className="logcontent" dangerouslySetInnerHTML={{ __html: item.content }} />
+                <div key={index} className='postman-dataImport-show-diff'>
+                  <span className='logcontent' dangerouslySetInnerHTML={{ __html: item.content }} />
                 </div>
               );
             })}
           </div>
-          <p className="info">温馨提示： 数据同步后，可能会造成原本的修改数据丢失</p>
+          <p className='info'>温馨提示： 数据同步后，可能会造成原本的修改数据丢失</p>
         </div>
       ),
       async onOk() {
@@ -258,7 +262,7 @@ class ProjectData extends Component {
         // 处理swagger url 导入
         await this.props.handleSwaggerUrlData(this.state.swaggerUrl);
         // let result = json5_parse(this.props.swaggerUrlData)
-        let res = await importDataModule[this.state.curImportType].run(this.props.swaggerUrlData);
+        let res = await this.getDataModule().run(this.props.swaggerUrlData);
         if (this.state.dataSync === 'merge') {
           // merge
           this.showConfirm(res);
@@ -303,39 +307,101 @@ class ProjectData extends Component {
       onChange: this.uploadChange
     };
 
-    let exportUrl =
-      this.state.curExportType &&
-      exportDataModule[this.state.curExportType] &&
-      exportDataModule[this.state.curExportType].route;
-    let exportHref = handleExportRouteParams(
-      exportUrl,
-      this.state.exportContent,
-      this.state.isWiki
-    );
+    let exportHref, curExportType, exportUrl;
+
+    curExportType = (this.state.curExportType && exportDataModule[this.state.curExportType]) || {};
+    exportUrl = curExportType.route;
+
+    if (exportUrl) {
+      exportHref = handleExportRouteParams(exportUrl, this.state.exportContent, this.state.isWiki);
+    }
+
+    const SwaggerVNode = (() => {
+      if (this.state.curImportType === 'swagger') {
+        return (
+          <div className='dataSync'>
+            <span className='label'>
+              开启url导入&nbsp;
+              <Tooltip title='swagger url 导入'>
+                <Icon type='question-circle-o' />
+              </Tooltip>{' '}
+              &nbsp;&nbsp;
+            </span>
+
+            <Switch checked={this.state.isSwaggerUrl} onChange={this.handleUrlChange} />
+          </div>
+        );
+      }
+      return null;
+    })();
+
+    const SwaggerUrlVNode = (() => {
+      if (this.state.isSwaggerUrl) {
+        return (
+          <div className='import-content url-import-content'>
+            <Input
+              placeholder='http://demo.swagger.io/v2/swagger.json'
+              onChange={e => this.swaggerUrlInput(e.target.value)}
+            />
+            <Button
+              type='primary'
+              className='url-btn'
+              onClick={this.onUrlUpload}
+              loading={this.state.showLoading}
+            >
+              上传
+            </Button>
+          </div>
+        );
+      } else {
+        return (
+          <div className='import-content'>
+            <Spin spinning={this.state.showLoading} tip='上传中...'>
+              <Dragger {...uploadMess}>
+                <p className='ant-upload-drag-icon'>
+                  <Icon type='inbox' />
+                </p>
+                <p className='ant-upload-text'>点击或者拖拽文件到上传区域</p>
+                <p
+                  className='ant-upload-hint'
+                  onClick={e => {
+                    e.stopPropagation();
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: this.state.curImportType ? this.getDataModule().desc : null
+                  }}
+                />
+              </Dragger>
+            </Spin>
+          </div>
+        );
+      }
+    })();
 
     // console.log('inter', this.state.exportContent);
     return (
-      <div className="g-row">
-        <div className="m-panel">
-          <div className="postman-dataImport">
-            <div className="dataImportCon">
+      <div className='g-row'>
+        <div className='m-panel'>
+          <div className='postman-dataImport'>
+            <div className='dataImportCon'>
               <div>
                 <h3>
                   数据导入&nbsp;
                   <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://hellosean1025.github.io/yapi/documents/data.html"
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    href='https://hellosean1025.github.io/yapi/documents/data.html'
                   >
-                    <Tooltip title="点击查看文档">
-                      <Icon type="question-circle-o" />
+                    <Tooltip title='点击查看文档'>
+                      <Icon type='question-circle-o' />
                     </Tooltip>
                   </a>
                 </h3>
               </div>
-              <div className="dataImportTile">
+              {/* 20220615121020 */}
+              <div className='dataImportTile'>
                 <Select
-                  placeholder="请选择导入数据的方式"
+                  placeholder='请选择导入数据的方式'
                   value={this.state.curImportType}
                   onChange={this.handleImportType}
                 >
@@ -348,13 +414,14 @@ class ProjectData extends Component {
                   })}
                 </Select>
               </div>
-              <div className="catidSelect">
+              {/* 20220615121006 */}
+              <div className='catidSelect'>
                 <Select
                   value={this.state.selectCatid + ''}
                   showSearch
                   style={{ width: '100%' }}
-                  placeholder="请选择数据导入的默认分类"
-                  optionFilterProp="children"
+                  placeholder='请选择数据导入的默认分类'
+                  optionFilterProp='children'
                   onChange={this.selectChange.bind(this)}
                   filterOption={(input, option) =>
                     option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -369,8 +436,9 @@ class ProjectData extends Component {
                   })}
                 </Select>
               </div>
-              <div className="dataSync">
-                <span className="label">
+              {/* 20220615121103 */}
+              <div className='dataSync'>
+                <span className='label'>
                   数据同步&nbsp;
                   <Tooltip
                     title={
@@ -389,72 +457,26 @@ class ProjectData extends Component {
                       </div>
                     }
                   >
-                    <Icon type="question-circle-o" />
+                    <Icon type='question-circle-o' />
                   </Tooltip>{' '}
                 </span>
                 <Select value={this.state.dataSync} onChange={this.onChange}>
-                  <Option value="normal">普通模式</Option>
-                  <Option value="good">智能合并</Option>
-                  <Option value="merge">完全覆盖</Option>
+                  <Option value='normal'>普通模式</Option>
+                  <Option value='good'>智能合并</Option>
+                  <Option value='merge'>完全覆盖</Option>
                 </Select>
-
                 {/* <Switch checked={this.state.dataSync} onChange={this.onChange} /> */}
               </div>
-              {this.state.curImportType === 'swagger' && (
-                <div className="dataSync">
-                  <span className="label">
-                    开启url导入&nbsp;
-                    <Tooltip title="swagger url 导入">
-                      <Icon type="question-circle-o" />
-                    </Tooltip>{' '}
-                    &nbsp;&nbsp;
-                  </span>
-
-                  <Switch checked={this.state.isSwaggerUrl} onChange={this.handleUrlChange} />
-                </div>
-              )}
-              {this.state.isSwaggerUrl ? (
-                <div className="import-content url-import-content">
-                  <Input
-                    placeholder="http://demo.swagger.io/v2/swagger.json"
-                    onChange={e => this.swaggerUrlInput(e.target.value)}
-                  />
-                  <Button
-                    type="primary"
-                    className="url-btn"
-                    onClick={this.onUrlUpload}
-                    loading={this.state.showLoading}
-                  >
-                    上传
-                  </Button>
-                </div>
-              ) : (
-                <div className="import-content">
-                  <Spin spinning={this.state.showLoading} tip="上传中...">
-                    <Dragger {...uploadMess}>
-                      <p className="ant-upload-drag-icon">
-                        <Icon type="inbox" />
-                      </p>
-                      <p className="ant-upload-text">点击或者拖拽文件到上传区域</p>
-                      <p
-                        className="ant-upload-hint"
-                        onClick={e => {
-                          e.stopPropagation();
-                        }}
-                        dangerouslySetInnerHTML={{
-                          __html: this.state.curImportType
-                            ? importDataModule[this.state.curImportType].desc
-                            : null
-                        }}
-                      />
-                    </Dragger>
-                  </Spin>
-                </div>
-              )}
+              {/* 20220615132731 */}
+              {SwaggerVNode}
+              {/* 20220615132731 */}
+              {/* 20220615121103 */}
+              {/* 20220615121006 */}
+              {/* 20220615121020 */}
             </div>
 
             <div
-              className="dataImportCon"
+              className='dataImportCon'
               style={{
                 marginLeft: '20px',
                 display: Object.keys(exportDataModule).length > 0 ? '' : 'none'
@@ -463,8 +485,8 @@ class ProjectData extends Component {
               <div>
                 <h3>数据导出</h3>
               </div>
-              <div className="dataImportTile">
-                <Select placeholder="请选择导出数据的方式" onChange={this.handleExportType}>
+              <div className='dataImportTile'>
+                <Select placeholder='请选择导出数据的方式' onChange={this.handleExportType}>
                   {Object.keys(exportDataModule).map(name => {
                     return (
                       <Option key={name} value={name}>
@@ -475,21 +497,18 @@ class ProjectData extends Component {
                 </Select>
               </div>
 
-              <div className="dataExport">
-                <RadioGroup defaultValue="all" onChange={this.handleChange}>
-                  <Radio value="all">全部接口</Radio>
-                  <Radio value="open">公开接口</Radio>
+              <div className='dataExport'>
+                <RadioGroup defaultValue='all' onChange={this.handleChange}>
+                  <Radio value='all'>全部接口</Radio>
+                  <Radio value='open'>公开接口</Radio>
                 </RadioGroup>
               </div>
-              <div className="export-content">
+              <div className='export-content'>
                 {this.state.curExportType ? (
                   <div>
-                    <p className="export-desc">{exportDataModule[this.state.curExportType].desc}</p>
-                    <a 
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={exportHref}>
-                      <Button className="export-button" type="primary" size="large">
+                    <p className='export-desc'>{curExportType.desc}</p>
+                    <a target='_blank' rel='noopener noreferrer' href={exportHref}>
+                      <Button className='export-button' type='primary' size='large'>
                         {' '}
                         导出{' '}
                       </Button>
@@ -497,17 +516,17 @@ class ProjectData extends Component {
                     <Checkbox
                       checked={this.state.isWiki}
                       onChange={this.handleWikiChange}
-                      className="wiki-btn"
+                      className='wiki-btn'
                       disabled={this.state.curExportType === 'json'}
                     >
                       添加wiki&nbsp;
-                      <Tooltip title="开启后 html 和 markdown 数据导出会带上wiki数据">
-                        <Icon type="question-circle-o" />
+                      <Tooltip title='开启后 html 和 markdown 数据导出会带上wiki数据'>
+                        <Icon type='question-circle-o' />
                       </Tooltip>{' '}
                     </Checkbox>
                   </div>
                 ) : (
-                  <Button disabled className="export-button" type="primary" size="large">
+                  <Button disabled className='export-button' type='primary' size='large'>
                     {' '}
                     导出{' '}
                   </Button>
