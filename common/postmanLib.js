@@ -66,7 +66,7 @@ async function httpRequestByServer(options, defaultOptions, context) {
   const axiosConfigs = {
     method: options.method,
     url: url,
-    headers: { ...options.headers, 'yapi-run': defaultOptions.url }
+    headers: { ...options.headers, 'yapi-run-test': defaultOptions.url }
   };
   if (options.data) {
     axiosConfigs.data = options.data;

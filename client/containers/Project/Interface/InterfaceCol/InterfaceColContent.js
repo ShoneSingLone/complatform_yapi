@@ -1082,52 +1082,37 @@ class InterfaceColContent extends Component {
             />
           </Col>
           <Col span={9}>
-            {this.state.hasPlugin ? (
-              <div
+            <div
+              style={{
+                float: 'right',
+                paddingTop: '8px'
+              }}
+            >
+              {this.props.curProjectRole !== 'guest' && (
+                <Tooltip title='在 YApi 服务端跑自动化测试，测试环境不能为私有网络，请确保 YApi 服务器可以访问到自动化测试环境domain'>
+                  <Button
+                    style={{
+                      marginRight: '8px'
+                    }}
+                    onClick={this.autoTests}
+                  >
+                    服务端测试
+                  </Button>
+                </Tooltip>
+              )}
+              <Button
+                onClick={this.openCommonSetting}
                 style={{
-                  float: 'right',
-                  paddingTop: '8px'
+                  marginRight: '8px'
                 }}
               >
-                {this.props.curProjectRole !== 'guest' && (
-                  <Tooltip title='在 YApi 服务端跑自动化测试，测试环境不能为私有网络，请确保 YApi 服务器可以访问到自动化测试环境domain'>
-                    <Button
-                      style={{
-                        marginRight: '8px'
-                      }}
-                      onClick={this.autoTests}
-                    >
-                      服务端测试
-                    </Button>
-                  </Tooltip>
-                )}
-                <Button
-                  onClick={this.openCommonSetting}
-                  style={{
-                    marginRight: '8px'
-                  }}
-                >
-                  通用规则配置
-                </Button>
-                &nbsp;
-                <Button type='primary' onClick={this.executeTests}>
-                  开始测试
-                </Button>
-              </div>
-            ) : (
-              <Tooltip title='请安装 cross-request Chrome 插件'>
-                <Button
-                  disabled
-                  type='primary'
-                  style={{
-                    float: 'right',
-                    marginTop: '8px'
-                  }}
-                >
-                  开始测试
-                </Button>
-              </Tooltip>
-            )}
+                通用规则配置
+              </Button>
+              &nbsp;
+              <Button type='primary' onClick={this.executeTests}>
+                开始测试
+              </Button>
+            </div>
           </Col>
         </Row>
 

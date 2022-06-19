@@ -959,7 +959,7 @@ class InterfaceEditForm extends Component {
                   <Option value={-1}>任意</Option>
                   {_.map(projectMsg.env, (env, index) => {
                     return (
-                      <Option value={index} key={env._id}>
+                      <Option value={env._id} key={env._id}>
                         {env.name}=>{env.domain}
                       </Option>
                     );

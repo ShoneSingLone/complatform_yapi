@@ -15,7 +15,7 @@ const EditButton = props => {
     }
     return (
       <Button
-        icon="edit"
+        icon='edit'
         onClick={() => {
           onClick(name, true);
         }}
@@ -27,7 +27,7 @@ const EditButton = props => {
     // 管理员
     return (
       <Button
-        icon="edit"
+        icon='edit'
         onClick={() => {
           onClick(name, true);
         }}
@@ -108,8 +108,11 @@ class Profile extends Component {
   getUserInfo = id => {
     var _this = this;
     const { curUid } = this.props;
-
     axios.get('/api/user/find?id=' + id).then(res => {
+      if (res.data.errmsg === '没有权限') {
+        alert('没有权限');
+        res.data.data = {};
+      }
       _this.setState({
         userinfo: res.data.data,
         _userinfo: res.data.data
@@ -224,7 +227,7 @@ class Profile extends Component {
     if (this.state.usernameEdit === false) {
       userNameEditHtml = (
         <div>
-          <span className="text">{userinfo.username}</span>&nbsp;&nbsp;
+          <span className='text'>{userinfo.username}</span>&nbsp;&nbsp;
           {/*<span className="text-button"  onClick={() => { this.handleEdit('usernameEdit', true) }}><Icon type="edit" />修改</span>*/}
           {/* {btn} */}
           {/* 站点登陆才能编辑 */}
@@ -234,7 +237,7 @@ class Profile extends Component {
               isOwner={userinfo.uid === this.props.curUid}
               isAdmin={this.props.curRole === 'admin'}
               onClick={this.handleEdit}
-              name="usernameEdit"
+              name='usernameEdit'
             />
           )}
         </div>
@@ -244,13 +247,13 @@ class Profile extends Component {
         <div>
           <Input
             value={_userinfo.username}
-            name="username"
+            name='username'
             onChange={this.changeUserinfo}
-            placeholder="用户名"
+            placeholder='用户名'
           />
-          <ButtonGroup className="edit-buttons">
+          <ButtonGroup className='edit-buttons'>
             <Button
-              className="edit-button"
+              className='edit-button'
               onClick={() => {
                 this.handleEdit('usernameEdit', false);
               }}
@@ -258,11 +261,11 @@ class Profile extends Component {
               取消
             </Button>
             <Button
-              className="edit-button"
+              className='edit-button'
               onClick={() => {
                 this.updateUserinfo('username');
               }}
-              type="primary"
+              type='primary'
             >
               确定
             </Button>
@@ -274,7 +277,7 @@ class Profile extends Component {
     if (this.state.emailEdit === false) {
       emailEditHtml = (
         <div>
-          <span className="text">{userinfo.email}</span>&nbsp;&nbsp;
+          <span className='text'>{userinfo.email}</span>&nbsp;&nbsp;
           {/*<span className="text-button" onClick={() => { this.handleEdit('emailEdit', true) }} ><Icon type="edit" />修改</span>*/}
           {/* {btn} */}
           {/* 站点登陆才能编辑 */}
@@ -284,7 +287,7 @@ class Profile extends Component {
               isOwner={userinfo.uid === this.props.curUid}
               isAdmin={this.props.curRole === 'admin'}
               onClick={this.handleEdit}
-              name="emailEdit"
+              name='emailEdit'
             />
           )}
         </div>
@@ -293,14 +296,14 @@ class Profile extends Component {
       emailEditHtml = (
         <div>
           <Input
-            placeholder="Email"
+            placeholder='Email'
             value={_userinfo.email}
-            name="email"
+            name='email'
             onChange={this.changeUserinfo}
           />
-          <ButtonGroup className="edit-buttons">
+          <ButtonGroup className='edit-buttons'>
             <Button
-              className="edit-button"
+              className='edit-button'
               onClick={() => {
                 this.handleEdit('emailEdit', false);
               }}
@@ -308,8 +311,8 @@ class Profile extends Component {
               取消
             </Button>
             <Button
-              className="edit-button"
-              type="primary"
+              className='edit-button'
+              type='primary'
               onClick={() => {
                 this.updateUserinfo('email');
               }}
@@ -324,14 +327,14 @@ class Profile extends Component {
     if (this.state.roleEdit === false) {
       roleEditHtml = (
         <div>
-          <span className="text">{roles[userinfo.role]}</span>&nbsp;&nbsp;
+          <span className='text'>{roles[userinfo.role]}</span>&nbsp;&nbsp;
         </div>
       );
     } else {
       roleEditHtml = (
         <Select defaultValue={_userinfo.role} onChange={this.changeRole} style={{ width: 150 }}>
-          <Option value="admin">管理员</Option>
-          <Option value="member">会员</Option>
+          <Option value='admin'>管理员</Option>
+          <Option value='member'>会员</Option>
         </Select>
       );
     }
@@ -341,7 +344,7 @@ class Profile extends Component {
       if (userType) {
         btn = (
           <Button
-            icon="edit"
+            icon='edit'
             onClick={() => {
               this.handleEdit('secureEdit', true);
             }}
@@ -358,23 +361,23 @@ class Profile extends Component {
             style={{
               display: this.props.curRole === 'admin' && userinfo.role != 'admin' ? 'none' : ''
             }}
-            placeholder="旧的密码"
-            type="password"
-            name="old_password"
-            id="old_password"
+            placeholder='旧的密码'
+            type='password'
+            name='old_password'
+            id='old_password'
           />
-          <Input placeholder="新的密码" type="password" name="password" id="password" />
-          <Input placeholder="确认密码" type="password" name="verify_pass" id="verify_pass" />
-          <ButtonGroup className="edit-buttons">
+          <Input placeholder='新的密码' type='password' name='password' id='password' />
+          <Input placeholder='确认密码' type='password' name='verify_pass' id='verify_pass' />
+          <ButtonGroup className='edit-buttons'>
             <Button
-              className="edit-button"
+              className='edit-button'
               onClick={() => {
                 this.handleEdit('secureEdit', false);
               }}
             >
               取消
             </Button>
-            <Button className="edit-button" onClick={this.updatePassword} type="primary">
+            <Button className='edit-button' onClick={this.updatePassword} type='primary'>
               确定
             </Button>
           </ButtonGroup>
@@ -382,74 +385,74 @@ class Profile extends Component {
       );
     }
     return (
-      <div className="user-profile">
-        <div className="user-item-body">
+      <div className='user-profile'>
+        <div className='user-item-body'>
           {userinfo.uid === this.props.curUid ? (
             <h3>个人设置</h3>
           ) : (
             <h3>{userinfo.username} 资料设置</h3>
           )}
 
-          <Row className="avatarCon" type="flex" justify="start">
+          <Row className='avatarCon' type='flex' justify='start'>
             <Col span={24}>
               {userinfo.uid === this.props.curUid ? (
                 <AvatarUpload uid={userinfo.uid}>点击上传头像</AvatarUpload>
               ) : (
-                <div className="avatarImg">
+                <div className='avatarImg'>
                   <img src={`/api/user/avatar?uid=${userinfo.uid}`} />
                 </div>
               )}
             </Col>
           </Row>
-          <Row className="user-item" type="flex" justify="start">
-            <div className="maoboli" />
+          <Row className='user-item' type='flex' justify='start'>
+            <div className='maoboli' />
             <Col span={4}>用户id</Col>
             <Col span={12}>{userinfo.uid}</Col>
           </Row>
-          <Row className="user-item" type="flex" justify="start">
-            <div className="maoboli" />
+          <Row className='user-item' type='flex' justify='start'>
+            <div className='maoboli' />
             <Col span={4}>用户名</Col>
             <Col span={12}>{userNameEditHtml}</Col>
           </Row>
-          <Row className="user-item" type="flex" justify="start">
-            <div className="maoboli" />
+          <Row className='user-item' type='flex' justify='start'>
+            <div className='maoboli' />
             <Col span={4}>Email</Col>
             <Col span={12}>{emailEditHtml}</Col>
           </Row>
           <Row
-            className="user-item"
+            className='user-item'
             style={{ display: this.props.curRole === 'admin' ? '' : 'none' }}
-            type="flex"
-            justify="start"
+            type='flex'
+            justify='start'
           >
-            <div className="maoboli" />
+            <div className='maoboli' />
             <Col span={4}>角色</Col>
             <Col span={12}>{roleEditHtml}</Col>
           </Row>
           <Row
-            className="user-item"
+            className='user-item'
             style={{ display: this.props.curRole === 'admin' ? '' : 'none' }}
-            type="flex"
-            justify="start"
+            type='flex'
+            justify='start'
           >
-            <div className="maoboli" />
+            <div className='maoboli' />
             <Col span={4}>登陆方式</Col>
             <Col span={12}>{userinfo.type === 'site' ? '站点登陆' : '第三方登陆'}</Col>
           </Row>
-          <Row className="user-item" type="flex" justify="start">
-            <div className="maoboli" />
+          <Row className='user-item' type='flex' justify='start'>
+            <div className='maoboli' />
             <Col span={4}>创建账号时间</Col>
             <Col span={12}>{formatTime(userinfo.add_time)}</Col>
           </Row>
-          <Row className="user-item" type="flex" justify="start">
-            <div className="maoboli" />
+          <Row className='user-item' type='flex' justify='start'>
+            <div className='maoboli' />
             <Col span={4}>更新账号时间</Col>
             <Col span={12}>{formatTime(userinfo.up_time)}</Col>
           </Row>
 
           {userType ? (
-            <Row className="user-item" type="flex" justify="start">
-              <div className="maoboli" />
+            <Row className='user-item' type='flex' justify='start'>
+              <div className='maoboli' />
               <Col span={4}>密码</Col>
               <Col span={12}>{secureEditHtml}</Col>
             </Row>
@@ -506,28 +509,28 @@ class AvatarUpload extends Component {
     // let imageUrl = this.state.imageUrl ? this.state.imageUrl : `/api/user/avatar?uid=${this.props.uid}`;
     // console.log(this.props.uid);
     return (
-      <div className="avatar-box">
+      <div className='avatar-box'>
         <Tooltip
-          placement="right"
+          placement='right'
           title={<div>点击头像更换 (只支持jpg、png格式且大小不超过200kb的图片)</div>}
         >
           <div>
             <Upload
-              className="avatar-uploader"
-              name="basecode"
+              className='avatar-uploader'
+              name='basecode'
               showUploadList={false}
-              action="/api/user/upload_avatar"
+              action='/api/user/upload_avatar'
               beforeUpload={beforeUpload}
               onChange={this.handleChange.bind(this)}
             >
               {/*<Avatar size="large" src={imageUrl}  />*/}
               <div style={{ width: 100, height: 100 }}>
-                <img className="avatar" src={imageUrl} />
+                <img className='avatar' src={imageUrl} />
               </div>
             </Upload>
           </div>
         </Tooltip>
-        <span className="avatarChange" />
+        <span className='avatarChange' />
       </div>
     );
   }

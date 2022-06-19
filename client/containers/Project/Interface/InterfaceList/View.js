@@ -2,7 +2,7 @@ import './View.scss';
 import React, { PureComponent as Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Table, Icon, Row, Col, Tooltip, message, Switch } from 'antd';
+import { Table, Icon, Row, Col, Tooltip, message, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import AceEditor from 'client/components/AceEditor/AceEditor';
 import { formatTime, safeArray } from '../../../../common.js';
@@ -12,9 +12,8 @@ import constants from '../../../../constants/variable.js';
 import copy from 'copy-to-clipboard';
 import SchemaTable from '../../../../components/SchemaTable/SchemaTable.js';
 import _ from 'lodash';
-
+//
 const HTTP_METHOD = constants.HTTP_METHOD;
-
 @connect(state => {
   return {
     curData: state.inter.curdata,
@@ -355,19 +354,17 @@ class View extends Component {
       if (!this.props.curData.isProxy) {
         return '未开启转发';
       }
-      const currEnv = this.props.curData.witchEnv;
-      if (currEnv == -1) {
+      const envId = this.props.curData.witchEnv;
+      if (!envId) {
         return '任意';
       }
-      if (currEnv > -1) {
+
+      if (envId) {
         const envArray = this.props.currProject.env;
-        let env;
-        if (envArray.length - 1 < currEnv) {
-          env = _.first(envArray);
-        } else {
-          env = envArray[currEnv];
+        let env = _.find(envArray, { _id: envId });
+        if (env) {
+          return `${env.name}=====${env.domain}`;
         }
-        return `${env.name}=====${env.domain}`;
       } else {
         return '--';
       }
@@ -399,6 +396,19 @@ class View extends Component {
     }
 
     const { tag, up_time, title, uid, username } = this.props.curData;
+
+    const ajaxCode = `/**
+*  ${title}
+*  ${window.location.href}
+*/
+async ${_.camelCase(this.props.curData.path)}({params,data}) {
+  return ajax({
+    method: "${this.props.curData.method}",
+    url: \`${this.props.curData.path}\`,
+    params:params||{},
+    data:data||{}
+  });
+}`;
 
     let res = (
       <div className='caseContainer'>
@@ -485,14 +495,18 @@ class View extends Component {
               <span>{this.props.curData.isProxy ? '开启' : '关闭'}</span>
             </Col>
           </Row>
-          <Row className='row'>
-            <Col span={4} className='colKey'>
-              转发环境：
-            </Col>
-            <Col span={18} className='colValue'>
-              <span>{showProxyEnv()}</span>
-            </Col>
-          </Row>
+          {/* 转发环境  */}
+          {this.props.curData.isProxy ? (
+            <Row className='row'>
+              <Col span={4} className='colKey'>
+                转发环境：
+              </Col>
+              <Col span={18} className='colValue'>
+                <span>{showProxyEnv()}</span>
+              </Col>
+            </Row>
+          ) : null}
+          {/* 转发环境  */}
 
           <Row className='row'>
             <Col span={4} className='colKey'>
@@ -519,6 +533,31 @@ class View extends Component {
                   (location.port !== '' ? ':' + location.port : '') +
                   `/mock/${this.props.currProject._id}${this.props.currProject.basepath}${this.props.curData.path}`}
               </span>
+            </Col>
+          </Row>
+          <Row className='row'>
+            <Col span={4} className='colKey'>
+              ajax代码：
+            </Col>
+            <Col
+              span={18}
+              className='colValue'
+              style={{
+                position: 'relative'
+              }}
+            >
+              <Button
+                onClick={() => this.copyUrl(ajaxCode)}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  zIndex: 1
+                }}
+              >
+                复制代码
+              </Button>
+              <AceEditor data={ajaxCode} readOnly={true} mode='text' style={{ minHeight: 180 }} />
             </Col>
           </Row>
           {this.props.curData.custom_field_value && this.props.custom_field.enable && (

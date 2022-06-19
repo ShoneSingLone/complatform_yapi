@@ -3,13 +3,15 @@ const projectModel = require('../models/project.js');
 const interfaceModel = require('../models/interface.js');
 const mockExtra = require('../../common/mock-extra.js');
 const { schemaValidator } = require('../../common/utils.js');
-const _ = require('underscore');
+const _ = require('lodash');
 const Mock = require('mockjs');
 const variable = require('../../client/constants/variable.js');
 const httpProxy = require('http-proxy-middleware');
 const k2c = require('koa2-connect');
 const axios = require('axios');
 const https = require('https');
+const { object } = require('underscore');
+const { ObjectId } = require('mongodb');
 
 exports.handleProxy = handleProxy;
 
@@ -20,8 +22,8 @@ async function handleProxy(ctx, { domain, projectId }) {
   })();
 
   const url = (() => {
-    if (headers['yapi-run']) {
-      return headers['yapi-run'];
+    if (headers['yapi-run-test']) {
+      return headers['yapi-run-test'];
     }
     return `${domain}${targetURL}`;
   })();
@@ -45,13 +47,20 @@ async function handleProxy(ctx, { domain, projectId }) {
   try {
     const response = await axios(axiosOptions);
     body = response.data;
+
+    _.each(response.headers, (value, prop) => {
+      ctx.set(prop, value);
+    });
   } catch (error) {
     console.clear();
     console.log('🚀:', 'axios 代理出的错', error);
     body = yapi.commons.resReturn(null, 500, { message: error.message });
     body.catchError = error.stack;
   }
-  body.A_NOTICE = `此response由yAPI代理 ${url}`;
+  body.aNotice = {
+    aTips: `由yAPI转发`,
+    ..._.pick(axiosOptions, ['headers', 'method', 'url'])
+  };
   return (ctx.body = body);
 }
 
@@ -293,8 +302,9 @@ module.exports = async (ctx, next) => {
 
       let findInterface;
       let weight = 0;
-      _.each(newData, item => {
+      _.some(newData, item => {
         let m = matchApi(realUrlPath, item.path);
+        console.log(item.path);
         if (m !== false) {
           if (m.__weight >= weight) {
             findInterface = item;
@@ -339,12 +349,18 @@ module.exports = async (ctx, next) => {
       }
     }
 
-    if (interfaceData.isProxy || ctx.headers['yapi-run']) {
-      const env = project.env[interfaceData.witchEnv];
+    if (interfaceData.isProxy || ctx.headers['yapi-run-test']) {
+      const env = _.find(project.env, i => {
+        try {
+          const id = ObjectId(i._id).toString();
+          return id === interfaceData.witchEnv;
+        } catch (error) {}
+        return false;
+      });
       await handleProxy(ctx, {
         projectId: project._id,
         domain: env && env.domain,
-        yapiRun: ctx.headers['yapi-run']
+        yapiRun: ctx.headers['yapi-run-test']
       });
       return ctx.body;
     }
@@ -442,7 +458,25 @@ module.exports = async (ctx, next) => {
       }
 
       ctx.status = context.httpCode;
-      ctx.body = { A_NOTICE: `此response由yAPI mockJson`, ...JSON.parse(context.mockJson) };
+      let responseByMock = {};
+      let msg = 'ok';
+
+      try {
+        if (typeof context.mockJson === 'string') {
+          responseByMock = JSON.parse(context.mockJson);
+        } else if (_.isPlainObject(context.mockJson)) {
+          responseByMock = context.mockJson;
+        }
+      } catch (error) {
+        msg = error.message;
+      }
+      ctx.body = {
+        aNotice: {
+          aTips: `由yAPI MockJson 模拟数据`,
+          msg
+        },
+        ...responseByMock
+      };
       return;
     } catch (e) {
       yapi.commons.log(e, 'error');

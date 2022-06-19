@@ -19,7 +19,7 @@ class interfaceModel extends baseModel {
       /* NOTE: switch开关，如果关，默认使用mock数据， */
       isProxy: { type: Boolean, enum: [true, false], default: false },
       /* NOTE：env下标，如果是-1，则循环取用，success或者最后一个*/
-      witchEnv: { type: Number, default: -1 },
+      witchEnv: { type: String, default: '' },
       desc: String,
       markdown: String,
       add_time: Number,
@@ -175,7 +175,8 @@ class interfaceModel extends baseModel {
 
   list(project_id, select) {
     select =
-      select || '_id isProxy witchEnv title uid path method project_id catid edit_uid status add_time up_time';
+      select ||
+      '_id isProxy witchEnv title uid path method project_id catid edit_uid status add_time up_time';
     return this.model
       .find({
         project_id: project_id
@@ -217,7 +218,8 @@ class interfaceModel extends baseModel {
 
   listByCatid(catid, select) {
     select =
-      select || '_id isProxy witchEnv title uid path method project_id catid edit_uid status add_time up_time index tag';
+      select ||
+      '_id isProxy witchEnv title uid path method project_id catid edit_uid status add_time up_time index tag';
     return this.model
       .find({
         catid: catid
@@ -248,7 +250,7 @@ class interfaceModel extends baseModel {
     limit = parseInt(limit);
     return this.model
       .find(option)
-      .sort({index: 1})
+      .sort({ index: 1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .select(
@@ -269,11 +271,7 @@ class interfaceModel extends baseModel {
         catid: catid
       };
     }
-    return this.model
-      .find(option)
-      .select()
-      .sort({ title: 1 })
-      .exec();
+    return this.model.find(option).select().sort({ title: 1 }).exec();
   }
 
   del(id) {
@@ -344,10 +342,7 @@ class interfaceModel extends baseModel {
   search(keyword) {
     return this.model
       .find({
-        $or: [
-          { 'title': new RegExp(keyword, 'ig') },
-          { 'path': new RegExp(keyword, 'ig') }
-        ]
+        $or: [{ title: new RegExp(keyword, 'ig') }, { path: new RegExp(keyword, 'ig') }]
       })
       .limit(10);
   }

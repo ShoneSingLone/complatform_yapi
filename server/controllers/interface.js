@@ -82,7 +82,7 @@ class interfaceController extends baseController {
       desc: 'string',
       status: 'string',
       isProxy: 'boolean',
-      witchEnv: 'number',
+      witchEnv: 'string',
       req_query: [
         {
           name: 'string',
