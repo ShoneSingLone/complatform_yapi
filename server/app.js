@@ -11,6 +11,8 @@ require('./plugin.js');
 const websockify = require('koa-websocket');
 const websocket = require('./websocket.js');
 const storageCreator = require('./utils/storage');
+var cors = require('koa2-cors');
+
 require('./utils/notice');
 
 const Koa = require('koa');
@@ -27,6 +29,8 @@ app.proxy = true;
 yapi.app = app;
 
 // app.use(bodyParser({multipart: true}));
+app.use(cors());
+
 app.use(
   koaBody({ strict: false, multipart: true, jsonLimit: '2mb', formLimit: '1mb', textLimit: '1mb' })
 );

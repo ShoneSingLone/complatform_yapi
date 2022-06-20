@@ -35,7 +35,7 @@ exports.httpProxyHandler = ctx => {
     if (ctx.request.body) {
       console.log(ctx.request.header['content-type']);
       if (ctx.request.header['content-type'].indexOf('application/x-www-form-urlencoded') > -1) {
-        requestBody = query.stringify(ctx.request.body);
+        requestBody = JSON.stringify(ctx.request.body);
         options.headers['Content-Length'] = Buffer.byteLength(requestBody);
       } else if (ctx.request.header['content-type'].indexOf('application/json') > -1) {
         requestBody = JSON.stringify(ctx.request.body);

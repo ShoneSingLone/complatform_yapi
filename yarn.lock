@@ -8745,6 +8745,11 @@ koa2-connect@^1.0.2:
   resolved "https://registry.npmmirror.com/koa2-connect/-/koa2-connect-1.0.2.tgz#cf196d70a4e6a055f717522768d26cdfc5396f7b"
   integrity sha512-Subc/t9vJaMtorZ/Z/yqjRaZZ4RQ8ew+aacQhYXzL6oVuaYaUGqhh3UMRB5gcpu7t9hu1QBwbJezHohLNohr3g==
 
+koa2-cors@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.npmmirror.com/koa2-cors/-/koa2-cors-2.0.6.tgz#9ad23df3a0b9bb84530b46f5944f3fb576086554"
+  integrity sha512-JRCcSM4lamM+8kvKGDKlesYk2ASrmSTczDtGUnIadqMgnHU4Ct5Gw7Bxt3w3m6d6dy3WN0PU4oMP43HbddDEWg==
+
 koa2-proxy-middleware@^0.0.4:
   version "0.0.4"
   resolved "https://registry.npmmirror.com/koa2-proxy-middleware/-/koa2-proxy-middleware-0.0.4.tgz#23c584890d8d299597018670e6fcbe6b3af7c50c"

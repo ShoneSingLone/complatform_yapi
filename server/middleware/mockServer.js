@@ -47,7 +47,6 @@ async function handleProxy(ctx, { domain, projectId }) {
   try {
     const response = await axios(axiosOptions);
     body = response.data;
-
     _.each(response.headers, (value, prop) => {
       ctx.set(prop, value);
     });
@@ -61,7 +60,12 @@ async function handleProxy(ctx, { domain, projectId }) {
     aTips: `由yAPI转发`,
     ..._.pick(axiosOptions, ['headers', 'method', 'url'])
   };
-  return (ctx.body = body);
+  // ctx.set("content-length", 3363);
+  console.log('🚀:', 'ctx.res.headers', ctx.response.length);
+  ctx.body = body;
+  console.log('🚀:', 'ctx.res.headers', ctx.response.length);
+
+  return;
 }
 
 /**
@@ -362,7 +366,7 @@ module.exports = async (ctx, next) => {
         domain: env && env.domain,
         yapiRun: ctx.headers['yapi-run-test']
       });
-      return ctx.body;
+      return;
     }
 
     let res;
