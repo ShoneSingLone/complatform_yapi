@@ -12,6 +12,27 @@ import constants from '../../../../constants/variable.js';
 import copy from 'copy-to-clipboard';
 import SchemaTable from '../../../../components/SchemaTable/SchemaTable.js';
 import _ from 'lodash';
+import { reduce } from 'underscore';
+
+const column_require = {
+  title: '是否必须',
+  dataIndex: 'required',
+  key: 'required',
+  width: 100,
+  sorter: a => {
+    debugger;
+    if (a.required === '是') {
+      return -1;
+    }
+    return 1;
+  },
+  render(_, item) {
+    if (item.required === '是') {
+      return <span style={{ color: 'red' }}>{item.required}</span>;
+    }
+    return <span>{item.required}</span>;
+  }
+};
 //
 const HTTP_METHOD = constants.HTTP_METHOD;
 @connect(state => {
@@ -38,7 +59,7 @@ class View extends Component {
 
   req_body_form(req_body_type, req_body_form) {
     if (req_body_type === 'form') {
-      const columns = [
+      const body_columns = [
         {
           title: '参数名称',
           dataIndex: 'name',
@@ -64,12 +85,7 @@ class View extends Component {
             );
           }
         },
-        {
-          title: '是否必须',
-          dataIndex: 'required',
-          key: 'required',
-          width: 100
-        },
+        column_require,
         {
           title: '示例',
           dataIndex: 'example',
@@ -109,7 +125,7 @@ class View extends Component {
             bordered
             size='small'
             pagination={false}
-            columns={columns}
+            columns={body_columns}
             dataSource={dataSource}
           />
         </div>
@@ -158,19 +174,14 @@ class View extends Component {
   }
 
   req_query(query) {
-    const columns = [
+    const query_columns = [
       {
         title: '参数名称',
         dataIndex: 'name',
         width: 140,
         key: 'name'
       },
-      {
-        title: '是否必须',
-        width: 100,
-        dataIndex: 'required',
-        key: 'required'
-      },
+      column_require,
       {
         title: '示例',
         dataIndex: 'example',
@@ -204,7 +215,13 @@ class View extends Component {
     }
 
     return (
-      <Table bordered size='small' pagination={false} columns={columns} dataSource={dataSource} />
+      <Table
+        bordered
+        size='small'
+        pagination={false}
+        columns={query_columns}
+        dataSource={dataSource}
+      />
     );
   }
 
@@ -282,7 +299,7 @@ class View extends Component {
         });
       });
     }
-    const req_params_columns = [
+    const req_path_params_columns = [
       {
         title: '参数名称',
         dataIndex: 'name',
@@ -308,7 +325,7 @@ class View extends Component {
       }
     ];
 
-    const columns = [
+    const headers_columns = [
       {
         title: '参数名称',
         dataIndex: 'name',
@@ -321,12 +338,7 @@ class View extends Component {
         key: 'value',
         width: '300px'
       },
-      {
-        title: '是否必须',
-        dataIndex: 'required',
-        key: 'required',
-        width: '100px'
-      },
+      column_require,
       {
         title: '示例',
         dataIndex: 'example',
@@ -589,7 +601,7 @@ async ${_.camelCase(this.props.curData.path)}({params,data}) {
               bordered
               size='small'
               pagination={false}
-              columns={req_params_columns}
+              columns={req_path_params_columns}
               dataSource={req_dataSource}
             />
           </div>
@@ -603,7 +615,7 @@ async ${_.camelCase(this.props.curData.path)}({params,data}) {
               bordered
               size='small'
               pagination={false}
-              columns={columns}
+              columns={headers_columns}
               dataSource={dataSource}
             />
           </div>

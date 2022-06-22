@@ -1,5 +1,4 @@
 const yapi = require('../yapi.js');
-const fs = require('fs');
 const projectModel = require('../models/project.js');
 const interfaceModel = require('../models/interface.js');
 const mockExtra = require('../../common/mock-extra.js');
@@ -43,11 +42,6 @@ async function handleProxy(ctx, { domain, projectId }) {
   }
   let body = yapi.commons.resReturn(null, 500, '代理失败');
   try {
-    const stamp = Date.now();
-    await fs.promises.writeFile(
-      `./axiosOptions/${stamp}.json`,
-      JSON.stringify(axiosOptions, null, 2)
-    );
     const response = await axios(axiosOptions);
     body = response.data;
     _.each(response.headers, (value, prop) => {
