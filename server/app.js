@@ -28,17 +28,22 @@ const app = websockify(new Koa());
 app.proxy = true;
 yapi.app = app;
 
+app.use(async (ctx, next) => {
+    const start = Date.now();
+    await next();
+    const ms = Date.now() - start;
+    ctx.set('yapi-Response-Time', `${ms}ms`);
+});
+
 // app.use(bodyParser({multipart: true}));
 app.use(cors());
 
-app.use(
-  koaBody({ strict: false, multipart: true, jsonLimit: '2mb', formLimit: '1mb', textLimit: '1mb' })
-);
+app.use(koaBody({strict: false, multipart: true, jsonLimit: '4mb', formLimit: '4mb', textLimit: '4mb'}));
 app.use(mockServer);
 app.use(async (ctx, next) => {
-  console.clear();
-  console.log('ctx.params', ctx.originalUrl, ctx.params);
-  await next();
+    console.clear();
+    console.log('ctx.params', ctx.originalUrl, ctx.params);
+    await next();
 });
 app.use(router.routes());
 app.use(router.allowedMethods());
@@ -46,32 +51,32 @@ app.use(router.allowedMethods());
 websocket(app);
 
 app.use(async (ctx, next) => {
-  if (/^\/(?!api)[a-zA-Z0-9\/\-_]*$/.test(ctx.path)) {
-    ctx.path = '/';
-    await next();
-  } else {
-    await next();
-  }
+    if (/^\/(?!api)[a-zA-Z0-9\/\-_]*$/.test(ctx.path)) {
+        ctx.path = '/';
+        await next();
+    } else {
+        await next();
+    }
 });
 
 app.use(async (ctx, next) => {
-  if (ctx.path.indexOf('/prd') === 0) {
-    ctx.set('Cache-Control', 'max-age=8640000000');
-    if (yapi.commons.fileExist(yapi.path.join(yapi.WEBROOT, 'static', ctx.path + '.gz'))) {
-      ctx.set('Content-Encoding', 'gzip');
-      ctx.path = ctx.path + '.gz';
+    if (ctx.path.indexOf('/prd') === 0) {
+        ctx.set('Cache-Control', 'max-age=8640000000');
+        if (yapi.commons.fileExist(yapi.path.join(yapi.WEBROOT, 'static', ctx.path + '.gz'))) {
+            ctx.set('Content-Encoding', 'gzip');
+            ctx.path = ctx.path + '.gz';
+        }
     }
-  }
-  await next();
+    await next();
 });
 
-app.use(koaStatic(yapi.path.join(yapi.WEBROOT, 'static'), { index: indexFile, gzip: true }));
+app.use(koaStatic(yapi.path.join(yapi.WEBROOT, 'static'), {index: indexFile, gzip: true}));
 
 const server = app.listen(yapi.WEBCONFIG.port);
 
 server.setTimeout(yapi.WEBCONFIG.timeout);
 
 commons.log(
-  `服务已启动，请打开下面链接访问:
+    `服务已启动，请打开下面链接访问:
       http://127.0.0.1${yapi.WEBCONFIG.port == '80' ? '' : ':' + yapi.WEBCONFIG.port}/`
 );

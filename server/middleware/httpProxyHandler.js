@@ -8,7 +8,6 @@ exports.request = async options => {
   } catch (error) {
     res = error;
   }
-  console.log('🚀:', 'res', res.data);
 };
 exports.httpProxyHandler = ctx => {
   return new Promise(resolve => {

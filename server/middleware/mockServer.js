@@ -1,4 +1,5 @@
 const yapi = require('../yapi.js');
+const fs = require('fs');
 const projectModel = require('../models/project.js');
 const interfaceModel = require('../models/interface.js');
 const mockExtra = require('../../common/mock-extra.js');
@@ -6,11 +7,8 @@ const { schemaValidator } = require('../../common/utils.js');
 const _ = require('lodash');
 const Mock = require('mockjs');
 const variable = require('../../client/constants/variable.js');
-const httpProxy = require('http-proxy-middleware');
-const k2c = require('koa2-connect');
 const axios = require('axios');
 const https = require('https');
-const { object } = require('underscore');
 const { ObjectId } = require('mongodb');
 
 exports.handleProxy = handleProxy;
@@ -45,14 +43,21 @@ async function handleProxy(ctx, { domain, projectId }) {
   }
   let body = yapi.commons.resReturn(null, 500, '代理失败');
   try {
+    const stamp = Date.now();
+    await fs.promises.writeFile(
+      `./axiosOptions/${stamp}.json`,
+      JSON.stringify(axiosOptions, null, 2)
+    );
     const response = await axios(axiosOptions);
     body = response.data;
     _.each(response.headers, (value, prop) => {
+      /* TODO: */
+      /* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
+      if (prop === 'transfer-encoding') return;
       ctx.set(prop, value);
     });
   } catch (error) {
     console.clear();
-    console.log('🚀:', 'axios 代理出的错', error);
     body = yapi.commons.resReturn(null, 500, { message: error.message });
     body.catchError = error.stack;
   }
@@ -60,11 +65,7 @@ async function handleProxy(ctx, { domain, projectId }) {
     aTips: `由yAPI转发`,
     ..._.pick(axiosOptions, ['headers', 'method', 'url'])
   };
-  // ctx.set("content-length", 3363);
-  console.log('🚀:', 'ctx.res.headers', ctx.response.length);
   ctx.body = body;
-  console.log('🚀:', 'ctx.res.headers', ctx.response.length);
-
   return;
 }
 
@@ -253,7 +254,7 @@ module.exports = async (ctx, next) => {
 
   try {
     /* TODO:获取当前链接的对应代理地址
-          /* 如果该接口是已完成状态 */
+              /* 如果该接口是已完成状态 */
     /* 尝试访问实际的主机 */
     /* 获取真实的响应数据 */
     /* 否则 */
@@ -306,6 +307,7 @@ module.exports = async (ctx, next) => {
 
       let findInterface;
       let weight = 0;
+      /* fixed: /{xxxId} ：简直是陋习*/
       _.some(newData, item => {
         let m = matchApi(realUrlPath, item.path);
         console.log(item.path);
