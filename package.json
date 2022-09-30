@@ -7,8 +7,7 @@
     "dev-copy-icon": "cp -r static/iconfont ./",
     "dev-server": " nodemon server/app.js dev -L",
     "install-server": " node server/install.js",
-    "dev-client": "cross-env NODE_ENV=dev ykit s -p 4000",
-    "dev": "npm run dev-server & npm run dev-client",
+    "dev": "npm run dev-server",
     "preview": "cross-env NODE_ENV=production node server/app.js",
     "test": "ava",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
@@ -23,8 +22,6 @@
     "start": "运行生产环境服务器",
     "install-server": "初始化数据库数据，用于安装",
     "dev": "运行开发服务器",
-    "dev-server": "运行后端开发服务器",
-    "dev-client": "运行前端开发服务器",
     "test": "执行测试"
   },
   "repository": {
