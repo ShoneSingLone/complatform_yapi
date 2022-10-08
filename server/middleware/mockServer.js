@@ -1,11 +1,11 @@
 const yapi = require('../yapi.js');
 const projectModel = require('../models/project.js');
 const interfaceModel = require('../models/interface.js');
-const mockExtra = require('../../common/mock-extra.js');
-const { schemaValidator } = require('../../common/utils.js');
+const mockExtra = require('common/mock-extra.js');
+const { schemaValidator } = require('common/utils.js');
 const _ = require('lodash');
 const Mock = require('mockjs');
-const variable = require('../../client/constants/variable.js');
+const variable = require('static/constants/variable.js');
 const axios = require('axios');
 const https = require('https');
 const { ObjectId } = require('mongodb');

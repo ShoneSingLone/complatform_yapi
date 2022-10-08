@@ -6,9 +6,10 @@ import { withRouter } from 'react-router-dom';
 import { Table, Button, message, Popconfirm, Tooltip, Icon } from 'antd';
 import { fetchMockCol } from 'client/reducer/modules/mockCol';
 import { formatTime } from 'client/common.js';
-import constants from 'client/constants/variable.js';
+import constants from 'static/constants/variable.js';
 import CaseDesModal from './CaseDesModal';
-import { json5_parse } from '../../../client/common';
+import { json5_parse } from 'common';
+import json5 from 'json5';
 import _ from 'underscore';
 
 @connect(
@@ -113,21 +114,23 @@ export default class MockCol extends Component {
   };
 
   // mock case 可以设置开启的关闭
-  openMockCase = async (id , enable=true)=> {
+  openMockCase = async (id, enable = true) => {
     const interface_id = this.props.match.params.actionId;
 
-    await axios.post('/api/plugin/advmock/case/hide', {
-      id,
-      enable: !enable
-    }).then(async res => {
-      if (res.data.errcode === 0) {
-        message.success('修改成功');
-        await this.props.fetchMockCol(interface_id);
-      } else {
-        message.error(res.data.errmsg);
-      }
-    })
-  }
+    await axios
+      .post('/api/plugin/advmock/case/hide', {
+        id,
+        enable: !enable
+      })
+      .then(async res => {
+        if (res.data.errcode === 0) {
+          message.success('修改成功');
+          await this.props.fetchMockCol(interface_id);
+        } else {
+          message.error(res.data.errmsg);
+        }
+      });
+  };
 
   render() {
     const { list: data, currInterface } = this.props;
@@ -207,24 +210,24 @@ export default class MockCol extends Component {
             !isGuest && (
               <div>
                 <span style={{ marginRight: 5 }}>
-                  <Button size="small" onClick={this.openModal(recode)}>
+                  <Button size='small' onClick={this.openModal(recode)}>
                     编辑
                   </Button>
                 </span>
                 <span style={{ marginRight: 5 }}>
                   <Popconfirm
-                    title="你确定要删除这条期望?"
+                    title='你确定要删除这条期望?'
                     onConfirm={() => this.deleteCase(_id)}
-                    okText="确定"
-                    cancelText="取消"
+                    okText='确定'
+                    cancelText='取消'
                   >
-                    <Button size="small" onClick={() => {}}>
+                    <Button size='small' onClick={() => {}}>
                       删除
                     </Button>
                   </Popconfirm>
                 </span>
                 <span>
-                  <Button size="small" onClick={() => this.openMockCase(_id, recode.case_enable)}>
+                  <Button size='small' onClick={() => this.openMockCase(_id, recode.case_enable)}>
                     {recode.case_enable ? <span>已开启</span> : <span>未开启</span>}
                   </Button>
                 </span>
@@ -238,21 +241,21 @@ export default class MockCol extends Component {
     return (
       <div>
         <div style={{ marginBottom: 8 }}>
-          <Button type="primary" onClick={this.openModal(initCaseData, true)} disabled={isGuest}>
+          <Button type='primary' onClick={this.openModal(initCaseData, true)} disabled={isGuest}>
             添加期望
           </Button>
           <a
-            target="_blank"
-            rel="noopener noreferrer"
+            target='_blank'
+            rel='noopener noreferrer'
             href={constants.docHref.adv_mock_case}
             style={{ marginLeft: 8 }}
           >
-            <Tooltip title="点击查看文档">
-              <Icon type="question-circle-o" />
+            <Tooltip title='点击查看文档'>
+              <Icon type='question-circle-o' />
             </Tooltip>
           </a>
         </div>
-        <Table columns={columns} dataSource={data} pagination={false} rowKey="_id" />
+        <Table columns={columns} dataSource={data} pagination={false} rowKey='_id' />
         {caseDesModalVisible && (
           <CaseDesModal
             visible={caseDesModalVisible}

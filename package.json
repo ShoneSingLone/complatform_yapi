@@ -31,6 +31,8 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
+    "static": "file:./static",
+    "common": "file:./common",
     "ajv": "^5.5.1",
     "ajv-i18n": "^2.2.0",
     "axios": "0.18.1",
@@ -127,7 +129,6 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "markdown-it-include": "^1.0.0",
-    "node-sass": "^4.9.0",
     "nodemon": "^1.11.0",
     "prop-types": "^15.5.10",
     "rc-queue-anim": "^1.2.0",

@@ -21,5 +21,3 @@ exports.formatDate = val => {
     convert2Decimal(date.getSeconds())
   ].join(':')}`;
 };
-
-// const json5_parse = require('../client/common.js').json5_parse;

@@ -1,5 +1,3 @@
-// const json5_parse = require('../client/common.js').json5_parse;
-
 const json5 = require('json5');
 
 module.exports = function(jsondiffpatch, formattersHtml, curDiffData) {
