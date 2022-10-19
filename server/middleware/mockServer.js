@@ -1,14 +1,14 @@
-const yapi = require('../yapi.js');
+const { yapi } = global;
 const projectModel = require('../models/project.js');
 const interfaceModel = require('../models/interface.js');
-const mockExtra = require('common/mock-extra.js');
-const { schemaValidator } = require('common/utils.js');
+const mockExtra = require('../../common/mock-extra.js');
+const { schemaValidator } = require('../../common/utils.js');
 const _ = require('lodash');
 const Mock = require('mockjs');
-const variable = require('static/constants/variable.js');
 const axios = require('axios');
 const https = require('https');
 const { ObjectId } = require('mongodb');
+const { VARIABLE } = yapi;
 
 exports.handleProxy = handleProxy;
 
@@ -162,7 +162,7 @@ function mockValidator(interfaceData, ctx) {
     }
   }
   // form 表单判断
-  if (variable.HTTP_METHOD[method].request_body && interfaceData.req_body_type === 'form') {
+  if (VARIABLE.HTTP_METHOD[method].request_body && interfaceData.req_body_type === 'form') {
     for (j = 0, len = interfaceData.req_body_form.length; j < len; j++) {
       let curForm = interfaceData.req_body_form[j];
       if (curForm && typeof curForm === 'object' && curForm.required === '1') {
@@ -181,7 +181,7 @@ function mockValidator(interfaceData, ctx) {
   let validResult;
   // json schema 判断
   if (
-    variable.HTTP_METHOD[method].request_body &&
+    VARIABLE.HTTP_METHOD[method].request_body &&
     interfaceData.req_body_type === 'json' &&
     interfaceData.req_body_is_json_schema === true
   ) {
@@ -354,7 +354,7 @@ module.exports = async (ctx, next) => {
         try {
           const id = ObjectId(i._id).toString();
           return id === interfaceData.witchEnv;
-        } catch (error) {}
+        } catch (error) { }
         return false;
       });
       await handleProxy(ctx, {

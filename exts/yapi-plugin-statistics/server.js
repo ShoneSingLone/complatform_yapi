@@ -1,14 +1,14 @@
 /**
  * Created by gxl.gao on 2017/10/24.
  */
-const yapi = require('yapi.js');
-const mongoose = require('mongoose');
+const { yapi } = global;
+const { mongoose } = yapi;
 const controller = require('./controller');
 const statisModel = require('./statisMockModel.js');
 const commons = require('./util.js');
 
-module.exports = function() {
-  yapi.connect.then(function() {
+module.exports = function () {
+  (function () {
     let Col = mongoose.connection.db.collection('statis_mock');
     Col.createIndex({
       interface_id: 1
@@ -25,9 +25,9 @@ module.exports = function() {
     Col.createIndex({
       date: 1
     });
-  });
+  })();
 
-  this.bindHook('add_router', function(addRouter) {
+  this.bindHook('add_router', function (addRouter) {
     addRouter({
       controller: controller,
       method: 'get',
@@ -56,7 +56,7 @@ module.exports = function() {
   });
 
   // MockServer生成mock数据后触发
-  this.bindHook('mock_after', function(context) {
+  this.bindHook('mock_after', function (context) {
     let interfaceId = context.interfaceData._id;
     let projectId = context.projectData._id;
     let groupId = context.projectData.group_id;

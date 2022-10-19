@@ -1,9 +1,10 @@
 const controller = require('./controller');
 const advModel = require('./advMockModel.js');
 const caseModel = require('./caseModel.js');
-const yapi = require('yapi.js');
-const mongoose = require('mongoose');
-const _ = require('underscore');
+const { yapi } = global;
+const { mongoose } = yapi;
+
+const _ = require('lodash');
 const path = require('path');
 const lib = require(path.resolve(yapi.WEBROOT, 'common/lib.js'));
 const Mock = require('mockjs');
@@ -19,24 +20,25 @@ function arrToObj(arr) {
   return obj;
 }
 
-module.exports = function() {
-  yapi.connect.then(function() {
-    let Col = mongoose.connection.db.collection('adv_mock');
-    Col.createIndex({
-      interface_id: 1
-    });
-    Col.createIndex({
-      project_id: 1
-    });
+module.exports = function () {
 
-    let caseCol = mongoose.connection.db.collection('adv_mock_case');
-    caseCol.createIndex({
-      interface_id: 1
-    });
-    caseCol.createIndex({
-      project_id: 1
-    });
+  let Col = mongoose.connection.db.collection('adv_mock');
+  Col.createIndex({
+    interface_id: 1
   });
+  Col.createIndex({
+    project_id: 1
+  });
+
+  let caseCol = mongoose.connection.db.collection('adv_mock_case');
+  caseCol.createIndex({
+    interface_id: 1
+  });
+  caseCol.createIndex({
+    project_id: 1
+  });
+
+
 
   async function checkCase(ctx, interfaceId) {
     let reqParams = Object.assign({}, ctx.query, ctx.request.body);
@@ -95,7 +97,7 @@ module.exports = function() {
     return result;
   }
 
-  this.bindHook('add_router', function(addRouter) {
+  this.bindHook('add_router', function (addRouter) {
     addRouter({
       controller: controller,
       method: 'get',
@@ -155,11 +157,11 @@ module.exports = function() {
       action: 'hideCase'
     });
   });
-  this.bindHook('interface_del', async function(id) {
+  this.bindHook('interface_del', async function (id) {
     let inst = yapi.getInst(advModel);
     await inst.delByInterfaceId(id);
   });
-  this.bindHook('project_del', async function(id) {
+  this.bindHook('project_del', async function (id) {
     let inst = yapi.getInst(advModel);
     await inst.delByProjectId(id);
   });
@@ -171,7 +173,7 @@ module.exports = function() {
       mockJson: res 
     } 
    */
-  this.bindHook('mock_after', async function(context) {
+  this.bindHook('mock_after', async function (context) {
     let interfaceId = context.interfaceData._id;
     let caseData = await checkCase(context.ctx, interfaceId);
 

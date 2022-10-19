@@ -5,7 +5,7 @@ const userController = require('./controllers/user.js');
 const interfaceColController = require('./controllers/interfaceCol.js');
 const testController = require('./controllers/test.js');
 
-const yapi = require('./yapi.js');
+const { yapi } = global;
 const projectController = require('./controllers/project.js');
 const logController = require('./controllers/log.js');
 const followController = require('./controllers/follow.js');

@@ -3,10 +3,10 @@ const interfaceCatModel = require('../models/interfaceCat.js');
 const interfaceCaseModel = require('../models/interfaceCase.js');
 const followModel = require('../models/follow.js');
 const groupModel = require('../models/group.js');
-const _ = require('underscore');
+const _ = require('lodash');
 const url = require('url');
 const baseController = require('./base.js');
-const yapi = require('../yapi.js');
+const { yapi } = global;
 const userModel = require('../models/user.js');
 const projectModel = require('../models/project.js');
 const jsondiffpatch = require('jsondiffpatch');
@@ -549,7 +549,7 @@ class interfaceController extends baseController {
   async downloadCrx(ctx) {
     let filename = 'crossRequest.zip';
     let dataBuffer = yapi.fs.readFileSync(
-      yapi.path.join(yapi.WEBROOT, 'static/attachment/cross-request.zip')
+      path.join(yapi.WEBROOT, 'static/attachment/cross-request.zip')
     );
     ctx.set('Content-disposition', 'attachment; filename=' + filename);
     ctx.set('Content-Type', 'application/zip');

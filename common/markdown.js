@@ -1,5 +1,5 @@
 const schema = require('./schema-transformTo-table.js');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const json_parse = function(json) {
   try {

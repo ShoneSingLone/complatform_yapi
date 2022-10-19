@@ -1,6 +1,6 @@
 const projectModel = require('../models/project.js');
-const yapi = require('../yapi.js');
-const _ = require('underscore');
+const { yapi } = global;
+const _ = require('lodash');
 const baseController = require('./base.js');
 const interfaceModel = require('../models/interface.js');
 const interfaceColModel = require('../models/interfaceCol.js');

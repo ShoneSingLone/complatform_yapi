@@ -1,6 +1,7 @@
-const yapi = require('./yapi.js');
-const plugin_path = yapi.path.join(yapi.WEBROOT, 'node_modules');
-const plugin_system_path = yapi.path.join(yapi.WEBROOT, 'exts');
+const { yapi } = global;
+const path = require("path");
+const plugin_path = path.join(yapi.WEBROOT, 'node_modules');
+const plugin_system_path = path.join(yapi.WEBROOT, 'exts');
 const initPlugins = require('../common/plugin.js').initPlugins;
 var extConfig = require('../common/config.js').exts;
 
@@ -185,7 +186,7 @@ var hooks = {
    *    hander: (emails, title, content)=> {...}
    * }
    */
-  addNotice:{
+  addNotice: {
     type: 'multi',
     listener: []
   }
@@ -238,12 +239,12 @@ pluginsConfig.forEach(plugin => {
 
   if (
     !yapi.commons.fileExist(
-      yapi.path.join(plugin_path, 'yapi-plugin-' + plugin.name + '/server.js')
+      path.join(plugin_path, 'yapi-plugin-' + plugin.name + '/server.js')
     )
   ) {
     throw new Error(`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`);
   }
-  let pluginModule = require(yapi.path.join(
+  let pluginModule = require(path.join(
     plugin_path,
     'yapi-plugin-' + plugin.name + '/server.js'
   ));
@@ -257,12 +258,12 @@ extConfig.forEach(plugin => {
 
   if (
     !yapi.commons.fileExist(
-      yapi.path.join(plugin_system_path, 'yapi-plugin-' + plugin.name + '/server.js')
+      path.join(plugin_system_path, 'yapi-plugin-' + plugin.name + '/server.js')
     )
   ) {
     throw new Error(`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`);
   }
-  let pluginModule = require(yapi.path.join(
+  let pluginModule = require(path.join(
     plugin_system_path,
     'yapi-plugin-' + plugin.name + '/server.js'
   ));

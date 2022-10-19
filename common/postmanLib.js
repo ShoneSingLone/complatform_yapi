@@ -1,9 +1,7 @@
 const { isJson5, json_parse, handleJson, joinPath, safeArray } = require('./utils');
-const constants = require('static/constants/variable.js');
-const _ = require('underscore');
+const _ = require('lodash');
 const URL = require('url');
 const utils = require('./power-string.js').utils;
-const HTTP_METHOD = constants.HTTP_METHOD;
 const axios = require('axios');
 const qs = require('qs');
 const CryptoJS = require('crypto-js');
@@ -11,6 +9,9 @@ const jsrsasign = require('jsrsasign');
 const https = require('https');
 const lodash = require('lodash');
 const isNode = typeof global == 'object' && global.global === global;
+const { VARIABLE } = global.yapi;
+const HTTP_METHOD = VARIABLE.HTTP_METHOD;
+
 const ContentTypeMap = {
   'application/json': 'json',
   'application/xml': 'xml',

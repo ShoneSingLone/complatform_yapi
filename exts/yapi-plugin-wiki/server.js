@@ -1,16 +1,16 @@
-const yapi = require('yapi.js');
-const mongoose = require('mongoose');
+const { yapi } = global;
+const { mongoose } = yapi;
 const controller = require('./controller');
 
-module.exports = function() {
-  yapi.connect.then(function() {
+module.exports = function () {
+  (function () {
     let Col = mongoose.connection.db.collection('wiki');
     Col.createIndex({
       project_id: 1
     });
-  });
+  })();
 
-  this.bindHook('add_router', function(addRouter) {
+  this.bindHook('add_router', function (addRouter) {
     addRouter({
       // 获取wiki信息
       controller: controller,
@@ -28,7 +28,7 @@ module.exports = function() {
     });
   });
 
-  this.bindHook('add_ws_router', function(wsRouter) {
+  this.bindHook('add_ws_router', function (wsRouter) {
     wsRouter({
       controller: controller,
       method: 'get',

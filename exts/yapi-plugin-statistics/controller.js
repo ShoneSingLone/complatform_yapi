@@ -8,7 +8,7 @@ const projectModel = require('models/project.js');
 const interfaceModel = require('models/interface.js');
 const interfaceCaseModel = require('models/interfaceCase.js');
 
-const yapi = require('yapi.js');
+const { yapi } = global;
 const config = require('./index.js');
 const commons = require('./util.js');
 const os = require('os');

@@ -1,13 +1,14 @@
 const userModel = require('../models/user.js');
-const yapi = require('../yapi.js');
+const { yapi } = global;
 const baseController = require('./base.js');
 const common = require('../utils/commons.js');
 const ldap = require('../utils/ldap.js');
-
 const interfaceModel = require('../models/interface.js');
 const groupModel = require('../models/group.js');
 const projectModel = require('../models/project.js');
 const avatarModel = require('../models/avatar.js');
+const path = require('path');
+
 
 const jwt = require('jsonwebtoken');
 
@@ -357,9 +358,8 @@ class userController extends baseController {
       });
       yapi.commons.sendMail({
         to: user.email,
-        contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您的账号 ${
-          params.email
-        } 已经注册成功</p>`
+        contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您的账号 ${params.email
+          } 已经注册成功</p>`
       });
     } catch (e) {
       ctx.body = yapi.commons.resReturn(null, 401, e.message);
@@ -601,7 +601,7 @@ class userController extends baseController {
       let data = await avatarInst.get(uid);
       let dataBuffer, type;
       if (!data || !data.basecode) {
-        dataBuffer = yapi.fs.readFileSync(yapi.path.join(yapi.WEBROOT, 'static/image/avatar.png'));
+        dataBuffer = yapi.fs.readFileSync(path.join(yapi.WEBROOT, 'static/image/avatar.png'));
         type = 'image/png';
       } else {
         type = data.type;

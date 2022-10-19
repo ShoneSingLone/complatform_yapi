@@ -7,6 +7,7 @@ import { Table, Button, message, Popconfirm, Tooltip, Icon } from 'antd';
 import { fetchMockCol } from 'client/reducer/modules/mockCol';
 import { formatTime } from 'client/common.js';
 import constants from 'static/constants/variable.js';
+const { yapi } = global;
 import CaseDesModal from './CaseDesModal';
 import { json5_parse } from 'common';
 import json5 from 'json5';

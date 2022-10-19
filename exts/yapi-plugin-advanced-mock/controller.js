@@ -1,6 +1,6 @@
 const baseController = require('controllers/base.js');
 const advModel = require('./advMockModel.js');
-const yapi = require('yapi.js');
+const { yapi } = global;
 const caseModel = require('./caseModel.js');
 const userModel = require('models/user.js');
 const config = require('./index.js');

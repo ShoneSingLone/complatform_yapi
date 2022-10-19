@@ -1,4 +1,4 @@
-const yapi = require('../yapi.js');
+const { yapi } = global;
 const baseModel = require('./base.js');
 
 class projectModel extends baseModel {

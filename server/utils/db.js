@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const yapi = require('../yapi.js');
 const autoIncrement = require('./mongoose-auto-increment');
-
+const { yapi } = global;
 function model(model, schema) {
   if (schema instanceof mongoose.Schema === false) {
     schema = new mongoose.Schema(schema);
@@ -12,72 +11,74 @@ function model(model, schema) {
   return mongoose.model(model, schema, model);
 }
 
-function connect(callback) {
-  mongoose.Promise = global.Promise;
-  mongoose.set('useNewUrlParser', true);
-  mongoose.set('useFindAndModify', false);
-  mongoose.set('useCreateIndex', true);
+async function setYapiMongooseAsync() {
+  return new Promise((resolve, reject) => {
+    mongoose.Promise = global.Promise;
+    mongoose.set('useNewUrlParser', true);
+    mongoose.set('useFindAndModify', false);
+    mongoose.set('useCreateIndex', true);
 
-  let config = yapi.WEBCONFIG;
-  let options = {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true};
+    let { WEBCONFIG } = yapi;
+    let options = { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true };
 
-  if (config.db.user) {
-    options.user = config.db.user;
-    options.pass = config.db.pass;
-  }
-
-  if (config.db.reconnectTries) {
-    options.reconnectTries = config.db.reconnectTries;
-  }
-
-  if (config.db.reconnectInterval) {
-    options.reconnectInterval = config.db.reconnectInterval;
-  }
-
-
-  options = Object.assign({}, options, config.db.options)
-
-  var connectString = '';
-
-  if(config.db.connectString){
-    connectString = config.db.connectString;
-  }else{
-    connectString = `mongodb://${config.db.servername}:${config.db.port}/${config.db.DATABASE}`;
-    if (config.db.authSource) {
-      connectString = connectString + `?authSource=${config.db.authSource}`;
+    if (WEBCONFIG.db.user) {
+      options.user = WEBCONFIG.db.user;
+      options.pass = WEBCONFIG.db.pass;
     }
-  }
 
-  let db = mongoose.connect(
-    connectString,
-    options,
-    function(err) {
-      if (err) {
-        yapi.commons.log(err + ', mongodb Authentication failed', 'error');
+    if (WEBCONFIG.db.reconnectTries) {
+      options.reconnectTries = WEBCONFIG.db.reconnectTries;
+    }
+
+    if (WEBCONFIG.db.reconnectInterval) {
+      options.reconnectInterval = WEBCONFIG.db.reconnectInterval;
+    }
+
+
+    options = Object.assign({}, options, WEBCONFIG.db.options);
+
+    var connectString = '';
+
+    if (WEBCONFIG.db.connectString) {
+      connectString = WEBCONFIG.db.connectString;
+    } else {
+      connectString = `mongodb://${WEBCONFIG.db.servername}:${WEBCONFIG.db.port}/${WEBCONFIG.db.DATABASE}`;
+      if (WEBCONFIG.db.authSource) {
+        connectString = connectString + `?authSource=${WEBCONFIG.db.authSource}`;
       }
     }
-  );
 
-  db.then(
-    function() {
-      yapi.commons.log('mongodb load success...');
-
-      if (typeof callback === 'function') {
-        callback.call(db);
+    console.log('🚀:', 'connectString', JSON.stringify(connectString, null, 2));
+    let db = mongoose.connect(
+      connectString,
+      options,
+      function (err) {
+        if (err) {
+          yapi.commons.log(err + ', mongodb Authentication failed', 'error');
+          reject(err);
+        }
       }
-    },
-    function(err) {
-      yapi.commons.log(err + 'mongodb connect error', 'error');
-    }
-  );
+    );
+    db.then(
+      function (mongoose) {
+        yapi.commons.log('mongodb load success...');
+        yapi.mongoose = mongoose;
+        resolve(mongoose);
+      },
+      function (err) {
+        yapi.commons.log(err + 'mongodb connect error', 'error');
+        reject(err);
+      }
+    );
 
-  autoIncrement.initialize(db);
-  return db;
+    autoIncrement.initialize(db);
+
+  });
 }
 
-yapi.db = model;
+yapi.dbModel = model;
 
 module.exports = {
-  model: model,
-  connect: connect
+  model,
+  setYapiMongooseAsync
 };

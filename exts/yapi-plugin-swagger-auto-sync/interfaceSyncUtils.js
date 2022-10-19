@@ -3,7 +3,7 @@ const openController = require('controllers/open.js');
 const projectModel = require('models/project.js');
 const syncModel = require('./syncModel.js');
 const tokenModel = require('models/token.js');
-const yapi = require('yapi.js')
+const { yapi } = global;
 const sha = require('sha.js');
 const md5 = require('md5');
 const { getToken } = require('utils/token');
@@ -16,9 +16,9 @@ class syncUtils {
         this.ctx = ctx;
         this.openController = yapi.getInst(openController);
         this.syncModel = yapi.getInst(syncModel);
-        this.tokenModel = yapi.getInst(tokenModel)
+        this.tokenModel = yapi.getInst(tokenModel);
         this.projectModel = yapi.getInst(projectModel);
-        this.init()
+        this.init();
     }
 
     //初始化定时任务
@@ -41,7 +41,7 @@ class syncUtils {
      * @param {*} uid 用户id
      */
     async addSyncJob(projectId, cronExpression, swaggerUrl, syncMode, uid) {
-        if(!swaggerUrl)return;
+        if (!swaggerUrl) return;
         let projectToken = await this.getProjectToken(projectId, uid);
         //立即执行一次
         this.syncInterface(projectId, swaggerUrl, syncMode, uid, projectToken);
@@ -63,7 +63,7 @@ class syncUtils {
         let oldPorjectData;
         try {
             oldPorjectData = await this.projectModel.get(projectId);
-        } catch(e) {
+        } catch (e) {
             yapi.commons.log('获取项目:' + projectId + '失败');
             this.deleteSyncJob(projectId);
             //删除数据库定时任务
@@ -80,15 +80,15 @@ class syncUtils {
         }
         let newSwaggerJsonData;
         try {
-            newSwaggerJsonData = await this.getSwaggerContent(swaggerUrl)
+            newSwaggerJsonData = await this.getSwaggerContent(swaggerUrl);
             if (!newSwaggerJsonData || typeof newSwaggerJsonData !== 'object') {
-                yapi.commons.log('数据格式出错，请检查')
+                yapi.commons.log('数据格式出错，请检查');
                 this.saveSyncLog(0, syncMode, "数据格式出错，请检查", uid, projectId);
             }
-            newSwaggerJsonData = JSON.stringify(newSwaggerJsonData)
+            newSwaggerJsonData = JSON.stringify(newSwaggerJsonData);
         } catch (e) {
             this.saveSyncLog(0, syncMode, "获取数据失败，请检查", uid, projectId);
-            yapi.commons.log('获取数据失败' + e.message)
+            yapi.commons.log('获取数据失败' + e.message);
         }
 
         let oldSyncJob = await this.syncModel.getByProjectId(projectId);
@@ -108,7 +108,7 @@ class syncUtils {
             project_id: projectId,
             merge: syncMode,
             token: projectToken
-        }
+        };
         let requestObj = {
             params: _params
         };
@@ -203,16 +203,16 @@ class syncUtils {
     }
 
     async getSwaggerContent(swaggerUrl) {
-        const axios = require('axios')
+        const axios = require('axios');
         try {
             let response = await axios.get(swaggerUrl);
             if (response.status > 400) {
-                throw new Error(`http status "${response.status}"` + '获取数据失败，请确认 swaggerUrl 是否正确')
+                throw new Error(`http status "${response.status}"` + '获取数据失败，请确认 swaggerUrl 是否正确');
             }
             return response.data;
         } catch (e) {
-            let response = e.response || {status: e.message || 'error'};
-            throw new Error(`http status "${response.status}"` + '获取数据失败，请确认 swaggerUrl 是否正确')
+            let response = e.response || { status: e.message || 'error' };
+            throw new Error(`http status "${response.status}"` + '获取数据失败，请确认 swaggerUrl 是否正确');
         }
     }
 

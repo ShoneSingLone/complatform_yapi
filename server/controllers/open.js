@@ -5,7 +5,7 @@ const interfaceModel = require('../models/interface.js');
 const interfaceCatModel = require('../models/interfaceCat.js');
 const followModel = require('../models/follow.js');
 const userModel = require('../models/user.js');
-const yapi = require('../yapi.js');
+const { yapi } = global;
 const baseController = require('./base.js');
 const {
   handleParams,
@@ -17,7 +17,7 @@ const { handleParamsValue, ArrayToObject } = require('../../common/utils.js');
 const renderToHtml = require('../utils/reportHtml');
 const axios = require('axios');
 const HanldeImportData = require('../../common/HandleImportData');
-const _ = require('underscore');
+const _ = require('lodash');
 const createContex = require('../../common/createContext')
 
 /**

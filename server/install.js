@@ -1,15 +1,17 @@
 const fs = require('fs-extra');
-const yapi = require('./yapi.js');
+const { yapi } = global;
 const commons = require('./utils/commons');
 const dbModule = require('./utils/db.js');
 const userModel = require('./models/user.js');
 const mongoose = require('mongoose');
+const path = require('path');
+
 
 yapi.commons = commons;
-yapi.connect = dbModule.connect();
+yapi.mongoose = dbModule.connect();
 
 function install() {
-  let exist = yapi.commons.fileExist(yapi.path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
+  let exist = yapi.commons.fileExist(path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
 
   if (exist) {
     throw new Error(
@@ -33,7 +35,7 @@ function setupSql() {
     up_time: yapi.commons.time()
   });
 
-  yapi.connect
+  yapi.mongoose
     .then(function() {
       let userCol = mongoose.connection.db.collection('user');
       userCol.createIndex({
@@ -136,7 +138,7 @@ function setupSql() {
 
       result.then(
         function() {
-          fs.ensureFileSync(yapi.path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
+          fs.ensureFileSync(path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
           console.log(
             `初始化管理员账号成功,账号名："${yapi.WEBCONFIG.adminAccount}"，密码："ymfe.org"`
           ); // eslint-disable-line

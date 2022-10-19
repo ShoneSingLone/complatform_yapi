@@ -1,5 +1,5 @@
 const baseController = require('controllers/base.js');
-const yapi = require('yapi.js');
+const { yapi } = global;
 const syncModel = require('../syncModel.js');
 const projectModel = require('models/project.js');
 const interfaceSyncUtils = require('../interfaceSyncUtils.js')

@@ -1,5 +1,5 @@
 const ldap = require('ldapjs');
-const yapi = require('../yapi.js');
+const { yapi } = global;
 const util = require('util');
 
 exports.ldapQuery = (username, password) => {

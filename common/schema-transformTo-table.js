@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 let fieldNum = 1;
 
 exports.schemaTransformToTable = schema => {

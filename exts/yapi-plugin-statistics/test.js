@@ -6,7 +6,7 @@ const userModel = require('../../server/models/user.js');
 const mongoose = require('mongoose');
 
 yapi.commons = commons;
-yapi.connect = dbModule.connect();
+yapi.mongoose = dbModule.connect();
 
 const convert2Decimal = num => (num > 9 ? num : `0${num}`);
 const formatYMD = (val, joinStr = '-') => {
@@ -36,7 +36,7 @@ function run() {
     };
   };
 
-  yapi.connect
+  yapi.mongoose
     .then(function() {
       let logCol = mongoose.connection.db.collection('statis_mock');
       let arr = [];

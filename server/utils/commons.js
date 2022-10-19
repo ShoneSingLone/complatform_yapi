@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const yapi = require('../yapi.js');
+const { yapi } = global;
 const sha1 = require('sha1');
 const logModel = require('../models/log.js');
 const projectModel = require('../models/project.js');
@@ -13,7 +13,7 @@ const json5 = require('json5');
 const _ = require('underscore');
 const Ajv = require('ajv');
 const Mock = require('mockjs');
-const sandboxFn = require('./sandbox')
+const sandboxFn = require('./sandbox');
 
 
 
@@ -284,15 +284,15 @@ exports.verifyPath = path => {
 exports.sandbox = (sandbox, script) => {
   try {
     const vm = require('vm');
-    sandbox = sandbox || {};	
-    script = new vm.Script(script);	
-    const context = new vm.createContext(sandbox);	
-    script.runInContext(context, {	
-      timeout: 3000	
-    });	      
-    return sandbox
+    sandbox = sandbox || {};
+    script = new vm.Script(script);
+    const context = new vm.createContext(sandbox);
+    script.runInContext(context, {
+      timeout: 3000
+    });
+    return sandbox;
   } catch (err) {
-    throw err
+    throw err;
   }
 };
 
@@ -548,13 +548,13 @@ exports.runCaseScript = async function runCaseScript(params, colId, interfaceId)
     if (colData.checkHttpCodeIs200) {
       let status = +params.response.status;
       if (status !== 200) {
-        throw ('Http status code 不是 200，请检查(该规则来源于于 [测试集->通用规则配置] )')
+        throw ('Http status code 不是 200，请检查(该规则来源于于 [测试集->通用规则配置] )');
       }
     }
 
     if (colData.checkResponseField.enable) {
       if (params.response.body[colData.checkResponseField.name] != colData.checkResponseField.value) {
-        throw (`返回json ${colData.checkResponseField.name} 值不是${colData.checkResponseField.value}，请检查(该规则来源于于 [测试集->通用规则配置] )`)
+        throw (`返回json ${colData.checkResponseField.name} 值不是${colData.checkResponseField.value}，请检查(该规则来源于于 [测试集->通用规则配置] )`);
       }
     }
 
@@ -563,11 +563,11 @@ exports.runCaseScript = async function runCaseScript(params, colId, interfaceId)
       let interfaceData = await interfaceInst.get(interfaceId);
       if (interfaceData.res_body_is_json_schema && interfaceData.res_body) {
         let schema = JSON.parse(interfaceData.res_body);
-        let result = schemaValidator(schema, context.body)
+        let result = schemaValidator(schema, context.body);
         if (!result.valid) {
           throw (`返回Json 不符合 response 定义的数据结构,原因: ${result.message}
 数据结构如下：
-${JSON.stringify(schema, null, 2)}`)
+${JSON.stringify(schema, null, 2)}`);
         }
       }
     }
@@ -576,7 +576,7 @@ ${JSON.stringify(schema, null, 2)}`)
       let globalScript = colData.checkScript.content;
       // script 是断言
       if (globalScript) {
-        logs.push('执行脚本：' + globalScript)
+        logs.push('执行脚本：' + globalScript);
         result = await sandboxFn(context, globalScript);
       }
     }
@@ -585,7 +585,7 @@ ${JSON.stringify(schema, null, 2)}`)
     let script = params.script;
     // script 是断言
     if (script) {
-      logs.push('执行脚本:' + script)
+      logs.push('执行脚本:' + script);
       result = await sandboxFn(context, script);
     }
     result.logs = logs;
@@ -675,5 +675,9 @@ exports.createWebAPIRequest = function (ops) {
     });
     http_client.end();
   });
-}
+};
 
+
+exports.setYapiCommons = () => {
+  yapi.commons = exports;
+};

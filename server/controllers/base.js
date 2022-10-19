@@ -1,10 +1,10 @@
-const yapi = require('../yapi.js');
+const { yapi } = global;
 const projectModel = require('../models/project.js');
 const userModel = require('../models/user.js');
 const interfaceModel = require('../models/interface.js');
 const groupModel = require('../models/group.js');
 const tokenModel = require('../models/token.js');
-const _ = require('underscore');
+const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const {parseToken} = require('../utils/token')
 

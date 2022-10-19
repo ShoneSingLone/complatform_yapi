@@ -1,4 +1,4 @@
-const yapi = require('yapi.js');
+const { yapi } = global;
 const baseModel = require('models/base.js');
 const  mongoose = require('mongoose');
 

@@ -1,8 +1,8 @@
 // Module Scope
 var mongoose = require('mongoose'),
-extend = require('extend'),
-counterSchema,
-IdentityCounter;
+  extend = require('extend'),
+  counterSchema,
+  IdentityCounter;
 
 // Initialize plugin by creating counter collection in database.
 exports.initialize = function (connection) {
@@ -43,18 +43,18 @@ exports.plugin = function (schema, options) {
     incrementBy: 1, // The number by which to increment the count each time.
     unique: true // Should we create a unique index for the field
   },
-  fields = {}, // A hash of fields to add properties to in Mongoose.
-  ready = false; // True if the counter collection has been updated and the document is ready to be saved.
+    fields = {}, // A hash of fields to add properties to in Mongoose.
+    ready = false; // True if the counter collection has been updated and the document is ready to be saved.
 
-  switch (typeof(options)) {
+  switch (typeof (options)) {
     // If string, the user chose to pass in just the model name.
     case 'string':
       settings.model = options;
-    break;
+      break;
     // If object, the user passed in a hash of options.
     case 'object':
       extend(settings, options);
-    break;
+      break;
   }
 
   if (settings.model == null)
@@ -66,7 +66,7 @@ exports.plugin = function (schema, options) {
     require: true
   };
   if (settings.field !== '_id')
-    fields[settings.field].unique = settings.unique
+    fields[settings.field].unique = settings.unique;
   schema.add(fields);
 
   // Find the counter for this model and the relevant field.
