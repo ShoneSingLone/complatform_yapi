@@ -1,6 +1,6 @@
 // Module Scope
 var mongoose = require('mongoose'),
-  extend = require('extend'),
+  _ = require('lodash'),
   counterSchema,
   IdentityCounter;
 
@@ -53,7 +53,7 @@ exports.plugin = function (schema, options) {
       break;
     // If object, the user passed in a hash of options.
     case 'object':
-      extend(settings, options);
+      _.extend(settings, options);
       break;
   }
 

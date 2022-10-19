@@ -40,12 +40,13 @@ async function main(params) {
   
   */
 
+  const path = require('path');
   require('./yapi.js');
   const { yapi } = global;
-  const path = require('path');
+  /*  */
   require('./utils/commons').setYapiCommons();
   await require('./utils/db.js').setYapiMongooseAsync();
-  const mockServer = require('./middleware/mockServer.js');
+  const useMockServer = require('./middleware/mockServer.js');
   require('./plugin.js');
   const websockify = require('koa-websocket');
   const websocket = require('./websocket.js');
@@ -55,7 +56,6 @@ async function main(params) {
 
   const Koa = require('koa');
   const koaStatic = require('koa-static');
-  // const bodyParser = require('koa-bodyparser');
   const koaBody = require('koa-body');
   const router = require('./router.js');
 
@@ -77,7 +77,7 @@ async function main(params) {
   app.use(cors());
 
   app.use(koaBody({ strict: false, multipart: true, jsonLimit: '4mb', formLimit: '4mb', textLimit: '4mb' }));
-  app.use(mockServer);
+  app.use(useMockServer);
   app.use(async (ctx, next) => {
     console.clear();
     console.log('ctx.params', ctx.originalUrl, ctx.params);
