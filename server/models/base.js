@@ -1,5 +1,6 @@
 const { yapi } = global;
 const mongoose = require('mongoose');
+const { model: dbModel } = require('../utils/db');
 const autoIncrement = require('../utils/mongoose-auto-increment');
 
 /**
@@ -20,7 +21,7 @@ class baseModel {
       });
     }
 
-    this.model = yapi.dbModel(this.name, this.schema);
+    this.model = dbModel(this.name, this.schema);
   }
 
   isNeedAutoIncrement() {

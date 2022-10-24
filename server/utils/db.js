@@ -76,8 +76,6 @@ async function setYapiMongooseAsync() {
   });
 }
 
-yapi.dbModel = model;
-
 module.exports = {
   model,
   setYapiMongooseAsync

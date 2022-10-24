@@ -1,42 +1,39 @@
-const fs = require('fs-extra');
-const { yapi } = global;
-const commons = require('./utils/commons');
-const dbModule = require('./utils/db.js');
-const userModel = require('./models/user.js');
-const mongoose = require('mongoose');
-const path = require('path');
+(async function () {
+  const { initDbAndCommon } = require("./utils/initConfig");
+  const yapi = await initDbAndCommon();
+  const path = require('path');
+  const fs = require('fs-extra');
+  const userModel = require('./models/user.js');
+  const mongoose = require('mongoose');
 
 
-yapi.commons = commons;
-yapi.mongoose = dbModule.connect();
 
-function install() {
-  let exist = yapi.commons.fileExist(path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
+  function install() {
+    let exist = yapi.commons.fileExist(path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
 
-  if (exist) {
-    throw new Error(
-      'init.lock文件已存在，请确认您是否已安装。如果需要重新安装，请删掉init.lock文件'
-    );
+    if (exist) {
+      throw new Error(
+        'init.lock文件已存在，请确认您是否已安装。如果需要重新安装，请删掉init.lock文件'
+      );
+    }
+
+    setupSql();
   }
 
-  setupSql();
-}
+  function setupSql() {
+    let userInst = yapi.getInst(userModel);
+    let passsalt = yapi.commons.randStr();
+    let result = userInst.save({
+      username: yapi.WEBCONFIG.adminAccount.substr(0, yapi.WEBCONFIG.adminAccount.indexOf('@')),
+      email: yapi.WEBCONFIG.adminAccount,
+      password: yapi.commons.generatePassword(yapi.WEBCONFIG.adminPwd, passsalt),
+      passsalt: passsalt,
+      role: 'admin',
+      add_time: yapi.commons.time(),
+      up_time: yapi.commons.time()
+    });
 
-function setupSql() {
-  let userInst = yapi.getInst(userModel);
-  let passsalt = yapi.commons.randStr();
-  let result = userInst.save({
-    username: yapi.WEBCONFIG.adminAccount.substr(0, yapi.WEBCONFIG.adminAccount.indexOf('@')),
-    email: yapi.WEBCONFIG.adminAccount,
-    password: yapi.commons.generatePassword('ymfe.org', passsalt),
-    passsalt: passsalt,
-    role: 'admin',
-    add_time: yapi.commons.time(),
-    up_time: yapi.commons.time()
-  });
-
-  yapi.mongoose
-    .then(function() {
+    (function () {
       let userCol = mongoose.connection.db.collection('user');
       userCol.createIndex({
         username: 1
@@ -137,21 +134,20 @@ function setupSql() {
       });
 
       result.then(
-        function() {
+        function () {
           fs.ensureFileSync(path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
           console.log(
-            `初始化管理员账号成功,账号名："${yapi.WEBCONFIG.adminAccount}"，密码："ymfe.org"`
+            `初始化管理员账号成功,账号名："${yapi.WEBCONFIG.adminAccount}"，密码："${yapi.WEBCONFIG.adminPwd}"`
           ); // eslint-disable-line
           process.exit(0);
         },
-        function(err) {
+        function (err) {
           throw new Error(`初始化管理员账号 "${yapi.WEBCONFIG.adminAccount}" 失败, ${err.message}`); // eslint-disable-line
         }
       );
-    })
-    .catch(function(err) {
-      throw new Error(err.message);
-    });
-}
+    })();
+  }
 
-install();
+  install();
+
+})();

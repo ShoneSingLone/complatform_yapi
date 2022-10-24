@@ -39,13 +39,10 @@ async function main(params) {
   };
   
   */
-
+  const { initDbAndCommon } = require("./utils/initConfig");
+  const yapi = await initDbAndCommon();
   const path = require('path');
-  require('./yapi.js');
-  const { yapi } = global;
-  /*  */
-  require('./utils/commons').setYapiCommons();
-  await require('./utils/db.js').setYapiMongooseAsync();
+
   const useMockServer = require('./middleware/mockServer.js');
   require('./plugin.js');
   const websockify = require('koa-websocket');

@@ -52,6 +52,7 @@ specifiers:
   nodemailer: 4.0.1
   nodemon: ^1.11.0
   os: 0.1.1
+  prettier: ^2.2.1
   qs: ^6.7.0
   request: 2.81.0
   rewire: ^2.5.2
@@ -118,6 +119,7 @@ dependencies:
   nodemailer: 4.0.1
   nodemon: 1.19.4
   os: 0.1.1
+  prettier: 2.7.1
   qs: 6.11.0
   request: mirrors.tencent.com/request/2.81.0
   rewire: 2.5.2
@@ -4293,7 +4295,7 @@ packages:
     dev: false
 
   /mv/2.1.1:
-    resolution: {integrity: sha1-rmzg1vbV4KT32JN5jQPB6pVZtqI=}
+    resolution: {integrity: sha512-at/ZndSy3xEGJ8i0ygALh8ru9qy7gWW1cmkaqBN29JmMlIvM//MEO9y1sk/avxuwnPcfhkejkLsuPxH81BrkSg==}
     engines: {node: '>=0.8.0'}
     requiresBuild: true
     dependencies:
@@ -4869,6 +4871,12 @@ packages:
   /preserve/0.2.0:
     resolution: {integrity: sha1-gV7R9uvGWSb4ZbMQwHE7yzMVzks=}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /prettier/2.7.1:
+    resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: false
 
   /pretty-ms/0.2.2:
