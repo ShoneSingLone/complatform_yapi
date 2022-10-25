@@ -80,7 +80,7 @@ class logController extends baseController {
           list: projectLogList,
           total: Math.ceil(total / limit)
         });
-      } else if (type === "project") {
+      } else if (type === 'project') {
         let result = await this.Model.listWithPaging(typeid, type, page, limit, selectValue);
         let count = await this.Model.listCount(typeid, type, selectValue);
 

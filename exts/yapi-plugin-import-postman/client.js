@@ -262,6 +262,6 @@ function postman(importDataModule) {
   };
 }
 
-module.exports = function() {
+module.exports = function () {
   this.bindHook('import_data', postman);
 };

@@ -17,7 +17,6 @@ class exportController extends baseController {
     this.catModel = yapi.getInst(interfaceCatModel);
     this.interModel = yapi.getInst(interfaceModel);
     this.projectModel = yapi.getInst(projectModel);
-    
   }
 
   async handleListClass(pid, status) {
@@ -34,7 +33,7 @@ class exportController extends baseController {
         newResult.push(item);
       }
     }
-    
+
     return newResult;
   }
 
@@ -53,8 +52,8 @@ class exportController extends baseController {
       });
     }
 
-    delArrId(data, function(item) {
-      delArrId(item.list, function(api) {
+    delArrId(data, function (item) {
+      delArrId(item.list, function (api) {
         delArrId(api.req_body_form);
         delArrId(api.req_params);
         delArrId(api.req_query);
@@ -127,7 +126,7 @@ class exportController extends baseController {
       // console.log('tp',tp);
       let content = tp.replace(
         /<div\s+?class="table-of-contents"\s*>[\s\S]*?<\/ul>\s*<\/div>/gi,
-        function(match) {
+        function (match) {
           left = match;
           return '';
         }

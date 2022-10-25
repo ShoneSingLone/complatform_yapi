@@ -9,8 +9,8 @@ class advMockModel extends baseModel {
   getSchema() {
     return {
       interface_id: { type: Number, required: true },
-      project_id: {type: Number, required: true},
-      enable: {type: Boolean, default: false}, 
+      project_id: { type: Number, required: true },
+      enable: { type: Boolean, default: false },
       mock_script: String,
       uid: String,
       up_time: Number
@@ -18,7 +18,6 @@ class advMockModel extends baseModel {
   }
 
   get(interface_id) {
-
     return this.model.findOne({
       interface_id: interface_id
     });
@@ -30,10 +29,10 @@ class advMockModel extends baseModel {
     });
   }
 
-  delByProjectId(project_id){
+  delByProjectId(project_id) {
     return this.model.remove({
       project_id: project_id
-    })
+    });
   }
 
   save(data) {
@@ -44,18 +43,21 @@ class advMockModel extends baseModel {
 
   up(data) {
     data.up_time = yapi.commons.time();
-    return this.model.update({
-      interface_id: data.interface_id
-    }, {
+    return this.model.update(
+      {
+        interface_id: data.interface_id
+      },
+      {
         uid: data.uid,
         up_time: data.up_time,
         mock_script: data.mock_script,
         enable: data.enable
-      }, {
+      },
+      {
         upsert: true
-      })
+      }
+    );
   }
-
 }
 
 module.exports = advMockModel;

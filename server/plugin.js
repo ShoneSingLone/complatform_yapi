@@ -1,5 +1,5 @@
 const { yapi } = global;
-const path = require("path");
+const path = require('path');
 const plugin_path = path.join(yapi.WEBROOT, 'node_modules');
 const plugin_system_path = path.join(yapi.WEBROOT, 'exts');
 const initPlugins = require('../common/plugin.js').initPlugins;
@@ -180,7 +180,7 @@ var hooks = {
 
   /**
    * addNoticePlugin(config)
-   * 
+   *
    * config.weixin = {
    *    title: 'wechat',
    *    hander: (emails, title, content)=> {...}
@@ -238,16 +238,11 @@ pluginsConfig.forEach(plugin => {
   if (!plugin || plugin.enable === false || plugin.server === false) return null;
 
   if (
-    !yapi.commons.fileExist(
-      path.join(plugin_path, 'yapi-plugin-' + plugin.name + '/server.js')
-    )
+    !yapi.commons.fileExist(path.join(plugin_path, 'yapi-plugin-' + plugin.name + '/server.js'))
   ) {
     throw new Error(`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`);
   }
-  let pluginModule = require(path.join(
-    plugin_path,
-    'yapi-plugin-' + plugin.name + '/server.js'
-  ));
+  let pluginModule = require(path.join(plugin_path, 'yapi-plugin-' + plugin.name + '/server.js'));
   pluginModule.call(yapi, plugin.options);
 });
 

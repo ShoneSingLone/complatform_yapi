@@ -21,7 +21,6 @@ function arrToObj(arr) {
 }
 
 module.exports = function () {
-
   let Col = mongoose.connection.db.collection('adv_mock');
   Col.createIndex({
     interface_id: 1
@@ -37,8 +36,6 @@ module.exports = function () {
   caseCol.createIndex({
     project_id: 1
   });
-
-
 
   async function checkCase(ctx, interfaceId) {
     let reqParams = Object.assign({}, ctx.query, ctx.request.body);

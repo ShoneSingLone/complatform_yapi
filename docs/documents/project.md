@@ -2,9 +2,9 @@
 
 ## 基本设置
 
-- tag 信息：可自定义tag名称和tag描述，tag信息可用在接口tag标识中;
+- tag 信息：可自定义 tag 名称和 tag 描述，tag 信息可用在接口 tag 标识中;
 - mock 严格模式：开启后 mock 请求会对 query，body form 的必须字段和 json schema 进行校验;
-- 开启json5：开启后允许接口请求body 和返回值中写 json 字段。yapi建议用户关闭 json5， 因为json-schema 格式可以进行接口格式校验。
+- 开启 json5：开启后允许接口请求 body 和返回值中写 json 字段。yapi 建议用户关闭 json5， 因为 json-schema 格式可以进行接口格式校验。
 
 <img src="./images/usage/project-message.png" />
 
@@ -76,8 +76,6 @@ v1.3.21 新增全局变量，用户可以在环境列表中定义全局变量的
 
 <img src="./images/usage/project_setting_global.png" />
 
-
-
 ## 请求配置
 
 pre-script, 通过自定义 js 脚本方式改变请求的参数和返回的 response 数据
@@ -126,6 +124,7 @@ context.query.token = context.utils.md5(context.pathname + 'salt');
 ### 返回数据示例
 
 在上面的示例请求完成后，假设返回 responseData={a:1},公共变量 context 包含以下属性：
+
 ```
 context = {
   pathname: '/api/user',
@@ -159,15 +158,14 @@ context.responseData.a = 2;
 > （v1.3.16+新增）context.href 和 context.hostname  
 > （v1.3.17+新增）context.caseId 测试用例的唯一 key 值
 
-
 ### storage
 
 storage.setItem 兼容浏览器和服务端，并且是持久化数据存储，不会丢失，用法类似于 localStorage。
 storage 一共两个 api，分别是 setItem 和 getItem
 
 ```js
-storage.setItem('xxx', 'token-----xxxxx')
-context.query.token = storage.getItem('xxx')
+storage.setItem('xxx', 'token-----xxxxx');
+context.query.token = storage.getItem('xxx');
 ```
 
 ### 工具函数
@@ -183,7 +181,7 @@ context.utils = {
   sha256    //转换字符串为 sha256 编码
   sha384    //转换字符串为 sha384 编码
   sha512    //转换字符串为 sha512 编码
-  unbase64  //转换 base64 编码为字符串  
+  unbase64  //转换 base64 编码为字符串
   axios     // axios 库，可用于 api 请求，官网 https://github.com/axios/axios
 }
 ```
@@ -208,9 +206,9 @@ console.log('decryptedData', decryptedData);
 处理请求参数，或返回数据，可能还会涉及到异步处理，比如 ajax 请求，YApi 在 v1.3.13 版本支持了异步处理。
 
 ```javascript
-context.promise = new Promise(function(resolve) {
+context.promise = new Promise(function (resolve) {
   var api = context.utils.axios.get('http://yapi.local.qunar.com:3000/api/user/status');
-  api.then(function(result) {
+  api.then(function (result) {
     //...
     console.log(result.data);
     resolve();
@@ -221,8 +219,8 @@ context.promise = new Promise(function(resolve) {
 promise 还可以来设置接口延迟
 
 ```javascript
-context.promise = new Promise(function(resolve) {
-  setTimeout(function() {
+context.promise = new Promise(function (resolve) {
+  setTimeout(function () {
     console.log('delay 1000ms');
     resolve('ok');
   }, 1000);
@@ -239,10 +237,9 @@ context.promise = new Promise(function(resolve) {
 
 [openapi 文档地址](https://hellosean1025.github.io/yapi/openapi.html)
 
+## 全局 mock
 
-## 全局mock
-
-v1.3.21 新增全局 mock 设置，方便用户在项目层面上全局设置公共的mock数据，具体 mock 脚本详细使用方法详见 <a href="./adv_mock.md#自定义-mock-脚本">自定义 Mock 脚本</a> 
+v1.3.21 新增全局 mock 设置，方便用户在项目层面上全局设置公共的 mock 数据，具体 mock 脚本详细使用方法详见 <a href="./adv_mock.md#自定义-mock-脚本">自定义 Mock 脚本</a>
 
 ### Mock 优先级说明
 

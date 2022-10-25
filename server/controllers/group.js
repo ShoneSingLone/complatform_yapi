@@ -6,7 +6,7 @@ const userModel = require('../models/user.js');
 const interfaceModel = require('../models/interface.js');
 const interfaceColModel = require('../models/interfaceCol.js');
 const interfaceCaseModel = require('../models/interfaceCase.js');
-const _ = require('underscore')
+const _ = require('underscore');
 
 const rolename = {
   owner: '组长',
@@ -127,17 +127,15 @@ class groupController extends baseController {
     let params = ctx.params;
 
     // 新版每个人都有权限添加分组
-    
+
     // if (this.getRole() !== 'admin') {
     //   return (ctx.body = yapi.commons.resReturn(null, 401, '没有权限'));
     // }
 
     let owners = [];
 
-    if(params.owner_uids.length === 0){
-      params.owner_uids.push(
-        this.getUid()
-      )
+    if (params.owner_uids.length === 0) {
+      params.owner_uids.push(this.getUid());
     }
 
     if (params.owner_uids) {
@@ -212,7 +210,7 @@ class groupController extends baseController {
     };
   }
 
-  async getMyGroup(ctx){
+  async getMyGroup(ctx) {
     var groupInst = yapi.getInst(groupModel);
     let privateGroup = await groupInst.getByPrivateUid(this.getUid());
     if (!privateGroup) {
@@ -224,10 +222,10 @@ class groupController extends baseController {
         type: 'private'
       });
     }
-    if(privateGroup){
-      ctx.body = yapi.commons.resReturn(privateGroup)
-    }else{
-      ctx.body = yapi.commons.resReturn(null)
+    if (privateGroup) {
+      ctx.body = yapi.commons.resReturn(privateGroup);
+    } else {
+      ctx.body = yapi.commons.resReturn(null);
     }
   }
 
@@ -415,40 +413,40 @@ class groupController extends baseController {
       });
     }
 
-    if(this.getRole() === 'admin'){
+    if (this.getRole() === 'admin') {
       let result = await groupInst.list();
-      if(result && result.length > 0 ){
-        for (let i = 0; i < result.length; i++){
+      if (result && result.length > 0) {
+        for (let i = 0; i < result.length; i++) {
           result[i] = result[i].toObject();
-          newResult.unshift(result[i])
+          newResult.unshift(result[i]);
         }
       }
-    }else{
+    } else {
       let result = await groupInst.getAuthList(this.getUid());
-      if(result && result.length > 0 ){
-        for (let i = 0; i < result.length; i++){
+      if (result && result.length > 0) {
+        for (let i = 0; i < result.length; i++) {
           result[i] = result[i].toObject();
-          newResult.unshift(result[i])
+          newResult.unshift(result[i]);
         }
       }
 
-      const groupIds = newResult.map(item=> item._id);
+      const groupIds = newResult.map(item => item._id);
       const newGroupIds = [];
 
       let groupByProject = await projectInst.getAuthList(this.getUid());
-      if(groupByProject && groupByProject.length > 0){
-        groupByProject.forEach( _data=>{
+      if (groupByProject && groupByProject.length > 0) {
+        groupByProject.forEach(_data => {
           const _temp = [...groupIds, ...newGroupIds];
-          if(!_.find(_temp, id=> id === _data.group_id)){
-            newGroupIds.push(_data.group_id)
+          if (!_.find(_temp, id => id === _data.group_id)) {
+            newGroupIds.push(_data.group_id);
           }
-        })
+        });
       }
-      let newData = await groupInst.findByGroups(newGroupIds)
-      newData.forEach(_data=>{
+      let newData = await groupInst.findByGroups(newGroupIds);
+      newData.forEach(_data => {
         _data = _data.toObject();
         newResult.push(_data);
-      })
+      });
     }
     if (privateGroup) {
       privateGroup = privateGroup.toObject();

@@ -17,23 +17,23 @@ class interfaceCol extends baseModel {
       index: { type: Number, default: 0 },
       test_report: { type: String, default: '{}' },
       checkHttpCodeIs200: {
-        type:Boolean,
+        type: Boolean,
         default: false
       },
       checkResponseSchema: {
-        type:Boolean,
+        type: Boolean,
         default: false
       },
       checkResponseField: {
         name: {
           type: String,
           required: true,
-          default: "code"
+          default: 'code'
         },
         value: {
           type: String,
           required: true,
-          default: "0"
+          default: '0'
         },
         enable: {
           type: Boolean,

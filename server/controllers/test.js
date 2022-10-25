@@ -42,7 +42,7 @@ class interfaceColController extends baseController {
       let params = ctx.request.body;
       ctx.status = +ctx.query.code || 200;
       ctx.body = yapi.commons.resReturn(params);
-    } catch(e) {
+    } catch (e) {
       ctx.body = yapi.commons.resReturn(null, 402, e.message);
     }
   }
@@ -77,23 +77,23 @@ class interfaceColController extends baseController {
 
       let chunks = [],
         size = 0;
-      req.on('data', function(chunk) {
+      req.on('data', function (chunk) {
         chunks.push(chunk);
         size += chunk.length;
       });
 
-      req.on('finish', function() {
+      req.on('finish', function () {
         console.log(34343);
       });
 
-      req.on('end', function() {
+      req.on('end', function () {
         let data = new Buffer(size);
         for (let i = 0, pos = 0, l = chunks.length; i < l; i++) {
           let chunk = chunks[i];
           chunk.copy(data, pos);
           pos += chunk.length;
         }
-        fs.writeFileSync(path.join(yapi.WEBROOT_RUNTIME, 'test.text'), data, function(err) {
+        fs.writeFileSync(path.join(yapi.WEBROOT_RUNTIME, 'test.text'), data, function (err) {
           return (ctx.body = yapi.commons.resReturn(null, 402, '写入失败'));
         });
       });

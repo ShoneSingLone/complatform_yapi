@@ -354,7 +354,7 @@ module.exports = async (ctx, next) => {
         try {
           const id = ObjectId(i._id).toString();
           return id === interfaceData.witchEnv;
-        } catch (error) { }
+        } catch (error) {}
         return false;
       });
       await handleProxy(ctx, {

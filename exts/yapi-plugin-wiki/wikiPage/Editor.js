@@ -38,21 +38,21 @@ class WikiEditor extends Component {
     return (
       <div>
         <div
-          id="desc"
-          className="wiki-editor"
+          id='desc'
+          className='wiki-editor'
           style={{ display: !isConflict ? 'block' : 'none' }}
         />
-        <div className="wiki-title wiki-up">
+        <div className='wiki-title wiki-up'>
           <Button
-            icon="upload"
-            type="primary"
-            className="upload-btn"
+            icon='upload'
+            type='primary'
+            className='upload-btn'
             disabled={isConflict}
             onClick={this.onUpload}
           >
             更新
           </Button>
-          <Button onClick={onCancel} className="upload-btn">
+          <Button onClick={onCancel} className='upload-btn'>
             取消
           </Button>
           <Checkbox checked={notice} onChange={onEmailNotice}>

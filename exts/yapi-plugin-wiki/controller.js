@@ -178,7 +178,7 @@ class wikiController extends baseController {
           ctx.websocket.send(JSON.stringify(data));
         }
       });
-      ctx.websocket.on('close', async () => { });
+      ctx.websocket.on('close', async () => {});
     } catch (err) {
       yapi.commons.log(err, 'error');
     }

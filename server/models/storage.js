@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 class stroageModel extends baseModel {
   constructor() {
-    super()
+    super();
     let storageCol = mongoose.connection.db.collection('storage');
     storageCol.createIndex(
       {
@@ -29,18 +29,20 @@ class stroageModel extends baseModel {
     };
   }
   save(key, data = {}, isInsert = false) {
-
     let saveData = {
       key,
       data: JSON.stringify(data, null, 2)
     };
-    if(isInsert){
+    if (isInsert) {
       let r = new this.model(saveData);
       return r.save();
     }
-    return this.model.updateOne({
-      key
-    }, saveData)
+    return this.model.updateOne(
+      {
+        key
+      },
+      saveData
+    );
   }
 
   del(key) {
@@ -54,14 +56,15 @@ class stroageModel extends baseModel {
       .findOne({
         key
       })
-      .exec().then(data => {
-        this.save(key, {})
+      .exec()
+      .then(data => {
+        this.save(key, {});
         if (!data) return null;
         data = data.toObject().data;
         try {
-          return JSON.parse(data)
+          return JSON.parse(data);
         } catch (e) {
-          return {}
+          return {};
         }
       });
   }

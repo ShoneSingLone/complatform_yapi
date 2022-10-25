@@ -17,7 +17,6 @@ class exportController extends baseController {
     this.catModel = yapi.getInst(interfaceCatModel);
     this.interModel = yapi.getInst(interfaceModel);
     this.projectModel = yapi.getInst(projectModel);
-    
   }
 
   async handleListClass(pid, status) {
@@ -34,7 +33,7 @@ class exportController extends baseController {
         newResult.push(item);
       }
     }
-    
+
     return newResult;
   }
 
@@ -53,8 +52,8 @@ class exportController extends baseController {
       });
     }
 
-    delArrId(data, function(item) {
-      delArrId(item.list, function(api) {
+    delArrId(data, function (item) {
+      delArrId(item.list, function (api) {
         delArrId(api.req_body_form);
         delArrId(api.req_params);
         delArrId(api.req_query);
@@ -70,7 +69,7 @@ class exportController extends baseController {
 
   // @feat: serives
 
-  async exportFullData (ctx) {
+  async exportFullData(ctx) {
     return this.exportData(ctx, 'full-path');
   }
 
@@ -81,7 +80,7 @@ class exportController extends baseController {
     let isWiki = ctx.request.query.isWiki;
 
     if (!pid) {
-      return ctx.body = yapi.commons.resReturn(null, 200, 'pid 不为空');
+      return (ctx.body = yapi.commons.resReturn(null, 200, 'pid 不为空'));
     }
     let curProject, wikiData;
     let tp = '';
@@ -104,17 +103,20 @@ class exportController extends baseController {
         case 'json': {
           let data = this.handleExistId(list);
           if (Array.isArray(data) && fullPath === 'full-path' && basepath) {
-            data.forEach(function(cate) {
+            data.forEach(function (cate) {
               if (Array.isArray(cate.list)) {
                 cate.proBasepath = basepath;
                 cate.proName = curProject.name;
                 cate.proDescription = curProject.desc;
-                cate.list = cate.list.map(function(api) {
-                  api.path = api.query_path.path = (basepath + '/' + api.path).replace(/[\/]{2,}/g, '/');
+                cate.list = cate.list.map(function (api) {
+                  api.path = api.query_path.path = (basepath + '/' + api.path).replace(
+                    /[\/]{2,}/g,
+                    '/'
+                  );
                   return api;
                 });
               }
-            })
+            });
           }
           tp = JSON.stringify(data, null, 2);
           ctx.set('Content-Disposition', `attachment; filename=api.json`);
@@ -147,7 +149,7 @@ class exportController extends baseController {
       // console.log('tp',tp);
       let content = tp.replace(
         /<div\s+?class="table-of-contents"\s*>[\s\S]*?<\/ul>\s*<\/div>/gi,
-        function(match) {
+        function (match) {
           left = match;
           return '';
         }

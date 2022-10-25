@@ -9,14 +9,11 @@ import { Link } from 'react-router-dom';
 import WikiView from './View.js';
 import WikiEditor from './Editor.js';
 
-@connect(
-  state => {
-    return {
-      projectMsg: state.project.currProject
-    };
-  },
-  {}
-)
+@connect(state => {
+  return {
+    projectMsg: state.project.currProject
+  };
+}, {})
 class WikiPage extends Component {
   constructor(props) {
     super(props);
@@ -215,11 +212,11 @@ class WikiPage extends Component {
     const isConflict = status === 'EDITOR';
 
     return (
-      <div className="g-row">
-        <div className="m-panel wiki-content">
-          <div className="wiki-content">
+      <div className='g-row'>
+        <div className='m-panel wiki-content'>
+          <div className='wiki-content'>
             {isConflict && (
-              <div className="wiki-conflict">
+              <div className='wiki-conflict'>
                 <Link to={`/user/profile/${editUid || uid}`}>
                   <b>{editName || username}</b>
                 </Link>

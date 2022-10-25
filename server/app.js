@@ -39,7 +39,7 @@ async function main(params) {
   };
   
   */
-  const { initDbAndCommon } = require("./utils/initConfig");
+  const { initDbAndCommon } = require('./utils/initConfig');
   const yapi = await initDbAndCommon();
   const path = require('path');
 
@@ -55,7 +55,6 @@ async function main(params) {
   const koaStatic = require('koa-static');
   const koaBody = require('koa-body');
   const router = require('./router.js');
-
 
   let indexFile = process.argv[2] === 'dev' ? 'dev.html' : 'index.html';
 
@@ -73,7 +72,15 @@ async function main(params) {
   // app.use(bodyParser({multipart: true}));
   app.use(cors());
 
-  app.use(koaBody({ strict: false, multipart: true, jsonLimit: '4mb', formLimit: '4mb', textLimit: '4mb' }));
+  app.use(
+    koaBody({
+      strict: false,
+      multipart: true,
+      jsonLimit: '4mb',
+      formLimit: '4mb',
+      textLimit: '4mb'
+    })
+  );
   app.use(useMockServer);
   app.use(async (ctx, next) => {
     console.clear();
@@ -115,8 +122,6 @@ async function main(params) {
     `服务已启动，请打开下面链接访问:
       http://127.0.0.1${yapi.WEBCONFIG.port == '80' ? '' : ':' + yapi.WEBCONFIG.port}/`
   );
-
-
 }
 
 main();

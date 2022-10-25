@@ -34,7 +34,6 @@ async function setYapiMongooseAsync() {
       options.reconnectInterval = WEBCONFIG.db.reconnectInterval;
     }
 
-
     options = Object.assign({}, options, WEBCONFIG.db.options);
 
     var connectString = '';
@@ -49,16 +48,12 @@ async function setYapiMongooseAsync() {
     }
 
     console.log('🚀:', 'connectString', JSON.stringify(connectString, null, 2));
-    let db = mongoose.connect(
-      connectString,
-      options,
-      function (err) {
-        if (err) {
-          yapi.commons.log(err + ', mongodb Authentication failed', 'error');
-          reject(err);
-        }
+    let db = mongoose.connect(connectString, options, function (err) {
+      if (err) {
+        yapi.commons.log(err + ', mongodb Authentication failed', 'error');
+        reject(err);
       }
-    );
+    });
     db.then(
       function (mongoose) {
         yapi.commons.log('mongodb load success...');
@@ -72,7 +67,6 @@ async function setYapiMongooseAsync() {
     );
 
     autoIncrement.initialize(db);
-
   });
 }
 

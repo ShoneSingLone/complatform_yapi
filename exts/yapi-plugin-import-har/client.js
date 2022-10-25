@@ -200,10 +200,10 @@ function postman(importDataModule) {
       } else if (item === 'res_body') {
         res.res_body_is_json_schema = true;
         if (data.response.content.encoding && data.response.content.encoding == 'base64') {
-            //base64
-            res[item] = transformJsonToSchema(unbase64(data.response.content.text));
+          //base64
+          res[item] = transformJsonToSchema(unbase64(data.response.content.text));
         } else {
-            res[item] = transformJsonToSchema(data.response.content.text);
+          res[item] = transformJsonToSchema(data.response.content.text);
         }
       } else {
         res[item] = data.request[reflect[item]];
@@ -224,6 +224,6 @@ function postman(importDataModule) {
   };
 }
 
-module.exports = function() {
+module.exports = function () {
   this.bindHook('import_data', postman);
 };
