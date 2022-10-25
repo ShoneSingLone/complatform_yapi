@@ -1,47 +1,12 @@
-async function main(params) {
-  process.env.NODE_PATH = __dirname;
-  require('module').Module._initPaths();
+const path = require('path');
+/* require 如果没有用相对路径，就优先从node_modules里面找，找不到就从NODE_PATH 开始找 */
+process.env.NODE_PATH = path.resolve(__dirname);
+require('module').Module._initPaths();
 
-  /* 
-  // 初始化全局的依赖加载路径
-  Module._initPaths = function() {
-    ...
-    var paths = [path.resolve(process.execPath, '..', '..', 'lib', 'node')];
-  
-    ...
-    // 我们需要着重关注此处，获取环境变量“NODE_PATH”
-    var nodePath = process.env['NODE_PATH'];
-    if (nodePath) {
-      paths = nodePath.split(path.delimiter).concat(paths);
-    }
-  
-    // modulePaths记录了全局加载依赖的根目录，在Module._resolveLookupPaths中有使用
-    modulePaths = paths;
-  };
-  
-  // @params: request为加载的模块名 
-  // @params: parent为当前模块（即加载依赖的模块）
-  Module._resolveLookupPaths = function(request, parent) {
-    ...
-   
-    var start = request.substring(0, 2);
-    // 若为引用模块名的方式，即require('moduleA')
-    if (start !== './' && start !== '..') {
-      // 此处的modulePaths即为Module._initPaths函数中赋值的变量
-      var paths = modulePaths;
-      if (parent) {
-        if (!parent.paths) parent.paths = [];
-        paths = parent.paths.concat(paths);
-      }
-      return [request, paths];
-    } 
-    ...
-  };
-  
-  */
-  const { initDbAndCommon } = require('./utils/initConfig');
+
+async function main(params) {
+  const { initDbAndCommon } = require("./utils/initConfig");
   const yapi = await initDbAndCommon();
-  const path = require('path');
 
   const useMockServer = require('./middleware/mockServer.js');
   require('./plugin.js');
@@ -72,15 +37,16 @@ async function main(params) {
   // app.use(bodyParser({multipart: true}));
   app.use(cors());
 
-  app.use(
-    koaBody({
-      strict: false,
-      multipart: true,
-      jsonLimit: '4mb',
-      formLimit: '4mb',
-      textLimit: '4mb'
-    })
-  );
+  app.use(async (ctx, next) => {
+    if (/^\/(?!api)[a-zA-Z0-9\/\-_]*$/.test(ctx.path)) {
+      ctx.path = '/';
+      await next();
+    } else {
+      await next();
+    }
+  });
+
+  app.use(koaBody({ strict: false, multipart: true, jsonLimit: '4mb', formLimit: '4mb', textLimit: '4mb' }));
   app.use(useMockServer);
   app.use(async (ctx, next) => {
     console.clear();
@@ -92,14 +58,7 @@ async function main(params) {
 
   websocket(app);
 
-  app.use(async (ctx, next) => {
-    if (/^\/(?!api)[a-zA-Z0-9\/\-_]*$/.test(ctx.path)) {
-      ctx.path = '/';
-      await next();
-    } else {
-      await next();
-    }
-  });
+
 
   app.use(async (ctx, next) => {
     if (ctx.path.indexOf('/prd') === 0) {
