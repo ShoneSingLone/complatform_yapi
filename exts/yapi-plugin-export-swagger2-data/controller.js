@@ -130,7 +130,8 @@ class exportSwaggerController extends baseController {
           let apisObj = {};
           for (let aptTag of list) {
             //list of category
-            for (let api of aptTag.list) { //list of api
+            for (let api of aptTag.list) {
+              //list of api
               if (apisObj[api.path] == null) {
                 apisObj[api.path] = {};
               }
@@ -155,7 +156,8 @@ class exportSwaggerController extends baseController {
                 }
                 apiItem['parameters'] = (() => {
                   let paramArray = [];
-                  for (let p of api.req_headers) { //Headers parameters
+                  for (let p of api.req_headers) {
+                    //Headers parameters
                     //swagger has consumes proprety, so skip proprety "Content-Type"
                     if (p.name === 'Content-Type') {
                       continue;
@@ -169,7 +171,8 @@ class exportSwaggerController extends baseController {
                       default: p.value
                     });
                   }
-                  for (let p of api.req_params) { //Path parameters
+                  for (let p of api.req_params) {
+                    //Path parameters
                     paramArray.push({
                       name: p.name,
                       in: 'path',
@@ -178,7 +181,8 @@ class exportSwaggerController extends baseController {
                       type: 'string' //always be type string
                     });
                   }
-                  for (let p of api.req_query) { //Query parameters
+                  for (let p of api.req_query) {
+                    //Query parameters
                     paramArray.push({
                       name: p.name,
                       in: 'query',
