@@ -3,9 +3,8 @@ const path = require('path');
 process.env.NODE_PATH = path.resolve(__dirname);
 require('module').Module._initPaths();
 
-
 async function main(params) {
-  const { initDbAndCommon } = require("./utils/initConfig");
+  const { initDbAndCommon } = require('./utils/initConfig');
   const yapi = await initDbAndCommon();
 
   const useMockServer = require('./middleware/mockServer.js');
@@ -34,31 +33,27 @@ async function main(params) {
     ctx.set('yapi-Response-Time', `${ms}ms`);
   });
 
-  // app.use(bodyParser({multipart: true}));
   app.use(cors());
-
-  app.use(async (ctx, next) => {
-    if (/^\/(?!api)[a-zA-Z0-9\/\-_]*$/.test(ctx.path)) {
-      ctx.path = '/';
-      await next();
-    } else {
-      await next();
-    }
-  });
-
-  app.use(koaBody({ strict: false, multipart: true, jsonLimit: '4mb', formLimit: '4mb', textLimit: '4mb' }));
+  
+  app.use(
+    koaBody({
+      strict: false,
+      multipart: true,
+      jsonLimit: '4mb',
+      formLimit: '4mb',
+      textLimit: '4mb'
+    })
+  );
   app.use(useMockServer);
   app.use(async (ctx, next) => {
     console.clear();
-    console.log('ctx.params', ctx.originalUrl, ctx.params);
+    console.log('ctx.params', ctx.originalUrl, ctx.params, ctx.request.body);
     await next();
   });
   app.use(router.routes());
   app.use(router.allowedMethods());
 
   websocket(app);
-
-
 
   app.use(async (ctx, next) => {
     if (ctx.path.indexOf('/prd') === 0) {
