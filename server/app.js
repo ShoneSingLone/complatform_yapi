@@ -47,7 +47,7 @@ async function main(params) {
   app.use(useMockServer);
   app.use(async (ctx, next) => {
     console.clear();
-    console.log('ctx.params', ctx.originalUrl, ctx.params, ctx.request.body);
+    console.log('ctx.params', ctx.path, ctx.params, ctx.request.body);
     await next();
   });
   app.use(router.routes());
