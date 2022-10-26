@@ -2,7 +2,7 @@ const baseController = require('controllers/base.js');
 const { yapi } = global;
 const syncModel = require('../syncModel.js');
 const projectModel = require('models/project.js');
-const interfaceSyncUtils = require('../interfaceSyncUtils.js')
+const interfaceSyncUtils = require('../interfaceSyncUtils.js');
 
 class syncController extends baseController {
   constructor(ctx) {
@@ -14,7 +14,7 @@ class syncController extends baseController {
 
   /**
    * 保存定时任务
-   * @param {*} ctx 
+   * @param {*} ctx
    */
   async upSync(ctx) {
     let requestBody = ctx.request.body;
@@ -36,7 +36,13 @@ class syncController extends baseController {
 
     //操作定时任务
     if (requestBody.is_sync_open) {
-      this.interfaceSyncUtils.addSyncJob(projectId, requestBody.sync_cron, requestBody.sync_json_url, requestBody.sync_mode, requestBody.uid);
+      this.interfaceSyncUtils.addSyncJob(
+        projectId,
+        requestBody.sync_cron,
+        requestBody.sync_json_url,
+        requestBody.sync_mode,
+        requestBody.uid
+      );
     } else {
       this.interfaceSyncUtils.deleteSyncJob(projectId);
     }
@@ -45,7 +51,7 @@ class syncController extends baseController {
 
   /**
    * 查询定时任务
-   * @param {*} ctx 
+   * @param {*} ctx
    */
   async getSync(ctx) {
     let projectId = ctx.query.project_id;
@@ -55,8 +61,6 @@ class syncController extends baseController {
     let result = await this.syncModel.getByProjectId(projectId);
     return (ctx.body = yapi.commons.resReturn(result));
   }
-
 }
-
 
 module.exports = syncController;

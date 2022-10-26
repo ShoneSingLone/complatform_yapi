@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const axios = require('axios');
 
-
 const isNode = typeof global == 'object' && global.global === global;
 
 async function handle(
@@ -17,10 +16,9 @@ async function handle(
   token,
   port
 ) {
-
-  const taskNotice = _.throttle((index, len)=>{
-    messageSuccess(`正在导入，已执行任务 ${index+1} 个，共 ${len} 个`)
-  }, 3000)
+  const taskNotice = _.throttle((index, len) => {
+    messageSuccess(`正在导入，已执行任务 ${index + 1} 个，共 ${len} 个`);
+  }, 3000);
 
   const handleAddCat = async cats => {
     let catsObj = {};
@@ -62,7 +60,7 @@ async function handle(
     if (cats === false) {
       return;
     }
-    
+
     const res = info.apis;
     let len = res.length;
     let count = 0;
@@ -74,7 +72,7 @@ async function handle(
       return;
     }
 
-    if(info.basePath){
+    if (info.basePath) {
       let projectApiPath = '/api/project/up';
       if (isNode) {
         projectApiPath = 'http://127.0.0.1:' + port + projectApiPath;
@@ -84,7 +82,7 @@ async function handle(
         id: projectId,
         basepath: info.basePath,
         token
-      })
+      });
     }
 
     for (let index = 0; index < res.length; index++) {
@@ -149,7 +147,7 @@ async function handle(
         return;
       }
 
-      taskNotice(index, res.length)
+      taskNotice(index, res.length);
     }
   };
 

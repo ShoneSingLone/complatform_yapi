@@ -9,7 +9,6 @@ const projectModel = require('../models/project.js');
 const avatarModel = require('../models/avatar.js');
 const path = require('path');
 
-
 const jwt = require('jsonwebtoken');
 
 class userController extends baseController {
@@ -358,8 +357,7 @@ class userController extends baseController {
       });
       yapi.commons.sendMail({
         to: user.email,
-        contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您的账号 ${params.email
-          } 已经注册成功</p>`
+        contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您的账号 ${params.email} 已经注册成功</p>`
       });
     } catch (e) {
       ctx.body = yapi.commons.resReturn(null, 401, e.message);

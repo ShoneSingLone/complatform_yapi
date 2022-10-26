@@ -41,8 +41,19 @@ async function handleProxy(ctx, { domain, projectId }) {
     axiosOptions.data = ctx.request.body;
   }
   let body = yapi.commons.resReturn(null, 500, '代理失败');
+  let response;
   try {
-    const response = await axios(axiosOptions);
+    response = await axios(axiosOptions);
+  } catch (error) {
+    /* 返回的原始数据 */
+    if (error?.response?.data) {
+      const { data, status } = error.response;
+      body = data;
+      ctx.status = status;
+    }
+  }
+
+  if (response) {
     body = response.data;
     _.each(response.headers, (value, prop) => {
       /* TODO: */
@@ -50,10 +61,6 @@ async function handleProxy(ctx, { domain, projectId }) {
       if (prop === 'transfer-encoding') return;
       ctx.set(prop, value);
     });
-  } catch (error) {
-    console.clear();
-    body = yapi.commons.resReturn(null, 500, { message: error.message });
-    body.catchError = error.stack;
   }
   body.aNotice = {
     aTips: `由yAPI转发`,
@@ -354,7 +361,7 @@ module.exports = async (ctx, next) => {
         try {
           const id = ObjectId(i._id).toString();
           return id === interfaceData.witchEnv;
-        } catch (error) { }
+        } catch (error) {}
         return false;
       });
       await handleProxy(ctx, {

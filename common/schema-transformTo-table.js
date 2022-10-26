@@ -23,7 +23,7 @@ function checkJsonSchema(json) {
   return newJson;
 }
 
-const mapping = function(data, index) {
+const mapping = function (data, index) {
   switch (data.type) {
     case 'string':
       return SchemaString(data);
@@ -128,7 +128,7 @@ const SchemaArray = (data, index) => {
   let items = checkJsonSchema(data.items);
   let optionForm = mapping(items, index);
   //  处理array嵌套array的问题
-  let children =optionForm ;
+  let children = optionForm;
   if (!_.isArray(optionForm) && !_.isUndefined(optionForm)) {
     optionForm.key = 'array-' + fieldNum++;
     children = [optionForm];

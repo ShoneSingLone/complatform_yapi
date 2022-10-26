@@ -22,31 +22,29 @@ exports.initialize = function (connection) {
 
       // Create model using new schema.
       IdentityCounter = mongoose.model('IdentityCounter', counterSchema);
-    }
-    else
-      throw ex;
+    } else throw ex;
   }
 };
 
 // The function to use when invoking the plugin on a custom schema.
 exports.plugin = function (schema, options) {
-
   // If we don't have reference to the counterSchema or the IdentityCounter model then the plugin was most likely not
   // initialized properly so throw an error.
-  if (!counterSchema || !IdentityCounter) throw new Error("mongoose-auto-increment has not been initialized");
+  if (!counterSchema || !IdentityCounter)
+    throw new Error('mongoose-auto-increment has not been initialized');
 
   // Default settings and plugin scope variables.
   var settings = {
-    model: null, // The model to configure the plugin for.
-    field: '_id', // The field the plugin should track.
-    startAt: 0, // The number the count should start at.
-    incrementBy: 1, // The number by which to increment the count each time.
-    unique: true // Should we create a unique index for the field
-  },
+      model: null, // The model to configure the plugin for.
+      field: '_id', // The field the plugin should track.
+      startAt: 0, // The number the count should start at.
+      incrementBy: 1, // The number by which to increment the count each time.
+      unique: true // Should we create a unique index for the field
+    },
     fields = {}, // A hash of fields to add properties to in Mongoose.
     ready = false; // True if the counter collection has been updated and the document is ready to be saved.
 
-  switch (typeof (options)) {
+  switch (typeof options) {
     // If string, the user chose to pass in just the model name.
     case 'string':
       settings.model = options;
@@ -57,16 +55,14 @@ exports.plugin = function (schema, options) {
       break;
   }
 
-  if (settings.model == null)
-    throw new Error("model must be set");
+  if (settings.model == null) throw new Error('model must be set');
 
   // Add properties for field in schema.
   fields[settings.field] = {
     type: Number,
     require: true
   };
-  if (settings.field !== '_id')
-    fields[settings.field].unique = settings.unique;
+  if (settings.field !== '_id') fields[settings.field].unique = settings.unique;
   schema.add(fields);
 
   // Find the counter for this model and the relevant field.
@@ -75,12 +71,15 @@ exports.plugin = function (schema, options) {
     function (err, counter) {
       if (!counter) {
         // If no counter exists then create one and save it.
-        counter = new IdentityCounter({ model: settings.model, field: settings.field, count: settings.startAt - settings.incrementBy });
+        counter = new IdentityCounter({
+          model: settings.model,
+          field: settings.field,
+          count: settings.startAt - settings.incrementBy
+        });
         counter.save(function () {
           ready = true;
         });
-      }
-      else {
+      } else {
         ready = true;
       }
     }
@@ -88,13 +87,16 @@ exports.plugin = function (schema, options) {
 
   // Declare a function to get the next counter for the model/schema.
   var nextCount = function (callback) {
-    IdentityCounter.findOne({
-      model: settings.model,
-      field: settings.field
-    }, function (err, counter) {
-      if (err) return callback(err);
-      callback(null, counter === null ? settings.startAt : counter.count + settings.incrementBy);
-    });
+    IdentityCounter.findOne(
+      {
+        model: settings.model,
+        field: settings.field
+      },
+      function (err, counter) {
+        if (err) return callback(err);
+        callback(null, counter === null ? settings.startAt : counter.count + settings.incrementBy);
+      }
+    );
   };
   // Add nextCount as both a method on documents and a static on the schema for convenience.
   schema.method('nextCount', nextCount);
@@ -166,13 +168,11 @@ exports.plugin = function (schema, options) {
         }
         // If not ready then set a 5 millisecond timer and try to save again. It will keep doing this until
         // the counter collection is ready.
-        else
-          setTimeout(save, 5);
+        else setTimeout(save, 5);
       })();
     }
     // If the document does not have the field we're interested in or that field isn't a number AND the user did
     // not specify that we should increment on updates, then just continue the save without any increment logic.
-    else
-      next();
+    else next();
   });
 };

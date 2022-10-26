@@ -1,6 +1,6 @@
 const { yapi } = global;
 const baseModel = require('models/base.js');
-const  mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 class syncModel extends baseModel {
   getName() {
@@ -9,7 +9,7 @@ class syncModel extends baseModel {
 
   getSchema() {
     return {
-      uid: { type: Number},
+      uid: { type: Number },
       project_id: { type: Number, required: true },
       //是否开启自动同步
       is_sync_open: { type: Boolean, default: false },
@@ -24,20 +24,20 @@ class syncModel extends baseModel {
       //上次同步的swagger 文档内容
       old_swagger_content: String,
       add_time: Number,
-      up_time: Number,
+      up_time: Number
     };
   }
 
   getByProjectId(id) {
     return this.model.findOne({
       project_id: id
-    }) 
+    });
   }
 
-  delByProjectId(project_id){
+  delByProjectId(project_id) {
     return this.model.remove({
       project_id: project_id
-    })
+    });
   }
 
   save(data) {
@@ -60,31 +60,36 @@ class syncModel extends baseModel {
     let id = data.id;
     delete data.id;
     data.up_time = yapi.commons.time();
-    return this.model.update({
-      _id: id
-    }, data)
+    return this.model.update(
+      {
+        _id: id
+      },
+      data
+    );
   }
 
   upById(id, data) {
     delete data.id;
     data.up_time = yapi.commons.time();
-    return this.model.update({
-      _id: id
-    }, data)
+    return this.model.update(
+      {
+        _id: id
+      },
+      data
+    );
   }
 
-  del(id){
+  del(id) {
     return this.model.remove({
       _id: id
-    })
+    });
   }
 
-  delByProjectId(projectId){
+  delByProjectId(projectId) {
     return this.model.remove({
       project_id: projectId
-    })
+    });
   }
-
 }
 
 module.exports = syncModel;

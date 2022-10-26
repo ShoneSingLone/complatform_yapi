@@ -1,8 +1,7 @@
-import React, { PureComponent as Component } from 'react'
-import PropTypes from 'prop-types'
+import React, { PureComponent as Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getToken } from '../../../client/reducer/modules/project.js'
-
+import { getToken } from '../../../client/reducer/modules/project.js';
 
 import './Services.scss';
 
@@ -10,7 +9,7 @@ import './Services.scss';
   state => {
     return {
       token: state.project.token
-    }
+    };
   },
   {
     getToken
@@ -21,19 +20,18 @@ export default class Services extends Component {
     projectId: PropTypes.string,
     token: PropTypes.string,
     getToken: PropTypes.func
-  }
+  };
 
   async componentDidMount() {
     const id = this.props.projectId;
     await this.props.getToken(id);
-    
   }
-  render () {
+  render() {
     const id = this.props.projectId;
     return (
-      <div className="project-services">
-        <section className="news-box m-panel">
-          <div className="token">
+      <div className='project-services'>
+        <section className='news-box m-panel'>
+          <div className='token'>
             <h5>安装工具</h5>
             <pre>{`
   npm i sm2tsservice -D
@@ -42,10 +40,15 @@ export default class Services extends Component {
             <pre>{`
   touch json2service.json
   `}</pre>
-            <pre>{`
+            <pre>
+              {`
   {
     "url": "yapi-swagger.json",
-    "remoteUrl": "${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}/api/open/plugin/export-full?type=json&pid=${id}&status=all&token=${this.props.token}",
+    "remoteUrl": "${location.protocol}//${location.hostname}${
+                location.port ? `:${location.port}` : ''
+              }/api/open/plugin/export-full?type=json&pid=${id}&status=all&token=${
+                this.props.token
+              }",
     "type": "yapi",
     "swaggerParser": {}
   }
@@ -55,9 +58,14 @@ export default class Services extends Component {
             <pre>{`
   touch json2service.json
   `}</pre>
-            <pre>{`
+            <pre>
+              {`
   {
-    "url": "${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}/api/open/plugin/export-full?type=json&pid=${id}&status=all&token=${this.props.token}",
+    "url": "${location.protocol}//${location.hostname}${
+                location.port ? `:${location.port}` : ''
+              }/api/open/plugin/export-full?type=json&pid=${id}&status=all&token=${
+                this.props.token
+              }",
     "type": "yapi",
     "swaggerParser": {}
   }
@@ -68,7 +76,7 @@ export default class Services extends Component {
   (./node_modules/.bin/)sm2tsservice --clear
   `}</pre>
           </div>
-          <a href="https://github.com/gogoyqj/sm2tsservice">更多说明 sm2tsservice</a>
+          <a href='https://github.com/gogoyqj/sm2tsservice'>更多说明 sm2tsservice</a>
         </section>
       </div>
     );

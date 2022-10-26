@@ -37,7 +37,7 @@ function run() {
   };
 
   yapi.mongoose
-    .then(function() {
+    .then(function () {
       let logCol = mongoose.connection.db.collection('statis_mock');
       let arr = [];
       for (let i = 0; i < 11; i++) {
@@ -48,7 +48,7 @@ function run() {
         arr.push(data(i));
       }
     })
-    .catch(function(err) {
+    .catch(function (err) {
       throw new Error(err.message);
     });
 }

@@ -74,8 +74,7 @@ function CompareObj(objA, objB, flag) {
 
 exports.jsonEqual = Compare;
 
-exports.isDeepMatch = function(obj, properties) {
- 
+exports.isDeepMatch = function (obj, properties) {
   if (!properties || typeof properties !== 'object' || Object.keys(properties).length === 0) {
     return true;
   }
@@ -85,8 +84,8 @@ exports.isDeepMatch = function(obj, properties) {
   }
 
   let match = true;
-  let keys = Object.keys(properties)
-  for (let index=0; index< keys.length; index++) {
+  let keys = Object.keys(properties);
+  for (let index = 0; index < keys.length; index++) {
     let i = keys[index];
     if (!Compare(obj[i], properties[i])) {
       match = false;

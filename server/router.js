@@ -61,7 +61,6 @@ let routerConfig = {
       method: 'get'
     },
 
-    
     {
       action: 'list',
       path: 'list',

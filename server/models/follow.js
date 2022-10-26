@@ -42,10 +42,10 @@ class followModel extends baseModel {
     });
   }
 
-  delByProjectId(projectid){
+  delByProjectId(projectid) {
     return this.model.remove({
       projectid: projectid
-    })
+    });
   }
 
   list(uid) {

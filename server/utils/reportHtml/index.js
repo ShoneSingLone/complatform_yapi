@@ -29,13 +29,9 @@ function createHtml(reports) {
 function createHtml5(left, tp, msg, runTime) {
   let message = ``;
   if (msg.failedNum === 0) {
-    message += `<div>一共 <span class="success">${
-      msg.successNum
-    }</span> 测试用例， 全部验证通过(${runTime})</div>`;
+    message += `<div>一共 <span class="success">${msg.successNum}</span> 测试用例， 全部验证通过(${runTime})</div>`;
   } else {
-    message += `<div>一共 ${msg.len} 测试用例，<span class="success"> ${
-      msg.successNum
-    }</span> 个验证通过， ${msg.failedNum} 个未通过(${runTime})</div>`;
+    message += `<div>一共 ${msg.len} 测试用例，<span class="success"> ${msg.successNum}</span> 个验证通过， ${msg.failedNum} 个未通过(${runTime})</div>`;
   }
 
   //html5模板

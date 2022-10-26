@@ -39,37 +39,35 @@ function delInst(m) {
   }
 }
 
-
-
 const VARIABLE = {
   PAGE_LIMIT: 10, // 默认每页展示10条数据
   NAME_LIMIT: 100, // 限制名称的字符长度(中文算两个长度)
   HTTP_METHOD: {
-    'GET': {
+    GET: {
       request_body: false,
       default_tab: 'query'
     },
-    'POST': {
+    POST: {
       request_body: true,
       default_tab: 'body'
     },
-    'PUT': {
+    PUT: {
       request_body: true,
       default_tab: 'body'
     },
-    'DELETE': {
+    DELETE: {
       request_body: true,
       default_tab: 'body'
     },
-    'HEAD': {
+    HEAD: {
       request_body: false,
       default_tab: 'query'
     },
-    'OPTIONS': {
+    OPTIONS: {
       request_body: false,
       default_tab: 'query'
     },
-    'PATCH': {
+    PATCH: {
       request_body: true,
       default_tab: 'body'
     }
@@ -128,35 +126,81 @@ const VARIABLE = {
     'android-o',
     'apple-o'
   ],
-  HTTP_REQUEST_HEADER: ["Accept", "Accept-Charset", "Accept-Encoding", "Accept-Language", "Accept-Datetime", "Authorization", "Cache-Control", "Connection", "Cookie", "Content-Disposition", "Content-Length", "Content-MD5", "Content-Type", "Date", "Expect", "From", "Host", "If-Match", "If-Modified-Since", "If-None-Match", "If-Range", "If-Unmodified-Since", "Max-Forwards", "Origin", "Pragma", "Proxy-Authorization", "Range", "Referer", "TE", "User-Agent", "Upgrade", "Via", "Warning", "X-Requested-With", "DNT", "X-Forwarded-For", "X-Forwarded-Host", "X-Forwarded-Proto", "Front-End-Https", "X-Http-Method-Override", "X-ATT-DeviceId", "X-Wap-Profile", "Proxy-Connection", "X-UIDH", "X-Csrf-Token"],
+  HTTP_REQUEST_HEADER: [
+    'Accept',
+    'Accept-Charset',
+    'Accept-Encoding',
+    'Accept-Language',
+    'Accept-Datetime',
+    'Authorization',
+    'Cache-Control',
+    'Connection',
+    'Cookie',
+    'Content-Disposition',
+    'Content-Length',
+    'Content-MD5',
+    'Content-Type',
+    'Date',
+    'Expect',
+    'From',
+    'Host',
+    'If-Match',
+    'If-Modified-Since',
+    'If-None-Match',
+    'If-Range',
+    'If-Unmodified-Since',
+    'Max-Forwards',
+    'Origin',
+    'Pragma',
+    'Proxy-Authorization',
+    'Range',
+    'Referer',
+    'TE',
+    'User-Agent',
+    'Upgrade',
+    'Via',
+    'Warning',
+    'X-Requested-With',
+    'DNT',
+    'X-Forwarded-For',
+    'X-Forwarded-Host',
+    'X-Forwarded-Proto',
+    'Front-End-Https',
+    'X-Http-Method-Override',
+    'X-ATT-DeviceId',
+    'X-Wap-Profile',
+    'Proxy-Connection',
+    'X-UIDH',
+    'X-Csrf-Token'
+  ],
   METHOD_COLOR: {
     post: {
-      bac: "#d2eafb",
-      color: "#108ee9"
+      bac: '#d2eafb',
+      color: '#108ee9'
     },
     get: {
-      bac: "#cfefdf",
-      color: "#00a854"
+      bac: '#cfefdf',
+      color: '#00a854'
     },
     put: {
-      bac: "#fff3cf",
-      color: "#ffbf00"
+      bac: '#fff3cf',
+      color: '#ffbf00'
     },
     delete: {
-      bac: "#fcdbd9",
-      color: "#f04134"
+      bac: '#fcdbd9',
+      color: '#f04134'
     },
     head: {
-      bac: "#fff3cf",
-      color: "#ffbf00"
+      bac: '#fff3cf',
+      color: '#ffbf00'
     },
     patch: {
-      bac: "#fff3cf",
-      color: "#ffbf00"
+      bac: '#fff3cf',
+      color: '#ffbf00'
     },
     options: {
-      bac: "#fff3cf",
-      color: "#ffbf00"
+      bac: '#fff3cf',
+      color: '#ffbf00'
     }
   },
   MOCK_SOURCE: [
@@ -176,7 +220,7 @@ const VARIABLE = {
     { name: '时间', mock: '@time' },
     { name: '日期时间', mock: '@datetime' },
     { name: '图片连接', mock: '@image' },
-    { name: '图片data', mock: "@imageData" },
+    { name: '图片data', mock: '@imageData' },
     { name: '颜色', mock: '@color' },
     { name: '颜色hex', mock: '@hex' },
     { name: '颜色rgba', mock: '@rgba' },
@@ -214,8 +258,6 @@ const VARIABLE = {
     adv_mock_script: 'https://hellosean1025.github.io/yapi/documents/adv_mock.html'
   }
 };
-
-
 
 let yapi = {
   fs: fs,
@@ -259,8 +301,9 @@ function storageCreator(id) {
   };
 }
 
-if (mail) { yapi.mail = mail; }
-
+if (mail) {
+  yapi.mail = mail;
+}
 
 global.yapi = yapi;
 global.storageCreator = storageCreator;

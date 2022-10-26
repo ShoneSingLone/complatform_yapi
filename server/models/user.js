@@ -40,10 +40,7 @@ class userModel extends baseModel {
   }
 
   list() {
-    return this.model
-      .find()
-      .select('_id username email role type  add_time up_time study')
-      .exec(); //显示id name email role
+    return this.model.find().select('_id username email role type  add_time up_time study').exec(); //显示id name email role
   }
 
   findByUids(uids) {

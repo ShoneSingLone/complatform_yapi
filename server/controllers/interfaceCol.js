@@ -43,7 +43,7 @@ class interfaceColController extends baseController {
         result[i] = result[i].toObject();
         let caseList = await this.caseModel.list(result[i]._id);
 
-        for(let j=0; j< caseList.length; j++){
+        for (let j = 0; j < caseList.length; j++) {
           let item = caseList[j].toObject();
           let interfaceData = await this.interfaceModel.getBaseinfo(item.interface_id);
           item.path = interfaceData.path;
@@ -54,7 +54,6 @@ class interfaceColController extends baseController {
           return a.index - b.index;
         });
         result[i].caseList = caseList;
-        
       }
       ctx.body = yapi.commons.resReturn(result);
     } catch (e) {
@@ -498,7 +497,7 @@ class interfaceColController extends baseController {
 
       const handleReplaceStr = str => {
         if (str.indexOf('$') !== -1) {
-          str = str.replace(/\$\.([0-9]+)\./g, function(match, p1) {
+          str = str.replace(/\$\.([0-9]+)\./g, function (match, p1) {
             p1 = p1.toString();
             return `$.${newCaseList[oldCaseObj[p1]]}.` || '';
           });
@@ -855,13 +854,18 @@ class interfaceColController extends baseController {
 
   async runCaseScript(ctx) {
     let params = ctx.request.body;
-    ctx.body = await yapi.commons.runCaseScript(params, params.col_id, params.interface_id, this.getUid());
+    ctx.body = await yapi.commons.runCaseScript(
+      params,
+      params.col_id,
+      params.interface_id,
+      this.getUid()
+    );
   }
 
   // 数组去重
   unique(array, compare) {
     let hash = {};
-    let arr = array.reduce(function(item, next) {
+    let arr = array.reduce(function (item, next) {
       hash[next[compare]] ? '' : (hash[next[compare]] = true && item.push(next));
       // console.log('item',item.project_id)
       return item;

@@ -3,9 +3,8 @@ const path = require('path');
 process.env.NODE_PATH = path.resolve(__dirname);
 require('module').Module._initPaths();
 
-
 async function main(params) {
-  const { initDbAndCommon } = require("./utils/initConfig");
+  const { initDbAndCommon } = require('./utils/initConfig');
   const yapi = await initDbAndCommon();
 
   const useMockServer = require('./middleware/mockServer.js');
@@ -21,7 +20,6 @@ async function main(params) {
   const koaBody = require('koa-body');
   const router = require('./router.js');
 
-
   let indexFile = process.argv[2] === 'dev' ? 'dev.html' : 'index.html';
 
   const app = websockify(new Koa());
@@ -35,31 +33,27 @@ async function main(params) {
     ctx.set('yapi-Response-Time', `${ms}ms`);
   });
 
-  // app.use(bodyParser({multipart: true}));
   app.use(cors());
 
-  app.use(async (ctx, next) => {
-    if (/^\/(?!api)[a-zA-Z0-9\/\-_]*$/.test(ctx.path)) {
-      ctx.path = '/';
-      await next();
-    } else {
-      await next();
-    }
-  });
-
-  app.use(koaBody({ strict: false, multipart: true, jsonLimit: '4mb', formLimit: '4mb', textLimit: '4mb' }));
+  app.use(
+    koaBody({
+      strict: false,
+      multipart: true,
+      jsonLimit: '4mb',
+      formLimit: '4mb',
+      textLimit: '4mb'
+    })
+  );
   app.use(useMockServer);
   app.use(async (ctx, next) => {
     console.clear();
-    console.log('ctx.params', ctx.originalUrl, ctx.params);
+    console.log('ctx.params', ctx.originalUrl, ctx.params, ctx.request.body);
     await next();
   });
   app.use(router.routes());
   app.use(router.allowedMethods());
 
   websocket(app);
-
-
 
   app.use(async (ctx, next) => {
     if (ctx.path.indexOf('/prd') === 0) {
@@ -82,8 +76,6 @@ async function main(params) {
     `服务已启动，请打开下面链接访问:
       http://127.0.0.1${yapi.WEBCONFIG.port == '80' ? '' : ':' + yapi.WEBCONFIG.port}/`
   );
-
-
 }
 
 main();

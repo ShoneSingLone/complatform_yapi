@@ -1,4 +1,4 @@
-import swaggerAutoSync from './swaggerAutoSync/swaggerAutoSync.js'
+import swaggerAutoSync from './swaggerAutoSync/swaggerAutoSync.js';
 
 function hander(routers) {
   routers.test = {
@@ -7,6 +7,6 @@ function hander(routers) {
   };
 }
 
-module.exports = function() {
+module.exports = function () {
   this.bindHook('sub_setting_nav', hander);
 };

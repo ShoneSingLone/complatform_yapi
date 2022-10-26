@@ -1,6 +1,6 @@
 const json5 = require('json5');
 
-module.exports = function(jsondiffpatch, formattersHtml, curDiffData) {
+module.exports = function (jsondiffpatch, formattersHtml, curDiffData) {
   const json5_parse = json => {
     if (typeof json === 'object' && json) return json;
     try {
@@ -33,8 +33,8 @@ module.exports = function(jsondiffpatch, formattersHtml, curDiffData) {
   };
 
   const valueMaps = {
-    '1': '必需',
-    '0': '非必需',
+    1: '必需',
+    0: '非必需',
     text: '文本',
     file: '文件',
     undone: '未完成',

@@ -43,30 +43,30 @@ class StatisChart extends Component {
     return (
       <div>
         <Spin spinning={this.state.showLoading}>
-          <div className="statis-chart-content">
-            <h3 className="statis-title">mock 接口访问总数为：{mockCount.toLocaleString()}</h3>
-            <div className="statis-chart">
+          <div className='statis-chart-content'>
+            <h3 className='statis-title'>mock 接口访问总数为：{mockCount.toLocaleString()}</h3>
+            <div className='statis-chart'>
               <LineChart
                 width={width}
                 height={300}
                 data={mockDateList}
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
-                <XAxis dataKey="_id" />
+                <XAxis dataKey='_id' />
                 <YAxis />
-                <CartesianGrid strokeDasharray="7 3" />
+                <CartesianGrid strokeDasharray='7 3' />
                 <Tooltip />
                 <Legend />
                 <Line
-                  name="mock统计值"
-                  type="monotone"
-                  dataKey="count"
-                  stroke="#8884d8"
+                  name='mock统计值'
+                  type='monotone'
+                  dataKey='count'
+                  stroke='#8884d8'
                   activeDot={{ r: 8 }}
                 />
               </LineChart>
             </div>
-            <div className="statis-footer">过去3个月mock接口调用情况</div>
+            <div className='statis-footer'>过去3个月mock接口调用情况</div>
           </div>
         </Spin>
       </div>

@@ -15,8 +15,6 @@ const Ajv = require('ajv');
 const Mock = require('mockjs');
 const sandboxFn = require('./sandbox');
 
-
-
 const ejs = require('easy-json-schema');
 
 const jsf = require('json-schema-faker');
@@ -89,8 +87,8 @@ exports.log = (msg, type) => {
     case 'error':
       f = console.error; // eslint-disable-line
       break;
-    default:
-      f = console.log; // eslint-disable-line
+    default: // eslint-disable-line
+      f = console.log;
       break;
   }
 
@@ -154,9 +152,7 @@ exports.json_parse = json => {
 };
 
 exports.randStr = () => {
-  return Math.random()
-    .toString(36)
-    .substr(2);
+  return Math.random().toString(36).substr(2);
 };
 exports.getIp = ctx => {
   let ip;
@@ -425,7 +421,6 @@ exports.createAction = (router, baseurl, routerController, action, path, method,
       await inst.init(ctx);
       ctx.params = Object.assign({}, ctx.request.query, ctx.request.body, ctx.params);
       if (inst.schemaMap && typeof inst.schemaMap === 'object' && inst.schemaMap[action]) {
-
         let validResult = yapi.commons.validateParams(inst.schemaMap[action], ctx.params);
 
         if (!validResult.valid) {
@@ -457,7 +452,7 @@ function handleParamsValue(params, val) {
   let value = {};
   try {
     params = params.toObject();
-  } catch (e) { }
+  } catch (e) {}
   if (params.length === 0 || val.length === 0) {
     return params;
   }
@@ -525,7 +520,6 @@ function convertString(variable) {
   }
 }
 
-
 exports.runCaseScript = async function runCaseScript(params, colId, interfaceId) {
   const colInst = yapi.getInst(interfaceColModel);
   let colData = await colInst.get(colId);
@@ -544,17 +538,18 @@ exports.runCaseScript = async function runCaseScript(params, colId, interfaceId)
 
   let result = {};
   try {
-
     if (colData.checkHttpCodeIs200) {
       let status = +params.response.status;
       if (status !== 200) {
-        throw ('Http status code 不是 200，请检查(该规则来源于于 [测试集->通用规则配置] )');
+        throw 'Http status code 不是 200，请检查(该规则来源于于 [测试集->通用规则配置] )';
       }
     }
 
     if (colData.checkResponseField.enable) {
-      if (params.response.body[colData.checkResponseField.name] != colData.checkResponseField.value) {
-        throw (`返回json ${colData.checkResponseField.name} 值不是${colData.checkResponseField.value}，请检查(该规则来源于于 [测试集->通用规则配置] )`);
+      if (
+        params.response.body[colData.checkResponseField.name] != colData.checkResponseField.value
+      ) {
+        throw `返回json ${colData.checkResponseField.name} 值不是${colData.checkResponseField.value}，请检查(该规则来源于于 [测试集->通用规则配置] )`;
       }
     }
 
@@ -565,9 +560,9 @@ exports.runCaseScript = async function runCaseScript(params, colId, interfaceId)
         let schema = JSON.parse(interfaceData.res_body);
         let result = schemaValidator(schema, context.body);
         if (!result.valid) {
-          throw (`返回Json 不符合 response 定义的数据结构,原因: ${result.message}
+          throw `返回Json 不符合 response 定义的数据结构,原因: ${result.message}
 数据结构如下：
-${JSON.stringify(schema, null, 2)}`);
+${JSON.stringify(schema, null, 2)}`;
         }
       }
     }
@@ -580,7 +575,6 @@ ${JSON.stringify(schema, null, 2)}`);
         result = await sandboxFn(context, globalScript);
       }
     }
-
 
     let script = params.script;
     // script 是断言
@@ -641,8 +635,6 @@ exports.handleMockScript = async function (script, context) {
   context.delay = sandbox.delay;
 };
 
-
-
 exports.createWebAPIRequest = function (ops) {
   return new Promise(function (resolve, reject) {
     let req = '';
@@ -670,13 +662,12 @@ exports.createWebAPIRequest = function (ops) {
         }
       }
     );
-    http_client.on('error', (e) => {
+    http_client.on('error', e => {
       reject({ message: `request error: ${e.message}` });
     });
     http_client.end();
   });
 };
-
 
 exports.setYapiCommons = () => {
   yapi.commons = exports;

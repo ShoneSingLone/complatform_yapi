@@ -1,12 +1,10 @@
 (async function () {
-  const { initDbAndCommon } = require("./utils/initConfig");
+  const { initDbAndCommon } = require('./utils/initConfig');
   const yapi = await initDbAndCommon();
   const path = require('path');
   const fs = require('fs-extra');
   const userModel = require('./models/user.js');
   const mongoose = require('mongoose');
-
-
 
   function install() {
     let exist = yapi.commons.fileExist(path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
@@ -149,5 +147,4 @@
   }
 
   install();
-
 })();

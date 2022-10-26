@@ -1,7 +1,7 @@
 const schema = require('./schema-transformTo-table.js');
 const _ = require('lodash');
 
-const json_parse = function(json) {
+const json_parse = function (json) {
   try {
     return JSON.parse(json);
   } catch (err) {
@@ -82,8 +82,9 @@ function createReqHeaders(req_headers) {
     for (let j = 0; j < req_headers.length; j++) {
       headersTable += `| ${req_headers[j].name || ''}  |  ${req_headers[j].value || ''} | ${
         req_headers[j].required == 1 ? '是' : '否'
-      }  |  ${handleWrap(req_headers[j].example) || ''} |  ${handleWrap(req_headers[j].desc) ||
-        ''} |\n`;
+      }  |  ${handleWrap(req_headers[j].example) || ''} |  ${
+        handleWrap(req_headers[j].desc) || ''
+      } |\n`;
     }
     return headersTable;
   }
@@ -95,8 +96,9 @@ function createPathParams(req_params) {
     let paramsTable = `**路径参数**\n\n`;
     paramsTable += `| 参数名称 | 示例  | 备注  |\n| ------------ | ------------ | ------------ |\n`;
     for (let j = 0; j < req_params.length; j++) {
-      paramsTable += `| ${req_params[j].name || ''} |  ${handleWrap(req_params[j].example) ||
-        ''} |  ${handleWrap(req_params[j].desc) || ''} |\n`;
+      paramsTable += `| ${req_params[j].name || ''} |  ${
+        handleWrap(req_params[j].example) || ''
+      } |  ${handleWrap(req_params[j].desc) || ''} |\n`;
     }
     return paramsTable;
   }
@@ -110,8 +112,9 @@ function createReqQuery(req_query) {
     for (let j = 0; j < req_query.length; j++) {
       headersTable += `| ${req_query[j].name || ''} | ${
         req_query[j].required == 1 ? '是' : '否'
-      }  |  ${handleWrap(req_query[j].example) || ''} |  ${handleWrap(req_query[j].desc) ||
-        ''} |\n`;
+      }  |  ${handleWrap(req_query[j].example) || ''} |  ${
+        handleWrap(req_query[j].desc) || ''
+      } |\n`;
     }
     return headersTable;
   }
@@ -258,7 +261,10 @@ function createInterMarkdown(basepath, listItem, isToc) {
   let mdTemplate = ``;
   const toc = `[TOC]\n\n`;
   // 接口名称
-  mdTemplate += `\n## ${escapeStr(`${listItem.title}\n<a id=${listItem.title + listItem.catid}> </a>`, isToc)}\n`;
+  mdTemplate += `\n## ${escapeStr(
+    `${listItem.title}\n<a id=${listItem.title + listItem.catid}> </a>`,
+    isToc
+  )}\n`;
   isToc && (mdTemplate += toc);
   // 基本信息
   mdTemplate += createBaseMessage(basepath, listItem);

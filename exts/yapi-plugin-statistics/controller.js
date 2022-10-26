@@ -166,7 +166,7 @@ class statisMockController extends baseController {
 
   cupLoad() {
     return new Promise((resolve, reject) => {
-      cpu(1000, function(load) {
+      cpu(1000, function (load) {
         resolve(load);
       });
     });

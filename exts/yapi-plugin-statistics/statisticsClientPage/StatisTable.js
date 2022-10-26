@@ -28,10 +28,10 @@ const columns = [
 const StatisTable = props => {
   const { dataSource } = props;
   return (
-    <div className="m-row-table">
-      <h3 className="statis-title">分组数据详情</h3>
+    <div className='m-row-table'>
+      <h3 className='statis-title'>分组数据详情</h3>
       <Table
-        className="statis-table"
+        className='statis-table'
         pagination={false}
         dataSource={dataSource}
         columns={columns}
