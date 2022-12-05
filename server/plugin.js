@@ -233,7 +233,7 @@ yapi.bindHook = bindHook;
 yapi.emitHook = emitHook;
 yapi.emitHookSync = emitHook;
 
-let pluginsConfig = initPlugins(yapi.WEBCONFIG.plugins, 'plugin');
+let pluginsConfig = initPlugins(global.WEBCONFIG.plugins, 'plugin');
 pluginsConfig.forEach(plugin => {
   if (!plugin || plugin.enable === false || plugin.server === false) return null;
 

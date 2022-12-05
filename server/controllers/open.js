@@ -159,7 +159,7 @@ class openController extends baseController {
       },
       () => {},
       token,
-      yapi.WEBCONFIG.port
+      global.WEBCONFIG.port
     );
 
     if (errorMessage.length > 0) {

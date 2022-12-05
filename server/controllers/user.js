@@ -138,12 +138,12 @@ class userController extends baseController {
       // const username = email.split(/\@/g)[0];
       const { info: ldapInfo } = await ldap.ldapQuery(email, password);
       const emailPrefix = email.split(/\@/g)[0];
-      const emailPostfix = yapi.WEBCONFIG.ldapLogin.emailPostfix;
+      const emailPostfix = global.WEBCONFIG.ldapLogin.emailPostfix;
 
       const emailParams =
-        ldapInfo[yapi.WEBCONFIG.ldapLogin.emailKey || 'mail'] ||
+        ldapInfo[global.WEBCONFIG.ldapLogin.emailKey || 'mail'] ||
         (emailPostfix ? emailPrefix + emailPostfix : email);
-      const username = ldapInfo[yapi.WEBCONFIG.ldapLogin.usernameKey] || emailPrefix;
+      const username = ldapInfo[global.WEBCONFIG.ldapLogin.usernameKey] || emailPrefix;
 
       let login = await this.handleThirdLogin(emailParams, username);
 
@@ -298,7 +298,7 @@ class userController extends baseController {
    */
   async reg(ctx) {
     //注册
-    if (yapi.WEBCONFIG.closeRegister) {
+    if (global.WEBCONFIG.closeRegister) {
       return (ctx.body = yapi.commons.resReturn(null, 400, '禁止注册，请联系管理员'));
     }
     let userInst = yapi.getInst(userModel);

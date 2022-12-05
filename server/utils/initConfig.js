@@ -1,4 +1,7 @@
+const { WEBCONFIG } = require('../../../privateConfigs.js');
+
 exports.initDbAndCommon = async function () {
+  global.WEBCONFIG = WEBCONFIG;
   require('../yapi.js');
   const { yapi } = global;
   /*  */

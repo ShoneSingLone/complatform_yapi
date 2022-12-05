@@ -20,7 +20,7 @@ async function main(params) {
   const koaBody = require('koa-body');
   const router = require('./router.js');
 
-  let indexFile = process.argv[2] === 'dev' ? 'dev.html' : 'index.html';
+  let indexFile = 'index.html';
 
   const app = websockify(new Koa());
   app.proxy = true;
@@ -68,13 +68,13 @@ async function main(params) {
 
   app.use(koaStatic(path.join(yapi.WEBROOT, 'static'), { index: indexFile, gzip: true }));
 
-  const server = app.listen(yapi.WEBCONFIG.port);
+  const server = app.listen(global.WEBCONFIG.port);
 
-  server.setTimeout(yapi.WEBCONFIG.timeout);
+  server.setTimeout(global.WEBCONFIG.timeout);
 
   yapi.commons.log(
     `服务已启动，请打开下面链接访问:
-      http://127.0.0.1${yapi.WEBCONFIG.port == '80' ? '' : ':' + yapi.WEBCONFIG.port}/`
+      http://127.0.0.1${global.WEBCONFIG.port == '80' ? '' : ':' + global.WEBCONFIG.port}/`
   );
 }
 

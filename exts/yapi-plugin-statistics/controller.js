@@ -7,12 +7,12 @@ const groupModel = require('models/group.js');
 const projectModel = require('models/project.js');
 const interfaceModel = require('models/interface.js');
 const interfaceCaseModel = require('models/interfaceCase.js');
-
 const { yapi } = global;
 const config = require('./index.js');
 const commons = require('./util.js');
 const os = require('os');
 let cpu = require('cpu-load');
+const { WEBCONFIG } = require('../../../privateConfigs.js');
 
 class statisMockController extends baseController {
   constructor(ctx) {
@@ -86,7 +86,7 @@ class statisMockController extends baseController {
   async getSystemStatus(ctx) {
     try {
       let mail = '';
-      if (yapi.WEBCONFIG.mail && yapi.WEBCONFIG.mail.enable) {
+      if (WEBCONFIG.mail && WEBCONFIG.mail.enable) {
         mail = await this.checkEmail();
         // return ctx.body = yapi.commons.resReturn(result);
       } else {

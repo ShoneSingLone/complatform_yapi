@@ -78,7 +78,7 @@ class logController extends baseController {
         let total = await this.Model.listCountByGroup(typeid, projectIds);
         ctx.body = yapi.commons.resReturn({
           list: projectLogList,
-          total: Math.ceil(total / limit)
+          total
         });
       } else if (type === 'project') {
         let result = await this.Model.listWithPaging(typeid, type, page, limit, selectValue);

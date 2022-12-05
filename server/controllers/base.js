@@ -31,6 +31,7 @@ class baseController {
       '/api/user/avatar',
       '/api/user/login_by_ldap'
     ];
+
     if (ignoreRouter.indexOf(ctx.path) > -1) {
       this.$auth = true;
     } else {
@@ -57,6 +58,10 @@ class baseController {
 
     let params = Object.assign({}, ctx.query, ctx.request.body);
     let token = params.token;
+
+    if (!token) {
+      token = ctx.cookies.get('_yapi_token');
+    }
 
     // 如果前缀是 /api/open，执行 parse token 逻辑
     if (token && (openApiRouter.indexOf(ctx.path) > -1 || ctx.path.indexOf('/api/open/') === 0)) {
@@ -157,8 +162,8 @@ class baseController {
   }
 
   async checkRegister() {
-    // console.log('config', yapi.WEBCONFIG);
-    if (yapi.WEBCONFIG.closeRegister) {
+    // console.log('config', global.WEBCONFIG);
+    if (global.WEBCONFIG.closeRegister) {
       return false;
     } else {
       return true;
@@ -166,11 +171,11 @@ class baseController {
   }
 
   async checkLDAP() {
-    // console.log('config', yapi.WEBCONFIG);
-    if (!yapi.WEBCONFIG.ldapLogin) {
+    // console.log('config', global.WEBCONFIG);
+    if (!global.WEBCONFIG.ldapLogin) {
       return false;
     } else {
-      return yapi.WEBCONFIG.ldapLogin.enable || false;
+      return global.WEBCONFIG.ldapLogin.enable || false;
     }
   }
   /**

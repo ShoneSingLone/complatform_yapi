@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const nodemailer = require('nodemailer');
-const { yapiConfig: config } = require('../../privateConfigs');
+const { WEBCONFIG } = require('../../privateConfigs');
 
 let insts = new Map();
 let mail;
@@ -10,7 +10,6 @@ const WEBROOT = path.resolve(__dirname, '..'); //路径
 const WEBROOT_SERVER = __dirname;
 const WEBROOT_RUNTIME = path.resolve(__dirname, '../..');
 const WEBROOT_LOG = path.join(WEBROOT_RUNTIME, 'log');
-const WEBCONFIG = config;
 
 fs.ensureDirSync(WEBROOT_LOG);
 
@@ -258,7 +257,6 @@ const VARIABLE = {
     adv_mock_script: 'https://hellosean1025.github.io/yapi/documents/adv_mock.html'
   }
 };
-
 let yapi = {
   fs: fs,
   path: path,
@@ -266,7 +264,7 @@ let yapi = {
   WEBROOT_SERVER: WEBROOT_SERVER,
   WEBROOT_RUNTIME: WEBROOT_RUNTIME,
   WEBROOT_LOG: WEBROOT_LOG,
-  WEBCONFIG: WEBCONFIG,
+  WEBCONFIG,
   getInst: getInst,
   delInst: delInst,
   getInsts: insts,

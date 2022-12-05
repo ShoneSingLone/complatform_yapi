@@ -191,7 +191,7 @@ exports.sendMail = (options, cb) => {
   try {
     yapi.mail.sendMail(
       {
-        from: yapi.WEBCONFIG.mail.from,
+        from: global.WEBCONFIG.mail.from,
         to: options.to,
         subject: options.subject,
         html: options.contents

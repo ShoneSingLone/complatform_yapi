@@ -1174,19 +1174,17 @@ class interfaceController extends baseController {
       if (!params || !Array.isArray(params)) {
         ctx.body = yapi.commons.resReturn(null, 400, '请求参数必须是数组');
       }
-      params.forEach(item => {
-        if (item.id) {
-          this.Model.upIndex(item.id, item.index).then(
-            res => {},
-            err => {
-              yapi.commons.log(err.message, 'error');
-            }
-          );
-        }
-      });
+      await Promise.all(
+        params.map(item => {
+          if (item.id) {
+            return this.Model.upIndex(item.id, item.index);
+          }
+        })
+      );
 
       return (ctx.body = yapi.commons.resReturn('成功！'));
     } catch (e) {
+      yapi.commons.log(e.message, 'error');
       ctx.body = yapi.commons.resReturn(null, 400, e.message);
     }
   }
@@ -1207,19 +1205,17 @@ class interfaceController extends baseController {
       if (!params || !Array.isArray(params)) {
         ctx.body = yapi.commons.resReturn(null, 400, '请求参数必须是数组');
       }
-      params.forEach(item => {
-        if (item.id) {
-          this.catModel.upCatIndex(item.id, item.index).then(
-            res => {},
-            err => {
-              yapi.commons.log(err.message, 'error');
-            }
-          );
-        }
-      });
-
+      await Promise.all(
+        params.map(item => {
+          if (item.id) {
+            return this.catModel.upCatIndex(item.id, item.index);
+          }
+        })
+      );
+      /* ???? 都没有保证事务，能返回成功？ */
       return (ctx.body = yapi.commons.resReturn('成功！'));
     } catch (e) {
+      yapi.commons.log(e.message, 'error');
       ctx.body = yapi.commons.resReturn(null, 400, e.message);
     }
   }

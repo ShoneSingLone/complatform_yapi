@@ -7,7 +7,9 @@
   const mongoose = require('mongoose');
 
   function install() {
-    let exist = yapi.commons.fileExist(path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
+    const fileExistURL = path.join(yapi.WEBROOT_RUNTIME, 'init.lock');
+    console.log(fileExistURL);
+    let exist = yapi.commons.fileExist(fileExistURL);
 
     if (exist) {
       throw new Error(
@@ -22,9 +24,9 @@
     let userInst = yapi.getInst(userModel);
     let passsalt = yapi.commons.randStr();
     let result = userInst.save({
-      username: yapi.WEBCONFIG.adminAccount.substr(0, yapi.WEBCONFIG.adminAccount.indexOf('@')),
-      email: yapi.WEBCONFIG.adminAccount,
-      password: yapi.commons.generatePassword(yapi.WEBCONFIG.adminPwd, passsalt),
+      username: global.WEBCONFIG.adminAccount.substr(0, global.WEBCONFIG.adminAccount.indexOf('@')),
+      email: global.WEBCONFIG.adminAccount,
+      password: yapi.commons.generatePassword(global.WEBCONFIG.adminPwd, passsalt),
       passsalt: passsalt,
       role: 'admin',
       add_time: yapi.commons.time(),
@@ -135,12 +137,14 @@
         function () {
           fs.ensureFileSync(path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
           console.log(
-            `初始化管理员账号成功,账号名："${yapi.WEBCONFIG.adminAccount}"，密码："${yapi.WEBCONFIG.adminPwd}"`
+            `初始化管理员账号成功,账号名："${global.WEBCONFIG.adminAccount}"，密码："${global.WEBCONFIG.adminPwd}"`
           ); // eslint-disable-line
           process.exit(0);
         },
         function (err) {
-          throw new Error(`初始化管理员账号 "${yapi.WEBCONFIG.adminAccount}" 失败, ${err.message}`); // eslint-disable-line
+          throw new Error(
+            `初始化管理员账号 "${global.WEBCONFIG.adminAccount}" 失败, ${err.message}`
+          ); // eslint-disable-line
         }
       );
     })();
