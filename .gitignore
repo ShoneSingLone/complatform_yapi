@@ -53,3 +53,4 @@ privateConfigs/s1.js
 privateConfigs/s2.js
 axiosOptions
 axiosOptions_body
+dist-exec

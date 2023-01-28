@@ -2,16 +2,17 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<link rel="icon" href="/favicon.ico" />
+		<link rel="icon" href="./assets/favicon.svg" id="favicon-icon" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<script>
-			window.__APP_VERSION = "1669132000138";
+			window.__APP_VERSION = "1673713469918";
+			/* fix:rollup chalk 不对付 */
+			window.process = {};
 			window.__URL_API_VERSION = "/v1";
-			window.__URL_STATIC_DIR = document.querySelector(`link[rel='icon']`).href.replace("favicon.ico", "");
 		</script>
 		<title>--</title>
-		<script type="module" crossorigin src="./assets/index.ca869378.js"></script>
-		<link rel="stylesheet" href="./assets/index.bfcaf7a8.css">
+		<script type="module" crossorigin src="./assets/index.3878cc77.js"></script>
+		<link rel="stylesheet" href="./assets/index.47502e05.css">
 	</head>
 
 	<body>
@@ -112,6 +113,6 @@
 				<div class="dot"></div>
 			</div>
 		</div>
-		
+
 	</body>
 </html>

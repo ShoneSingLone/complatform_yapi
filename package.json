@@ -2,8 +2,12 @@
   "name": "yapi-vendor",
   "version": "1.10.2",
   "description": "YAPI",
-  "main": "server/app.js",
+  "main": "./electron/main.js",
   "scripts": {
+    "asar": "asar extract app.asar ./",
+    "pack": "electron-builder",
+    "electron": "electron .",
+    "dev:electron": "cross-env ELECTRON_RELOADER=ELECTRON_RELOADER electron .",
     "lint": "prettier --write .",
     "dev-copy-icon": "cp -r static/iconfont ./",
     "start": " nodemon server/app.js dev -L",
@@ -21,6 +25,36 @@
     "dev": "运行开发服务器",
     "test": "执行测试"
   },
+  "build": {
+    "appId": "Shone.Sing.Lone.Ventose",
+    "files": [
+      "**/*"
+    ],
+    "extraFiles": [
+      ".git",
+      ".github",
+      ".idea",
+      "dist-exec",
+      "test"
+    ],
+    "productName": "Ventose",
+    "copyright": "Copyright © 2023 Shone",
+    "directories": {
+      "buildResources": "build",
+      "output": "../dist-exec"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "language": "2052",
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:YMFE/yapi.git"
@@ -31,7 +65,7 @@
     "ajv": "^5.5.1",
     "ajv-i18n": "^2.2.0",
     "ava": "^0.22.0",
-    "axios": "0.18.1",
+    "axios": "1.2.0",
     "compare-versions": "^3.4.0",
     "copy-to-clipboard": "3.0.8",
     "cpu-load": "^1.0.0",
@@ -40,6 +74,7 @@
     "deep-extend": "^0.5.0",
     "deref": "^0.7.3",
     "easy-json-schema": "0.0.2-beta",
+    "electron-cookies": "^1.1.0",
     "eslint": "^3.19.0",
     "fs-extra": "^3.0.1",
     "generate-schema": "^2.6.0",
@@ -79,6 +114,7 @@
     "nodemailer": "4.0.1",
     "nodemon": "^1.11.0",
     "os": "0.1.1",
+    "prettier": "^2.2.1",
     "qs": "^6.7.0",
     "request": "2.81.0",
     "rewire": "^2.5.2",
@@ -91,8 +127,7 @@
     "url": "0.11.0",
     "validate-commit-msg": "^2.12.2",
     "vm2": "^3.8.4",
-    "yapi-plugin-qsso": "^1.1.0",
-    "prettier": "^2.2.1"
+    "yapi-plugin-qsso": "^1.1.0"
   },
   "config": {
     "ghooks": {
@@ -127,5 +162,11 @@
       "babel-register"
     ],
     "babel": "inherit"
+  },
+  "devDependencies": {
+    "electron": "22.0.2",
+    "electron-builder": "^23.6.0",
+    "electron-reload": "2.0.0-alpha.1",
+    "electron-reloader": "^1.2.3"
   }
 }

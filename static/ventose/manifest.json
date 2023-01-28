@@ -1,0 +1,123 @@
+{
+  "src/devui/ui/xSingle/layer/imgs/loading-1.gif": {
+    "file": "assets/loading-1.7c6380e9.gif",
+    "src": "src/devui/ui/xSingle/layer/imgs/loading-1.gif"
+  },
+  "src/devui/ui/xSingle/layer/imgs/loading-0.gif": {
+    "file": "assets/loading-0.07236f68.gif",
+    "src": "src/devui/ui/xSingle/layer/imgs/loading-0.gif"
+  },
+  "src/devui/ui/xSingle/layer/imgs/icon-ext.png": {
+    "file": "assets/icon-ext.e2e7a838.png",
+    "src": "src/devui/ui/xSingle/layer/imgs/icon-ext.png"
+  },
+  "src/devui/ui/xSingle/layer/imgs/loading-2.gif": {
+    "file": "assets/loading-2.16ea0cf6.gif",
+    "src": "src/devui/ui/xSingle/layer/imgs/loading-2.gif"
+  },
+  "src/devui/ui/xSingle/layer/imgs/icon.png": {
+    "file": "assets/icon.99942159.png",
+    "src": "src/devui/ui/xSingle/layer/imgs/icon.png"
+  },
+  "src/devui/assets/svg/input.svg": {
+    "file": "assets/input.6b0bacb4.svg",
+    "src": "src/devui/assets/svg/input.svg"
+  },
+  "index.html": {
+    "file": "assets/index.3878cc77.js",
+    "src": "index.html",
+    "isEntry": true,
+    "dynamicImports": [
+      "src/containers/Login/LoginContainer.tsx",
+      "src/containers/Project/ViewProject.tsx",
+      "src/containers/Project/Interface/ProjectInterface.tsx",
+      "src/containers/Project/Interface/InterfaceAll.tsx",
+      "src/containers/Project/Interface/InterfaceCategory.tsx",
+      "src/containers/Project/Interface/InterfaceDetail.tsx"
+    ],
+    "css": [
+      "assets/index.47502e05.css"
+    ],
+    "assets": [
+      "assets/loading-1.7c6380e9.gif",
+      "assets/icon.99942159.png",
+      "assets/loading-0.07236f68.gif",
+      "assets/loading-2.16ea0cf6.gif",
+      "assets/icon-ext.e2e7a838.png",
+      "assets/input.6b0bacb4.svg"
+    ]
+  },
+  "src/containers/Login/LoginContainer.tsx": {
+    "file": "assets/LoginContainer.3d1fd44c.js",
+    "src": "src/containers/Login/LoginContainer.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html"
+    ],
+    "css": [
+      "assets/LoginContainer.02d8757a.css"
+    ]
+  },
+  "src/containers/Project/ViewProject.tsx": {
+    "file": "assets/ViewProject.614b282d.js",
+    "src": "src/containers/Project/ViewProject.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html"
+    ]
+  },
+  "src/containers/Project/Interface/ProjectInterface.tsx": {
+    "file": "assets/ProjectInterface.1e1b1f9d.js",
+    "src": "src/containers/Project/Interface/ProjectInterface.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html"
+    ],
+    "css": [
+      "assets/ProjectInterface.6a4d7119.css"
+    ]
+  },
+  "src/containers/Project/Interface/InterfaceAll.tsx": {
+    "file": "assets/InterfaceAll.ccb6e017.js",
+    "src": "src/containers/Project/Interface/InterfaceAll.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html"
+    ]
+  },
+  "src/containers/Project/Interface/InterfaceCategory.tsx": {
+    "file": "assets/InterfaceCategory.8aa03e48.js",
+    "src": "src/containers/Project/Interface/InterfaceCategory.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html"
+    ]
+  },
+  "src/containers/Project/Interface/InterfaceDetail.tsx": {
+    "file": "assets/InterfaceDetail.32dc3e6c.js",
+    "src": "src/containers/Project/Interface/InterfaceDetail.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html"
+    ],
+    "css": [
+      "assets/InterfaceDetail.9b709bfa.css"
+    ]
+  },
+  "src/containers/Project/Interface/ProjectInterface.css": {
+    "file": "assets/ProjectInterface.6a4d7119.css",
+    "src": "src/containers/Project/Interface/ProjectInterface.css"
+  },
+  "src/containers/Project/Interface/InterfaceDetail.css": {
+    "file": "assets/InterfaceDetail.9b709bfa.css",
+    "src": "src/containers/Project/Interface/InterfaceDetail.css"
+  },
+  "index.css": {
+    "file": "assets/index.47502e05.css",
+    "src": "index.css"
+  },
+  "src/containers/Login/LoginContainer.css": {
+    "file": "assets/LoginContainer.02d8757a.css",
+    "src": "src/containers/Login/LoginContainer.css"
+  }
+}
