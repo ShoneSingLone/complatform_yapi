@@ -1,11 +1,10 @@
 const path = require('path');
 const fs = require('fs-extra');
 const nodemailer = require('nodemailer');
-const { WEBCONFIG } = require('../../privateConfigs');
-
 let insts = new Map();
 let mail;
 
+const { WEBCONFIG } = global;
 const WEBROOT = path.resolve(__dirname, '..'); //路径
 const WEBROOT_SERVER = __dirname;
 const WEBROOT_RUNTIME = path.resolve(__dirname, '../..');
