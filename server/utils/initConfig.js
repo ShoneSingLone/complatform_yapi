@@ -1,4 +1,4 @@
-global.WEBCONFIG = require('C://./yapiConfigs');
+global.WEBCONFIG = require('../../../yapiConfigs');
 
 exports.initDbAndCommon = async function () {
   require('../yapi.js');

@@ -47,10 +47,8 @@ client/plugin-module.js
 server/middleware/test.axios.js
 static/prd
 
+privateConfigs
 privateConfigs.js
-privateConfigs/client.js
-privateConfigs/s1.js
-privateConfigs/s2.js
 axiosOptions
 axiosOptions_body
 dist-exec
