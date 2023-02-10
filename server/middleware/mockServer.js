@@ -55,7 +55,9 @@ async function handleProxy(ctx, { domain, projectId }) {
 
   if (response) {
     body = response.data;
-    body.A_RESPONSE_DATA = response.data;
+    try {
+      body.A_RESPONSE_DATA = JSON.parse(JSON.stringify(response.data));
+    } catch (error) { }
     _.each(response.headers, (value, prop) => {
       /* TODO: */
       /* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
@@ -362,7 +364,7 @@ module.exports = async (ctx, next) => {
         try {
           const id = ObjectId(i._id).toString();
           return id === interfaceData.witchEnv;
-        } catch (error) {}
+        } catch (error) { }
         return false;
       });
       await handleProxy(ctx, {
