@@ -55,6 +55,7 @@ async function handleProxy(ctx, { domain, projectId }) {
 
   if (response) {
     body = response.data;
+    body.A_RESPONSE_DATA = response.data;
     _.each(response.headers, (value, prop) => {
       /* TODO: */
       /* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
@@ -62,8 +63,8 @@ async function handleProxy(ctx, { domain, projectId }) {
       ctx.set(prop, value);
     });
   }
-  body.aNotice = {
-    aTips: `由yAPI转发`,
+  body.A_NOTICE = {
+    A_TIPS: `由yAPI转发`,
     ..._.pick(axiosOptions, ['headers', 'method', 'url'])
   };
   ctx.body = body;
@@ -478,8 +479,8 @@ module.exports = async (ctx, next) => {
         msg = error.message;
       }
       ctx.body = {
-        aNotice: {
-          aTips: `由yAPI MockJson 模拟数据`,
+        A_NOTICE: {
+          A_TIPS: `由yAPI MockJson 模拟数据`,
           msg
         },
         ...responseByMock

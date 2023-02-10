@@ -5,12 +5,11 @@
   "scripts": {
     "lint": "prettier --write .",
     "dev-copy-icon": "cp -r static/iconfont ./",
-    "start": " nodemon server/app.js dev -L",
+    "start": "nodemon server/app.js dev -L",
     "install-server": " node server/install.js",
     "preview": "cross-env NODE_ENV=production node server/app.js",
     "test": "ava",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "build-client": "cross-env NODE_ENV=production ykit pack -m && npm run deploy",
     "npm-publish": "node ./npm-publish.js",
     "docs": "ydoc build"
   },
