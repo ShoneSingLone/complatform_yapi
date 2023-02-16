@@ -8,11 +8,10 @@ const projectModel = require('models/project.js');
 const interfaceModel = require('models/interface.js');
 const interfaceCaseModel = require('models/interfaceCase.js');
 const { yapi } = global;
-const config = require('./index.js');
 const commons = require('./util.js');
 const os = require('os');
 let cpu = require('cpu-load');
-const { WEBCONFIG } = require('../../../privateConfigs.js');
+const { WEBCONFIG } = global;
 
 class statisMockController extends baseController {
   constructor(ctx) {
@@ -115,7 +114,7 @@ class statisMockController extends baseController {
   }
 
   checkEmail() {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       let result = {};
       yapi.mail.verify(error => {
         if (error) {
@@ -165,7 +164,7 @@ class statisMockController extends baseController {
   }
 
   cupLoad() {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       cpu(1000, function (load) {
         resolve(load);
       });

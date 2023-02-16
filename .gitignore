@@ -36,7 +36,6 @@ Thumbs.db
 
 node_modules/
 runtime/
-/prd/
 /dev/
 .tags
 .tags1
@@ -45,7 +44,6 @@ client/plugin-module.js
 .vscode
 /iconfont
 server/middleware/test.axios.js
-static/prd
 
 privateConfigs
 privateConfigs.js
