@@ -28,6 +28,17 @@ async function main(params) {
   app.proxy = true;
   yapi.app = app;
 
+  app.use(cors());
+  app.use(
+    koaBody({
+      strict: false,
+      multipart: true,
+      jsonLimit: '4mb',
+      formLimit: '4mb',
+      textLimit: '4mb'
+    })
+  );
+
   app.use(async (ctx, next) => {
     console.log(
       '\nctx.path',
@@ -43,16 +54,6 @@ async function main(params) {
     ctx.set('yapi-Response-Time', `${ms}ms`);
   });
 
-  app.use(cors());
-  app.use(
-    koaBody({
-      strict: false,
-      multipart: true,
-      jsonLimit: '4mb',
-      formLimit: '4mb',
-      textLimit: '4mb'
-    })
-  );
   app.use(useMockServer);
   app.use(router.routes());
   app.use(router.allowedMethods());
@@ -87,6 +88,19 @@ async function main(params) {
     yapi.commons.log(`
     ${tips}
     http://127.0.0.1${PORT == '80' ? '' : ':' + PORT}/ `);
+
+    function getIPAdress() {
+      var interfaces = require('os').networkInterfaces();
+      const content = JSON.stringify(interfaces);
+      const contentArray = content.split(`",`).filter(s => s.match(/"address":"(.*)/));
+      contentArray.forEach(s => {
+        const res = s.match(/address":"192.(.*)/);
+        if (res) {
+          console.log(`    http://192.${res[1]}:${PORT}/`);
+        }
+      });
+    }
+    getIPAdress();
   }
 
   appListen(currentPort);
