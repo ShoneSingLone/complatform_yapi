@@ -20,49 +20,62 @@ async function handleProxy(ctx, { domain, projectId }) {
     return { ...ctx.headers };
   })();
 
-  const url = (() => {
+  const [path, proxyHOST, proxyPORT] = (() => {
+
+    let path, proxyHOST, proxyPORT;
     if (headers['yapi-run-test']) {
-      return headers['yapi-run-test'];
+      path = headers['yapi-run-test'];
+    } else {
+      path = `${domain}${targetURL}`;
     }
-    return `${domain}${targetURL}`;
+
+    if (headers['yapi-proxy-host']) {
+      proxyHOST = headers['yapi-proxy-host'];
+    }
+
+    if (headers['yapi-proxy-port']) {
+      proxyPORT = headers['yapi-proxy-port'];
+    }
+
+
+    return [path, proxyHOST, proxyPORT];
   })();
 
-  const axiosOptions = {
-    method: ctx.method,
-    url,
-    headers,
-  };
 
-  if (/^https/.test(url)) {
-    axiosOptions.httpsAgent = new https.Agent({
-      rejectUnauthorized: false
-    });
-  }
 
-  if (['POST', 'PATCH'].includes(String(axiosOptions.method).toUpperCase())) {
-    axiosOptions.data = ctx.request.body;
-  }
   let body = yapi.commons.resReturn(null, 500, '代理失败');
   let response;
   console.clear();
   try {
-    response = await getResponseThroghProxy(axiosOptions);
-    // response = await axiosProxy(axiosOptions);
+    response = await getResponseThroghProxy({
+      ctx,
+      path,
+      host: proxyHOST,
+      port: proxyPORT
+    });
   } catch (error) {
     console.error(error);
     /* 返回的原始数据 */
-    if (error?.response?.data) {
+    if (error.message) {
+      body.errorMessage = error.message;
+    } else if (error?.response?.data) {
       const { data, status } = error.response;
       body = data;
-      ctx.status = status;
+      ctx.status = status || 500;
     }
   }
 
   if (response) {
-    body = response.data;
     try {
-      body.A_RESPONSE_DATA = JSON.parse(JSON.stringify(response.data));
-    } catch (error) { }
+      if (response.body instanceof Buffer) {
+        const _bodyString = response.body.toString('utf-8');
+        body = JSON.parse(_bodyString);
+      } else {
+        body = response.body;
+      }
+    } catch (error) {
+      console.error(error);
+    }
     _.each(response.headers, (value, prop) => {
       /* TODO: */
       /* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
@@ -72,7 +85,7 @@ async function handleProxy(ctx, { domain, projectId }) {
   }
   body.A_NOTICE = {
     A_TIPS: `由yAPI转发`,
-    ..._.pick(axiosOptions, ['headers', 'method', 'url'])
+    ..._.pick(ctx, ['headers', 'method', 'url'])
   };
   ctx.body = body;
   return;
