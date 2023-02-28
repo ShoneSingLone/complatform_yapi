@@ -11,6 +11,7 @@
     "test": "ava",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "deploy": "ghca deploy -c ./privateConfigs/server.js",
+    "deploy:c": "ghca deploy -c ./privateConfigs/client.js",
     "docs": "ydoc build"
   },
   "scripts-info": {
