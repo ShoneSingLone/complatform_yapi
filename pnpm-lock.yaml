@@ -18,6 +18,7 @@ specifiers:
   fs-extra: ^3.0.1
   generate-schema: ^2.6.0
   ghooks: ^2.0.0
+  https-proxy-agent: ^5.0.1
   immer: ^1.1.1
   js-base64: ^2.3.2
   json-schema-faker: 0.5.0-rc16
@@ -84,6 +85,7 @@ dependencies:
   fs-extra: 3.0.1
   generate-schema: 2.6.0
   ghooks: 2.0.4
+  https-proxy-agent: 5.0.1
   immer: 1.12.1
   js-base64: 2.6.4
   json-schema-faker: 0.5.0-rc16
@@ -249,6 +251,15 @@ packages:
     resolution: {integrity: sha512-QOxyigPVrpZ2GXT+PFyZTl6TtOFc5egxHIP9IlQ+RbupQuX4RkT/Bee4/kQuC02Xkzg84JcT7oLYtDIQxp+v7w==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+    dev: false
+
+  /agent-base/6.0.2:
+    resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
+    engines: {node: '>= 6.0.0'}
+    dependencies:
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /ajv-i18n/2.2.0_ajv@5.5.2:
@@ -2880,6 +2891,16 @@ packages:
       assert-plus: 0.2.0
       jsprim: 1.4.2
       sshpk: 1.17.0
+    dev: false
+
+  /https-proxy-agent/5.0.1:
+    resolution: {integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==}
+    engines: {node: '>= 6'}
+    dependencies:
+      agent-base: 6.0.2
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /hullabaloo-config-manager/1.1.1:

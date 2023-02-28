@@ -2,12 +2,14 @@ const { yapi } = global;
 const projectModel = require('../models/project.js');
 const interfaceModel = require('../models/interface.js');
 const mockExtra = require('../../common/mock-extra.js');
+const HttpsProxyAgent = require("https-proxy-agent");
 const { schemaValidator } = require('../../common/utils.js');
 const _ = require('lodash');
 const Mock = require('mockjs');
 const axios = require('axios');
 const https = require('https');
 const { ObjectId } = require('mongodb');
+const { getResponseThroghProxy } = require('./requestProxy.js');
 const { VARIABLE } = yapi;
 
 exports.handleProxy = handleProxy;
@@ -28,7 +30,7 @@ async function handleProxy(ctx, { domain, projectId }) {
   const axiosOptions = {
     method: ctx.method,
     url,
-    headers
+    headers,
   };
 
   if (/^https/.test(url)) {
@@ -42,9 +44,12 @@ async function handleProxy(ctx, { domain, projectId }) {
   }
   let body = yapi.commons.resReturn(null, 500, '代理失败');
   let response;
+  console.clear();
   try {
-    response = await axios(axiosOptions);
+    response = await getResponseThroghProxy(axiosOptions);
+    // response = await axiosProxy(axiosOptions);
   } catch (error) {
+    console.error(error);
     /* 返回的原始数据 */
     if (error?.response?.data) {
       const { data, status } = error.response;
@@ -57,7 +62,7 @@ async function handleProxy(ctx, { domain, projectId }) {
     body = response.data;
     try {
       body.A_RESPONSE_DATA = JSON.parse(JSON.stringify(response.data));
-    } catch (error) {}
+    } catch (error) { }
     _.each(response.headers, (value, prop) => {
       /* TODO: */
       /* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
@@ -258,7 +263,7 @@ module.exports = async (ctx, next) => {
 
   try {
     /* TODO:获取当前链接的对应代理地址
-              /* 如果该接口是已完成状态 */
+    /* 如果该接口是已完成状态 */
     /* 尝试访问实际的主机 */
     /* 获取真实的响应数据 */
     /* 否则 */
@@ -364,7 +369,7 @@ module.exports = async (ctx, next) => {
         try {
           const id = ObjectId(i._id).toString();
           return id === interfaceData.witchEnv;
-        } catch (error) {}
+        } catch (error) { }
         return false;
       });
       await handleProxy(ctx, {

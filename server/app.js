@@ -43,10 +43,10 @@ async function main(params) {
     console.log(
       '\nctx.path',
       ctx.path,
-      '\nparmas:\n\t',
-      ctx.params,
-      '\nbody:\n\t',
-      ctx.request.body
+      '\nquery:\n',
+      JSON.stringify(ctx?.query || {}, null, 2),
+      '\nbody:\n',
+      JSON.stringify(ctx?.request?.body || {}, null, 2),
     );
     const start = Date.now();
     await next();
