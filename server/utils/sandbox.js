@@ -6,8 +6,8 @@ module.exports = async function sandboxFn(context, script) {
     timeout: 3000,
     asyncTimeout: 60000
   });
-
-  script += '; return this;';
+  script = `${script};
+return this;`;
   // 执行动态代码
   let result = context;
   try {
@@ -17,10 +17,12 @@ module.exports = async function sandboxFn(context, script) {
           context.execSript = '执行时间过长';
           return r(context);
         }, 1000 * 10);
+        console.log("safeVm\n", script);
         const res = await safeVm.run(script, context);
         r(res);
       }))();
   } catch (error) {
+    console.log(context);
     console.error(error);
   }
 

@@ -2,12 +2,9 @@ const { yapi } = global;
 const projectModel = require('../models/project.js');
 const interfaceModel = require('../models/interface.js');
 const mockExtra = require('../../common/mock-extra.js');
-const HttpsProxyAgent = require("https-proxy-agent");
 const { schemaValidator } = require('../../common/utils.js');
 const _ = require('lodash');
 const Mock = require('mockjs');
-const axios = require('axios');
-const https = require('https');
 const { ObjectId } = require('mongodb');
 const { getResponseThroghProxy } = require('./requestProxy.js');
 const { VARIABLE } = yapi;
@@ -65,29 +62,25 @@ async function handleProxy(ctx, { domain, projectId }) {
     }
   }
 
-  if (response) {
-    try {
-      if (response.body instanceof Buffer) {
-        const _bodyString = response.body.toString('utf-8');
-        body = JSON.parse(_bodyString);
-      } else {
-        body = response.body;
-      }
-    } catch (error) {
-      console.error(error);
+
+
+  try {
+    if (response) {
+      body = response.body;
+      console.log("response.body", response.body.toString('utf-8'));
+      _.each(response.headers, (value, prop) => {
+        /* TODO: */
+        /* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
+        if (prop === 'transfer-encoding') {
+          return;
+        }
+        ctx.set(prop, value);
+      });
     }
-    _.each(response.headers, (value, prop) => {
-      /* TODO: */
-      /* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
-      if (prop === 'transfer-encoding') return;
-      ctx.set(prop, value);
-    });
+  } catch (error) {
+    body = yapi.commons.resReturn(null, 555, `错误来自yapi服务器： ${error.message}`);
   }
-  body.A_NOTICE = {
-    A_TIPS: `由yAPI转发`,
-    ..._.pick(ctx, ['headers', 'method', 'url'])
-  };
-  ctx.body = body;
+  ctx.body = body || {};
   return;
 }
 

@@ -58,13 +58,12 @@ exports.schemaToJson = function (schema, options = {}) {
   return result;
 };
 
-exports.resReturn = (data, num, errmsg) => {
-  num = num || 0;
-
+exports.resReturn = (data, errcode, errmsg) => {
+  errcode = errcode || 0;
   return {
-    errcode: num,
+    errcode,
     errmsg: errmsg || '成功！',
-    data: data
+    data
   };
 };
 
@@ -452,7 +451,7 @@ function handleParamsValue(params, val) {
   let value = {};
   try {
     params = params.toObject();
-  } catch (e) {}
+  } catch (e) { }
   if (params.length === 0 || val.length === 0) {
     return params;
   }

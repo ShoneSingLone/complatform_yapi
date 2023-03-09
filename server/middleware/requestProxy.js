@@ -2,108 +2,110 @@ var http = require('http');
 var fs = require('fs');
 
 exports.getResponseThroghProxy = function ({ ctx, path, host, port }) {
+
+    host = host === 'undefined' ? "" : host;
+    port = port === 'undefined' ? "" : port;
+
     return new Promise(resolve => {
         delete ctx.request?.header.host;
-        const options = {
-            path,
-            method: ctx.request.method,
-            headers: ctx.request?.header
-        };
+        const httpRequestOptions = new URL(path);
+        httpRequestOptions.method = ctx.request.method;
+        httpRequestOptions.headers = ctx.request?.header;
 
-        debugger;
-        if (host && port && host != 'undefined' && port != 'undefined') {
-            options.host = host;
-            options.port = port;
+        if (host && port) {
+            httpRequestOptions.host = host;
+            httpRequestOptions.port = port;
         }
 
-        let requestBody = ctx.request.body,
-            body,
-            headers,
-            chunks = [],
-            fileFields,
-            files,
-            boundaryKey,
-            boundary,
-            endData,
-            filesLength,
-            totallength = 0;
+        let requestBody = "", body, headers, bodyFields, bodyFiles, boundaryKey, boundary, endData, filesLength, totallength = 0;
 
-        if (requestBody) {
+        if (ctx.request.body && JSON.stringify(ctx.request.body) != "{}") {
             (() => {
                 if (ctx.request?.header['content-type']) {
-                    if (ctx.request.header['content-type'].indexOf('application/x-www-form-urlencoded') > -1) {
+                    if (String(ctx.request.header['content-type']).includes('application/x-www-form-urlencoded')) {
                         requestBody = JSON.stringify(ctx.request.body);
-                        options.headers['Content-Length'] = Buffer.byteLength(requestBody);
+                        httpRequestOptions.headers['Content-Length'] = Buffer.byteLength(requestBody);
                         return;
                     }
 
-                    if (ctx.request.header['content-type'].indexOf('application/json') > -1) {
+                    if (String(ctx.request.header['content-type']).includes('application/json')) {
                         requestBody = JSON.stringify(ctx.request.body);
-                        options.headers['Content-Length'] = Buffer.byteLength(requestBody);
+                        httpRequestOptions.headers['Content-Length'] = Buffer.byteLength(requestBody);
                         return;
                     }
 
 
-                    if (ctx.request.header['content-type'].indexOf('multipart/form-data') > -1) {
-                        fileFields = ctx.request.body.fields;
-                        files = ctx.request.body.files;
+                    if (String(ctx.request.header['content-type']).includes('multipart/form-data')) {
+                        bodyFields = ctx.request.body.fields;
+                        bodyFiles = ctx.request.body.files;
                         boundaryKey = Math.random().toString(16);
                         boundary = `\r\n----${boundaryKey}\r\n`;
                         endData = `\r\n----${boundaryKey}--`;
                         filesLength = 0;
 
-                        Object.keys(fileFields).forEach(key => {
-                            requestBody += `${boundary}Content-Disposition:form-data;name="${key}"\r\n\r\n${fileFields[key]}`;
+                        Object.keys(bodyFields).forEach(key => {
+                            requestBody += `${boundary}Content-Disposition:form-data;name="${key}"\r\n\r\n${bodyFields[key]}`;
                         });
 
-                        Object.keys(files).forEach(key => {
-                            requestBody += `${boundary}Content-Type: application/octet-stream\r\nContent-Disposition: form-data; name="${key}";filename="${files[key].name}"\r\nContent-Transfer-Encoding: binary\r\n\r\n`;
-                            filesLength += Buffer.byteLength(requestBody, 'utf-8') + files[key].size;
+                        Object.keys(bodyFiles).forEach(key => {
+                            requestBody += `${boundary}Content-Type: application/octet-stream\r\nContent-Disposition: form-data; name="${key}";filename="${bodyFiles[key].name}"\r\nContent-Transfer-Encoding: binary\r\n\r\n`;
+                            filesLength += Buffer.byteLength(requestBody, 'utf-8') + bodyFiles[key].size;
                         });
 
-                        options.headers['Content-Type'] = `multipart/form-data; boundary=--${boundaryKey}`;
-                        options.headers[`Content-Length`] = filesLength + Buffer.byteLength(endData);
+                        httpRequestOptions.headers['Content-Type'] = `multipart/form-data; boundary=--${boundaryKey}`;
+                        httpRequestOptions.headers[`Content-Length`] = filesLength + Buffer.byteLength(endData);
                         return;
                     }
                 }
                 requestBody = JSON.stringify(ctx.request.body);
-                options.headers['Content-Length'] = Buffer.byteLength(requestBody);
+                httpRequestOptions.headers['Content-Length'] = Buffer.byteLength(requestBody);
             })();
         }
 
-        const req = http.request(options, res => {
-            res.on('data', chunk => {
+        const httpRequest = http.request(httpRequestOptions, response => {
+            const chunks = [];
+            response.on('data', chunk => {
                 chunks.push(chunk);
                 totallength += chunk.length;
             });
 
-            res.on('end', () => {
+            response.on('end', () => {
                 body = Buffer.concat(chunks, totallength);
-                headers = res.headers;
+                headers = response.headers;
                 resolve({ headers, body: body });
             });
         });
 
-        if (requestBody) {
-            req.write(requestBody);
-        }
+        httpRequest.on('error', (e) => {
+            console.log('Error with the request:', e);
+            resolve({ headers, body: { errormsg: e.message, code: 555 } });
+        });
 
-        if (fileFields) {
-            let fileKeyArray = Object.keys(files);
+        if (bodyFiles) {
+            let fileKeyArray = Object.keys(bodyFiles);
             let uploadConnt = 0;
             fileKeyArray.forEach(key => {
-                let fileStream = fs.createReadStream(files[key].path);
-                fileStream.on('end', async () => {
-                    await fs.promises.unlink(files[key].path);
+                let frs = fs.createReadStream(bodyFiles[key].path);
+                frs.on("err", (error) => {
+                    console.log("发生错误", error);
+                });
+                frs.on('end', async () => {
+                    await fs.promises.unlink(bodyFiles[key].path);
                     uploadConnt++;
                     if (uploadConnt == fileKeyArray.length) {
-                        req.end(endData);
+                        httpRequest.end(endData);
                     }
                 });
-                fileStream.pipe(req, { end: false });
+                if (requestBody) {
+                    httpRequest.write(requestBody);
+                }
+                frs.pipe(httpRequest, { end: false });
             });
+        } else if (requestBody) {
+            httpRequest.write(requestBody);
+            httpRequest.end();
         } else {
-            req.end();
+            httpRequest.end();
         }
     });
 };
