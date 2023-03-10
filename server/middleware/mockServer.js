@@ -67,7 +67,7 @@ async function handleProxy(ctx, { domain, projectId }) {
   try {
     if (response) {
       body = response.body;
-      console.log("response.body", response.body.toString('utf-8'));
+      // console.log("response.body", response.body.toString('utf-8'));
       _.each(response.headers, (value, prop) => {
         /* TODO: */
         /* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */

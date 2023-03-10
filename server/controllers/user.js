@@ -60,7 +60,7 @@ class userController extends baseController {
           study: result.study
         },
         0,
-        'logout success...'
+        '登录成功'
       ));
     } else {
       return (ctx.body = yapi.commons.resReturn(null, 405, '密码错误'));

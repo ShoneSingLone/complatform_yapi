@@ -29,7 +29,9 @@ async function main(params) {
   app.proxy = true;
   yapi.app = app;
 
-  app.use(cors());
+  app.use(cors({
+    credentials: true,
+  }));
   app.use(
     koaBody({
       strict: false,
@@ -42,14 +44,14 @@ async function main(params) {
 
   app.use(async (ctx, next) => {
     try {
-      console.log(
+      /* console.log(
         '\nctx.path',
         ctx.path,
         '\nquery:\n',
         JSON.stringify(ctx?.query || {}, null, 2),
         '\nbody:\n',
         JSON.stringify(ctx?.request?.body || {}, null, 2),
-      );
+      ); */
       const start = Date.now();
       await next();
       const yapiTips = {
