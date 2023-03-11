@@ -7,6 +7,7 @@ const tokenModel = require('../models/token.js');
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const { parseToken } = require('../utils/token');
+const { customCookies } = require('../utils/customCookies');
 
 class baseController {
   constructor(ctx) {
@@ -60,7 +61,7 @@ class baseController {
     let token = params.token;
 
     if (!token) {
-      token = ctx.cookies.get('_yapi_token');
+      token = customCookies(ctx, '_yapi_token');
     }
 
     // 如果前缀是 /api/open，执行 parse token 逻辑
@@ -128,8 +129,8 @@ class baseController {
   }
 
   async checkLogin(ctx) {
-    let token = ctx.cookies.get('_yapi_token');
-    let uid = ctx.cookies.get('_yapi_uid');
+    let token = customCookies(ctx, '_yapi_token');
+    let uid = customCookies(ctx, '_yapi_uid');
     try {
       if (!token || !uid) {
         return false;

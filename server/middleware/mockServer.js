@@ -3,6 +3,7 @@ const projectModel = require('../models/project.js');
 const interfaceModel = require('../models/interface.js');
 const mockExtra = require('../../common/mock-extra.js');
 const { schemaValidator } = require('../../common/utils.js');
+const { customCookies } = require('../utils/customCookies');
 const _ = require('lodash');
 const Mock = require('mockjs');
 const { ObjectId } = require('mongodb');
@@ -456,7 +457,7 @@ module.exports = async (ctx, next) => {
             if (context.resHeader[i] && typeof context.resHeader[i] === 'string') {
               cookie = parseCookie(context.resHeader[i]);
               if (cookie && typeof cookie === 'object') {
-                ctx.cookies.set(cookie.name, cookie.value, {
+                customCookies(ctx, cookie.name, cookie.value, {
                   maxAge: 864000000,
                   httpOnly: false
                 });
@@ -465,7 +466,7 @@ module.exports = async (ctx, next) => {
               context.resHeader[i].forEach(item => {
                 cookie = parseCookie(item);
                 if (cookie && typeof cookie === 'object') {
-                  ctx.cookies.set(cookie.name, cookie.value, {
+                  customCookies(ctx, cookie.name, cookie.value, {
                     maxAge: 864000000,
                     httpOnly: false
                   });

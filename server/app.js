@@ -31,6 +31,14 @@ async function main(params) {
 
   app.use(cors({
     credentials: true,
+    origin: (ctx) => {
+      ctx.set('Access-Control-Expose-Headers', "x-cookies");
+      if (ctx.headers.origin === 'https://shonesinglone.github.io') {
+        return ctx.headers.origin;
+      } else {
+        return false;
+      }
+    }
   }));
   app.use(
     koaBody({
@@ -44,14 +52,14 @@ async function main(params) {
 
   app.use(async (ctx, next) => {
     try {
-      /* console.log(
+      console.log(
         '\nctx.path',
         ctx.path,
         '\nquery:\n',
         JSON.stringify(ctx?.query || {}, null, 2),
         '\nbody:\n',
         JSON.stringify(ctx?.request?.body || {}, null, 2),
-      ); */
+      );
       const start = Date.now();
       await next();
       const yapiTips = {

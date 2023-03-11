@@ -7,6 +7,8 @@ const interfaceModel = require('../models/interface.js');
 const groupModel = require('../models/group.js');
 const projectModel = require('../models/project.js');
 const avatarModel = require('../models/avatar.js');
+const { customCookies } = require('../utils/customCookies');
+
 const path = require('path');
 
 const jwt = require('jsonwebtoken');
@@ -78,8 +80,8 @@ class userController extends baseController {
    */
 
   async logout(ctx) {
-    ctx.cookies.set('_yapi_token', null);
-    ctx.cookies.set('_yapi_uid', null);
+    customCookies(ctx, '_yapi_token', null);
+    customCookies(ctx, '_yapi_uid', null);
     ctx.body = yapi.commons.resReturn('ok');
   }
 
@@ -274,11 +276,11 @@ class userController extends baseController {
   setLoginCookie(uid, passsalt) {
     let token = jwt.sign({ uid: uid }, passsalt, { expiresIn: '7 days' });
 
-    this.ctx.cookies.set('_yapi_token', token, {
+    customCookies(this.ctx, '_yapi_token', token, {
       expires: yapi.commons.expireDate(7),
       httpOnly: true
     });
-    this.ctx.cookies.set('_yapi_uid', uid, {
+    customCookies(this.ctx, '_yapi_uid', uid, {
       expires: yapi.commons.expireDate(7),
       httpOnly: true
     });
