@@ -1,5 +1,6 @@
 const koaRouter = require('koa-router');
 const interfaceController = require('./controllers/interface.js');
+
 const { yapi } = global;
 
 const router = koaRouter();
@@ -20,15 +21,12 @@ function addPluginRouter(config) {
   createAction(router, '/api', config.controller, config.action, routerPath, method, true);
 }
 
-function websocket(app) {
-  createAction(
-    router,
-    '/api',
-    interfaceController,
-    'solveConflict',
-    '/interface/solve_conflict',
-    'get'
-  );
+
+
+exports.DecoratorWebsocket = function DecoratorWebsocket(app) {
+  createAction(router, '/api', interfaceController, 'solveConflict', '/interface/solve_conflict', 'get');
+  /* complatform项目使用 /ws/api前缀 */
+  createAction(router, '/ws/api', interfaceController, 'solveConflict', '/interface/solve_conflict', 'get');
 
   yapi.emitHookSync('add_ws_router', addPluginRouter);
 
@@ -42,6 +40,4 @@ function websocket(app) {
       })
     );
   });
-}
-
-module.exports = websocket;
+};
