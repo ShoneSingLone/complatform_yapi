@@ -1,8 +1,8 @@
-const baseController = require('controllers/base.js');
-const interfaceModel = require('models/interface.js');
-const projectModel = require('models/project.js');
+const baseController = require('server/controllers/base.js');
+const interfaceModel = require('server/models/interface.js');
+const projectModel = require('server/models/project.js');
 // const wikiModel = require('../yapi-plugin-wiki/wikiModel.js');
-const interfaceCatModel = require('models/interfaceCat.js');
+const interfaceCatModel = require('server/models/interfaceCat.js');
 const { yapi } = global;
 const markdownIt = require('markdown-it');
 const markdownItAnchor = require('markdown-it-anchor');

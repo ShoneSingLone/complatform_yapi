@@ -1,5 +1,6 @@
 const koaRouter = require('koa-router');
 const interfaceController = require('./controllers/interface.js');
+const { wikiController } = require('./controllers/wiki.js');
 const groupController = require('./controllers/group.js');
 const userController = require('./controllers/user.js');
 const interfaceColController = require('./controllers/interfaceCol.js');
@@ -15,6 +16,10 @@ const { createAction } = require('./utils/commons.js');
 const router = koaRouter();
 
 let INTERFACE_CONFIG = {
+  wiki: {
+    prefix: "/wiki/",
+    controller: wikiController
+  },
   interface: {
     prefix: '/interface/',
     controller: interfaceController
@@ -54,6 +59,13 @@ let INTERFACE_CONFIG = {
 };
 
 let routerConfig = {
+  wiki: [
+    {
+      action: 'action',
+      path: 'action',
+      method: 'post'
+    }
+  ],
   group: [
     {
       action: 'getMyGroup',

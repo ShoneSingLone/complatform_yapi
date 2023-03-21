@@ -1,7 +1,7 @@
-const baseController = require('controllers/base.js');
+const baseController = require('server/controllers/base.js');
 const wikiModel = require('./wikiModel.js');
-const projectModel = require('models/project.js');
-const userModel = require('models/user.js');
+const projectModel = require('server/models/project.js');
+const userModel = require('server/models/user.js');
 const jsondiffpatch = require('jsondiffpatch');
 const formattersHtml = jsondiffpatch.formatters.html;
 const { yapi } = global;
@@ -178,7 +178,7 @@ class wikiController extends baseController {
           ctx.websocket.send(JSON.stringify(data));
         }
       });
-      ctx.websocket.on('close', async () => {});
+      ctx.websocket.on('close', async () => { });
     } catch (err) {
       yapi.commons.log(err, 'error');
     }

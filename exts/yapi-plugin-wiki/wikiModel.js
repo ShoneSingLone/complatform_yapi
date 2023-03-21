@@ -1,5 +1,5 @@
 const { yapi } = global;
-const baseModel = require('models/base.js');
+const baseModel = require('server/models/base.js');
 
 class statisMockModel extends baseModel {
   getName() {

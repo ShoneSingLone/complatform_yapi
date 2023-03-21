@@ -1,12 +1,12 @@
 const schedule = require('node-schedule');
-const openController = require('controllers/open.js');
-const projectModel = require('models/project.js');
+const openController = require('server/controllers/open.js');
+const projectModel = require('server/models/project.js');
 const syncModel = require('./syncModel.js');
-const tokenModel = require('models/token.js');
+const tokenModel = require('server/models/token.js');
 const { yapi } = global;
 const sha = require('sha.js');
 const md5 = require('md5');
-const { getToken } = require('utils/token');
+const { getToken } = require('server/utils/token');
 const jobMap = new Map();
 
 class syncUtils {

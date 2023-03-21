@@ -129,9 +129,7 @@
       followCol.createIndex({
         uid: 1
       });
-      followCol.createIndex({
-        project_id: 1
-      });
+      followCol.createIndex({ project_id: 1 });
 
       result.then(
         function () {

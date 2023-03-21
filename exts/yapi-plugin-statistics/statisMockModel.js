@@ -2,7 +2,7 @@
  * Created by gxl.gao on 2017/10/24.
  */
 const { yapi } = global;
-const baseModel = require('models/base.js');
+const baseModel = require('server/models/base.js');
 
 class statisMockModel extends baseModel {
   getName() {

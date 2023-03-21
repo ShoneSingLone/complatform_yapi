@@ -1,18 +1,17 @@
 const fs = require('fs');
 const path = require('path');
+
 /* require 如果没有用相对路径，就优先从node_modules里面找，找不到就从NODE_PATH 开始找 */
-process.env.NODE_PATH = path.resolve(__dirname);
+process.env.NODE_PATH = path.resolve(__dirname, "..");
 require('module').Module._initPaths();
 
-async function main(params) {
+async function main() {
   /* preset */
-  const { initDbAndCommon } = require('./utils/initConfig');
+  const { initDbAndCommon, appListen } = require('server/utils');
+
   const yapi = await initDbAndCommon();
-  const { useGzipWhenPrd } = require('./middleware/prdGzip.js');
-  const { useMockServer } = require('./middleware/mockServer.js');
-  const { useCORS } = require('./middleware/cors');
-  const { useHistoryMode } = require('./middleware/historyMode');
-  const { useYapiDevHeaderInfo } = require('./middleware/yapiDevHeaderInfo');
+  /* 最先调用initDbAndCommon，再使用中间件 */
+  const { useGzipWhenPrd, useMockServer, useCORS, useHistoryMode, useYapiDevHeaderInfo } = require("server/middleware");
 
   require('./plugin.js');
   const websockify = require('koa-websocket');
@@ -48,37 +47,14 @@ async function main(params) {
   /* index.html */
   app.use(useHistoryMode(yapi));
 
-  function appListen(PORT, tips = '服务已启动，请打开下面链接访问:') {
-    app.listen(PORT);
-    if (process.send) {
-      process.send(JSON.stringify({ type: 'CHANGE_PORT', PORT }));
-    }
 
-    yapi.commons.log(`${tips} http://127.0.0.1${PORT == '80' ? '' : ':' + PORT}/ `);
-
-    function getIPAdress() {
-      var interfaces = require('os').networkInterfaces();
-      const content = JSON.stringify(interfaces);
-      const contentArray = content.split(`",`).filter(s => s.match(/"address":"(.*)/));
-      contentArray.forEach(s => {
-        const res = s.match(/address":"192.(.*)/);
-        if (res) {
-          console.log(`    http://192.${res[1]}:${PORT}/`);
-        }
-      });
-    }
-    getIPAdress();
-  }
-
-  appListen(currentPort);
-  app.server.on('error', function handleAppError(e) {
+  appListen(app, currentPort).server.on('error', function handleAppError(e) {
     if (e.code === 'EADDRINUSE') {
       setTimeout(() => {
-        appListen(++currentPort, 'Address in use, retrying...');
+        appListen(app, ++currentPort, 'Address in use, retrying...');
       }, 100);
     }
   });
-
   app.server.setTimeout(global.WEBCONFIG.timeout);
 }
 
