@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 exports.useHistoryMode = (yapi) => async (ctx, next) => {
     /* history 模式，除了api，都返回index.html */
     if (ctx.status === 404) {
