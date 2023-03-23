@@ -8,6 +8,7 @@ class WikiModel extends baseModel {
 
     getSchema() {
         return {
+            del_tag: { type: Number, default: 0 },
             type: String,
             title: String,
             p_id: { type: Number, default: 0 },
@@ -27,46 +28,25 @@ class WikiModel extends baseModel {
         return m.save();
     }
 
+    /* find  find  find  find  find  find  find  find  find  find  find  */
     list(select = '_id p_id type title project_id username uid edit_uid add_time up_time desc markdown') {
-        return this.model.find().select(select).sort({ title: 1 }).exec();
+        return this.model.find({ del_tag: 0 }).select(select).exec();
     }
     /* 无 desc markdown detail才单独加载*/
     menu(select = '_id p_id type title project_id username uid edit_uid add_time up_time') {
-        return this.model.find().select(select).sort({ title: 1 }).exec();
+        return this.model.find({ del_tag: 0 }).select(select).exec();
     }
-
     detail(_id) {
-        return this.model
-            .findOne({ _id })
-            .exec();
+        return this.model.findOne({ _id, del_tag: 0 }).exec();
+    }
+    /* find  find  find  find  find  find  find  find  find  find  find  */
+
+    delete(_id) {
+        return this.up(_id, { del_tag: 1 });
     }
 
-    get(project_id) {
-        return this.model
-            .findOne({
-                project_id: project_id
-            })
-            .exec();
-    }
-
-    up(id, data) {
-        return this.model.update(
-            {
-                _id: id
-            },
-            data,
-            { runValidators: true }
-        );
-    }
-
-    upEditUid(id, uid) {
-        return this.model.update(
-            {
-                _id: id
-            },
-            { edit_uid: uid },
-            { runValidators: true }
-        );
+    up(_id, data) {
+        return this.model.update({ _id }, data, { runValidators: true });
     }
 }
 

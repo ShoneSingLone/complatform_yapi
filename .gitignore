@@ -50,3 +50,4 @@ privateConfigs.js
 axiosOptions
 axiosOptions_body
 dist-exec
+static/wiki

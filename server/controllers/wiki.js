@@ -30,8 +30,12 @@ class wikiController extends baseController {
 }
 
 
-
 const STRATEGY = {
+  async delete(ctx) {
+    const { _id } = ctx.params;
+    /* 标记删除 */
+    return await this.wiki_orm.delete(_id);
+  },
   async detail(ctx) {
     const { _id } = ctx.params;
     return await this.wiki_orm.detail(_id);
@@ -54,7 +58,5 @@ const STRATEGY = {
     return { msg: res };
   }
 };
-
-
 
 exports.wikiController = wikiController;

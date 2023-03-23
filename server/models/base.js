@@ -1,7 +1,7 @@
 const { yapi } = global;
 const mongoose = require('mongoose');
-const { model: dbModel } = require('../utils/db');
-const autoIncrement = require('../utils/mongoose-auto-increment');
+const { model: dbModel } = require('server/utils/db');
+const autoIncrement = require('server/utils/mongoose-auto-increment');
 
 /**
  * 所有的model都需要继承baseModel, 且需要 getSchema和getName方法，不然会报错
