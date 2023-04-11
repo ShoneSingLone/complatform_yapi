@@ -1,6 +1,6 @@
-const baseModel = require('./base.js');
+const BaseModel = require('server/models/base');
 
-class userModel extends baseModel {
+class userModel extends BaseModel {
   getName() {
     return 'user';
   }
@@ -24,7 +24,8 @@ class userModel extends baseModel {
       role: String,
       add_time: Number,
       up_time: Number,
-      type: { type: String, enum: ['site', 'third'], default: 'site' } //site用户是网站注册用户, third是第三方登录过来的用户
+      //site用户是网站注册用户, third是第三方登录过来的用户
+      type: { type: String, enum: ['site', 'third'], default: 'site' }
     };
   }
 

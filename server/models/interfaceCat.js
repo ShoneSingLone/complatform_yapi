@@ -1,10 +1,10 @@
 const { yapi } = global;
-const baseModel = require('./base.js');
+const BaseModel = require('server/models/base');
 
 /**
  * 接口分类
  */
-class interfaceCat extends baseModel {
+class interfaceCat extends BaseModel {
   getName() {
     return 'interface_cat';
   }

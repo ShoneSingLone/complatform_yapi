@@ -1,9 +1,9 @@
 const { yapi } = global;
-const baseModel = require('./base.js');
+const BaseModel = require('server/models/base');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-class interfaceCase extends baseModel {
+class interfaceCase extends BaseModel {
   getName() {
     return 'interface_case';
   }

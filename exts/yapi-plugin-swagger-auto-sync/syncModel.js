@@ -1,8 +1,8 @@
 const { yapi } = global;
-const baseModel = require('server/models/base.js');
+const BaseModel = require('server/models/base');
 const mongoose = require('mongoose');
 
-class syncModel extends baseModel {
+class syncModel extends BaseModel {
   getName() {
     return 'interface_auto_sync';
   }

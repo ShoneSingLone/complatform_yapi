@@ -51,3 +51,4 @@ axiosOptions
 axiosOptions_body
 dist-exec
 static/wiki
+.vs

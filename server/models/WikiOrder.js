@@ -1,25 +1,14 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base.js');
+const BaseModel = require('server/models/base');
 
 class WikiModel extends BaseModel {
     getName() {
-        return 'wiki_doc';
+        return 'wiki_order';
     }
 
     getSchema() {
         return {
-            del_tag: { type: Number, default: 0 },
-            type: String,
-            title: String,
-            p_id: { type: Number, default: 0 },
-            project_id: { type: Number },
-            username: String,
-            uid: { type: Number },
-            edit_uid: { type: Number, default: 0 },
-            desc: String,
-            markdown: String,
-            add_time: Number,
-            up_time: Number
+            belong_type: { type: String, enum: ["private", "group", "project", "all"], default: 'private' },
         };
     }
 
@@ -27,7 +16,6 @@ class WikiModel extends BaseModel {
         let m = new this.model(data);
         return m.save();
     }
-
     /* find  find  find  find  find  find  find  find  find  find  find  */
     list(select = '_id p_id type title project_id username uid edit_uid add_time up_time desc markdown') {
         return this.model.find({ del_tag: 0 }).select(select).exec();

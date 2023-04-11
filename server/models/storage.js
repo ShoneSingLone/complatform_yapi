@@ -1,7 +1,7 @@
-const baseModel = require('./base.js');
+const BaseModel = require('server/models/base');
 const mongoose = require('mongoose');
 
-class stroageModel extends baseModel {
+class stroageModel extends BaseModel {
   constructor() {
     super();
     let storageCol = mongoose.connection.db.collection('storage');

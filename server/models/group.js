@@ -1,7 +1,7 @@
 const { yapi } = global;
-const baseModel = require('./base.js');
+const BaseModel = require('server/models/base');
 
-class groupModel extends baseModel {
+class groupModel extends BaseModel {
   getName() {
     return 'group';
   }

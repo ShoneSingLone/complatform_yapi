@@ -1,8 +1,8 @@
 const { yapi } = global;
-const baseModel = require('server/models/base.js');
+const BaseModel = require('server/models/base');
 const mongoose = require('mongoose');
 
-class caseModel extends baseModel {
+class caseModel extends BaseModel {
   getName() {
     return 'adv_mock_case';
   }
