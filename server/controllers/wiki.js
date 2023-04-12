@@ -1,7 +1,8 @@
 const { yapi } = global;
-const baseController = require('./base.js');
+const baseController = require('server/controllers/base');
 const { WikiModel } = require('server/models/wiki');
 const { WikiOrderModel } = require('server/models/WikiOrder');
+const { diffText } = require('common/diff-view.js');
 
 class wikiController extends baseController {
   constructor(ctx) {
@@ -80,10 +81,26 @@ const STRATEGY = {
       data.belong_id = this.$user._id;
     }
 
+    const oldWikiArticle = await this.orm_wiki.detail(_id);
+    const oldmarkdown = oldWikiArticle?.markdown || "";
+    const newMarkdown = data?.markdown || "";
+
     if (_id) {
       res = await this.orm_wiki.up(_id, data);
     } else {
       res = await this.orm_wiki.save(data);
+      data._id = res._id;
+    }
+    const result = diffText(oldmarkdown, newMarkdown);
+    if (result) {
+      yapi.commons.saveLog({
+        content: `<a href="/user/profile/${this.$user._id}">${this.$user.username}</a> 修改了文档 <a href="./wiki?wiki_id=${data._id}">${data._id}:${data.title}</a>`,
+        type: 'wiki_doc',
+        uid: this.$user._id,
+        username: this.$user.username,
+        typeid: data._id,
+        data: result
+      });
     }
     return { msg: res };
   }

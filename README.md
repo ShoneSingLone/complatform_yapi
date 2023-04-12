@@ -15,7 +15,7 @@
 
 mongodb
 
-```bash
+```js
 db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}},{multi:true})
 ```
 

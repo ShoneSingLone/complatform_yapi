@@ -1,6 +1,8 @@
 const json5 = require('json5');
+const jsondiffpatch = require('jsondiffpatch');
+const formattersHtml = jsondiffpatch.formatters.html;
 
-module.exports = function (jsondiffpatch, formattersHtml, curDiffData) {
+function diffView(jsondiffpatch, formattersHtml, curDiffData) {
   const json5_parse = json => {
     if (typeof json === 'object' && json) return json;
     try {
@@ -186,3 +188,19 @@ module.exports = function (jsondiffpatch, formattersHtml, curDiffData) {
 
   return (diffView = diffView.filter(item => item.content));
 };
+
+
+diffView.diffText = (left, right) => {
+  if (left === right) {
+    return false;
+  }
+  var delta = jsondiffpatch.diff(left, right);
+  let result = formattersHtml.format(delta, left);
+  return result;
+};
+
+module.exports = diffView;
+
+
+
+
