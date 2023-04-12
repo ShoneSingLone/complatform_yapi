@@ -1,7 +1,7 @@
 const { yapi } = global;
 const BaseModel = require('server/models/base');
 
-class WikiModel extends BaseModel {
+class WikiOrderModel extends BaseModel {
     getName() {
         return 'wiki_order';
     }
@@ -9,33 +9,39 @@ class WikiModel extends BaseModel {
     getSchema() {
         return {
             belong_type: { type: String, enum: ["private", "group", "project", "all"], default: 'private' },
+            belong_id: { type: Number },
+            order: { type: Array },
         };
     }
-
     save(data) {
         let m = new this.model(data);
         return m.save();
     }
-    /* find  find  find  find  find  find  find  find  find  find  find  */
-    list(select = '_id p_id type title project_id username uid edit_uid add_time up_time desc markdown') {
-        return this.model.find({ del_tag: 0 }).select(select).exec();
+    async detail(params) {
+        params = params || {};
+        if ("all" === params.belong_type) {
+            delete params.belong_id;
+        }
+        return this.model.findOne(params).exec();
     }
-    /* 无 desc markdown detail才单独加载*/
-    menu(select = '_id p_id type title project_id username uid edit_uid add_time up_time') {
-        return this.model.find({ del_tag: 0 }).select(select).exec();
+    async upsertOne({ belong_type, belong_id, order }) {
+        let msg;
+        let params = await this.detail({ belong_type, belong_id }) || {};
+        if (params._id) {
+            params.order = order;
+            msg = await this.up(params._id, params);
+        } else {
+            params = { belong_type, belong_id, order };
+            msg = await this.save(params);
+        }
+        return { msg };
     }
-    detail(_id) {
-        return this.model.findOne({ _id, del_tag: 0 }).exec();
-    }
-    /* find  find  find  find  find  find  find  find  find  find  find  */
-
     delete(_id) {
         return this.up(_id, { del_tag: 1 });
     }
-
     up(_id, data) {
         return this.model.update({ _id }, data, { runValidators: true });
     }
 }
 
-exports.WikiModel = WikiModel;
+exports.WikiOrderModel = WikiOrderModel;

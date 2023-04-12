@@ -8,6 +8,8 @@ class WikiModel extends BaseModel {
 
     getSchema() {
         return {
+            belong_type: { type: String, enum: ["private", "group", "project", "all"], default: 'private' },
+            belong_id: { type: Number },
             del_tag: { type: Number, default: 0 },
             type: String,
             title: String,
@@ -29,12 +31,25 @@ class WikiModel extends BaseModel {
     }
 
     /* find  find  find  find  find  find  find  find  find  find  find  */
-    list(select = '_id p_id type title project_id username uid edit_uid add_time up_time desc markdown') {
-        return this.model.find({ del_tag: 0 }).select(select).exec();
-    }
-    /* 无 desc markdown detail才单独加载*/
-    menu(select = '_id p_id type title project_id username uid edit_uid add_time up_time') {
-        return this.model.find({ del_tag: 0 }).select(select).exec();
+    /**
+     * 
+     *     无 desc markdown
+     * detail才单独加载
+     * 
+     * @param {any} [params={}] 
+     * @returns 
+     * 
+     * @memberOf WikiModel
+     */
+    menu(params = {}) {
+        const select = params.select || '_id p_id type title project_id username uid edit_uid add_time up_time desc belong_type belong_id';
+        const belong_type = params.belong_type || "all";
+        let belong_id = params.belong_id;
+        const condition = { del_tag: 0, belong_type };
+        if (belong_id || 0 == belong_id) {
+            condition.belong_id = belong_id;
+        }
+        return this.model.find(condition).select(select).exec();
     }
     detail(_id) {
         return this.model.findOne({ _id, del_tag: 0 }).exec();

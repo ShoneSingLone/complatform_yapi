@@ -12,3 +12,10 @@
 
 - 跨域+Nginx+frp导致携带cookies很麻烦
 
+
+mongodb
+
+```bash
+db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}},{multi:true})
+```
+
