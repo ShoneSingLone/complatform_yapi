@@ -1,10 +1,10 @@
 const { yapi } = global;
-const baseController = require('server/controllers/base');
+const BaseController = require('server/controllers/base');
 const { WikiModel } = require('server/models/wiki');
 const { WikiOrderModel } = require('server/models/WikiOrder');
 const { diffText } = require('common/diff-view.js');
 
-class wikiController extends baseController {
+class wikiController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.orm_wiki = yapi.getInst(WikiModel);
