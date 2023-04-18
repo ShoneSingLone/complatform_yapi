@@ -1,15 +1,14 @@
 const { yapi } = global;
 const BaseController = require('server/controllers/base');
-const { WikiModel } = require('server/models/wiki');
-const { WikiOrderModel } = require('server/models/WikiOrder');
-const { diffText } = require('common/diff-view.js');
+const { I18nModel } = require('server/models/I18n');
+const _ = require("lodash");
+const fs = require("fs");
+const json5 = require("json5");
 
 class GodController extends BaseController {
     constructor(ctx) {
         super(ctx);
-        this.orm_i18n = yapi.getInst(WikiModel);
-        this.orm_wiki = yapi.getInst(WikiModel);
-        this.orm_wiki_order = yapi.getInst(WikiOrderModel);
+        this.orm_i18n = yapi.getInst(I18nModel);
     }
 
     /*
@@ -20,8 +19,8 @@ class GodController extends BaseController {
      * @memberOf GodController
      * */
     async say(ctx) {
-        const { action } = ctx.params;
-        const strategy = STRATEGY[action];
+        const { incantations } = ctx.params;
+        const strategy = STRATEGY[incantations];
         if (strategy) {
             try {
                 const res = await strategy.call(this, ctx);
@@ -29,82 +28,74 @@ class GodController extends BaseController {
             } catch (err) {
                 ctx.body = yapi.commons.resReturn(null, 402, err.message);
             }
+        } else {
+            ctx.body = yapi.commons.resReturn(null, 404, incantations);
         }
     }
 }
 
 
 const STRATEGY = {
-    async delete(ctx) {
-        const { _id } = ctx.params;
-        /* 标记删除 */
-        return await this.orm_wiki.delete(_id);
-    },
-    async detail(ctx) {
-        const { _id } = ctx.params;
-        return await this.orm_wiki.detail(_id);
-    },
-    async list(ctx) {
-        return { list: await this.orm_wiki.list() };
-    },
-    async menu(ctx) {
-        const { payload } = ctx.params || {};
-        let { belong_type, belong_id } = payload || {};
-        const { order } = (await this.orm_wiki_order.detail({ belong_type, belong_id })) || {};
-        const orderArray = order || [];
-
-        const res = {
-            list: await this.orm_wiki.menu({ belong_type, belong_id }),
-            orderArray
-        };
-        return res;
-    },
-    async resetMenuOrder(ctx) {
-        const { payload } = ctx.params || {};
-        let { belong_type, belong_id, order } = payload || {};
-
-        if (!belong_type) {
-            belong_type = 'private';
-            /* 当前用户的ID */
-            belong_id = this.$user._id;
-        }
-
-        return await this.orm_wiki_order.upsertOne({ belong_type, belong_id, order });
-    },
     async upsertOneI18nRecord(ctx) {
-        const { data } = ctx.params;
-        const { id, pId, valueArray, tag } = data;
+        const params = _.omit(ctx.params, ["incantations"]);
         let res;
-
-        if (!belong_type) {
-            data.belong_type = 'private';
-            /* 当前用户的ID */
-            data.belong_id = this.$user._id;
-        }
-
-        const oldWikiArticle = await this.orm_wiki.detail(_id);
-        const oldmarkdown = oldWikiArticle?.markdown || "";
-        const newMarkdown = data?.markdown || "";
-
-        if (_id) {
-            res = await this.orm_wiki.up(_id, data);
+        if (params._id) {
+            res = await this.orm_i18n.up(_id, params);
         } else {
-            res = await this.orm_wiki.save(data);
-            data._id = res._id;
-        }
-        const result = diffText(oldmarkdown, newMarkdown);
-        if (result) {
-            yapi.commons.saveLog({
-                content: `<a href="/user/profile/${this.$user._id}">${this.$user.username}</a> 修改了文档 <a href="./wiki?wiki_id=${data._id}">${data._id}:${data.title}</a>`,
-                type: 'wiki_doc',
-                uid: this.$user._id,
-                username: this.$user.username,
-                typeid: data._id,
-                data: result
-            });
+            res = await this.orm_i18n.save(params);
         }
         return { msg: res };
-    }
+    },
+    async i18nRecords(ctx) {
+        return this.orm_i18n.list();
+    },
+    async i18nRecordById(ctx) {
+        const _id = ctx.params._id;
+        return this.orm_i18n.detail({ _id });
+    },
+    async importI18nJSON(ctx) {
+        let path = ctx.params?.files?.file?.path;
+        let msg = "";
+        if (path) {
+            try {
+                const content = await fs.promises.readFile(path, "utf-8");
+
+
+
+                function InnerScope(_content) {
+                    try {
+                        const getJSON = new Function(`return ${_content}`);
+                        const i18nObj = getJSON();
+                        if (typeof (i18nObj) === "object") {
+                            return i18nObj;
+                        }
+                    } catch (error) {
+
+                    }
+                    return [];
+                }
+                const i18nObj = InnerScope(content);
+                const newRecords = _.map(i18nObj, (valueArray, key) => {
+                    return {
+                        key,
+                        isRectified: false,
+                        desc: "",
+                        valueArray: JSON.stringify(valueArray),
+                    };
+                });
+                return this.orm_i18n.insertMany(newRecords);
+            } catch (error) {
+                msg = error.message;
+            } finally {
+                await fs.promises.unlink(path);
+            }
+            if (msg) {
+                throw new Error(msg);
+            }
+        } else {
+            throw new Error("upload fail");
+        }
+    },
 };
 
 exports.GodController = GodController;

@@ -2,7 +2,7 @@ const controller = require('./controller');
 const advModel = require('./advMockModel.js');
 const caseModel = require('./caseModel.js');
 const { yapi } = global;
-const { mongoose } = yapi;
+const { DbConnection } = yapi;
 
 const _ = require('lodash');
 const path = require('path');
@@ -21,7 +21,7 @@ function arrToObj(arr) {
 }
 
 module.exports = function () {
-  let Col = mongoose.connection.db.collection('adv_mock');
+  let Col = DbConnection.connection.db.collection('adv_mock');
   Col.createIndex({
     interface_id: 1
   });
@@ -29,7 +29,7 @@ module.exports = function () {
     project_id: 1
   });
 
-  let caseCol = mongoose.connection.db.collection('adv_mock_case');
+  let caseCol = DbConnection.connection.db.collection('adv_mock_case');
   caseCol.createIndex({
     interface_id: 1
   });

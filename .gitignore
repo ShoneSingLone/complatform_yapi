@@ -52,3 +52,4 @@ axiosOptions_body
 dist-exec
 static/wiki
 .vs
+server/uploads/upload_*

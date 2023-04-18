@@ -1,10 +1,10 @@
 const { yapi } = global;
-const { mongoose } = yapi;
+const { DbConnection } = yapi;
 const controller = require('./controller');
 
 module.exports = function () {
   (function () {
-    let Col = mongoose.connection.db.collection('wiki');
+    let Col = DbConnection.connection.db.collection('wiki');
     Col.createIndex({
       project_id: 1
     });

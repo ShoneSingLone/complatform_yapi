@@ -2,14 +2,14 @@
  * Created by gxl.gao on 2017/10/24.
  */
 const { yapi } = global;
-const { mongoose } = yapi;
+const { DbConnection } = yapi;
 const controller = require('./controller');
 const statisModel = require('./statisMockModel.js');
 const commons = require('./util.js');
 
 module.exports = function () {
   (function () {
-    let Col = mongoose.connection.db.collection('statis_mock');
+    let Col = DbConnection.connection.db.collection('statis_mock');
     Col.createIndex({
       interface_id: 1
     });

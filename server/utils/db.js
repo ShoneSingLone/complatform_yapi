@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
-const autoIncrement = require('./mongoose-auto-increment');
+const autoIncrement = require('mongoose-auto-increment');
 const { yapi } = global;
-function model(model, schema) {
+function connection(model, schema) {
   if (schema instanceof mongoose.Schema === false) {
     schema = new mongoose.Schema(schema);
   }
-
   schema.set('autoIndex', false);
-
   return mongoose.model(model, schema, model);
 }
 
@@ -55,10 +53,11 @@ async function setYapiMongooseAsync() {
       }
     });
     db.then(
-      function (mongoose) {
+      function (connection) {
         yapi.commons.log('mongodb load success...');
-        yapi.mongoose = mongoose;
-        resolve(mongoose);
+        yapi.DbConnection = connection;
+        autoIncrement.initialize(connection);
+        resolve(connection);
       },
       function (err) {
         yapi.commons.log(err + 'mongodb connect error', 'error');
@@ -66,11 +65,10 @@ async function setYapiMongooseAsync() {
       }
     );
 
-    autoIncrement.initialize(db);
   });
 }
 
 module.exports = {
-  model,
+  model: connection,
   setYapiMongooseAsync
 };

@@ -32,7 +32,17 @@ async function main() {
   yapi.app = app;
 
   app.use(useCORS());
-  app.use(koaBody({ strict: false, multipart: true, jsonLimit: '4mb', formLimit: '4mb', textLimit: '4mb' }));
+  app.use(koaBody({
+    strict: false,
+    multipart: true,
+    formidable: {
+      // 上传目录
+      uploadDir: path.join(__dirname, 'uploads'),
+      // 保留文件扩展名
+      keepExtensions: true,
+    },
+    jsonLimit: '4mb', formLimit: '4mb', textLimit: '4mb'
+  }));
   app.use(useYapiDevHeaderInfo());
   /* router */
   app.use(useMockServer());

@@ -1,7 +1,7 @@
 const { yapi } = global;
-const mongoose = require('mongoose');
+const { Schema } = require('mongoose');
 const { model: dbModel } = require('server/utils/db');
-const autoIncrement = require('server/utils/mongoose-auto-increment');
+const autoIncrement = require('mongoose-auto-increment');
 
 /**
  * 所有的model都需要继承baseModel, 且需要 getSchema和getName方法，不然会报错
@@ -9,30 +9,23 @@ const autoIncrement = require('server/utils/mongoose-auto-increment');
 
 class BaseModel {
   constructor() {
-    this.schema = new mongoose.Schema(this.getSchema());
+    /* 约定优于配置，不要东搞西搞 */
+    const IS_NEED_AUTO_INCREMENT = true;
+    const PRIMARY_KEY = "_id";
+
+    this.schema = new Schema(this.getSchema());
     this.name = this.getName();
 
-    if (this.isNeedAutoIncrement() === true) {
+    if (IS_NEED_AUTO_INCREMENT) {
       this.schema.plugin(autoIncrement.plugin, {
         model: this.name,
-        field: this.getPrimaryKey(),
-        startAt: 11,
-        incrementBy: yapi.commons.rand(1, 10)
+        field: PRIMARY_KEY,
+        startAt: 1,
+        incrementBy: 1
       });
     }
 
     this.model = dbModel(this.name, this.schema);
-  }
-
-  isNeedAutoIncrement() {
-    return true;
-  }
-
-  /**
-   * 可通过覆盖此方法生成其他自增字段
-   */
-  getPrimaryKey() {
-    return '_id';
   }
 
   /**
