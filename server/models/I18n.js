@@ -9,7 +9,7 @@ class I18nModel extends BaseModel {
     }
     getSchema() {
         return {
-            key: { type: String },
+            key: { type: String, unique: true },
             isRectified: { type: Boolean, default: false },
             desc: { type: String },
             valueArray: { type: String },
@@ -40,7 +40,6 @@ class I18nModel extends BaseModel {
         await Promise.all(dataArray.map(async record => {
             const existedRecord = await this.detailByKey(record?.key);
             if (existedRecord?._id) {
-
                 const diffRes = diff(record, _.pick(existedRecord, [
                     "key",
                     "isRectified",

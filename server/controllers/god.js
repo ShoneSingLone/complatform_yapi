@@ -46,6 +46,17 @@ const STRATEGY = {
         }
         return { msg: res };
     },
+    async upsertI18nRecordMany(ctx) {
+        return {
+            msg: await Promise.all(_.map(_.omit(ctx.params, ["incantations"]), async (row) => {
+                if (row._id) {
+                    return this.orm_i18n.up(row._id, row);
+                } else {
+                    return this.orm_i18n.save(row);
+                }
+            }))
+        };
+    },
     async i18nRecords(ctx) {
         return this.orm_i18n.list();
     },
@@ -59,9 +70,6 @@ const STRATEGY = {
         if (path) {
             try {
                 const content = await fs.promises.readFile(path, "utf-8");
-
-
-
                 function InnerScope(_content) {
                     try {
                         const getJSON = new Function(`return ${_content}`);
