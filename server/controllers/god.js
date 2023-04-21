@@ -40,8 +40,12 @@ const STRATEGY = {
         const params = _.omit(ctx.params, ["incantations"]);
         let res;
         if (params._id) {
-            res = await this.orm_i18n.up(_id, params);
+            res = await this.orm_i18n.up(params._id, params);
         } else {
+            const existedRecord = await this.orm_i18n.detailByKey(params?.key);
+            if (existedRecord._id) {
+                throw new Error(`Key ${params?.key} Duplicated`);
+            }
             res = await this.orm_i18n.save(params);
         }
         return { msg: res };
@@ -58,11 +62,20 @@ const STRATEGY = {
         };
     },
     async i18nRecords(ctx) {
-        return this.orm_i18n.list();
+        const { condition } = ctx.params;
+        if (condition && Object.keys(condition)?.length > 0) {
+            return this.orm_i18n.keyValue(condition);
+        } else {
+            return this.orm_i18n.list();
+        }
     },
     async i18nRecordById(ctx) {
         const _id = ctx.params._id;
         return this.orm_i18n.detail({ _id });
+    },
+    async deleteI18nRecords(ctx) {
+        const ids = ctx.params.ids;
+        return this.orm_i18n.deleteMany({ ids });
     },
     async importI18nJSON(ctx) {
         let path = ctx.params?.files?.file?.path;

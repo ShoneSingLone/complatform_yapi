@@ -15,6 +15,9 @@ class I18nModel extends BaseModel {
             valueArray: { type: String },
         };
     }
+    deleteMany({ ids }) {
+        return this.model.deleteMany({ _id: { $in: ids } });
+    }
     save(data) {
         let m = new this.model(data);
         return m.save();
@@ -22,8 +25,18 @@ class I18nModel extends BaseModel {
     up(_id, data) {
         return this.model.update({ _id }, data, { runValidators: true });
     }
-    list(condition = {}) {
-        return this.model.find(condition).sort({ key: -1 }).select("_id key upperKey desc").exec();
+    list() {
+        return this.model.find({}).sort({ key: -1 }).select("_id key desc isRectified").exec();
+    }
+    keyValue(condition = {}) {
+        if (_.isArray(condition.ids)) {
+            const ids = condition.ids;
+            delete condition.ids;
+            condition._id = {
+                $in: ids
+            };
+        }
+        return this.model.find(condition).sort({ key: -1 }).select("key valueArray").exec();
     }
     detail(_id) {
         return this.model.findOne({ _id }).exec();
