@@ -1,6 +1,6 @@
 const userModel = require('../models/user.js');
 const { yapi } = global;
-const baseController = require('./base.js');
+const BaseController = require('./base.js');
 const common = require('../utils/commons.js');
 const ldap = require('../utils/ldap.js');
 const interfaceModel = require('../models/interface.js');
@@ -13,7 +13,7 @@ const path = require('path');
 
 const jwt = require('jsonwebtoken');
 
-class userController extends baseController {
+class userController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.Model = yapi.getInst(userModel);

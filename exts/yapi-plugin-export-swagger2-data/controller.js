@@ -1,10 +1,10 @@
-const baseController = require('server/controllers/base.js');
+const BaseController = require('server/controllers/base.js');
 const interfaceModel = require('server/models/interface.js');
 const projectModel = require('server/models/project.js');
 const interfaceCatModel = require('server/models/interfaceCat.js');
 const { yapi } = global;
 
-class exportSwaggerController extends baseController {
+class exportSwaggerController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.catModel = yapi.getInst(interfaceCatModel);

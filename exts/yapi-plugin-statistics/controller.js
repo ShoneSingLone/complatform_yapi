@@ -1,7 +1,7 @@
 /**
  * Created by gxl.gao on 2017/10/24.
  */
-const baseController = require('server/controllers/base.js');
+const BaseController = require('server/controllers/base.js');
 const statisMockModel = require('./statisMockModel.js');
 const groupModel = require('server/models/group.js');
 const projectModel = require('server/models/project.js');
@@ -13,7 +13,7 @@ const os = require('os');
 let cpu = require('cpu-load');
 const { WEBCONFIG } = global;
 
-class statisMockController extends baseController {
+class statisMockController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.Model = yapi.getInst(statisMockModel);

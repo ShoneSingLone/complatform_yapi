@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const { parseToken } = require('../utils/token');
 const { customCookies } = require('../utils/customCookies');
 
-class baseController {
+class BaseController {
   constructor(ctx) {
     this.ctx = ctx;
     //网站上线后，role对象key是不能修改的，value可以修改
@@ -319,4 +319,4 @@ class baseController {
   }
 }
 
-module.exports = baseController;
+module.exports = BaseController;

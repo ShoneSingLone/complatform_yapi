@@ -1,11 +1,11 @@
 const logModel = require('../models/log.js');
 const { yapi } = global;
-const baseController = require('./base.js');
+const BaseController = require('./base.js');
 const groupModel = require('../models/group');
 const projectModel = require('../models/project');
 const interfaceModel = require('../models/interface');
 
-class logController extends baseController {
+class logController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.Model = yapi.getInst(logModel);

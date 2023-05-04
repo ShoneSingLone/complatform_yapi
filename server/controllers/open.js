@@ -6,7 +6,7 @@ const interfaceCatModel = require('../models/interfaceCat.js');
 const followModel = require('../models/follow.js');
 const userModel = require('../models/user.js');
 const { yapi } = global;
-const baseController = require('./base.js');
+const BaseController = require('./base.js');
 const {
   handleParams,
   crossRequest,
@@ -28,7 +28,7 @@ const createContex = require('../../common/createContext');
 const importDataModule = {};
 yapi.emitHook('import_data', importDataModule);
 
-class openController extends baseController {
+class openController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.projectModel = yapi.getInst(projectModel);

@@ -1,10 +1,10 @@
-const baseController = require('server/controllers/base.js');
+const BaseController = require('server/controllers/base.js');
 const { yapi } = global;
 const syncModel = require('../syncModel.js');
 const projectModel = require('server/models/project.js');
 const interfaceSyncUtils = require('../interfaceSyncUtils.js');
 
-class syncController extends baseController {
+class syncController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.syncModel = yapi.getInst(syncModel);

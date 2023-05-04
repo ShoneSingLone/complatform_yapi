@@ -29,7 +29,7 @@ class I18nModel extends BaseModel {
         return this.model.find({}).sort({ key: -1 }).select("_id key desc isRectified").exec();
     }
     keyValue(condition = {}) {
-        if (_.isArray(condition.ids)) {
+        if (_.isArray(condition?.ids)) {
             const ids = condition.ids;
             delete condition.ids;
             condition._id = {

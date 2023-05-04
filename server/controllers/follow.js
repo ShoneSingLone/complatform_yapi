@@ -1,9 +1,9 @@
 const { yapi } = global;
-const baseController = require('./base.js');
+const BaseController = require('./base.js');
 const followModel = require('../models/follow');
 const projectModel = require('../models/project');
 
-class followController extends baseController {
+class followController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.Model = yapi.getInst(followModel);

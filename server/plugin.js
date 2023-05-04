@@ -130,7 +130,7 @@ var hooks = {
    * config = {
    *  path,      // String 路由名称
    *  method,    // String 请求方法 get post ...
-   *  controller // Class 继承baseController的class
+   *  controller // Class 继承BaseController的class
    *  action     // String controller的Action
    * }
    *
@@ -156,7 +156,7 @@ var hooks = {
    * config = {
    *  path,      // String 路由名称
    *  method,    // String 请求方法 get post ...
-   *  controller // Class 继承baseController的class
+   *  controller // Class 继承BaseController的class
    *  action     // String controller的Action
    * }
    *

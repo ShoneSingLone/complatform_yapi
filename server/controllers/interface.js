@@ -5,7 +5,7 @@ const followModel = require('../models/follow.js');
 const groupModel = require('../models/group.js');
 const _ = require('lodash');
 const url = require('url');
-const baseController = require('./base.js');
+const BaseController = require('./base.js');
 const { yapi } = global;
 const userModel = require('../models/user.js');
 const projectModel = require('../models/project.js');
@@ -60,7 +60,7 @@ function handleHeaders(values) {
   }
 }
 
-class interfaceController extends baseController {
+class interfaceController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.Model = yapi.getInst(interfaceModel);
@@ -914,7 +914,7 @@ class interfaceController extends baseController {
       }
       result = await this.Model.get(id);
 
-      if (result.edit_uid !== 0 && result.edit_uid !== this.getUid()) {
+      if (result.edit_uid !== 0 && result.edit_uid !== this.$uid) {
         userInst = yapi.getInst(userModel);
         userinfo = await userInst.findById(result.edit_uid);
         data = {
@@ -922,7 +922,7 @@ class interfaceController extends baseController {
           data: { uid: result.edit_uid, username: userinfo.username }
         };
       } else {
-        this.Model.upEditUid(id, this.getUid()).then();
+        await this.Model.upEditUid(id, this.getUid()).then();
         data = {
           errno: 0,
           data: result

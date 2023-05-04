@@ -1,6 +1,6 @@
 const groupModel = require('../models/group.js');
 const { yapi } = global;
-const baseController = require('./base.js');
+const BaseController = require('./base.js');
 const projectModel = require('../models/project.js');
 const userModel = require('../models/user.js');
 const interfaceModel = require('../models/interface.js');
@@ -14,7 +14,7 @@ const rolename = {
   guest: '访客'
 };
 
-class groupController extends baseController {
+class groupController extends BaseController {
   constructor(ctx) {
     super(ctx);
 

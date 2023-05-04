@@ -2,11 +2,11 @@ const interfaceColModel = require('../models/interfaceCol.js');
 const interfaceCaseModel = require('../models/interfaceCase.js');
 const interfaceModel = require('../models/interface.js');
 const projectModel = require('../models/project.js');
-const baseController = require('./base.js');
+const BaseController = require('./base.js');
 const { yapi } = global;
 const _ = require('lodash');
 
-class interfaceColController extends baseController {
+class interfaceColController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.colModel = yapi.getInst(interfaceColModel);

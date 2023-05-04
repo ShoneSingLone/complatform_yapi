@@ -1,4 +1,4 @@
-const baseController = require('server/controllers/base.js');
+const BaseController = require('server/controllers/base.js');
 const wikiModel = require('./wikiModel.js');
 const projectModel = require('server/models/project.js');
 const userModel = require('server/models/user.js');
@@ -9,7 +9,7 @@ const { yapi } = global;
 const fs = require('fs-extra');
 const path = require('path');
 const showDiffMsg = require('../../common/diff-view.js');
-class wikiController extends baseController {
+class wikiController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.Model = yapi.getInst(wikiModel);

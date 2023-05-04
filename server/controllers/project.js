@@ -1,7 +1,7 @@
 const projectModel = require('../models/project.js');
 const { yapi } = global;
 const _ = require('lodash');
-const baseController = require('./base.js');
+const BaseController = require('./base.js');
 const interfaceModel = require('../models/interface.js');
 const interfaceColModel = require('../models/interfaceCol.js');
 const interfaceCaseModel = require('../models/interfaceCase.js');
@@ -16,7 +16,7 @@ const { getToken } = require('../utils/token');
 const sha = require('sha.js');
 const axios = require('axios').default;
 
-class projectController extends baseController {
+class projectController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.Model = yapi.getInst(projectModel);

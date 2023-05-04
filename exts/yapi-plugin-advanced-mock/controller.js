@@ -1,11 +1,11 @@
 const { yapi } = global;
-const baseController = require('server/controllers/base.js');
+const BaseController = require('server/controllers/base.js');
 const advModel = require('./advMockModel.js');
 const caseModel = require('./caseModel.js');
 const userModel = require('server/models/user.js');
 const config = require('./index.js');
 
-class advMockController extends baseController {
+class advMockController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.Model = yapi.getInst(advModel);

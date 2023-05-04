@@ -95,7 +95,7 @@ var hooks = {
      * config = {
      *  path,      // String
      *  method,    // String
-     *  controller // Class 继承baseController的class
+     *  controller // Class 继承BaseController的class
      *  action     // String controller的Action
      * }
      */

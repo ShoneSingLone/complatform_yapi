@@ -43,7 +43,7 @@ const STRATEGY = {
             res = await this.orm_i18n.up(params._id, params);
         } else {
             const existedRecord = await this.orm_i18n.detailByKey(params?.key);
-            if (existedRecord._id) {
+            if (existedRecord?._id) {
                 throw new Error(`Key ${params?.key} Duplicated`);
             }
             res = await this.orm_i18n.save(params);

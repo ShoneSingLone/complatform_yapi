@@ -1,4 +1,4 @@
-const baseController = require('server/controllers/base.js');
+const BaseController = require('server/controllers/base.js');
 const interfaceModel = require('server/models/interface.js');
 const projectModel = require('server/models/project.js');
 // const wikiModel = require('../yapi-plugin-wiki/wikiModel.js');
@@ -11,7 +11,7 @@ const defaultTheme = require('./defaultTheme.js');
 const md = require('../../common/markdown');
 
 // const htmlToPdf = require("html-pdf");
-class exportController extends baseController {
+class exportController extends BaseController {
   constructor(ctx) {
     super(ctx);
     this.catModel = yapi.getInst(interfaceCatModel);
