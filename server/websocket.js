@@ -1,11 +1,11 @@
 const koaRouter = require('koa-router');
 const interfaceController = require('./controllers/interface.js');
-const BaseController = require('server/controllers/base.js');
 
 const { yapi } = global;
 
 const wsRouter = koaRouter();
 const { createAction } = require('./utils/commons.js');
+const { useWS } = require('./websocket.controller.js');
 
 let pluginsRouterPath = [];
 
@@ -26,36 +26,8 @@ function addPluginRouter(config) {
 
 exports.DecoratorWebsocket = function DecoratorWebsocket(app) {
   createAction(wsRouter, '/api', interfaceController, 'solveConflict', '/interface/solve_conflict', 'get');
-
   yapi.emitHookSync('add_ws_router', addPluginRouter);
-
-  app.ws.use(async (ctx, next) => {
-    try {
-
-      /* complatform项目使用 /ws/api前缀 */
-      if (ctx.path === `/ws/api/interface/solve_conflict`) {
-        const vm = new interfaceController(ctx);
-        await vm.checkLogin(ctx);
-        return await vm.solveConflict(ctx);
-      }
-      const vm = new BaseController(ctx);
-      await vm.checkLogin(ctx);
-      console.log("ws", ctx.path, vm.$user);
-      if (vm.$user) {
-        ctx.websocket.send(JSON.stringify({ msg: `Hello ${vm.$user.username}`, id: vm.$uid }));
-        ctx.websocket.on('message', (message) => {
-          ctx.websocket.send(JSON.stringify({ id: vm.$uid, msg: message.toString() }));
-        });
-        ctx.websocket.on('close', async () => {
-          debugger;
-        });
-      }
-      return next();
-    } catch (error) {
-      yapi.commons.log(error, 'error');
-    }
-  });
-
+  app.ws.use(useWS());
   app.ws.use(wsRouter.routes());
   app.ws.use(wsRouter.allowedMethods());
   app.ws.use(function (ctx, next) {

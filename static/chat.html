@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Electron Chat</title>
+    <script type="text/javascript" src="js/libs/marked.js"></script>
+    <script type="text/javascript" src="js/libs/vue.global.js"></script>
+    <script type="text/javascript" src="js/libs/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="style/main.css" />
+  </head>
+  <body>
+    <main id="app">
+      <div class="content">
+        <user-list></user-list>
+        <chat-area></chat-area>
+      </div>
+      <input-bar ref="inputBar" @input="onInput" @send="onSend"></input-bar>
+    </main>
+    <script type="text/javascript" src="js/chat.js"></script>
+  </body>
+</html>
