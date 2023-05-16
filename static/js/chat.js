@@ -58,7 +58,10 @@
         template: `<aside>
         <h3>Connected Users</h3>
         <ul id="users">
-            <li v-for="user in state.users" v-html="user"> </li>
+            <li v-for="user in state.users">
+                <div>{{user.username}}</div>
+                <div>{{user.email}}</div>
+            </li>
         </ul>
         <div id="user-stats">{{state.users.length}} users online.</div>
       </aside>`
@@ -143,12 +146,18 @@
                     open(url) {
                         this.ws = new WebSocket(url);
                         this.ws.addEventListener("open", (event) => {
-                            debugger;
                             this.ws.send("Hello Server!");
                         });
                         this.ws.addEventListener("message", (event) => {
-                            debugger;
-                            console.log("Message from server ", event.data);
+                            try {
+                                const data = JSON.parse(event.data);
+                                const { type, payload } = data;
+                                const handler = this.handlerMap.get(type);
+                                handler(payload);
+                                console.log("Message from server ", data);
+                            } catch (error) {
+                                console.error(error);
+                            }
                         });
                         this.ws.addEventListener("error", (event) => {
                             console.log("error from server ", event.data);
@@ -164,7 +173,7 @@
                         }
                     },
                     emit(type, payload) {
-                        socket.ws.send(JSON.stringify({ type, payload }));
+                        this.ws.send(JSON.stringify({ type, payload }));
                     }
                 };
 
@@ -176,6 +185,7 @@
                     state.appendMessage = (`__${data.username}:__ ${data.text}`);
                 });
                 socket.on('login', (data) => {
+                    state.username = data.username;
                     state.appendMessage = (`${data.username} has logged in.`);
                     state.users = data.users;
                 });
@@ -189,13 +199,11 @@
                     state.appendMessage = (`${data.username} disconnected.`);
                     state.users = data.users;
                 });
-
                 socket.open(url);
                 this.socket = socket;
             },
             onLogin() {
                 this.initSocket(state.url);
-                this.socket.emit('login', { username: state.username });
                 this.$refs.inputBar.focus();
             },
             onInput(text) {

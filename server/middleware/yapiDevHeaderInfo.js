@@ -12,7 +12,7 @@ exports.useYapiDevHeaderInfo = () => async (ctx, next) => {
         ); */
 
 
-        console.log(ctx.path);
+        console.log(ctx.path, ctx.ips.join(","));
         const start = Date.now();
         await next();
         const yapiTips = {
