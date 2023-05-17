@@ -1,4 +1,13 @@
 (function () {
+
+    function newWsPayload(type, payload) {
+        try {
+            return JSON.stringify({ type, payload });
+        } catch (error) {
+            return "{type:'error',payload:{}}";
+        }
+    }
+
     const { marked, Vue } = window;
     const { createApp, reactive, defineComponent } = Vue;
     let { host, protocol } = location;
@@ -144,26 +153,33 @@
                 const socket = {
                     ws: null,
                     open(url) {
-                        this.ws = new WebSocket(url);
-                        this.ws.addEventListener("open", (event) => {
-                            this.ws.send("Hello Server!");
-                        });
-                        this.ws.addEventListener("message", (event) => {
-                            try {
-                                const data = JSON.parse(event.data);
-                                const { type, payload } = data;
-                                const handler = this.handlerMap.get(type);
-                                handler(payload);
-                                console.log("Message from server ", data);
-                            } catch (error) {
-                                console.error(error);
-                            }
-                        });
-                        this.ws.addEventListener("error", (event) => {
-                            console.log("error from server ", event.data);
-                        });
-                        this.ws.addEventListener("close", (event) => {
-                            console.log("close from server ", event.data);
+                        return new Promise(r => {
+                            this.ws = new WebSocket(url);
+                            this.ws.addEventListener("open", (event) => {
+                                this.ws.addEventListener("message", (event) => {
+                                    try {
+                                        const data = JSON.parse(event.data);
+                                        const { type, payload } = data;
+                                        if ("_$auth" === type) {
+                                            r(data);
+                                        } else {
+                                            const handler = this.handlerMap.get(type);
+                                            handler(payload);
+                                            console.log("Message from server ", data);
+                                        }
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                });
+
+                                this.ws.addEventListener("error", (event) => {
+                                    console.log("error from server ", event.data);
+                                });
+
+                                this.ws.addEventListener("close", (event) => {
+                                    console.log("close from server ", event.data);
+                                });
+                            });
                         });
                     },
                     handlerMap: new Map(),
@@ -177,17 +193,17 @@
                     }
                 };
 
-                socket.on('connect', () => {
+                socket.on('connected', (data) => {
                     state.appendMessage = (`Connected to server ${state.url}`);
+                    state.username = data.username;
                     state.status = '';
+                });
+                socket.on('login', (data) => {
+                    state.appendMessage = (`${data.newJoinUsername} has logged in.`);
+                    state.users = data.users;
                 });
                 socket.on('message', (data) => {
                     state.appendMessage = (`__${data.username}:__ ${data.text}`);
-                });
-                socket.on('login', (data) => {
-                    state.username = data.username;
-                    state.appendMessage = (`${data.username} has logged in.`);
-                    state.users = data.users;
                 });
                 socket.on('typing', (data) => {
                     state.status = `${data.username} is typing...`;
@@ -199,7 +215,12 @@
                     state.appendMessage = (`${data.username} disconnected.`);
                     state.users = data.users;
                 });
-                socket.open(url);
+                socket.on("current-processes", (data) => {
+                    console.log('🚀:', 'current-processes', JSON.stringify(data, null, 2));
+                });
+                socket.open(url).then((data) => {
+                    socket.ws.send(newWsPayload("login"));
+                });
                 this.socket = socket;
             },
             onLogin() {
