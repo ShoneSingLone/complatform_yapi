@@ -19,41 +19,26 @@ exports.useWS = () => async (ctx, next) => {
         await vm.checkLogin(ctx);
         console.log("ws", ctx.path, vm.$user);
         if (vm.$user) {
-            wsUsers.set(vm.$uid, vm.$user);
-            ctx.websocket.send(send({
-                type: "login",
-                payload: {
-                    username: vm.$user.username,
-                    users: Array.from(wsUsers, user => _.pick(user[1], ["_id", "username", "email"]))
-                }
-            }));
+            wsUsers.set(vm.$uid, { vm, ctx });
+            const users = Array.from(wsUsers, ({ vm }) => _.pick(vm.$user, ["_id", "username", "email"]));
 
-            function send(msg) {
-                try {
-                    return JSON.stringify(msg);
-                } catch (error) {
-                    return "{}";
-                }
-            }
+            toAllClient({
+                payload: send({
+                    type: "login",
+                    payload: {
+                        username: vm.$user.username,
+                        users
+                    }
+                })
+            });
 
-            function reforward(data) {
-                return send(data);
-            }
-            const handlerMap = new Map();
-
-            handlerMap.set('connect', reforward);
-            handlerMap.set('message', reforward);
-            handlerMap.set('login', reforward);
-            handlerMap.set('typing', reforward);
-            handlerMap.set('stop-typing', reforward);
-            handlerMap.set('logout', reforward);
 
             ctx.websocket.on('message', (paramsString) => {
                 try {
                     const data = JSON.parse(paramsString);
                     const { type } = data;
                     const handler = handlerMap.get(type);
-                    ctx.websocket.send(handler(data));
+                    handler(ctx, data);
                 } catch (error) {
                     console.error(error);
                 }
@@ -76,3 +61,26 @@ exports.useWS = () => async (ctx, next) => {
     }
 };
 
+
+function send(msg) {
+    try {
+        return JSON.stringify(msg);
+    } catch (error) {
+        return "{}";
+    }
+}
+
+function toAllClient({ payload }) {
+    wsUsers.forEach(({ vm, ctx }, uid) => {
+        ctx.websocket.send(send(payload));
+    });
+}
+
+const handlerMap = new Map();
+
+handlerMap.set('connect', toAllClient);
+handlerMap.set('message', toAllClient);
+handlerMap.set('login', toAllClient);
+handlerMap.set('typing', toAllClient);
+handlerMap.set('stop-typing', toAllClient);
+handlerMap.set('logout', toAllClient);
