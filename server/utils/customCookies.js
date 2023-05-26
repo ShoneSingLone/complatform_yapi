@@ -11,20 +11,16 @@
    } */
 
 function Cookies(ctx) {
-    if (ctx.xCookies) {
-        return ctx.xCookies;
-    } else {
-        ctx.xCookies = {};
-        try {
-            let _cookies = JSON.parse(ctx.header['x-cookies']);
-            if (_cookies) {
-                ctx.xCookies = _cookies;
-            }
-        } catch (error) {
-
-        }
-        return ctx.xCookies;
+    let _cookies = {};
+    try {
+        _cookies = JSON.parse(ctx.header['x-cookies']);
+    } catch (error) {
+        /* 如果跨域的ws */
+        _cookies = JSON.parse(ctx.query['x-cookies']);
+    } finally {
+        ctx.xCookies = _cookies;
     }
+    return ctx.xCookies;
 }
 
 

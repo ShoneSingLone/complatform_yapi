@@ -27,7 +27,7 @@ function getWsHanderAndPayloadBy(paramsString) {
     try {
         const params = JSON.parse(paramsString) || {};
         const { type } = params;
-        const handler = HANDLER_MAP.get(type) || (() => null);
+        const handler = HANDLER[type] || (() => null);
         return {
             handler,
             payload: params,
@@ -83,26 +83,34 @@ const wsHandler = {
                 users
             })
         });
+    },
+    solveConflict: ({ ctx, vm }) => {
+        debugger;
+
+        /* 是否已经在编辑 */
+
+        wsHandler.toAllClient({
+            wsPayload: newWsPayload("login", {
+                newJoinUsername: vm.$user.username,
+                users
+            })
+        });
     }
 };
 
-const HANDLER_MAP = new Map();
+const HANDLER = {
+    "solveConflict": wsHandler.solveConflict,
+    'login': wsHandler.SendUserInfoAndNoticeAllClient,
+    'message': wsHandler.toAllClient,
+    'typing': wsHandler.toAllClient,
+    'stop-typing': wsHandler.toAllClient,
+    'logout': wsHandler.toAllClient,
+};
 
-HANDLER_MAP.set('login', wsHandler.SendUserInfoAndNoticeAllClient);
-HANDLER_MAP.set('message', wsHandler.toAllClient);
-HANDLER_MAP.set('typing', wsHandler.toAllClient);
-HANDLER_MAP.set('stop-typing', wsHandler.toAllClient);
-HANDLER_MAP.set('logout', wsHandler.toAllClient);
 
 exports.useWS = () => async (ctx, next) => {
     console.log("app websocket", ctx.path);
     const PATH_STRATEGY = new Map();
-
-    PATH_STRATEGY.set(`/ws/solve_conflict`, async () => {
-        const vm = new interfaceController(ctx);
-        await vm.checkLogin(ctx);
-        return await vm.solveConflict(ctx);
-    });
 
     PATH_STRATEGY.set(`/ws`, async () => {
         /* 默认的root */

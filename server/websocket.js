@@ -30,7 +30,7 @@ exports.DecoratorWebsocket = function DecoratorWebsocket(app) {
   app.ws.use(useWS());
   app.ws.use(wsRouter.routes());
   app.ws.use(wsRouter.allowedMethods());
-  app.ws.use(function (ctx, next) {
+  app.ws.use((ctx, next) => {
     return ctx.websocket.send(
       JSON.stringify({
         errcode: 404,

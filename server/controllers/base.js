@@ -82,7 +82,6 @@ class BaseController {
 
       // if (this.$auth) {
       //   ctx.params.project_id = await this.getProjectIdByToken(token);
-
       //   if (!ctx.params.project_id) {
       //     return (this.$tokenAuth = false);
       //   }
