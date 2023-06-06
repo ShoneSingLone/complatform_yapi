@@ -1,8 +1,6 @@
-const { yapi } = global;
-
 function arrUnique(arr1, arr2) {
   let arr = arr1.concat(arr2);
-  let res = arr.filter(function (item, index, arr) {
+  let res = arr.filter(function(item, index, arr) {
     return arr.indexOf(item) === index;
   });
   return res;
@@ -23,21 +21,17 @@ const noticeObj = {
 
 yapi.emitHook('addNotice', noticeObj);
 
-yapi.commons.sendNotice = async function (projectId, data) {
+yapi.sendNotice = async function(projectId, data) {
   const projectModel = require('../models/project.js');
   const userModel = require('../models/user.js');
   const followModel = require('../models/follow.js');
-
   const followInst = yapi.getInst(followModel);
   const userInst = yapi.getInst(userModel);
   const projectInst = yapi.getInst(projectModel);
   const list = await followInst.listByProjectId(projectId);
   const starUsers = list.map(item => item.uid);
-
   const projectList = await projectInst.get(projectId);
-  const projectMenbers = projectList.members
-    .filter(item => item.email_notice)
-    .map(item => item.uid);
+  const projectMenbers = projectList.members.filter(item => item.email_notice).map(item => item.uid);
 
   const users = arrUnique(projectMenbers, starUsers);
   const usersInfo = await userInst.findByUids(users);

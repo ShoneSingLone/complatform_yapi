@@ -9,13 +9,10 @@
 
 只接受限定的参数，多余的会被过滤掉 => model 里面 schemaMap
 
-
-- 跨域+Nginx+frp导致携带cookies很麻烦
-
+- 跨域+Nginx+frp 导致携带 cookies 很麻烦
 
 mongodb
 
 ```js
-db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}},{multi:true})
+db.col.update({ title: 'MongoDB 教程' }, { $set: { title: 'MongoDB' } }, { multi: true });
 ```
-

@@ -12,10 +12,10 @@ class wikiController extends BaseController {
   }
 
   /*
-   * 
-   * 
-   * @param {any} ctx 
-   * 
+   *
+   *
+   * @param {any} ctx
+   *
    * @memberOf wikiController
    * */
   async action(ctx) {
@@ -31,7 +31,6 @@ class wikiController extends BaseController {
     }
   }
 }
-
 
 const STRATEGY = {
   async delete(ctx) {
@@ -82,8 +81,8 @@ const STRATEGY = {
     }
 
     const oldWikiArticle = await this.orm_wiki.detail(_id);
-    const oldmarkdown = oldWikiArticle?.markdown || "";
-    const newMarkdown = data?.markdown || "";
+    const oldmarkdown = oldWikiArticle?.markdown || '';
+    const newMarkdown = data?.markdown || '';
 
     if (_id) {
       res = await this.orm_wiki.up(_id, data);

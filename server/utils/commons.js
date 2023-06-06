@@ -67,32 +67,12 @@ exports.resReturn = (data, errcode, errmsg) => {
   };
 };
 
-exports.log = (msg, type) => {
+const log = (msg, type = 'log') => {
   if (!msg) {
     return;
   }
-
-  type = type || 'log';
-
-  let f;
-
-  switch (type) {
-    case 'log':
-      f = console.log; // eslint-disable-line
-      break;
-    case 'warn':
-      f = console.warn; // eslint-disable-line
-      break;
-    case 'error':
-      f = console.error; // eslint-disable-line
-      break;
-    default: // eslint-disable-line
-      f = console.log;
-      break;
-  }
-
-  f(type + ':', msg);
-
+  let logFn = console[type];
+  logFn(type + ':', msg);
   let date = new Date();
   let year = date.getFullYear();
   let month = date.getMonth() + 1;
@@ -111,6 +91,7 @@ exports.log = (msg, type) => {
     flag: 'a'
   });
 };
+exports.log = log;
 
 exports.fileExist = filePath => {
   try {
@@ -451,7 +432,7 @@ function handleParamsValue(params, val) {
   let value = {};
   try {
     params = params.toObject();
-  } catch (e) { }
+  } catch (e) {}
   if (params.length === 0 || val.length === 0) {
     return params;
   }
@@ -670,4 +651,16 @@ exports.createWebAPIRequest = function (ops) {
 
 exports.setYapiCommons = () => {
   yapi.commons = exports;
+};
+
+const applog = {
+  log(msg) {
+    log(msg, 'log');
+  },
+  error(msg) {
+    log(msg, 'error');
+  },
+  warn(msg) {
+    log(msg, 'warn');
+  }
 };

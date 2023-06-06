@@ -187,8 +187,7 @@ function diffView(jsondiffpatch, formattersHtml, curDiffData) {
   }
 
   return (diffView = diffView.filter(item => item.content));
-};
-
+}
 
 diffView.diffText = (left, right) => {
   if (left === right) {
@@ -200,7 +199,3 @@ diffView.diffText = (left, right) => {
 };
 
 module.exports = diffView;
-
-
-
-

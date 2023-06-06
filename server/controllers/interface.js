@@ -559,7 +559,7 @@ class interfaceController extends BaseController {
   async downloadCrx(ctx) {
     let filename = 'crossRequest.zip';
     let dataBuffer = yapi.fs.readFileSync(
-      path.join(yapi.WEBROOT, 'static/attachment/cross-request.zip')
+      path.join(WEBROOT, 'static/attachment/cross-request.zip')
     );
     ctx.set('Content-disposition', 'attachment; filename=' + filename);
     ctx.set('Content-Type', 'application/zip');
@@ -795,14 +795,11 @@ class interfaceController extends BaseController {
     if (params.switch_notice === true) {
       let diffView = showDiffMsg(jsondiffpatch, formattersHtml, logData);
       let annotatedCss = fs.readFileSync(
-        path.resolve(
-          yapi.WEBROOT,
-          'node_modules/jsondiffpatch/dist/formatters-styles/annotated.css'
-        ),
+        path.resolve(WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/annotated.css'),
         'utf8'
       );
       let htmlCss = fs.readFileSync(
-        path.resolve(yapi.WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/html.css'),
+        path.resolve(WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/html.css'),
         'utf8'
       );
 
@@ -810,7 +807,7 @@ class interfaceController extends BaseController {
 
       let interfaceUrl = `${ctx.request.origin}/project/${interfaceData.project_id}/interface/api/${id}`;
 
-      yapi.commons.sendNotice(interfaceData.project_id, {
+      yapi.sendNotice(interfaceData.project_id, {
         title: `${username} 更新了接口`,
         content: `<html>
         <head>

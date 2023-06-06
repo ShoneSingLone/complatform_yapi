@@ -11,31 +11,44 @@
    } */
 
 function Cookies(ctx) {
-    let _cookies = {};
+  let _cookies = false;
+  try {
+    _cookies = JSON.parse(ctx.header['x-cookies']);
+  } catch (error) {}
+
+  /* ws可能无法从header里获取x-cookies */
+  if (!_cookies) {
     try {
-        _cookies = JSON.parse(ctx.header['x-cookies']);
-    } catch (error) {
-        /* 如果跨域的ws */
-        _cookies = JSON.parse(ctx.query['x-cookies']);
-    } finally {
-        ctx.xCookies = _cookies;
-    }
-    return ctx.xCookies;
+      /* 如果跨域的ws */
+      _cookies = JSON.parse(ctx.query['x-cookies']);
+    } catch (error) {}
+  }
+
+  if (_cookies) {
+    ctx.xCookies = _cookies;
+  }
+
+  return ctx.xCookies || {};
 }
 
-
 exports.customCookies = (ctx, key, value) => {
-    let xCookies = Cookies(ctx);
-    const isSet = value !== undefined;
-    if (isSet) {
-        ctx.cookies.set(key, value);
-        xCookies[key] = value;
-        ctx.set('x-cookies', JSON.stringify(xCookies));
-    } else {
-        value = ctx.cookies.get(key);
-        if (!value) {
-            value = xCookies[key];
-        }
-        return value;
+  let xCookies = Cookies(ctx);
+  const isSet = value !== undefined;
+  if (isSet) {
+    ctx.cookies.set(key, value);
+    xCookies[key] = value;
+    ctx.set('x-cookies', JSON.stringify(xCookies));
+  } else {
+    value = ctx.cookies.get(key);
+    if (!value) {
+      value = xCookies[key];
     }
+
+    if (value) {
+      return value;
+    } else {
+      debugger;
+      return '';
+    }
+  }
 };

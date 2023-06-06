@@ -6,7 +6,8 @@ let mail;
 
 const { WEBCONFIG } = global;
 const WEBROOT = path.resolve(__dirname, '..'); //路径
-console.log("WEBROOT", WEBROOT);
+exports.WEBROOT = WEBROOT;
+
 const WEBROOT_SERVER = __dirname;
 const WEBROOT_RUNTIME = path.resolve(__dirname, '../..');
 const WEBROOT_LOG = path.join(WEBROOT_RUNTIME, 'log');
@@ -302,6 +303,8 @@ function storageCreator(id) {
 if (mail) {
   yapi.mail = mail;
 }
+
+exports.yapi = yapi;
 
 global.yapi = yapi;
 global.storageCreator = storageCreator;

@@ -19,7 +19,6 @@ async function handleProxy(ctx, { domain, projectId }) {
   })();
 
   const [path, proxyHOST, proxyPORT] = (() => {
-
     let path, proxyHOST, proxyPORT;
     if (headers['yapi-run-test']) {
       path = headers['yapi-run-test'];
@@ -35,11 +34,8 @@ async function handleProxy(ctx, { domain, projectId }) {
       proxyPORT = headers['yapi-proxy-port'];
     }
 
-
     return [path, proxyHOST, proxyPORT];
   })();
-
-
 
   let body = yapi.commons.resReturn(null, 500, '代理失败');
   let response;
@@ -62,8 +58,6 @@ async function handleProxy(ctx, { domain, projectId }) {
       ctx.status = status || 500;
     }
   }
-
-
 
   try {
     if (response) {
@@ -376,7 +370,7 @@ exports.useMockServer = () => async (ctx, next) => {
         try {
           const id = ObjectId(i._id).toString();
           return id === interfaceData.witchEnv;
-        } catch (error) { }
+        } catch (error) {}
         return false;
       });
       await handleProxy(ctx, {

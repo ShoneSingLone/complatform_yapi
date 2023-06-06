@@ -1,5 +1,4 @@
 const userModel = require('../models/user.js');
-const { yapi } = global;
 const BaseController = require('./base.js');
 const common = require('../utils/commons.js');
 const ldap = require('../utils/ldap.js');
@@ -8,14 +7,13 @@ const groupModel = require('../models/group.js');
 const projectModel = require('../models/project.js');
 const avatarModel = require('../models/avatar.js');
 const { customCookies } = require('../utils/customCookies');
-
 const path = require('path');
-
 const jwt = require('jsonwebtoken');
 
 class userController extends BaseController {
   constructor(ctx) {
     super(ctx);
+    yapi;
     this.Model = yapi.getInst(userModel);
   }
   /**
@@ -601,7 +599,7 @@ class userController extends BaseController {
       let data = await avatarInst.get(uid);
       let dataBuffer, type;
       if (!data || !data.basecode) {
-        dataBuffer = yapi.fs.readFileSync(path.join(yapi.WEBROOT, 'static/image/avatar.png'));
+        dataBuffer = yapi.fs.readFileSync(path.join(WEBROOT, 'static/image/avatar.png'));
         type = 'image/png';
       } else {
         type = data.type;

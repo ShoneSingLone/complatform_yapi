@@ -14,7 +14,7 @@ class logModel extends BaseModel {
       typeid: { type: Number, required: true },
       type: {
         type: String,
-        enum: ['user', 'group', 'interface', 'project', 'other', 'interface_col', "wiki_doc"],
+        enum: ['user', 'group', 'interface', 'project', 'other', 'interface_col', 'wiki_doc'],
         required: true
       },
       content: { type: String, required: true },

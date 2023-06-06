@@ -17,7 +17,7 @@ return this;`;
           context.execSript = '执行时间过长';
           return r(context);
         }, 1000 * 10);
-        console.log("safeVm\n", script);
+        console.log('safeVm\n', script);
         const res = await safeVm.run(script, context);
         r(res);
       }))();

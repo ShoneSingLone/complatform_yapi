@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 /* require 如果没有用相对路径，就优先从node_modules里面找，找不到就从NODE_PATH 开始找 */
-process.env.NODE_PATH = path.resolve(__dirname, "..");
+process.env.NODE_PATH = path.resolve(__dirname, '..');
 require('module').Module._initPaths();
 
 async function main() {
@@ -11,7 +11,13 @@ async function main() {
 
   const yapi = await initDbAndCommon();
   /* 最先调用initDbAndCommon，再使用中间件 */
-  const { useGzipWhenPrd, useMockServer, useCORS, useHistoryMode, useYapiDevHeaderInfo } = require("server/middleware");
+  const {
+    useGzipWhenPrd,
+    useMockServer,
+    useCORS,
+    useHistoryMode,
+    useYapiDevHeaderInfo
+  } = require('server/middleware');
 
   require('./plugin.js');
   const websockify = require('koa-websocket');
@@ -32,17 +38,21 @@ async function main() {
   yapi.app = app;
 
   app.use(useCORS());
-  app.use(koaBody({
-    strict: false,
-    multipart: true,
-    formidable: {
-      // 上传目录
-      uploadDir: path.join(__dirname, 'uploads'),
-      // 保留文件扩展名
-      keepExtensions: true,
-    },
-    jsonLimit: '4mb', formLimit: '4mb', textLimit: '4mb'
-  }));
+  app.use(
+    koaBody({
+      strict: false,
+      multipart: true,
+      formidable: {
+        // 上传目录
+        uploadDir: path.join(__dirname, 'uploads'),
+        // 保留文件扩展名
+        keepExtensions: true
+      },
+      jsonLimit: '4mb',
+      formLimit: '4mb',
+      textLimit: '4mb'
+    })
+  );
   app.use(useYapiDevHeaderInfo());
   /* router */
   app.use(useMockServer());
@@ -53,10 +63,9 @@ async function main() {
 
   app.use(useGzipWhenPrd(yapi));
   /* static */
-  app.use(koaStatic(path.join(yapi.WEBROOT, 'static'), { index: INDEX_FILE, gzip: true }));
+  app.use(koaStatic(path.join(WEBROOT, 'static'), { index: INDEX_FILE, gzip: true }));
   /* index.html */
   app.use(useHistoryMode(yapi));
-
 
   appListen(app, currentPort).server.on('error', function handleAppError(e) {
     if (e.code === 'EADDRINUSE') {

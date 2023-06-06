@@ -1,14 +1,13 @@
+const { DbConnection } = yapi;
 const controller = require('./controller');
 const advModel = require('./advMockModel.js');
 const caseModel = require('./caseModel.js');
-const { yapi } = global;
-const { DbConnection } = yapi;
 
 const _ = require('lodash');
 const path = require('path');
-const lib = require(path.resolve(yapi.WEBROOT, 'common/lib.js'));
+const lib = require(path.resolve(WEBROOT, 'common/lib.js'));
 const Mock = require('mockjs');
-const mockExtra = require(path.resolve(yapi.WEBROOT, 'common/mock-extra.js'));
+const mockExtra = require(path.resolve(WEBROOT, 'common/mock-extra.js'));
 
 function arrToObj(arr) {
   let obj = { 'Set-Cookie': [] };
@@ -189,7 +188,7 @@ module.exports = function () {
           })
         );
       } catch (err) {
-        yapi.commons.log(err, 'error');
+        applog.error(err);
       }
 
       context.resHeader = arrToObj(data.headers);

@@ -280,7 +280,7 @@ class openController extends BaseController {
 
     if (ctx.params.email === true && reportsResult.message.failedNum !== 0) {
       let autoTestUrl = `${ctx.request.origin}/api/open/run_auto_test?id=${id}&token=${token}&mode=${ctx.params.mode}`;
-      yapi.commons.sendNotice(projectId, {
+      yapi.sendNotice(projectId, {
         title: `YApi自动化测试报告`,
         content: `
         <html>

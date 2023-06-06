@@ -18,11 +18,11 @@ const router = koaRouter();
 
 let INTERFACE_CONFIG = {
   god: {
-    prefix: "/god/",
+    prefix: '/god/',
     controller: GodController
   },
   wiki: {
-    prefix: "/wiki/",
+    prefix: '/wiki/',
     controller: wikiController
   },
   interface: {

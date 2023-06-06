@@ -1,8 +1,8 @@
 const _ = require('lodash');
 
 exports.useYapiDevHeaderInfo = () => async (ctx, next) => {
-    try {
-        /* console.log(
+  try {
+    /* console.log(
             '\nctx.path',
             ctx.path,
             '\nquery:\n',
@@ -11,30 +11,31 @@ exports.useYapiDevHeaderInfo = () => async (ctx, next) => {
             JSON.stringify(ctx?.request?.body || {}, null, 2),
         ); */
 
+    console.log(ctx.path, ctx.ips.join(','));
+    const start = Date.now();
+    await next();
+    const yapiTips = {
+      ..._.pick(ctx, ['headers', 'method', 'url'])
+    };
 
-        console.log(ctx.path, ctx.ips.join(","));
-        const start = Date.now();
-        await next();
-        const yapiTips = {
-            ..._.pick(ctx, ['headers', 'method', 'url'])
-        };
-
-        function flattenDeep(obj, target) {
-            return _.reduce(obj, (target, value, key) => {
-                if (_.isPlainObject(value)) {
-                    return flattenDeep(value, target);
-                } else {
-                    target[`yapi-${key}`] = value;
-                }
-                return target;
-            }, target);
-        }
-        _.each(
-            flattenDeep(yapiTips, { 'response-time': `${Date.now() - start}ms`, }),
-            (value, key) => {
-                ctx.set(key, value);
-            });
-    } catch (error) {
-        console.error(error);
+    function flattenDeep(obj, target) {
+      return _.reduce(
+        obj,
+        (target, value, key) => {
+          if (_.isPlainObject(value)) {
+            return flattenDeep(value, target);
+          } else {
+            target[`yapi-${key}`] = value;
+          }
+          return target;
+        },
+        target
+      );
     }
+    _.each(flattenDeep(yapiTips, { 'response-time': `${Date.now() - start}ms` }), (value, key) => {
+      ctx.set(key, value);
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };

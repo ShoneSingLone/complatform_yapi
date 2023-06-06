@@ -11,7 +11,7 @@ class BaseModel {
   constructor() {
     /* 约定优于配置，不要东搞西搞 */
     const IS_NEED_AUTO_INCREMENT = true;
-    const PRIMARY_KEY = "_id";
+    const PRIMARY_KEY = '_id';
 
     this.schema = new Schema(this.getSchema());
     this.name = this.getName();

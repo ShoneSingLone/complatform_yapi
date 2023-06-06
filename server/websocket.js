@@ -22,10 +22,15 @@ function addPluginRouter(config) {
   createAction(wsRouter, '/api', config.controller, config.action, routerPath, method, true);
 }
 
-
-
 exports.DecoratorWebsocket = function DecoratorWebsocket(app) {
-  createAction(wsRouter, '/api', interfaceController, 'solveConflict', '/interface/solve_conflict', 'get');
+  createAction(
+    wsRouter,
+    '/api',
+    interfaceController,
+    'solveConflict',
+    '/interface/solve_conflict',
+    'get'
+  );
   yapi.emitHookSync('add_ws_router', addPluginRouter);
   app.ws.use(useWS());
   app.ws.use(wsRouter.routes());

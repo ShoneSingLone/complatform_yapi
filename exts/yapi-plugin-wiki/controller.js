@@ -104,19 +104,16 @@ class wikiController extends BaseController {
         let diffView = showDiffMsg(jsondiffpatch, formattersHtml, logData);
 
         let annotatedCss = fs.readFileSync(
-          path.resolve(
-            yapi.WEBROOT,
-            'node_modules/jsondiffpatch/dist/formatters-styles/annotated.css'
-          ),
+          path.resolve(WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/annotated.css'),
           'utf8'
         );
         let htmlCss = fs.readFileSync(
-          path.resolve(yapi.WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/html.css'),
+          path.resolve(WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/html.css'),
           'utf8'
         );
         let project = await this.projectModel.getBaseInfo(params.project_id);
 
-        yapi.commons.sendNotice(params.project_id, {
+        yapi.sendNotice(params.project_id, {
           title: `${username} 更新了wiki说明`,
           content: `<html>
           <head>
@@ -178,7 +175,7 @@ class wikiController extends BaseController {
           ctx.websocket.send(JSON.stringify(data));
         }
       });
-      ctx.websocket.on('close', async () => { });
+      ctx.websocket.on('close', async () => {});
     } catch (err) {
       yapi.commons.log(err, 'error');
     }

@@ -64,7 +64,6 @@ async function setYapiMongooseAsync() {
         reject(err);
       }
     );
-
   });
 }
 

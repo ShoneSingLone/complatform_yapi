@@ -1,4 +1,3 @@
-const { yapi } = global;
 const projectModel = require('../models/project.js');
 const userModel = require('../models/user.js');
 const interfaceModel = require('../models/interface.js');
@@ -131,12 +130,16 @@ class BaseController {
     let token = customCookies(ctx, '_yapi_token');
     let uid = customCookies(ctx, '_yapi_uid');
     try {
+      /* 未携带认证信息 */
       if (!token || !uid) {
+        yapi.applog.log('未携带认证信息');
         return false;
       }
       let userInst = yapi.getInst(userModel); //创建user实体
       let result = await userInst.findById(uid);
+      /* 用户不存在 */
       if (!result) {
+        yapi.applog.log('用户不存在');
         return false;
       }
 
@@ -144,16 +147,17 @@ class BaseController {
       try {
         decoded = jwt.verify(token, result.passsalt);
       } catch (err) {
+        yapi.applog.log('JWT 信息不匹配');
         return false;
       }
-
+      /* 身份验证 */
       if (decoded.uid == uid) {
         this.$uid = uid;
         this.$auth = true;
         this.$user = result;
+        yapi.applog.log('身份验证');
         return true;
       }
-
       return false;
     } catch (e) {
       yapi.commons.log(e, 'error');
@@ -185,7 +189,8 @@ class BaseController {
 
   async getLoginStatus(ctx) {
     let body;
-    if ((await this.checkLogin(ctx)) === true) {
+    const isLogin = await this.checkLogin(ctx);
+    if (isLogin) {
       let result = yapi.commons.fieldSelect(this.$user, [
         '_id',
         'username',
