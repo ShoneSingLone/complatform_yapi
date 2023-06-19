@@ -1,6 +1,5 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { yapi } = global;
 const sha1 = require('sha1');
 const logModel = require('../models/log.js');
 const projectModel = require('../models/project.js');
@@ -171,7 +170,7 @@ exports.sendMail = (options, cb) => {
   try {
     yapi.mail.sendMail(
       {
-        from: global.WEBCONFIG.mail.from,
+        from: yapi.WEBCONFIG.mail.from,
         to: options.to,
         subject: options.subject,
         html: options.contents
@@ -432,7 +431,7 @@ function handleParamsValue(params, val) {
   let value = {};
   try {
     params = params.toObject();
-  } catch (e) {}
+  } catch (e) { }
   if (params.length === 0 || val.length === 0) {
     return params;
   }
@@ -649,9 +648,6 @@ exports.createWebAPIRequest = function (ops) {
   });
 };
 
-exports.setYapiCommons = () => {
-  yapi.commons = exports;
-};
 
 const applog = {
   log(msg) {
@@ -664,3 +660,9 @@ const applog = {
     log(msg, 'warn');
   }
 };
+
+exports.setYapiCommons = () => {
+  yapi.commons = exports;
+};
+
+

@@ -5,9 +5,9 @@ const caseModel = require('./caseModel.js');
 
 const _ = require('lodash');
 const path = require('path');
-const lib = require(path.resolve(WEBROOT, 'common/lib.js'));
+const lib = require(path.resolve(yapi.WEBROOT, 'common/lib.js'));
 const Mock = require('mockjs');
-const mockExtra = require(path.resolve(WEBROOT, 'common/mock-extra.js'));
+const mockExtra = require(path.resolve(yapi.WEBROOT, 'common/mock-extra.js'));
 
 function arrToObj(arr) {
   let obj = { 'Set-Cookie': [] };

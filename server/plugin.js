@@ -1,7 +1,6 @@
-const { yapi } = global;
 const path = require('path');
-const plugin_path = path.join(WEBROOT, 'node_modules');
-const plugin_system_path = path.join(WEBROOT, 'exts');
+const plugin_path = path.join(yapi.WEBROOT, 'node_modules');
+const plugin_system_path = path.join(yapi.WEBROOT, 'exts');
 const initPlugins = require('../common/plugin.js').initPlugins;
 var extConfig = require('../common/config.js').exts;
 
@@ -91,31 +90,31 @@ var hooks = {
     listener: []
   },
   /**
-     * 导出 markdown 数据
-     * @param context Object
-     * {
-     *  projectData: project,
+   * 导出 markdown 数据
+   * @param context Object
+   * {
+   *  projectData: project,
         interfaceData: interfaceData,
         ctx: ctx,
         mockJson: res 
-     * }
-     * 
-     */
+   * }
+   *
+   */
   export_markdown: {
     type: 'multi',
     listener: []
   },
   /**
-     * MockServer生成mock数据后触发
-     * @param context Object
-     * {
-     *  projectData: project,
+   * MockServer生成mock数据后触发
+   * @param context Object
+   * {
+   *  projectData: project,
         interfaceData: interfaceData,
         ctx: ctx,
         mockJson: res 
-     * }
-     * 
-     */
+   * }
+   *
+   */
   mock_after: {
     type: 'multi',
     listener: []
@@ -233,7 +232,7 @@ yapi.bindHook = bindHook;
 yapi.emitHook = emitHook;
 yapi.emitHookSync = emitHook;
 
-let pluginsConfig = initPlugins(global.WEBCONFIG.plugins, 'plugin');
+let pluginsConfig = initPlugins(yapi.WEBCONFIG.plugins, 'plugin');
 pluginsConfig.forEach(plugin => {
   if (!plugin || plugin.enable === false || plugin.server === false) return null;
 

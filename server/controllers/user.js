@@ -138,12 +138,12 @@ class userController extends BaseController {
       // const username = email.split(/\@/g)[0];
       const { info: ldapInfo } = await ldap.ldapQuery(email, password);
       const emailPrefix = email.split(/\@/g)[0];
-      const emailPostfix = global.WEBCONFIG.ldapLogin.emailPostfix;
+      const emailPostfix = yapi.WEBCONFIG.ldapLogin.emailPostfix;
 
       const emailParams =
-        ldapInfo[global.WEBCONFIG.ldapLogin.emailKey || 'mail'] ||
+        ldapInfo[yapi.WEBCONFIG.ldapLogin.emailKey || 'mail'] ||
         (emailPostfix ? emailPrefix + emailPostfix : email);
-      const username = ldapInfo[global.WEBCONFIG.ldapLogin.usernameKey] || emailPrefix;
+      const username = ldapInfo[yapi.WEBCONFIG.ldapLogin.usernameKey] || emailPrefix;
 
       let login = await this.handleThirdLogin(emailParams, username);
 
@@ -298,7 +298,7 @@ class userController extends BaseController {
    */
   async reg(ctx) {
     //注册
-    if (global.WEBCONFIG.closeRegister) {
+    if (yapi.WEBCONFIG.closeRegister) {
       return (ctx.body = yapi.commons.resReturn(null, 400, '禁止注册，请联系管理员'));
     }
     let userInst = yapi.getInst(userModel);
@@ -599,7 +599,7 @@ class userController extends BaseController {
       let data = await avatarInst.get(uid);
       let dataBuffer, type;
       if (!data || !data.basecode) {
-        dataBuffer = yapi.fs.readFileSync(path.join(WEBROOT, 'static/image/avatar.png'));
+        dataBuffer = yapi.fs.readFileSync(path.join(yapi.WEBROOT, 'static/image/avatar.png'));
         type = 'image/png';
       } else {
         type = data.type;

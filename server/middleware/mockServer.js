@@ -223,7 +223,7 @@ function mockValidator(interfaceData, ctx) {
 exports.useMockServer = () => async (ctx, next) => {
   // no used variable 'hostname' & 'config'
   // let hostname = ctx.hostname;
-  // let config = global.WEBCONFIG;
+  // let config = yapi.WEBCONFIG;
   let path = ctx.path;
   let header = ctx.request.header;
 
