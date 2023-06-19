@@ -14,5 +14,9 @@
 mongodb
 
 ```js
-db.col.update({ title: 'MongoDB 教程' }, { $set: { title: 'MongoDB' } }, { multi: true });
+db.col.update(
+	{ title: "MongoDB 教程" },
+	{ $set: { title: "MongoDB" } },
+	{ multi: true }
+);
 ```

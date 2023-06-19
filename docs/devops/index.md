@@ -157,8 +157,8 @@ node server/app.js //启动服务器后，请访问 127.0.0.1:{config.json配置
 
 ```json
 {
-  "port": "*****",
-  "closeRegister": true
+	"port": "*****",
+	"closeRegister": true
 }
 ```
 
@@ -168,9 +168,9 @@ node server/app.js //启动服务器后，请访问 127.0.0.1:{config.json配置
 
 ```json
 {
-  "port": "******",
-  "adminAccount": "*****",
-  "versionNotify": true
+	"port": "******",
+	"adminAccount": "*****",
+	"versionNotify": true
 }
 ```
 
@@ -180,12 +180,12 @@ node server/app.js //启动服务器后，请访问 127.0.0.1:{config.json配置
 
 ```json
 {
-  "port": "***",
-  "db": {
-    "connectString": "mongodb://127.0.0.100:8418,127.0.0.101:8418,127.0.0.102:8418/yapidb?slaveOk=true",
-    "user": "******",
-    "pass": "******"
-  }
+	"port": "***",
+	"db": {
+		"connectString": "mongodb://127.0.0.100:8418,127.0.0.101:8418,127.0.0.102:8418/yapidb?slaveOk=true",
+		"user": "******",
+		"pass": "******"
+	}
 }
 ```
 

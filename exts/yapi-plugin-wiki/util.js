@@ -7,17 +7,17 @@ const convert2Decimal = num => (num > 9 ? num : `0${num}`);
  * @return {String} 2017-01-20 20:00:00
  */
 exports.formatDate = val => {
-  let date = val;
-  if (typeof val !== 'object') {
-    date = new Date(val);
-  }
-  return `${[
-    date.getFullYear(),
-    convert2Decimal(date.getMonth() + 1),
-    convert2Decimal(date.getDate())
-  ].join('-')}  ${[
-    convert2Decimal(date.getHours()),
-    convert2Decimal(date.getMinutes()),
-    convert2Decimal(date.getSeconds())
-  ].join(':')}`;
+	let date = val;
+	if (typeof val !== "object") {
+		date = new Date(val);
+	}
+	return `${[
+		date.getFullYear(),
+		convert2Decimal(date.getMonth() + 1),
+		convert2Decimal(date.getDate())
+	].join("-")}  ${[
+		convert2Decimal(date.getHours()),
+		convert2Decimal(date.getMinutes()),
+		convert2Decimal(date.getSeconds())
+	].join(":")}`;
 };

@@ -1,7 +1,7 @@
-const { initDbAndCommon } = require('./initConfig');
-const { appListen } = require('./appListen');
+const { initDbAndCommon } = require("./initConfig");
+const { appListen } = require("./appListen");
 
 module.exports = {
-  initDbAndCommon,
-  appListen
+	initDbAndCommon,
+	appListen
 };

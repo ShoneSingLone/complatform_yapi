@@ -1,4 +1,4 @@
-global.WEBCONFIG = require('../../../yapiConfigs.js');
+global.WEBCONFIG = require("../../../yapiConfigs.js");
 
 /* module.exports = {
     port: "0000",
@@ -21,8 +21,8 @@ global.WEBCONFIG = require('../../../yapiConfigs.js');
 }; */
 
 exports.initDbAndCommon = async function () {
-    require('../utils/utils');
-    require('../utils/commons');
-    await require('../utils/db.js').setYapiMongooseAsync();
-    return global.xU;
+	require("../utils/utils");
+	require("../utils/commons");
+	await require("../utils/db.js").setYapiMongooseAsync();
+	return global.xU;
 };

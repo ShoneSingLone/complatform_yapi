@@ -1,121 +1,127 @@
-const BaseController = require('server/controllers/base.js');
-const modelWiki = require('./modelWiki.js');
-const modelProject = require('server/models/project.js');
-const modelUser = require('server/models/user.js');
-const jsondiffpatch = require('jsondiffpatch');
+const BaseController = require("server/controllers/base.js");
+const modelWiki = require("./modelWiki.js");
+const modelProject = require("server/models/project.js");
+const modelUser = require("server/models/user.js");
+const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
 const { yapi } = global;
 // const util = require('./util.js');
-const fs = require('fs-extra');
-const path = require('path');
-const showDiffMsg = require('../../common/diff-view.js');
+const fs = require("fs-extra");
+const path = require("path");
+const showDiffMsg = require("../../common/diff-view.js");
 class wikiController extends BaseController {
-  constructor(ctx) {
-    super(ctx);
-    this.Model = xU.getInst(modelWiki);
-    this.modelProject = xU.getInst(modelProject);
-  }
+	constructor(ctx) {
+		super(ctx);
+		this.Model = xU.getInst(modelWiki);
+		this.modelProject = xU.getInst(modelProject);
+	}
 
-  /**
-   * 获取wiki信息
-   * @interface wiki_desc/get
-   * @method get
-   * @category statistics
-   * @foldnumber 10
-   * @returns {Object}
-   */
-  async getWikiDesc(ctx) {
-    try {
-      let project_id = ctx.request.query.project_id;
-      if (!project_id) {
-        return (ctx.body = xU.resReturn(null, 400, '项目id不能为空'));
-      }
-      let result = await this.Model.get(project_id);
-      return (ctx.body = xU.resReturn(result));
-    } catch (err) {
-      ctx.body = xU.resReturn(null, 400, err.message);
-    }
-  }
+	/**
+	 * 获取wiki信息
+	 * @interface wiki_desc/get
+	 * @method get
+	 * @category statistics
+	 * @foldnumber 10
+	 * @returns {Object}
+	 */
+	async getWikiDesc(ctx) {
+		try {
+			let project_id = ctx.request.query.project_id;
+			if (!project_id) {
+				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+			}
+			let result = await this.Model.get(project_id);
+			return (ctx.body = xU.resReturn(result));
+		} catch (err) {
+			ctx.body = xU.resReturn(null, 400, err.message);
+		}
+	}
 
-  /**
-   * 保存wiki信息
-   * @interface wiki_desc/get
-   * @method get
-   * @category statistics
-   * @foldnumber 10
-   * @returns {Object}
-   */
+	/**
+	 * 保存wiki信息
+	 * @interface wiki_desc/get
+	 * @method get
+	 * @category statistics
+	 * @foldnumber 10
+	 * @returns {Object}
+	 */
 
-  async uplodaWikiDesc(ctx) {
-    try {
-      let params = ctx.request.body;
-      params = xU.handleParams(params, {
-        project_id: 'number',
-        desc: 'string',
-        markdown: 'string'
-      });
+	async uplodaWikiDesc(ctx) {
+		try {
+			let params = ctx.request.body;
+			params = xU.handleParams(params, {
+				project_id: "number",
+				desc: "string",
+				markdown: "string"
+			});
 
-      if (!params.project_id) {
-        return (ctx.body = xU.resReturn(null, 400, '项目id不能为空'));
-      }
-      if (!this.$tokenAuth) {
-        let auth = await this.checkAuth(params.project_id, 'project', 'edit');
-        if (!auth) {
-          return (ctx.body = xU.resReturn(null, 400, '没有权限'));
-        }
-      }
+			if (!params.project_id) {
+				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+			}
+			if (!this.$tokenAuth) {
+				let auth = await this.checkAuth(params.project_id, "project", "edit");
+				if (!auth) {
+					return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+				}
+			}
 
-      let notice = params.email_notice;
-      delete params.email_notice;
-      const username = this.getUsername();
-      const uid = this.getUid();
+			let notice = params.email_notice;
+			delete params.email_notice;
+			const username = this.getUsername();
+			const uid = this.getUid();
 
-      // 如果当前数据库里面没有数据
-      let result = await this.Model.get(params.project_id);
-      if (!result) {
-        let data = Object.assign(params, {
-          username,
-          uid,
-          add_time: xU.time(),
-          up_time: xU.time()
-        });
+			// 如果当前数据库里面没有数据
+			let result = await this.Model.get(params.project_id);
+			if (!result) {
+				let data = Object.assign(params, {
+					username,
+					uid,
+					add_time: xU.time(),
+					up_time: xU.time()
+				});
 
-        let res = await this.Model.save(data);
-        ctx.body = xU.resReturn(res);
-      } else {
-        let data = Object.assign(params, {
-          username,
-          uid,
-          up_time: xU.time()
-        });
-        let upRes = await this.Model.up(result._id, data);
-        ctx.body = xU.resReturn(upRes);
-      }
+				let res = await this.Model.save(data);
+				ctx.body = xU.resReturn(res);
+			} else {
+				let data = Object.assign(params, {
+					username,
+					uid,
+					up_time: xU.time()
+				});
+				let upRes = await this.Model.up(result._id, data);
+				ctx.body = xU.resReturn(upRes);
+			}
 
-      let logData = {
-        type: 'wiki',
-        project_id: params.project_id,
-        current: params.desc,
-        old: result ? result.toObject().desc : ''
-      };
-      let wikiUrl = `${ctx.request.origin}/project/${params.project_id}/wiki`;
+			let logData = {
+				type: "wiki",
+				project_id: params.project_id,
+				current: params.desc,
+				old: result ? result.toObject().desc : ""
+			};
+			let wikiUrl = `${ctx.request.origin}/project/${params.project_id}/wiki`;
 
-      if (notice) {
-        let diffView = showDiffMsg(jsondiffpatch, formattersHtml, logData);
+			if (notice) {
+				let diffView = showDiffMsg(jsondiffpatch, formattersHtml, logData);
 
-        let annotatedCss = fs.readFileSync(
-          path.resolve(xU.WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/annotated.css'),
-          'utf8'
-        );
-        let htmlCss = fs.readFileSync(
-          path.resolve(xU.WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/html.css'),
-          'utf8'
-        );
-        let project = await this.modelProject.getBaseInfo(params.project_id);
+				let annotatedCss = fs.readFileSync(
+					path.resolve(
+						xU.WEBROOT,
+						"node_modules/jsondiffpatch/dist/formatters-styles/annotated.css"
+					),
+					"utf8"
+				);
+				let htmlCss = fs.readFileSync(
+					path.resolve(
+						xU.WEBROOT,
+						"node_modules/jsondiffpatch/dist/formatters-styles/html.css"
+					),
+					"utf8"
+				);
+				let project = await this.modelProject.getBaseInfo(params.project_id);
 
-        xU.sendNotice(params.project_id, {
-          title: `${username} 更新了wiki说明`,
-          content: `<html>
+				xU.sendNotice(params.project_id, {
+					title: `${username} 更新了wiki说明`,
+					content: `<html>
           <head>
           <meta charset="utf-8" />
           <style>
@@ -130,102 +136,102 @@ class wikiController extends BaseController {
           <p>详细改动日志: ${this.diffHTML(diffView)}</p></div>
           </body>
           </html>`
-        });
-      }
+				});
+			}
 
-      // 保存修改日志信息
-      xU.saveLog({
-        content: `<a href="/user/profile/${uid}">${username}</a> 更新了 <a href="${wikiUrl}">wiki</a> 的信息`,
-        type: 'project',
-        uid,
-        username: username,
-        typeid: params.project_id,
-        data: logData
-      });
-      return 1;
-    } catch (err) {
-      ctx.body = xU.resReturn(null, 400, err.message);
-    }
-  }
-  diffHTML(html) {
-    if (html.length === 0) {
-      return `<span style="color: #555">没有改动，该操作未改动wiki数据</span>`;
-    }
+			// 保存修改日志信息
+			xU.saveLog({
+				content: `<a href="/user/profile/${uid}">${username}</a> 更新了 <a href="${wikiUrl}">wiki</a> 的信息`,
+				type: "project",
+				uid,
+				username: username,
+				typeid: params.project_id,
+				data: logData
+			});
+			return 1;
+		} catch (err) {
+			ctx.body = xU.resReturn(null, 400, err.message);
+		}
+	}
+	diffHTML(html) {
+		if (html.length === 0) {
+			return `<span style="color: #555">没有改动，该操作未改动wiki数据</span>`;
+		}
 
-    return html.map(item => {
-      return `<div>
+		return html.map(item => {
+			return `<div>
       <h4 class="title">${item.title}</h4>
       <div>${item.content}</div>
     </div>`;
-    });
-  }
+		});
+	}
 
-  // 处理编辑冲突
-  async wikiConflict(ctx) {
-    try {
-      let result;
-      ctx.websocket.on('message', async message => {
-        let id = parseInt(ctx.query.id, 10);
-        if (!id) {
-          return ctx.websocket.send('id 参数有误');
-        }
-        result = await this.Model.get(id);
-        let data = await this.websocketMsgMap(message, result);
-        if (data) {
-          ctx.websocket.send(JSON.stringify(data));
-        }
-      });
-      ctx.websocket.on('close', async () => {});
-    } catch (err) {
-      xU.log(err, 'error');
-    }
-  }
+	// 处理编辑冲突
+	async wikiConflict(ctx) {
+		try {
+			let result;
+			ctx.websocket.on("message", async message => {
+				let id = parseInt(ctx.query.id, 10);
+				if (!id) {
+					return ctx.websocket.send("id 参数有误");
+				}
+				result = await this.Model.get(id);
+				let data = await this.websocketMsgMap(message, result);
+				if (data) {
+					ctx.websocket.send(JSON.stringify(data));
+				}
+			});
+			ctx.websocket.on("close", async () => {});
+		} catch (err) {
+			xU.log(err, "error");
+		}
+	}
 
-  websocketMsgMap(msg, result) {
-    const map = {
-      start: this.startFunc.bind(this),
-      end: this.endFunc.bind(this),
-      editor: this.editorFunc.bind(this)
-    };
+	websocketMsgMap(msg, result) {
+		const map = {
+			start: this.startFunc.bind(this),
+			end: this.endFunc.bind(this),
+			editor: this.editorFunc.bind(this)
+		};
 
-    return map[msg](result);
-  }
+		return map[msg](result);
+	}
 
-  // socket 开始链接
-  async startFunc(result) {
-    if (result && result.edit_uid === this.getUid()) {
-      await this.Model.upEditUid(result._id, 0);
-    }
-  }
+	// socket 开始链接
+	async startFunc(result) {
+		if (result && result.edit_uid === this.getUid()) {
+			await this.Model.upEditUid(result._id, 0);
+		}
+	}
 
-  // socket 结束链接
-  async endFunc(result) {
-    if (result) {
-      await this.Model.upEditUid(result._id, 0);
-    }
-  }
+	// socket 结束链接
+	async endFunc(result) {
+		if (result) {
+			await this.Model.upEditUid(result._id, 0);
+		}
+	}
 
-  // 正在编辑
-  async editorFunc(result) {
-    let userInst, userinfo, data;
-    if (result && result.edit_uid !== 0 && result.edit_uid !== this.getUid()) {
-      userInst = xU.getInst(modelUser);
-      userinfo = await userInst.findById(result.edit_uid);
-      data = {
-        errno: result.edit_uid,
-        data: { uid: result.edit_uid, username: userinfo.username }
-      };
-    } else {
-      if (result) {
-        await this.Model.upEditUid(result._id, this.getUid());
-      }
-      data = {
-        errno: 0,
-        data: result
-      };
-    }
-    return data;
-  }
+	// 正在编辑
+	async editorFunc(result) {
+		let userInst, userinfo, data;
+		if (result && result.edit_uid !== 0 && result.edit_uid !== this.getUid()) {
+			userInst = xU.getInst(modelUser);
+			userinfo = await userInst.findById(result.edit_uid);
+			data = {
+				errno: result.edit_uid,
+				data: { uid: result.edit_uid, username: userinfo.username }
+			};
+		} else {
+			if (result) {
+				await this.Model.upEditUid(result._id, this.getUid());
+			}
+			data = {
+				errno: 0,
+				data: result
+			};
+		}
+		return data;
+	}
 }
 
 module.exports = wikiController;

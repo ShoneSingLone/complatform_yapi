@@ -164,8 +164,8 @@ storage.setItem 兼容浏览器和服务端，并且是持久化数据存储，�
 storage 一共两个 api，分别是 setItem 和 getItem
 
 ```js
-storage.setItem('xxx', 'token-----xxxxx');
-context.query.token = storage.getItem('xxx');
+storage.setItem("xxx", "token-----xxxxx");
+context.query.token = storage.getItem("xxx");
 ```
 
 ### 工具函数
@@ -192,13 +192,19 @@ CryptoJS 具体用法
 var data = [{ id: 1 }, { id: 2 }];
 
 // Encrypt
-var ciphertext = context.utils.CryptoJS.AES.encrypt(JSON.stringify(data), 'secret key 123');
+var ciphertext = context.utils.CryptoJS.AES.encrypt(
+	JSON.stringify(data),
+	"secret key 123"
+);
 
 // Decrypt
-var bytes = context.utils.CryptoJS.AES.decrypt(ciphertext.toString(), 'secret key 123');
+var bytes = context.utils.CryptoJS.AES.decrypt(
+	ciphertext.toString(),
+	"secret key 123"
+);
 var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
-console.log('decryptedData', decryptedData);
+console.log("decryptedData", decryptedData);
 ```
 
 ### 异步处理（v1.3.13+支持）
@@ -207,12 +213,14 @@ console.log('decryptedData', decryptedData);
 
 ```javascript
 context.promise = new Promise(function (resolve) {
-  var api = context.utils.axios.get('http://yapi.local.qunar.com:3000/api/user/status');
-  api.then(function (result) {
-    //...
-    console.log(result.data);
-    resolve();
-  });
+	var api = context.utils.axios.get(
+		"http://yapi.local.qunar.com:3000/api/user/status"
+	);
+	api.then(function (result) {
+		//...
+		console.log(result.data);
+		resolve();
+	});
 });
 ```
 
@@ -220,10 +228,10 @@ promise 还可以来设置接口延迟
 
 ```javascript
 context.promise = new Promise(function (resolve) {
-  setTimeout(function () {
-    console.log('delay 1000ms');
-    resolve('ok');
-  }, 1000);
+	setTimeout(function () {
+		console.log("delay 1000ms");
+		resolve("ok");
+	}, 1000);
 });
 ```
 

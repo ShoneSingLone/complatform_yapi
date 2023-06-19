@@ -1,63 +1,63 @@
 const { yapi } = global;
-const ModelBase = require('server/models/base');
+const ModelBase = require("server/models/base");
 
 class advMockModel extends ModelBase {
-  getName() {
-    return 'adv_mock';
-  }
+	getName() {
+		return "adv_mock";
+	}
 
-  getSchema() {
-    return {
-      interface_id: { type: Number, required: true },
-      project_id: { type: Number, required: true },
-      enable: { type: Boolean, default: false },
-      mock_script: String,
-      uid: String,
-      up_time: Number
-    };
-  }
+	getSchema() {
+		return {
+			interface_id: { type: Number, required: true },
+			project_id: { type: Number, required: true },
+			enable: { type: Boolean, default: false },
+			mock_script: String,
+			uid: String,
+			up_time: Number
+		};
+	}
 
-  get(interface_id) {
-    return this.model.findOne({
-      interface_id: interface_id
-    });
-  }
+	get(interface_id) {
+		return this.model.findOne({
+			interface_id: interface_id
+		});
+	}
 
-  delByInterfaceId(interface_id) {
-    return this.model.remove({
-      interface_id: interface_id
-    });
-  }
+	delByInterfaceId(interface_id) {
+		return this.model.remove({
+			interface_id: interface_id
+		});
+	}
 
-  delByProjectId(project_id) {
-    return this.model.remove({
-      project_id: project_id
-    });
-  }
+	delByProjectId(project_id) {
+		return this.model.remove({
+			project_id: project_id
+		});
+	}
 
-  save(data) {
-    data.up_time = xU.time();
-    let m = new this.model(data);
-    return m.save();
-  }
+	save(data) {
+		data.up_time = xU.time();
+		let m = new this.model(data);
+		return m.save();
+	}
 
-  up(data) {
-    data.up_time = xU.time();
-    return this.model.update(
-      {
-        interface_id: data.interface_id
-      },
-      {
-        uid: data.uid,
-        up_time: data.up_time,
-        mock_script: data.mock_script,
-        enable: data.enable
-      },
-      {
-        upsert: true
-      }
-    );
-  }
+	up(data) {
+		data.up_time = xU.time();
+		return this.model.update(
+			{
+				interface_id: data.interface_id
+			},
+			{
+				uid: data.uid,
+				up_time: data.up_time,
+				mock_script: data.mock_script,
+				enable: data.enable
+			},
+			{
+				upsert: true
+			}
+		);
+	}
 }
 
 module.exports = advMockModel;

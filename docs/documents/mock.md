@@ -92,9 +92,9 @@
 在代码直接请求 yapi 提供的 mock 地址，以 jQuery 为例：
 
 ```javascript
-let prefix = 'http://yapi.xxx.com/mock/2817';
-$.post(prefix + '/baseapi/path', { username: 'xxx' }, function (res) {
-  console.log(res); //返回上图预览部分的数据
+let prefix = "http://yapi.xxx.com/mock/2817";
+$.post(prefix + "/baseapi/path", { username: "xxx" }, function (res) {
+	console.log(res); //返回上图预览部分的数据
 });
 ```
 

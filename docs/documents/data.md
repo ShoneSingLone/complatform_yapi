@@ -81,11 +81,11 @@ npm install -g yapi-cli
 
 ```json
 {
-  "type": "swagger",
-  "token": "17fba0027f300248b804",
-  "file": "swagger.json",
-  "merge": "normal",
-  "server": "http://yapi.local.qunar.com:3000"
+	"type": "swagger",
+	"token": "17fba0027f300248b804",
+	"file": "swagger.json",
+	"merge": "normal",
+	"server": "http://yapi.local.qunar.com:3000"
 }
 ```
 
