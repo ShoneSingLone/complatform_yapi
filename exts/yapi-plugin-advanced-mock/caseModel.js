@@ -1,8 +1,8 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 const mongoose = require('mongoose');
 
-class caseModel extends BaseModel {
+class caseModel extends ModelBase {
   getName() {
     return 'adv_mock_case';
   }
@@ -53,7 +53,7 @@ class caseModel extends BaseModel {
   }
 
   save(data) {
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     let m = new this.model(data);
     return m.save();
   }
@@ -61,7 +61,7 @@ class caseModel extends BaseModel {
   up(data) {
     let id = data.id;
     delete data.id;
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     return this.model.update(
       {
         _id: id

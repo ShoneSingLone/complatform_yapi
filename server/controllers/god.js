@@ -8,7 +8,7 @@ const json5 = require('json5');
 class GodController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.orm_i18n = yapi.getInst(I18nModel);
+    this.orm_i18n = xU.getInst(I18nModel);
   }
 
   /*
@@ -24,12 +24,12 @@ class GodController extends BaseController {
     if (strategy) {
       try {
         const res = await strategy.call(this, ctx);
-        ctx.body = yapi.commons.resReturn(res);
+        ctx.body = xU.resReturn(res);
       } catch (err) {
-        ctx.body = yapi.commons.resReturn(null, 402, err.message);
+        ctx.body = xU.resReturn(null, 402, err.message);
       }
     } else {
-      ctx.body = yapi.commons.resReturn(null, 404, incantations);
+      ctx.body = xU.resReturn(null, 404, incantations);
     }
   }
 }

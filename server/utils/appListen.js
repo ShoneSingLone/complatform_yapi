@@ -3,7 +3,7 @@ function appListen(app, PORT, tips = '服务已启动，请打开下面链接访
   if (process.send) {
     process.send(JSON.stringify({ type: 'CHANGE_PORT', PORT }));
   }
-  yapi.commons.log(`${tips} http://127.0.0.1${PORT == '80' ? '' : ':' + PORT}/ `);
+  xU.log(`${tips} http://127.0.0.1${PORT == '80' ? '' : ':' + PORT}/ `);
   var interfaces = require('os').networkInterfaces();
   const content = JSON.stringify(interfaces);
   const contentArray = content.split(`",`).filter(s => s.match(/"address":"(.*)/));

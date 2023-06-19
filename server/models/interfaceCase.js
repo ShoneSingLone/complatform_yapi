@@ -1,9 +1,9 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-class interfaceCase extends BaseModel {
+class interfaceCase extends ModelBase {
   getName() {
     return 'interface_case';
   }
@@ -116,7 +116,7 @@ class interfaceCase extends BaseModel {
   }
 
   up(id, data) {
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     return this.model.update({ _id: id }, data);
   }
 

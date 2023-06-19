@@ -1,13 +1,13 @@
 const { yapi } = global;
 const BaseController = require('./base.js');
 const followModel = require('../models/follow');
-const projectModel = require('../models/project');
+const modelProject = require('../models/project');
 
 class followController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.Model = yapi.getInst(followModel);
-    this.projectModel = yapi.getInst(projectModel);
+    this.Model = xU.getInst(followModel);
+    this.modelProject = xU.getInst(modelProject);
   }
 
   /**
@@ -29,17 +29,17 @@ class followController extends BaseController {
     // limit = ctx.request.query.limit || 10;
 
     if (!uid) {
-      return (ctx.body = yapi.commons.resReturn(null, 400, '用户id不能为空'));
+      return (ctx.body = xU.resReturn(null, 400, '用户id不能为空'));
     }
 
     try {
       let result = await this.Model.list(uid);
 
-      ctx.body = yapi.commons.resReturn({
+      ctx.body = xU.resReturn({
         list: result
       });
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 402, err.message);
+      ctx.body = xU.resReturn(null, 402, err.message);
     }
   }
 
@@ -59,20 +59,20 @@ class followController extends BaseController {
       uid = this.getUid();
 
     if (!params.projectid) {
-      return (ctx.body = yapi.commons.resReturn(null, 400, '项目id不能为空'));
+      return (ctx.body = xU.resReturn(null, 400, '项目id不能为空'));
     }
 
     let checkRepeat = await this.Model.checkProjectRepeat(uid, params.projectid);
 
     if (checkRepeat == 0) {
-      return (ctx.body = yapi.commons.resReturn(null, 401, '项目未关注'));
+      return (ctx.body = xU.resReturn(null, 401, '项目未关注'));
     }
 
     try {
       let result = await this.Model.del(params.projectid, this.getUid());
-      ctx.body = yapi.commons.resReturn(result);
+      ctx.body = xU.resReturn(result);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -91,24 +91,24 @@ class followController extends BaseController {
 
   async add(ctx) {
     let params = ctx.request.body;
-    params = yapi.commons.handleParams(params, {
+    params = xU.handleParams(params, {
       projectid: 'number'
     });
 
     let uid = this.getUid();
 
     if (!params.projectid) {
-      return (ctx.body = yapi.commons.resReturn(null, 400, '项目id不能为空'));
+      return (ctx.body = xU.resReturn(null, 400, '项目id不能为空'));
     }
 
     let checkRepeat = await this.Model.checkProjectRepeat(uid, params.projectid);
 
     if (checkRepeat) {
-      return (ctx.body = yapi.commons.resReturn(null, 401, '项目已关注'));
+      return (ctx.body = xU.resReturn(null, 401, '项目已关注'));
     }
 
     try {
-      let project = await this.projectModel.get(params.projectid);
+      let project = await this.modelProject.get(params.projectid);
       let data = {
         uid: uid,
         projectid: params.projectid,
@@ -117,7 +117,7 @@ class followController extends BaseController {
         color: project.color
       };
       let result = await this.Model.save(data);
-      result = yapi.commons.fieldSelect(result, [
+      result = xU.fieldSelect(result, [
         '_id',
         'uid',
         'projectid',
@@ -125,9 +125,9 @@ class followController extends BaseController {
         'icon',
         'color'
       ]);
-      ctx.body = yapi.commons.resReturn(result);
+      ctx.body = xU.resReturn(result);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 }

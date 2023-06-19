@@ -1,10 +1,10 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 
 /**
  * 接口分类
  */
-class interfaceCat extends BaseModel {
+class interfaceCat extends ModelBase {
   getName() {
     return 'interface_cat';
   }
@@ -62,7 +62,7 @@ class interfaceCat extends BaseModel {
   }
 
   up(id, data) {
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     return this.model.update(
       {
         _id: id

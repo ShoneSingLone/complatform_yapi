@@ -1,15 +1,15 @@
 const BaseController = require('server/controllers/base.js');
 const { yapi } = global;
 const syncModel = require('../syncModel.js');
-const projectModel = require('server/models/project.js');
+const modelProject = require('server/models/project.js');
 const interfaceSyncUtils = require('../interfaceSyncUtils.js');
 
 class syncController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.syncModel = yapi.getInst(syncModel);
-    this.projectModel = yapi.getInst(projectModel);
-    this.interfaceSyncUtils = yapi.getInst(interfaceSyncUtils);
+    this.syncModel = xU.getInst(syncModel);
+    this.modelProject = xU.getInst(modelProject);
+    this.interfaceSyncUtils = xU.getInst(interfaceSyncUtils);
   }
 
   /**
@@ -20,11 +20,11 @@ class syncController extends BaseController {
     let requestBody = ctx.request.body;
     let projectId = requestBody.project_id;
     if (!projectId) {
-      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id'));
+      return (ctx.body = xU.resReturn(null, 408, '缺少项目Id'));
     }
 
     if ((await this.checkAuth(projectId, 'project', 'edit')) !== true) {
-      return (ctx.body = yapi.commons.resReturn(null, 405, '没有权限'));
+      return (ctx.body = xU.resReturn(null, 405, '没有权限'));
     }
 
     let result;
@@ -46,7 +46,7 @@ class syncController extends BaseController {
     } else {
       this.interfaceSyncUtils.deleteSyncJob(projectId);
     }
-    return (ctx.body = yapi.commons.resReturn(result));
+    return (ctx.body = xU.resReturn(result));
   }
 
   /**
@@ -56,10 +56,10 @@ class syncController extends BaseController {
   async getSync(ctx) {
     let projectId = ctx.query.project_id;
     if (!projectId) {
-      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id'));
+      return (ctx.body = xU.resReturn(null, 408, '缺少项目Id'));
     }
     let result = await this.syncModel.getByProjectId(projectId);
-    return (ctx.body = yapi.commons.resReturn(result));
+    return (ctx.body = xU.resReturn(result));
   }
 }
 

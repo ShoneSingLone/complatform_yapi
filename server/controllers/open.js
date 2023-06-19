@@ -1,10 +1,10 @@
-const projectModel = require('../models/project.js');
+const modelProject = require('../models/project.js');
 const interfaceColModel = require('../models/interfaceCol.js');
 const interfaceCaseModel = require('../models/interfaceCase.js');
 const interfaceModel = require('../models/interface.js');
 const interfaceCatModel = require('../models/interfaceCat.js');
 const followModel = require('../models/follow.js');
-const userModel = require('../models/user.js');
+const modelUser = require('../models/user.js');
 const { yapi } = global;
 const BaseController = require('./base.js');
 const {
@@ -26,18 +26,18 @@ const createContex = require('../../common/createContext');
  * }
  */
 const importDataModule = {};
-yapi.emitHook('import_data', importDataModule);
+xU.emitHook('import_data', importDataModule);
 
 class openController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.projectModel = yapi.getInst(projectModel);
-    this.interfaceColModel = yapi.getInst(interfaceColModel);
-    this.interfaceCaseModel = yapi.getInst(interfaceCaseModel);
-    this.interfaceModel = yapi.getInst(interfaceModel);
-    this.interfaceCatModel = yapi.getInst(interfaceCatModel);
-    this.followModel = yapi.getInst(followModel);
-    this.userModel = yapi.getInst(userModel);
+    this.modelProject = xU.getInst(modelProject);
+    this.interfaceColModel = xU.getInst(interfaceColModel);
+    this.interfaceCaseModel = xU.getInst(interfaceCaseModel);
+    this.interfaceModel = xU.getInst(interfaceModel);
+    this.interfaceCatModel = xU.getInst(interfaceCatModel);
+    this.followModel = xU.getInst(followModel);
+    this.modelUser = xU.getInst(modelUser);
     this.handleValue = this.handleValue.bind(this);
     this.schemaMap = {
       runAutoTest: {
@@ -92,11 +92,11 @@ class openController extends BaseController {
 
     let token = ctx.params.token;
     if (!type || !importDataModule[type]) {
-      return (ctx.body = yapi.commons.resReturn(null, 40022, '不存在的导入方式'));
+      return (ctx.body = xU.resReturn(null, 40022, '不存在的导入方式'));
     }
 
     if (!content && !ctx.params.url) {
-      return (ctx.body = yapi.commons.resReturn(null, 40022, 'json 或者 url 参数，不能都为空'));
+      return (ctx.body = xU.resReturn(null, 40022, 'json 或者 url 参数，不能都为空'));
     }
     try {
       let request = require('request'); // let Promise = require('Promise');
@@ -118,7 +118,7 @@ class openController extends BaseController {
       }
       content = JSON.parse(content);
     } catch (e) {
-      return (ctx.body = yapi.commons.resReturn(null, 40022, 'json 格式有误:' + e));
+      return (ctx.body = xU.resReturn(null, 40022, 'json 格式有误:' + e));
     }
 
     let menuList = await this.interfaceCatModel.list(project_id);
@@ -127,19 +127,19 @@ class openController extends BaseController {
      * 如果没有分类,增加一个默认分类
      */
     if (menuList.length === 0) {
-      const catInst = yapi.getInst(interfaceCatModel);
+      const catInst = xU.getInst(interfaceCatModel);
       const menu = await catInst.save({
         name: '默认分类',
         project_id: project_id,
         desc: '默认分类',
         uid: this.getUid(),
-        add_time: yapi.commons.time(),
-        up_time: yapi.commons.time()
+        add_time: xU.time(),
+        up_time: xU.time()
       });
       menuList.push(menu);
     }
     let selectCatid = menuList[0]._id;
-    let projectData = await this.projectModel.get(project_id);
+    let projectData = await this.modelProject.get(project_id);
     let res = await importDataModule[type](content);
 
     let successMessage;
@@ -159,13 +159,13 @@ class openController extends BaseController {
       },
       () => {},
       token,
-      yapi.WEBCONFIG.port
+      WEBCONFIG.port
     );
 
     if (errorMessage.length > 0) {
-      return (ctx.body = yapi.commons.resReturn(null, 404, errorMessage.join('\n')));
+      return (ctx.body = xU.resReturn(null, 404, errorMessage.join('\n')));
     }
-    ctx.body = yapi.commons.resReturn(null, 0, successMessage + warnMessage);
+    ctx.body = xU.resReturn(null, 0, successMessage + warnMessage);
   }
 
   async projectInterfaceData(ctx) {
@@ -182,7 +182,7 @@ class openController extends BaseController {
     let result = [];
     Object.keys(params).map(item => {
       if (/env_/gi.test(item)) {
-        let curEnv = yapi.commons.trim(params[item]);
+        let curEnv = xU.trim(params[item]);
         let value = { curEnv, project_id: item.split('_')[1] };
         result.push(value);
       }
@@ -191,7 +191,7 @@ class openController extends BaseController {
   }
   async runAutoTest(ctx) {
     if (!this.$tokenAuth) {
-      return (ctx.body = yapi.commons.resReturn(null, 40022, 'token 验证失败'));
+      return (ctx.body = xU.resReturn(null, 40022, 'token 验证失败'));
     }
     // console.log(1231312)
     const token = ctx.query.token;
@@ -206,19 +206,19 @@ class openController extends BaseController {
 
     let colData = await this.interfaceColModel.get(id);
     if (!colData) {
-      return (ctx.body = yapi.commons.resReturn(null, 40022, 'id值不存在'));
+      return (ctx.body = xU.resReturn(null, 40022, 'id值不存在'));
     }
 
-    let projectData = await this.projectModel.get(projectId);
+    let projectData = await this.modelProject.get(projectId);
 
-    let caseList = await yapi.commons.getCaseList(id);
+    let caseList = await xU.getCaseList(id);
     if (caseList.errcode !== 0) {
       ctx.body = caseList;
     }
     caseList = caseList.data;
     for (let i = 0, l = caseList.length; i < l; i++) {
       let item = caseList[i];
-      let projectEvn = await this.projectModel.getByEnv(item.project_id);
+      let projectEvn = await this.modelProject.getByEnv(item.project_id);
 
       item.id = item._id;
       let curEnvItem = _.find(curEnvList, key => {
@@ -280,7 +280,7 @@ class openController extends BaseController {
 
     if (ctx.params.email === true && reportsResult.message.failedNum !== 0) {
       let autoTestUrl = `${ctx.request.origin}/api/open/run_auto_test?id=${id}&token=${token}&mode=${ctx.params.mode}`;
-      yapi.sendNotice(projectId, {
+      xU.sendNotice(projectId, {
         title: `YApi自动化测试报告`,
         content: `
         <html>
@@ -380,7 +380,7 @@ class openController extends BaseController {
 
   async handleScriptTest(interfaceData, response, validRes, requestParams) {
     try {
-      let test = await yapi.commons.runCaseScript(
+      let test = await xU.runCaseScript(
         {
           response: response,
           records: this.records,

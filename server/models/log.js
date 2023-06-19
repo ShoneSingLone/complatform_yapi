@@ -1,9 +1,9 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-class logModel extends BaseModel {
+class ModelLog extends ModelBase {
   getName() {
     return 'log';
   }
@@ -39,7 +39,7 @@ class logModel extends BaseModel {
       uid: data.uid,
       username: data.username,
       typeid: data.typeid,
-      add_time: yapi.commons.time(),
+      add_time: xU.time(),
       data: data.data
     };
 
@@ -152,4 +152,4 @@ class logModel extends BaseModel {
   }
 }
 
-module.exports = logModel;
+module.exports = ModelLog;

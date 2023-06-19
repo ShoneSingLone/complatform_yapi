@@ -20,12 +20,12 @@ class interfaceColController extends baseController {
       let query = ctx.query;
       // cookie 检测
       ctx.cookies.set('_uid', 12, {
-        expires: yapi.commons.expireDate(7),
+        expires: xU.expireDate(7),
         httpOnly: true
       });
-      ctx.body = yapi.commons.resReturn(query);
+      ctx.body = xU.resReturn(query);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -41,9 +41,9 @@ class interfaceColController extends baseController {
     try {
       let params = ctx.request.body;
       ctx.status = +ctx.query.code || 200;
-      ctx.body = yapi.commons.resReturn(params);
+      ctx.body = xU.resReturn(params);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -57,9 +57,9 @@ class interfaceColController extends baseController {
   async testPost(ctx) {
     try {
       let params = ctx.request.body;
-      ctx.body = yapi.commons.resReturn(params);
+      ctx.body = xU.resReturn(params);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -93,14 +93,14 @@ class interfaceColController extends baseController {
           chunk.copy(data, pos);
           pos += chunk.length;
         }
-        fs.writeFileSync(path.join(yapi.WEBROOT_RUNTIME, 'test.text'), data, function (err) {
-          return (ctx.body = yapi.commons.resReturn(null, 402, '写入失败'));
+        fs.writeFileSync(path.join(xU.WEBROOT_RUNTIME, 'test.text'), data, function (err) {
+          return (ctx.body = xU.resReturn(null, 402, '写入失败'));
         });
       });
 
-      ctx.body = yapi.commons.resReturn({ res: '上传成功' });
+      ctx.body = xU.resReturn({ res: '上传成功' });
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -114,11 +114,11 @@ class interfaceColController extends baseController {
   async testFilesUpload(ctx) {
     try {
       let file = ctx.request.body.files.file;
-      let newPath = path.join(yapi.WEBROOT_RUNTIME, 'test.text');
+      let newPath = path.join(xU.WEBROOT_RUNTIME, 'test.text');
       fs.renameSync(file.path, newPath);
-      ctx.body = yapi.commons.resReturn({ res: '上传成功' });
+      ctx.body = xU.resReturn({ res: '上传成功' });
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -132,9 +132,9 @@ class interfaceColController extends baseController {
   async testPut(ctx) {
     try {
       let params = ctx.request.body;
-      ctx.body = yapi.commons.resReturn(params);
+      ctx.body = xU.resReturn(params);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -148,9 +148,9 @@ class interfaceColController extends baseController {
   async testDelete(ctx) {
     try {
       let body = ctx.request.body;
-      ctx.body = yapi.commons.resReturn(body);
+      ctx.body = xU.resReturn(body);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -164,9 +164,9 @@ class interfaceColController extends baseController {
   async testHead(ctx) {
     try {
       let query = ctx.query;
-      ctx.body = yapi.commons.resReturn(query);
+      ctx.body = xU.resReturn(query);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -180,9 +180,9 @@ class interfaceColController extends baseController {
   async testOptions(ctx) {
     try {
       let query = ctx.query;
-      ctx.body = yapi.commons.resReturn(query);
+      ctx.body = xU.resReturn(query);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -196,9 +196,9 @@ class interfaceColController extends baseController {
   async testPatch(ctx) {
     try {
       let params = ctx.request.body;
-      ctx.body = yapi.commons.resReturn(params);
+      ctx.body = xU.resReturn(params);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
   /**
@@ -211,9 +211,9 @@ class interfaceColController extends baseController {
   async testRaw(ctx) {
     try {
       let params = ctx.request.body;
-      ctx.body = yapi.commons.resReturn(params);
+      ctx.body = xU.resReturn(params);
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 
@@ -234,7 +234,7 @@ class interfaceColController extends baseController {
       console.log(ctx.response);
       ctx.body = result;
     } catch (e) {
-      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+      ctx.body = xU.resReturn(null, 402, e.message);
     }
   }
 }

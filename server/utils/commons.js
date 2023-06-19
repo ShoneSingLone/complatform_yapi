@@ -1,12 +1,12 @@
 const fs = require('fs-extra');
 const path = require('path');
 const sha1 = require('sha1');
-const logModel = require('../models/log.js');
-const projectModel = require('../models/project.js');
+const modelLog = require('../models/log.js');
+const modelProject = require('../models/project.js');
+const modelUser = require('../models/user.js');
 const interfaceColModel = require('../models/interfaceCol.js');
 const interfaceCaseModel = require('../models/interfaceCase.js');
 const interfaceModel = require('../models/interface.js');
-const userModel = require('../models/user.js');
 const followModel = require('../models/follow.js');
 const json5 = require('json5');
 const _ = require('underscore');
@@ -43,7 +43,7 @@ const defaultOptions = {
 //   });
 // });
 
-exports.schemaToJson = function (schema, options = {}) {
+const schemaToJson = function (schema, options = {}) {
   Object.assign(options, defaultOptions);
 
   jsf.option(options);
@@ -57,7 +57,7 @@ exports.schemaToJson = function (schema, options = {}) {
   return result;
 };
 
-exports.resReturn = (data, errcode, errmsg) => {
+const resReturn = (data, errcode, errmsg) => {
   errcode = errcode || 0;
   return {
     errcode,
@@ -76,7 +76,7 @@ const log = (msg, type = 'log') => {
   let year = date.getFullYear();
   let month = date.getMonth() + 1;
 
-  let logfile = path.join(yapi.WEBROOT_LOG, year + '-' + month + '.log');
+  let logfile = path.join(xU.WEBROOT_LOG, year + '-' + month + '.log');
 
   if (typeof msg === 'object') {
     if (msg instanceof Error) msg = msg.message;
@@ -90,9 +90,8 @@ const log = (msg, type = 'log') => {
     flag: 'a'
   });
 };
-exports.log = log;
 
-exports.fileExist = filePath => {
+const fileExist = filePath => {
   try {
     return fs.statSync(filePath).isFile();
   } catch (err) {
@@ -100,11 +99,11 @@ exports.fileExist = filePath => {
   }
 };
 
-exports.time = () => {
+const time = () => {
   return Date.parse(new Date()) / 1000;
 };
 
-exports.fieldSelect = (data, field) => {
+const fieldSelect = (data, field) => {
   if (!data || !field || !Array.isArray(field)) {
     return null;
   }
@@ -118,11 +117,11 @@ exports.fieldSelect = (data, field) => {
   return arr;
 };
 
-exports.rand = (min, max) => {
+const rand = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-exports.json_parse = json => {
+const json_parse = json => {
   try {
     return json5.parse(json);
   } catch (e) {
@@ -130,10 +129,10 @@ exports.json_parse = json => {
   }
 };
 
-exports.randStr = () => {
+const randStr = () => {
   return Math.random().toString(36).substr(2);
 };
-exports.getIp = ctx => {
+const getIp = ctx => {
   let ip;
   try {
     ip = ctx.ip.match(/\d+.\d+.\d+.\d+/) ? ctx.ip.match(/\d+.\d+.\d+.\d+/)[0] : 'localhost';
@@ -143,34 +142,34 @@ exports.getIp = ctx => {
   return ip;
 };
 
-exports.generatePassword = (password, passsalt) => {
+const generatePassword = (password, passsalt) => {
   return sha1(password + sha1(passsalt));
 };
 
-exports.expireDate = day => {
+const expireDate = day => {
   let date = new Date();
   date.setTime(date.getTime() + day * 86400000);
   return date;
 };
 
-exports.sendMail = (options, cb) => {
-  if (!yapi.mail) return false;
+const sendMail = (options, cb) => {
+  if (!xU.mail) return false;
   options.subject = options.subject ? options.subject + '-YApi 平台' : 'YApi 平台';
 
   cb =
     cb ||
     function (err) {
       if (err) {
-        yapi.commons.log('send mail ' + options.to + ' error,' + err.message, 'error');
+        xU.log('send mail ' + options.to + ' error,' + err.message, 'error');
       } else {
-        yapi.commons.log('send mail ' + options.to + ' success');
+        xU.log('send mail ' + options.to + ' success');
       }
     };
 
   try {
-    yapi.mail.sendMail(
+    xU.mail.sendMail(
       {
-        from: yapi.WEBCONFIG.mail.from,
+        from: WEBCONFIG.mail.from,
         to: options.to,
         subject: options.subject,
         html: options.contents
@@ -178,12 +177,12 @@ exports.sendMail = (options, cb) => {
       cb
     );
   } catch (e) {
-    yapi.commons.log(e.message, 'error');
+    xU.log(e.message, 'error');
     console.error(e.message); // eslint-disable-line
   }
 };
 
-exports.validateSearchKeyword = keyword => {
+const validateSearchKeyword = keyword => {
   if (/^\*|\?|\+|\$|\^|\\|\.$/.test(keyword)) {
     return false;
   }
@@ -191,7 +190,7 @@ exports.validateSearchKeyword = keyword => {
   return true;
 };
 
-exports.filterRes = (list, rules) => {
+const filterRes = (list, rules) => {
   return list.map(item => {
     let filteredRes = {};
 
@@ -207,7 +206,7 @@ exports.filterRes = (list, rules) => {
   });
 };
 
-exports.handleVarPath = (pathname, params) => {
+const handleVarPath = (pathname, params) => {
   function insertParams(name) {
     if (!_.find(params, { name: name })) {
       params.push({
@@ -238,7 +237,7 @@ exports.handleVarPath = (pathname, params) => {
  * 验证一个 path 是否合法
  * path第一位必需为 /, path 只允许由 字母数字-/_:.{}= 组成
  */
-exports.verifyPath = path => {
+const verifyPath = path => {
   // if (/^\/[a-zA-Z0-9\-\/_:!\.\{\}\=]*$/.test(path)) {
   //   return true;
   // } else {
@@ -256,7 +255,7 @@ exports.verifyPath = path => {
  * @example let a = sandbox({a: 1}, 'a=2')
  * a = {a: 2}
  */
-exports.sandbox = (sandbox, script) => {
+const sandbox = (sandbox, script) => {
   try {
     const vm = require('vm');
     sandbox = sandbox || {};
@@ -301,17 +300,13 @@ function rtrim(str) {
   return str.replace(/(\s*$)/g, '');
 }
 
-exports.trim = trim;
-exports.ltrim = ltrim;
-exports.rtrim = rtrim;
-
 /**
  * 处理请求参数类型，String 字符串去除两边空格，Number 使用parseInt 转换为数字
  * @params Object {a: ' ab ', b: ' 123 '}
  * @keys Object {a: 'string', b: 'number'}
  * @return Object {a: 'ab', b: 123}
  */
-exports.handleParams = (params, keys) => {
+const handleParams = (params, keys) => {
   if (!params || typeof params !== 'object' || !keys || typeof keys !== 'object') {
     return false;
   }
@@ -335,7 +330,7 @@ exports.handleParams = (params, keys) => {
   return params;
 };
 
-exports.validateParams = (schema2, params) => {
+const validateParams = (schema2, params) => {
   const flag = schema2.closeRemoveAdditional;
   const ajv = new Ajv({
     allErrors: true,
@@ -365,9 +360,9 @@ exports.validateParams = (schema2, params) => {
   };
 };
 
-exports.saveLog = logData => {
+const saveLog = logData => {
   try {
-    let logInst = yapi.getInst(logModel);
+    let logInst = xU.getInst(modelLog);
     let data = {
       content: logData.content,
       type: logData.type,
@@ -379,7 +374,7 @@ exports.saveLog = logData => {
 
     logInst.save(data).then();
   } catch (e) {
-    yapi.commons.log(e, 'error'); // eslint-disable-line
+    xU.log(e, 'error'); // eslint-disable-line
   }
 };
 
@@ -393,17 +388,17 @@ exports.saveLog = logData => {
  * @param {*} action controller action_name
  * @param {*} ws enable ws
  */
-exports.createAction = (router, baseurl, routerController, action, path, method, ws) => {
+const createAction = (router, baseurl, routerController, action, path, method, ws) => {
   router[method](baseurl + path, async ctx => {
     let inst = new routerController(ctx);
     try {
       await inst.init(ctx);
       ctx.params = Object.assign({}, ctx.request.query, ctx.request.body, ctx.params);
       if (inst.schemaMap && typeof inst.schemaMap === 'object' && inst.schemaMap[action]) {
-        let validResult = yapi.commons.validateParams(inst.schemaMap[action], ctx.params);
+        let validResult = xU.validateParams(inst.schemaMap[action], ctx.params);
 
         if (!validResult.valid) {
-          return (ctx.body = yapi.commons.resReturn(null, 400, validResult.message));
+          return (ctx.body = xU.resReturn(null, 400, validResult.message));
         }
       }
       if (inst.$auth === true) {
@@ -412,12 +407,12 @@ exports.createAction = (router, baseurl, routerController, action, path, method,
         if (ws === true) {
           ctx.ws.send('请登录...');
         } else {
-          ctx.body = yapi.commons.resReturn(null, 40011, '请登录...');
+          ctx.body = xU.resReturn(null, 40011, '请登录...');
         }
       }
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 40011, '服务器出错...');
-      yapi.commons.log(err, 'error');
+      ctx.body = xU.resReturn(null, 40011, '服务器出错...');
+      xU.log(err, 'error');
     }
   });
 };
@@ -448,13 +443,11 @@ function handleParamsValue(params, val) {
   return params;
 }
 
-exports.handleParamsValue = handleParamsValue;
-
-exports.getCaseList = async function getCaseList(id) {
-  const caseInst = yapi.getInst(interfaceCaseModel);
-  const colInst = yapi.getInst(interfaceColModel);
-  const projectInst = yapi.getInst(projectModel);
-  const interfaceInst = yapi.getInst(interfaceModel);
+const getCaseList = async function getCaseList(id) {
+  const caseInst = xU.getInst(interfaceCaseModel);
+  const colInst = xU.getInst(interfaceColModel);
+  const projectInst = xU.getInst(modelProject);
+  const interfaceInst = xU.getInst(interfaceModel);
 
   let resultList = await caseInst.list(id, 'all');
   let colData = await colInst.get(id);
@@ -480,7 +473,7 @@ exports.getCaseList = async function getCaseList(id) {
   resultList = resultList.sort((a, b) => {
     return a.index - b.index;
   });
-  let ctxBody = yapi.commons.resReturn(resultList);
+  let ctxBody = xU.resReturn(resultList);
   ctxBody.colData = colData;
   return ctxBody;
 };
@@ -499,8 +492,8 @@ function convertString(variable) {
   }
 }
 
-exports.runCaseScript = async function runCaseScript(params, colId, interfaceId) {
-  const colInst = yapi.getInst(interfaceColModel);
+const runCaseScript = async function runCaseScript(params, colId, interfaceId) {
+  const colInst = xU.getInst(interfaceColModel);
   let colData = await colInst.get(colId);
   const logs = [];
   const context = {
@@ -533,7 +526,7 @@ exports.runCaseScript = async function runCaseScript(params, colId, interfaceId)
     }
 
     if (colData.checkResponseSchema) {
-      const interfaceInst = yapi.getInst(interfaceModel);
+      const interfaceInst = xU.getInst(interfaceModel);
       let interfaceData = await interfaceInst.get(interfaceId);
       if (interfaceData.res_body_is_json_schema && interfaceData.res_body) {
         let schema = JSON.parse(interfaceData.res_body);
@@ -562,17 +555,17 @@ ${JSON.stringify(schema, null, 2)}`;
       result = await sandboxFn(context, script);
     }
     result.logs = logs;
-    return yapi.commons.resReturn(result);
+    return xU.resReturn(result);
   } catch (err) {
     logs.push(convertString(err));
     result.logs = logs;
-    return yapi.commons.resReturn(result, 400, err.name + ': ' + err.message);
+    return xU.resReturn(result, 400, err.name + ': ' + err.message);
   }
 };
 
-exports.getUserdata = async function getUserdata(uid, role) {
+const getUserdata = async function getUserdata(uid, role) {
   role = role || 'dev';
-  let userInst = yapi.getInst(userModel);
+  let userInst = xU.getInst(modelUser);
   let userData = await userInst.findById(uid);
   if (!userData) {
     return null;
@@ -586,7 +579,7 @@ exports.getUserdata = async function getUserdata(uid, role) {
 };
 
 // 处理mockJs脚本
-exports.handleMockScript = async function (script, context) {
+const handleMockScript = async function (script, context) {
   let sandbox = {
     header: context.ctx.header,
     query: context.ctx.query,
@@ -614,7 +607,7 @@ exports.handleMockScript = async function (script, context) {
   context.delay = sandbox.delay;
 };
 
-exports.createWebAPIRequest = function (ops) {
+const createWebAPIRequest = function (ops) {
   return new Promise(function (resolve, reject) {
     let req = '';
     let http_client = http.request(
@@ -661,9 +654,36 @@ const applog = {
   }
 };
 
-exports.setYapiCommons = () => {
-  yapi.commons = exports;
-  yapi.applog = applog;
-};
 
-
+exports.schemaToJson = schemaToJson;
+exports.resReturn = resReturn;
+exports.log = log;
+exports.fileExist = fileExist;
+exports.time = time;
+exports.fieldSelect = fieldSelect;
+exports.rand = rand;
+exports.json_parse = json_parse;
+exports.randStr = randStr;
+exports.getIp = getIp;
+exports.generatePassword = generatePassword;
+exports.expireDate = expireDate;
+exports.sendMail = sendMail;
+exports.validateSearchKeyword = validateSearchKeyword;
+exports.filterRes = filterRes;
+exports.handleVarPath = handleVarPath;
+exports.verifyPath = verifyPath;
+exports.sandbox = sandbox;
+exports.trim = trim;
+exports.ltrim = ltrim;
+exports.rtrim = rtrim;
+exports.handleParams = handleParams;
+exports.validateParams = validateParams;
+exports.saveLog = saveLog;
+exports.createAction = createAction;
+exports.handleParamsValue = handleParamsValue;
+exports.getCaseList = getCaseList;
+exports.runCaseScript = runCaseScript;
+exports.getUserdata = getUserdata;
+exports.handleMockScript = handleMockScript;
+exports.createWebAPIRequest = createWebAPIRequest;
+exports.applog = applog;

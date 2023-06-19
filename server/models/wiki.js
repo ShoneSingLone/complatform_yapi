@@ -1,7 +1,7 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base.js');
+const ModelBase = require('server/models/base.js');
 
-class WikiModel extends BaseModel {
+class WikiModel extends ModelBase {
   getName() {
     return 'wiki_doc';
   }

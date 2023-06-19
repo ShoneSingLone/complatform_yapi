@@ -1,7 +1,7 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 
-class tokenModel extends BaseModel {
+class tokenModel extends ModelBase {
   getName() {
     return 'token';
   }

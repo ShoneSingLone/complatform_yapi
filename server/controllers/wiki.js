@@ -7,8 +7,8 @@ const { diffText } = require('common/diff-view.js');
 class wikiController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.orm_wiki = yapi.getInst(WikiModel);
-    this.orm_wiki_order = yapi.getInst(WikiOrderModel);
+    this.orm_wiki = xU.getInst(WikiModel);
+    this.orm_wiki_order = xU.getInst(WikiOrderModel);
   }
 
   /*
@@ -24,9 +24,9 @@ class wikiController extends BaseController {
     if (strategy) {
       try {
         const res = await strategy.call(this, ctx);
-        ctx.body = yapi.commons.resReturn(res);
+        ctx.body = xU.resReturn(res);
       } catch (err) {
-        ctx.body = yapi.commons.resReturn(null, 402, err.message);
+        ctx.body = xU.resReturn(null, 402, err.message);
       }
     }
   }
@@ -92,7 +92,7 @@ const STRATEGY = {
     }
     const result = diffText(oldmarkdown, newMarkdown);
     if (result) {
-      yapi.commons.saveLog({
+      xU.saveLog({
         content: `<a href="/user/profile/${this.$user._id}">${this.$user.username}</a> 修改了文档 <a href="./wiki?wiki_id=${data._id}">${data._id}:${data.title}</a>`,
         type: 'wiki_doc',
         uid: this.$user._id,

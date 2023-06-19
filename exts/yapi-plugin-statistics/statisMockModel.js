@@ -2,9 +2,9 @@
  * Created by gxl.gao on 2017/10/24.
  */
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 
-class statisMockModel extends BaseModel {
+class statisMockModel extends ModelBase {
   getName() {
     return 'statis_mock';
   }
@@ -67,7 +67,7 @@ class statisMockModel extends BaseModel {
   }
 
   up(id, data) {
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     return this.model.updateOne(
       {
         _id: id

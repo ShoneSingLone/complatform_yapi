@@ -1,13 +1,13 @@
-const { DbConnection } = yapi;
+const { DbConnection } = xU;
 const controller = require('./controller');
 const advModel = require('./advMockModel.js');
 const caseModel = require('./caseModel.js');
 
 const _ = require('lodash');
 const path = require('path');
-const lib = require(path.resolve(yapi.WEBROOT, 'common/lib.js'));
+const lib = require(path.resolve(xU.WEBROOT, 'common/lib.js'));
 const Mock = require('mockjs');
-const mockExtra = require(path.resolve(yapi.WEBROOT, 'common/mock-extra.js'));
+const mockExtra = require(path.resolve(xU.WEBROOT, 'common/mock-extra.js'));
 
 function arrToObj(arr) {
   let obj = { 'Set-Cookie': [] };
@@ -38,12 +38,12 @@ module.exports = function () {
 
   async function checkCase(ctx, interfaceId) {
     let reqParams = Object.assign({}, ctx.query, ctx.request.body);
-    let caseInst = yapi.getInst(caseModel);
+    let caseInst = xU.getInst(caseModel);
 
     // let ip = ctx.ip.match(/\d+.\d+.\d+.\d+/)[0];
     // request.ip
 
-    let ip = yapi.commons.getIp(ctx);
+    let ip = xU.getIp(ctx);
     //   数据库信息查询
     // 过滤 开启IP
     let listWithIp = await caseInst.model
@@ -86,7 +86,7 @@ module.exports = function () {
   }
 
   async function handleByCase(caseData) {
-    let caseInst = yapi.getInst(caseModel);
+    let caseInst = xU.getInst(caseModel);
     let result = await caseInst.get({
       _id: caseData._id
     });
@@ -154,11 +154,11 @@ module.exports = function () {
     });
   });
   this.bindHook('interface_del', async function (id) {
-    let inst = yapi.getInst(advModel);
+    let inst = xU.getInst(advModel);
     await inst.delByInterfaceId(id);
   });
   this.bindHook('project_del', async function (id) {
-    let inst = yapi.getInst(advModel);
+    let inst = xU.getInst(advModel);
     await inst.delByProjectId(id);
   });
   /**
@@ -178,7 +178,7 @@ module.exports = function () {
       // 匹配到高级mock
       let data = await handleByCase(caseData);
 
-      context.mockJson = yapi.commons.json_parse(data.res_body);
+      context.mockJson = xU.json_parse(data.res_body);
       try {
         context.mockJson = Mock.mock(
           mockExtra(context.mockJson, {
@@ -196,7 +196,7 @@ module.exports = function () {
       context.delay = data.delay;
       return true;
     }
-    let inst = yapi.getInst(advModel);
+    let inst = xU.getInst(advModel);
     let data = await inst.get(interfaceId);
 
     if (!data || !data.enable || !data.mock_script) {
@@ -205,6 +205,6 @@ module.exports = function () {
 
     // mock 脚本
     let script = data.mock_script;
-    await yapi.commons.handleMockScript(script, context);
+    await xU.handleMockScript(script, context);
   });
 };

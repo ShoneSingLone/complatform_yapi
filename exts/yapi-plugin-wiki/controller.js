@@ -1,7 +1,7 @@
 const BaseController = require('server/controllers/base.js');
 const wikiModel = require('./wikiModel.js');
-const projectModel = require('server/models/project.js');
-const userModel = require('server/models/user.js');
+const modelProject = require('server/models/project.js');
+const modelUser = require('server/models/user.js');
 const jsondiffpatch = require('jsondiffpatch');
 const formattersHtml = jsondiffpatch.formatters.html;
 const { yapi } = global;
@@ -12,8 +12,8 @@ const showDiffMsg = require('../../common/diff-view.js');
 class wikiController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.Model = yapi.getInst(wikiModel);
-    this.projectModel = yapi.getInst(projectModel);
+    this.Model = xU.getInst(wikiModel);
+    this.modelProject = xU.getInst(modelProject);
   }
 
   /**
@@ -28,12 +28,12 @@ class wikiController extends BaseController {
     try {
       let project_id = ctx.request.query.project_id;
       if (!project_id) {
-        return (ctx.body = yapi.commons.resReturn(null, 400, '项目id不能为空'));
+        return (ctx.body = xU.resReturn(null, 400, '项目id不能为空'));
       }
       let result = await this.Model.get(project_id);
-      return (ctx.body = yapi.commons.resReturn(result));
+      return (ctx.body = xU.resReturn(result));
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 400, err.message);
+      ctx.body = xU.resReturn(null, 400, err.message);
     }
   }
 
@@ -49,19 +49,19 @@ class wikiController extends BaseController {
   async uplodaWikiDesc(ctx) {
     try {
       let params = ctx.request.body;
-      params = yapi.commons.handleParams(params, {
+      params = xU.handleParams(params, {
         project_id: 'number',
         desc: 'string',
         markdown: 'string'
       });
 
       if (!params.project_id) {
-        return (ctx.body = yapi.commons.resReturn(null, 400, '项目id不能为空'));
+        return (ctx.body = xU.resReturn(null, 400, '项目id不能为空'));
       }
       if (!this.$tokenAuth) {
         let auth = await this.checkAuth(params.project_id, 'project', 'edit');
         if (!auth) {
-          return (ctx.body = yapi.commons.resReturn(null, 400, '没有权限'));
+          return (ctx.body = xU.resReturn(null, 400, '没有权限'));
         }
       }
 
@@ -76,20 +76,20 @@ class wikiController extends BaseController {
         let data = Object.assign(params, {
           username,
           uid,
-          add_time: yapi.commons.time(),
-          up_time: yapi.commons.time()
+          add_time: xU.time(),
+          up_time: xU.time()
         });
 
         let res = await this.Model.save(data);
-        ctx.body = yapi.commons.resReturn(res);
+        ctx.body = xU.resReturn(res);
       } else {
         let data = Object.assign(params, {
           username,
           uid,
-          up_time: yapi.commons.time()
+          up_time: xU.time()
         });
         let upRes = await this.Model.up(result._id, data);
-        ctx.body = yapi.commons.resReturn(upRes);
+        ctx.body = xU.resReturn(upRes);
       }
 
       let logData = {
@@ -104,16 +104,16 @@ class wikiController extends BaseController {
         let diffView = showDiffMsg(jsondiffpatch, formattersHtml, logData);
 
         let annotatedCss = fs.readFileSync(
-          path.resolve(yapi.WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/annotated.css'),
+          path.resolve(xU.WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/annotated.css'),
           'utf8'
         );
         let htmlCss = fs.readFileSync(
-          path.resolve(yapi.WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/html.css'),
+          path.resolve(xU.WEBROOT, 'node_modules/jsondiffpatch/dist/formatters-styles/html.css'),
           'utf8'
         );
-        let project = await this.projectModel.getBaseInfo(params.project_id);
+        let project = await this.modelProject.getBaseInfo(params.project_id);
 
-        yapi.sendNotice(params.project_id, {
+        xU.sendNotice(params.project_id, {
           title: `${username} 更新了wiki说明`,
           content: `<html>
           <head>
@@ -134,7 +134,7 @@ class wikiController extends BaseController {
       }
 
       // 保存修改日志信息
-      yapi.commons.saveLog({
+      xU.saveLog({
         content: `<a href="/user/profile/${uid}">${username}</a> 更新了 <a href="${wikiUrl}">wiki</a> 的信息`,
         type: 'project',
         uid,
@@ -144,7 +144,7 @@ class wikiController extends BaseController {
       });
       return 1;
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 400, err.message);
+      ctx.body = xU.resReturn(null, 400, err.message);
     }
   }
   diffHTML(html) {
@@ -177,7 +177,7 @@ class wikiController extends BaseController {
       });
       ctx.websocket.on('close', async () => {});
     } catch (err) {
-      yapi.commons.log(err, 'error');
+      xU.log(err, 'error');
     }
   }
 
@@ -209,7 +209,7 @@ class wikiController extends BaseController {
   async editorFunc(result) {
     let userInst, userinfo, data;
     if (result && result.edit_uid !== 0 && result.edit_uid !== this.getUid()) {
-      userInst = yapi.getInst(userModel);
+      userInst = xU.getInst(modelUser);
       userinfo = await userInst.findById(result.edit_uid);
       data = {
         errno: result.edit_uid,

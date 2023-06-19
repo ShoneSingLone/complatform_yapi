@@ -1,5 +1,5 @@
-const projectModel = require('../models/project.js');
-const userModel = require('../models/user.js');
+const modelProject = require('../models/project.js');
+const modelUser = require('../models/user.js');
 const interfaceModel = require('../models/interface.js');
 const groupModel = require('../models/group.js');
 const tokenModel = require('../models/token.js');
@@ -20,8 +20,8 @@ class BaseController {
 
   async init(ctx) {
     this.$user = null;
-    this.tokenModel = yapi.getInst(tokenModel);
-    this.projectModel = yapi.getInst(projectModel);
+    this.tokenModel = xU.getInst(tokenModel);
+    this.modelProject = xU.getInst(modelProject);
     let ignoreRouter = [
       '/api/user/login_by_token',
       '/api/user/login',
@@ -89,9 +89,9 @@ class BaseController {
 
       let checkId = await this.getProjectIdByToken(token);
       if (!checkId) {
-        ctx.body = yapi.commons.resReturn(null, 42014, 'token 无效');
+        ctx.body = xU.resReturn(null, 42014, 'token 无效');
       }
-      let projectData = await this.projectModel.get(checkId);
+      let projectData = await this.modelProject.get(checkId);
       if (projectData) {
         ctx.query.pid = checkId; // 兼容：/api/plugin/export
         ctx.params.project_id = checkId;
@@ -105,7 +105,7 @@ class BaseController {
             username: 'system'
           };
         } else {
-          let userInst = yapi.getInst(userModel); //创建user实体
+          let userInst = xU.getInst(modelUser); //创建user实体
           result = await userInst.findById(tokenUid);
         }
 
@@ -132,14 +132,14 @@ class BaseController {
     try {
       /* 未携带认证信息 */
       if (!token || !uid) {
-        yapi.applog.log('未携带认证信息');
+        xU.applog.log('未携带认证信息');
         return false;
       }
-      let userInst = yapi.getInst(userModel); //创建user实体
+      let userInst = xU.getInst(modelUser); //创建user实体
       let result = await userInst.findById(uid);
       /* 用户不存在 */
       if (!result) {
-        yapi.applog.log('用户不存在');
+        xU.applog.log('用户不存在');
         return false;
       }
 
@@ -147,7 +147,7 @@ class BaseController {
       try {
         decoded = jwt.verify(token, result.passsalt);
       } catch (err) {
-        yapi.applog.log('JWT 信息不匹配');
+        xU.applog.log('JWT 信息不匹配');
         return false;
       }
       /* 身份验证 */
@@ -155,19 +155,19 @@ class BaseController {
         this.$uid = uid;
         this.$auth = true;
         this.$user = result;
-        yapi.applog.log('身份验证');
+        xU.applog.log('身份验证');
         return true;
       }
       return false;
     } catch (e) {
-      yapi.commons.log(e, 'error');
+      xU.log(e, 'error');
       return false;
     }
   }
 
   async checkRegister() {
-    // console.log('config', yapi.WEBCONFIG);
-    if (yapi.WEBCONFIG.closeRegister) {
+    // console.log('config', WEBCONFIG);
+    if (WEBCONFIG.closeRegister) {
       return false;
     } else {
       return true;
@@ -175,11 +175,11 @@ class BaseController {
   }
 
   async checkLDAP() {
-    // console.log('config', yapi.WEBCONFIG);
-    if (!yapi.WEBCONFIG.ldapLogin) {
+    // console.log('config', WEBCONFIG);
+    if (!WEBCONFIG.ldapLogin) {
       return false;
     } else {
-      return yapi.WEBCONFIG.ldapLogin.enable || false;
+      return WEBCONFIG.ldapLogin.enable || false;
     }
   }
   /**
@@ -191,7 +191,7 @@ class BaseController {
     let body;
     const isLogin = await this.checkLogin(ctx);
     if (isLogin) {
-      let result = yapi.commons.fieldSelect(this.$user, [
+      let result = xU.fieldSelect(this.$user, [
         '_id',
         'username',
         'email',
@@ -201,9 +201,9 @@ class BaseController {
         'type',
         'study'
       ]);
-      body = yapi.commons.resReturn(result);
+      body = xU.resReturn(result);
     } else {
-      body = yapi.commons.resReturn(null, 40011, '请登录...');
+      body = xU.resReturn(null, 40011, '请登录...');
     }
 
     body.ladp = await this.checkLDAP();
@@ -230,7 +230,7 @@ class BaseController {
         return 'admin';
       }
       if (type === 'interface') {
-        let interfaceInst = yapi.getInst(interfaceModel);
+        let interfaceInst = xU.getInst(interfaceModel);
         let interfaceData = await interfaceInst.get(id);
         result.interfaceData = interfaceData;
         // 项目创建者相当于 owner
@@ -242,7 +242,7 @@ class BaseController {
       }
 
       if (type === 'project') {
-        let projectInst = yapi.getInst(projectModel);
+        let projectInst = xU.getInst(modelProject);
         let projectData = await projectInst.get(id);
         if (projectData.uid === this.getUid()) {
           // 建立项目的人
@@ -268,7 +268,7 @@ class BaseController {
       }
 
       if (type === 'group') {
-        let groupInst = yapi.getInst(groupModel);
+        let groupInst = xU.getInst(groupModel);
         let groupData = await groupInst.get(id);
         // 建立分组的人
         if (groupData.uid === this.getUid()) {
@@ -293,7 +293,7 @@ class BaseController {
 
       return 'member';
     } catch (e) {
-      yapi.commons.log(e, 'error');
+      xU.log(e, 'error');
       return false;
     }
   }

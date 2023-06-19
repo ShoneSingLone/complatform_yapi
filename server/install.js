@@ -3,13 +3,13 @@
   const yapi = await initDbAndCommon();
   const path = require('path');
   const fs = require('fs-extra');
-  const userModel = require('./models/user.js');
+  const modelUser = require('./models/user.js');
   const mongoose = require('mongoose');
 
   function install() {
-    const fileExistURL = path.join(yapi.WEBROOT_RUNTIME, 'init.lock');
+    const fileExistURL = path.join(xU.WEBROOT_RUNTIME, 'init.lock');
     console.log(fileExistURL);
-    let exist = yapi.commons.fileExist(fileExistURL);
+    let exist = xU.fileExist(fileExistURL);
 
     if (exist) {
       throw new Error(
@@ -21,16 +21,16 @@
   }
 
   function setupSql() {
-    let userInst = yapi.getInst(userModel);
-    let passsalt = yapi.commons.randStr();
+    let userInst = xU.getInst(modelUser);
+    let passsalt = xU.randStr();
     let result = userInst.save({
-      username: yapi.WEBCONFIG.adminAccount.substr(0, yapi.WEBCONFIG.adminAccount.indexOf('@')),
-      email: yapi.WEBCONFIG.adminAccount,
-      password: yapi.commons.generatePassword(yapi.WEBCONFIG.adminPwd, passsalt),
+      username: WEBCONFIG.adminAccount.substr(0, WEBCONFIG.adminAccount.indexOf('@')),
+      email: WEBCONFIG.adminAccount,
+      password: xU.generatePassword(WEBCONFIG.adminPwd, passsalt),
       passsalt: passsalt,
       role: 'admin',
-      add_time: yapi.commons.time(),
-      up_time: yapi.commons.time()
+      add_time: xU.time(),
+      up_time: xU.time()
     });
 
     (function () {
@@ -133,15 +133,15 @@
 
       result.then(
         function () {
-          fs.ensureFileSync(path.join(yapi.WEBROOT_RUNTIME, 'init.lock'));
+          fs.ensureFileSync(path.join(xU.WEBROOT_RUNTIME, 'init.lock'));
           console.log(
-            `初始化管理员账号成功,账号名："${yapi.WEBCONFIG.adminAccount}"，密码："${yapi.WEBCONFIG.adminPwd}"`
+            `初始化管理员账号成功,账号名："${WEBCONFIG.adminAccount}"，密码："${WEBCONFIG.adminPwd}"`
           ); // eslint-disable-line
           process.exit(0);
         },
         function (err) {
           throw new Error(
-            `初始化管理员账号 "${yapi.WEBCONFIG.adminAccount}" 失败, ${err.message}`
+            `初始化管理员账号 "${WEBCONFIG.adminAccount}" 失败, ${err.message}`
           ); // eslint-disable-line
         }
       );

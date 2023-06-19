@@ -3,7 +3,7 @@ const { yapi } = global;
 const interfaceSyncUtils = require('./interfaceSyncUtils.js');
 
 module.exports = function () {
-  yapi.getInst(interfaceSyncUtils);
+  xU.getInst(interfaceSyncUtils);
 
   this.bindHook('add_router', function (addRouter) {
     addRouter({

@@ -7,7 +7,7 @@ const autoIncrement = require('mongoose-auto-increment');
  * 所有的model都需要继承baseModel, 且需要 getSchema和getName方法，不然会报错
  */
 
-class BaseModel {
+class ModelBase {
   constructor() {
     /* 约定优于配置，不要东搞西搞 */
     const IS_NEED_AUTO_INCREMENT = true;
@@ -32,12 +32,12 @@ class BaseModel {
    * 获取collection的schema结构
    */
   getSchema() {
-    yapi.commons.log('Model Class need getSchema function', 'error');
+    xU.log('Model Class need getSchema function', 'error');
   }
 
   getName() {
-    yapi.commons.log('Model Class need name', 'error');
+    xU.log('Model Class need name', 'error');
   }
 }
 
-module.exports = BaseModel;
+module.exports = ModelBase;

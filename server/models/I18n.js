@@ -1,9 +1,9 @@
 const { yapi } = global;
 const _ = require('lodash');
 const { diff } = require('jsondiffpatch');
-const BaseModel = require('server/models/base.js');
+const ModelBase = require('server/models/base.js');
 
-class I18nModel extends BaseModel {
+class I18nModel extends ModelBase {
   getName() {
     return 'i18n';
   }

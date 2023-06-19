@@ -1,5 +1,5 @@
 const { yapi } = global;
-const { DbConnection } = yapi;
+const { DbConnection } = xU;
 const controller = require('./controller');
 
 module.exports = function () {

@@ -9,7 +9,7 @@ const jsrsasign = require('jsrsasign');
 const https = require('https');
 const lodash = require('lodash');
 const isNode = typeof global == 'object' && global.global === global;
-const { VARIABLE } = global.yapi;
+const { VARIABLE } = global.xU;
 const HTTP_METHOD = VARIABLE.HTTP_METHOD;
 
 const ContentTypeMap = {

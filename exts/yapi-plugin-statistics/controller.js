@@ -4,7 +4,7 @@
 const BaseController = require('server/controllers/base.js');
 const statisMockModel = require('./statisMockModel.js');
 const groupModel = require('server/models/group.js');
-const projectModel = require('server/models/project.js');
+const modelProject = require('server/models/project.js');
 const interfaceModel = require('server/models/interface.js');
 const interfaceCaseModel = require('server/models/interfaceCase.js');
 const { yapi } = global;
@@ -16,11 +16,11 @@ const { WEBCONFIG } = global;
 class statisMockController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.Model = yapi.getInst(statisMockModel);
-    this.groupModel = yapi.getInst(groupModel);
-    this.projectModel = yapi.getInst(projectModel);
-    this.interfaceModel = yapi.getInst(interfaceModel);
-    this.interfaceCaseModel = yapi.getInst(interfaceCaseModel);
+    this.Model = xU.getInst(statisMockModel);
+    this.groupModel = xU.getInst(groupModel);
+    this.modelProject = xU.getInst(modelProject);
+    this.interfaceModel = xU.getInst(interfaceModel);
+    this.interfaceCaseModel = xU.getInst(interfaceCaseModel);
   }
 
   /**
@@ -34,18 +34,18 @@ class statisMockController extends BaseController {
   async getStatisCount(ctx) {
     try {
       let groupCount = await this.groupModel.getGroupListCount();
-      let projectCount = await this.projectModel.getProjectListCount();
+      let projectCount = await this.modelProject.getProjectListCount();
       let interfaceCount = await this.interfaceModel.getInterfaceListCount();
       let interfaceCaseCount = await this.interfaceCaseModel.getInterfaceCaseListCount();
 
-      return (ctx.body = yapi.commons.resReturn({
+      return (ctx.body = xU.resReturn({
         groupCount,
         projectCount,
         interfaceCount,
         interfaceCaseCount
       }));
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 400, err.message);
+      ctx.body = xU.resReturn(null, 400, err.message);
     }
   }
 
@@ -63,14 +63,14 @@ class statisMockController extends BaseController {
       let mockDateList = [];
 
       if (!this.getRole() === 'admin') {
-        return (ctx.body = yapi.commons.resReturn(null, 405, '没有权限'));
+        return (ctx.body = xU.resReturn(null, 405, '没有权限'));
       }
       //  默认时间是30 天为一周期
       let dateInterval = commons.getDateRange();
       mockDateList = await this.Model.getDayCount(dateInterval);
-      return (ctx.body = yapi.commons.resReturn({ mockCount, mockDateList }));
+      return (ctx.body = xU.resReturn({ mockCount, mockDateList }));
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 400, err.message);
+      ctx.body = xU.resReturn(null, 400, err.message);
     }
   }
 
@@ -87,7 +87,7 @@ class statisMockController extends BaseController {
       let mail = '';
       if (WEBCONFIG.mail && WEBCONFIG.mail.enable) {
         mail = await this.checkEmail();
-        // return ctx.body = yapi.commons.resReturn(result);
+        // return ctx.body = xU.resReturn(result);
       } else {
         mail = '未配置';
       }
@@ -107,16 +107,16 @@ class statisMockController extends BaseController {
         uptime,
         load: load.toFixed(2)
       };
-      return (ctx.body = yapi.commons.resReturn(data));
+      return (ctx.body = xU.resReturn(data));
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 400, err.message);
+      ctx.body = xU.resReturn(null, 400, err.message);
     }
   }
 
   checkEmail() {
     return new Promise(resolve => {
       let result = {};
-      yapi.mail.verify(error => {
+      xU.mail.verify(error => {
         if (error) {
           result = '不可用';
           resolve(result);
@@ -143,8 +143,8 @@ class statisMockController extends BaseController {
         };
         result.push(data);
 
-        let projectCount = await this.projectModel.listCount(groupId);
-        let projectData = await this.projectModel.list(groupId);
+        let projectCount = await this.modelProject.listCount(groupId);
+        let projectData = await this.modelProject.list(groupId);
         let interfaceCount = 0;
         for (let j = 0; j < projectData.length; j++) {
           let project = projectData[j];
@@ -157,9 +157,9 @@ class statisMockController extends BaseController {
         data.project = projectCount;
         data.mock = mockCount;
       }
-      return (ctx.body = yapi.commons.resReturn(result));
+      return (ctx.body = xU.resReturn(result));
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 400, err.message);
+      ctx.body = xU.resReturn(null, 400, err.message);
     }
   }
 

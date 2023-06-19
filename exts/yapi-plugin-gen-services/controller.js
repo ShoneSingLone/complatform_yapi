@@ -1,6 +1,6 @@
 const BaseController = require('server/controllers/base.js');
 const interfaceModel = require('server/models/interface.js');
-const projectModel = require('server/models/project.js');
+const modelProject = require('server/models/project.js');
 // const wikiModel = require('../yapi-plugin-wiki/wikiModel.js');
 const interfaceCatModel = require('server/models/interfaceCat.js');
 const { yapi } = global;
@@ -14,9 +14,9 @@ const md = require('../../common/markdown');
 class exportController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.catModel = yapi.getInst(interfaceCatModel);
-    this.interModel = yapi.getInst(interfaceModel);
-    this.projectModel = yapi.getInst(projectModel);
+    this.catModel = xU.getInst(interfaceCatModel);
+    this.interModel = xU.getInst(interfaceModel);
+    this.modelProject = xU.getInst(modelProject);
   }
 
   async handleListClass(pid, status) {
@@ -80,16 +80,16 @@ class exportController extends BaseController {
     let isWiki = ctx.request.query.isWiki;
 
     if (!pid) {
-      return (ctx.body = yapi.commons.resReturn(null, 200, 'pid 不为空'));
+      return (ctx.body = xU.resReturn(null, 200, 'pid 不为空'));
     }
     let curProject, wikiData;
     let tp = '';
     try {
-      curProject = await this.projectModel.get(pid);
+      curProject = await this.modelProject.get(pid);
       const basepath = curProject.basepath;
       if (isWiki === 'true') {
         const wikiModel = require('../yapi-plugin-wiki/wikiModel.js');
-        wikiData = await yapi.getInst(wikiModel).get(pid);
+        wikiData = await xU.getInst(wikiModel).get(pid);
       }
       ctx.set('Content-Type', 'application/octet-stream');
       const list = await this.handleListClass(pid, status);
@@ -130,8 +130,8 @@ class exportController extends BaseController {
         }
       }
     } catch (error) {
-      yapi.commons.log(error, 'error');
-      ctx.body = yapi.commons.resReturn(null, 502, '下载出错');
+      xU.log(error, 'error');
+      ctx.body = xU.resReturn(null, 502, '下载出错');
     }
 
     async function createHtml(list) {
@@ -201,8 +201,8 @@ class exportController extends BaseController {
         mdTemplate += md.createClassMarkdown(curProject, list, isToc);
         return mdTemplate;
       } catch (e) {
-        yapi.commons.log(e, 'error');
-        ctx.body = yapi.commons.resReturn(null, 502, '下载出错');
+        xU.log(e, 'error');
+        ctx.body = xU.resReturn(null, 502, '下载出错');
       }
     }
   }

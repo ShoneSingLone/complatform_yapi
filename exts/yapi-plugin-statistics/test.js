@@ -1,12 +1,9 @@
 const fs = require('fs-extra');
-const yapi = require('../../server/yapi.js');
-const commons = require('../../server/utils/commons');
 const dbModule = require('../../server/utils/db.js');
-const userModel = require('../../server/models/user.js');
+const modelUser = require('../../server/models/user.js');
 const mongoose = require('mongoose');
 
-yapi.commons = commons;
-yapi.mongoose = dbModule.connect();
+xU.mongoose = dbModule.connect();
 
 const convert2Decimal = num => (num > 9 ? num : `0${num}`);
 const formatYMD = (val, joinStr = '-') => {
@@ -23,9 +20,9 @@ const formatYMD = (val, joinStr = '-') => {
 };
 
 function run() {
-  let time = yapi.commons.time() - 10000000;
+  let time = xU.time() - 10000000;
   let data = i => {
-    time = time - yapi.commons.rand(10000, 1000000);
+    time = time - xU.rand(10000, 1000000);
     return {
       interface_id: 94,
       project_id: 25,
@@ -36,7 +33,7 @@ function run() {
     };
   };
 
-  yapi.mongoose
+  xU.mongoose
     .then(function () {
       let logCol = mongoose.connection.db.collection('statis_mock');
       let arr = [];

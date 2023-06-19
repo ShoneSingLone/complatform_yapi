@@ -2,7 +2,7 @@
  * Created by gxl.gao on 2017/10/24.
  */
 const { yapi } = global;
-const { DbConnection } = yapi;
+const { DbConnection } = xU;
 const controller = require('./controller');
 const statisModel = require('./statisMockModel.js');
 const commons = require('./util.js');
@@ -61,22 +61,22 @@ module.exports = function () {
     let projectId = context.projectData._id;
     let groupId = context.projectData.group_id;
     //let ip = context.ctx.originalUrl;
-    let ip = yapi.commons.getIp(context.ctx);
+    let ip = xU.getIp(context.ctx);
 
     let data = {
       interface_id: interfaceId,
       project_id: projectId,
       group_id: groupId,
-      time: yapi.commons.time(),
+      time: xU.time(),
       ip: ip,
       date: commons.formatYMD(new Date())
     };
-    let inst = yapi.getInst(statisModel);
+    let inst = xU.getInst(statisModel);
 
     try {
       inst.save(data).then();
     } catch (e) {
-      yapi.commons.log('mockStatisError', e);
+      xU.log('mockStatisError', e);
     }
   });
 };

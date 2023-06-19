@@ -1,4 +1,4 @@
-const yapi = require('../yapi');
+const yapi = require('../utils');
 
 const crypto = require('crypto');
 

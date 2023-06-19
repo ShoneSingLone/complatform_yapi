@@ -1,17 +1,17 @@
-const logModel = require('../models/log.js');
+const modelLog = require('../models/log.js');
 const { yapi } = global;
 const BaseController = require('./base.js');
 const groupModel = require('../models/group');
-const projectModel = require('../models/project');
+const modelProject = require('../models/project');
 const interfaceModel = require('../models/interface');
 
 class logController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.Model = yapi.getInst(logModel);
-    this.groupModel = yapi.getInst(groupModel);
-    this.projectModel = yapi.getInst(projectModel);
-    this.interfaceModel = yapi.getInst(interfaceModel);
+    this.Model = xU.getInst(modelLog);
+    this.groupModel = xU.getInst(groupModel);
+    this.modelProject = xU.getInst(modelProject);
+    this.interfaceModel = xU.getInst(interfaceModel);
     this.schemaMap = {
       listByUpdate: {
         '*type': 'string',
@@ -46,14 +46,14 @@ class logController extends BaseController {
       type = ctx.request.query.type,
       selectValue = ctx.request.query.selectValue;
     if (!typeid) {
-      return (ctx.body = yapi.commons.resReturn(null, 400, 'typeid不能为空'));
+      return (ctx.body = xU.resReturn(null, 400, 'typeid不能为空'));
     }
     if (!type) {
-      return (ctx.body = yapi.commons.resReturn(null, 400, 'type不能为空'));
+      return (ctx.body = xU.resReturn(null, 400, 'type不能为空'));
     }
     try {
       if (type === 'group') {
-        let projectList = await this.projectModel.list(typeid);
+        let projectList = await this.modelProject.list(typeid);
         let projectIds = [],
           projectDatas = {};
         for (let i in projectList) {
@@ -76,7 +76,7 @@ class logController extends BaseController {
           projectLogList[index] = item;
         });
         let total = await this.Model.listCountByGroup(typeid, projectIds);
-        ctx.body = yapi.commons.resReturn({
+        ctx.body = xU.resReturn({
           list: projectLogList,
           total
         });
@@ -84,13 +84,13 @@ class logController extends BaseController {
         let result = await this.Model.listWithPaging(typeid, type, page, limit, selectValue);
         let count = await this.Model.listCount(typeid, type, selectValue);
 
-        ctx.body = yapi.commons.resReturn({
+        ctx.body = xU.resReturn({
           total: Math.ceil(count / limit),
           list: result
         });
       }
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 402, err.message);
+      ctx.body = xU.resReturn(null, 402, err.message);
     }
   }
   /**
@@ -110,7 +110,7 @@ class logController extends BaseController {
     try {
       let { typeid, type, apis } = params;
       let list = [];
-      let projectDatas = await this.projectModel.getBaseInfo(typeid, 'basepath');
+      let projectDatas = await this.modelProject.getBaseInfo(typeid, 'basepath');
       let basePath = projectDatas.toObject().basepath;
 
       for (let i = 0; i < apis.length; i++) {
@@ -135,9 +135,9 @@ class logController extends BaseController {
       }
 
       // let result = await this.Model.listWithCatid(typeid, type, catId);
-      ctx.body = yapi.commons.resReturn(list);
+      ctx.body = xU.resReturn(list);
     } catch (err) {
-      ctx.body = yapi.commons.resReturn(null, 402, err.message);
+      ctx.body = xU.resReturn(null, 402, err.message);
     }
   }
 }

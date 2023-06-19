@@ -3,9 +3,9 @@
 #
 
 - server/app.js
-- yapi.js configs
+- xU.js configs
 
-# yapi.commons.validateParams
+# xU.validateParams
 
 只接受限定的参数，多余的会被过滤掉 => model 里面 schemaMap
 

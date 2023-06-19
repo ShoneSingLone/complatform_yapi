@@ -1,7 +1,7 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 
-class groupModel extends BaseModel {
+class groupModel extends ModelBase {
   getName() {
     return 'group';
   }
@@ -188,7 +188,7 @@ class groupModel extends BaseModel {
         custom_field1: data.custom_field1,
         group_name: data.group_name,
         group_desc: data.group_desc,
-        up_time: yapi.commons.time()
+        up_time: xU.time()
       }
     );
   }

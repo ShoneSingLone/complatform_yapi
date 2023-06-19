@@ -1,6 +1,6 @@
 const path = require('path');
-const plugin_path = path.join(yapi.WEBROOT, 'node_modules');
-const plugin_system_path = path.join(yapi.WEBROOT, 'exts');
+const plugin_path = path.join(xU.WEBROOT, 'node_modules');
+const plugin_system_path = path.join(xU.WEBROOT, 'exts');
 const initPlugins = require('../common/plugin.js').initPlugins;
 var extConfig = require('../common/config.js').exts;
 
@@ -215,34 +215,34 @@ function emitHook(name) {
   if (hooks[name] && typeof hooks[name] === 'object') {
     let args = Array.prototype.slice.call(arguments, 1);
     if (hooks[name].type === 'single' && typeof hooks[name].listener === 'function') {
-      return Promise.resolve(hooks[name].listener.apply(yapi, args));
+      return Promise.resolve(hooks[name].listener.apply(xU, args));
     }
     let promiseAll = [];
     if (Array.isArray(hooks[name].listener)) {
       let listenerList = hooks[name].listener;
       for (let i = 0, l = listenerList.length; i < l; i++) {
-        promiseAll.push(Promise.resolve(listenerList[i].apply(yapi, args)));
+        promiseAll.push(Promise.resolve(listenerList[i].apply(xU, args)));
       }
     }
     return Promise.all(promiseAll);
   }
 }
 
-yapi.bindHook = bindHook;
-yapi.emitHook = emitHook;
-yapi.emitHookSync = emitHook;
+xU.bindHook = bindHook;
+xU.emitHook = emitHook;
+xU.emitHookSync = emitHook;
 
-let pluginsConfig = initPlugins(yapi.WEBCONFIG.plugins, 'plugin');
+let pluginsConfig = initPlugins(WEBCONFIG.plugins, 'plugin');
 pluginsConfig.forEach(plugin => {
   if (!plugin || plugin.enable === false || plugin.server === false) return null;
 
   if (
-    !yapi.commons.fileExist(path.join(plugin_path, 'yapi-plugin-' + plugin.name + '/server.js'))
+    !xU.fileExist(path.join(plugin_path, 'yapi-plugin-' + plugin.name + '/server.js'))
   ) {
     throw new Error(`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`);
   }
   let pluginModule = require(path.join(plugin_path, 'yapi-plugin-' + plugin.name + '/server.js'));
-  pluginModule.call(yapi, plugin.options);
+  pluginModule.call(xU, plugin.options);
 });
 
 extConfig = initPlugins(extConfig, 'ext');
@@ -251,7 +251,7 @@ extConfig.forEach(plugin => {
   if (!plugin || plugin.enable === false || plugin.server === false) return null;
 
   if (
-    !yapi.commons.fileExist(
+    !xU.fileExist(
       path.join(plugin_system_path, 'yapi-plugin-' + plugin.name + '/server.js')
     )
   ) {
@@ -261,8 +261,8 @@ extConfig.forEach(plugin => {
     plugin_system_path,
     'yapi-plugin-' + plugin.name + '/server.js'
   ));
-  pluginModule.call(yapi, plugin.options);
+  pluginModule.call(xU, plugin.options);
 });
 
 //delete bindHook方法，避免误操作
-delete yapi.bindHook;
+delete xU.bindHook;

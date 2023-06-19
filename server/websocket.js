@@ -4,7 +4,6 @@ const interfaceController = require('./controllers/interface.js');
 const { yapi } = global;
 
 const wsRouter = koaRouter();
-const { createAction } = require('./utils/commons.js');
 const { useWS } = require('./websocket.controller.js');
 
 let pluginsRouterPath = [];
@@ -19,11 +18,11 @@ function addPluginRouter(config) {
     throw new Error('Plugin Route path conflict, please try rename the path');
   }
   pluginsRouterPath.push(routerPath);
-  createAction(wsRouter, '/api', config.controller, config.action, routerPath, method, true);
+  xU.createAction(wsRouter, '/api', config.controller, config.action, routerPath, method, true);
 }
 
 exports.DecoratorWebsocket = function DecoratorWebsocket(app) {
-  createAction(
+  xU.createAction(
     wsRouter,
     '/api',
     interfaceController,
@@ -31,7 +30,7 @@ exports.DecoratorWebsocket = function DecoratorWebsocket(app) {
     '/interface/solve_conflict',
     'get'
   );
-  yapi.emitHookSync('add_ws_router', addPluginRouter);
+  xU.emitHookSync('add_ws_router', addPluginRouter);
   app.ws.use(useWS());
   app.ws.use(wsRouter.routes());
   app.ws.use(wsRouter.allowedMethods());

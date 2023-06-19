@@ -1,5 +1,5 @@
 const { yapi } = global;
-const projectModel = require('../models/project.js');
+const modelProject = require('../models/project.js');
 const interfaceModel = require('../models/interface.js');
 const mockExtra = require('../../common/mock-extra.js');
 const { schemaValidator } = require('../../common/utils.js');
@@ -8,7 +8,7 @@ const _ = require('lodash');
 const Mock = require('mockjs');
 const { ObjectId } = require('mongodb');
 const { getResponseThroghProxy } = require('./requestProxy.js');
-const { VARIABLE } = yapi;
+const { VARIABLE } = xU;
 
 exports.handleProxy = handleProxy;
 
@@ -37,7 +37,7 @@ async function handleProxy(ctx, { domain, projectId }) {
     return [path, proxyHOST, proxyPORT];
   })();
 
-  let body = yapi.commons.resReturn(null, 500, '代理失败');
+  let body = xU.resReturn(null, 500, '代理失败');
   let response;
   console.clear();
   try {
@@ -73,7 +73,7 @@ async function handleProxy(ctx, { domain, projectId }) {
       });
     }
   } catch (error) {
-    body = yapi.commons.resReturn(null, 555, `错误来自yapi服务器： ${error.message}`);
+    body = xU.resReturn(null, 555, `错误来自yapi服务器： ${error.message}`);
   }
   ctx.body = body || {};
   return;
@@ -201,8 +201,8 @@ function mockValidator(interfaceData, ctx) {
     interfaceData.req_body_type === 'json' &&
     interfaceData.req_body_is_json_schema === true
   ) {
-    const schema = yapi.commons.json_parse(interfaceData.req_body_other);
-    const params = yapi.commons.json_parse(ctx.request.body);
+    const schema = xU.json_parse(interfaceData.req_body_other);
+    const params = xU.json_parse(ctx.request.body);
     validResult = schemaValidator(schema, params);
   }
   if (noRequiredArr.length > 0 || (validResult && !validResult.valid)) {
@@ -223,7 +223,7 @@ function mockValidator(interfaceData, ctx) {
 exports.useMockServer = () => async (ctx, next) => {
   // no used variable 'hostname' & 'config'
   // let hostname = ctx.hostname;
-  // let config = yapi.WEBCONFIG;
+  // let config = WEBCONFIG;
   let path = ctx.path;
   let header = ctx.request.header;
 
@@ -243,24 +243,24 @@ exports.useMockServer = () => async (ctx, next) => {
   /* ctx.set('Access-Control-Allow-Origin', '*'); */
 
   if (!projectId) {
-    return (ctx.body = yapi.commons.resReturn(null, 400, 'projectId不能为空'));
+    return (ctx.body = xU.resReturn(null, 400, 'projectId不能为空'));
   }
 
-  let projectInst = yapi.getInst(projectModel);
+  let projectInst = xU.getInst(modelProject);
   let project;
   try {
     project = await projectInst.get(projectId);
   } catch (e) {
-    return (ctx.body = yapi.commons.resReturn(null, 403, e.message));
+    return (ctx.body = xU.resReturn(null, 403, e.message));
   }
 
   if (!project) {
-    return (ctx.body = yapi.commons.resReturn(null, 400, '不存在的项目'));
+    return (ctx.body = xU.resReturn(null, 400, '不存在的项目'));
   }
 
   let interfaceData;
   let realUrlPath;
-  let interfaceInst = yapi.getInst(interfaceModel);
+  let interfaceInst = xU.getInst(interfaceModel);
 
   try {
     /* TODO:获取当前链接的对应代理地址
@@ -338,7 +338,7 @@ exports.useMockServer = () => async (ctx, next) => {
           return handleCorsRequest(ctx);
         }
 
-        return (ctx.body = yapi.commons.resReturn(
+        return (ctx.body = xU.resReturn(
           null,
           404,
           `当前使用yAPI代理，${ctx.method} ${realUrlPath}，但API不存在。请确认GET?POST?URL?是否正确`
@@ -348,7 +348,7 @@ exports.useMockServer = () => async (ctx, next) => {
     }
 
     if (interfaceData.length > 1) {
-      return (ctx.body = yapi.commons.resReturn(null, 405, '存在多个api，请检查数据库'));
+      return (ctx.body = xU.resReturn(null, 405, '存在多个api，请检查数据库'));
     } else {
       interfaceData = interfaceData[0];
     }
@@ -357,7 +357,7 @@ exports.useMockServer = () => async (ctx, next) => {
     if (project.strice) {
       const validResult = mockValidator(interfaceData, ctx);
       if (!validResult.valid) {
-        return (ctx.body = yapi.commons.resReturn(
+        return (ctx.body = xU.resReturn(
           null,
           404,
           `接口字段验证不通过, ${validResult.message}`
@@ -388,8 +388,8 @@ exports.useMockServer = () => async (ctx, next) => {
       if (interfaceData.res_body_type === 'json') {
         if (interfaceData.res_body_is_json_schema === true) {
           //json-schema
-          const schema = yapi.commons.json_parse(interfaceData.res_body);
-          res = yapi.commons.schemaToJson(schema, {
+          const schema = xU.json_parse(interfaceData.res_body);
+          res = xU.schemaToJson(schema, {
             alwaysFakeOptionals: true
           });
         } else {
@@ -404,7 +404,7 @@ exports.useMockServer = () => async (ctx, next) => {
           }
           // console.log('body', ctx.request.body)
 
-          res = mockExtra(yapi.commons.json_parse(interfaceData.res_body), {
+          res = mockExtra(xU.json_parse(interfaceData.res_body), {
             query: ctx.request.query,
             body: ctx.request.body,
             params: Object.assign({}, ctx.request.query, ctx.request.body)
@@ -416,7 +416,7 @@ exports.useMockServer = () => async (ctx, next) => {
           res = Mock.mock(res);
         } catch (e) {
           console.log('err', e.message);
-          yapi.commons.log(e, 'error');
+          xU.log(e, 'error');
         }
       }
 
@@ -433,10 +433,10 @@ exports.useMockServer = () => async (ctx, next) => {
       if (project.is_mock_open && project.project_mock_script) {
         // 项目层面的mock脚本解析
         let script = project.project_mock_script;
-        yapi.commons.handleMockScript(script, context);
+        xU.handleMockScript(script, context);
       }
 
-      await yapi.emitHook('mock_after', context);
+      await xU.emitHook('mock_after', context);
 
       let handleMock = new Promise(resolve => {
         setTimeout(() => {
@@ -495,7 +495,7 @@ exports.useMockServer = () => async (ctx, next) => {
       };
       return;
     } catch (e) {
-      yapi.commons.log(e, 'error');
+      xU.log(e, 'error');
       return (ctx.body = {
         errcode: 400,
         errmsg: '解析出错，请检查。Error: ' + e.message,
@@ -503,7 +503,7 @@ exports.useMockServer = () => async (ctx, next) => {
       });
     }
   } catch (e) {
-    yapi.commons.log(e, 'error');
-    return (ctx.body = yapi.commons.resReturn(null, 409, e.message));
+    xU.log(e, 'error');
+    return (ctx.body = xU.resReturn(null, 409, e.message));
   }
 };

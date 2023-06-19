@@ -1,7 +1,7 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 
-class interfaceModel extends BaseModel {
+class interfaceModel extends ModelBase {
   getName() {
     return 'interface';
   }
@@ -293,7 +293,7 @@ class interfaceModel extends BaseModel {
   }
 
   up(id, data) {
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     return this.model.update(
       {
         _id: id

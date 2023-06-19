@@ -1,15 +1,15 @@
 const BaseController = require('server/controllers/base.js');
 const interfaceModel = require('server/models/interface.js');
-const projectModel = require('server/models/project.js');
+const modelProject = require('server/models/project.js');
 const interfaceCatModel = require('server/models/interfaceCat.js');
 const { yapi } = global;
 
 class exportSwaggerController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.catModel = yapi.getInst(interfaceCatModel);
-    this.interModel = yapi.getInst(interfaceModel);
-    this.projectModel = yapi.getInst(projectModel);
+    this.catModel = xU.getInst(interfaceCatModel);
+    this.interModel = xU.getInst(interfaceModel);
+    this.modelProject = xU.getInst(modelProject);
   }
 
   /*
@@ -71,12 +71,12 @@ class exportSwaggerController extends BaseController {
     let status = ctx.request.query.status;
 
     if (!pid) {
-      ctx.body = yapi.commons.resReturn(null, 200, 'pid 不为空');
+      ctx.body = xU.resReturn(null, 200, 'pid 不为空');
     }
     let curProject;
     let tp = '';
     try {
-      curProject = await this.projectModel.get(pid);
+      curProject = await this.modelProject.get(pid);
       ctx.set('Content-Type', 'application/octet-stream');
       const list = await this.handleListClass(pid, status);
 
@@ -90,12 +90,12 @@ class exportSwaggerController extends BaseController {
           return (ctx.body = tp);
         }
         default: {
-          ctx.body = yapi.commons.resReturn(null, 400, 'type 无效参数');
+          ctx.body = xU.resReturn(null, 400, 'type 无效参数');
         }
       }
     } catch (error) {
-      yapi.commons.log(error, 'error');
-      ctx.body = yapi.commons.resReturn(null, 502, '下载出错');
+      xU.log(error, 'error');
+      ctx.body = xU.resReturn(null, 502, '下载出错');
     }
 
     //Convert to SwaggerV2.0 (OpenAPI 2.0)

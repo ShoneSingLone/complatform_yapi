@@ -25,7 +25,7 @@ async function main() {
 
   require('./utils/notice');
 
-  let currentPort = yapi.WEBCONFIG.port;
+  let currentPort = WEBCONFIG.port;
 
   const Koa = require('koa');
   const koaStatic = require('koa-static');
@@ -35,7 +35,7 @@ async function main() {
   const INDEX_FILE = 'index.html';
   const app = websockify(new Koa());
   app.proxy = true;
-  yapi.app = app;
+  xU.app = app;
 
   app.use(useCORS());
   app.use(
@@ -63,7 +63,7 @@ async function main() {
 
   app.use(useGzipWhenPrd(yapi));
   /* static */
-  app.use(koaStatic(path.join(yapi.WEBROOT, 'static'), { index: INDEX_FILE, gzip: true }));
+  app.use(koaStatic(path.join(xU.WEBROOT, 'static'), { index: INDEX_FILE, gzip: true }));
   /* index.html */
   app.use(useHistoryMode(yapi));
 
@@ -74,7 +74,7 @@ async function main() {
       }, 100);
     }
   });
-  app.server.setTimeout(yapi.WEBCONFIG.timeout);
+  app.server.setTimeout(WEBCONFIG.timeout);
 }
 
 try {

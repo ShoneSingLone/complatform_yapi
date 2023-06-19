@@ -1,6 +1,6 @@
 const schedule = require('node-schedule');
 const openController = require('server/controllers/open.js');
-const projectModel = require('server/models/project.js');
+const modelProject = require('server/models/project.js');
 const syncModel = require('./syncModel.js');
 const tokenModel = require('server/models/token.js');
 const { yapi } = global;
@@ -11,14 +11,14 @@ const jobMap = new Map();
 
 class syncUtils {
   constructor(ctx) {
-    yapi.commons.log(
+    xU.log(
       '-------------------------------------swaggerSyncUtils constructor-----------------------------------------------'
     );
     this.ctx = ctx;
-    this.openController = yapi.getInst(openController);
-    this.syncModel = yapi.getInst(syncModel);
-    this.tokenModel = yapi.getInst(tokenModel);
-    this.projectModel = yapi.getInst(projectModel);
+    this.openController = xU.getInst(openController);
+    this.syncModel = xU.getInst(syncModel);
+    this.tokenModel = xU.getInst(tokenModel);
+    this.modelProject = xU.getInst(modelProject);
     this.init();
   }
 
@@ -66,12 +66,12 @@ class syncUtils {
 
   //同步接口
   async syncInterface(projectId, swaggerUrl, syncMode, uid, projectToken) {
-    yapi.commons.log('定时器触发, syncJsonUrl:' + swaggerUrl + ',合并模式:' + syncMode);
+    xU.log('定时器触发, syncJsonUrl:' + swaggerUrl + ',合并模式:' + syncMode);
     let oldPorjectData;
     try {
-      oldPorjectData = await this.projectModel.get(projectId);
+      oldPorjectData = await this.modelProject.get(projectId);
     } catch (e) {
-      yapi.commons.log('获取项目:' + projectId + '失败');
+      xU.log('获取项目:' + projectId + '失败');
       this.deleteSyncJob(projectId);
       //删除数据库定时任务
       await this.syncModel.delByProjectId(projectId);
@@ -79,7 +79,7 @@ class syncUtils {
     }
     //如果项目已经删除了
     if (!oldPorjectData) {
-      yapi.commons.log('项目:' + projectId + '不存在');
+      xU.log('项目:' + projectId + '不存在');
       this.deleteSyncJob(projectId);
       //删除数据库定时任务
       await this.syncModel.delByProjectId(projectId);
@@ -89,13 +89,13 @@ class syncUtils {
     try {
       newSwaggerJsonData = await this.getSwaggerContent(swaggerUrl);
       if (!newSwaggerJsonData || typeof newSwaggerJsonData !== 'object') {
-        yapi.commons.log('数据格式出错，请检查');
+        xU.log('数据格式出错，请检查');
         this.saveSyncLog(0, syncMode, '数据格式出错，请检查', uid, projectId);
       }
       newSwaggerJsonData = JSON.stringify(newSwaggerJsonData);
     } catch (e) {
       this.saveSyncLog(0, syncMode, '获取数据失败，请检查', uid, projectId);
-      yapi.commons.log('获取数据失败' + e.message);
+      xU.log('获取数据失败' + e.message);
     }
 
     let oldSyncJob = await this.syncModel.getByProjectId(projectId);
@@ -108,7 +108,7 @@ class syncUtils {
     ) {
       //记录日志
       // this.saveSyncLog(0, syncMode, "接口无更新", uid, projectId);
-      oldSyncJob.last_sync_time = yapi.commons.time();
+      oldSyncJob.last_sync_time = xU.time();
       await this.syncModel.upById(oldSyncJob._id, oldSyncJob);
       return;
     }
@@ -128,7 +128,7 @@ class syncUtils {
     //同步成功就更新同步表的数据
     if (requestObj.body.errcode == 0) {
       //修改sync_model的属性
-      oldSyncJob.last_sync_time = yapi.commons.time();
+      oldSyncJob.last_sync_time = xU.time();
       oldSyncJob.old_swagger_content = md5(newSwaggerJsonData);
       await this.syncModel.upById(oldSyncJob._id, oldSyncJob);
     }
@@ -156,7 +156,7 @@ class syncUtils {
    * @param {*} projectId
    */
   saveSyncLog(errcode, syncMode, moremsg, uid, projectId) {
-    yapi.commons.saveLog({
+    xU.saveLog({
       content:
         '自动同步接口状态:' +
         (errcode == 0 ? '成功,' : '失败,') +
@@ -181,7 +181,7 @@ class syncUtils {
       let data = await this.tokenModel.get(project_id);
       let token;
       if (!data) {
-        let passsalt = yapi.commons.randStr();
+        let passsalt = xU.randStr();
         token = sha('sha1').update(passsalt).digest('hex').substr(0, 20);
 
         await this.tokenModel.save({ project_id, token });

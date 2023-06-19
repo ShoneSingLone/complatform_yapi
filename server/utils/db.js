@@ -16,7 +16,6 @@ async function setYapiMongooseAsync() {
     mongoose.set('useFindAndModify', false);
     mongoose.set('useCreateIndex', true);
 
-    let { WEBCONFIG } = yapi;
     let options = { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true };
 
     if (WEBCONFIG.db.user) {
@@ -48,19 +47,19 @@ async function setYapiMongooseAsync() {
     console.log('🚀:', 'connectString', JSON.stringify(connectString, null, 2));
     let db = mongoose.connect(connectString, options, function (err) {
       if (err) {
-        yapi.commons.log(err + ', mongodb Authentication failed', 'error');
+        xU.log(err + ', mongodb Authentication failed', 'error');
         reject(err);
       }
     });
     db.then(
       function (connection) {
-        yapi.commons.log('mongodb load success...');
-        yapi.DbConnection = connection;
+        xU.log('mongodb load success...');
+        xU.DbConnection = connection;
         autoIncrement.initialize(connection);
         resolve(connection);
       },
       function (err) {
-        yapi.commons.log(err + 'mongodb connect error', 'error');
+        xU.log(err + 'mongodb connect error', 'error');
         reject(err);
       }
     );

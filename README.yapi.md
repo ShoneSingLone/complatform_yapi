@@ -2,7 +2,7 @@
 
 体验地址：
 
-[http://yapi.smart-xwork.cn/](http://yapi.smart-xwork.cn/)
+[http://xU.smart-xwork.cn/](http://xU.smart-xwork.cn/)
 
 文档：
 

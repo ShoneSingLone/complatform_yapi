@@ -1,17 +1,17 @@
 module.exports = function storageCreator(id) {
   const storageModel = require('../models/storage.js');
-  const yapi = require('../yapi.js');
+  const yapi = require('./utils.js');
   const defaultData = {};
   return {
     getItem: async (name = '') => {
-      let inst = yapi.getInst(storageModel);
+      let inst = xU.getInst(storageModel);
       let data = await inst.get(id);
       data = data || defaultData;
       if (name) return data[name];
       return data;
     },
     setItem: async (name, value) => {
-      let inst = yapi.getInst(storageModel);
+      let inst = xU.getInst(storageModel);
       let curData = await inst.get(id);
       let data = curData || defaultData;
       let result;

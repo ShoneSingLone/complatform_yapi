@@ -47,7 +47,6 @@ exports.customCookies = (ctx, key, value) => {
     if (value) {
       return value;
     } else {
-      debugger;
       return '';
     }
   }

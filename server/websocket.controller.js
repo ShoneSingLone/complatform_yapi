@@ -3,7 +3,7 @@ const _ = require('lodash');
 var cps = require('current-processes');
 const { yapi } = global;
 const ONLINE_USERS = new Map();
-yapi.users = ONLINE_USERS;
+xU.users = ONLINE_USERS;
 
 /*
  *
@@ -158,6 +158,6 @@ exports.useWS = () => async (ctx, next) => {
     }
     return next();
   } catch (error) {
-    yapi.commons.log(error, 'error');
+    xU.log(error, 'error');
   }
 };

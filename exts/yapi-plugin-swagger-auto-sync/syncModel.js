@@ -1,8 +1,8 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 const mongoose = require('mongoose');
 
-class syncModel extends BaseModel {
+class syncModel extends ModelBase {
   getName() {
     return 'interface_auto_sync';
   }
@@ -41,7 +41,7 @@ class syncModel extends BaseModel {
   }
 
   save(data) {
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     let m = new this.model(data);
     return m.save();
   }
@@ -59,7 +59,7 @@ class syncModel extends BaseModel {
   up(data) {
     let id = data.id;
     delete data.id;
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     return this.model.update(
       {
         _id: id
@@ -70,7 +70,7 @@ class syncModel extends BaseModel {
 
   upById(id, data) {
     delete data.id;
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     return this.model.update(
       {
         _id: id

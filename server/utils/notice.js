@@ -10,7 +10,7 @@ const noticeObj = {
   mail: {
     title: '邮件',
     hander: (emails, title, content) => {
-      yapi.commons.sendMail({
+      xU.sendMail({
         to: emails,
         contents: content,
         subject: title
@@ -19,15 +19,15 @@ const noticeObj = {
   }
 };
 
-yapi.emitHook('addNotice', noticeObj);
+xU.emitHook('addNotice', noticeObj);
 
-yapi.sendNotice = async function(projectId, data) {
-  const projectModel = require('../models/project.js');
-  const userModel = require('../models/user.js');
+xU.sendNotice = async function(projectId, data) {
+  const modelProject = require('../models/project.js');
+  const modelUser = require('../models/user.js');
   const followModel = require('../models/follow.js');
-  const followInst = yapi.getInst(followModel);
-  const userInst = yapi.getInst(userModel);
-  const projectInst = yapi.getInst(projectModel);
+  const followInst = xU.getInst(followModel);
+  const userInst = xU.getInst(modelUser);
+  const projectInst = xU.getInst(modelProject);
   const list = await followInst.listByProjectId(projectId);
   const starUsers = list.map(item => item.uid);
   const projectList = await projectInst.get(projectId);
@@ -43,15 +43,15 @@ yapi.sendNotice = async function(projectId, data) {
       try {
         noticeItem.hander(emails, data.title, data.content);
       } catch (err) {
-        yapi.commons.log('发送' + (noticeItem.title || key) + '失败' + err.message, 'error');
+        xU.log('发送' + (noticeItem.title || key) + '失败' + err.message, 'error');
       }
     });
-    // yapi.commons.sendMail({
+    // xU.sendMail({
     //   to: emails,
     //   contents: data.content,
     //   subject: data.title
     // });
   } catch (e) {
-    yapi.commons.log('发送失败：' + e, 'error');
+    xU.log('发送失败：' + e, 'error');
   }
 };

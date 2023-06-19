@@ -1,7 +1,7 @@
 const { yapi } = global;
-const BaseModel = require('server/models/base');
+const ModelBase = require('server/models/base');
 
-class advMockModel extends BaseModel {
+class advMockModel extends ModelBase {
   getName() {
     return 'adv_mock';
   }
@@ -36,13 +36,13 @@ class advMockModel extends BaseModel {
   }
 
   save(data) {
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     let m = new this.model(data);
     return m.save();
   }
 
   up(data) {
-    data.up_time = yapi.commons.time();
+    data.up_time = xU.time();
     return this.model.update(
       {
         interface_id: data.interface_id

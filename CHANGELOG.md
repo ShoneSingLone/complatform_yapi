@@ -86,7 +86,7 @@
 
 ### v1.7.1
 
-- 废弃 yapi.ymfe.org 文档站点
+- 废弃 xU.ymfe.org 文档站点
 
 ### v1.7.0
 

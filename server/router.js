@@ -12,7 +12,6 @@ const projectController = require('./controllers/project.js');
 const logController = require('./controllers/log.js');
 const followController = require('./controllers/follow.js');
 const openController = require('./controllers/open.js');
-const { createAction } = require('./utils/commons.js');
 
 const router = koaRouter();
 
@@ -618,17 +617,17 @@ function addPluginRouter(config) {
     throw new Error('Plugin Route path conflict, please try rename the path');
   }
   pluginsRouterPath.push(routerPath);
-  createAction(router, '/api', config.controller, config.action, routerPath, method, false);
+  xU.createAction(router, '/api', config.controller, config.action, routerPath, method, false);
 }
 
-yapi.emitHookSync('add_router', addPluginRouter);
+xU.emitHookSync('add_router', addPluginRouter);
 
 for (let ctrl in routerConfig) {
   let actions = routerConfig[ctrl];
   actions.forEach(item => {
     let routerController = INTERFACE_CONFIG[ctrl].controller;
     let routerPath = INTERFACE_CONFIG[ctrl].prefix + item.path;
-    createAction(router, '/api', routerController, item.action, routerPath, item.method);
+    xU.createAction(router, '/api', routerController, item.action, routerPath, item.method);
   });
 }
 

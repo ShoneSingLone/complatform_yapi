@@ -1,8 +1,8 @@
 const groupModel = require('../models/group.js');
 const { yapi } = global;
 const BaseController = require('./base.js');
-const projectModel = require('../models/project.js');
-const userModel = require('../models/user.js');
+const modelProject = require('../models/project.js');
+const modelUser = require('../models/user.js');
 const interfaceModel = require('../models/interface.js');
 const interfaceColModel = require('../models/interfaceCol.js');
 const interfaceCaseModel = require('../models/interfaceCase.js');
@@ -98,7 +98,7 @@ class groupController extends BaseController {
   async get(ctx) {
     let params = ctx.params;
 
-    let groupInst = yapi.getInst(groupModel);
+    let groupInst = xU.getInst(groupModel);
     let result = await groupInst.getGroupById(params.id);
     if (result) {
       result = result.toObject();
@@ -107,7 +107,7 @@ class groupController extends BaseController {
       if (result.type === 'private') {
         result.group_name = '个人空间';
       }
-      ctx.body = yapi.commons.resReturn(result);
+      ctx.body = xU.resReturn(result);
     }
   }
 
@@ -129,7 +129,7 @@ class groupController extends BaseController {
     // 新版每个人都有权限添加分组
 
     // if (this.getRole() !== 'admin') {
-    //   return (ctx.body = yapi.commons.resReturn(null, 401, '没有权限'));
+    //   return (ctx.body = xU.resReturn(null, 401, '没有权限'));
     // }
 
     let owners = [];
@@ -148,25 +148,25 @@ class groupController extends BaseController {
       }
     }
 
-    let groupInst = yapi.getInst(groupModel);
+    let groupInst = xU.getInst(groupModel);
 
     let checkRepeat = await groupInst.checkRepeat(params.group_name);
 
     if (checkRepeat > 0) {
-      return (ctx.body = yapi.commons.resReturn(null, 401, '项目分组名已存在'));
+      return (ctx.body = xU.resReturn(null, 401, '项目分组名已存在'));
     }
 
     let data = {
       group_name: params.group_name,
       group_desc: params.group_desc,
       uid: this.getUid(),
-      add_time: yapi.commons.time(),
-      up_time: yapi.commons.time(),
+      add_time: xU.time(),
+      up_time: xU.time(),
       members: owners
     };
 
     let result = await groupInst.save(data);
-    result = yapi.commons.fieldSelect(result, [
+    result = xU.fieldSelect(result, [
       '_id',
       'group_name',
       'group_desc',
@@ -175,7 +175,7 @@ class groupController extends BaseController {
       'type'
     ]);
     let username = this.getUsername();
-    yapi.commons.saveLog({
+    xU.saveLog({
       content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组 <a href="/group/${
         result._id
       }">${params.group_name}</a>`,
@@ -184,7 +184,7 @@ class groupController extends BaseController {
       username: username,
       typeid: result._id
     });
-    ctx.body = yapi.commons.resReturn(result);
+    ctx.body = xU.resReturn(result);
   }
 
   /**
@@ -196,7 +196,7 @@ class groupController extends BaseController {
 
   async getUserdata(uid, role) {
     role = role || 'dev';
-    let userInst = yapi.getInst(userModel);
+    let userInst = xU.getInst(modelUser);
     let userData = await userInst.findById(uid);
     if (!userData) {
       return null;
@@ -211,21 +211,21 @@ class groupController extends BaseController {
   }
 
   async getMyGroup(ctx) {
-    var groupInst = yapi.getInst(groupModel);
+    var groupInst = xU.getInst(groupModel);
     let privateGroup = await groupInst.getByPrivateUid(this.getUid());
     if (!privateGroup) {
       privateGroup = await groupInst.save({
         uid: this.getUid(),
         group_name: 'User-' + this.getUid(),
-        add_time: yapi.commons.time(),
-        up_time: yapi.commons.time(),
+        add_time: xU.time(),
+        up_time: xU.time(),
         type: 'private'
       });
     }
     if (privateGroup) {
-      ctx.body = yapi.commons.resReturn(privateGroup);
+      ctx.body = xU.resReturn(privateGroup);
     } else {
-      ctx.body = yapi.commons.resReturn(null);
+      ctx.body = xU.resReturn(null);
     }
   }
 
@@ -243,7 +243,7 @@ class groupController extends BaseController {
    */
   async addMember(ctx) {
     let params = ctx.params;
-    let groupInst = yapi.getInst(groupModel);
+    let groupInst = xU.getInst(groupModel);
 
     params.role = ['owner', 'dev', 'guest'].find(v => v === params.role) || 'dev';
     let add_members = [];
@@ -270,7 +270,7 @@ class groupController extends BaseController {
         return `<a href = "/user/profile/${item.uid}">${item.username}</a>`;
       });
       members = members.join('、');
-      yapi.commons.saveLog({
+      xU.saveLog({
         content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组成员 ${members} 为 ${
           rolename[params.role]
         }`,
@@ -280,7 +280,7 @@ class groupController extends BaseController {
         typeid: params.id
       });
     }
-    ctx.body = yapi.commons.resReturn({
+    ctx.body = xU.resReturn({
       result,
       add_members,
       exist_members,
@@ -302,14 +302,14 @@ class groupController extends BaseController {
    */
   async changeMemberRole(ctx) {
     let params = ctx.request.body;
-    let groupInst = yapi.getInst(groupModel);
+    let groupInst = xU.getInst(groupModel);
 
     var check = await groupInst.checkMemberRepeat(params.id, params.member_uid);
     if (check === 0) {
-      return (ctx.body = yapi.commons.resReturn(null, 400, '分组成员不存在'));
+      return (ctx.body = xU.resReturn(null, 400, '分组成员不存在'));
     }
     if ((await this.checkAuth(params.id, 'group', 'danger')) !== true) {
-      return (ctx.body = yapi.commons.resReturn(null, 405, '没有权限'));
+      return (ctx.body = xU.resReturn(null, 405, '没有权限'));
     }
 
     params.role = ['owner', 'dev', 'guest'].find(v => v === params.role) || 'dev';
@@ -318,7 +318,7 @@ class groupController extends BaseController {
     let username = this.getUsername();
 
     let groupUserdata = await this.getUserdata(params.member_uid, params.role);
-    yapi.commons.saveLog({
+    xU.saveLog({
       content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更改了分组成员 <a href="/user/profile/${
         params.member_uid
       }">${groupUserdata ? groupUserdata.username : ''}</a> 的权限为 "${rolename[params.role]}"`,
@@ -327,7 +327,7 @@ class groupController extends BaseController {
       username: username,
       typeid: params.id
     });
-    ctx.body = yapi.commons.resReturn(result);
+    ctx.body = xU.resReturn(result);
   }
 
   /**
@@ -343,9 +343,9 @@ class groupController extends BaseController {
 
   async getMemberList(ctx) {
     let params = ctx.params;
-    let groupInst = yapi.getInst(groupModel);
+    let groupInst = xU.getInst(groupModel);
     let group = await groupInst.get(params.id);
-    ctx.body = yapi.commons.resReturn(group.members);
+    ctx.body = xU.resReturn(group.members);
   }
 
   /**
@@ -362,20 +362,20 @@ class groupController extends BaseController {
 
   async delMember(ctx) {
     let params = ctx.params;
-    let groupInst = yapi.getInst(groupModel);
+    let groupInst = xU.getInst(groupModel);
     var check = await groupInst.checkMemberRepeat(params.id, params.member_uid);
     if (check === 0) {
-      return (ctx.body = yapi.commons.resReturn(null, 400, '分组成员不存在'));
+      return (ctx.body = xU.resReturn(null, 400, '分组成员不存在'));
     }
     if ((await this.checkAuth(params.id, 'group', 'danger')) !== true) {
-      return (ctx.body = yapi.commons.resReturn(null, 405, '没有权限'));
+      return (ctx.body = xU.resReturn(null, 405, '没有权限'));
     }
 
     let result = await groupInst.delMember(params.id, params.member_uid);
     let username = this.getUsername();
 
     let groupUserdata = await this.getUserdata(params.member_uid, params.role);
-    yapi.commons.saveLog({
+    xU.saveLog({
       content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分组成员 <a href="/user/profile/${
         params.member_uid
       }">${groupUserdata ? groupUserdata.username : ''}</a>`,
@@ -384,7 +384,7 @@ class groupController extends BaseController {
       username: username,
       typeid: params.id
     });
-    ctx.body = yapi.commons.resReturn(result);
+    ctx.body = xU.resReturn(result);
   }
 
   /**
@@ -397,8 +397,8 @@ class groupController extends BaseController {
    * @example ./api/group/list.json
    */
   async list(ctx) {
-    var groupInst = yapi.getInst(groupModel);
-    let projectInst = yapi.getInst(projectModel);
+    var groupInst = xU.getInst(groupModel);
+    let projectInst = xU.getInst(modelProject);
 
     let privateGroup = await groupInst.getByPrivateUid(this.getUid());
     let newResult = [];
@@ -407,8 +407,8 @@ class groupController extends BaseController {
       privateGroup = await groupInst.save({
         uid: this.getUid(),
         group_name: 'User-' + this.getUid(),
-        add_time: yapi.commons.time(),
-        up_time: yapi.commons.time(),
+        add_time: xU.time(),
+        up_time: xU.time(),
         type: 'private'
       });
     }
@@ -455,7 +455,7 @@ class groupController extends BaseController {
       newResult.unshift(privateGroup);
     }
 
-    ctx.body = yapi.commons.resReturn(newResult);
+    ctx.body = xU.resReturn(newResult);
   }
 
   /**
@@ -470,14 +470,14 @@ class groupController extends BaseController {
    */
   async del(ctx) {
     if (this.getRole() !== 'admin') {
-      return (ctx.body = yapi.commons.resReturn(null, 401, '没有权限'));
+      return (ctx.body = xU.resReturn(null, 401, '没有权限'));
     }
 
-    let groupInst = yapi.getInst(groupModel);
-    let projectInst = yapi.getInst(projectModel);
-    let interfaceInst = yapi.getInst(interfaceModel);
-    let interfaceColInst = yapi.getInst(interfaceColModel);
-    let interfaceCaseInst = yapi.getInst(interfaceCaseModel);
+    let groupInst = xU.getInst(groupModel);
+    let projectInst = xU.getInst(modelProject);
+    let interfaceInst = xU.getInst(interfaceModel);
+    let interfaceColInst = xU.getInst(interfaceColModel);
+    let interfaceCaseInst = xU.getInst(interfaceCaseModel);
     let id = ctx.params.id;
 
     let projectList = await projectInst.list(id, true);
@@ -491,7 +491,7 @@ class groupController extends BaseController {
     }
 
     let result = await groupInst.del(id);
-    ctx.body = yapi.commons.resReturn(result);
+    ctx.body = xU.resReturn(result);
   }
 
   /**
@@ -507,16 +507,16 @@ class groupController extends BaseController {
    * @example ./api/group/up.json
    */
   async up(ctx) {
-    let groupInst = yapi.getInst(groupModel);
+    let groupInst = xU.getInst(groupModel);
     let params = ctx.params;
 
     if ((await this.checkAuth(params.id, 'group', 'danger')) !== true) {
-      return (ctx.body = yapi.commons.resReturn(null, 405, '没有权限'));
+      return (ctx.body = xU.resReturn(null, 405, '没有权限'));
     }
 
     let result = await groupInst.up(params.id, params);
     let username = this.getUsername();
-    yapi.commons.saveLog({
+    xU.saveLog({
       content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了 <a href="/group/${
         params.id
       }">${params.group_name}</a> 分组`,
@@ -525,7 +525,7 @@ class groupController extends BaseController {
       username: username,
       typeid: params.id
     });
-    ctx.body = yapi.commons.resReturn(result);
+    ctx.body = xU.resReturn(result);
   }
 }
 
