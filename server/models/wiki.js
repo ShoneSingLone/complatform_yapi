@@ -1,7 +1,7 @@
 const { yapi } = global;
 const ModelBase = require('server/models/base.js');
 
-class WikiModel extends ModelBase {
+class ModelWiki extends ModelBase {
   getName() {
     return 'wiki_doc';
   }
@@ -43,7 +43,7 @@ class WikiModel extends ModelBase {
    * @param {any} [params={}]
    * @returns
    *
-   * @memberOf WikiModel
+   * @memberOf ModelWiki
    */
   menu(params = {}) {
     const select =
@@ -71,4 +71,4 @@ class WikiModel extends ModelBase {
   }
 }
 
-exports.WikiModel = WikiModel;
+exports.ModelWiki = ModelWiki;

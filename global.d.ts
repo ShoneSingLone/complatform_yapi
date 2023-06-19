@@ -1,2 +1,2 @@
-const { xU } = global;
-type t_xU = typeof xU;
+const { xU } = require('./server/utils/utils');
+type t_xU = typeof global.xU;

@@ -1,13 +1,14 @@
 const path = require('path');
 const fs = require('fs-extra');
 const nodemailer = require('nodemailer');
+
 let mail = () => null;
 if (WEBCONFIG.mail && WEBCONFIG.mail.enable) {
   mail = nodemailer.createTransport(WEBCONFIG.mail);
 }
 
 let INSTS = new Map();
-const { WEBCONFIG } = global;
+
 const {
   schemaToJson,
   resReturn,
@@ -317,7 +318,6 @@ function storageCreator(id) {
   };
 };
 
-
 let xU = {
   fs,
   path,
@@ -366,3 +366,6 @@ let xU = {
 };
 
 global.xU = xU;
+
+
+exports.xU = xU;

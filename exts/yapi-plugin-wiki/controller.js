@@ -1,5 +1,5 @@
 const BaseController = require('server/controllers/base.js');
-const wikiModel = require('./wikiModel.js');
+const modelWiki = require('./modelWiki.js');
 const modelProject = require('server/models/project.js');
 const modelUser = require('server/models/user.js');
 const jsondiffpatch = require('jsondiffpatch');
@@ -12,7 +12,7 @@ const showDiffMsg = require('../../common/diff-view.js');
 class wikiController extends BaseController {
   constructor(ctx) {
     super(ctx);
-    this.Model = xU.getInst(wikiModel);
+    this.Model = xU.getInst(modelWiki);
     this.modelProject = xU.getInst(modelProject);
   }
 
