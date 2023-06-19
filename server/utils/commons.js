@@ -663,6 +663,7 @@ const applog = {
 
 exports.setYapiCommons = () => {
   yapi.commons = exports;
+  yapi.applog = applog;
 };
 
 
