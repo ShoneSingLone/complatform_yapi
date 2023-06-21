@@ -163,6 +163,6 @@ exports.useWS = () => async (ctx, next) => {
 		}
 		return next();
 	} catch (error) {
-		xU.log(error, "error");
+		xU.applog.info(error, "error");
 	}
 };

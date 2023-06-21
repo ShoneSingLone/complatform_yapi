@@ -136,14 +136,14 @@ class BaseController {
 		try {
 			/* 未携带认证信息 */
 			if (!token || !uid) {
-				xU.applog.log("未携带认证信息");
+				xU.applog.info("未携带认证信息");
 				return false;
 			}
 			let userInst = xU.getInst(modelUser); //创建user实体
 			let result = await userInst.findById(uid);
 			/* 用户不存在 */
 			if (!result) {
-				xU.applog.log("用户不存在");
+				xU.applog.info("用户不存在");
 				return false;
 			}
 
@@ -151,7 +151,7 @@ class BaseController {
 			try {
 				decoded = jwt.verify(token, result.passsalt);
 			} catch (err) {
-				xU.applog.log("JWT 信息不匹配");
+				xU.applog.info("JWT 信息不匹配");
 				return false;
 			}
 			/* 身份验证 */
@@ -159,12 +159,12 @@ class BaseController {
 				this.$uid = uid;
 				this.$auth = true;
 				this.$user = result;
-				xU.applog.log("身份验证");
+				xU.applog.info("身份验证");
 				return true;
 			}
 			return false;
 		} catch (e) {
-			xU.log(e, "error");
+			xU.applog.info(e, "error");
 			return false;
 		}
 	}
@@ -297,7 +297,7 @@ class BaseController {
 
 			return "member";
 		} catch (e) {
-			xU.log(e, "error");
+			xU.applog.info(e, "error");
 			return false;
 		}
 	}

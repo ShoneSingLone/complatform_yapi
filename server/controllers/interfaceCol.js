@@ -756,7 +756,7 @@ class interfaceColController extends BaseController {
 					this.caseModel.upCaseIndex(item.id, item.index).then(
 						res => {},
 						err => {
-							xU.log(err.message, "error");
+							xU.applog.info(err.message, "error");
 						}
 					);
 				}
@@ -790,7 +790,7 @@ class interfaceColController extends BaseController {
 					this.colModel.upColIndex(item.id, item.index).then(
 						res => {},
 						err => {
-							xU.log(err.message, "error");
+							xU.applog.info(err.message, "error");
 						}
 					);
 				}

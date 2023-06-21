@@ -441,7 +441,7 @@ exports.useMockServer = () => async (ctx, next) => {
 					res = Mock.mock(res);
 				} catch (e) {
 					console.log("err", e.message);
-					xU.log(e, "error");
+					xU.applog.info(e, "error");
 				}
 			}
 
@@ -526,7 +526,7 @@ exports.useMockServer = () => async (ctx, next) => {
 			};
 			return;
 		} catch (e) {
-			xU.log(e, "error");
+			xU.applog.info(e, "error");
 			return (ctx.body = {
 				errcode: 400,
 				errmsg: "解析出错，请检查。Error: " + e.message,
@@ -534,7 +534,7 @@ exports.useMockServer = () => async (ctx, next) => {
 			});
 		}
 	} catch (e) {
-		xU.log(e, "error");
+		xU.applog.info(e, "error");
 		return (ctx.body = xU.resReturn(null, 409, e.message));
 	}
 };

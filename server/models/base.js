@@ -32,11 +32,11 @@ class ModelBase {
 	 * 获取collection的schema结构
 	 */
 	getSchema() {
-		xU.log("Model Class need getSchema function", "error");
+		xU.applog.info("Model Class need getSchema function", "error");
 	}
 
 	getName() {
-		xU.log("Model Class need name", "error");
+		xU.applog.info("Model Class need name", "error");
 	}
 }
 

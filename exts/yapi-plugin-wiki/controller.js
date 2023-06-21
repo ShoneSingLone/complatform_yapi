@@ -183,7 +183,7 @@ class wikiController extends BaseController {
 			});
 			ctx.websocket.on("close", async () => {});
 		} catch (err) {
-			xU.log(err, "error");
+			xU.applog.info(err, "error");
 		}
 	}
 

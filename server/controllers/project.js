@@ -775,7 +775,7 @@ class projectController extends BaseController {
 				});
 			});
 		} catch (e) {
-			xU.log(e, "error"); // eslint-disable-line
+			xU.applog.info(e, "error"); // eslint-disable-line
 		}
 	}
 

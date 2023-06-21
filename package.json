@@ -58,6 +58,7 @@
 	"author": "",
 	"license": "Apache-2.0",
 	"dependencies": {
+		"dayjs": "^1.10.7",
 		"ajv": "^5.5.1",
 		"ajv-i18n": "^2.2.0",
 		"ava": "^0.22.0",
@@ -101,7 +102,6 @@
 		"markdown-it-table-of-contents": "0.3.2",
 		"md5": "2.2.1",
 		"mockjs": "1.0.1-beta3",
-		"moment": "^2.19.3",
 		"mongodb": "3.1.8",
 		"mongoose": "5.7.5",
 		"mongoose-auto-increment": "5.0.1",
@@ -137,8 +137,6 @@
 	},
 	"devDependencies": {
 		"cross-env": "^7.0.3",
-		"nodemon": "^1.19.4",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.0.4"
+		"nodemon": "^1.19.4"
 	}
 }

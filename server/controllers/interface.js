@@ -976,7 +976,7 @@ class interfaceController extends BaseController {
 				this.Model.upEditUid(id, 0).then();
 			});
 		} catch (err) {
-			xU.log(err, "error");
+			xU.applog.info(err, "error");
 		}
 	}
 
@@ -1100,7 +1100,7 @@ class interfaceController extends BaseController {
 					xU.emitHook("interface_del", item._id).then();
 					await this.caseModel.delByInterfaceId(item._id);
 				} catch (e) {
-					xU.log(e.message, "error");
+					xU.applog.info(e.message, "error");
 				}
 			});
 			await this.catModel.del(id);
@@ -1234,7 +1234,7 @@ class interfaceController extends BaseController {
 
 			return (ctx.body = xU.resReturn("成功！"));
 		} catch (e) {
-			xU.log(e.message, "error");
+			xU.applog.info(e.message, "error");
 			ctx.body = xU.resReturn(null, 400, e.message);
 		}
 	}
@@ -1265,7 +1265,7 @@ class interfaceController extends BaseController {
 			/* ???? 都没有保证事务，能返回成功？ */
 			return (ctx.body = xU.resReturn("成功！"));
 		} catch (e) {
-			xU.log(e.message, "error");
+			xU.applog.info(e.message, "error");
 			ctx.body = xU.resReturn(null, 400, e.message);
 		}
 	}

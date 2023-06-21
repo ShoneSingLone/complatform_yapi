@@ -1,5 +1,6 @@
 const fs = require("fs-extra");
 const path = require("path");
+const dayjs = require("dayjs");
 const sha1 = require("sha1");
 const modelLog = require("../models/log.js");
 const modelProject = require("../models/project.js");
@@ -13,9 +14,7 @@ const _ = require("underscore");
 const Ajv = require("ajv");
 const Mock = require("mockjs");
 const sandboxFn = require("./sandbox");
-
 const ejs = require("easy-json-schema");
-
 const jsf = require("json-schema-faker");
 const { schemaValidator } = require("../../common/utils");
 const http = require("http");
@@ -32,16 +31,6 @@ const defaultOptions = {
 	failOnInvalidTypes: false,
 	failOnInvalidFormat: false
 };
-
-// formats.forEach(item => {
-//   item = item.name;
-//   jsf.format(item, () => {
-//     if (item === 'mobile') {
-//       return jsf.random.randexp('^[1][34578][0-9]{9}$');
-//     }
-//     return Mock.mock('@' + item);
-//   });
-// });
 
 const schemaToJson = function (schema, options = {}) {
 	Object.assign(options, defaultOptions);
@@ -66,29 +55,41 @@ const resReturn = (data, errcode, errmsg) => {
 	};
 };
 
-const log = (msg, type = "log") => {
+const log = (msg, type = "info") => {
+	let errorThrowAt = ``;
 	if (!msg) {
 		return;
 	}
-	let logFn = console[type];
-	logFn(type + ":", msg);
-	let date = new Date();
-	let year = date.getFullYear();
-	let month = date.getMonth() + 1;
-
-	let logfile = path.join(xU.WEBROOT_LOG, year + "-" + month + ".log");
 
 	if (typeof msg === "object") {
 		if (msg instanceof Error) msg = msg.message;
 		else msg = JSON.stringify(msg);
 	}
 
-	// let data = (new Date).toLocaleString() + '\t|\t' + type + '\t|\t' + msg + '\n';
-	let data = `[ ${new Date().toLocaleString()} ] [ ${type} ] ${msg}\n`;
-
-	fs.writeFileSync(logfile, data, {
+	try {
+		throw new Error("common.info");
+	} catch (error) {
+		try {
+			const contentArray = String(error.stack).split("\n");
+			let errorAt = String(contentArray[3]);
+			const res = errorAt.match(/\((.*)\)/);
+			if (res && res[1]) {
+				errorThrowAt += `\n(${res[1]})`;
+			} else {
+				errorThrowAt += `\n(${errorAt.split("    at ")[1]})`;
+			}
+		} catch (error) { }
+	}
+	/* let date = new Date(); let year = date.getFullYear();
+	let month = date.getMonth() + 1; */
+	const date = Date.now();
+	let logfile = path.join(xU.WEBROOT_LOG, `${dayjs(date).format("YYYY-MM-DD_HH")}.log`);
+	const errorContent = `【${dayjs(date).format("YYYY-MM-DD HH:mm:ss")}-${date}】：【${type}】：【${msg}】${errorThrowAt}\n===`;
+	fs.writeFileSync(logfile, errorContent, {
 		flag: "a"
 	});
+	let logFn = console[type];
+	logFn(errorContent);
 };
 
 const fileExist = filePath => {
@@ -164,9 +165,9 @@ const sendMail = (options, cb) => {
 		cb ||
 		function (err) {
 			if (err) {
-				xU.log("send mail " + options.to + " error," + err.message, "error");
+				xU.applog.info("send mail " + options.to + " error," + err.message, "error");
 			} else {
-				xU.log("send mail " + options.to + " success");
+				xU.applog.info("send mail " + options.to + " success");
 			}
 		};
 
@@ -181,7 +182,7 @@ const sendMail = (options, cb) => {
 			cb
 		);
 	} catch (e) {
-		xU.log(e.message, "error");
+		xU.applog.info(e.message, "error");
 		console.error(e.message); // eslint-disable-line
 	}
 };
@@ -383,7 +384,7 @@ const saveLog = logData => {
 
 		logInst.save(data).then();
 	} catch (e) {
-		xU.log(e, "error"); // eslint-disable-line
+		xU.applog.info(e, "error"); // eslint-disable-line
 	}
 };
 
@@ -438,7 +439,7 @@ const createAction = (
 			}
 		} catch (err) {
 			ctx.body = xU.resReturn(null, 40011, "服务器出错...");
-			xU.log(err, "error");
+			xU.applog.info(err, "error");
 		}
 	});
 };
@@ -452,7 +453,7 @@ function handleParamsValue(params, val) {
 	let value = {};
 	try {
 		params = params.toObject();
-	} catch (e) {}
+	} catch (e) { }
 	if (params.length === 0 || val.length === 0) {
 		return params;
 	}
@@ -675,8 +676,8 @@ const createWebAPIRequest = function (ops) {
 };
 
 const applog = {
-	log(msg) {
-		log(msg, "log");
+	info(msg) {
+		log(msg, "info");
 	},
 	error(msg) {
 		log(msg, "error");

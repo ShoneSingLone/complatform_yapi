@@ -52,19 +52,19 @@ async function setYapiMongooseAsync() {
 		console.log("🚀:", "connectString", JSON.stringify(connectString, null, 2));
 		let db = mongoose.connect(connectString, options, function (err) {
 			if (err) {
-				xU.log(err + ", mongodb Authentication failed", "error");
+				xU.applog.info(err + ", mongodb Authentication failed", "error");
 				reject(err);
 			}
 		});
 		db.then(
 			function (connection) {
-				xU.log("mongodb load success...");
+				console.log("mongodb load success...");
 				xU.DbConnection = connection;
 				autoIncrement.initialize(connection);
 				resolve(connection);
 			},
 			function (err) {
-				xU.log(err + "mongodb connect error", "error");
+				xU.applog.info(err + "mongodb connect error", "error");
 				reject(err);
 			}
 		);

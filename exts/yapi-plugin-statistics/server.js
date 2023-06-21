@@ -76,7 +76,7 @@ module.exports = function () {
 		try {
 			inst.save(data).then();
 		} catch (e) {
-			xU.log("mockStatisError", e);
+			xU.applog.info("mockStatisError", e);
 		}
 	});
 };

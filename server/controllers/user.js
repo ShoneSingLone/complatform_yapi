@@ -113,11 +113,11 @@ class userController extends BaseController {
 			let ret = await xU.emitHook("third_login", ctx);
 			let login = await this.handleThirdLogin(ret.email, ret.username);
 			if (login === true) {
-				xU.log("login success");
+				xU.applog.info("login success");
 				ctx.redirect("/group");
 			}
 		} catch (e) {
-			xU.log(e.message, "error");
+			xU.applog.info(e.message, "error");
 			ctx.redirect("/");
 		}
 	}
@@ -167,7 +167,7 @@ class userController extends BaseController {
 				));
 			}
 		} catch (e) {
-			xU.log(e.message, "error");
+			xU.applog.info(e.message, "error");
 			return (ctx.body = xU.resReturn(null, 401, e.message));
 		}
 	}

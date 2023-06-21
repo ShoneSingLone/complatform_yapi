@@ -97,7 +97,7 @@ class exportSwaggerController extends BaseController {
 				}
 			}
 		} catch (error) {
-			xU.log(error, "error");
+			xU.applog.info(error, "error");
 			ctx.body = xU.resReturn(null, 502, "下载出错");
 		}
 

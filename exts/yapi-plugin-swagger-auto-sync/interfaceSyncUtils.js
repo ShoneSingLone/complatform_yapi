@@ -11,9 +11,7 @@ const jobMap = new Map();
 
 class syncUtils {
 	constructor(ctx) {
-		xU.log(
-			"-------------------------------------swaggerSyncUtils constructor-----------------------------------------------"
-		);
+		console.log("-------------------------------------swaggerSyncUtils constructor-----------------------------------------------");
 		this.ctx = ctx;
 		this.openController = xU.getInst(openController);
 		this.syncModel = xU.getInst(syncModel);
@@ -66,12 +64,12 @@ class syncUtils {
 
 	//同步接口
 	async syncInterface(projectId, swaggerUrl, syncMode, uid, projectToken) {
-		xU.log("定时器触发, syncJsonUrl:" + swaggerUrl + ",合并模式:" + syncMode);
+		xU.applog.info("定时器触发, syncJsonUrl:" + swaggerUrl + ",合并模式:" + syncMode);
 		let oldPorjectData;
 		try {
 			oldPorjectData = await this.modelProject.get(projectId);
 		} catch (e) {
-			xU.log("获取项目:" + projectId + "失败");
+			xU.applog.info("获取项目:" + projectId + "失败");
 			this.deleteSyncJob(projectId);
 			//删除数据库定时任务
 			await this.syncModel.delByProjectId(projectId);
@@ -79,7 +77,7 @@ class syncUtils {
 		}
 		//如果项目已经删除了
 		if (!oldPorjectData) {
-			xU.log("项目:" + projectId + "不存在");
+			xU.applog.info("项目:" + projectId + "不存在");
 			this.deleteSyncJob(projectId);
 			//删除数据库定时任务
 			await this.syncModel.delByProjectId(projectId);
@@ -89,13 +87,13 @@ class syncUtils {
 		try {
 			newSwaggerJsonData = await this.getSwaggerContent(swaggerUrl);
 			if (!newSwaggerJsonData || typeof newSwaggerJsonData !== "object") {
-				xU.log("数据格式出错，请检查");
+				xU.applog.info("数据格式出错，请检查");
 				this.saveSyncLog(0, syncMode, "数据格式出错，请检查", uid, projectId);
 			}
 			newSwaggerJsonData = JSON.stringify(newSwaggerJsonData);
 		} catch (e) {
 			this.saveSyncLog(0, syncMode, "获取数据失败，请检查", uid, projectId);
-			xU.log("获取数据失败" + e.message);
+			xU.applog.info("获取数据失败" + e.message);
 		}
 
 		let oldSyncJob = await this.syncModel.getByProjectId(projectId);
@@ -229,7 +227,7 @@ class syncUtils {
 			if (response.status > 400) {
 				throw new Error(
 					`http status "${response.status}"` +
-						"获取数据失败，请确认 swaggerUrl 是否正确"
+					"获取数据失败，请确认 swaggerUrl 是否正确"
 				);
 			}
 			return response.data;
@@ -237,7 +235,7 @@ class syncUtils {
 			let response = e.response || { status: e.message || "error" };
 			throw new Error(
 				`http status "${response.status}"` +
-					"获取数据失败，请确认 swaggerUrl 是否正确"
+				"获取数据失败，请确认 swaggerUrl 是否正确"
 			);
 		}
 	}
