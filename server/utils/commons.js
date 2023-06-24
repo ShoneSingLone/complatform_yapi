@@ -84,7 +84,7 @@ const log = (msg, type = "info") => {
 	let month = date.getMonth() + 1; */
 	const date = Date.now();
 	let logfile = path.join(xU.WEBROOT_LOG, `${dayjs(date).format("YYYY-MM-DD_HH")}.log`);
-	const errorContent = `【${dayjs(date).format("YYYY-MM-DD HH:mm:ss")}-${date}】：【${type}】：【${msg}】${errorThrowAt}\n===`;
+	const errorContent = `===\n【${dayjs(date).format("YYYY-MM-DD HH:mm:ss")}-${date}】：【${type}】：【${msg}】${errorThrowAt}\n===`;
 	fs.writeFileSync(logfile, errorContent, {
 		flag: "a"
 	});
@@ -165,7 +165,7 @@ const sendMail = (options, cb) => {
 		cb ||
 		function (err) {
 			if (err) {
-				xU.applog.info("send mail " + options.to + " error," + err.message, "error");
+				xU.applog.error("send mail " + options.to + " error," + err.message);
 			} else {
 				xU.applog.info("send mail " + options.to + " success");
 			}
@@ -182,7 +182,7 @@ const sendMail = (options, cb) => {
 			cb
 		);
 	} catch (e) {
-		xU.applog.info(e.message, "error");
+		xU.applog.error(e.message);
 		console.error(e.message); // eslint-disable-line
 	}
 };
@@ -384,7 +384,7 @@ const saveLog = logData => {
 
 		logInst.save(data).then();
 	} catch (e) {
-		xU.applog.info(e, "error"); // eslint-disable-line
+		xU.applog.error(e); // eslint-disable-line
 	}
 };
 
@@ -439,7 +439,7 @@ const createAction = (
 			}
 		} catch (err) {
 			ctx.body = xU.resReturn(null, 40011, "服务器出错...");
-			xU.applog.info(err, "error");
+			xU.applog.error(err);
 		}
 	});
 };

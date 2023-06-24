@@ -5,7 +5,7 @@ const interfaceModel = require("../models/interface.js");
 const interfaceCatModel = require("../models/interfaceCat.js");
 const followModel = require("../models/follow.js");
 const modelUser = require("../models/user.js");
-const { yapi } = global;
+
 const BaseController = require("./base.js");
 const {
 	handleParams,

@@ -164,7 +164,7 @@ class BaseController {
 			}
 			return false;
 		} catch (e) {
-			xU.applog.info(e, "error");
+			xU.applog.error(e);
 			return false;
 		}
 	}
@@ -297,7 +297,7 @@ class BaseController {
 
 			return "member";
 		} catch (e) {
-			xU.applog.info(e, "error");
+			xU.applog.error(e);
 			return false;
 		}
 	}

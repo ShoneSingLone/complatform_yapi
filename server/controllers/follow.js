@@ -1,4 +1,4 @@
-const { yapi } = global;
+
 const BaseController = require("./base.js");
 const followModel = require("../models/follow");
 const modelProject = require("../models/project");

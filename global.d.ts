@@ -1,2 +1,5 @@
-const { xU } = require("./server/utils/utils");
-type t_xU = typeof global.xU;
+import xU from "./server/utils/utils";
+
+export declare const xU: {
+	a: number;
+};

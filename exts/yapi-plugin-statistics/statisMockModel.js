@@ -1,7 +1,7 @@
 /**
  * Created by gxl.gao on 2017/10/24.
  */
-const { yapi } = global;
+
 const ModelBase = require("server/models/base");
 
 class statisMockModel extends ModelBase {

@@ -3,7 +3,7 @@ const interfaceModel = require("server/models/interface.js");
 const modelProject = require("server/models/project.js");
 // const modelWiki = require('../yapi-plugin-wiki/modelWiki.js');
 const interfaceCatModel = require("server/models/interfaceCat.js");
-const { yapi } = global;
+
 const markdownIt = require("markdown-it");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItTableOfContents = require("markdown-it-table-of-contents");
@@ -131,7 +131,7 @@ class exportController extends BaseController {
 				}
 			}
 		} catch (error) {
-			xU.applog.info(error, "error");
+			xU.applog.error(error);
 			ctx.body = xU.resReturn(null, 502, "下载出错");
 		}
 
@@ -202,7 +202,7 @@ class exportController extends BaseController {
 				mdTemplate += md.createClassMarkdown(curProject, list, isToc);
 				return mdTemplate;
 			} catch (e) {
-				xU.applog.info(e, "error");
+				xU.applog.error(e);
 				ctx.body = xU.resReturn(null, 502, "下载出错");
 			}
 		}

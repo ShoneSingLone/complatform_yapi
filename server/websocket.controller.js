@@ -1,7 +1,7 @@
 const BaseController = require("server/controllers/base.js");
 const _ = require("lodash");
 var cps = require("current-processes");
-const { yapi } = global;
+
 const ONLINE_USERS = new Map();
 xU.users = ONLINE_USERS;
 
@@ -163,6 +163,6 @@ exports.useWS = () => async (ctx, next) => {
 		}
 		return next();
 	} catch (error) {
-		xU.applog.info(error, "error");
+		xU.applog.error(error);
 	}
 };

@@ -2,7 +2,7 @@ const BaseController = require("server/controllers/base.js");
 const interfaceModel = require("server/models/interface.js");
 const modelProject = require("server/models/project.js");
 const interfaceCatModel = require("server/models/interfaceCat.js");
-const { yapi } = global;
+const xU = require("../../server/utils/utils");
 
 class exportSwaggerController extends BaseController {
 	constructor(ctx) {
@@ -13,9 +13,9 @@ class exportSwaggerController extends BaseController {
 	}
 
 	/*
-       handleListClass,handleExistId is same as the exportController(yapi-plugin-export-data).
-       No DRY,but i have no idea to optimize it.
-    */
+	   handleListClass,handleExistId is same as the exportController(yapi-plugin-export-data).
+	   No DRY,but i have no idea to optimize it.
+	*/
 
 	async handleListClass(pid, status) {
 		let result = await this.catModel.list(pid),
@@ -97,7 +97,7 @@ class exportSwaggerController extends BaseController {
 				}
 			}
 		} catch (error) {
-			xU.applog.info(error, "error");
+			xU.applog.error(error);
 			ctx.body = xU.resReturn(null, 502, "下载出错");
 		}
 
@@ -119,9 +119,9 @@ class exportSwaggerController extends BaseController {
 							name: t.name,
 							description: t.desc
 							/*externalDocs:{
-                                descroption:"",
-                                url:""
-                            } */
+								descroption:"",
+								url:""
+							} */
 						});
 					});
 					return tagArray;
@@ -195,7 +195,7 @@ class exportSwaggerController extends BaseController {
 										});
 									}
 									switch (
-										api.req_body_type //Body parameters
+									api.req_body_type //Body parameters
 									) {
 										case "form": {
 											for (let p of api.req_body_form) {

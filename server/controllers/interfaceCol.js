@@ -3,7 +3,7 @@ const interfaceCaseModel = require("../models/interfaceCase.js");
 const interfaceModel = require("../models/interface.js");
 const modelProject = require("../models/project.js");
 const BaseController = require("./base.js");
-const { yapi } = global;
+
 const _ = require("lodash");
 
 class interfaceColController extends BaseController {
@@ -756,7 +756,7 @@ class interfaceColController extends BaseController {
 					this.caseModel.upCaseIndex(item.id, item.index).then(
 						res => {},
 						err => {
-							xU.applog.info(err.message, "error");
+							xU.applog.error(err.message);
 						}
 					);
 				}
@@ -790,7 +790,7 @@ class interfaceColController extends BaseController {
 					this.colModel.upColIndex(item.id, item.index).then(
 						res => {},
 						err => {
-							xU.applog.info(err.message, "error");
+							xU.applog.error(err.message);
 						}
 					);
 				}

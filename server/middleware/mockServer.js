@@ -1,4 +1,4 @@
-const { yapi } = global;
+
 const modelProject = require("../models/project.js");
 const interfaceModel = require("../models/interface.js");
 const mockExtra = require("../../common/mock-extra.js");
@@ -441,7 +441,7 @@ exports.useMockServer = () => async (ctx, next) => {
 					res = Mock.mock(res);
 				} catch (e) {
 					console.log("err", e.message);
-					xU.applog.info(e, "error");
+					xU.applog.error(e);
 				}
 			}
 
@@ -526,7 +526,7 @@ exports.useMockServer = () => async (ctx, next) => {
 			};
 			return;
 		} catch (e) {
-			xU.applog.info(e, "error");
+			xU.applog.error(e);
 			return (ctx.body = {
 				errcode: 400,
 				errmsg: "解析出错，请检查。Error: " + e.message,
@@ -534,7 +534,7 @@ exports.useMockServer = () => async (ctx, next) => {
 			});
 		}
 	} catch (e) {
-		xU.applog.info(e, "error");
+		xU.applog.error(e);
 		return (ctx.body = xU.resReturn(null, 409, e.message));
 	}
 };

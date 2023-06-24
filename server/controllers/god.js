@@ -1,4 +1,4 @@
-const { yapi } = global;
+
 const BaseController = require("server/controllers/base");
 const { I18nModel } = require("server/models/I18n");
 const _ = require("lodash");

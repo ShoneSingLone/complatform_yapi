@@ -105,7 +105,7 @@ class exportController extends BaseController {
 				}
 			}
 		} catch (error) {
-			xU.applog.info(error, "error");
+			xU.applog.error(error);
 			ctx.body = xU.resReturn(null, 502, "下载出错");
 		}
 
@@ -176,7 +176,7 @@ class exportController extends BaseController {
 				mdTemplate += md.createClassMarkdown(curProject, list, isToc);
 				return mdTemplate;
 			} catch (e) {
-				xU.applog.info(e, "error");
+				xU.applog.error(e);
 				ctx.body = xU.resReturn(null, 502, "下载出错");
 			}
 		}

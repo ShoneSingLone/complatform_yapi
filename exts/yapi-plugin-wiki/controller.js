@@ -4,7 +4,7 @@ const modelProject = require("server/models/project.js");
 const modelUser = require("server/models/user.js");
 const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
-const { yapi } = global;
+
 // const util = require('./util.js');
 const fs = require("fs-extra");
 const path = require("path");
@@ -183,7 +183,7 @@ class wikiController extends BaseController {
 			});
 			ctx.websocket.on("close", async () => {});
 		} catch (err) {
-			xU.applog.info(err, "error");
+			xU.applog.error(err);
 		}
 	}
 

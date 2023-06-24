@@ -1,4 +1,4 @@
-const { yapi } = global;
+
 const { Schema } = require("mongoose");
 const { model: dbModel } = require("server/utils/db");
 const autoIncrement = require("mongoose-auto-increment");
@@ -32,11 +32,11 @@ class ModelBase {
 	 * 获取collection的schema结构
 	 */
 	getSchema() {
-		xU.applog.info("Model Class need getSchema function", "error");
+		xU.applog.error("Model Class need getSchema function");
 	}
 
 	getName() {
-		xU.applog.info("Model Class need name", "error");
+		xU.applog.error("Model Class need name");
 	}
 }
 

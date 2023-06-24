@@ -6,7 +6,7 @@ const groupModel = require("../models/group.js");
 const _ = require("lodash");
 const url = require("url");
 const BaseController = require("./base.js");
-const { yapi } = global;
+
 const modelUser = require("../models/user.js");
 const modelProject = require("../models/project.js");
 const jsondiffpatch = require("jsondiffpatch");
@@ -976,7 +976,7 @@ class interfaceController extends BaseController {
 				this.Model.upEditUid(id, 0).then();
 			});
 		} catch (err) {
-			xU.applog.info(err, "error");
+			xU.applog.error(err);
 		}
 	}
 
@@ -1100,7 +1100,7 @@ class interfaceController extends BaseController {
 					xU.emitHook("interface_del", item._id).then();
 					await this.caseModel.delByInterfaceId(item._id);
 				} catch (e) {
-					xU.applog.info(e.message, "error");
+					xU.applog.error(e.message);
 				}
 			});
 			await this.catModel.del(id);
@@ -1234,7 +1234,7 @@ class interfaceController extends BaseController {
 
 			return (ctx.body = xU.resReturn("成功！"));
 		} catch (e) {
-			xU.applog.info(e.message, "error");
+			xU.applog.error(e.message);
 			ctx.body = xU.resReturn(null, 400, e.message);
 		}
 	}
@@ -1265,7 +1265,7 @@ class interfaceController extends BaseController {
 			/* ???? 都没有保证事务，能返回成功？ */
 			return (ctx.body = xU.resReturn("成功！"));
 		} catch (e) {
-			xU.applog.info(e.message, "error");
+			xU.applog.error(e.message);
 			ctx.body = xU.resReturn(null, 400, e.message);
 		}
 	}

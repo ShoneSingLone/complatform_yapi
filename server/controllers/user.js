@@ -117,7 +117,7 @@ class userController extends BaseController {
 				ctx.redirect("/group");
 			}
 		} catch (e) {
-			xU.applog.info(e.message, "error");
+			xU.applog.error(e.message);
 			ctx.redirect("/");
 		}
 	}
@@ -167,7 +167,7 @@ class userController extends BaseController {
 				));
 			}
 		} catch (e) {
-			xU.applog.info(e.message, "error");
+			xU.applog.error(e.message);
 			return (ctx.body = xU.resReturn(null, 401, e.message));
 		}
 	}

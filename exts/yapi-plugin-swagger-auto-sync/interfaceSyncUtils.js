@@ -3,13 +3,13 @@ const openController = require("server/controllers/open.js");
 const modelProject = require("server/models/project.js");
 const syncModel = require("./syncModel.js");
 const tokenModel = require("server/models/token.js");
-const { yapi } = global;
+
 const sha = require("sha.js");
 const md5 = require("md5");
 const { getToken } = require("server/utils/token");
 const jobMap = new Map();
 
-class syncUtils {
+class SyncUtils {
 	constructor(ctx) {
 		console.log("-------------------------------------swaggerSyncUtils constructor-----------------------------------------------");
 		this.ctx = ctx;
@@ -241,4 +241,4 @@ class syncUtils {
 	}
 }
 
-module.exports = syncUtils;
+module.exports = SyncUtils;

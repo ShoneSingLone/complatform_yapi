@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const autoIncrement = require("mongoose-auto-increment");
-const { yapi } = global;
+
 function connection(model, schema) {
 	if (schema instanceof mongoose.Schema === false) {
 		schema = new mongoose.Schema(schema);
@@ -52,7 +52,7 @@ async function setYapiMongooseAsync() {
 		console.log("🚀:", "connectString", JSON.stringify(connectString, null, 2));
 		let db = mongoose.connect(connectString, options, function (err) {
 			if (err) {
-				xU.applog.info(err + ", mongodb Authentication failed", "error");
+				xU.applog.error(err + ", mongodb Authentication failed");
 				reject(err);
 			}
 		});
@@ -64,7 +64,7 @@ async function setYapiMongooseAsync() {
 				resolve(connection);
 			},
 			function (err) {
-				xU.applog.info(err + "mongodb connect error", "error");
+				xU.applog.error(err + "mongodb connect error");
 				reject(err);
 			}
 		);

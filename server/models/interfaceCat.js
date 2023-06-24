@@ -1,4 +1,4 @@
-const { yapi } = global;
+
 const ModelBase = require("server/models/base");
 
 /**

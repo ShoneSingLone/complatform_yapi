@@ -1,4 +1,4 @@
-const { yapi } = global;
+
 const { DbConnection } = xU;
 const controller = require("./controller");
 

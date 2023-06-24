@@ -1,4 +1,4 @@
-const { yapi } = global;
+
 const BaseController = require("server/controllers/base.js");
 const advModel = require("./advMockModel.js");
 const caseModel = require("./caseModel.js");

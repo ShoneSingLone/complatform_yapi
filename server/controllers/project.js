@@ -1,5 +1,5 @@
 const modelProject = require("../models/project.js");
-const { yapi } = global;
+
 const _ = require("lodash");
 const BaseController = require("./base.js");
 const interfaceModel = require("../models/interface.js");
@@ -775,7 +775,7 @@ class projectController extends BaseController {
 				});
 			});
 		} catch (e) {
-			xU.applog.info(e, "error"); // eslint-disable-line
+			xU.applog.error(e); // eslint-disable-line
 		}
 	}
 

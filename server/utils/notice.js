@@ -45,9 +45,8 @@ xU.sendNotice = async function (projectId, data) {
 			try {
 				noticeItem.hander(emails, data.title, data.content);
 			} catch (err) {
-				xU.applog.info(
+				xU.applog.error(
 					"发送" + (noticeItem.title || key) + "失败" + err.message,
-					"error"
 				);
 			}
 		});
@@ -57,6 +56,6 @@ xU.sendNotice = async function (projectId, data) {
 		//   subject: data.title
 		// });
 	} catch (e) {
-		xU.applog.info("发送失败：" + e, "error");
+		xU.applog.error("发送失败：" + e);
 	}
 };

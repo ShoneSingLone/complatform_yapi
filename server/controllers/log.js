@@ -1,5 +1,5 @@
 const modelLog = require("../models/log.js");
-const { yapi } = global;
+
 const BaseController = require("./base.js");
 const groupModel = require("../models/group");
 const modelProject = require("../models/project");

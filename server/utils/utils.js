@@ -367,5 +367,6 @@ let xU = {
 	mail
 };
 
+
 global.xU = xU;
-exports.xU = xU;
+module.exports = xU;

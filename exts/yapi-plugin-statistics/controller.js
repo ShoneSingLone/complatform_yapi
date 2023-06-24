@@ -7,7 +7,7 @@ const groupModel = require("server/models/group.js");
 const modelProject = require("server/models/project.js");
 const interfaceModel = require("server/models/interface.js");
 const interfaceCaseModel = require("server/models/interfaceCase.js");
-const { yapi } = global;
+
 const commons = require("./util.js");
 const os = require("os");
 let cpu = require("cpu-load");

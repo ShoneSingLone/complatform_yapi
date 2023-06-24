@@ -1,5 +1,5 @@
 const controller = require("./controller/syncController.js");
-const { yapi } = global;
+
 const interfaceSyncUtils = require("./interfaceSyncUtils.js");
 
 module.exports = function () {

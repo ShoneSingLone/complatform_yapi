@@ -1,7 +1,7 @@
 /**
  * Created by gxl.gao on 2017/10/24.
  */
-const { yapi } = global;
+
 const { DbConnection } = xU;
 const controller = require("./controller");
 const statisModel = require("./statisMockModel.js");
