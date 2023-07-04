@@ -4,7 +4,7 @@ const asyncFs = require("fs").promises;
 
 async function main(params) {
 	const [dir, files] = await _n.asyncAllDirAndFile([
-		path.resolve(__dirname, "../server")
+		path.resolve(__dirname, "../test")
 	]);
 
 	_n.each(files, async i => {
