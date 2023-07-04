@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const autoIncrement = require("mongoose-auto-increment");
 
 function connection(model, schema) {
-	if (schema instanceof mongoose.Schema === false) {
+	if (!(schema instanceof mongoose.Schema)) {
 		schema = new mongoose.Schema(schema);
 	}
 	schema.set("autoIndex", false);

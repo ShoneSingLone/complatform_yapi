@@ -252,7 +252,7 @@ pluginsConfig.forEach(plugin => {
 	}
 	let pluginModule = require(path.join(
 		PLUGIN_PATH,
-		"yapi-plugin-" + plugin.name + "/server.ts"
+		"yapi-plugin-" + plugin.name + "/server.js"
 	));
 	pluginModule.call(xU, plugin.options);
 });
@@ -265,7 +265,7 @@ extConfig.forEach(plugin => {
 
 	if (
 		!xU.fileExist(
-			path.join(PLUGIN_SYSTEM_PATH, "yapi-plugin-" + plugin.name + "/server.ts")
+			path.join(PLUGIN_SYSTEM_PATH, "yapi-plugin-" + plugin.name + "/server.js")
 		)
 	) {
 		throw new Error(
@@ -274,7 +274,7 @@ extConfig.forEach(plugin => {
 	}
 	let pluginModule = require(path.join(
 		PLUGIN_SYSTEM_PATH,
-		"yapi-plugin-" + plugin.name + "/server.ts"
+		"yapi-plugin-" + plugin.name + "/server.js"
 	));
 	pluginModule.call(xU, plugin.options);
 });

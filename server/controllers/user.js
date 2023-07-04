@@ -609,7 +609,7 @@ class userController extends BaseController {
 				type = "image/png";
 			} else {
 				type = data.type;
-				dataBuffer = new Buffer(data.basecode, "base64");
+				dataBuffer = new Buffer.alloc(data.basecode, "base64");
 			}
 
 			ctx.set("Content-type", type);

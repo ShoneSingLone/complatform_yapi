@@ -30,7 +30,7 @@ async function main() {
 	const websockify = require("koa-websocket");
 	const { appUseWebsocket } = require("./websocket");
 
-	require("./utils/notice");
+	require("server/utils/notice");
 
 	const Koa = require("koa");
 	const koaStatic = require("koa-static");

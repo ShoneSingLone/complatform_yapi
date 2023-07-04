@@ -3,10 +3,10 @@
   "version": "1.10.2",
   "description": "YAPI",
   "scripts": {
-    "prd": "cross-env NODE_ENV=production node server/app.ts",
-    "start": "nodemon ./devServer.js dev -L",
+    "prd": "cross-env NODE_ENV=production node server/app.js",
+    "start": "nodemon server/app.js dev -L",
     "lint": "prettier --write .",
-    "install-server": "node server/install.ts",
+    "install-server": "node server/install.js",
     "test": "ava",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
