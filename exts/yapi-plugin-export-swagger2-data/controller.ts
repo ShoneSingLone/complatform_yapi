@@ -2,7 +2,6 @@ const BaseController = require("server/controllers/base");
 const interfaceModel = require("server/models/interface");
 const modelProject = require("server/models/project");
 const interfaceCatModel = require("server/models/interfaceCat");
-const xU = require("../../server/utils/utils");
 
 class exportSwaggerController extends BaseController {
 	constructor(ctx) {

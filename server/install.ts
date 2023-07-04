@@ -3,8 +3,7 @@ process.env.NODE_PATH = path.resolve(__dirname, "..");
 require("module").Module._initPaths();
 
 (async function () {
-	const { initDbAndCommon } = require("./utils/initConfig");
-	const yapi = await initDbAndCommon();
+	await require("./utils/initConfig")();
 	const fs = require("fs-extra");
 	const { ModelUser } = require("./models/user");
 	const mongoose = require("mongoose");

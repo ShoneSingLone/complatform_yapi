@@ -4,10 +4,8 @@ const { useCORS } = require("./cors");
 const { useHistoryMode } = require("./historyMode");
 const { useYapiDevHeaderInfo } = require("./yapiDevHeaderInfo");
 
-module.exports = {
-	useGzipWhenPrd,
-	useMockServer,
-	useCORS,
-	useHistoryMode,
-	useYapiDevHeaderInfo
-};
+exports.useGzipWhenPrd = useGzipWhenPrd;
+exports.useMockServer = useMockServer;
+exports.useCORS = useCORS;
+exports.useHistoryMode = useHistoryMode;
+exports.useYapiDevHeaderInfo = useYapiDevHeaderInfo;

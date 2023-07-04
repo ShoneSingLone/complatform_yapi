@@ -1,8 +1,9 @@
-exports.appListen = function (
+module.exports = function appListen(
 	app,
 	PORT,
 	tips = "服务已启动，请打开下面链接访问:"
 ) {
+	let currentPort = Number(WEBCONFIG.port) || 3000;
 	app.listen(PORT);
 	if (process.send) {
 		process.send(JSON.stringify({ type: "CHANGE_PORT", PORT }));
@@ -19,5 +20,13 @@ exports.appListen = function (
 			console.log(`http://192.${res[1]}:${PORT}/`);
 		}
 	});
+	app.server.on("error", function handleAppError(e) {
+		if (e.code === "EADDRINUSE") {
+			setTimeout(() => {
+				appListen(app, ++currentPort, "Address in use, retrying...");
+			}, 100);
+		}
+	});
+	app.server.setTimeout(WEBCONFIG.timeout);
 	return app;
 };

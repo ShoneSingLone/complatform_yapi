@@ -1,8 +1,6 @@
 const path = require("path");
 const fs = require("fs-extra");
 const nodemailer = require("nodemailer");
-const { initDbAndCommon } = require("./initConfig");
-const { appListen } = require("./appListen");
 
 let mail = () => null;
 if (WEBCONFIG.mail && WEBCONFIG.mail.enable) {
@@ -370,8 +368,5 @@ let xU = {
 };
 
 global.xU = xU;
-module.exports = {
-	xU,
-	initDbAndCommon,
-	appListen
-};
+
+exports.xU = xU;

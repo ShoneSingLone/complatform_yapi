@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const { Module } = require("module");
-
 /* ********************************************************************************  */
 /* require 如果没有用相对路径，就优先从node_modules里面找，找不到就从NODE_PATH 开始找 */
 const NODE_PATH = path.resolve(__dirname, "..");
@@ -17,8 +16,7 @@ require.extensions[".ts"] = require.extensions[".js"];
 
 async function main() {
 	/* preset */
-	const { initDbAndCommon, appListen } = require("server/utils/utils");
-	const yapi = await initDbAndCommon();
+	await require("server/utils/initConfig")();
 	/* 最先调用initDbAndCommon，再使用中间件 */
 	const {
 		useGzipWhenPrd,
@@ -26,15 +24,13 @@ async function main() {
 		useCORS,
 		useHistoryMode,
 		useYapiDevHeaderInfo
-	} = require("./middleware");
+	} = require("./middleware/middleware");
 
 	require("./plugin");
 	const websockify = require("koa-websocket");
-	const { DecoratorWebsocket } = require("./websocket");
+	const { appUseWebsocket } = require("./websocket");
 
 	require("./utils/notice");
-
-	let currentPort = WEBCONFIG.port;
 
 	const Koa = require("koa");
 	const koaStatic = require("koa-static");
@@ -43,9 +39,8 @@ async function main() {
 
 	const INDEX_FILE = "index.html";
 	const app = websockify(new Koa());
-	app.proxy = true;
 	xU.app = app;
-
+	app.proxy = true;
 	app.use(useCORS());
 	app.use(
 		koaBody({
@@ -68,9 +63,9 @@ async function main() {
 	app.use(router.routes());
 	app.use(router.allowedMethods());
 	/* websocket */
-	DecoratorWebsocket(app);
-
-	app.use(useGzipWhenPrd(yapi));
+	appUseWebsocket(app);
+	/* router */
+	app.use(useGzipWhenPrd());
 	/* static */
 	app.use(
 		koaStatic(path.join(xU.WEBROOT, "static"), {
@@ -79,16 +74,8 @@ async function main() {
 		})
 	);
 	/* index.html */
-	app.use(useHistoryMode(yapi));
-
-	appListen(app, currentPort).server.on("error", function handleAppError(e) {
-		if (e.code === "EADDRINUSE") {
-			setTimeout(() => {
-				appListen(app, ++currentPort, "Address in use, retrying...");
-			}, 100);
-		}
-	});
-	app.server.setTimeout(WEBCONFIG.timeout);
+	app.use(useHistoryMode());
+	require("./utils/appListen")(app);
 }
 
 try {
