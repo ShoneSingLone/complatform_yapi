@@ -11,7 +11,9 @@ const jobMap = new Map();
 
 class SyncUtils {
 	constructor(ctx) {
-		console.log("-------------------------------------swaggerSyncUtils constructor-----------------------------------------------");
+		console.log(
+			"-------------------------------------swaggerSyncUtils constructor-----------------------------------------------"
+		);
 		this.ctx = ctx;
 		this.openController = xU.getInst(openController);
 		this.syncModel = xU.getInst(syncModel);
@@ -64,7 +66,9 @@ class SyncUtils {
 
 	//同步接口
 	async syncInterface(projectId, swaggerUrl, syncMode, uid, projectToken) {
-		xU.applog.info("定时器触发, syncJsonUrl:" + swaggerUrl + ",合并模式:" + syncMode);
+		xU.applog.info(
+			"定时器触发, syncJsonUrl:" + swaggerUrl + ",合并模式:" + syncMode
+		);
 		let oldPorjectData;
 		try {
 			oldPorjectData = await this.modelProject.get(projectId);
@@ -93,7 +97,7 @@ class SyncUtils {
 			newSwaggerJsonData = JSON.stringify(newSwaggerJsonData);
 		} catch (e) {
 			this.saveSyncLog(0, syncMode, "获取数据失败，请检查", uid, projectId);
-			xU.applog.info("获取数据失败" + e.message);
+			xU.applog.error("获取数据失败" + e.message);
 		}
 
 		let oldSyncJob = await this.syncModel.getByProjectId(projectId);
@@ -227,7 +231,7 @@ class SyncUtils {
 			if (response.status > 400) {
 				throw new Error(
 					`http status "${response.status}"` +
-					"获取数据失败，请确认 swaggerUrl 是否正确"
+						"获取数据失败，请确认 swaggerUrl 是否正确"
 				);
 			}
 			return response.data;
@@ -235,7 +239,7 @@ class SyncUtils {
 			let response = e.response || { status: e.message || "error" };
 			throw new Error(
 				`http status "${response.status}"` +
-				"获取数据失败，请确认 swaggerUrl 是否正确"
+					"获取数据失败，请确认 swaggerUrl 是否正确"
 			);
 		}
 	}

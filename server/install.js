@@ -6,7 +6,7 @@ require("module").Module._initPaths();
 	const { initDbAndCommon } = require("./utils/initConfig");
 	const yapi = await initDbAndCommon();
 	const fs = require("fs-extra");
-	const modelUser = require("./models/user.js");
+	const { ModelUser } = require("./models/user.js");
 	const mongoose = require("mongoose");
 
 	function install() {
@@ -24,7 +24,7 @@ require("module").Module._initPaths();
 	}
 
 	function setupSql() {
-		let userInst = xU.getInst(modelUser);
+		let userInst = xU.getInst(ModelUser);
 		let passsalt = xU.randStr();
 		let result = userInst.save({
 			username: WEBCONFIG.adminAccount.substr(

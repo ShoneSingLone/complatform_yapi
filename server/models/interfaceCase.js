@@ -1,4 +1,3 @@
-
 const ModelBase = require("server/models/base");
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;

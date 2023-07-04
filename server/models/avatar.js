@@ -1,4 +1,3 @@
-
 const ModelBase = require("server/models/base");
 
 class avatarModel extends ModelBase {

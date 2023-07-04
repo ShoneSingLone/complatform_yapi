@@ -1,4 +1,3 @@
-
 const { Schema } = require("mongoose");
 const { model: dbModel } = require("server/utils/db");
 const autoIncrement = require("mongoose-auto-increment");

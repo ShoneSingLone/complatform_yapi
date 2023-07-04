@@ -7,7 +7,7 @@ const interfaceColModel = require("../models/interfaceCol.js");
 const interfaceCaseModel = require("../models/interfaceCase.js");
 const interfaceCatModel = require("../models/interfaceCat.js");
 const groupModel = require("../models/group");
-const modelUser = require("../models/user.js");
+const { ModelUser } = require("../models/user.js");
 const modelLog = require("../models/log.js");
 const followModel = require("../models/follow.js");
 const tokenModel = require("../models/token.js");
@@ -473,7 +473,7 @@ class projectController extends BaseController {
 			let result = await this.Model.delMember(params.id, params.member_uid);
 			let username = this.getUsername();
 			yapi
-				.getInst(modelUser)
+				.getInst(ModelUser)
 				.findById(params.member_uid)
 				.then(member => {
 					xU.saveLog({
@@ -683,7 +683,7 @@ class projectController extends BaseController {
 
 		let username = this.getUsername();
 		yapi
-			.getInst(modelUser)
+			.getInst(ModelUser)
 			.findById(params.member_uid)
 			.then(member => {
 				xU.saveLog({

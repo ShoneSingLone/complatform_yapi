@@ -28,7 +28,14 @@ function addPluginRouter(config) {
 }
 
 exports.DecoratorWebsocket = function DecoratorWebsocket(app) {
-	xU.createAction(wsRouter, "/api", interfaceController, "solveConflict", "/interface/solve_conflict", "get");
+	xU.createAction(
+		wsRouter,
+		"/api",
+		interfaceController,
+		"solveConflict",
+		"/interface/solve_conflict",
+		"get"
+	);
 	xU.emitHookSync("add_ws_router", addPluginRouter);
 	app.ws.use(useWS());
 	app.ws.use(wsRouter.routes());

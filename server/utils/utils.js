@@ -2,6 +2,56 @@ const path = require("path");
 const fs = require("fs-extra");
 const nodemailer = require("nodemailer");
 
+
+let xU = {
+	fs,
+	path,
+	WEBROOT,
+	VARIABLE,
+	WEBROOT_LOG,
+	WEBROOT_SERVER,
+	WEBROOT_RUNTIME,
+	getInst: getInst,
+	delInst: delInst,
+	getInsts: INSTS,
+	storageCreator,
+	schemaToJson,
+	resReturn,
+	log,
+	fileExist,
+	time,
+	fieldSelect,
+	rand,
+	json_parse,
+	randStr,
+	getIp,
+	generatePassword,
+	expireDate,
+	sendMail,
+	validateSearchKeyword,
+	filterRes,
+	handleVarPath,
+	verifyPath,
+	sandbox,
+	trim,
+	ltrim,
+	rtrim,
+	handleParams,
+	validateParams,
+	saveLog,
+	createAction,
+	handleParamsValue,
+	getCaseList,
+	runCaseScript,
+	getUserdata,
+	handleMockScript,
+	createWebAPIRequest,
+	applog,
+	mail
+};
+xU.getInst = getInst;
+
+
 let mail = () => null;
 if (WEBCONFIG.mail && WEBCONFIG.mail.enable) {
 	mail = nodemailer.createTransport(WEBCONFIG.mail);
@@ -319,54 +369,6 @@ function storageCreator(id) {
 		}
 	};
 }
-
-let xU = {
-	fs,
-	path,
-	WEBROOT,
-	VARIABLE,
-	WEBROOT_LOG,
-	WEBROOT_SERVER,
-	WEBROOT_RUNTIME,
-	getInst: getInst,
-	delInst: delInst,
-	getInsts: INSTS,
-	storageCreator,
-	schemaToJson,
-	resReturn,
-	log,
-	fileExist,
-	time,
-	fieldSelect,
-	rand,
-	json_parse,
-	randStr,
-	getIp,
-	generatePassword,
-	expireDate,
-	sendMail,
-	validateSearchKeyword,
-	filterRes,
-	handleVarPath,
-	verifyPath,
-	sandbox,
-	trim,
-	ltrim,
-	rtrim,
-	handleParams,
-	validateParams,
-	saveLog,
-	createAction,
-	handleParamsValue,
-	getCaseList,
-	runCaseScript,
-	getUserdata,
-	handleMockScript,
-	createWebAPIRequest,
-	applog,
-	mail
-};
-
 
 global.xU = xU;
 module.exports = xU;

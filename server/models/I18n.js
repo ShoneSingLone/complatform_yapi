@@ -1,4 +1,3 @@
-
 const _ = require("lodash");
 const { diff } = require("jsondiffpatch");
 const ModelBase = require("server/models/base.js");

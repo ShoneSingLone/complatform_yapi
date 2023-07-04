@@ -1,6 +1,6 @@
 const ModelBase = require("server/models/base");
 
-class modelUser extends ModelBase {
+class ModelUser extends ModelBase {
 	getName() {
 		return "user";
 	}
@@ -115,4 +115,4 @@ class modelUser extends ModelBase {
 	}
 }
 
-module.exports = modelUser;
+exports.ModelUser = ModelUser;

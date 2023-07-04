@@ -1,7 +1,6 @@
-
 const ModelBase = require("server/models/base");
 
-class advMockModel extends ModelBase {
+class ModelAdvMock extends ModelBase {
 	getName() {
 		return "adv_mock";
 	}
@@ -60,4 +59,4 @@ class advMockModel extends ModelBase {
 	}
 }
 
-module.exports = advMockModel;
+module.exports = ModelAdvMock;

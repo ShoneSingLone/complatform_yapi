@@ -1,7 +1,7 @@
 const BaseController = require("server/controllers/base.js");
 const modelWiki = require("./modelWiki.js");
 const modelProject = require("server/models/project.js");
-const modelUser = require("server/models/user.js");
+const { ModelUser } = require("server/models/user.js");
 const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
 
@@ -215,7 +215,7 @@ class wikiController extends BaseController {
 	async editorFunc(result) {
 		let userInst, userinfo, data;
 		if (result && result.edit_uid !== 0 && result.edit_uid !== this.getUid()) {
-			userInst = xU.getInst(modelUser);
+			userInst = xU.getInst(ModelUser);
 			userinfo = await userInst.findById(result.edit_uid);
 			data = {
 				errno: result.edit_uid,

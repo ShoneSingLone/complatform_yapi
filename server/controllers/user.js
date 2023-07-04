@@ -1,4 +1,4 @@
-const modelUser = require("../models/user.js");
+const { ModelUser } = require("../models/user.js");
 const BaseController = require("./base.js");
 const ldap = require("../utils/ldap.js");
 const interfaceModel = require("../models/interface.js");
@@ -12,8 +12,7 @@ const jwt = require("jsonwebtoken");
 class userController extends BaseController {
 	constructor(ctx) {
 		super(ctx);
-		xU;
-		this.Model = xU.getInst(modelUser);
+		this.modelUser = xU.getInst(ModelUser);
 	}
 	/**
 	 * 用户登录接口
@@ -28,7 +27,7 @@ class userController extends BaseController {
 	 */
 	async login(ctx) {
 		//登录
-		let userInst = xU.getInst(modelUser); //创建user实体
+		let userInst = xU.getInst(ModelUser); //创建user实体
 		let email = ctx.request.body.email;
 		email = (email || "").trim();
 		let password = ctx.request.body.password;
@@ -95,7 +94,7 @@ class userController extends BaseController {
 	 */
 
 	async upStudy(ctx) {
-		let userInst = xU.getInst(modelUser); //创建user实体
+		let userInst = xU.getInst(ModelUser); //创建user实体
 		let data = {
 			up_time: xU.time(),
 			study: true
@@ -149,7 +148,7 @@ class userController extends BaseController {
 			let login = await this.handleThirdLogin(emailParams, username);
 
 			if (login === true) {
-				let userInst = xU.getInst(modelUser); //创建user实体
+				let userInst = xU.getInst(ModelUser); //创建user实体
 				let result = await userInst.findByEmail(emailParams);
 				return (ctx.body = xU.resReturn(
 					{
@@ -175,7 +174,7 @@ class userController extends BaseController {
 	// 处理第三方登录
 	async handleThirdLogin(email, username) {
 		let user, data, passsalt;
-		let userInst = xU.getInst(modelUser);
+		let userInst = xU.getInst(ModelUser);
 
 		try {
 			user = await userInst.findByEmail(email);
@@ -222,7 +221,7 @@ class userController extends BaseController {
 	 */
 	async changePassword(ctx) {
 		let params = ctx.request.body;
-		let userInst = xU.getInst(modelUser);
+		let userInst = xU.getInst(ModelUser);
 
 		if (!params.uid) {
 			return (ctx.body = xU.resReturn(null, 400, "uid不能为空"));
@@ -278,14 +277,14 @@ class userController extends BaseController {
 	setLoginCookie(uid, passsalt) {
 		let token = jwt.sign({ uid: uid }, passsalt, { expiresIn: "7 days" });
 
-		customCookies(this.ctx, "_yapi_token", token, {
+		const cookiesValues = {
 			expires: xU.expireDate(7),
 			httpOnly: true
-		});
-		customCookies(this.ctx, "_yapi_uid", uid, {
-			expires: xU.expireDate(7),
-			httpOnly: true
-		});
+		};
+		customCookies(this.ctx, "_yapi_token", token, cookiesValues);
+		customCookies(this.ctx, "_yapi_uid", uid, cookiesValues);
+		console.log('🚀:', 'this.ctx', this.ctx.header);
+		debugger;
 	}
 
 	/**
@@ -305,7 +304,7 @@ class userController extends BaseController {
 		if (WEBCONFIG.closeRegister) {
 			return (ctx.body = xU.resReturn(null, 400, "禁止注册，请联系管理员"));
 		}
-		let userInst = xU.getInst(modelUser);
+		let userInst = xU.getInst(ModelUser);
 		let params = ctx.request.body; //获取请求的参数,检查是否存在用户名和密码
 
 		params = xU.handleParams(params, {
@@ -346,7 +345,6 @@ class userController extends BaseController {
 
 		try {
 			let user = await userInst.save(data);
-
 			this.setLoginCookie(user._id, user.passsalt);
 			await this.handlePrivateGroup(user._id, user.username, user.email);
 			ctx.body = xU.resReturn({
@@ -383,7 +381,7 @@ class userController extends BaseController {
 		let page = ctx.request.query.page || 1,
 			limit = ctx.request.query.limit || 10;
 
-		const userInst = xU.getInst(modelUser);
+		const userInst = xU.getInst(ModelUser);
 		try {
 			let user = await userInst.listWithPaging(page, limit);
 			let count = await userInst.listCount();
@@ -410,7 +408,7 @@ class userController extends BaseController {
 	async findById(ctx) {
 		//根据id获取用户信息
 		try {
-			let userInst = xU.getInst(modelUser);
+			let userInst = xU.getInst(ModelUser);
 			let id = ctx.request.query.id;
 
 			if (this.getRole() !== "admin" && id != this.getUid()) {
@@ -458,7 +456,7 @@ class userController extends BaseController {
 				return (ctx.body = xU.resReturn(null, 402, "Without permission."));
 			}
 
-			let userInst = xU.getInst(modelUser);
+			let userInst = xU.getInst(ModelUser);
 			let id = ctx.request.body.id;
 			if (id == this.getUid()) {
 				return (ctx.body = xU.resReturn(null, 403, "禁止删除管理员"));
@@ -502,7 +500,7 @@ class userController extends BaseController {
 				return (ctx.body = xU.resReturn(null, 401, "没有权限"));
 			}
 
-			let userInst = xU.getInst(modelUser);
+			let userInst = xU.getInst(ModelUser);
 			let id = params.uid;
 
 			if (!id) {
@@ -644,7 +642,7 @@ class userController extends BaseController {
 			return (ctx.body = xU.resReturn(void 0, 400, "Bad query."));
 		}
 
-		let queryList = await this.Model.search(q);
+		let queryList = await this.modelUser.search(q);
 		let rules = [
 			{
 				key: "_id",

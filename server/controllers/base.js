@@ -1,5 +1,5 @@
 const modelProject = require("../models/project.js");
-const modelUser = require("../models/user.js");
+const { ModelUser } = require("../models/user.js");
 const interfaceModel = require("../models/interface.js");
 const groupModel = require("../models/group.js");
 const tokenModel = require("../models/token.js");
@@ -109,7 +109,7 @@ class BaseController {
 						username: "system"
 					};
 				} else {
-					let userInst = xU.getInst(modelUser); //创建user实体
+					let userInst = xU.getInst(ModelUser); //创建user实体
 					result = await userInst.findById(tokenUid);
 				}
 
@@ -139,17 +139,17 @@ class BaseController {
 				xU.applog.info("未携带认证信息");
 				return false;
 			}
-			let userInst = xU.getInst(modelUser); //创建user实体
-			let result = await userInst.findById(uid);
+			let userDBCollection = xU.getInst(ModelUser); //创建user实体
+			let currUserInfo = await userDBCollection.findById(uid);
 			/* 用户不存在 */
-			if (!result) {
+			if (!currUserInfo) {
 				xU.applog.info("用户不存在");
 				return false;
 			}
 
 			let decoded;
 			try {
-				decoded = jwt.verify(token, result.passsalt);
+				decoded = jwt.verify(token, currUserInfo.passsalt);
 			} catch (err) {
 				xU.applog.info("JWT 信息不匹配");
 				return false;
@@ -158,8 +158,8 @@ class BaseController {
 			if (decoded.uid == uid) {
 				this.$uid = uid;
 				this.$auth = true;
-				this.$user = result;
-				xU.applog.info("身份验证");
+				this.$user = currUserInfo;
+				xU.applog.info("身份验证成功");
 				return true;
 			}
 			return false;

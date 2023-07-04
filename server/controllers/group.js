@@ -2,7 +2,7 @@ const groupModel = require("../models/group.js");
 
 const BaseController = require("./base.js");
 const modelProject = require("../models/project.js");
-const modelUser = require("../models/user.js");
+const { ModelUser } = require("../models/user.js");
 const interfaceModel = require("../models/interface.js");
 const interfaceColModel = require("../models/interfaceCol.js");
 const interfaceCaseModel = require("../models/interfaceCase.js");
@@ -196,7 +196,7 @@ class groupController extends BaseController {
 
 	async getUserdata(uid, role) {
 		role = role || "dev";
-		let userInst = xU.getInst(modelUser);
+		let userInst = xU.getInst(ModelUser);
 		let userData = await userInst.findById(uid);
 		if (!userData) {
 			return null;

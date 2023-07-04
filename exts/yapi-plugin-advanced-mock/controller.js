@@ -1,8 +1,7 @@
-
 const BaseController = require("server/controllers/base.js");
 const advModel = require("./advMockModel.js");
 const caseModel = require("./caseModel.js");
-const modelUser = require("server/models/user.js");
+const { ModelUser } = require("server/models/user.js");
 const config = require("./index.js");
 
 class advMockController extends BaseController {
@@ -10,7 +9,7 @@ class advMockController extends BaseController {
 		super(ctx);
 		this.Model = xU.getInst(advModel);
 		this.caseModel = xU.getInst(caseModel);
-		this.modelUser = xU.getInst(modelUser);
+		this.ModelUser = xU.getInst(ModelUser);
 	}
 
 	async getMock(ctx) {
@@ -66,7 +65,7 @@ class advMockController extends BaseController {
 			}
 			let result = await this.caseModel.list(id);
 			for (let i = 0, len = result.length; i < len; i++) {
-				let userinfo = await this.modelUser.findById(result[i].uid);
+				let userinfo = await this.ModelUser.findById(result[i].uid);
 				result[i] = result[i].toObject();
 				// if (userinfo) {
 				result[i].username = userinfo.username;

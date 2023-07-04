@@ -4,7 +4,7 @@ const dayjs = require("dayjs");
 const sha1 = require("sha1");
 const modelLog = require("../models/log.js");
 const modelProject = require("../models/project.js");
-const modelUser = require("../models/user.js");
+const { ModelUser } = require("../models/user.js");
 const interfaceColModel = require("../models/interfaceCol.js");
 const interfaceCaseModel = require("../models/interfaceCase.js");
 const interfaceModel = require("../models/interface.js");
@@ -83,8 +83,13 @@ const log = (msg, type = "info") => {
 	/* let date = new Date(); let year = date.getFullYear();
 	let month = date.getMonth() + 1; */
 	const date = Date.now();
-	let logfile = path.join(xU.WEBROOT_LOG, `${dayjs(date).format("YYYY-MM-DD_HH")}.log`);
-	const errorContent = `===\n【${dayjs(date).format("YYYY-MM-DD HH:mm:ss")}-${date}】：【${type}】：【${msg}】${errorThrowAt}\n===`;
+	let logfile = path.join(
+		xU.WEBROOT_LOG,
+		`${dayjs(date).format("YYYY-MM-DD_HH")}.log`
+	);
+	const errorContent = `===\n【${dayjs(date).format(
+		"YYYY-MM-DD HH:mm:ss"
+	)}-${date}】：【${type}】：【${msg}】${errorThrowAt}\n===`;
 	fs.writeFileSync(logfile, errorContent, {
 		flag: "a"
 	});
@@ -599,7 +604,7 @@ ${JSON.stringify(schema, null, 2)}`;
 
 const getUserdata = async function getUserdata(uid, role) {
 	role = role || "dev";
-	let userInst = xU.getInst(modelUser);
+	let userInst = xU.getInst(ModelUser);
 	let userData = await userInst.findById(uid);
 	if (!userData) {
 		return null;

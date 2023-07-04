@@ -10,7 +10,7 @@
 	   });
    } */
 
-function Cookies(ctx) {
+function getCookiesFromCtx(ctx) {
 	let _cookies = false;
 	try {
 		_cookies = JSON.parse(ctx.header["x-cookies"]);
@@ -31,23 +31,15 @@ function Cookies(ctx) {
 	return ctx.xCookies || {};
 }
 
-exports.customCookies = (ctx, key, value) => {
-	let xCookies = Cookies(ctx);
+exports.customCookies = (ctx, key, value, options) => {
+	let xCookies = getCookiesFromCtx(ctx);
 	const isSet = value !== undefined;
 	if (isSet) {
-		ctx.cookies.set(key, value);
+		ctx.cookies.set(key, value, options);
 		xCookies[key] = value;
-		ctx.set("x-cookies", JSON.stringify(xCookies));
+		const xCookiesString = JSON.stringify(xCookies);
+		ctx.set("x-cookies", xCookiesString);
 	} else {
-		value = ctx.cookies.get(key);
-		if (!value) {
-			value = xCookies[key];
-		}
-
-		if (value) {
-			return value;
-		} else {
-			return "";
-		}
+		return xCookies[key];
 	}
 };

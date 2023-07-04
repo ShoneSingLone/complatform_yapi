@@ -7,7 +7,7 @@ const _ = require("lodash");
 const url = require("url");
 const BaseController = require("./base.js");
 
-const modelUser = require("../models/user.js");
+const { ModelUser } = require("../models/user.js");
 const modelProject = require("../models/project.js");
 const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
@@ -72,7 +72,7 @@ class interfaceController extends BaseController {
 		this.modelProject = xU.getInst(modelProject);
 		this.caseModel = xU.getInst(interfaceCaseModel);
 		this.followModel = xU.getInst(followModel);
-		this.modelUser = xU.getInst(modelUser);
+		this.ModelUser = xU.getInst(ModelUser);
 		this.groupModel = xU.getInst(groupModel);
 
 		const minLengthStringField = {
@@ -495,7 +495,7 @@ class interfaceController extends BaseController {
 			if (!result) {
 				return (ctx.body = xU.resReturn(null, 490, "不存在的"));
 			}
-			let userinfo = await this.modelUser.findById(result.uid);
+			let userinfo = await this.ModelUser.findById(result.uid);
 			let project = await this.modelProject.getBaseInfo(result.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
@@ -958,7 +958,7 @@ class interfaceController extends BaseController {
 			result = await this.Model.get(id);
 
 			if (result.edit_uid !== 0 && result.edit_uid !== this.$uid) {
-				userInst = xU.getInst(modelUser);
+				userInst = xU.getInst(ModelUser);
 				userinfo = await userInst.findById(result.edit_uid);
 				data = {
 					errno: result.edit_uid,

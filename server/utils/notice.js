@@ -23,10 +23,10 @@ xU.emitHook("addNotice", noticeObj);
 
 xU.sendNotice = async function (projectId, data) {
 	const modelProject = require("../models/project.js");
-	const modelUser = require("../models/user.js");
+	const { ModelUser } = require("../models/user.js");
 	const followModel = require("../models/follow.js");
 	const followInst = xU.getInst(followModel);
-	const userInst = xU.getInst(modelUser);
+	const userInst = xU.getInst(ModelUser);
 	const projectInst = xU.getInst(modelProject);
 	const list = await followInst.listByProjectId(projectId);
 	const starUsers = list.map(item => item.uid);
@@ -46,7 +46,7 @@ xU.sendNotice = async function (projectId, data) {
 				noticeItem.hander(emails, data.title, data.content);
 			} catch (err) {
 				xU.applog.error(
-					"发送" + (noticeItem.title || key) + "失败" + err.message,
+					"发送" + (noticeItem.title || key) + "失败" + err.message
 				);
 			}
 		});

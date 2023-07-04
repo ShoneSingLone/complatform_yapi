@@ -1,6 +1,6 @@
 const fs = require("fs-extra");
 const dbModule = require("../../server/utils/db.js");
-const modelUser = require("../../server/models/user.js");
+const { ModelUser } = require("../../server/models/user.js");
 const mongoose = require("mongoose");
 
 xU.mongoose = dbModule.connect();

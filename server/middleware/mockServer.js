@@ -1,4 +1,3 @@
-
 const modelProject = require("../models/project.js");
 const interfaceModel = require("../models/interface.js");
 const mockExtra = require("../../common/mock-extra.js");

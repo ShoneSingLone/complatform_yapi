@@ -4,7 +4,7 @@ const interfaceCaseModel = require("../models/interfaceCase.js");
 const interfaceModel = require("../models/interface.js");
 const interfaceCatModel = require("../models/interfaceCat.js");
 const followModel = require("../models/follow.js");
-const modelUser = require("../models/user.js");
+const { ModelUser } = require("../models/user.js");
 
 const BaseController = require("./base.js");
 const {
@@ -37,7 +37,7 @@ class openController extends BaseController {
 		this.interfaceModel = xU.getInst(interfaceModel);
 		this.interfaceCatModel = xU.getInst(interfaceCatModel);
 		this.followModel = xU.getInst(followModel);
-		this.modelUser = xU.getInst(modelUser);
+		this.ModelUser = xU.getInst(ModelUser);
 		this.handleValue = this.handleValue.bind(this);
 		this.schemaMap = {
 			runAutoTest: {

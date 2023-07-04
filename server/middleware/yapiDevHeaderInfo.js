@@ -3,15 +3,15 @@ const _ = require("lodash");
 exports.useYapiDevHeaderInfo = () => async (ctx, next) => {
 	try {
 		/* console.log(
-            '\nctx.path',
-            ctx.path,
-            '\nquery:\n',
-            JSON.stringify(ctx?.query || {}, null, 2),
-            '\nbody:\n',
-            JSON.stringify(ctx?.request?.body || {}, null, 2),
-        ); */
+			'\nctx.path',
+			ctx.path,
+			'\nquery:\n',
+			JSON.stringify(ctx?.query || {}, null, 2),
+			'\nbody:\n',
+			JSON.stringify(ctx?.request?.body || {}, null, 2),
+		); */
 
-		console.log(ctx.path, ctx.ips.join(","));
+		xU.applog.info(ctx.path, ctx.ips.join(","));
 		const start = Date.now();
 		await next();
 		const yapiTips = {

@@ -1,7 +1,6 @@
-
 const ModelBase = require("server/models/base");
 
-class tokenModel extends ModelBase {
+class ModelToken extends ModelBase {
 	getName() {
 		return "token";
 	}
@@ -45,4 +44,4 @@ class tokenModel extends ModelBase {
 	}
 }
 
-module.exports = tokenModel;
+module.exports = ModelToken;

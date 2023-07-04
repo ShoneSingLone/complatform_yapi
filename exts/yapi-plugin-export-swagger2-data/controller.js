@@ -195,7 +195,7 @@ class exportSwaggerController extends BaseController {
 										});
 									}
 									switch (
-									api.req_body_type //Body parameters
+										api.req_body_type //Body parameters
 									) {
 										case "form": {
 											for (let p of api.req_body_form) {
