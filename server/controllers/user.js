@@ -1,6 +1,6 @@
 const { ModelUser } = require("../models/user");
 const BaseController = require("./base");
-const ldap = require("../utils/ldap");
+const { ldapQuery } = require("../utils/ldap");
 const interfaceModel = require("../models/interface");
 const groupModel = require("../models/group");
 const modelProject = require("../models/project");
@@ -136,7 +136,7 @@ class userController extends BaseController {
 		try {
 			const { email, password } = ctx.request.body;
 			// const username = email.split(/\@/g)[0];
-			const { info: ldapInfo } = await ldap.ldapQuery(email, password);
+			const { info: ldapInfo } = await ldapQuery(email, password);
 			const emailPrefix = email.split(/\@/g)[0];
 			const emailPostfix = WEBCONFIG.ldapLogin.emailPostfix;
 

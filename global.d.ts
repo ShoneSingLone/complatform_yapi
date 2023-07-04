@@ -24,7 +24,7 @@ type t_WEBCONFIG = {
 };
 
 declare global {
-	var xU: {};
+	var xU: { a: string };
 	var WEBCONFIG: t_WEBCONFIG;
 }
 

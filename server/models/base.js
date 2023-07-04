@@ -1,6 +1,13 @@
-const { Schema } = require("mongoose");
-const { model: dbModel } = require("server/utils/db");
+const { Schema,model } = require("mongoose");
 const autoIncrement = require("mongoose-auto-increment");
+
+function dbModel(modelName, schema) {
+	if (!(schema instanceof Schema)) {
+		schema = new Schema(schema);
+	}
+	schema.set("autoIndex", false);
+	return model(modelName, schema, modelName);
+}
 
 /**
  * 所有的model都需要继承baseModel, 且需要 getSchema和getName方法，不然会报错

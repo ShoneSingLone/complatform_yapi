@@ -15,7 +15,6 @@ function getCookiesFromCtx(ctx) {
 	try {
 		_cookies = JSON.parse(ctx.header["x-cookies"]);
 	} catch (error) { }
-
 	/* ws可能无法从header里获取x-cookies */
 	if (!_cookies) {
 		try {
@@ -40,6 +39,10 @@ exports.customCookies = (ctx, key, value, options) => {
 		const xCookiesString = JSON.stringify(xCookies);
 		ctx.set("x-cookies", xCookiesString);
 	} else {
+		let val = ctx.cookies.get(key);
+		if (val) {
+			return val;
+		}
 		return xCookies[key];
 	}
 };

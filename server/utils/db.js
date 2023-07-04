@@ -1,13 +1,6 @@
 const mongoose = require("mongoose");
 const autoIncrement = require("mongoose-auto-increment");
 
-function connection(model, schema) {
-	if (!(schema instanceof mongoose.Schema)) {
-		schema = new mongoose.Schema(schema);
-	}
-	schema.set("autoIndex", false);
-	return mongoose.model(model, schema, model);
-}
 
 async function setYapiMongooseAsync() {
 	return new Promise((resolve, reject) => {
@@ -71,7 +64,4 @@ async function setYapiMongooseAsync() {
 	});
 }
 
-module.exports = {
-	model: connection,
-	setYapiMongooseAsync
-};
+module.exports = setYapiMongooseAsync;

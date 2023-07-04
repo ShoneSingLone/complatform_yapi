@@ -43,6 +43,8 @@ const {
 	createWebAPIRequest,
 	applog
 } = require("./commons");
+
+
 const WEBROOT = path.resolve(__dirname, "../.."); //路径
 const WEBROOT_SERVER = __dirname;
 const WEBROOT_RUNTIME = path.resolve(__dirname, "../../..");
@@ -53,7 +55,7 @@ fs.ensureDirSync(WEBROOT_LOG);
  * 获取一个model实例，如果不存在则创建一个新的返回
  * @param {*} m class
  * @example
- * xU.getInst(groupModel, arg1, arg2)
+ * getInst(groupModel, arg1, arg2)
  */
 function getInst(m, ...args) {
 	if (!INSTS.get(m)) {
@@ -297,14 +299,14 @@ function storageCreator(id) {
 	const defaultData = {};
 	return {
 		getItem: async (name = "") => {
-			let inst = xU.getInst(storageModel);
+			let inst = getInst(storageModel);
 			let data = await inst.get(id);
 			data = data || defaultData;
 			if (name) return data[name];
 			return data;
 		},
 		setItem: async (name, value) => {
-			let inst = xU.getInst(storageModel);
+			let inst = getInst(storageModel);
 			let curData = await inst.get(id);
 			let data = curData || defaultData;
 			let result;
@@ -320,53 +322,54 @@ function storageCreator(id) {
 	};
 }
 
-let xU = {
-	fs,
-	path,
-	WEBROOT,
-	VARIABLE,
-	WEBROOT_LOG,
-	WEBROOT_SERVER,
-	WEBROOT_RUNTIME,
-	getInst: getInst,
-	delInst: delInst,
-	getInsts: INSTS,
-	storageCreator,
-	schemaToJson,
-	resReturn,
-	log,
-	fileExist,
-	time,
-	fieldSelect,
-	rand,
-	json_parse,
-	randStr,
-	getIp,
-	generatePassword,
-	expireDate,
-	sendMail,
-	validateSearchKeyword,
-	filterRes,
-	handleVarPath,
-	verifyPath,
-	sandbox,
-	trim,
-	ltrim,
-	rtrim,
-	handleParams,
-	validateParams,
-	saveLog,
-	createAction,
-	handleParamsValue,
-	getCaseList,
-	runCaseScript,
-	getUserdata,
-	handleMockScript,
-	createWebAPIRequest,
-	applog,
-	mail
-};
+
+
+
+let xU = {};
+
+xU.fs = fs;
+xU.path = path;
+xU.WEBROOT = WEBROOT;
+xU.VARIABLE = VARIABLE;
+xU.WEBROOT_LOG = WEBROOT_LOG;
+xU.WEBROOT_SERVER = WEBROOT_SERVER;
+xU.WEBROOT_RUNTIME = WEBROOT_RUNTIME;
+xU.getInst = getInst;
+xU.delInst = delInst;
+xU.getInsts = INSTS;
+xU.storageCreator = storageCreator;
+xU.schemaToJson = schemaToJson;
+xU.resReturn = resReturn;
+xU.log = log;
+xU.fileExist = fileExist;
+xU.time = time;
+xU.fieldSelect = fieldSelect;
+xU.rand = rand;
+xU.json_parse = json_parse;
+xU.randStr = randStr;
+xU.getIp = getIp;
+xU.generatePassword = generatePassword;
+xU.expireDate = expireDate;
+xU.sendMail = sendMail;
+xU.validateSearchKeyword = validateSearchKeyword;
+xU.filterRes = filterRes;
+xU.handleVarPath = handleVarPath;
+xU.verifyPath = verifyPath;
+xU.sandbox = sandbox;
+xU.trim = trim;
+xU.ltrim = ltrim;
+xU.rtrim = rtrim;
+xU.handleParams = handleParams;
+xU.validateParams = validateParams;
+xU.saveLog = saveLog;
+xU.createAction = createAction;
+xU.handleParamsValue = handleParamsValue;
+xU.getCaseList = getCaseList;
+xU.runCaseScript = runCaseScript;
+xU.getUserdata = getUserdata;
+xU.handleMockScript = handleMockScript;
+xU.createWebAPIRequest = createWebAPIRequest;
+xU.applog = applog;
+xU.mail = mail;
 
 global.xU = xU;
-
-exports.xU = xU;

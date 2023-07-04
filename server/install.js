@@ -1,12 +1,9 @@
-const path = require("path");
-process.env.NODE_PATH = path.resolve(__dirname, "..");
-require("module").Module._initPaths();
-
 (async function () {
-	await require("./utils/initConfig")();
-	const fs = require("fs-extra");
-	const { ModelUser } = require("./models/user");
+	await require("./utils/onFirstLine")();
+	const path = require("path");
 	const mongoose = require("mongoose");
+	const fs = require("fs-extra");
+	const { ModelUser } = require("server/models/user");
 
 	function install() {
 		const fileExistURL = path.join(xU.WEBROOT_RUNTIME, "init.lock");

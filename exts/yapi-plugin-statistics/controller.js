@@ -2,25 +2,24 @@
  * Created by gxl.gao on 2017/10/24.
  */
 const BaseController = require("server/controllers/base");
-const statisMockModel = require("./statisMockModel");
-const groupModel = require("server/models/group");
-const modelProject = require("server/models/project");
-const interfaceModel = require("server/models/interface");
-const interfaceCaseModel = require("server/models/interfaceCase");
+const ModelGroup = require("server/models/group");
+const ModelProject = require("server/models/project");
+const ModelInterface = require("server/models/interface");
+const ModelInterfaceCase = require("server/models/interfaceCase");
+const ModelStatisMock = require("./statisMockModel");
 
 const commons = require("./util");
 const os = require("os");
 let cpu = require("cpu-load");
-const { WEBCONFIG } = global;
 
 class statisMockController extends BaseController {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.getInst(statisMockModel);
-		this.groupModel = xU.getInst(groupModel);
-		this.modelProject = xU.getInst(modelProject);
-		this.interfaceModel = xU.getInst(interfaceModel);
-		this.interfaceCaseModel = xU.getInst(interfaceCaseModel);
+		this.modelStatisMock = xU.getInst(ModelStatisMock);
+		this.modelGroup = xU.getInst(ModelGroup);
+		this.modelProject = xU.getInst(ModelProject);
+		this.interfaceModel = xU.getInst(ModelInterface);
+		this.interfaceCaseModel = xU.getInst(ModelInterfaceCase);
 	}
 
 	/**
@@ -33,11 +32,10 @@ class statisMockController extends BaseController {
 	 */
 	async getStatisCount(ctx) {
 		try {
-			let groupCount = await this.groupModel.getGroupListCount();
+			let groupCount = await this.modelGroup.getGroupListCount();
 			let projectCount = await this.modelProject.getProjectListCount();
 			let interfaceCount = await this.interfaceModel.getInterfaceListCount();
-			let interfaceCaseCount =
-				await this.interfaceCaseModel.getInterfaceCaseListCount();
+			let interfaceCaseCount = await this.interfaceCaseModel.getInterfaceCaseListCount();
 
 			return (ctx.body = xU.resReturn({
 				groupCount,
@@ -60,7 +58,7 @@ class statisMockController extends BaseController {
 	 */
 	async getMockDateList(ctx) {
 		try {
-			let mockCount = await this.Model.getTotalCount();
+			let mockCount = await this.modelStatisMock.getTotalCount();
 			let mockDateList = [];
 
 			if (!this.getRole() === "admin") {
@@ -68,7 +66,7 @@ class statisMockController extends BaseController {
 			}
 			//  默认时间是30 天为一周期
 			let dateInterval = commons.getDateRange();
-			mockDateList = await this.Model.getDayCount(dateInterval);
+			mockDateList = await this.modelStatisMock.getDayCount(dateInterval);
 			return (ctx.body = xU.resReturn({ mockCount, mockDateList }));
 		} catch (err) {
 			ctx.body = xU.resReturn(null, 400, err.message);
@@ -131,7 +129,7 @@ class statisMockController extends BaseController {
 
 	async groupDataStatis(ctx) {
 		try {
-			let groupData = await this.groupModel.list();
+			let groupData = await this.modelGroup.list();
 			let result = [];
 			for (let i = 0; i < groupData.length; i++) {
 				let group = groupData[i];
@@ -153,7 +151,7 @@ class statisMockController extends BaseController {
 						project_id: project._id
 					});
 				}
-				let mockCount = await this.Model.countByGroupId(groupId);
+				let mockCount = await this.modelStatisMock.countByGroupId(groupId);
 				data.interface = interfaceCount;
 				data.project = projectCount;
 				data.mock = mockCount;
