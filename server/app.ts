@@ -1,14 +1,23 @@
 const fs = require("fs");
 const path = require("path");
+const { Module } = require("module");
 
+/* ********************************************************************************  */
 /* require 如果没有用相对路径，就优先从node_modules里面找，找不到就从NODE_PATH 开始找 */
-process.env.NODE_PATH = path.resolve(__dirname, "..");
-require("module").Module._initPaths();
+const NODE_PATH = path.resolve(__dirname, "..");
+process.env.NODE_PATH = NODE_PATH;
+Module._initPaths();
+/*
+ * 享受TS类型检查便利，不用TSC转译
+ * commonJS不以后缀为判断依据
+ * "type":"module"则严格需要后缀
+ */
+require.extensions[".ts"] = require.extensions[".js"];
+/* ********************************************************************************  */
 
 async function main() {
 	/* preset */
-	const { initDbAndCommon, appListen } = require("server/utils");
-
+	const { initDbAndCommon, appListen } = require("server/utils/utils");
 	const yapi = await initDbAndCommon();
 	/* 最先调用initDbAndCommon，再使用中间件 */
 	const {
@@ -17,11 +26,11 @@ async function main() {
 		useCORS,
 		useHistoryMode,
 		useYapiDevHeaderInfo
-	} = require("server/middleware");
+	} = require("./middleware");
 
-	require("./plugin.js");
+	require("./plugin");
 	const websockify = require("koa-websocket");
-	const { DecoratorWebsocket } = require("./websocket.js");
+	const { DecoratorWebsocket } = require("./websocket");
 
 	require("./utils/notice");
 
@@ -30,7 +39,7 @@ async function main() {
 	const Koa = require("koa");
 	const koaStatic = require("koa-static");
 	const koaBody = require("koa-body");
-	const router = require("./router.js");
+	const router = require("./router");
 
 	const INDEX_FILE = "index.html";
 	const app = websockify(new Koa());
