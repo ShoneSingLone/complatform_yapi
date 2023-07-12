@@ -8,6 +8,7 @@ const path = require("path");
 const dayjs = require("dayjs");
 const json5 = require("json5");
 
+
 class GodController extends BaseController {
 	constructor(ctx) {
 		super(ctx);
@@ -28,7 +29,7 @@ class GodController extends BaseController {
 			const { file } = files;
 			const { useFor } = fields;
 			const sourcePath = file.path;
-			let targetPath = path.resolve(__dirname, "../../..", "resourceAssets", useFor, dayjs().format("YYYY_MM_DD"));
+			let targetPath = path.resolve(__dirname, "../uploads", RESOURCE_ASSETS, useFor, dayjs().format("YYYY_MM_DD"));
 			await _n.asyncSafeMakeDir(targetPath);
 			const basename = path.basename(sourcePath);
 			targetPath = path.resolve(targetPath, basename);
@@ -36,7 +37,7 @@ class GodController extends BaseController {
 			await fs.promises.unlink(sourcePath);
 			const res = await this.orm_resource.save({
 				name: file.name,
-				path: targetPath,
+				path: _.last(String(targetPath).split(RESOURCE_ASSETS)),
 				type: file.type,
 				useFor: useFor,
 				size: file.size,

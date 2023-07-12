@@ -1,1 +1,4 @@
-module.exports = {};
+module.exports = {
+    UPLOADS: "uploads",
+    RESOURCE_ASSETS: "resourceAssets"
+};
