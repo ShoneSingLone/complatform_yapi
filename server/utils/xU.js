@@ -44,7 +44,6 @@ const {
 	applog
 } = require("./commons");
 
-
 const WEBROOT = path.resolve(__dirname, "../.."); //路径
 const WEBROOT_SERVER = __dirname;
 const WEBROOT_RUNTIME = path.resolve(__dirname, "../../..");
@@ -321,9 +320,6 @@ function storageCreator(id) {
 		}
 	};
 }
-
-
-
 
 let xU = {};
 

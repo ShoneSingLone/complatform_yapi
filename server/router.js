@@ -69,10 +69,15 @@ let routerConfig = {
 			method: "post"
 		},
 		{
-			action: "testSingleUpload",
+			action: "SingleUpload",
 			path: "single/upload",
 			method: "post"
 		},
+		{
+			action: "getResource",
+			path: "resource",
+			method: "get"
+		}
 	],
 	wiki: [
 		{
@@ -639,6 +644,7 @@ for (let ctrl in routerConfig) {
 	actions.forEach(item => {
 		let routerController = INTERFACE_CONFIG[ctrl].controller;
 		let routerPath = INTERFACE_CONFIG[ctrl].prefix + item.path;
+		console.log("/api", routerPath, item.method);
 		xU.createAction(
 			router,
 			"/api",

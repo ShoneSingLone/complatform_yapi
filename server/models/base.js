@@ -1,4 +1,4 @@
-const { Schema,model } = require("mongoose");
+const { Schema, model } = require("mongoose");
 const autoIncrement = require("mongoose-auto-increment");
 
 function dbModel(modelName, schema) {

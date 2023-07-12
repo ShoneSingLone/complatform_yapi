@@ -19,6 +19,7 @@ class BaseController {
 	}
 
 	async init(ctx) {
+		xU.applog.info("BaseController");
 		this.$user = null;
 		this.tokenModel = xU.getInst(tokenModel);
 		this.modelProject = xU.getInst(modelProject);

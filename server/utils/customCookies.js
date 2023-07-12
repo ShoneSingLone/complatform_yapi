@@ -14,13 +14,13 @@ function getCookiesFromCtx(ctx) {
 	let _cookies = false;
 	try {
 		_cookies = JSON.parse(ctx.header["x-cookies"]);
-	} catch (error) { }
+	} catch (error) {}
 	/* ws可能无法从header里获取x-cookies */
 	if (!_cookies) {
 		try {
 			/* 如果跨域的ws */
 			_cookies = JSON.parse(ctx.query["x-cookies"]);
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	if (_cookies) {

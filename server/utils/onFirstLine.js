@@ -7,10 +7,10 @@ process.env.NODE_PATH = NODE_PATH;
 Module._initPaths();
 /* 然后可以使用root下的文件名开头 */
 /*
-* 享受TS类型检查便利，不用TSC转译
-* commonJS不以后缀为判断依据
-* "type":"module"则严格需要后缀
-*/
+ * 享受TS类型检查便利，不用TSC转译
+ * commonJS不以后缀为判断依据
+ * "type":"module"则严格需要后缀
+ */
 require.extensions[".ts"] = require.extensions[".js"];
 /* ********************************************************************************  */
 

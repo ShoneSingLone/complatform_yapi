@@ -7,7 +7,14 @@ const fs = require("fs");
 const path = require("path");
 const dayjs = require("dayjs");
 const json5 = require("json5");
+const { VARIABLES } = require("common/variables");
+const mime = require("mime-types");
 
+let TARGET_PREFIX = path.resolve(
+	__dirname,
+	"../../..",
+	VARIABLES.RESOURCE_ASSETS
+);
 
 class GodController extends BaseController {
 	constructor(ctx) {
@@ -16,20 +23,46 @@ class GodController extends BaseController {
 		this.orm_resource = xU.getInst(ModelResource);
 	}
 
+	/**
+	 *
+	 *
+	 * @param {string} id
+	 * @action getResource
+	 * @url /
+	 *
+	 */
+	async getResource(ctx) {
+		try {
+			const res = await this.orm_resource.getResourceById(ctx.query.id);
+			if (res) {
+				let targetPath = path.resolve(`${TARGET_PREFIX}${res.path}`);
+				ctx.status = 200;
+				ctx.set("Content-Type", mime.lookup(res.path));
+				ctx.body = fs.createReadStream(targetPath);
+			}
+		} catch (e) {
+			xU.applog.eerror(e.message);
+		}
+	}
+
 	/*
-	 * 
-	 * 
-	 * @param {any} ctx 
-	 * 
+	 *
+	 *
+	 * @param {any} ctx
+	 *
 	 * @memberOf GodController
-	* */
-	async testSingleUpload(ctx) {
+	 * */
+	async SingleUpload(ctx) {
 		try {
 			const { files, fields } = ctx.params;
 			const { file } = files;
 			const { useFor } = fields;
 			const sourcePath = file.path;
-			let targetPath = path.resolve(__dirname, "../uploads", RESOURCE_ASSETS, useFor, dayjs().format("YYYY_MM_DD"));
+			let targetPath = path.resolve(
+				TARGET_PREFIX,
+				useFor,
+				dayjs().format("YYYY_MM_DD")
+			);
 			await _n.asyncSafeMakeDir(targetPath);
 			const basename = path.basename(sourcePath);
 			targetPath = path.resolve(targetPath, basename);
@@ -37,12 +70,12 @@ class GodController extends BaseController {
 			await fs.promises.unlink(sourcePath);
 			const res = await this.orm_resource.save({
 				name: file.name,
-				path: _.last(String(targetPath).split(RESOURCE_ASSETS)),
+				path: _.last(String(targetPath).split(VARIABLES.RESOURCE_ASSETS)),
 				type: file.type,
 				useFor: useFor,
 				size: file.size,
 				uploadBy: this.$uid,
-				add_time: xU.time(),
+				add_time: xU.time()
 			});
 			ctx.body = xU.resReturn({ _id: res._id });
 		} catch (e) {
@@ -50,8 +83,6 @@ class GodController extends BaseController {
 			ctx.body = xU.resReturn(null, 402, e.message);
 		}
 	}
-
-
 
 	/*
 	 * 神说要啥就有啥
@@ -126,6 +157,7 @@ const STRATEGY = {
 		if (path) {
 			try {
 				const content = await fs.promises.readFile(path, "utf-8");
+
 				function InnerScope(_content) {
 					try {
 						const getJSON = new Function(`return ${_content}`);
@@ -133,9 +165,10 @@ const STRATEGY = {
 						if (typeof i18nObj === "object") {
 							return i18nObj;
 						}
-					} catch (error) { }
+					} catch (error) {}
 					return [];
 				}
+
 				const i18nObj = InnerScope(content);
 				const newRecords = _.map(i18nObj, (valueArray, key) => {
 					return {

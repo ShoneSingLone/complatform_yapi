@@ -7,7 +7,9 @@ module.exports = function appListen(
 	if (process.send) {
 		process.send(JSON.stringify({ type: "CHANGE_PORT", PORT: currPort }));
 	}
-	console.log(`${tips}\nhttp://127.0.0.1${currPort == "80" ? "" : ":" + currPort}/ `);
+	console.log(
+		`${tips}\nhttp://127.0.0.1${currPort == "80" ? "" : ":" + currPort}/ `
+	);
 	var interfaces = require("os").networkInterfaces();
 	const content = JSON.stringify(interfaces);
 	const contentArray = content

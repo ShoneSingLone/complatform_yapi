@@ -1,4 +1,4 @@
-module.exports = {
-    UPLOADS: "uploads",
-    RESOURCE_ASSETS: "resourceAssets"
+exports.VARIABLES = {
+	UPLOADS: "uploads",
+	RESOURCE_ASSETS: "resourceAssets"
 };

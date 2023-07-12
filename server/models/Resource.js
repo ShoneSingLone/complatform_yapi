@@ -27,7 +27,7 @@ type: 'image/png' */
 			desc: String,
 			uploadBy: String,
 			uploadBy: String,
-			add_time: Number,
+			add_time: Number
 		};
 	}
 
@@ -36,14 +36,11 @@ type: 'image/png' */
 		return modelVM.save();
 	}
 
-
-
-	findByUids(uids) {
+	getResourceById(_id) {
 		return this.model
-			.find({
-				_id: { $in: uids }
+			.findOne({
+				_id
 			})
-			.select("_id username email role type  add_time up_time study")
 			.exec();
 	}
 

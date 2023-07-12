@@ -1,6 +1,6 @@
-
 async function main() {
 	await require("./utils/onFirstLine")();
+	const { VARIABLES } = require("common/variables");
 	const path = require("path");
 
 	const INDEX_FILE = "index.html";
@@ -15,7 +15,6 @@ async function main() {
 	require("./plugin");
 	const websockify = require("koa-websocket");
 	const { appUseWebsocket } = require("./websocket");
-
 
 	require("server/utils/notice");
 
@@ -34,7 +33,7 @@ async function main() {
 			multipart: true,
 			formidable: {
 				// 上传目录
-				uploadDir: path.join(__dirname, UPLOADS),
+				uploadDir: path.join(__dirname, VARIABLES.UPLOADS),
 				// 保留文件扩展名
 				keepExtensions: true
 			},

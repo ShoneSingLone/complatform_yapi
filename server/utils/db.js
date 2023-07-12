@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const autoIncrement = require("mongoose-auto-increment");
 
-
 async function setYapiMongooseAsync() {
 	return new Promise((resolve, reject) => {
 		mongoose.Promise = global.Promise;

@@ -1,6 +1,5 @@
 const ldap = require("ldapjs");
 
-
 exports.ldapQuery = (username, password) => {
 	// const deferred = Q.defer();
 
