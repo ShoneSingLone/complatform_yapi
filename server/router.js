@@ -67,7 +67,12 @@ let routerConfig = {
 			action: "say",
 			path: "say",
 			method: "post"
-		}
+		},
+		{
+			action: "testSingleUpload",
+			path: "single/upload",
+			method: "post"
+		},
 	],
 	wiki: [
 		{

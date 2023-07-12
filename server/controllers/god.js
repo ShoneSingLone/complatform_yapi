@@ -1,14 +1,56 @@
 const BaseController = require("server/controllers/base");
-const { I18nModel } = require("server/models/I18n");
+const { ModelI18n } = require("server/models/I18n");
+const { ModelResource } = require("server/models/Resource");
+const { _n } = require("@ventose/utils-node");
 const _ = require("lodash");
 const fs = require("fs");
+const path = require("path");
+const dayjs = require("dayjs");
 const json5 = require("json5");
 
 class GodController extends BaseController {
 	constructor(ctx) {
 		super(ctx);
-		this.orm_i18n = xU.getInst(I18nModel);
+		this.orm_i18n = xU.getInst(ModelI18n);
+		this.orm_resource = xU.getInst(ModelResource);
 	}
+
+	/*
+	 * 
+	 * 
+	 * @param {any} ctx 
+	 * 
+	 * @memberOf GodController
+	* */
+	async testSingleUpload(ctx) {
+		try {
+			const { files, fields } = ctx.params;
+			const { file } = files;
+			const { useFor } = fields;
+			const sourcePath = file.path;
+			let targetPath = path.resolve(__dirname, "../../..", "resourceAssets", useFor, dayjs().format("YYYY_MM_DD"));
+			await _n.asyncSafeMakeDir(targetPath);
+			const basename = path.basename(sourcePath);
+			targetPath = path.resolve(targetPath, basename);
+			await fs.promises.copyFile(sourcePath, targetPath);
+			await fs.promises.unlink(sourcePath);
+			const res = await this.orm_resource.save({
+				name: file.name,
+				path: targetPath,
+				type: file.type,
+				useFor: useFor,
+				size: file.size,
+				uploadBy: this.$uid,
+				add_time: xU.time(),
+			});
+			ctx.body = xU.resReturn({ _id: res._id });
+		} catch (e) {
+			xU.applog.error(e.message);
+			ctx.body = xU.resReturn(null, 402, e.message);
+		}
+	}
+
+
 
 	/*
 	 * 神说要啥就有啥
@@ -90,7 +132,7 @@ const STRATEGY = {
 						if (typeof i18nObj === "object") {
 							return i18nObj;
 						}
-					} catch (error) {}
+					} catch (error) { }
 					return [];
 				}
 				const i18nObj = InnerScope(content);

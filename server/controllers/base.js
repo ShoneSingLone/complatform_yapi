@@ -83,14 +83,6 @@ class BaseController {
 				tokenUid = tokens.uid;
 			}
 
-			// if (this.$auth) {
-			//   ctx.params.project_id = await this.getProjectIdByToken(token);
-			//   if (!ctx.params.project_id) {
-			//     return (this.$tokenAuth = false);
-			//   }
-			//   return (this.$tokenAuth = true);
-			// }
-
 			let checkId = await this.getProjectIdByToken(token);
 			if (!checkId) {
 				ctx.body = xU.resReturn(null, 42014, "token 无效");
@@ -159,7 +151,7 @@ class BaseController {
 				this.$uid = uid;
 				this.$auth = true;
 				this.$user = currUserInfo;
-				xU.applog.info("身份验证成功");
+				xU.applog.info(`身份验证成功 ID: ${currUserInfo.id}`);
 				return true;
 			}
 			return false;

@@ -2,7 +2,7 @@ const _ = require("lodash");
 const { diff } = require("jsondiffpatch");
 const ModelBase = require("server/models/base");
 
-class I18nModel extends ModelBase {
+class ModelI18n extends ModelBase {
 	getName() {
 		return "i18n";
 	}
@@ -86,4 +86,4 @@ class I18nModel extends ModelBase {
 	}
 }
 
-exports.I18nModel = I18nModel;
+exports.ModelI18n = ModelI18n;
