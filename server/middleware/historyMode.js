@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-exports.middlewareNotFound = () => async (ctx, next) => {
+const middlewareNotFound = () => async (ctx, next) => {
 	/* history 模式，除了api，都返回index.html */
 	if (ctx.status === 404) {
 		xU.applog.info("middlewareNotFound return index");
@@ -10,4 +10,9 @@ exports.middlewareNotFound = () => async (ctx, next) => {
 		ctx.set("Content-Type", "text/html");
 		ctx.body = fs.createReadStream(indexPath);
 	}
+};
+
+module.exports = function (app) {
+	app.use(middlewareNotFound());
+	app.use(middlewareNotFound());
 };

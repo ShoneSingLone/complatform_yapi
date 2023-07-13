@@ -1,7 +1,7 @@
 var cors = require("koa2-cors");
 
-exports.middlewareCORS = () =>
-	cors({
+const middlewareCORS = () => {
+	return cors({
 		credentials: true,
 		origin: ctx => {
 			ctx.set("Access-Control-Expose-Headers", "x-cookies");
@@ -13,3 +13,8 @@ exports.middlewareCORS = () =>
 			}
 		}
 	});
+};
+
+module.exports = function (app) {
+	app.use(middlewareCORS());
+};

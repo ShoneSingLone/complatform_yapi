@@ -3,8 +3,7 @@
 	"version": "1.10.2",
 	"description": "YAPI",
 	"scripts": {
-		"prd": "cross-env NODE_ENV=production node server/app.js",
-		"start": "nodemon server/app.js dev -L",
+		"start": "cross-env NODE_ENV=production node server/app.js",
 		"lint": "prettier --write .",
 		"install-server": "node server/install.js",
 		"test": "ava",

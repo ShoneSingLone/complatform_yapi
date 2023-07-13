@@ -1,7 +1,7 @@
 const koaRouter = require("koa-router");
-const interfaceController = require("./controllers/interface");
-const { wikiController } = require("./controllers/wiki");
-const { GodController } = require("./controllers/god");
+const { ControllerInterface } = require("./controllers/interface");
+const { ControllerWiki } = require("./controllers/wiki");
+const { ControllerGod } = require("./controllers/god");
 const groupController = require("./controllers/group");
 const userController = require("./controllers/user");
 const interfaceColController = require("./controllers/interfaceCol");
@@ -11,20 +11,49 @@ const logController = require("./controllers/log");
 const followController = require("./controllers/follow");
 const openController = require("./controllers/open");
 
+const wsRouter = koaRouter();
+const {
+	middlewareWebsocket,
+	appSetupWebsocket
+} = require("./middleware/websocket");
+
+let pluginsRouterPath = [];
+
+function addPluginRouter(config) {
+	if (!config.path || !config.controller || !config.action) {
+		throw new Error("Plugin Route config Error");
+	}
+	let method = config.method || "GET";
+	let routerPath = "/ws_plugin/" + config.path;
+	if (pluginsRouterPath.indexOf(routerPath) > -1) {
+		throw new Error("Plugin Route path conflict, please try rename the path");
+	}
+	pluginsRouterPath.push(routerPath);
+	xU.createAction(
+		wsRouter,
+		"/api",
+		config.controller,
+		config.action,
+		routerPath,
+		method,
+		true
+	);
+}
+
 const router = koaRouter();
 
 let INTERFACE_CONFIG = {
 	god: {
 		prefix: "/god/",
-		controller: GodController
+		controller: ControllerGod
 	},
 	wiki: {
 		prefix: "/wiki/",
-		controller: wikiController
+		controller: ControllerWiki
 	},
 	interface: {
 		prefix: "/interface/",
-		controller: interfaceController
+		controller: ControllerInterface
 	},
 	user: {
 		prefix: "/user/",
@@ -611,8 +640,6 @@ let routerConfig = {
 	]
 };
 
-let pluginsRouterPath = [];
-
 function addPluginRouter(config) {
 	if (!config.path || !config.controller || !config.action) {
 		throw new Error("Plugin Route config Error");
@@ -643,7 +670,6 @@ for (let ctrl in routerConfig) {
 	actions.forEach(item => {
 		let routerController = INTERFACE_CONFIG[ctrl].controller;
 		let routerPath = INTERFACE_CONFIG[ctrl].prefix + item.path;
-		console.log("/api", routerPath, item.method);
 		xU.createAction(
 			router,
 			"/api",
@@ -655,7 +681,8 @@ for (let ctrl in routerConfig) {
 	});
 }
 
-exports.appAsyncSetupRoutes = async app => {
+module.exports = function (app) {
 	app.use(router.routes());
 	app.use(router.allowedMethods());
+	appSetupWebsocket(app);
 };

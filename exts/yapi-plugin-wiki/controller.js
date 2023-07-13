@@ -9,7 +9,7 @@ const formattersHtml = jsondiffpatch.formatters.html;
 const fs = require("fs-extra");
 const path = require("path");
 const showDiffMsg = require("../../common/diff-view");
-class wikiController extends BaseController {
+class ControllerWiki extends BaseController {
 	constructor(ctx) {
 		super(ctx);
 		this.Model = xU.getInst(modelWiki);
@@ -234,4 +234,4 @@ class wikiController extends BaseController {
 	}
 }
 
-module.exports = wikiController;
+module.exports = ControllerWiki;

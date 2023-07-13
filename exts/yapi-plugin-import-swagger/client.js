@@ -3,7 +3,6 @@ import run from "./run";
 
 module.exports = function () {
 	this.bindHook("import_data", function (importDataModule) {
-		debugger;
 		if (!importDataModule || typeof importDataModule !== "object") {
 			console.error("importDataModule 参数Must be Object Type");
 			return null;

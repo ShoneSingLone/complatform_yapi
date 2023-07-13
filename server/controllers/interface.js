@@ -64,7 +64,7 @@ function handleHeaders(values) {
 	}
 }
 
-class interfaceController extends BaseController {
+class ControllerInterface extends BaseController {
 	constructor(ctx) {
 		super(ctx);
 		this.Model = xU.getInst(interfaceModel);
@@ -1322,4 +1322,4 @@ class interfaceController extends BaseController {
 	}
 }
 
-module.exports = interfaceController;
+exports.ControllerInterface = ControllerInterface;

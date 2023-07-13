@@ -46,7 +46,7 @@ node server/app.js //启动服务器后，请访问 127.0.0.1:{config.json配置
 
 ```
 |-- config.json
-|-- init.lock
+|-- yapi.installed
 |-- log
 `-- vendors
     |-- CHANGELOG.md

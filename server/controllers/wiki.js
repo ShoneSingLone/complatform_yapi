@@ -3,7 +3,7 @@ const { ModelWiki } = require("server/models/wiki");
 const { WikiOrderModel } = require("server/models/WikiOrder");
 const { diffText } = require("common/diff-view");
 
-class wikiController extends BaseController {
+class ControllerWiki extends BaseController {
 	constructor(ctx) {
 		super(ctx);
 		this.orm_wiki = xU.getInst(ModelWiki);
@@ -15,7 +15,7 @@ class wikiController extends BaseController {
 	 *
 	 * @param {any} ctx
 	 *
-	 * @memberOf wikiController
+	 * @memberOf ControllerWiki
 	 * */
 	async action(ctx) {
 		const { action } = ctx.params;
@@ -109,4 +109,4 @@ const STRATEGY = {
 	}
 };
 
-exports.wikiController = wikiController;
+exports.ControllerWiki = ControllerWiki;

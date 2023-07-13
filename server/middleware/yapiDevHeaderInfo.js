@@ -1,15 +1,16 @@
 const _ = require("lodash");
 
-exports.middlewareWhenDev = () => async (ctx, next) => {
+const middlewareWhenDev = () => async (ctx, next) => {
+	ctx.callme = ["middlewareWhenDev"];
 	try {
 		/* console.log(
-			'\nctx.path',
-			ctx.path,
-			'\nquery:\n',
-			JSON.stringify(ctx?.query || {}, null, 2),
-			'\nbody:\n',
-			JSON.stringify(ctx?.request?.body || {}, null, 2),
-		); */
+      '\nctx.path',
+      ctx.path,
+      '\nquery:\n',
+      JSON.stringify(ctx?.query || {}, null, 2),
+      '\nbody:\n',
+      JSON.stringify(ctx?.request?.body || {}, null, 2),
+    ); */
 
 		xU.applog.info(ctx.path, ctx.ips.join(","));
 		const start = Date.now();
@@ -32,6 +33,7 @@ exports.middlewareWhenDev = () => async (ctx, next) => {
 				target
 			);
 		}
+
 		_.each(
 			flattenDeep(yapiTips, { "response-time": `${Date.now() - start}ms` }),
 			(value, key) => {
@@ -41,4 +43,8 @@ exports.middlewareWhenDev = () => async (ctx, next) => {
 	} catch (error) {
 		console.error(error);
 	}
+};
+
+module.exports = function (app) {
+	app.use(middlewareWhenDev());
 };

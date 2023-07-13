@@ -9,9 +9,13 @@ const dayjs = require("dayjs");
 const json5 = require("json5");
 const mime = require("mime-types");
 
-let TARGET_PREFIX = path.resolve(__dirname, "../../..", xU.var.RESOURCE_ASSETS);
+let TARGET_PREFIX = path.join(
+	xU.var.APP_ROOT_SERVER_DIR,
+	xU.var.UPLOADS,
+	xU.var.RESOURCE_ASSETS
+);
 
-class GodController extends BaseController {
+class ControllerGod extends BaseController {
 	constructor(ctx) {
 		super(ctx);
 		this.orm_i18n = xU.getInst(ModelI18n);
@@ -21,19 +25,24 @@ class GodController extends BaseController {
 	/**
 	 *
 	 *
-	 * @param {string} id
-	 * @action getResource
-	 * @url /
+	 * @param {any} ctx
 	 *
+	 * @memberOf ControllerGod
 	 */
 	async getResource(ctx) {
 		try {
 			const res = await this.orm_resource.getResourceById(ctx.query.id);
 			if (res) {
 				let targetPath = path.resolve(`${TARGET_PREFIX}${res.path}`);
-				ctx.status = 200;
-				ctx.set("Content-Type", mime.lookup(res.path));
-				ctx.body = fs.createReadStream(targetPath);
+				const isExist = xU.fileExist(targetPath);
+				if (isExist) {
+					xU.applog.info("targetPath", targetPath);
+					ctx.status = 200;
+					ctx.set("Content-Type", mime.lookup(res.path));
+					ctx.body = fs.createReadStream(targetPath);
+				} else {
+					ctx.body = xU.resReturn(null, 404, "not found");
+				}
 			}
 		} catch (e) {
 			xU.applog.eerror(e.message);
@@ -45,7 +54,8 @@ class GodController extends BaseController {
 	 *
 	 * @param {any} ctx
 	 *
-	 * @memberOf GodController
+	 * @memberOf ControllerGod
+	 *
 	 * */
 	async SingleUpload(ctx) {
 		try {
@@ -84,7 +94,7 @@ class GodController extends BaseController {
 	 *
 	 * @param {any} ctx
 	 *
-	 * @memberOf GodController
+	 * @memberOf ControllerGod
 	 * */
 	async say(ctx) {
 		const { incantations } = ctx.params;
@@ -188,4 +198,4 @@ const STRATEGY = {
 	}
 };
 
-exports.GodController = GodController;
+exports.ControllerGod = ControllerGod;

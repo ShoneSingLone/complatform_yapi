@@ -231,7 +231,6 @@ function emitHook(name) {
 		return Promise.all(promiseAll);
 	}
 }
-
 xU.bindHook = bindHook;
 xU.emitHook = emitHook;
 xU.emitHookSync = emitHook;

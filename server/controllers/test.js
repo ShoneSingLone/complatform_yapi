@@ -93,7 +93,7 @@ class interfaceColController extends baseController {
 					pos += chunk.length;
 				}
 				fs.writeFileSync(
-					path.join(xU.var.APP_ROOT_PARENT_DIR, "test.text"),
+					path.join(xU.var.APP_ROOT_DIR, "test.text"),
 					data,
 					function (err) {
 						return (ctx.body = xU.resReturn(null, 402, "写入失败"));
@@ -117,7 +117,7 @@ class interfaceColController extends baseController {
 	async testFilesUpload(ctx) {
 		try {
 			let file = ctx.request.body.files.file;
-			let newPath = path.join(xU.var.APP_ROOT_PARENT_DIR, "test.text");
+			let newPath = path.join(xU.var.APP_ROOT_DIR, "test.text");
 			fs.renameSync(file.path, newPath);
 			ctx.body = xU.resReturn({ res: "上传成功" });
 		} catch (e) {

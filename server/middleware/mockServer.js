@@ -7,7 +7,6 @@ const _ = require("lodash");
 const Mock = require("mockjs");
 const { ObjectId } = require("mongodb");
 const { getResponseThroghProxy } = require("./requestProxy");
-exports.handleProxy = handleProxy;
 
 async function handleProxy(ctx, { domain, projectId }) {
 	const targetURL = ctx.originalUrl.replace(`/mock/${projectId}`, "");
@@ -231,13 +230,10 @@ function mockValidator(interfaceData, ctx) {
 	return { valid: true };
 }
 
-exports.middlewareMockServer = () => async (ctx, next) => {
-	// no used xU.var. 'hostname' & 'config'
-	// let hostname = ctx.hostname;
-	// let config = WEBCONFIG;
+const middlewareMockServer = () => async (ctx, next) => {
+	ctx.callme.push("middlewareMockServer");
 	let path = ctx.path;
 	let header = ctx.request.header;
-
 	/*** 如果不是/Mock/链接，不做代理 */
 	if (path.indexOf("/mock/") !== 0) {
 		if (next) await next();
@@ -251,7 +247,6 @@ exports.middlewareMockServer = () => async (ctx, next) => {
 
 	ctx.set("Access-Control-Allow-Origin", header.origin);
 	ctx.set("Access-Control-Allow-Credentials", true);
-	/* ctx.set('Access-Control-Allow-Origin', '*'); */
 
 	if (!projectId) {
 		return (ctx.body = xU.resReturn(null, 400, "projectId不能为空"));
@@ -535,3 +530,9 @@ exports.middlewareMockServer = () => async (ctx, next) => {
 		return (ctx.body = xU.resReturn(null, 409, e.message));
 	}
 };
+
+module.exports = function (app) {
+	app.use(middlewareMockServer());
+};
+
+exports.handleProxy = handleProxy;

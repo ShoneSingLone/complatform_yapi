@@ -69,7 +69,7 @@ npm run dev
 
 ```
 |-- config.json
-|-- init.lock
+|-- yapi.installed
 |-- log
 `-- vendors
     |-- CHANGELOG.md
