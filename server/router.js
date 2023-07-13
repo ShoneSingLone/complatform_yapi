@@ -6,7 +6,6 @@ const groupController = require("./controllers/group");
 const userController = require("./controllers/user");
 const interfaceColController = require("./controllers/interfaceCol");
 const testController = require("./controllers/test");
-
 const projectController = require("./controllers/project");
 const logController = require("./controllers/log");
 const followController = require("./controllers/follow");
@@ -656,4 +655,7 @@ for (let ctrl in routerConfig) {
 	});
 }
 
-module.exports = router;
+exports.appAsyncSetupRoutes = async app => {
+	app.use(router.routes());
+	app.use(router.allowedMethods());
+};

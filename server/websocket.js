@@ -27,7 +27,7 @@ function addPluginRouter(config) {
 	);
 }
 
-exports.appUseWebsocket = function appUseWebsocket(app) {
+exports.appSetupWebsocket = function appSetupWebsocket(app) {
 	xU.createAction(
 		wsRouter,
 		"/api",

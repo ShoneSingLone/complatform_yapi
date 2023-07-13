@@ -1,65 +1,45 @@
 async function main() {
+	/* 此代码必先最开始就调用：增加了当前运行目录 */
 	await require("./utils/onFirstLine")();
-	const { VARIABLES } = require("common/variables");
 	const path = require("path");
+	const { middlewareGzipWhenProd } = require("server/middleware/prdGzip");
+	const { middlewareMockServer } = require("server/middleware/mockServer");
+	const { middlewareCORS } = require("server/middleware/cors");
+	const { middlewareNotFound } = require("server/middleware/historyMode");
+	const { middlewareWhenDev } = require("server/middleware/yapiDevHeaderInfo");
+	const { middlewareParseParams } = require("server/middleware/parseParams");
 
-	const INDEX_FILE = "index.html";
-	/* preset */
-	const {
-		useGzipWhenPrd,
-		useMockServer,
-		useCORS,
-		useHistoryMode,
-		useYapiDevHeaderInfo
-	} = require("server/middleware/middleware");
 	require("./plugin");
 	const websockify = require("koa-websocket");
-	const { appUseWebsocket } = require("./websocket");
+	const { appSetupWebsocket } = require("./websocket");
 
 	require("server/utils/notice");
 
 	const Koa = require("koa");
 	const koaStatic = require("koa-static");
-	const koaBody = require("koa-body");
-	const router = require("./router");
-
+	const { appAsyncSetupRoutes } = require("./router");
 	const app = websockify(new Koa());
-	xU.app = app;
+
 	app.proxy = true;
-	app.use(useCORS());
-	app.use(
-		koaBody({
-			strict: false,
-			multipart: true,
-			formidable: {
-				// 上传目录
-				uploadDir: path.join(__dirname, VARIABLES.UPLOADS),
-				// 保留文件扩展名
-				keepExtensions: true
-			},
-			jsonLimit: "4mb",
-			formLimit: "4mb",
-			textLimit: "4mb"
-		})
-	);
-	app.use(useYapiDevHeaderInfo());
-	/* router */
-	app.use(useMockServer());
-	app.use(router.routes());
-	app.use(router.allowedMethods());
-	/* websocket */
-	appUseWebsocket(app);
-	/* router */
-	app.use(useGzipWhenPrd());
+	app.use(middlewareCORS());
+	app.use(middlewareParseParams());
+	app.use(middlewareWhenDev());
 	/* static */
 	app.use(
 		koaStatic(path.join(xU.WEBROOT, "static"), {
-			index: INDEX_FILE,
+			index: xU._v_INDEX_FILE,
 			gzip: true
 		})
 	);
+	/* router */
+	app.use(middlewareMockServer());
+	await appAsyncSetupRoutes(app);
+	/* websocket */
+	appSetupWebsocket(app);
+	/* router */
+	app.use(middlewareGzipWhenProd());
 	/* index.html */
-	app.use(useHistoryMode());
+	app.use(middlewareNotFound());
 	require("server/utils/appListen")(app);
 }
 

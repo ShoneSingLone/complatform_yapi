@@ -1,6 +1,6 @@
 const _ = require("lodash");
 
-exports.useYapiDevHeaderInfo = () => async (ctx, next) => {
+exports.middlewareWhenDev = () => async (ctx, next) => {
 	try {
 		/* console.log(
 			'\nctx.path',

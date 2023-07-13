@@ -17,12 +17,12 @@ require.extensions[".ts"] = require.extensions[".js"];
 global.WEBCONFIG = require("../../../yapiConfigs");
 
 module.exports = async () => {
-	require("server/utils/xU");
+  /*上面的代码运行之后，server就可以直接访问到*/
 	require("server/utils/commons");
 	await require("server/utils/db")();
 };
 
-/* 
+/*
 {
 	port: "0000",
 	adminAccount: "xxx@xxx.xxx",

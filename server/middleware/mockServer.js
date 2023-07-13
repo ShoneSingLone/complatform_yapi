@@ -233,7 +233,7 @@ function mockValidator(interfaceData, ctx) {
 	return { valid: true };
 }
 
-exports.useMockServer = () => async (ctx, next) => {
+exports.middlewareMockServer = () => async (ctx, next) => {
 	// no used variable 'hostname' & 'config'
 	// let hostname = ctx.hostname;
 	// let config = WEBCONFIG;

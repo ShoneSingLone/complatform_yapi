@@ -1,6 +1,6 @@
 var cors = require("koa2-cors");
 
-exports.useCORS = () =>
+exports.middlewareCORS = () =>
 	cors({
 		credentials: true,
 		origin: ctx => {
