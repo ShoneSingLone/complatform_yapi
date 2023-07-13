@@ -2,8 +2,8 @@ const path = require("path");
 const { initPlugins } = require("../common/plugin");
 let { exts: extConfig } = require("../common/config");
 
-const PLUGIN_PATH = path.join(xU.WEBROOT, "node_modules");
-const PLUGIN_SYSTEM_PATH = path.join(xU.WEBROOT, "exts");
+const PLUGIN_PATH = path.join(xU.var.APP_ROOT_DIR, "node_modules");
+const PLUGIN_SYSTEM_PATH = path.join(xU.var.APP_ROOT_DIR, "exts");
 
 /**
  * 钩子配置

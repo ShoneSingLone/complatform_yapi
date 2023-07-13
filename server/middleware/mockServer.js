@@ -7,8 +7,6 @@ const _ = require("lodash");
 const Mock = require("mockjs");
 const { ObjectId } = require("mongodb");
 const { getResponseThroghProxy } = require("./requestProxy");
-const { VARIABLE } = xU;
-
 exports.handleProxy = handleProxy;
 
 async function handleProxy(ctx, { domain, projectId }) {
@@ -184,7 +182,7 @@ function mockValidator(interfaceData, ctx) {
 	}
 	// form 表单判断
 	if (
-		VARIABLE.HTTP_METHOD[method].request_body &&
+		xU.var.HTTP_METHOD[method].request_body &&
 		interfaceData.req_body_type === "form"
 	) {
 		for (j = 0, len = interfaceData.req_body_form.length; j < len; j++) {
@@ -205,7 +203,7 @@ function mockValidator(interfaceData, ctx) {
 	let validResult;
 	// json schema 判断
 	if (
-		VARIABLE.HTTP_METHOD[method].request_body &&
+		xU.var.HTTP_METHOD[method].request_body &&
 		interfaceData.req_body_type === "json" &&
 		interfaceData.req_body_is_json_schema === true
 	) {
@@ -234,7 +232,7 @@ function mockValidator(interfaceData, ctx) {
 }
 
 exports.middlewareMockServer = () => async (ctx, next) => {
-	// no used variable 'hostname' & 'config'
+	// no used xU.var. 'hostname' & 'config'
 	// let hostname = ctx.hostname;
 	// let config = WEBCONFIG;
 	let path = ctx.path;

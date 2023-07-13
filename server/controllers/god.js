@@ -9,7 +9,7 @@ const dayjs = require("dayjs");
 const json5 = require("json5");
 const mime = require("mime-types");
 
-let TARGET_PREFIX = path.resolve(__dirname, "../../..", xU._v_RESOURCE_ASSETS);
+let TARGET_PREFIX = path.resolve(__dirname, "../../..", xU.var.RESOURCE_ASSETS);
 
 class GodController extends BaseController {
 	constructor(ctx) {
@@ -65,7 +65,7 @@ class GodController extends BaseController {
 			await fs.promises.unlink(sourcePath);
 			const res = await this.orm_resource.save({
 				name: file.name,
-				path: _.last(String(targetPath).split(xU._v_RESOURCE_ASSETS)),
+				path: _.last(String(targetPath).split(xU.var.RESOURCE_ASSETS)),
 				type: file.type,
 				useFor: useFor,
 				size: file.size,

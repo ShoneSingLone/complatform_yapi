@@ -26,8 +26,8 @@ async function main() {
 	app.use(middlewareWhenDev());
 	/* static */
 	app.use(
-		koaStatic(path.join(xU.WEBROOT, "static"), {
-			index: xU._v_INDEX_FILE,
+		koaStatic(path.join(xU.var.APP_ROOT_DIR, "static"), {
+			index: xU.var.INDEX_FILE,
 			gzip: true
 		})
 	);

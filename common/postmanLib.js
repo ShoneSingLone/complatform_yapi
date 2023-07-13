@@ -15,8 +15,7 @@ const jsrsasign = require("jsrsasign");
 const https = require("https");
 const lodash = require("lodash");
 const isNode = typeof global == "object" && global.global === global;
-const { VARIABLE } = global.xU;
-const HTTP_METHOD = VARIABLE.HTTP_METHOD;
+const { HTTP_METHOD } = xU.var;
 
 const ContentTypeMap = {
 	"application/json": "json",

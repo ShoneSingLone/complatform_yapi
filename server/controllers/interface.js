@@ -584,7 +584,7 @@ class interfaceController extends BaseController {
 	async downloadCrx(ctx) {
 		let filename = "crossRequest.zip";
 		let dataBuffer = xU.fs.readFileSync(
-			path.join(WEBROOT, "static/attachment/cross-request.zip")
+			path.join(APP_ROOT_DIR, "static/attachment/cross-request.zip")
 		);
 		ctx.set("Content-disposition", "attachment; filename=" + filename);
 		ctx.set("Content-Type", "application/zip");
@@ -830,14 +830,14 @@ class interfaceController extends BaseController {
 			let diffView = showDiffMsg(jsondiffpatch, formattersHtml, logData);
 			let annotatedCss = fs.readFileSync(
 				path.resolve(
-					WEBROOT,
+					APP_ROOT_DIR,
 					"node_modules/jsondiffpatch/dist/formatters-styles/annotated.css"
 				),
 				"utf8"
 			);
 			let htmlCss = fs.readFileSync(
 				path.resolve(
-					WEBROOT,
+					APP_ROOT_DIR,
 					"node_modules/jsondiffpatch/dist/formatters-styles/html.css"
 				),
 				"utf8"

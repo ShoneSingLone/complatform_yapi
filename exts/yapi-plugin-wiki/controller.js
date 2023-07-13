@@ -105,14 +105,14 @@ class wikiController extends BaseController {
 
 				let annotatedCss = fs.readFileSync(
 					path.resolve(
-						xU.WEBROOT,
+						xU.var.APP_ROOT_DIR,
 						"node_modules/jsondiffpatch/dist/formatters-styles/annotated.css"
 					),
 					"utf8"
 				);
 				let htmlCss = fs.readFileSync(
 					path.resolve(
-						xU.WEBROOT,
+						xU.var.APP_ROOT_DIR,
 						"node_modules/jsondiffpatch/dist/formatters-styles/html.css"
 					),
 					"utf8"

@@ -5,9 +5,9 @@ const caseModel = require("./caseModel");
 
 const _ = require("lodash");
 const path = require("path");
-const lib = require(path.resolve(xU.WEBROOT, "common/lib"));
+const lib = require(path.resolve(xU.var.APP_ROOT_DIR, "common/lib"));
 const Mock = require("mockjs");
-const mockExtra = require(path.resolve(xU.WEBROOT, "common/mock-extra"));
+const mockExtra = require(path.resolve(xU.var.APP_ROOT_DIR, "common/mock-extra"));
 
 function arrToObj(arr) {
 	let obj = { "Set-Cookie": [] };

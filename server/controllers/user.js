@@ -604,7 +604,7 @@ class userController extends BaseController {
 			let dataBuffer, type;
 			if (!data || !data.basecode) {
 				dataBuffer = xU.fs.readFileSync(
-					path.join(xU.WEBROOT, "static/image/avatar.png")
+					path.join(xU.var.APP_ROOT_DIR, "static/image/avatar.png")
 				);
 				type = "image/png";
 			} else {

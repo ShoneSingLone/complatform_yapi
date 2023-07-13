@@ -6,7 +6,7 @@
 	const { ModelUser } = require("server/models/user");
 
 	function install() {
-		const fileExistURL = path.join(xU.WEBROOT_RUNTIME, "init.lock");
+		const fileExistURL = path.join(xU.var.APP_ROOT_PARENT_DIR, "init.lock");
 		console.log(fileExistURL);
 		let exist = xU.fileExist(fileExistURL);
 
@@ -136,7 +136,7 @@
 
 			result.then(
 				function () {
-					fs.ensureFileSync(path.join(xU.WEBROOT_RUNTIME, "init.lock"));
+					fs.ensureFileSync(path.join(xU.var.APP_ROOT_PARENT_DIR, "init.lock"));
 					console.log(
 						`初始化管理员账号成功,账号名："${WEBCONFIG.adminAccount}"，密码："${WEBCONFIG.adminPwd}"`
 					); // eslint-disable-line
