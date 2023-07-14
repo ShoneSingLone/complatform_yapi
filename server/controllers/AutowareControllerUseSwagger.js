@@ -59,7 +59,7 @@ module.exports = {
 						schema: { $ref: "#/definitions/ApiResponse" }
 					}
 				},
-				handler(ctx) { }
+				handler(ctx) {}
 			}
 		}
 	}

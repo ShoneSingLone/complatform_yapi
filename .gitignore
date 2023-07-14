@@ -52,3 +52,5 @@ static/wiki
 .vs
 static/dist
 server/uploads/resourceAssets
+server/uploads/db*
+server/uploads/upload_*

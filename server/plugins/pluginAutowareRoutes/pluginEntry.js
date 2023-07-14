@@ -1,13 +1,9 @@
 const koaStatic = require("koa-static");
-const Router = require("koa-router");
 const ControllerBase = require("server/controllers/base");
-const router = new Router();
-
-
+const RouteMap = new Map();
 
 /* 便捷使用schema */
-xU.schema = (schema) => ({ $ref: `#/definitions/${schema}` });
-
+xU.schema = schema => ({ $ref: `#/definitions/${schema}` });
 
 function appUseSwagger(app, swaggerJSON) {
 	app.use(async (ctx, next) => {
@@ -31,22 +27,47 @@ function appUseSwagger(app, swaggerJSON) {
 }
 
 function appAddRoutes(app, routes) {
-	routes.forEach(({ url, method, Controller, handler, prefix }) => {
-		url = `${WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath || ""
-			}${url}`;
-		router[method](url, async ctx => {
-			/* AOP */
-			await handler.call(new ControllerBase(ctx), ctx);
-		});
+	routes.forEach(({ url, method, handler }) => {
+		url = `${
+			WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath || ""
+		}${url}`;
+		const urlObj = RouteMap.get(url) || {};
+		urlObj[String(method).toUpperCase()] = handler;
+		RouteMap.set(url, urlObj);
 	});
-	app.use(router.routes());
-	app.use(
-		router.allowedMethods({
-			// throw: true, // 抛出错误，代替设置响应头状态
-			// notImplemented: () => '不支持当前请求所需要的功能',
-			// methodNotAllowed: () => '不支持的请求方式'
-		})
-	);
+
+	app.use(async (ctx, next) => {
+		const isDone = await (async () => {
+			const urlObj = RouteMap.get(ctx.path);
+			if (urlObj) {
+				const handler = urlObj[String(ctx.method).toUpperCase()];
+				if (handler) {
+					/* AOP */
+					const vm = new ControllerBase(ctx);
+					try {
+						await vm.init(ctx);
+						if (vm.$auth) {
+							await handler.call(vm, ctx);
+							return true;
+						} else {
+							ctx.body = xU.resReturn(
+								{
+									msg: "未获取授权"
+								},
+								40011,
+								"请登录..."
+							);
+						}
+					} catch (err) {
+						xU.applog.error(err);
+					}
+				}
+			}
+		})();
+		if (!isDone) {
+			await next();
+		}
+	});
 }
 
 module.exports = async function (app) {

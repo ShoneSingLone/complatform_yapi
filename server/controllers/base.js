@@ -32,7 +32,6 @@ class ControllerBase {
 			"/api/user/avatar",
 			"/api/user/login_by_ldap"
 		];
-
 		if (ignoreRouter.indexOf(ctx.path) > -1) {
 			this.$auth = true;
 		} else {

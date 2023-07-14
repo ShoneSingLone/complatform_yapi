@@ -1,6 +1,8 @@
 const { _n } = require("@ventose/utils-node");
 const { newSwaggerJSON } = require("./swagger.json");
-const swaggerJSON = newSwaggerJSON(WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo);
+const swaggerJSON = newSwaggerJSON(
+	WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo
+);
 const routes = [];
 async function scanAllAutowareController(app) {
 	try {

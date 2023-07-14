@@ -4,4 +4,4 @@
 - xU.schema
 - isHideInSwagger
 - WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath
-    - 在common.js 文件中 添加 isUsePlugin?.AutowareRoutes的信息
+  - 在 common.js 文件中 添加 isUsePlugin?.AutowareRoutes 的信息
