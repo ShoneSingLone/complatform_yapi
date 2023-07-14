@@ -41,7 +41,7 @@ module.exports = function () {
 
 	async function checkCase(ctx, interfaceId) {
 		let reqParams = Object.assign({}, ctx.query, ctx.request.body);
-		let caseInst = xU.getInst(caseModel);
+		let caseInst = xU.orm(caseModel);
 
 		// let ip = ctx.ip.match(/\d+.\d+.\d+.\d+/)[0];
 		// request.ip
@@ -92,7 +92,7 @@ module.exports = function () {
 	}
 
 	async function handleByCase(caseData) {
-		let caseInst = xU.getInst(caseModel);
+		let caseInst = xU.orm(caseModel);
 		let result = await caseInst.get({
 			_id: caseData._id
 		});
@@ -160,11 +160,11 @@ module.exports = function () {
 		});
 	});
 	this.bindHook("interface_del", async function (id) {
-		let inst = xU.getInst(advModel);
+		let inst = xU.orm(advModel);
 		await inst.delByInterfaceId(id);
 	});
 	this.bindHook("project_del", async function (id) {
-		let inst = xU.getInst(advModel);
+		let inst = xU.orm(advModel);
 		await inst.delByProjectId(id);
 	});
 	/**
@@ -172,8 +172,8 @@ module.exports = function () {
       projectData: project,
       interfaceData: interfaceData,
       ctx: ctx,
-      mockJson: res 
-    } 
+      mockJson: res
+    }
    */
 	this.bindHook("mock_after", async function (context) {
 		let interfaceId = context.interfaceData._id;
@@ -206,7 +206,7 @@ module.exports = function () {
 			context.delay = data.delay;
 			return true;
 		}
-		let inst = xU.getInst(advModel);
+		let inst = xU.orm(advModel);
 		let data = await inst.get(interfaceId);
 
 		if (!data || !data.enable || !data.mock_script) {

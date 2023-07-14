@@ -20703,10 +20703,7 @@ object-assign
 														(function () {
 															let url = a.url;
 															const { pathname, hostname } = window.location;
-															const prefix = pathname.replace(
-																`/swagger-ui.html`,
-																""
-															);
+															const prefix = pathname.replace(`/swagger`, "");
 															url = a.url.replace(
 																hostname,
 																`${hostname}${prefix}`

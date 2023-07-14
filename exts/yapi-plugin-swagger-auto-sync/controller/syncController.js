@@ -1,15 +1,15 @@
-const BaseController = require("server/controllers/base");
+const ControllerBase = require("server/controllers/base");
 
 const syncModel = require("../syncModel");
 const modelProject = require("server/models/project");
 const interfaceSyncUtils = require("../interfaceSyncUtils");
 
-class syncController extends BaseController {
+class syncController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.syncModel = xU.getInst(syncModel);
-		this.modelProject = xU.getInst(modelProject);
-		this.interfaceSyncUtils = xU.getInst(interfaceSyncUtils);
+		this.syncModel = xU.orm(syncModel);
+		this.modelProject = xU.orm(modelProject);
+		this.interfaceSyncUtils = xU.orm(interfaceSyncUtils);
 	}
 
 	/**

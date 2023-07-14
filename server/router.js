@@ -681,7 +681,7 @@ for (let ctrl in routerConfig) {
 	});
 }
 
-module.exports = function (app) {
+module.exports = async function (app) {
 	app.use(router.routes());
 	app.use(router.allowedMethods());
 	appSetupWebsocket(app);

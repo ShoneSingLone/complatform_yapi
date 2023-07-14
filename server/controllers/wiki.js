@@ -1,13 +1,13 @@
-const BaseController = require("server/controllers/base");
+const ControllerBase = require("server/controllers/base");
 const { ModelWiki } = require("server/models/wiki");
 const { WikiOrderModel } = require("server/models/WikiOrder");
 const { diffText } = require("common/diff-view");
 
-class ControllerWiki extends BaseController {
+class ControllerWiki extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.orm_wiki = xU.getInst(ModelWiki);
-		this.orm_wiki_order = xU.getInst(WikiOrderModel);
+		this.orm_wiki = xU.orm(ModelWiki);
+		this.orm_wiki_order = xU.orm(WikiOrderModel);
 	}
 
 	/*

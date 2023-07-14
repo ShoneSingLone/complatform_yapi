@@ -15,6 +15,6 @@ const middlewareCORS = () => {
 	});
 };
 
-module.exports = function (app) {
+module.exports = async function (app) {
 	app.use(middlewareCORS());
 };

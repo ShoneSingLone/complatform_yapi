@@ -1,12 +1,12 @@
-const BaseController = require("./base");
+const ControllerBase = require("./base");
 const followModel = require("../models/follow");
 const modelProject = require("../models/project");
 
-class followController extends BaseController {
+class followController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.getInst(followModel);
-		this.modelProject = xU.getInst(modelProject);
+		this.Model = xU.orm(followModel);
+		this.modelProject = xU.orm(modelProject);
 	}
 
 	/**

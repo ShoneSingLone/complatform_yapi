@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const { parseToken } = require("../utils/token");
 const { customCookies } = require("../utils/customCookies");
 
-class BaseController {
+class ControllerBase {
 	constructor(ctx) {
 		this.ctx = ctx;
 		//网站上线后，role对象key是不能修改的，value可以修改
@@ -19,10 +19,10 @@ class BaseController {
 	}
 
 	async init(ctx) {
-		xU.applog.info("BaseController");
+		xU.applog.info("ControllerBase");
 		this.$user = null;
-		this.tokenModel = xU.getInst(tokenModel);
-		this.modelProject = xU.getInst(modelProject);
+		this.tokenModel = xU.orm(tokenModel);
+		this.modelProject = xU.orm(modelProject);
 		let ignoreRouter = [
 			"/api/user/login_by_token",
 			"/api/user/login",
@@ -102,7 +102,7 @@ class BaseController {
 						username: "system"
 					};
 				} else {
-					let userInst = xU.getInst(ModelUser); //创建user实体
+					let userInst = xU.orm(ModelUser); //创建user实体
 					result = await userInst.findById(tokenUid);
 				}
 
@@ -132,7 +132,7 @@ class BaseController {
 				xU.applog.info("未携带认证信息");
 				return false;
 			}
-			let userDBCollection = xU.getInst(ModelUser); //创建user实体
+			let userDBCollection = xU.orm(ModelUser); //创建user实体
 			let currUserInfo = await userDBCollection.findById(uid);
 			/* 用户不存在 */
 			if (!currUserInfo) {
@@ -227,7 +227,7 @@ class BaseController {
 				return "admin";
 			}
 			if (type === "interface") {
-				let interfaceInst = xU.getInst(interfaceModel);
+				let interfaceInst = xU.orm(interfaceModel);
 				let interfaceData = await interfaceInst.get(id);
 				result.interfaceData = interfaceData;
 				// 项目创建者相当于 owner
@@ -239,7 +239,7 @@ class BaseController {
 			}
 
 			if (type === "project") {
-				let projectInst = xU.getInst(modelProject);
+				let projectInst = xU.orm(modelProject);
 				let projectData = await projectInst.get(id);
 				if (projectData.uid === this.getUid()) {
 					// 建立项目的人
@@ -265,7 +265,7 @@ class BaseController {
 			}
 
 			if (type === "group") {
-				let groupInst = xU.getInst(groupModel);
+				let groupInst = xU.orm(groupModel);
 				let groupData = await groupInst.get(id);
 				// 建立分组的人
 				if (groupData.uid === this.getUid()) {
@@ -325,4 +325,4 @@ class BaseController {
 	}
 }
 
-module.exports = BaseController;
+module.exports = ControllerBase;

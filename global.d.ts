@@ -1,4 +1,13 @@
 type t_WEBCONFIG = {
+	/*如果有 对象属性为plugin名称 value也是一个object ，是配置信息*/
+	/*
+  *isUsePlugin: {
+    AutowareRoutes: {
+      isUseSwagger: true
+    }
+  },
+  * */
+	isUsePlugin?: object;
 	port: string;
 	adminAccount: string;
 	db: {
@@ -25,6 +34,7 @@ type t_WEBCONFIG = {
 
 declare global {
 	var WEBCONFIG: t_WEBCONFIG;
+	var xU: {
+		schema?: (schemaName: string) => object;
+	};
 }
-
-export {};

@@ -252,7 +252,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		return (ctx.body = xU.resReturn(null, 400, "projectId不能为空"));
 	}
 
-	let projectInst = xU.getInst(modelProject);
+	let projectInst = xU.orm(modelProject);
 	let project;
 	try {
 		project = await projectInst.get(projectId);
@@ -266,11 +266,11 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 	let interfaceData;
 	let realUrlPath;
-	let interfaceInst = xU.getInst(interfaceModel);
+	let interfaceInst = xU.orm(interfaceModel);
 
 	try {
 		/* TODO:获取当前链接的对应代理地址
-    /* 如果该接口是已完成状态 */
+	/* 如果该接口是已完成状态 */
 		/* 尝试访问实际的主机 */
 		/* 获取真实的响应数据 */
 		/* 否则 */
@@ -531,7 +531,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 	}
 };
 
-module.exports = function (app) {
+module.exports = async function (app) {
 	app.use(middlewareMockServer());
 };
 

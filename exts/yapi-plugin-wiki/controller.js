@@ -1,4 +1,4 @@
-const BaseController = require("server/controllers/base");
+const ControllerBase = require("server/controllers/base");
 const modelWiki = require("./modelWiki");
 const modelProject = require("server/models/project");
 const { ModelUser } = require("server/models/user");
@@ -9,11 +9,11 @@ const formattersHtml = jsondiffpatch.formatters.html;
 const fs = require("fs-extra");
 const path = require("path");
 const showDiffMsg = require("../../common/diff-view");
-class ControllerWiki extends BaseController {
+class ControllerWiki extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.getInst(modelWiki);
-		this.modelProject = xU.getInst(modelProject);
+		this.Model = xU.orm(modelWiki);
+		this.modelProject = xU.orm(modelProject);
 	}
 
 	/**
@@ -215,7 +215,7 @@ class ControllerWiki extends BaseController {
 	async editorFunc(result) {
 		let userInst, userinfo, data;
 		if (result && result.edit_uid !== 0 && result.edit_uid !== this.getUid()) {
-			userInst = xU.getInst(ModelUser);
+			userInst = xU.orm(ModelUser);
 			userinfo = await userInst.findById(result.edit_uid);
 			data = {
 				errno: result.edit_uid,

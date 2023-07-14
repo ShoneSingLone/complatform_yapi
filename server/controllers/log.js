@@ -1,17 +1,17 @@
 const modelLog = require("../models/log");
 
-const BaseController = require("./base");
+const ControllerBase = require("./base");
 const groupModel = require("../models/group");
 const modelProject = require("../models/project");
 const interfaceModel = require("../models/interface");
 
-class logController extends BaseController {
+class logController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.getInst(modelLog);
-		this.groupModel = xU.getInst(groupModel);
-		this.modelProject = xU.getInst(modelProject);
-		this.interfaceModel = xU.getInst(interfaceModel);
+		this.Model = xU.orm(modelLog);
+		this.groupModel = xU.orm(groupModel);
+		this.modelProject = xU.orm(modelProject);
+		this.interfaceModel = xU.orm(interfaceModel);
 		this.schemaMap = {
 			listByUpdate: {
 				"*type": "string",

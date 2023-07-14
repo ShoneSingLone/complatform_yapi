@@ -1,4 +1,4 @@
-const BaseController = require("server/controllers/base");
+const ControllerBase = require("server/controllers/base");
 const interfaceModel = require("server/models/interface");
 const modelProject = require("server/models/project");
 const interfaceCatModel = require("server/models/interfaceCat");
@@ -9,12 +9,12 @@ const defaultTheme = require("./defaultTheme");
 const md = require("../../common/markdown");
 
 // const htmlToPdf = require("html-pdf");
-class exportController extends BaseController {
+class exportController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.catModel = xU.getInst(interfaceCatModel);
-		this.interModel = xU.getInst(interfaceModel);
-		this.modelProject = xU.getInst(modelProject);
+		this.catModel = xU.orm(interfaceCatModel);
+		this.interModel = xU.orm(interfaceModel);
+		this.modelProject = xU.orm(modelProject);
 	}
 
 	async handleListClass(pid, status) {
@@ -80,7 +80,7 @@ class exportController extends BaseController {
 			curProject = await this.modelProject.get(pid);
 			if (isWiki === "true") {
 				const modelWiki = require("../yapi-plugin-wiki/modelWiki");
-				wikiData = await xU.getInst(modelWiki).get(pid);
+				wikiData = await xU.orm(modelWiki).get(pid);
 			}
 			ctx.set("Content-Type", "application/octet-stream");
 			const list = await this.handleListClass(pid, status);

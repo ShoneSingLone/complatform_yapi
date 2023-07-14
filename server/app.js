@@ -12,7 +12,7 @@ async function main() {
 	await require("server/middleware/cors")(app);
 	await require("server/middleware/parseParams")(app);
 	await require("server/middleware/mockServer")(app);
-	await require("server/plugins/swagger/swagger_plugin")(app);
+	await require("server/plugins/usePlugin")(app);
 	await require("server/assets")(app);
 	await require("server/router")(app);
 	await require("server/middleware/historyMode")(app);

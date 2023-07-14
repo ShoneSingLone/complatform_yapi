@@ -4,14 +4,14 @@ module.exports = function storageCreator(id) {
 	const defaultData = {};
 	return {
 		getItem: async (name = "") => {
-			let inst = xU.getInst(storageModel);
+			let inst = xU.orm(storageModel);
 			let data = await inst.get(id);
 			data = data || defaultData;
 			if (name) return data[name];
 			return data;
 		},
 		setItem: async (name, value) => {
-			let inst = xU.getInst(storageModel);
+			let inst = xU.orm(storageModel);
 			let curData = await inst.get(id);
 			let data = curData || defaultData;
 			let result;

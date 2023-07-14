@@ -16,6 +16,6 @@ const middlewareParseParams = () =>
 		textLimit: "4mb"
 	});
 
-module.exports = function (app) {
+module.exports = async function (app) {
 	app.use(middlewareParseParams());
 };

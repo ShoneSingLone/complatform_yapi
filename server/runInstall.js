@@ -18,7 +18,7 @@
 	}
 
 	function setupSql() {
-		let userInst = xU.getInst(ModelUser);
+		let userInst = xU.orm(ModelUser);
 		let passsalt = xU.randStr();
 		let result = userInst.save({
 			username: WEBCONFIG.adminAccount.substr(

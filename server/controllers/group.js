@@ -1,6 +1,6 @@
 const groupModel = require("../models/group");
 
-const BaseController = require("./base");
+const ControllerBase = require("./base");
 const modelProject = require("../models/project");
 const { ModelUser } = require("../models/user");
 const interfaceModel = require("../models/interface");
@@ -14,7 +14,7 @@ const rolename = {
 	guest: "访客"
 };
 
-class groupController extends BaseController {
+class groupController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 
@@ -98,7 +98,7 @@ class groupController extends BaseController {
 	async get(ctx) {
 		let params = ctx.params;
 
-		let groupInst = xU.getInst(groupModel);
+		let groupInst = xU.orm(groupModel);
 		let result = await groupInst.getGroupById(params.id);
 		if (result) {
 			result = result.toObject();
@@ -148,7 +148,7 @@ class groupController extends BaseController {
 			}
 		}
 
-		let groupInst = xU.getInst(groupModel);
+		let groupInst = xU.orm(groupModel);
 
 		let checkRepeat = await groupInst.checkRepeat(params.group_name);
 
@@ -196,7 +196,7 @@ class groupController extends BaseController {
 
 	async getUserdata(uid, role) {
 		role = role || "dev";
-		let userInst = xU.getInst(ModelUser);
+		let userInst = xU.orm(ModelUser);
 		let userData = await userInst.findById(uid);
 		if (!userData) {
 			return null;
@@ -211,7 +211,7 @@ class groupController extends BaseController {
 	}
 
 	async getMyGroup(ctx) {
-		var groupInst = xU.getInst(groupModel);
+		var groupInst = xU.orm(groupModel);
 		let privateGroup = await groupInst.getByPrivateUid(this.getUid());
 		if (!privateGroup) {
 			privateGroup = await groupInst.save({
@@ -243,7 +243,7 @@ class groupController extends BaseController {
 	 */
 	async addMember(ctx) {
 		let params = ctx.params;
-		let groupInst = xU.getInst(groupModel);
+		let groupInst = xU.orm(groupModel);
 
 		params.role =
 			["owner", "dev", "guest"].find(v => v === params.role) || "dev";
@@ -303,7 +303,7 @@ class groupController extends BaseController {
 	 */
 	async changeMemberRole(ctx) {
 		let params = ctx.request.body;
-		let groupInst = xU.getInst(groupModel);
+		let groupInst = xU.orm(groupModel);
 
 		var check = await groupInst.checkMemberRepeat(params.id, params.member_uid);
 		if (check === 0) {
@@ -351,7 +351,7 @@ class groupController extends BaseController {
 
 	async getMemberList(ctx) {
 		let params = ctx.params;
-		let groupInst = xU.getInst(groupModel);
+		let groupInst = xU.orm(groupModel);
 		let group = await groupInst.get(params.id);
 		ctx.body = xU.resReturn(group.members);
 	}
@@ -370,7 +370,7 @@ class groupController extends BaseController {
 
 	async delMember(ctx) {
 		let params = ctx.params;
-		let groupInst = xU.getInst(groupModel);
+		let groupInst = xU.orm(groupModel);
 		var check = await groupInst.checkMemberRepeat(params.id, params.member_uid);
 		if (check === 0) {
 			return (ctx.body = xU.resReturn(null, 400, "分组成员不存在"));
@@ -405,8 +405,8 @@ class groupController extends BaseController {
 	 * @example ./api/group/list.json
 	 */
 	async list(ctx) {
-		var groupInst = xU.getInst(groupModel);
-		let projectInst = xU.getInst(modelProject);
+		var groupInst = xU.orm(groupModel);
+		let projectInst = xU.orm(modelProject);
 
 		let privateGroup = await groupInst.getByPrivateUid(this.getUid());
 		let newResult = [];
@@ -481,11 +481,11 @@ class groupController extends BaseController {
 			return (ctx.body = xU.resReturn(null, 401, "没有权限"));
 		}
 
-		let groupInst = xU.getInst(groupModel);
-		let projectInst = xU.getInst(modelProject);
-		let interfaceInst = xU.getInst(interfaceModel);
-		let interfaceColInst = xU.getInst(interfaceColModel);
-		let interfaceCaseInst = xU.getInst(interfaceCaseModel);
+		let groupInst = xU.orm(groupModel);
+		let projectInst = xU.orm(modelProject);
+		let interfaceInst = xU.orm(interfaceModel);
+		let interfaceColInst = xU.orm(interfaceColModel);
+		let interfaceCaseInst = xU.orm(interfaceCaseModel);
 		let id = ctx.params.id;
 
 		let projectList = await projectInst.list(id, true);
@@ -515,7 +515,7 @@ class groupController extends BaseController {
 	 * @example ./api/group/up.json
 	 */
 	async up(ctx) {
-		let groupInst = xU.getInst(groupModel);
+		let groupInst = xU.orm(groupModel);
 		let params = ctx.params;
 
 		if ((await this.checkAuth(params.id, "group", "danger")) !== true) {

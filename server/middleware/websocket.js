@@ -1,4 +1,4 @@
-const BaseController = require("server/controllers/base");
+const ControllerBase = require("server/controllers/base");
 const _ = require("lodash");
 var cps = require("current-processes");
 
@@ -114,7 +114,7 @@ const middlewareWebsocket = () => async (ctx, next) => {
 
 	PATH_STRATEGY.set(`/ws`, async () => {
 		/* 默认的root */
-		const vm = new BaseController(ctx);
+		const vm = new ControllerBase(ctx);
 		await vm.checkLogin(ctx);
 		/* 异步，不能用open来确定可以发消息的事件，只有通过权限校验才接受client发送的消息 */
 		if (vm.$user) {

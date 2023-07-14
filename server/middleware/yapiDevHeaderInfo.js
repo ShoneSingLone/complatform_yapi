@@ -4,13 +4,13 @@ const middlewareWhenDev = () => async (ctx, next) => {
 	ctx.callme = ["middlewareWhenDev"];
 	try {
 		/* console.log(
-      '\nctx.path',
-      ctx.path,
-      '\nquery:\n',
-      JSON.stringify(ctx?.query || {}, null, 2),
-      '\nbody:\n',
-      JSON.stringify(ctx?.request?.body || {}, null, 2),
-    ); */
+	  '\nctx.path',
+	  ctx.path,
+	  '\nquery:\n',
+	  JSON.stringify(ctx?.query || {}, null, 2),
+	  '\nbody:\n',
+	  JSON.stringify(ctx?.request?.body || {}, null, 2),
+	); */
 
 		xU.applog.info(ctx.path, ctx.ips.join(","));
 		const start = Date.now();
@@ -45,6 +45,6 @@ const middlewareWhenDev = () => async (ctx, next) => {
 	}
 };
 
-module.exports = function (app) {
+module.exports = async function (app) {
 	app.use(middlewareWhenDev());
 };

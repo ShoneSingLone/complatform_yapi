@@ -1,5 +1,5 @@
 const { ModelUser } = require("../models/user");
-const BaseController = require("./base");
+const ControllerBase = require("./base");
 const { ldapQuery } = require("../utils/ldap");
 const interfaceModel = require("../models/interface");
 const groupModel = require("../models/group");
@@ -9,11 +9,12 @@ const { customCookies } = require("../utils/customCookies");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 
-class userController extends BaseController {
+class userController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelUser = xU.getInst(ModelUser);
+		this.modelUser = xU.orm(ModelUser);
 	}
+
 	/**
 	 * 用户登录接口
 	 * @interface /user/login
@@ -27,7 +28,7 @@ class userController extends BaseController {
 	 */
 	async login(ctx) {
 		//登录
-		let userInst = xU.getInst(ModelUser); //创建user实体
+		let userInst = xU.orm(ModelUser); //创建user实体
 		let email = ctx.request.body.email;
 		email = (email || "").trim();
 		let password = ctx.request.body.password;
@@ -94,7 +95,7 @@ class userController extends BaseController {
 	 */
 
 	async upStudy(ctx) {
-		let userInst = xU.getInst(ModelUser); //创建user实体
+		let userInst = xU.orm(ModelUser); //创建user实体
 		let data = {
 			up_time: xU.time(),
 			study: true
@@ -148,7 +149,7 @@ class userController extends BaseController {
 			let login = await this.handleThirdLogin(emailParams, username);
 
 			if (login === true) {
-				let userInst = xU.getInst(ModelUser); //创建user实体
+				let userInst = xU.orm(ModelUser); //创建user实体
 				let result = await userInst.findByEmail(emailParams);
 				return (ctx.body = xU.resReturn(
 					{
@@ -174,7 +175,7 @@ class userController extends BaseController {
 	// 处理第三方登录
 	async handleThirdLogin(email, username) {
 		let user, data, passsalt;
-		let userInst = xU.getInst(ModelUser);
+		let userInst = xU.orm(ModelUser);
 
 		try {
 			user = await userInst.findByEmail(email);
@@ -221,7 +222,7 @@ class userController extends BaseController {
 	 */
 	async changePassword(ctx) {
 		let params = ctx.request.body;
-		let userInst = xU.getInst(ModelUser);
+		let userInst = xU.orm(ModelUser);
 
 		if (!params.uid) {
 			return (ctx.body = xU.resReturn(null, 400, "uid不能为空"));
@@ -264,7 +265,7 @@ class userController extends BaseController {
 	}
 
 	async handlePrivateGroup(uid) {
-		var groupInst = xU.getInst(groupModel);
+		var groupInst = xU.orm(groupModel);
 		await groupInst.save({
 			uid: uid,
 			group_name: "User-" + uid,
@@ -302,7 +303,7 @@ class userController extends BaseController {
 		if (WEBCONFIG.closeRegister) {
 			return (ctx.body = xU.resReturn(null, 400, "禁止注册，请联系管理员"));
 		}
-		let userInst = xU.getInst(ModelUser);
+		let userInst = xU.orm(ModelUser);
 		let params = ctx.request.body; //获取请求的参数,检查是否存在用户名和密码
 
 		params = xU.handleParams(params, {
@@ -379,7 +380,7 @@ class userController extends BaseController {
 		let page = ctx.request.query.page || 1,
 			limit = ctx.request.query.limit || 10;
 
-		const userInst = xU.getInst(ModelUser);
+		const userInst = xU.orm(ModelUser);
 		try {
 			let user = await userInst.listWithPaging(page, limit);
 			let count = await userInst.listCount();
@@ -406,7 +407,7 @@ class userController extends BaseController {
 	async findById(ctx) {
 		//根据id获取用户信息
 		try {
-			let userInst = xU.getInst(ModelUser);
+			let userInst = xU.orm(ModelUser);
 			let id = ctx.request.query.id;
 
 			if (this.getRole() !== "admin" && id != this.getUid()) {
@@ -454,7 +455,7 @@ class userController extends BaseController {
 				return (ctx.body = xU.resReturn(null, 402, "Without permission."));
 			}
 
-			let userInst = xU.getInst(ModelUser);
+			let userInst = xU.orm(ModelUser);
 			let id = ctx.request.body.id;
 			if (id == this.getUid()) {
 				return (ctx.body = xU.resReturn(null, 403, "禁止删除管理员"));
@@ -498,7 +499,7 @@ class userController extends BaseController {
 				return (ctx.body = xU.resReturn(null, 401, "没有权限"));
 			}
 
-			let userInst = xU.getInst(ModelUser);
+			let userInst = xU.orm(ModelUser);
 			let id = params.uid;
 
 			if (!id) {
@@ -529,9 +530,9 @@ class userController extends BaseController {
 				username: data.username || userData.username,
 				email: data.email || userData.email
 			};
-			let groupInst = xU.getInst(groupModel);
+			let groupInst = xU.orm(groupModel);
 			await groupInst.updateMember(member);
-			let projectInst = xU.getInst(modelProject);
+			let projectInst = xU.orm(modelProject);
 			await projectInst.updateMember(member);
 
 			let result = await userInst.update(id, data);
@@ -578,7 +579,7 @@ class userController extends BaseController {
 				return (ctx.body = xU.resReturn(null, 400, "图片大小不能超过200kb"));
 			}
 
-			let avatarInst = xU.getInst(avatarModel);
+			let avatarInst = xU.orm(avatarModel);
 			let result = await avatarInst.up(this.getUid(), basecode, type);
 			ctx.body = xU.resReturn(result);
 		} catch (e) {
@@ -599,7 +600,7 @@ class userController extends BaseController {
 	async avatar(ctx) {
 		try {
 			let uid = ctx.query.uid ? ctx.query.uid : this.getUid();
-			let avatarInst = xU.getInst(avatarModel);
+			let avatarInst = xU.orm(avatarModel);
 			let data = await avatarInst.get(uid);
 			let dataBuffer, type;
 			if (!data || !data.basecode) {
@@ -680,7 +681,7 @@ class userController extends BaseController {
 		let result = {};
 		try {
 			if (type === "interface") {
-				let interfaceInst = xU.getInst(interfaceModel);
+				let interfaceInst = xU.orm(interfaceModel);
 				let interfaceData = await interfaceInst.get(id);
 				result.interface = interfaceData;
 				type = "project";
@@ -688,7 +689,7 @@ class userController extends BaseController {
 			}
 
 			if (type === "project") {
-				let projectInst = xU.getInst(modelProject);
+				let projectInst = xU.orm(modelProject);
 				let projectData = await projectInst.get(id);
 				result.project = projectData.toObject();
 				let ownerAuth = await this.checkAuth(id, "project", "danger"),
@@ -708,7 +709,7 @@ class userController extends BaseController {
 			}
 
 			if (type === "group") {
-				let groupInst = xU.getInst(groupModel);
+				let groupInst = xU.orm(groupModel);
 				let groupData = await groupInst.get(id);
 				result.group = groupData.toObject();
 				let ownerAuth = await this.checkAuth(id, "group", "danger"),

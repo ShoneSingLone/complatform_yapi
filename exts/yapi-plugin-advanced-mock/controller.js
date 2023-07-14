@@ -1,20 +1,20 @@
-const BaseController = require("server/controllers/base");
+const ControllerBase = require("server/controllers/base");
 const advModel = require("./advMockModel");
 const caseModel = require("./caseModel");
 const { ModelUser } = require("server/models/user");
 const config = require("./index");
 
-class advMockController extends BaseController {
+class advMockController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.getInst(advModel);
-		this.caseModel = xU.getInst(caseModel);
-		this.ModelUser = xU.getInst(ModelUser);
+		this.orm_adv = xU.orm(advModel);
+		this.caseModel = xU.orm(caseModel);
+		this.ModelUser = xU.orm(ModelUser);
 	}
 
 	async getMock(ctx) {
 		let id = ctx.query.interface_id;
-		let mockData = await this.Model.get(id);
+		let mockData = await this.orm_adv.get(id);
 		if (!mockData) {
 			return (ctx.body = xU.resReturn(null, 408, "mock脚本不存在"));
 		}
@@ -45,11 +45,11 @@ class advMockController extends BaseController {
 				enable: params.enable === true ? true : false
 			};
 			let result;
-			let mockData = await this.Model.get(data.interface_id);
+			let mockData = await this.orm_adv.get(data.interface_id);
 			if (mockData) {
-				result = await this.Model.up(data);
+				result = await this.orm_adv.up(data);
 			} else {
-				result = await this.Model.save(data);
+				result = await this.orm_adv.save(data);
 			}
 			return (ctx.body = xU.resReturn(result));
 		} catch (e) {

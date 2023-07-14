@@ -1,4 +1,4 @@
-const BaseController = require("server/controllers/base");
+const ControllerBase = require("server/controllers/base");
 const { ModelI18n } = require("server/models/I18n");
 const { ModelResource } = require("server/models/Resource");
 const { _n } = require("@ventose/utils-node");
@@ -15,11 +15,11 @@ let TARGET_PREFIX = path.join(
 	xU.var.RESOURCE_ASSETS
 );
 
-class ControllerGod extends BaseController {
+class ControllerGod extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.orm_i18n = xU.getInst(ModelI18n);
-		this.orm_resource = xU.getInst(ModelResource);
+		this.orm_i18n = xU.orm(ModelI18n);
+		this.orm_resource = xU.orm(ModelResource);
 	}
 
 	/**

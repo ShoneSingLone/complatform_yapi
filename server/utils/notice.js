@@ -25,9 +25,9 @@ xU.sendNotice = async function (projectId, data) {
 	const modelProject = require("../models/project");
 	const { ModelUser } = require("../models/user");
 	const followModel = require("../models/follow");
-	const followInst = xU.getInst(followModel);
-	const userInst = xU.getInst(ModelUser);
-	const projectInst = xU.getInst(modelProject);
+	const followInst = xU.orm(followModel);
+	const userInst = xU.orm(ModelUser);
+	const projectInst = xU.orm(modelProject);
 	const list = await followInst.listByProjectId(projectId);
 	const starUsers = list.map(item => item.uid);
 	const projectList = await projectInst.get(projectId);

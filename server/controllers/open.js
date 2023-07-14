@@ -6,7 +6,7 @@ const interfaceCatModel = require("../models/interfaceCat");
 const followModel = require("../models/follow");
 const { ModelUser } = require("../models/user");
 
-const BaseController = require("./base");
+const ControllerBase = require("./base");
 const {
 	handleParams,
 	crossRequest,
@@ -28,16 +28,16 @@ const createContex = require("../../common/createContext");
 const importDataModule = {};
 xU.emitHook("import_data", importDataModule);
 
-class openController extends BaseController {
+class openController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelProject = xU.getInst(modelProject);
-		this.interfaceColModel = xU.getInst(interfaceColModel);
-		this.interfaceCaseModel = xU.getInst(interfaceCaseModel);
-		this.interfaceModel = xU.getInst(interfaceModel);
-		this.interfaceCatModel = xU.getInst(interfaceCatModel);
-		this.followModel = xU.getInst(followModel);
-		this.ModelUser = xU.getInst(ModelUser);
+		this.modelProject = xU.orm(modelProject);
+		this.interfaceColModel = xU.orm(interfaceColModel);
+		this.interfaceCaseModel = xU.orm(interfaceCaseModel);
+		this.interfaceModel = xU.orm(interfaceModel);
+		this.interfaceCatModel = xU.orm(interfaceCatModel);
+		this.followModel = xU.orm(followModel);
+		this.ModelUser = xU.orm(ModelUser);
 		this.handleValue = this.handleValue.bind(this);
 		this.schemaMap = {
 			runAutoTest: {
@@ -135,7 +135,7 @@ class openController extends BaseController {
 		 * 如果没有分类,增加一个默认分类
 		 */
 		if (menuList.length === 0) {
-			const catInst = xU.getInst(interfaceCatModel);
+			const catInst = xU.orm(interfaceCatModel);
 			const menu = await catInst.save({
 				name: "默认分类",
 				project_id: project_id,

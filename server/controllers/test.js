@@ -1,8 +1,8 @@
-const baseController = require("./base");
+const ControllerBase = require("./base");
 const fs = require("fs"); //引入文件模块
 const path = require("path");
 
-class interfaceColController extends baseController {
+class interfaceColController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 	}

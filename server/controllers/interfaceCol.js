@@ -2,17 +2,17 @@ const interfaceColModel = require("../models/interfaceCol");
 const interfaceCaseModel = require("../models/interfaceCase");
 const interfaceModel = require("../models/interface");
 const modelProject = require("../models/project");
-const BaseController = require("./base");
+const ControllerBase = require("./base");
 
 const _ = require("lodash");
 
-class interfaceColController extends BaseController {
+class interfaceColController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.colModel = xU.getInst(interfaceColModel);
-		this.caseModel = xU.getInst(interfaceCaseModel);
-		this.interfaceModel = xU.getInst(interfaceModel);
-		this.modelProject = xU.getInst(modelProject);
+		this.colModel = xU.orm(interfaceColModel);
+		this.caseModel = xU.orm(interfaceCaseModel);
+		this.interfaceModel = xU.orm(interfaceModel);
+		this.modelProject = xU.orm(modelProject);
 	}
 
 	/**

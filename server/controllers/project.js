@@ -1,7 +1,7 @@
 const modelProject = require("../models/project");
 
 const _ = require("lodash");
-const BaseController = require("./base");
+const ControllerBase = require("./base");
 const interfaceModel = require("../models/interface");
 const interfaceColModel = require("../models/interfaceCol");
 const interfaceCaseModel = require("../models/interfaceCase");
@@ -15,15 +15,15 @@ const { getToken } = require("../utils/token");
 const sha = require("sha.js");
 const axios = require("axios").default;
 
-class projectController extends BaseController {
+class projectController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.getInst(modelProject);
-		this.groupModel = xU.getInst(groupModel);
-		this.modelLog = xU.getInst(modelLog);
-		this.followModel = xU.getInst(followModel);
-		this.tokenModel = xU.getInst(tokenModel);
-		this.interfaceModel = xU.getInst(interfaceModel);
+		this.Model = xU.orm(modelProject);
+		this.groupModel = xU.orm(groupModel);
+		this.modelLog = xU.orm(modelLog);
+		this.followModel = xU.orm(followModel);
+		this.tokenModel = xU.orm(tokenModel);
+		this.interfaceModel = xU.orm(interfaceModel);
 
 		const id = "number";
 		const member_uid = ["number"];
@@ -225,8 +225,8 @@ class projectController extends BaseController {
 		};
 
 		let result = await this.Model.save(data);
-		let colInst = xU.getInst(interfaceColModel);
-		let catInst = xU.getInst(interfaceCatModel);
+		let colInst = xU.orm(interfaceColModel);
+		let catInst = xU.orm(interfaceCatModel);
 		if (result._id) {
 			await colInst.save({
 				name: "公共测试集",
@@ -302,8 +302,8 @@ class projectController extends BaseController {
 
 			delete data._id;
 			let result = await this.Model.save(data);
-			let colInst = xU.getInst(interfaceColModel);
-			let catInst = xU.getInst(interfaceCatModel);
+			let colInst = xU.orm(interfaceColModel);
+			let catInst = xU.orm(interfaceCatModel);
 
 			// 增加集合
 			if (result._id) {
@@ -473,7 +473,7 @@ class projectController extends BaseController {
 			let result = await this.Model.delMember(params.id, params.member_uid);
 			let username = this.getUsername();
 			yapi
-				.getInst(ModelUser)
+				.orm(ModelUser)
 				.findById(params.member_uid)
 				.then(member => {
 					xU.saveLog({
@@ -538,7 +538,7 @@ class projectController extends BaseController {
 			}
 		}
 		result = result.toObject();
-		let catInst = xU.getInst(interfaceCatModel);
+		let catInst = xU.orm(interfaceCatModel);
 		let cat = await catInst.list(params.id);
 		result.cat = cat;
 		if (result.env.length === 0) {
@@ -628,9 +628,9 @@ class projectController extends BaseController {
 			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
 		}
 
-		let interfaceInst = xU.getInst(interfaceModel);
-		let interfaceColInst = xU.getInst(interfaceColModel);
-		let interfaceCaseInst = xU.getInst(interfaceCaseModel);
+		let interfaceInst = xU.orm(interfaceModel);
+		let interfaceColInst = xU.orm(interfaceColModel);
+		let interfaceCaseInst = xU.orm(interfaceCaseModel);
 		await interfaceInst.delByProjectId(id);
 		await interfaceCaseInst.delByProjectId(id);
 		await interfaceColInst.delByProjectId(id);
@@ -654,7 +654,7 @@ class projectController extends BaseController {
 	 */
 	async changeMemberRole(ctx) {
 		let params = ctx.request.body;
-		let projectInst = xU.getInst(modelProject);
+		let projectInst = xU.orm(modelProject);
 
 		var check = await projectInst.checkMemberRepeat(
 			params.id,
@@ -683,7 +683,7 @@ class projectController extends BaseController {
 
 		let username = this.getUsername();
 		yapi
-			.getInst(ModelUser)
+			.orm(ModelUser)
 			.findById(params.member_uid)
 			.then(member => {
 				xU.saveLog({
@@ -714,7 +714,7 @@ class projectController extends BaseController {
 	async changeMemberEmailNotice(ctx) {
 		try {
 			let params = ctx.request.body;
-			let projectInst = xU.getInst(modelProject);
+			let projectInst = xU.orm(modelProject);
 			var check = await projectInst.checkMemberRepeat(
 				params.id,
 				params.member_uid

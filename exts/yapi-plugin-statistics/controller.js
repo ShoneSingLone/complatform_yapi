@@ -1,7 +1,7 @@
 /**
  * Created by gxl.gao on 2017/10/24.
  */
-const BaseController = require("server/controllers/base");
+const ControllerBase = require("server/controllers/base");
 const ModelGroup = require("server/models/group");
 const ModelProject = require("server/models/project");
 const ModelInterface = require("server/models/interface");
@@ -12,14 +12,14 @@ const commons = require("./util");
 const os = require("os");
 let cpu = require("cpu-load");
 
-class statisMockController extends BaseController {
+class statisMockController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelStatisMock = xU.getInst(ModelStatisMock);
-		this.modelGroup = xU.getInst(ModelGroup);
-		this.modelProject = xU.getInst(ModelProject);
-		this.interfaceModel = xU.getInst(ModelInterface);
-		this.interfaceCaseModel = xU.getInst(ModelInterfaceCase);
+		this.modelStatisMock = xU.orm(ModelStatisMock);
+		this.modelGroup = xU.orm(ModelGroup);
+		this.modelProject = xU.orm(ModelProject);
+		this.interfaceModel = xU.orm(ModelInterface);
+		this.interfaceCaseModel = xU.orm(ModelInterfaceCase);
 	}
 
 	/**

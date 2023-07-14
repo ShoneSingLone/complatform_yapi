@@ -18,13 +18,16 @@ const http = require("http");
 const path = require("path");
 const fs = require("fs-extra");
 const nodemailer = require("nodemailer");
+const { isUsePlugin } = require("./isUsePlugin");
+
+WEBCONFIG.isUsePlugin = isUsePlugin;
 
 let mail = () => null;
 if (WEBCONFIG.mail && WEBCONFIG.mail.enable) {
 	mail = nodemailer.createTransport(WEBCONFIG.mail);
 }
 
-let INSTS = new Map();
+const MAP_ORM = new Map();
 const APP_ROOT_DIR = path.resolve(__dirname, "../.."); //路径
 const APP_ROOT_SERVER_DIR = path.resolve(__dirname, "..");
 
@@ -33,20 +36,20 @@ fs.ensureDirSync(APP_LOG_DIR);
 
 /**
  * 获取一个model实例，如果不存在则创建一个新的返回
- * @param {*} m class
+ * @param {*} ormModel class
  * @example
- * getInst(groupModel, arg1, arg2)
+ * orm(groupModel, arg1, arg2)
  */
-function getInst(m, ...args) {
-	if (!INSTS.get(m)) {
-		INSTS.set(m, new m(args));
+function orm(ormModel, ...args) {
+	if (!MAP_ORM.get(ormModel)) {
+		MAP_ORM.set(ormModel, new ormModel(args));
 	}
-	return INSTS.get(m);
+	return MAP_ORM.get(ormModel);
 }
 
 function delInst(m) {
 	try {
-		INSTS.delete(m);
+		MAP_ORM.delete(m);
 	} catch (err) {
 		console.error(err); // eslint-disable-line
 	}
@@ -57,24 +60,23 @@ function storageCreator(id) {
 	const defaultData = {};
 	return {
 		getItem: async (name = "") => {
-			let inst = getInst(storageModel);
+			let inst = orm(storageModel);
 			let data = await inst.get(id);
 			data = data || defaultData;
 			if (name) return data[name];
 			return data;
 		},
 		setItem: async (name, value) => {
-			let inst = getInst(storageModel);
-			let curData = await inst.get(id);
+			let orm_storage = orm(storageModel);
+			let curData = await orm_storage.get(id);
 			let data = curData || defaultData;
 			let result;
 			data[name] = value;
 			if (!curData) {
-				result = await inst.save(id, data, true);
+				result = await orm_storage.save(id, data, true);
 			} else {
-				result = await inst.save(id, data, false);
+				result = await orm_storage.save(id, data, false);
 			}
-
 			return result;
 		}
 	};
@@ -92,7 +94,11 @@ const applog = {
 	}
 };
 
-let xU = {
+global.xU = new Proxy({
+	_,
+	fs,
+	path,
+	MAP_ORM,
 	var: {
 		APP_ROOT_DIR,
 		APP_ROOT_SERVER_DIR,
@@ -319,51 +325,31 @@ let xU = {
 				"https://hellosean1025.github.io/yapi/documents/adv_mock.html"
 		}
 	},
-	applog
-};
-
-xU.fs = fs;
-xU.path = path;
-xU.var.APP_ROOT_DIR = APP_ROOT_DIR;
-xU.var.APP_ROOT_SERVER_DIR = APP_ROOT_SERVER_DIR;
-xU.getInst = getInst;
-xU.delInst = delInst;
-xU.getInsts = INSTS;
-xU.storageCreator = storageCreator;
-xU.schemaToJson = schemaToJson;
-xU.resReturn = resReturn;
-xU.log = log;
-xU.fileExist = fileExist;
-xU.time = time;
-xU.fieldSelect = fieldSelect;
-xU.rand = rand;
-xU.json_parse = json_parse;
-xU.randStr = randStr;
-xU.getIp = getIp;
-xU.generatePassword = generatePassword;
-xU.expireDate = expireDate;
-xU.sendMail = sendMail;
-xU.validateSearchKeyword = validateSearchKeyword;
-xU.filterRes = filterRes;
-xU.handleVarPath = handleVarPath;
-xU.verifyPath = verifyPath;
-xU.sandbox = sandbox;
-xU.trim = trim;
-xU.ltrim = ltrim;
-xU.rtrim = rtrim;
-xU.handleParams = handleParams;
-xU.validateParams = validateParams;
-xU.saveLog = saveLog;
-xU.createAction = createAction;
-xU.handleParamsValue = handleParamsValue;
-xU.getCaseList = getCaseList;
-xU.runCaseScript = runCaseScript;
-xU.getUserdata = getUserdata;
-xU.handleMockScript = handleMockScript;
-xU.createWebAPIRequest = createWebAPIRequest;
-xU.mail = mail;
-
-global.xU = xU;
+	autowareController(Controller, info) {
+		_.each(info, (value, key) => {
+			Controller[key] = value;
+		});
+		return Controller;
+	},
+}, {
+	get(obj, prop) {
+		if (_[prop]) {
+			return _[prop];
+		}
+		if (exports[prop]) {
+			return exports[prop];
+		}
+		return obj[prop];
+	},
+	set(obj, prop, val) {
+		if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+			throw new Error(`重复设置 xU ${prop} `);
+		} else {
+			obj[prop] = val;
+			return true;
+		}
+	}
+});
 
 jsf.extend("mock", function () {
 	return {
@@ -424,7 +410,7 @@ function log(msg, type = "info") {
 			} else {
 				errorThrowAt += `\n(${errorAt.split("    at ")[1]})`;
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 	/* let date = new Date(); let year = date.getFullYear();
   let month = date.getMonth() + 1; */
@@ -724,7 +710,7 @@ function validateParams(schema2, params) {
 
 function saveLog(logData) {
 	try {
-		let logInst = xU.getInst(modelLog);
+		let logInst = orm(modelLog);
 		let data = {
 			content: logData.content,
 			type: logData.type,
@@ -806,7 +792,7 @@ function handleParamsValue(params, val) {
 	let value = {};
 	try {
 		params = params.toObject();
-	} catch (e) {}
+	} catch (e) { }
 	if (params.length === 0 || val.length === 0) {
 		return params;
 	}
@@ -824,10 +810,10 @@ function handleParamsValue(params, val) {
 }
 
 async function getCaseList(id) {
-	const caseInst = xU.getInst(interfaceCaseModel);
-	const colInst = xU.getInst(interfaceColModel);
-	const projectInst = xU.getInst(modelProject);
-	const interfaceInst = xU.getInst(interfaceModel);
+	const caseInst = orm(interfaceCaseModel);
+	const colInst = orm(interfaceColModel);
+	const projectInst = orm(modelProject);
+	const interfaceInst = orm(interfaceModel);
 
 	let resultList = await caseInst.list(id, "all");
 	let colData = await colInst.get(id);
@@ -879,7 +865,7 @@ function convertString(variable) {
 }
 
 async function runCaseScript(params, colId, interfaceId) {
-	const colInst = xU.getInst(interfaceColModel);
+	const colInst = orm(interfaceColModel);
 	let colData = await colInst.get(colId);
 	const logs = [];
 	const context = {
@@ -913,7 +899,7 @@ async function runCaseScript(params, colId, interfaceId) {
 		}
 
 		if (colData.checkResponseSchema) {
-			const interfaceInst = xU.getInst(interfaceModel);
+			const interfaceInst = orm(interfaceModel);
 			let interfaceData = await interfaceInst.get(interfaceId);
 			if (interfaceData.res_body_is_json_schema && interfaceData.res_body) {
 				let schema = JSON.parse(interfaceData.res_body);
@@ -952,7 +938,7 @@ ${JSON.stringify(schema, null, 2)}`;
 
 async function getUserdata(uid, role) {
 	role = role || "dev";
-	let userInst = xU.getInst(ModelUser);
+	let userInst = orm(ModelUser);
 	let userData = await userInst.findById(uid);
 	if (!userData) {
 		return null;
@@ -1029,6 +1015,8 @@ function createWebAPIRequest(ops) {
 }
 
 exports.applog = applog;
+exports.mail = mail;
+exports.orm = orm;
 exports.schemaToJson = schemaToJson;
 exports.resReturn = resReturn;
 exports.log = log;
@@ -1060,3 +1048,4 @@ exports.runCaseScript = runCaseScript;
 exports.getUserdata = getUserdata;
 exports.handleMockScript = handleMockScript;
 exports.createWebAPIRequest = createWebAPIRequest;
+exports.storageCreator = storageCreator;

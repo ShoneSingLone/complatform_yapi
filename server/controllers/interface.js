@@ -5,7 +5,7 @@ const followModel = require("../models/follow");
 const groupModel = require("../models/group");
 const _ = require("lodash");
 const url = require("url");
-const BaseController = require("./base");
+const ControllerBase = require("./base");
 
 const { ModelUser } = require("../models/user");
 const modelProject = require("../models/project");
@@ -64,16 +64,16 @@ function handleHeaders(values) {
 	}
 }
 
-class ControllerInterface extends BaseController {
+class ControllerInterface extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.getInst(interfaceModel);
-		this.catModel = xU.getInst(interfaceCatModel);
-		this.modelProject = xU.getInst(modelProject);
-		this.caseModel = xU.getInst(interfaceCaseModel);
-		this.followModel = xU.getInst(followModel);
-		this.ModelUser = xU.getInst(ModelUser);
-		this.groupModel = xU.getInst(groupModel);
+		this.Model = xU.orm(interfaceModel);
+		this.catModel = xU.orm(interfaceCatModel);
+		this.modelProject = xU.orm(modelProject);
+		this.caseModel = xU.orm(interfaceCaseModel);
+		this.followModel = xU.orm(followModel);
+		this.ModelUser = xU.orm(ModelUser);
+		this.groupModel = xU.orm(groupModel);
 
 		const minLengthStringField = {
 			type: "string",
@@ -958,7 +958,7 @@ class ControllerInterface extends BaseController {
 			result = await this.Model.get(id);
 
 			if (result.edit_uid !== 0 && result.edit_uid !== this.$uid) {
-				userInst = xU.getInst(ModelUser);
+				userInst = xU.orm(ModelUser);
 				userinfo = await userInst.findById(result.edit_uid);
 				data = {
 					errno: result.edit_uid,
