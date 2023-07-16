@@ -20,7 +20,7 @@ const swagger_belong_id = {
 	type: "string"
 };
 
-const wikiUpsertOnePost = {
+const postWikiUpsertOne = {
 	summary: "添加或者修改wiki文档，根据有无ID",
 	request: {
 		body: {
@@ -48,11 +48,11 @@ const wikiUpsertOnePost = {
 	},
 	async handler(ctx) {
 		const { payload } = ctx;
-		const { belong_type, belong_id, markdown, _id } = payload;
+		let { belong_type, belong_id, markdown, _id } = payload;
 		let res;
 		if (belong_type === "private") {
 			/* 当前用户的ID */
-			belong_id = this.$user._id;
+			payload.belong_id = this.$uid;
 		}
 
 		if (_id) {
@@ -81,6 +81,123 @@ const wikiUpsertOnePost = {
 	}
 };
 
+const getWikiMenu = {
+	summary: "wiki左侧的菜单",
+	description: "文件保存在服务器上",
+	request: {
+		query: {
+			belong_type: swagger_belong_type,
+			belong_id: swagger_belong_id
+		}
+	},
+	async handler(ctx) {
+		try {
+			let { belong_type, belong_id } = ctx.payload || {};
+			const queryConditions = { belong_type };
+
+			if (belong_type === xU.var.PRIVATE) {
+				belong_id = this.$uid;
+			}
+			if (belong_id) {
+				queryConditions.belong_id = belong_id;
+			}
+
+			const { order } =
+				(await xU.orm(ModelWikiOrder).detail(queryConditions)) || {};
+			ctx.body = xU.resReturn({
+				list: await xU.orm(ModelWiki).menu({ belong_type, belong_id }),
+				orderArray: order || []
+			});
+		} catch (e) {
+			xU.applog.error(e.message);
+		}
+	}
+};
+
+const getWikiDetail = {
+	summary: "单个文档详情",
+	request: {
+		query: {
+			_id: xU.swagger_id("该资源ID")
+		}
+	},
+	async handler(ctx) {
+		try {
+			const { _id } = ctx.payload;
+			ctx.body = xU.resReturn(await xU.orm(ModelWiki).detail(_id));
+		} catch (e) {
+			xU.applog.error(e.message);
+		}
+	}
+};
+
+const getWikiList = {
+	summary: "文档 list",
+	async handler(ctx) {
+		try {
+			ctx.body = xU.resReturn({ list: await xU.orm(ModelWiki).list() });
+		} catch (e) {
+			xU.applog.error(e.message);
+		}
+	}
+};
+
+const postWikiResetMenuOrder = {
+	summary: "调整文档顺序，层级关系",
+	request: {
+		body: {
+			belong_type: swagger_belong_type,
+			belong_id: swagger_belong_id,
+			order: {
+				type: "array",
+				items: xU.schema("menuOrder")
+			}
+		}
+	},
+	async handler(ctx) {
+		try {
+			let { belong_type, belong_id, order } = ctx.payload || {};
+			if (!belong_type) {
+				belong_type = "private";
+			}
+
+			if (belong_type === "private") {
+				/* 当前用户的ID */
+				belong_id = this.$uid;
+			}
+
+			ctx.body = xU.resReturn(
+				await xU.orm(ModelWikiOrder).upsertOne({
+					belong_type,
+					belong_id,
+					order
+				})
+			);
+		} catch (e) {
+			xU.applog.error(e.message);
+		}
+	}
+};
+
+const deleteWikiDelete = {
+	summary: "删除wiki one",
+	request: {
+		query: {
+			_id: xU.swagger_id("该资源ID")
+		}
+	},
+	async handler(ctx) {
+		try {
+			const { _id } = ctx.payload;
+			/* 标记删除 */
+			await xU.orm(ModelWiki).delete(_id);
+			ctx.body = xU.resReturn({});
+		} catch (e) {
+			xU.applog.error(e.message);
+		}
+	}
+};
+
 module.exports = {
 	definitions: {
 		menuOrder: {
@@ -93,126 +210,22 @@ module.exports = {
 	},
 	paths: {
 		"/wiki/menu": {
-			get: {
-				summary: "wiki左侧的菜单",
-				description: "文件保存在服务器上",
-				request: {
-					query: {
-						belong_type: swagger_belong_type,
-						belong_id: swagger_belong_id
-					}
-				},
-				async handler(ctx) {
-					try {
-						let { belong_type, belong_id } = ctx.payload || {};
-						const queryConditions = { belong_type };
-
-						if (belong_type === xU.var.PRIVATE) {
-							belong_id = this.$uid;
-						}
-						if (belong_id) {
-							queryConditions.belong_id = belong_id;
-						}
-
-						const { order } =
-							(await xU.orm(ModelWikiOrder).detail(queryConditions)) || {};
-						ctx.body = xU.resReturn({
-							list: await xU.orm(ModelWiki).menu({ belong_type, belong_id }),
-							orderArray: order || []
-						});
-					} catch (e) {
-						xU.applog.error(e.message);
-					}
-				}
-			}
+			get: getWikiMenu
 		},
 		"/wiki/detail": {
-			get: {
-				summary: "单个文档详情",
-				request: {
-					query: {
-						_id: xU.swagger_id("该资源ID")
-					}
-				},
-				async handler(ctx) {
-					try {
-						const { _id } = ctx.payload;
-						ctx.body = xU.resReturn(await xU.orm(ModelWiki).detail(_id));
-					} catch (e) {
-						xU.applog.error(e.message);
-					}
-				}
-			}
+			get: getWikiDetail
 		},
 		"/wiki/list": {
-			get: {
-				summary: "文档 list",
-				async handler(ctx) {
-					try {
-						ctx.body = xU.resReturn({ list: await xU.orm(ModelWiki).list() });
-					} catch (e) {
-						xU.applog.error(e.message);
-					}
-				}
-			}
+			get: getWikiList
 		},
 		"/wiki/reset_menu_order": {
-			post: {
-				summary: "调整文档顺序，层级关系",
-				request: {
-					body: {
-						belong_type: swagger_belong_type,
-						belong_id: swagger_belong_id,
-						order: {
-							type: "array",
-							items: xU.schema("menuOrder")
-						}
-					}
-				},
-				async handler(ctx) {
-					try {
-						let { belong_type, belong_id, order } = ctx.payload || {};
-						if (!belong_type) {
-							belong_type = "private";
-							/* 当前用户的ID */
-							belong_id = this.$user._id;
-						}
-
-						ctx.body = xU.resReturn(
-							await xU.orm(ModelWikiOrder).upsertOne({
-								belong_type,
-								belong_id,
-								order
-							})
-						);
-					} catch (e) {
-						xU.applog.error(e.message);
-					}
-				}
-			}
+			post: postWikiResetMenuOrder
 		},
 		"/wiki/delete": {
-			delete: {
-				summary: "删除wiki one",
-				request: {
-					query: {
-						_id: xU.swagger_id("该资源ID")
-					}
-				},
-				async handler(ctx) {
-					try {
-						const { _id } = ctx.payload;
-						/* 标记删除 */
-						await xU.orm(ModelWiki).delete(_id);
-						ctx.body = xU.resReturn({});
-					} catch (e) {
-						xU.applog.error(e.message);
-					}
-				}
-			}
+			delete: deleteWikiDelete
 		},
 		"/wiki/upsertOne": {
-			post: wikiUpsertOnePost
+			post: postWikiUpsertOne
 		}
 	}
 };

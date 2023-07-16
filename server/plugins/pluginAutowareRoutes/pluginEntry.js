@@ -36,7 +36,7 @@ function appAddRoutes(app, routes) {
 			WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath || ""
 		}${url}`;
 		const urlObj = RouteMap.get(url) || {};
-		urlObj[String(method).toUpperCase()] = handler;
+		urlObj[String(method).toLowerCase()] = handler;
 		RouteMap.set(url, urlObj);
 	});
 
@@ -44,7 +44,7 @@ function appAddRoutes(app, routes) {
 		const isDone = await (async () => {
 			const urlObj = RouteMap.get(ctx.path);
 			if (urlObj) {
-				const handler = urlObj[String(ctx.method).toUpperCase()];
+				const handler = urlObj[String(ctx.method).toLowerCase()];
 				if (handler) {
 					/* AOP */
 					const vm = new ControllerBase(ctx);
