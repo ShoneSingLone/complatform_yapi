@@ -75,8 +75,11 @@ function autowareRoute({ controller, controllerName }) {
 					"produces"
 				])
 			};
-			const { request, responses } = handlerInfo;
-			if (request) {
+			const { request, responses, parameters } = handlerInfo;
+
+			if (parameters) {
+				swaggerJSON.paths[propPath][method].parameters = parameters;
+			} else if (request) {
 				addParameters(propPath, method, request);
 			}
 			if (responses) {
@@ -100,6 +103,18 @@ function addParameters(propPath, method, request) {
 	  formData: {}
   }
   */
+
+	const inBody = {
+		in: "body",
+		name: "body",
+		required: true,
+		schema: {
+			type: "object",
+			required: [],
+			properties: {}
+		}
+	};
+
 	_n.each(request, (paramInfo, propIn) => {
 		/*
 	propIn: {
@@ -115,13 +130,25 @@ function addParameters(propPath, method, request) {
 		'format': 'int64'
 	  }
 	  */
-			swaggerJSON.paths[propPath][method].parameters.push({
-				name: propName,
-				in: propIn,
-				...descInfo
-			});
+
+			if (propIn === "body") {
+				inBody.schema.properties[propName] = descInfo;
+				if (descInfo.required) {
+					inBody.schema.required.push(propName);
+				}
+			} else {
+				swaggerJSON.paths[propPath][method].parameters.push({
+					name: propName,
+					in: propIn,
+					...descInfo
+				});
+			}
 		});
 	});
+
+	if (Object.keys(inBody.schema.properties).length > 0) {
+		swaggerJSON.paths[propPath][method].parameters.push(inBody);
+	}
 }
 
 module.exports = scanAllAutowareController;

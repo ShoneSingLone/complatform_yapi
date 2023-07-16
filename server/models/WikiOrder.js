@@ -1,6 +1,6 @@
 const ModelBase = require("server/models/base");
 
-class WikiOrderModel extends ModelBase {
+class ModelWikiOrder extends ModelBase {
 	getName() {
 		return "wiki_order";
 	}
@@ -47,4 +47,4 @@ class WikiOrderModel extends ModelBase {
 	}
 }
 
-exports.WikiOrderModel = WikiOrderModel;
+exports.ModelWikiOrder = ModelWikiOrder;

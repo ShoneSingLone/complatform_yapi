@@ -4,6 +4,10 @@ const RouteMap = new Map();
 
 /* 便捷使用schema */
 xU.schema = schema => ({ $ref: `#/definitions/${schema}` });
+xU.swagger_id = desc => ({
+	description: desc,
+	type: "string"
+});
 
 function appUseSwagger(app, swaggerJSON) {
 	app.use(async (ctx, next) => {
@@ -47,13 +51,17 @@ function appAddRoutes(app, routes) {
 					try {
 						await vm.init(ctx);
 						if (vm.$auth) {
+							ctx.payload = xU.merge(
+								{},
+								ctx.params || {},
+								ctx.query || {},
+								ctx.request.body || {}
+							);
 							await handler.call(vm, ctx);
 							return true;
 						} else {
 							ctx.body = xU.resReturn(
-								{
-									msg: "未获取授权"
-								},
+								{ msg: "未获取授权" },
 								40011,
 								"请登录..."
 							);
@@ -61,6 +69,8 @@ function appAddRoutes(app, routes) {
 					} catch (err) {
 						xU.applog.error(err);
 					}
+				} else {
+					ctx.body = xU.resReturn(null, 404, "API 使用了错误的 METHOD");
 				}
 			}
 		})();

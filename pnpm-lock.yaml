@@ -63,7 +63,6 @@ specifiers:
   sha1: 1.1.1
   swagger-client: ^3.5.1
   tslib: 1.8.0
-  underscore: 1.13.6
   url: 0.11.0
   validate-commit-msg: ^2.12.2
   vm2: ^3.8.4
@@ -127,7 +126,6 @@ dependencies:
   sha1: 1.1.1
   swagger-client: 3.18.5
   tslib: 1.8.0
-  underscore: 1.13.6
   url: 0.11.0
   validate-commit-msg: 2.14.0
   vm2: 3.9.11
@@ -6723,13 +6721,6 @@ packages:
     resolution:
       {
         integrity: sha512-hEQt0+ZLDVUMhebKxL4x1BTtDY7bavVofhZ9KZ4aI26X9SRaE+Y3m83XUL1UP2jn8ynjndwCCpEHdUG+9pP1Tw==
-      }
-    dev: false
-
-  /underscore/1.13.6:
-    resolution:
-      {
-        integrity: sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==
       }
     dev: false
 

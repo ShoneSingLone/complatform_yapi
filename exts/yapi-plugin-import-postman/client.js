@@ -1,6 +1,6 @@
 import { message } from "antd";
 import URL from "url";
-import _ from "underscore";
+import _ from "lodash";
 const GenerateSchema = require("generate-schema/src/schemas/json");
 import { json_parse } from "../../common/utils.js";
 

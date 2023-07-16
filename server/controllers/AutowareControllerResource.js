@@ -62,7 +62,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						const { files, fields } = ctx.request.body;
+						const { files, fields } = ctx.payload;
 						const { file } = files;
 						const { useFor } = fields;
 						const sourcePath = file.path;
@@ -76,7 +76,7 @@ module.exports = {
 						targetPath = xU.path.resolve(targetPath, basename);
 						await xU.fs.promises.copyFile(sourcePath, targetPath);
 						await xU.fs.promises.unlink(sourcePath);
-						const res = await xU.orm(ModelResource).save({
+						const wikiInfo = {
 							name: file.name,
 							path: xU.last(String(targetPath).split(xU.var.RESOURCE_ASSETS)),
 							type: file.type,
@@ -84,7 +84,9 @@ module.exports = {
 							size: file.size,
 							uploadBy: this.$uid,
 							add_time: xU.time()
-						});
+						};
+
+						const res = await xU.orm(ModelResource).save(wikiInfo);
 						ctx.body = xU.resReturn({ _id: res._id });
 					} catch (e) {
 						xU.applog.error(e.message);

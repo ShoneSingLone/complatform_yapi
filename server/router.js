@@ -1,6 +1,5 @@
 const koaRouter = require("koa-router");
 const { ControllerInterface } = require("./controllers/interface");
-const { ControllerWiki } = require("./controllers/wiki");
 const { ControllerGod } = require("./controllers/god");
 const groupController = require("./controllers/group");
 const userController = require("./controllers/user");
@@ -47,10 +46,6 @@ let INTERFACE_CONFIG = {
 		prefix: "/god/",
 		controller: ControllerGod
 	},
-	wiki: {
-		prefix: "/wiki/",
-		controller: ControllerWiki
-	},
 	interface: {
 		prefix: "/interface/",
 		controller: ControllerInterface
@@ -94,23 +89,6 @@ let routerConfig = {
 		{
 			action: "say",
 			path: "say",
-			method: "post"
-		},
-		{
-			action: "SingleUpload",
-			path: "single/upload",
-			method: "post"
-		},
-		{
-			action: "getResource",
-			path: "resource",
-			method: "get"
-		}
-	],
-	wiki: [
-		{
-			action: "action",
-			path: "action",
 			method: "post"
 		}
 	],

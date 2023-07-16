@@ -110,7 +110,6 @@
 		"sha1": "1.1.1",
 		"swagger-client": "^3.5.1",
 		"tslib": "1.8.0",
-		"underscore": "1.13.6",
 		"url": "0.11.0",
 		"validate-commit-msg": "^2.12.2",
 		"vm2": "^3.8.4",

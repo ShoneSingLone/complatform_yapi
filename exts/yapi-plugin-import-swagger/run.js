@@ -1,4 +1,4 @@
-const _ = require("underscore");
+const _ = require("lodash");
 const swagger = require("swagger-client");
 const compareVersions = require("compare-versions");
 

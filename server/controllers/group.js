@@ -6,7 +6,7 @@ const { ModelUser } = require("../models/user");
 const interfaceModel = require("../models/interface");
 const interfaceColModel = require("../models/interfaceCol");
 const interfaceCaseModel = require("../models/interfaceCase");
-const _ = require("underscore");
+const _ = require("lodash");
 
 const rolename = {
 	owner: "组长",

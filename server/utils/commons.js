@@ -7,7 +7,7 @@ const interfaceColModel = require("../models/interfaceCol");
 const interfaceCaseModel = require("../models/interfaceCase");
 const interfaceModel = require("../models/interface");
 const json5 = require("json5");
-const _ = require("underscore");
+const _ = require("lodash");
 const Ajv = require("ajv");
 const Mock = require("mockjs");
 const sandboxFn = require("./sandbox");
@@ -101,10 +101,14 @@ global.xU = new Proxy(
 		path,
 		MAP_ORM,
 		var: {
+			PRIVATE: "private",
+			ALL: "all",
+			GROUP: "group",
+			PROJECT: "project",
 			APP_ROOT_DIR,
 			APP_ROOT_SERVER_DIR,
 			UPLOADS: "uploads",
-			RESOURCE_ASSETS: "db",
+			RESOURCE_ASSETS: "RESOURCE_ASSETS",
 			INDEX_FILE: "index.html",
 			PAGE_LIMIT: 10, // 默认每页展示10条数据
 			NAME_LIMIT: 100, // 限制名称的字符长度(中文算两个长度)
