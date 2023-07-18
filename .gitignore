@@ -51,6 +51,7 @@ dist-exec
 static/wiki
 .vs
 static/dist
-server/uploads/resourceAssets
 server/uploads/db*
 server/uploads/upload_*
+server/uploads/resourceAssets
+server/uploads/RESOURCE_ASSETS
