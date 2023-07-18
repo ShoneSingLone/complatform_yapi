@@ -38,7 +38,7 @@ fs.ensureDirSync(APP_LOG_DIR);
  * 获取一个model实例，如果不存在则创建一个新的返回
  * @param {*} ormModel class
  * @example
- * orm(groupModel, arg1, arg2)
+ * orm(ModelGroup, arg1, arg2)
  */
 function orm(ormModel, ...args) {
 	if (!MAP_ORM.get(ormModel)) {

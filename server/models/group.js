@@ -1,6 +1,6 @@
 const ModelBase = require("server/models/base");
 
-class groupModel extends ModelBase {
+class ModelGroup extends ModelBase {
 	getName() {
 		return "group";
 	}
@@ -215,4 +215,4 @@ class groupModel extends ModelBase {
 	}
 }
 
-module.exports = groupModel;
+module.exports = ModelGroup;

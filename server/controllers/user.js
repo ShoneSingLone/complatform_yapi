@@ -2,12 +2,13 @@ const { ModelUser } = require("../models/user");
 const ControllerBase = require("./base");
 const { ldapQuery } = require("../utils/ldap");
 const interfaceModel = require("../models/interface");
-const groupModel = require("../models/group");
+const ModelGroup = require("../models/group");
 const modelProject = require("../models/project");
 const avatarModel = require("../models/avatar");
 const { customCookies } = require("../utils/customCookies");
-const path = require("path");
 const jwt = require("jsonwebtoken");
+
+
 
 class userController extends ControllerBase {
 	constructor(ctx) {
@@ -265,7 +266,7 @@ class userController extends ControllerBase {
 	}
 
 	async handlePrivateGroup(uid) {
-		var groupInst = xU.orm(groupModel);
+		var groupInst = xU.orm(ModelGroup);
 		await groupInst.save({
 			uid: uid,
 			group_name: "User-" + uid,
@@ -530,7 +531,7 @@ class userController extends ControllerBase {
 				username: data.username || userData.username,
 				email: data.email || userData.email
 			};
-			let groupInst = xU.orm(groupModel);
+			let groupInst = xU.orm(ModelGroup);
 			await groupInst.updateMember(member);
 			let projectInst = xU.orm(modelProject);
 			await projectInst.updateMember(member);
@@ -556,27 +557,23 @@ class userController extends ControllerBase {
 		try {
 			let basecode = ctx.request.body.basecode;
 			if (!basecode) {
-				return (ctx.body = xU.resReturn(null, 400, "basecode不能为空"));
+				return (ctx.body = xU.resReturn(null, 400, 'basecode不能为空'));
 			}
-			let pngPrefix = "data:image/png;base64,";
-			let jpegPrefix = "data:image/jpeg;base64,";
+			let pngPrefix = 'data:image/png;base64,';
+			let jpegPrefix = 'data:image/jpeg;base64,';
 			let type;
 			if (basecode.substr(0, pngPrefix.length) === pngPrefix) {
 				basecode = basecode.substr(pngPrefix.length);
-				type = "image/png";
+				type = 'image/png';
 			} else if (basecode.substr(0, jpegPrefix.length) === jpegPrefix) {
 				basecode = basecode.substr(jpegPrefix.length);
-				type = "image/jpeg";
+				type = 'image/jpeg';
 			} else {
-				return (ctx.body = xU.resReturn(
-					null,
-					400,
-					"仅支持jpeg和png格式的图片"
-				));
+				return (ctx.body = xU.resReturn(null, 400, '仅支持jpeg和png格式的图片'));
 			}
 			let strLength = basecode.length;
 			if (parseInt(strLength - (strLength / 8) * 2) > 200000) {
-				return (ctx.body = xU.resReturn(null, 400, "图片大小不能超过200kb"));
+				return (ctx.body = xU.resReturn(null, 400, '图片大小不能超过200kb'));
 			}
 
 			let avatarInst = xU.orm(avatarModel);
@@ -596,7 +593,6 @@ class userController extends ControllerBase {
 	 * @returns {Object}
 	 * @example
 	 */
-
 	async avatar(ctx) {
 		try {
 			let uid = ctx.query.uid ? ctx.query.uid : this.getUid();
@@ -604,19 +600,17 @@ class userController extends ControllerBase {
 			let data = await avatarInst.get(uid);
 			let dataBuffer, type;
 			if (!data || !data.basecode) {
-				dataBuffer = xU.fs.readFileSync(
-					path.join(xU.var.APP_ROOT_DIR, "static/image/avatar.png")
-				);
-				type = "image/png";
+				dataBuffer = xU.fs.readFileSync(xU.path.join(xU.var.WEBROOT, 'static/image/avatar.png'));
+				type = 'image/png';
 			} else {
 				type = data.type;
-				dataBuffer = new Buffer.alloc(data.basecode, "base64");
+				dataBuffer = new Buffer(data.basecode, 'base64');
 			}
 
-			ctx.set("Content-type", type);
+			ctx.set('Content-type', type);
 			ctx.body = dataBuffer;
 		} catch (err) {
-			ctx.body = "error:" + err.message;
+			ctx.body = 'error:' + err.message;
 		}
 	}
 
@@ -709,7 +703,7 @@ class userController extends ControllerBase {
 			}
 
 			if (type === "group") {
-				let groupInst = xU.orm(groupModel);
+				let groupInst = xU.orm(ModelGroup);
 				let groupData = await groupInst.get(id);
 				result.group = groupData.toObject();
 				let ownerAuth = await this.checkAuth(id, "group", "danger"),

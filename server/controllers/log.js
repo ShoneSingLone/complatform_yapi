@@ -1,7 +1,7 @@
 const modelLog = require("../models/log");
 
 const ControllerBase = require("./base");
-const groupModel = require("../models/group");
+const ModelGroup = require("../models/group");
 const modelProject = require("../models/project");
 const interfaceModel = require("../models/interface");
 
@@ -9,7 +9,7 @@ class logController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.Model = xU.orm(modelLog);
-		this.groupModel = xU.orm(groupModel);
+		this.ModelGroup = xU.orm(ModelGroup);
 		this.modelProject = xU.orm(modelProject);
 		this.interfaceModel = xU.orm(interfaceModel);
 		this.schemaMap = {

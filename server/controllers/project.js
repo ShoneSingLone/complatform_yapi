@@ -6,7 +6,7 @@ const interfaceModel = require("../models/interface");
 const interfaceColModel = require("../models/interfaceCol");
 const interfaceCaseModel = require("../models/interfaceCase");
 const interfaceCatModel = require("../models/interfaceCat");
-const groupModel = require("../models/group");
+const ModelGroup = require("../models/group");
 const { ModelUser } = require("../models/user");
 const modelLog = require("../models/log");
 const followModel = require("../models/follow");
@@ -19,7 +19,7 @@ class projectController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.Model = xU.orm(modelProject);
-		this.groupModel = xU.orm(groupModel);
+		this.ModelGroup = xU.orm(ModelGroup);
 		this.modelLog = xU.orm(modelLog);
 		this.followModel = xU.orm(followModel);
 		this.tokenModel = xU.orm(tokenModel);
@@ -558,14 +558,14 @@ class projectController extends ControllerBase {
 	 * @foldnumber 10
 	 * @param {Number} group_id 项目group_id，不能为空
 	 * @returns {Object}
-	 * @example ./api/project/list.json
+	 * @example ./api/project/list
 	 */
 
 	async list(ctx) {
 		let group_id = ctx.params.group_id,
 			project_list = [];
 
-		let groupData = await this.groupModel.get(group_id);
+		let groupData = await this.ModelGroup.get(group_id);
 		let isPrivateGroup = false;
 		if (groupData.type === "private" && this.getUid() === groupData.uid) {
 			isPrivateGroup = true;
@@ -1096,7 +1096,7 @@ class projectController extends ControllerBase {
 		}
 
 		let projectList = await this.Model.search(q);
-		let groupList = await this.groupModel.search(q);
+		let groupList = await this.ModelGroup.search(q);
 		let interfaceList = await this.interfaceModel.search(q);
 
 		let projectRules = [

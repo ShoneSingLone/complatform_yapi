@@ -2,7 +2,7 @@ const interfaceModel = require("../models/interface");
 const interfaceCatModel = require("../models/interfaceCat");
 const interfaceCaseModel = require("../models/interfaceCase");
 const followModel = require("../models/follow");
-const groupModel = require("../models/group");
+const ModelGroup = require("../models/group");
 const _ = require("lodash");
 const url = require("url");
 const ControllerBase = require("./base");
@@ -73,7 +73,7 @@ class ControllerInterface extends ControllerBase {
 		this.caseModel = xU.orm(interfaceCaseModel);
 		this.followModel = xU.orm(followModel);
 		this.ModelUser = xU.orm(ModelUser);
-		this.groupModel = xU.orm(groupModel);
+		this.ModelGroup = xU.orm(ModelGroup);
 
 		const minLengthStringField = {
 			type: "string",
@@ -1163,7 +1163,7 @@ class ControllerInterface extends ControllerBase {
 
 		try {
 			//  查找有customFieldName的分组（group）
-			let groups = await this.groupModel.getcustomFieldName(customFieldName);
+			let groups = await this.ModelGroup.getcustomFieldName(customFieldName);
 			if (groups.length === 0) {
 				return (ctx.body = xU.resReturn(null, 404, "没有找到对应自定义接口"));
 			}

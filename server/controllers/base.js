@@ -1,7 +1,7 @@
 const modelProject = require("../models/project");
 const { ModelUser } = require("../models/user");
 const interfaceModel = require("../models/interface");
-const groupModel = require("../models/group");
+const ModelGroup = require("../models/group");
 const tokenModel = require("../models/token");
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
@@ -264,7 +264,7 @@ class ControllerBase {
 			}
 
 			if (type === "group") {
-				let groupInst = xU.orm(groupModel);
+				let groupInst = xU.orm(ModelGroup);
 				let groupData = await groupInst.get(id);
 				// 建立分组的人
 				if (groupData.uid === this.getUid()) {

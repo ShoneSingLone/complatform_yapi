@@ -1,4 +1,4 @@
-const groupModel = require("../models/group");
+const ModelGroup = require("../models/group");
 
 const ControllerBase = require("./base");
 const modelProject = require("../models/project");
@@ -98,7 +98,7 @@ class groupController extends ControllerBase {
 	async get(ctx) {
 		let params = ctx.params;
 
-		let groupInst = xU.orm(groupModel);
+		let groupInst = xU.orm(ModelGroup);
 		let result = await groupInst.getGroupById(params.id);
 		if (result) {
 			result = result.toObject();
@@ -148,7 +148,7 @@ class groupController extends ControllerBase {
 			}
 		}
 
-		let groupInst = xU.orm(groupModel);
+		let groupInst = xU.orm(ModelGroup);
 
 		let checkRepeat = await groupInst.checkRepeat(params.group_name);
 
@@ -176,9 +176,8 @@ class groupController extends ControllerBase {
 		]);
 		let username = this.getUsername();
 		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组 <a href="/group/${
-				result._id
-			}">${params.group_name}</a>`,
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组 <a href="/group/${result._id
+				}">${params.group_name}</a>`,
 			type: "group",
 			uid: this.getUid(),
 			username: username,
@@ -211,7 +210,7 @@ class groupController extends ControllerBase {
 	}
 
 	async getMyGroup(ctx) {
-		var groupInst = xU.orm(groupModel);
+		var groupInst = xU.orm(ModelGroup);
 		let privateGroup = await groupInst.getByPrivateUid(this.getUid());
 		if (!privateGroup) {
 			privateGroup = await groupInst.save({
@@ -243,7 +242,7 @@ class groupController extends ControllerBase {
 	 */
 	async addMember(ctx) {
 		let params = ctx.params;
-		let groupInst = xU.orm(groupModel);
+		let groupInst = xU.orm(ModelGroup);
 
 		params.role =
 			["owner", "dev", "guest"].find(v => v === params.role) || "dev";
@@ -272,9 +271,8 @@ class groupController extends ControllerBase {
 			});
 			members = members.join("、");
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组成员 ${members} 为 ${
-					rolename[params.role]
-				}`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组成员 ${members} 为 ${rolename[params.role]
+					}`,
 				type: "group",
 				uid: this.getUid(),
 				username: username,
@@ -303,7 +301,7 @@ class groupController extends ControllerBase {
 	 */
 	async changeMemberRole(ctx) {
 		let params = ctx.request.body;
-		let groupInst = xU.orm(groupModel);
+		let groupInst = xU.orm(ModelGroup);
 
 		var check = await groupInst.checkMemberRepeat(params.id, params.member_uid);
 		if (check === 0) {
@@ -325,11 +323,9 @@ class groupController extends ControllerBase {
 
 		let groupUserdata = await this.getUserdata(params.member_uid, params.role);
 		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更改了分组成员 <a href="/user/profile/${
-				params.member_uid
-			}">${groupUserdata ? groupUserdata.username : ""}</a> 的权限为 "${
-				rolename[params.role]
-			}"`,
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更改了分组成员 <a href="/user/profile/${params.member_uid
+				}">${groupUserdata ? groupUserdata.username : ""}</a> 的权限为 "${rolename[params.role]
+				}"`,
 			type: "group",
 			uid: this.getUid(),
 			username: username,
@@ -351,7 +347,7 @@ class groupController extends ControllerBase {
 
 	async getMemberList(ctx) {
 		let params = ctx.params;
-		let groupInst = xU.orm(groupModel);
+		let groupInst = xU.orm(ModelGroup);
 		let group = await groupInst.get(params.id);
 		ctx.body = xU.resReturn(group.members);
 	}
@@ -370,7 +366,7 @@ class groupController extends ControllerBase {
 
 	async delMember(ctx) {
 		let params = ctx.params;
-		let groupInst = xU.orm(groupModel);
+		let groupInst = xU.orm(ModelGroup);
 		var check = await groupInst.checkMemberRepeat(params.id, params.member_uid);
 		if (check === 0) {
 			return (ctx.body = xU.resReturn(null, 400, "分组成员不存在"));
@@ -384,9 +380,8 @@ class groupController extends ControllerBase {
 
 		let groupUserdata = await this.getUserdata(params.member_uid, params.role);
 		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分组成员 <a href="/user/profile/${
-				params.member_uid
-			}">${groupUserdata ? groupUserdata.username : ""}</a>`,
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分组成员 <a href="/user/profile/${params.member_uid
+				}">${groupUserdata ? groupUserdata.username : ""}</a>`,
 			type: "group",
 			uid: this.getUid(),
 			username: username,
@@ -405,7 +400,7 @@ class groupController extends ControllerBase {
 	 * @example ./api/group/list.json
 	 */
 	async list(ctx) {
-		var groupInst = xU.orm(groupModel);
+		var groupInst = xU.orm(ModelGroup);
 		let projectInst = xU.orm(modelProject);
 
 		let privateGroup = await groupInst.getByPrivateUid(this.getUid());
@@ -481,7 +476,7 @@ class groupController extends ControllerBase {
 			return (ctx.body = xU.resReturn(null, 401, "没有权限"));
 		}
 
-		let groupInst = xU.orm(groupModel);
+		let groupInst = xU.orm(ModelGroup);
 		let projectInst = xU.orm(modelProject);
 		let interfaceInst = xU.orm(interfaceModel);
 		let interfaceColInst = xU.orm(interfaceColModel);
@@ -515,7 +510,7 @@ class groupController extends ControllerBase {
 	 * @example ./api/group/up.json
 	 */
 	async up(ctx) {
-		let groupInst = xU.orm(groupModel);
+		let groupInst = xU.orm(ModelGroup);
 		let params = ctx.params;
 
 		if ((await this.checkAuth(params.id, "group", "danger")) !== true) {
@@ -525,9 +520,8 @@ class groupController extends ControllerBase {
 		let result = await groupInst.up(params.id, params);
 		let username = this.getUsername();
 		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了 <a href="/group/${
-				params.id
-			}">${params.group_name}</a> 分组`,
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了 <a href="/group/${params.id
+				}">${params.group_name}</a> 分组`,
 			type: "group",
 			uid: this.getUid(),
 			username: username,
