@@ -266,6 +266,7 @@ class ControllerBase {
 			if (type === "group") {
 				let groupInst = xU.orm(ModelGroup);
 				let groupData = await groupInst.get(id);
+
 				// 建立分组的人
 				if (groupData.uid === this.getUid()) {
 					return "owner";

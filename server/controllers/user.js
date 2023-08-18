@@ -627,15 +627,6 @@ class userController extends ControllerBase {
 	async search(ctx) {
 		const { q } = ctx.request.query;
 
-		if (!q) {
-			return (ctx.body = xU.resReturn(void 0, 400, "No keyword."));
-		}
-
-		if (!xU.validateSearchKeyword(q)) {
-			return (ctx.body = xU.resReturn(void 0, 400, "Bad query."));
-		}
-
-		let queryList = await this.modelUser.search(q);
 		let rules = [
 			{
 				key: "_id",
@@ -653,6 +644,19 @@ class userController extends ControllerBase {
 				alias: "upTime"
 			}
 		];
+
+
+		if (!q) {
+			let queryList = await this.modelUser.list();
+			let filteredRes = xU.filterRes(queryList, rules);
+			return (ctx.body = xU.resReturn(filteredRes, 0, "ok"));
+		}
+
+		if (!xU.validateSearchKeyword(q)) {
+			return (ctx.body = xU.resReturn(void 0, 400, "Bad query."));
+		}
+
+		let queryList = await this.modelUser.search(q);
 
 		let filteredRes = xU.filterRes(queryList, rules);
 

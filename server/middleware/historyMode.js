@@ -12,9 +12,11 @@ const middlewareNotFound = () => async (ctx, next) => {
 			ctx.set("Content-Type", mime.lookup(indexPath));
 			ctx.body = xU.fs.createReadStream(indexPath);
 		} else {
+			/* 返回首页 */
 			indexPath = path.join(xU.var.APP_ROOT_DIR, "static", "index.html");
-			ctx.status = 301;
-			ctx.redirect('/index.html');
+			ctx.status = 200;
+			ctx.set("Content-Type", mime.lookup(indexPath));
+			ctx.body = xU.fs.createReadStream(indexPath);
 		}
 	}
 	next();

@@ -85,7 +85,6 @@ module.exports = {
 							uploadBy: this.$uid,
 							add_time: xU.time()
 						};
-
 						const res = await xU.orm(ModelResource).save(wikiInfo);
 						ctx.body = xU.resReturn({ _id: res._id });
 					} catch (e) {

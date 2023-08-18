@@ -406,6 +406,7 @@ class groupController extends ControllerBase {
 		let privateGroup = await groupInst.getByPrivateUid(this.getUid());
 		let newResult = [];
 
+		/* 固定的个人中心，不可修改名称，如果不存在就添加 */
 		if (!privateGroup) {
 			privateGroup = await groupInst.save({
 				uid: this.getUid(),
@@ -416,6 +417,7 @@ class groupController extends ControllerBase {
 			});
 		}
 
+		/* 可查看所有分组 */
 		if (this.getRole() === "admin") {
 			let result = await groupInst.list();
 			if (result && result.length > 0) {
@@ -425,6 +427,7 @@ class groupController extends ControllerBase {
 				}
 			}
 		} else {
+			/* 只能查看自己参与的分组 */
 			let result = await groupInst.getAuthList(this.getUid());
 			if (result && result.length > 0) {
 				for (let i = 0; i < result.length; i++) {
@@ -436,21 +439,25 @@ class groupController extends ControllerBase {
 			const groupIds = newResult.map(item => item._id);
 			const newGroupIds = [];
 
+			/* 从项目里面直接加的人，但是没有在group中添加member， */
 			let groupByProject = await projectInst.getAuthList(this.getUid());
 			if (groupByProject && groupByProject.length > 0) {
 				groupByProject.forEach(_data => {
 					const _temp = [...groupIds, ...newGroupIds];
+					/* 不在已确认的分组中则添加进来 */
 					if (!_.find(_temp, id => id === _data.group_id)) {
 						newGroupIds.push(_data.group_id);
 					}
 				});
 			}
+			/* 根据group_id获取group */
 			let newData = await groupInst.findByGroups(newGroupIds);
 			newData.forEach(_data => {
 				_data = _data.toObject();
 				newResult.push(_data);
 			});
 		}
+
 		if (privateGroup) {
 			privateGroup = privateGroup.toObject();
 			privateGroup.group_name = "个人空间";
