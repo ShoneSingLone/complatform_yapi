@@ -61,9 +61,8 @@ module.exports = {
 						let groupByProject = await projectInst.getAuthList(this.getUid());
 						if (groupByProject && groupByProject.length > 0) {
 							groupByProject.forEach(_data => {
-								const _temp = [...groupIds, ...newGroupIds];
 								/* 不在已确认的分组中则添加进来 */
-								if (!xU.find(_temp, { id: _data.group_id })) {
+								if (![...groupIds, ...newGroupIds].includes(_data.group_id)) {
 									newGroupIds.push(_data.group_id);
 								}
 							});
@@ -72,6 +71,7 @@ module.exports = {
 						let newData = await groupInst.findByGroups(newGroupIds);
 						newData.forEach(_data => {
 							_data = _data.toObject();
+							_data.notInGroup = true;
 							newResult.push(_data);
 						});
 					}
@@ -80,6 +80,7 @@ module.exports = {
 						privateGroup = privateGroup.toObject();
 						privateGroup.group_name = "个人空间";
 						privateGroup.role = "owner";
+						privateGroup.privateSpace = true;
 						newResult.unshift(privateGroup);
 					}
 
