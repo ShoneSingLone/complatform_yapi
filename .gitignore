@@ -50,7 +50,6 @@ axiosOptions_body
 dist-exec
 static/wiki
 .vs
-static/dist
 server/uploads/db*
 server/uploads/upload_*
 server/uploads/resourceAssets
