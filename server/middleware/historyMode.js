@@ -24,5 +24,4 @@ const middlewareNotFound = () => async (ctx, next) => {
 
 module.exports = async function (app) {
 	app.use(middlewareNotFound());
-	app.use(middlewareNotFound());
 };
