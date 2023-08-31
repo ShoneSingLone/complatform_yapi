@@ -36,6 +36,11 @@ module.exports = {
 						if (result && result.length > 0) {
 							for (let i = 0; i < result.length; i++) {
 								result[i] = result[i].toObject();
+								if (xU.isSame(result[i].uid, this.$uid)) {
+									result[i].role = "owner";
+								} else {
+									result[i].role = "member";
+								}
 								newResult.unshift(result[i]);
 							}
 						}
