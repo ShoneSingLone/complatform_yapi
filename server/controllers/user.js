@@ -411,10 +411,6 @@ class userController extends ControllerBase {
 			let userInst = xU.orm(ModelUser);
 			let id = ctx.request.query.id;
 
-			if (this.getRole() !== "admin" && id != this.getUid()) {
-				return (ctx.body = xU.resReturn(null, 401, "没有权限"));
-			}
-
 			if (!id) {
 				return (ctx.body = xU.resReturn(null, 400, "uid不能为空"));
 			}
