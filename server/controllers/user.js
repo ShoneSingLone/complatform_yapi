@@ -6,7 +6,6 @@ const ModelGroup = require("../models/group");
 const modelProject = require("../models/project");
 const avatarModel = require("../models/avatar");
 const { customCookies } = require("../utils/customCookies");
-const jwt = require("jsonwebtoken");
 
 
 
@@ -14,59 +13,6 @@ class userController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.modelUser = xU.orm(ModelUser);
-	}
-
-	/**
-	 * 用户登录接口
-	 * @interface /user/login
-	 * @method POST
-	 * @category user
-	 * @foldnumber 10
-	 * @param {String} email email名称，不能为空
-	 * @param  {String} password 密码，不能为空
-	 * @returns {Object}
-	 * @example ./api/user/login.json
-	 */
-	async login(ctx) {
-		//登录
-		let userInst = xU.orm(ModelUser); //创建user实体
-		let email = ctx.request.body.email;
-		email = (email || "").trim();
-		let password = ctx.request.body.password;
-
-		if (!email) {
-			return (ctx.body = xU.resReturn(null, 400, "email不能为空"));
-		}
-		if (!password) {
-			return (ctx.body = xU.resReturn(null, 400, "密码不能为空"));
-		}
-
-		let result = await userInst.findByEmail(email);
-
-		if (!result) {
-			return (ctx.body = xU.resReturn(null, 404, "该用户不存在"));
-		} else if (
-			xU.generatePassword(password, result.passsalt) === result.password
-		) {
-			this.setLoginCookie(result._id, result.passsalt);
-
-			return (ctx.body = xU.resReturn(
-				{
-					username: result.username,
-					role: result.role,
-					uid: result._id,
-					email: result.email,
-					add_time: result.add_time,
-					up_time: result.up_time,
-					type: "site",
-					study: result.study
-				},
-				0,
-				"登录成功"
-			));
-		} else {
-			return (ctx.body = xU.resReturn(null, 405, "密码错误"));
-		}
 	}
 
 	/**
@@ -202,7 +148,6 @@ class userController extends ControllerBase {
 				});
 			}
 
-			this.setLoginCookie(user._id, user.passsalt);
 			return true;
 		} catch (e) {
 			console.error("third_login:", e.message); // eslint-disable-line
@@ -276,17 +221,6 @@ class userController extends ControllerBase {
 		});
 	}
 
-	setLoginCookie(uid, passsalt) {
-		let token = jwt.sign({ uid: uid }, passsalt, { expiresIn: "7 days" });
-
-		const cookiesValues = {
-			expires: xU.expireDate(7),
-			httpOnly: true
-		};
-		customCookies(this.ctx, "_yapi_token", token, cookiesValues);
-		customCookies(this.ctx, "_yapi_uid", uid, cookiesValues);
-	}
-
 	/**
 	 * 用户注册接口
 	 * @interface /user/reg
@@ -345,7 +279,6 @@ class userController extends ControllerBase {
 
 		try {
 			let user = await userInst.save(data);
-			this.setLoginCookie(user._id, user.passsalt);
 			await this.handlePrivateGroup(user._id, user.username, user.email);
 			ctx.body = xU.resReturn({
 				uid: user._id,

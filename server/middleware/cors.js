@@ -4,9 +4,11 @@ const middlewareCORS = () => {
 	return cors({
 		credentials: true,
 		origin: ctx => {
-			ctx.set("Access-Control-Expose-Headers", "x-cookies");
-			return ctx.headers.origin;
-			if (ctx.headers.origin === "https://shonesinglone.github.io") {
+			console.log('🚀 ctx.headers.origin', JSON.stringify(ctx.headers.origin, null, 2));
+			if (WEBCONFIG.cors.allow.includes(ctx.headers.origin)) {
+				/* 允许在header中携带额外的字段 */
+				// ctx.set("Access-Control-Expose-Headers", "x_token");
+				ctx.url = ctx.url.replace(/^\/0/, "");
 				return ctx.headers.origin;
 			} else {
 				return false;

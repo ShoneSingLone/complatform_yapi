@@ -10,39 +10,27 @@
 	   });
    } */
 
-function getCookiesFromCtx(ctx) {
-	let _cookies = false;
-	try {
-		_cookies = JSON.parse(ctx.header["x-cookies"]);
-	} catch (error) {}
+function getTokenFromQuery(ctx) {
+	let _xTokenn = {};
 	/* ws可能无法从header里获取x-cookies */
-	if (!_cookies) {
-		try {
-			/* 如果跨域的ws */
-			_cookies = JSON.parse(ctx.query["x-cookies"]);
-		} catch (error) {}
-	}
+	try {
+		/* 如果跨域的ws */
+		_xTokenn = JSON.parse(ctx.query["x_token"]);
+	} catch (error) { }
 
-	if (_cookies) {
-		ctx.xCookies = _cookies;
-	}
-
-	return ctx.xCookies || {};
+	return _xTokenn || {};
 }
 
 exports.customCookies = (ctx, key, value, options) => {
-	let xCookies = getCookiesFromCtx(ctx);
+	let xToken = getTokenFromQuery(ctx);
 	const isSet = value !== undefined;
 	if (isSet) {
 		ctx.cookies.set(key, value, options);
-		xCookies[key] = value;
-		const xCookiesString = JSON.stringify(xCookies);
-		ctx.set("x-cookies", xCookiesString);
 	} else {
 		let val = ctx.cookies.get(key);
 		if (val) {
 			return val;
 		}
-		return xCookies[key];
+		return xToken[key];
 	}
 };

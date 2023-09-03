@@ -75,15 +75,22 @@ function autowareRoute({ controller, controllerName }) {
 					"produces"
 				])
 			};
-			const { request, responses, parameters } = handlerInfo;
+
+			/* case by case TODO: */
+			const { request, responses, parameters, deprecated } = handlerInfo;
 
 			if (parameters) {
 				swaggerJSON.paths[propPath][method].parameters = parameters;
 			} else if (request) {
 				addParameters(propPath, method, request);
 			}
+
 			if (responses) {
 				swaggerJSON.paths[propPath][method].responses = responses;
+			}
+
+			if (deprecated) {
+				swaggerJSON.paths[propPath][method].deprecated = deprecated;
 			}
 		});
 	});

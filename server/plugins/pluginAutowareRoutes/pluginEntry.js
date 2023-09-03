@@ -32,9 +32,8 @@ function appUseSwagger(app, swaggerJSON) {
 
 function appAddRoutes(app, routes) {
 	routes.forEach(({ url, method, handler }) => {
-		url = `${
-			WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath || ""
-		}${url}`;
+		url = `${WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath || ""
+			}${url}`;
 		const urlObj = RouteMap.get(url) || {};
 		urlObj[String(method).toLowerCase()] = handler;
 		RouteMap.set(url, urlObj);
@@ -51,13 +50,18 @@ function appAddRoutes(app, routes) {
 					try {
 						await vm.init(ctx);
 						if (vm.$auth) {
-							ctx.payload = xU.merge(
+							vm.ctx.payload = xU.merge(
 								{},
 								ctx.params || {},
 								ctx.query || {},
 								ctx.request.body || {}
 							);
-							await handler.call(vm, ctx);
+							try {
+								await handler.call(vm, ctx);
+							} catch (error) {
+								error.message += (`\n${ctx.path} ${ctx.method} handler error`);
+								throw error;
+							}
 							return true;
 						} else {
 							ctx.body = xU.resReturn(

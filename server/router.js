@@ -94,12 +94,6 @@ let routerConfig = {
 	],
 	group: [
 		{
-			action: "getMyGroup",
-			path: "get_mygroup",
-			method: "get"
-		},
-
-		{
 			action: "list",
 			path: "list",
 			method: "get"
@@ -146,11 +140,6 @@ let routerConfig = {
 		}
 	],
 	user: [
-		{
-			action: "login",
-			path: "login",
-			method: "post"
-		},
 		{
 			action: "reg",
 			path: "reg",

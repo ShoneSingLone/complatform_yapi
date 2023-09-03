@@ -209,24 +209,6 @@ class groupController extends ControllerBase {
 		};
 	}
 
-	async getMyGroup(ctx) {
-		var groupInst = xU.orm(ModelGroup);
-		let privateGroup = await groupInst.getByPrivateUid(this.getUid());
-		if (!privateGroup) {
-			privateGroup = await groupInst.save({
-				uid: this.getUid(),
-				group_name: "User-" + this.getUid(),
-				add_time: xU.time(),
-				up_time: xU.time(),
-				type: "private"
-			});
-		}
-		if (privateGroup) {
-			ctx.body = xU.resReturn(privateGroup);
-		} else {
-			ctx.body = xU.resReturn(null);
-		}
-	}
 
 	/**
 	 * 添加项目分组成员

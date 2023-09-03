@@ -11,6 +11,7 @@ const { customCookies } = require("../utils/customCookies");
 class ControllerBase {
 	constructor(ctx) {
 		this.ctx = ctx;
+		ctx.$instance = this;
 		//网站上线后，role对象key是不能修改的，value可以修改
 		this.roles = {
 			admin: "Admin",
@@ -19,7 +20,6 @@ class ControllerBase {
 	}
 
 	async init(ctx) {
-		xU.applog.info("ControllerBase");
 		this.$user = null;
 		this.tokenModel = xU.orm(tokenModel);
 		this.modelProject = xU.orm(modelProject);
@@ -27,7 +27,6 @@ class ControllerBase {
 			"/api/user/login_by_token",
 			"/api/user/login",
 			"/api/user/reg",
-			"/api/user/status",
 			"/api/user/logout",
 			"/api/user/avatar",
 			"/api/user/login_by_ldap"
@@ -110,21 +109,10 @@ class ControllerBase {
 			}
 		}
 	}
-
-	async getProjectIdByToken(token) {
-		let projectId = await this.tokenModel.findId(token);
-		if (projectId) {
-			return projectId.toObject().project_id;
-		}
-	}
-
-	getUid() {
-		return parseInt(this.$uid, 10);
-	}
-
 	async checkLogin(ctx) {
 		let token = customCookies(ctx, "_yapi_token");
 		let uid = customCookies(ctx, "_yapi_uid");
+
 		try {
 			/* 未携带认证信息 */
 			if (!token || !uid) {
@@ -139,9 +127,12 @@ class ControllerBase {
 				return false;
 			}
 
+			const { passsalt } = currUserInfo;
+			console.log("🚀 ~ file: base.js:56 ~ ControllerBase ~ checkLogin ~ currUserInfo.passsalt:", currUserInfo.passsalt);
+
 			let decoded;
 			try {
-				decoded = jwt.verify(token, currUserInfo.passsalt);
+				decoded = jwt.verify(token, passsalt);
 			} catch (err) {
 				xU.applog.info("JWT 信息不匹配");
 				return false;
@@ -160,6 +151,18 @@ class ControllerBase {
 			return false;
 		}
 	}
+
+	async getProjectIdByToken(token) {
+		let projectId = await this.tokenModel.findId(token);
+		if (projectId) {
+			return projectId.toObject().project_id;
+		}
+	}
+
+	getUid() {
+		return parseInt(this.$uid, 10);
+	}
+
 
 	async checkRegister() {
 		// console.log('config', WEBCONFIG);

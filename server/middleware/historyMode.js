@@ -5,7 +5,6 @@ const mime = require("mime-types");
 const middlewareNotFound = () => async (ctx, next) => {
 	/* history 模式，除了api，都返回index.html */
 	if (ctx.status === 404) {
-
 		(() => {
 			xU.applog.info("middlewareNotFound return index", ctx.path);
 			let indexPath;
@@ -15,6 +14,14 @@ const middlewareNotFound = () => async (ctx, next) => {
 				ctx.status = 200;
 				ctx.set("Content-Type", mime.lookup(indexPath));
 				ctx.body = xU.fs.createReadStream(indexPath);
+				return;
+			}
+
+
+			if (ctx.header?.accept && ctx.header.accept.indexOf("application/json") > -1) {
+				ctx.status = 404;
+				ctx.set("Content-Type", "application/json");
+				ctx.body = xU.resReturn(null, 404, "NOT_FOUND");
 				return;
 			}
 
