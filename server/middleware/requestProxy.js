@@ -28,7 +28,6 @@ exports.getResponseThroghProxy = function ({ ctx, path, host, port }) {
 		let httpRequestOptions = new URL(path);
 		httpRequestOptions.method = ctx.request.method;
 		httpRequestOptions.headers = ctx.request?.header;
-
 		if (ctx.request.body && JSON.stringify(ctx.request.body) != "{}") {
 			(() => {
 				if (ctx.request?.header["content-type"]) {
@@ -146,22 +145,24 @@ exports.getResponseThroghProxy = function ({ ctx, path, host, port }) {
 		}
 
 		function newHttpRequest(httpRequestOptions) {
+			console.log("httpRequestOptions", httpRequestOptions);
+			const { method, headers } = httpRequestOptions;
+
+			/* 开启了代理 */
 			if (host && port) {
-				const { method, headers } = httpRequestOptions;
 				return http.request(
 					{ host, port, path, method, headers },
 					handleResponse
 				);
-			} else if (httpRequestOptions.protocol === "https:") {
-				const { method, headers } = httpRequestOptions;
-				return https.request(
-					path,
-					{ method, headers, rejectUnauthorized: false },
-					handleResponse
-				);
-			} else {
-				return http.request(httpRequestOptions, handleResponse);
 			}
+
+			/* https */
+			if (httpRequestOptions.protocol === "https:") {
+				return https.request(path, { method, headers, rejectUnauthorized: false }, handleResponse);
+			}
+
+			/* http */
+			return http.request(httpRequestOptions, { method, headers }, handleResponse);
 		}
 	});
 };
