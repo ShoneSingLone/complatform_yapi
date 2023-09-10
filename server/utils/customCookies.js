@@ -16,7 +16,7 @@ function getTokenFromQuery(ctx) {
 	try {
 		/* 如果跨域的ws */
 		_xTokenn = JSON.parse(ctx.query["x_token"]);
-	} catch (error) { }
+	} catch (error) {}
 
 	return _xTokenn || {};
 }

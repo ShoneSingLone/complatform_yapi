@@ -148,12 +148,12 @@ class ModelGroup extends ModelBase {
 	}
 
 	/**
-	 * 
+	 *
 	 * 当前用户uid 作为创建者，或者成员
-	 * 
-	 * @param {any} uid 
-	 * @returns 
-	 * 
+	 *
+	 * @param {any} uid
+	 * @returns
+	 *
 	 * @memberOf ModelGroup
 	 */
 	getAuthList(uid) {

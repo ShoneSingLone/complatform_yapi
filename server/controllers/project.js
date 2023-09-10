@@ -207,6 +207,32 @@ class projectController extends ControllerBase {
 			return (ctx.body = xU.resReturn(null, 401, "basepath格式有误"));
 		}
 
+		const requestCode = function ({
+			title,
+			projectId,
+			interfaceId,
+			path,
+			method,
+			xU
+		}) {
+			return `\`\`\`js
+/**
+*  ${title}
+*  ${window.location.href}
+*  http://10.143.133.216:3001/project/${projectId}/interface/api/${interfaceId}
+*/
+async ${xU.camelCase(path)}({params,data}) {
+return await request({
+method: "${method}",
+url: \`${path}\`,
+params:params||{},
+data:data||{}
+});
+}
+\`\`\`
+`;
+		};
+
 		let data = {
 			name: params.name,
 			desc: params.desc,
@@ -221,7 +247,8 @@ class projectController extends ControllerBase {
 			add_time: xU.time(),
 			up_time: xU.time(),
 			is_json5: false,
-			env: [{ name: "local", domain: "http://127.0.0.1" }]
+			env: [{ name: "local", domain: "http://127.0.0.1" }],
+			requestCode: requestCode.toString()
 		};
 
 		let result = await this.Model.save(data);
@@ -776,90 +803,6 @@ class projectController extends ControllerBase {
 			});
 		} catch (e) {
 			xU.applog.error(e); // eslint-disable-line
-		}
-	}
-
-	/**
-	 * 编辑项目
-	 * @interface /project/up
-	 * @method POST
-	 * @category project
-	 * @foldnumber 10
-	 * @param {Number} id 项目id，不能为空
-	 * @param {String} name 项目名称，不能为空
-	 * @param {String} basepath 项目基本路径，不能为空
-	 * @param {String} [desc] 项目描述
-	 * @returns {Object}
-	 * @example ./api/project/up.json
-	 */
-	async up(ctx) {
-		try {
-			let id = ctx.request.body.id;
-			let params = ctx.request.body;
-
-			params = xU.handleParams(params, {
-				name: "string",
-				basepath: "string",
-				group_id: "number",
-				desc: "string",
-				pre_script: "string",
-				after_script: "string",
-				project_mock_script: "string"
-			});
-
-			if (!id) {
-				return (ctx.body = xU.resReturn(null, 405, "项目id不能为空"));
-			}
-
-			if ((await this.checkAuth(id, "project", "danger")) !== true) {
-				return (ctx.body = xU.resReturn(null, 405, "没有权限"));
-			}
-
-			let projectData = await this.Model.get(id);
-
-			if (params.basepath) {
-				if (
-					(params.basepath = this.handleBasepath(params.basepath)) === false
-				) {
-					return (ctx.body = xU.resReturn(null, 401, "basepath格式有误"));
-				}
-			}
-
-			if (projectData.name === params.name) {
-				delete params.name;
-			}
-
-			if (params.name) {
-				let checkRepeat = await this.Model.checkNameRepeat(
-					params.name,
-					params.group_id
-				);
-				if (checkRepeat > 0) {
-					return (ctx.body = xU.resReturn(null, 401, "已存在的项目名"));
-				}
-			}
-
-			let data = {
-				up_time: xU.time()
-			};
-
-			data = Object.assign({}, data, params);
-
-			let result = await this.Model.up(id, data);
-			let username = this.getUsername();
-			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
-					projectData.name
-				}</a>`,
-				type: "project",
-				uid: this.getUid(),
-				username: username,
-				typeid: id
-			});
-			xU.emitHook("project_up", result).then();
-			ctx.body = xU.resReturn(result);
-		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
 		}
 	}
 

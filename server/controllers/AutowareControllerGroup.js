@@ -1,7 +1,6 @@
 const ModelGroup = require("server/models/group");
 const ModelProject = require("server/models/project");
 
-
 async function getMineGroup(ctx) {
 	var groupInst = xU.orm(ModelGroup);
 	let projectInst = xU.orm(ModelProject);
@@ -80,11 +79,7 @@ async function getMineGroup(ctx) {
 	}
 
 	ctx.body = xU.resReturn(newResult);
-
-
 }
-
-
 
 module.exports = {
 	definitions: {},
@@ -96,7 +91,8 @@ module.exports = {
 			get: {
 				deprecated: true,
 				summary: "获取分组信息 原Yapi用的名字，我不喜欢",
-				description: "不需要参数，获取当前登录用户能够访问的分组，个人空间，作为成员所在的分组，作为成员所在项目关联的分组",
+				description:
+					"不需要参数，获取当前登录用户能够访问的分组，个人空间，作为成员所在的分组，作为成员所在项目关联的分组",
 				request: {},
 				handler: getMineGroup
 			}
@@ -104,7 +100,8 @@ module.exports = {
 		"/group/mine": {
 			get: {
 				summary: "获取分组信息",
-				description: "不需要参数，获取当前登录用户能够访问的分组，个人空间，作为成员所在的分组，作为成员所在项目关联的分组",
+				description:
+					"不需要参数，获取当前登录用户能够访问的分组，个人空间，作为成员所在的分组，作为成员所在项目关联的分组",
 				request: {},
 				handler: getMineGroup
 			}

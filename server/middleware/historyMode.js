@@ -9,7 +9,11 @@ const middlewareNotFound = () => async (ctx, next) => {
 			xU.applog.info("middlewareNotFound return index", ctx.path);
 			let indexPath;
 
-			indexPath = path.join(xU.var.APP_ROOT_DIR, "static", ctx.path.substring(1));
+			indexPath = path.join(
+				xU.var.APP_ROOT_DIR,
+				"static",
+				ctx.path.substring(1)
+			);
 			if (xU.fileExist(indexPath)) {
 				ctx.status = 200;
 				ctx.set("Content-Type", mime.lookup(indexPath));
@@ -17,8 +21,10 @@ const middlewareNotFound = () => async (ctx, next) => {
 				return;
 			}
 
-
-			if (ctx.header?.accept && ctx.header.accept.indexOf("application/json") > -1) {
+			if (
+				ctx.header?.accept &&
+				ctx.header.accept.indexOf("application/json") > -1
+			) {
 				ctx.status = 404;
 				ctx.set("Content-Type", "application/json");
 				ctx.body = xU.resReturn(null, 404, "NOT_FOUND");

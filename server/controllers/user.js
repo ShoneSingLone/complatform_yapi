@@ -7,8 +7,6 @@ const modelProject = require("../models/project");
 const avatarModel = require("../models/avatar");
 const { customCookies } = require("../utils/customCookies");
 
-
-
 class userController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
@@ -486,23 +484,27 @@ class userController extends ControllerBase {
 		try {
 			let basecode = ctx.request.body.basecode;
 			if (!basecode) {
-				return (ctx.body = xU.resReturn(null, 400, 'basecode不能为空'));
+				return (ctx.body = xU.resReturn(null, 400, "basecode不能为空"));
 			}
-			let pngPrefix = 'data:image/png;base64,';
-			let jpegPrefix = 'data:image/jpeg;base64,';
+			let pngPrefix = "data:image/png;base64,";
+			let jpegPrefix = "data:image/jpeg;base64,";
 			let type;
 			if (basecode.substr(0, pngPrefix.length) === pngPrefix) {
 				basecode = basecode.substr(pngPrefix.length);
-				type = 'image/png';
+				type = "image/png";
 			} else if (basecode.substr(0, jpegPrefix.length) === jpegPrefix) {
 				basecode = basecode.substr(jpegPrefix.length);
-				type = 'image/jpeg';
+				type = "image/jpeg";
 			} else {
-				return (ctx.body = xU.resReturn(null, 400, '仅支持jpeg和png格式的图片'));
+				return (ctx.body = xU.resReturn(
+					null,
+					400,
+					"仅支持jpeg和png格式的图片"
+				));
 			}
 			let strLength = basecode.length;
 			if (parseInt(strLength - (strLength / 8) * 2) > 200000) {
-				return (ctx.body = xU.resReturn(null, 400, '图片大小不能超过200kb'));
+				return (ctx.body = xU.resReturn(null, 400, "图片大小不能超过200kb"));
 			}
 
 			let avatarInst = xU.orm(avatarModel);
@@ -529,17 +531,19 @@ class userController extends ControllerBase {
 			let data = await avatarInst.get(uid);
 			let dataBuffer, type;
 			if (!data || !data.basecode) {
-				dataBuffer = xU.fs.readFileSync(xU.path.join(xU.var.WEBROOT, 'static/image/avatar.png'));
-				type = 'image/png';
+				dataBuffer = xU.fs.readFileSync(
+					xU.path.join(xU.var.WEBROOT, "static/image/avatar.png")
+				);
+				type = "image/png";
 			} else {
 				type = data.type;
-				dataBuffer = new Buffer(data.basecode, 'base64');
+				dataBuffer = new Buffer(data.basecode, "base64");
 			}
 
-			ctx.set('Content-type', type);
+			ctx.set("Content-type", type);
 			ctx.body = dataBuffer;
 		} catch (err) {
-			ctx.body = 'error:' + err.message;
+			ctx.body = "error:" + err.message;
 		}
 	}
 
@@ -573,7 +577,6 @@ class userController extends ControllerBase {
 				alias: "upTime"
 			}
 		];
-
 
 		if (!q) {
 			let queryList = await this.modelUser.list();
