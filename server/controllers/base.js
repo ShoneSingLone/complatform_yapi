@@ -19,6 +19,25 @@ class ControllerBase {
 		};
 	}
 
+	handleBasepath(basepath) {
+		if (!basepath) {
+			return "";
+		}
+		if (basepath === "/") {
+			return "";
+		}
+		if (basepath[0] !== "/") {
+			basepath = "/" + basepath;
+		}
+		if (basepath[basepath.length - 1] === "/") {
+			basepath = basepath.substr(0, basepath.length - 1);
+		}
+		if (!/^\/[a-zA-Z0-9\-\/\._]+$/.test(basepath)) {
+			return false;
+		}
+		return basepath;
+	}
+
 	async init(ctx) {
 		this.$user = null;
 		this.tokenModel = xU.orm(tokenModel);
@@ -128,7 +147,10 @@ class ControllerBase {
 			}
 
 			const { passsalt } = currUserInfo;
-			console.log("🚀 ~ file: base.js:56 ~ ControllerBase ~ checkLogin ~ currUserInfo.passsalt:", currUserInfo.passsalt);
+			console.log(
+				"🚀 ~ file: base.js:56 ~ ControllerBase ~ checkLogin ~ currUserInfo.passsalt:",
+				currUserInfo.passsalt
+			);
 
 			let decoded;
 			try {
@@ -162,7 +184,6 @@ class ControllerBase {
 	getUid() {
 		return parseInt(this.$uid, 10);
 	}
-
 
 	async checkRegister() {
 		// console.log('config', WEBCONFIG);

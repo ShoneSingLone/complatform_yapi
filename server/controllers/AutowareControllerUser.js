@@ -2,7 +2,6 @@ const { ModelUser } = require("server/models/user");
 const jwt = require("jsonwebtoken");
 const { customCookies } = require("server/utils/customCookies");
 
-
 module.exports = {
 	definitions: {},
 	tag: {
@@ -56,7 +55,6 @@ module.exports = {
 							httpOnly: true
 						};
 
-
 						customCookies(this.ctx, "_yapi_token", TOKEN, COOKIES_OPTIONS);
 						customCookies(this.ctx, "_yapi_uid", uid, COOKIES_OPTIONS);
 
@@ -83,7 +81,6 @@ module.exports = {
 					}
 				}
 			}
-
 		},
 		"/user/status": {
 			get: {
@@ -104,8 +101,6 @@ module.exports = {
 						xU.applog.error(e.message);
 						ctx.body = xU.resReturn(null, 402, e.message);
 					}
-
-
 				}
 			}
 		}

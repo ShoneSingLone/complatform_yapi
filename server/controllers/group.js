@@ -8,7 +8,7 @@ const interfaceColModel = require("../models/interfaceCol");
 const interfaceCaseModel = require("../models/interfaceCase");
 const _ = require("lodash");
 
-const rolename = {
+const ROLE_NAME = {
 	owner: "组长",
 	dev: "开发者",
 	guest: "访客"
@@ -176,8 +176,9 @@ class groupController extends ControllerBase {
 		]);
 		let username = this.getUsername();
 		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组 <a href="/group/${result._id
-				}">${params.group_name}</a>`,
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组 <a href="/group/${
+				result._id
+			}">${params.group_name}</a>`,
 			type: "group",
 			uid: this.getUid(),
 			username: username,
@@ -208,7 +209,6 @@ class groupController extends ControllerBase {
 			email: userData.email
 		};
 	}
-
 
 	/**
 	 * 添加项目分组成员
@@ -253,8 +253,9 @@ class groupController extends ControllerBase {
 			});
 			members = members.join("、");
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组成员 ${members} 为 ${rolename[params.role]
-					}`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组成员 ${members} 为 ${
+					ROLE_NAME[params.role]
+				}`,
 				type: "group",
 				uid: this.getUid(),
 				username: username,
@@ -305,9 +306,11 @@ class groupController extends ControllerBase {
 
 		let groupUserdata = await this.getUserdata(params.member_uid, params.role);
 		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更改了分组成员 <a href="/user/profile/${params.member_uid
-				}">${groupUserdata ? groupUserdata.username : ""}</a> 的权限为 "${rolename[params.role]
-				}"`,
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更改了分组成员 <a href="/user/profile/${
+				params.member_uid
+			}">${groupUserdata ? groupUserdata.username : ""}</a> 的权限为 "${
+				ROLE_NAME[params.role]
+			}"`,
 			type: "group",
 			uid: this.getUid(),
 			username: username,
@@ -362,8 +365,9 @@ class groupController extends ControllerBase {
 
 		let groupUserdata = await this.getUserdata(params.member_uid, params.role);
 		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分组成员 <a href="/user/profile/${params.member_uid
-				}">${groupUserdata ? groupUserdata.username : ""}</a>`,
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分组成员 <a href="/user/profile/${
+				params.member_uid
+			}">${groupUserdata ? groupUserdata.username : ""}</a>`,
 			type: "group",
 			uid: this.getUid(),
 			username: username,
@@ -509,8 +513,9 @@ class groupController extends ControllerBase {
 		let result = await groupInst.up(params.id, params);
 		let username = this.getUsername();
 		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了 <a href="/group/${params.id
-				}">${params.group_name}</a> 分组`,
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了 <a href="/group/${
+				params.id
+			}">${params.group_name}</a> 分组`,
 			type: "group",
 			uid: this.getUid(),
 			username: username,
