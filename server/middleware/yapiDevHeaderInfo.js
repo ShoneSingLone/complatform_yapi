@@ -42,6 +42,7 @@ const middlewareWhenDev = () => async (ctx, next) => {
 		);
 	} catch (error) {
 		console.error(error);
+		ctx.body = xU.resReturn(null, 500, error.message);
 	}
 };
 
