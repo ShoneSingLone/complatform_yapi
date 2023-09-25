@@ -129,6 +129,75 @@ module.exports = {
 					}
 				}
 			}
+		},
+		"/remote_music_file": {
+			get: {
+				summary: "媒体文件流",
+				description: "媒体文件流",
+				request: {
+					query: {
+						id: {
+							description: "资源id",
+							required: true,
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					const { query, headers } = ctx.payload;
+					const { id } = query;
+
+					const record = AllMusic[id];
+					const total = record?.size;
+
+					if (!total) {
+						ctx.body = xU.resReturn(
+							null,
+							400,
+							"can not found music by current id"
+						);
+						return;
+					}
+
+					try {
+						if (headers.range) {
+							const range = headers.range;
+							const parts = range.replace(/bytes=/, "").split("-");
+							const partialstart = parseInt(parts[0], 10);
+							const partialend = parseInt(parts[1], 10);
+
+							let start = partialstart;
+							const end = partialend ? partialend : total - 1;
+							const chunksize = end - start + 1;
+
+							ctx.status = 206;
+							ctx.set({
+								"Content-Range": "bytes " + start + "-" + end + "/" + total,
+								"Accept-Ranges": "bytes",
+								"Content-Length": chunksize,
+								"Content-Type": record.type || "audio/mp3"
+							});
+							const rs = fs.createReadStream(
+								`${xU.var.RESOURCE_ASSETS_REMOTE}/${record.url}`,
+								{ start, end }
+							);
+							ctx.body = rs;
+						} else {
+							ctx.set({
+								"Content-Type": record.type || "audio/mp3",
+								"Accept-Ranges": "bytes",
+								"Content-Length": total
+							});
+							const rs = fs.createReadStream(
+								`${xU.var.RESOURCE_ASSETS_REMOTE}/${record.url}`
+							);
+							ctx.body = rs;
+						}
+					} catch (error) {
+						ctx.body = xU.resReturn(null, 400, error);
+					}
+				}
+			}
 		}
 	}
 };
