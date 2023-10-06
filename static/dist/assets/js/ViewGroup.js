@@ -1,4 +1,4 @@
-import { d as defineComponent, s as stateApp, c as cptRouter, e as xU, f as createVNode, r as resolveComponent, F as Fragment, v as ADMIN, x as xI, t as createTextVNode, a as defItem, b as API, U as components, g as isVNode, O as OWNER, w as withDirectives, j as resolveDirective, i as itemsInvalid, ah as ErrMsg, q as PRIVATE, ai as index, aj as defPagination, ak as METHOD_COLOR, al as LOG_TYPE, am as _$timeAgo, an as jsondiffpatch, C as _export_sfc, E as openBlock, H as createElementBlock, I as withCtx, J as renderList, ao as defColumns, m as xScope, ap as onMounted, ag as getAvatarSrcByid, D as DEV, aq as TAB_KEY_PROJECT_LIST, ar as TAB_KEY_MEMBER_LIST, u as PUBLIC, as as TAB_KEY_GROUP_LOG, at as TAB_KEY_GROUP_WIKI, G as GROUP, K as aHashLink, au as OPEN_BLANK } from "./index.js";
+import { d as defineComponent, s as stateApp, c as cptRouter, e as xU, f as createVNode, r as resolveComponent, F as Fragment, v as ADMIN, x as xI, t as createTextVNode, a as defItem, b as API, U as components, g as isVNode, O as OWNER, w as withDirectives, j as resolveDirective, i as itemsInvalid, ah as ErrMsg, q as PRIVATE, ai as index, aj as defPagination, ak as METHOD_COLOR, al as LOG_TYPE, am as _$timeAgo, an as jsondiffpatch, C as _export_sfc, E as openBlock, H as createElementBlock, I as withCtx, J as renderList, m as xScope, ao as onMounted, ap as defColumns, ag as getAvatarSrcByid, D as DEV, aq as TAB_KEY_PROJECT_LIST, ar as TAB_KEY_MEMBER_LIST, u as PUBLIC, as as TAB_KEY_GROUP_LOG, at as TAB_KEY_GROUP_WIKI, G as GROUP, K as aHashLink, au as OPEN_BLANK } from "./index.js";
 import { F as FormRules, p as pickValueFrom } from "./common.FormRules.js";
 import { V as VNodeCollection } from "./VNodeRender.js";
 import { P as ProjectCard, D as DialogAddProject, l as lib } from "./TuiEditor.js";
@@ -638,7 +638,7 @@ const GroupAside = defineComponent({
         "x-sider-tree_menu_active": stateApp.currGroup._id && xU.isSame(stateApp.currGroup._id, group._id)
       };
     },
-    getGrouMenuItem({
+    getGroupMenuItem({
       group
     }) {
       return createVNode("div", {
@@ -705,7 +705,7 @@ const GroupAside = defineComponent({
       }, {
         default: ({
           data: group
-        }) => vm.getGrouMenuItem({
+        }) => vm.getGroupMenuItem({
           group
         })
       }), [[resolveDirective("xloading"), vm.groupListForShow.length === 0]])
@@ -1681,31 +1681,25 @@ const ViewGroup = defineComponent({
   },
   mounted() {
     this.ifUrlNoGroupIdGetAndAddIdToUrl();
-    if (!this.cptRouter.query.group_tab) {
-      this.cptRouter.query.group_tab = TAB_KEY_PROJECT_LIST;
-    }
-  },
-  beforeUnmount() {
-    if (this.timmer) {
-      clearTimeout(this.timmer);
-    }
   },
   methods: {
     async ifUrlNoGroupIdGetAndAddIdToUrl() {
+      if (!this.cptRouter.query.group_tab) {
+        this.cptRouter.query.group_tab = TAB_KEY_PROJECT_LIST;
+      }
       try {
         if (!this.groupId || this.groupId === "undefined") {
           let {
             data: group
-          } = await API.group.getMyGroup();
-          this.cptRouter.query.group_id = group._id;
+          } = await API.group.mine();
+          if (xU.isArrayFill(group)) {
+            this.cptRouter.query.group_id = group[0]._id;
+          }
         } else {
           await stateApp._setCurrGroup(this.groupId);
         }
       } catch (e) {
         console.error(e);
-        this.timmer = setTimeout(() => {
-          this.ifUrlNoGroupIdGetAndAddIdToUrl();
-        }, 1e3);
       }
     }
   },

@@ -1,4 +1,6 @@
 const mime = require("mime-types");
+const fs = require("fs");
+const path = require("path");
 const { ModelResource } = require("server/models/Resource");
 const { _n } = require("@ventose/utils-node");
 
@@ -130,7 +132,7 @@ module.exports = {
 				}
 			}
 		},
-		"/remote_music_file": {
+		"/resource/remote_music_file": {
 			get: {
 				summary: "媒体文件流",
 				description: "媒体文件流",
@@ -144,13 +146,15 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					const { query, headers } = ctx.payload;
+					const { query, headers } = ctx;
 					const { id } = query;
 
+					let AllMusic = require("server/controllers/AutowareControllerResource/AllMusic");
 					const record = AllMusic[id];
-					const total = record?.size;
 
-					if (!total) {
+
+					const total = record?.size;
+					if (!record || !total) {
 						ctx.body = xU.resReturn(
 							null,
 							400,
@@ -158,6 +162,8 @@ module.exports = {
 						);
 						return;
 					}
+
+					const resourcePath = path.resolve(WEBCONFIG.RESOURCE_ASSETS_REMOTE, record.url);
 
 					try {
 						if (headers.range) {
@@ -177,10 +183,7 @@ module.exports = {
 								"Content-Length": chunksize,
 								"Content-Type": record.type || "audio/mp3"
 							});
-							const rs = fs.createReadStream(
-								`${xU.var.RESOURCE_ASSETS_REMOTE}/${record.url}`,
-								{ start, end }
-							);
+							const rs = fs.createReadStream(resourcePath, { start, end });
 							ctx.body = rs;
 						} else {
 							ctx.set({
@@ -188,9 +191,7 @@ module.exports = {
 								"Accept-Ranges": "bytes",
 								"Content-Length": total
 							});
-							const rs = fs.createReadStream(
-								`${xU.var.RESOURCE_ASSETS_REMOTE}/${record.url}`
-							);
+							const rs = fs.createReadStream(resourcePath);
 							ctx.body = rs;
 						}
 					} catch (error) {

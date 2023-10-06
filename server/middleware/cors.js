@@ -1,16 +1,22 @@
 var cors = require("koa2-cors");
+var _ = require("lodash");
 
 const middlewareCORS = () => {
 	return cors({
 		credentials: true,
 		origin: ctx => {
 			if (WEBCONFIG?.cors?.allow) {
-				if (WEBCONFIG.cors.allow.includes(ctx.headers.origin)) {
+				const url = String(ctx.headers.origin || ctx.headers.referer).toLowerCase();
+
+				if (_.some(WEBCONFIG.cors.allow, allow => {
+					return ~url.indexOf(String(allow).toLowerCase());
+				})) {
 					/* 允许在header中携带额外的字段 */
 					// ctx.set("Access-Control-Expose-Headers", "x_token");
 					ctx.url = ctx.url.replace(/^\/0/, "");
-					return ctx.headers.origin;
+					return url;
 				} else {
+					console.log('🚀:', 'cors fail', url, ctx.url);
 					return false;
 				}
 			} else {
