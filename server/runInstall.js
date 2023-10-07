@@ -34,6 +34,16 @@
 		});
 
 		(function () {
+			let storageCol = mongoose.connection.db.collection("storage");
+			storageCol.createIndex(
+				{
+					key: 1
+				},
+				{
+					unique: true
+				}
+			);
+
 			let userCol = mongoose.connection.db.collection("user");
 			userCol.createIndex({
 				username: 1
@@ -137,13 +147,15 @@
 					fs.ensureFileSync(path.join(xU.var.APP_ROOT_DIR, "yapi.installed"));
 					console.log(
 						`初始化管理员账号成功,账号名："${WEBCONFIG.adminAccount}"，密码："${WEBCONFIG.adminPwd}"`
-					); // eslint-disable-line
+					);
+
 					process.exit(0);
 				},
 				function (err) {
 					throw new Error(
 						`初始化管理员账号 "${WEBCONFIG.adminAccount}" 失败, ${err.message}`
-					); // eslint-disable-line
+					);
+
 				}
 			);
 		})();

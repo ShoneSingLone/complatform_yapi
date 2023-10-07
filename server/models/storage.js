@@ -1,19 +1,7 @@
 const ModelBase = require("server/models/base");
 const mongoose = require("mongoose");
 
-class stroageModel extends ModelBase {
-	constructor() {
-		super();
-		let storageCol = mongoose.connection.db.collection("storage");
-		storageCol.createIndex(
-			{
-				key: 1
-			},
-			{
-				unique: true
-			}
-		);
-	}
+class ModelStroage extends ModelBase {
 
 	getName() {
 		return "storage";
@@ -70,4 +58,4 @@ class stroageModel extends ModelBase {
 	}
 }
 
-module.exports = stroageModel;
+module.exports = ModelStroage;
