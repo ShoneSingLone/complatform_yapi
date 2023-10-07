@@ -1,4 +1,4 @@
-import { C as _export_sfc, E as openBlock, H as createElementBlock, ac as createBaseVNode, aY as toDisplayString } from "./index.js";
+import { H as _export_sfc, I as openBlock, J as createElementBlock, ae as createBaseVNode, a_ as toDisplayString } from "./index.js";
 const _sfc_main = {
   props: ["song", "loading"],
   setup() {
@@ -21,7 +21,7 @@ const _hoisted_2 = { class: "title" };
 const _hoisted_3 = { class: "singer" };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
-    class: "PrivateMobileSongItem MobileSongItem elevation-1 flex vertical width100",
+    class: "PrivateMobileSongItem MobileSongItem flex vertical width100",
     loading: $props.loading
   }, [
     createBaseVNode("div", _hoisted_2, toDisplayString($props.song.title), 1),

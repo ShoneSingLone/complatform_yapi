@@ -152,7 +152,6 @@ module.exports = {
 					let AllMusic = require("server/controllers/AutowareControllerResource/AllMusic");
 					const record = AllMusic[id];
 
-
 					const total = record?.size;
 					if (!record || !total) {
 						ctx.body = xU.resReturn(
@@ -163,7 +162,10 @@ module.exports = {
 						return;
 					}
 
-					const resourcePath = path.resolve(WEBCONFIG.RESOURCE_ASSETS_REMOTE, record.url);
+					const resourcePath = path.resolve(
+						WEBCONFIG.RESOURCE_ASSETS_REMOTE,
+						record.url
+					);
 
 					try {
 						if (headers.range) {

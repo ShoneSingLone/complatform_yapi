@@ -2,7 +2,6 @@ const ModelBase = require("server/models/base");
 const mongoose = require("mongoose");
 
 class ModelStroage extends ModelBase {
-
 	getName() {
 		return "storage";
 	}

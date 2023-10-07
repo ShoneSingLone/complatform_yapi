@@ -155,7 +155,6 @@
 					throw new Error(
 						`初始化管理员账号 "${WEBCONFIG.adminAccount}" 失败, ${err.message}`
 					);
-
 				}
 			);
 		})();

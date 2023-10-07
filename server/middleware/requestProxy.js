@@ -158,11 +158,19 @@ exports.getResponseThroghProxy = function ({ ctx, path, host, port }) {
 
 			/* https */
 			if (httpRequestOptions.protocol === "https:") {
-				return https.request(path, { method, headers, rejectUnauthorized: false }, handleResponse);
+				return https.request(
+					path,
+					{ method, headers, rejectUnauthorized: false },
+					handleResponse
+				);
 			}
 
 			/* http */
-			return http.request(httpRequestOptions, { method, headers }, handleResponse);
+			return http.request(
+				httpRequestOptions,
+				{ method, headers },
+				handleResponse
+			);
 		}
 	});
 };
