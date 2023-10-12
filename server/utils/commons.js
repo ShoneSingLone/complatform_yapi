@@ -788,7 +788,7 @@ function createAction(
 				}
 			}
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 40011, "服务器出错...");
+			ctx.body = xU.resReturn(null, 40012, err.message);
 			xU.applog.error(err);
 		}
 	});

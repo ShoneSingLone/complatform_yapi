@@ -499,10 +499,12 @@ const middlewareMockServer = () => async (ctx, next) => {
 			ctx.status = context.httpCode;
 			let responseByMock = {};
 			let msg = "ok";
-
+			let A_TIPS = `由yAPI MockJson 模拟数据`;
 			try {
-				if (typeof context.mockJson === "string") {
-					responseByMock = JSON.parse(context.mockJson);
+				/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
+				if (interfaceData.res_body_type === "backup") {
+					responseByMock = JSON.parse(interfaceData.resBackupJson);
+					A_TIPS = `使用备份的JSON数据`;
 				} else if (_.isPlainObject(context.mockJson)) {
 					responseByMock = context.mockJson;
 				}
@@ -511,7 +513,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			}
 			ctx.body = {
 				A_NOTICE: {
-					A_TIPS: `由yAPI MockJson 模拟数据`,
+					A_TIPS,
 					msg
 				},
 				...responseByMock

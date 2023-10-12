@@ -88,9 +88,10 @@ class interfaceModel extends ModelBase {
 			req_body_other: String,
 			res_body_type: {
 				type: String,
-				enum: ["json", "text", "xml", "raw", "json-schema"]
+				enum: ["json", "text", "xml", "raw", "json-schema", "backup"]
 			},
 			res_body: String,
+			resBackupJson: String,
 			res_body_is_json_schema: { type: Boolean, default: false },
 			custom_field_value: String,
 			field2: String,
@@ -147,7 +148,7 @@ class interfaceModel extends ModelBase {
 	getByPath(project_id, path, method, select) {
 		select =
 			select ||
-			"_id isProxy witchEnv title uid path method project_id catid edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
+			"_id isProxy witchEnv title uid path method project_id catid edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
 		return this.model
 			.find({
 				project_id: project_id,
@@ -318,7 +319,7 @@ class interfaceModel extends ModelBase {
 				custom_field_value: value
 			})
 			.select(
-				"title uid path method edit_uid status desc add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type custom_field_value"
+				"title uid path method edit_uid status desc add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value"
 			)
 			.exec();
 	}

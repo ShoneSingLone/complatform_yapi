@@ -125,6 +125,7 @@ class ControllerInterface extends ControllerBase {
 			req_body_other: "string",
 			res_body_type: "string",
 			res_body: "string",
+			resBackupJson: "string",
 			custom_field_value: "string",
 			api_opened: "boolean",
 			req_body_is_json_schema: "string",
@@ -584,7 +585,7 @@ class ControllerInterface extends ControllerBase {
 	async downloadCrx(ctx) {
 		let filename = "crossRequest.zip";
 		let dataBuffer = xU.fs.readFileSync(
-			path.join(APP_ROOT_DIR, "static/attachment/cross-request.zip")
+			path.join(xU.var.APP_ROOT_DIR, "static/attachment/cross-request.zip")
 		);
 		ctx.set("Content-disposition", "attachment; filename=" + filename);
 		ctx.set("Content-Type", "application/zip");
@@ -830,14 +831,14 @@ class ControllerInterface extends ControllerBase {
 			let diffView = showDiffMsg(jsondiffpatch, formattersHtml, logData);
 			let annotatedCss = fs.readFileSync(
 				path.resolve(
-					APP_ROOT_DIR,
+					xU.var.APP_ROOT_DIR,
 					"node_modules/jsondiffpatch/dist/formatters-styles/annotated.css"
 				),
 				"utf8"
 			);
 			let htmlCss = fs.readFileSync(
 				path.resolve(
-					APP_ROOT_DIR,
+					xU.var.APP_ROOT_DIR,
 					"node_modules/jsondiffpatch/dist/formatters-styles/html.css"
 				),
 				"utf8"
