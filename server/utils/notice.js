@@ -22,12 +22,12 @@ const noticeObj = {
 xU.emitHook("addNotice", noticeObj);
 
 xU.sendNotice = async function (projectId, data) {
-	const modelProject = require("../models/project");
+	const ModelProject = require("../models/project");
 	const { ModelUser } = require("../models/user");
-	const followModel = require("../models/follow");
-	const followInst = xU.orm(followModel);
+	const ModelFollow = require("../models/follow");
+	const followInst = xU.orm(ModelFollow);
 	const userInst = xU.orm(ModelUser);
-	const projectInst = xU.orm(modelProject);
+	const projectInst = xU.orm(ModelProject);
 	const list = await followInst.listByProjectId(projectId);
 	const starUsers = list.map(item => item.uid);
 	const projectList = await projectInst.get(projectId);

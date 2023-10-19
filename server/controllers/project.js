@@ -1,15 +1,15 @@
-const modelProject = require("../models/project");
+const ModelProject = require("../models/project");
 
 const _ = require("lodash");
 const ControllerBase = require("./base");
-const interfaceModel = require("../models/interface");
+const { ModelInterface } = require("../models/interface");
 const interfaceColModel = require("../models/interfaceCol");
-const interfaceCaseModel = require("../models/interfaceCase");
-const interfaceCatModel = require("../models/interfaceCat");
+const ModelInterfaceCase = require("../models/interfaceCase");
+const ModelInterfaceCat = require("../models/interfaceCat");
 const ModelGroup = require("../models/group");
 const { ModelUser } = require("../models/user");
 const modelLog = require("../models/log");
-const followModel = require("../models/follow");
+const ModelFollow = require("../models/follow");
 const tokenModel = require("../models/token");
 const { getToken } = require("../utils/token");
 const sha = require("sha.js");
@@ -18,12 +18,12 @@ const axios = require("axios").default;
 class projectController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.orm(modelProject);
-		this.ModelGroup = xU.orm(ModelGroup);
+		this.model = xU.orm(ModelProject);
+		this.modelGroup = xU.orm(ModelGroup);
 		this.modelLog = xU.orm(modelLog);
-		this.followModel = xU.orm(followModel);
+		this.modelFollow = xU.orm(ModelFollow);
 		this.tokenModel = xU.orm(tokenModel);
-		this.interfaceModel = xU.orm(interfaceModel);
+		this.modelInterface = xU.orm(ModelInterface);
 
 		const id = "number";
 		const member_uid = ["number"];
@@ -158,7 +158,7 @@ class projectController extends ControllerBase {
 			if (!name) {
 				return (ctx.body = xU.resReturn(null, 401, "项目名不能为空"));
 			}
-			let checkRepeat = await this.Model.checkNameRepeat(name, group_id);
+			let checkRepeat = await this.model.checkNameRepeat(name, group_id);
 
 			if (checkRepeat > 0) {
 				return (ctx.body = xU.resReturn(null, 401, "已存在的项目名"));
@@ -192,7 +192,7 @@ class projectController extends ControllerBase {
 			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
 		}
 
-		let checkRepeat = await this.Model.checkNameRepeat(
+		let checkRepeat = await this.model.checkNameRepeat(
 			params.name,
 			params.group_id
 		);
@@ -251,9 +251,9 @@ data:data||{}
 			requestCode: requestCode.toString()
 		};
 
-		let result = await this.Model.save(data);
+		let result = await this.model.save(data);
 		let colInst = xU.orm(interfaceColModel);
-		let catInst = xU.orm(interfaceCatModel);
+		let catInst = xU.orm(ModelInterfaceCat);
 		if (result._id) {
 			await colInst.save({
 				name: "公共测试集",
@@ -276,7 +276,7 @@ data:data||{}
 		// 将项目添加者变成项目组长,除admin以外
 		if (this.getRole() !== "admin") {
 			let userdata = await xU.getUserdata(uid, "owner");
-			await this.Model.addMember(result._id, [userdata]);
+			await this.model.addMember(result._id, [userdata]);
 		}
 		let username = this.getUsername();
 		xU.saveLog({
@@ -328,9 +328,9 @@ data:data||{}
 			});
 
 			delete data._id;
-			let result = await this.Model.save(data);
+			let result = await this.model.save(data);
 			let colInst = xU.orm(interfaceColModel);
-			let catInst = xU.orm(interfaceCatModel);
+			let catInst = xU.orm(ModelInterfaceCat);
 
 			// 增加集合
 			if (result._id) {
@@ -358,7 +358,7 @@ data:data||{}
 					let catResult = await catInst.save(catDate);
 
 					// 获取每个集合中的interface
-					let interfaceData = await this.interfaceModel.listByInterStatus(
+					let interfaceData = await this.modelInterface.listByInterStatus(
 						item._id
 					);
 
@@ -374,25 +374,25 @@ data:data||{}
 						});
 						delete data._id;
 
-						await this.interfaceModel.save(data);
+						await this.modelInterface.save(data);
 					}
 				}
 			}
 
 			// 增加member
-			let copyProject = await this.Model.get(copyId);
+			let copyProject = await this.model.get(copyId);
 			let copyProjectMembers = copyProject.members;
 
 			let uid = this.getUid();
 			// 将项目添加者变成项目组长,除admin以外
 			if (this.getRole() !== "admin") {
 				let userdata = await xU.getUserdata(uid, "owner");
-				let check = await this.Model.checkMemberRepeat(copyId, uid);
+				let check = await this.model.checkMemberRepeat(copyId, uid);
 				if (check === 0) {
 					copyProjectMembers.push(userdata);
 				}
 			}
-			await this.Model.addMember(result._id, copyProjectMembers);
+			await this.model.addMember(result._id, copyProjectMembers);
 
 			// 在每个测试结合下添加interface
 
@@ -436,7 +436,7 @@ data:data||{}
 		let no_members = [];
 		for (let i = 0, len = params.member_uids.length; i < len; i++) {
 			let id = params.member_uids[i];
-			let check = await this.Model.checkMemberRepeat(params.id, id);
+			let check = await this.model.checkMemberRepeat(params.id, id);
 			let userdata = await xU.getUserdata(id, params.role);
 			if (check > 0) {
 				exist_members.push(userdata);
@@ -447,7 +447,7 @@ data:data||{}
 			}
 		}
 
-		let result = await this.Model.addMember(params.id, add_members);
+		let result = await this.model.addMember(params.id, add_members);
 		if (add_members.length) {
 			let members = add_members.map(item => {
 				return `<a href = "/user/profile/${item.uid}">${item.username}</a>`;
@@ -485,7 +485,7 @@ data:data||{}
 		try {
 			let params = ctx.params;
 
-			var check = await this.Model.checkMemberRepeat(
+			var check = await this.model.checkMemberRepeat(
 				params.id,
 				params.member_uid
 			);
@@ -497,7 +497,7 @@ data:data||{}
 				return (ctx.body = xU.resReturn(null, 405, "没有权限"));
 			}
 
-			let result = await this.Model.delMember(params.id, params.member_uid);
+			let result = await this.model.delMember(params.id, params.member_uid);
 			let username = this.getUsername();
 			yapi
 				.orm(ModelUser)
@@ -536,7 +536,7 @@ data:data||{}
 			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
 		}
 
-		let project = await this.Model.get(params.id);
+		let project = await this.model.get(params.id);
 		ctx.body = xU.resReturn(project.members);
 	}
 
@@ -554,7 +554,7 @@ data:data||{}
 	async get(ctx) {
 		let params = ctx.params;
 		let projectId = params.id || params.project_id; // 通过 token 访问
-		let result = await this.Model.getBaseInfo(projectId);
+		let result = await this.model.getBaseInfo(projectId);
 
 		if (!result) {
 			return (ctx.body = xU.resReturn(null, 400, "不存在的项目"));
@@ -565,7 +565,7 @@ data:data||{}
 			}
 		}
 		result = result.toObject();
-		let catInst = xU.orm(interfaceCatModel);
+		let catInst = xU.orm(ModelInterfaceCat);
 		let cat = await catInst.list(params.id);
 		result.cat = cat;
 		if (result.env.length === 0) {
@@ -592,19 +592,19 @@ data:data||{}
 		let group_id = ctx.params.group_id,
 			project_list = [];
 
-		let groupData = await this.ModelGroup.get(group_id);
+		let groupData = await this.modelGroup.get(group_id);
 		let isPrivateGroup = false;
 		if (groupData.type === "private" && this.getUid() === groupData.uid) {
 			isPrivateGroup = true;
 		}
 		let auth = await this.checkAuth(group_id, "group", "view");
-		let result = await this.Model.list(group_id);
-		let follow = await this.followModel.list(this.getUid());
+		let result = await this.model.list(group_id);
+		let follow = await this.modelFollow.list(this.getUid());
 		if (isPrivateGroup === false) {
 			for (let index = 0, item, r = 1; index < result.length; index++) {
 				item = result[index].toObject();
 				if (item.project_type === "private" && auth === false) {
-					r = await this.Model.checkMemberRepeat(item._id, this.getUid());
+					r = await this.model.checkMemberRepeat(item._id, this.getUid());
 					if (r === 0) {
 						continue;
 					}
@@ -655,15 +655,15 @@ data:data||{}
 			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
 		}
 
-		let interfaceInst = xU.orm(interfaceModel);
+		let interfaceInst = xU.orm(ModelInterface);
 		let interfaceColInst = xU.orm(interfaceColModel);
-		let interfaceCaseInst = xU.orm(interfaceCaseModel);
+		let interfaceCaseInst = xU.orm(ModelInterfaceCase);
 		await interfaceInst.delByProjectId(id);
 		await interfaceCaseInst.delByProjectId(id);
 		await interfaceColInst.delByProjectId(id);
-		await this.followModel.delByProjectId(id);
+		await this.modelFollow.delByProjectId(id);
 		xU.emitHook("project_del", id).then();
-		let result = await this.Model.del(id);
+		let result = await this.model.del(id);
 		ctx.body = xU.resReturn(result);
 	}
 
@@ -681,7 +681,7 @@ data:data||{}
 	 */
 	async changeMemberRole(ctx) {
 		let params = ctx.request.body;
-		let projectInst = xU.orm(modelProject);
+		let projectInst = xU.orm(ModelProject);
 
 		var check = await projectInst.checkMemberRepeat(
 			params.id,
@@ -741,7 +741,7 @@ data:data||{}
 	async changeMemberEmailNotice(ctx) {
 		try {
 			let params = ctx.request.body;
-			let projectInst = xU.orm(modelProject);
+			let projectInst = xU.orm(ModelProject);
 			var check = await projectInst.checkMemberRepeat(
 				params.id,
 				params.member_uid
@@ -785,13 +785,13 @@ data:data||{}
 			return (ctx.body = xU.resReturn(null, 405, "项目id不能为空"));
 		}
 		try {
-			let result = await this.Model.up(id, data);
+			let result = await this.model.up(id, data);
 			ctx.body = xU.resReturn(result);
 		} catch (e) {
 			ctx.body = xU.resReturn(null, 402, e.message);
 		}
 		try {
-			this.followModel.updateById(this.getUid(), id, data).then(() => {
+			this.modelFollow.updateById(this.getUid(), id, data).then(() => {
 				let username = this.getUsername();
 				xU.saveLog({
 					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 修改了项目图标、颜色`,
@@ -836,7 +836,7 @@ data:data||{}
 				return (ctx.body = xU.resReturn(null, 405, "env参数格式有误"));
 			}
 
-			let projectData = await this.Model.get(id);
+			let projectData = await this.model.get(id);
 			let data = {
 				up_time: xU.time()
 			};
@@ -846,7 +846,7 @@ data:data||{}
 			if (isRepeat) {
 				return (ctx.body = xU.resReturn(null, 405, "环境变量名重复"));
 			}
-			let result = await this.Model.up(id, data);
+			let result = await this.model.up(id, data);
 			let username = this.getUsername();
 			xU.saveLog({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
@@ -892,13 +892,13 @@ data:data||{}
 				return (ctx.body = xU.resReturn(null, 405, "tag参数格式有误"));
 			}
 
-			let projectData = await this.Model.get(id);
+			let projectData = await this.model.get(id);
 			let data = {
 				up_time: xU.time()
 			};
 			data.tag = params.tag;
 
-			let result = await this.Model.up(id, data);
+			let result = await this.model.up(id, data);
 			let username = this.getUsername();
 			xU.saveLog({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
@@ -940,7 +940,7 @@ data:data||{}
 			//   return (ctx.body = xU.resReturn(null, 405, '没有权限'));
 			// }
 
-			let env = await this.Model.getByEnv(project_id);
+			let env = await this.model.getByEnv(project_id);
 
 			ctx.body = xU.resReturn(env);
 		} catch (e) {
@@ -1038,9 +1038,9 @@ data:data||{}
 			return (ctx.body = xU.resReturn(void 0, 400, "Bad query."));
 		}
 
-		let projectList = await this.Model.search(q);
-		let groupList = await this.ModelGroup.search(q);
-		let interfaceList = await this.interfaceModel.search(q);
+		let projectList = await this.model.search(q);
+		let groupList = await this.modelGroup.search(q);
+		let interfaceList = await this.modelInterface.search(q);
 
 		let projectRules = [
 			"_id",

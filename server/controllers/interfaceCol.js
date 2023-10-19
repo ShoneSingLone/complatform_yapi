@@ -1,7 +1,7 @@
 const interfaceColModel = require("../models/interfaceCol");
-const interfaceCaseModel = require("../models/interfaceCase");
-const interfaceModel = require("../models/interface");
-const modelProject = require("../models/project");
+const ModelInterfaceCase = require("../models/interfaceCase");
+const { ModelInterface } = require("../models/interface");
+const ModelProject = require("../models/project");
 const ControllerBase = require("./base");
 
 const _ = require("lodash");
@@ -10,9 +10,9 @@ class interfaceColController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.colModel = xU.orm(interfaceColModel);
-		this.caseModel = xU.orm(interfaceCaseModel);
-		this.interfaceModel = xU.orm(interfaceModel);
-		this.modelProject = xU.orm(modelProject);
+		this.caseModel = xU.orm(ModelInterfaceCase);
+		this.modelInterface = xU.orm(ModelInterface);
+		this.modelProject = xU.orm(ModelProject);
 	}
 
 	/**
@@ -45,7 +45,7 @@ class interfaceColController extends ControllerBase {
 
 				for (let j = 0; j < caseList.length; j++) {
 					let item = caseList[j].toObject();
-					let interfaceData = await this.interfaceModel.getBaseinfo(
+					let interfaceData = await this.modelInterface.getBaseinfo(
 						item.interface_id
 					);
 					item.path = interfaceData.path;
@@ -247,7 +247,7 @@ class interfaceColController extends ControllerBase {
 					query,
 					bodyParams,
 					pathParams;
-				let data = await this.interfaceModel.get(result.interface_id);
+				let data = await this.modelInterface.get(result.interface_id);
 				if (!data) {
 					await this.caseModel.del(result._id);
 					continue;
@@ -405,7 +405,7 @@ class interfaceColController extends ControllerBase {
 			};
 
 			for (let i = 0; i < params.interface_list.length; i++) {
-				let interfaceData = await this.interfaceModel.get(
+				let interfaceData = await this.modelInterface.get(
 					params.interface_list[i]
 				);
 				data.interface_id = params.interface_list[i];
@@ -650,7 +650,7 @@ class interfaceColController extends ControllerBase {
 				return (ctx.body = xU.resReturn(null, 400, "不存在的case"));
 			}
 			result = result.toObject();
-			let data = await this.interfaceModel.get(result.interface_id);
+			let data = await this.modelInterface.get(result.interface_id);
 			if (!data) {
 				return (ctx.body = xU.resReturn(
 					null,

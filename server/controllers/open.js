@@ -1,9 +1,9 @@
-const modelProject = require("../models/project");
+const ModelProject = require("../models/project");
 const interfaceColModel = require("../models/interfaceCol");
-const interfaceCaseModel = require("../models/interfaceCase");
-const interfaceModel = require("../models/interface");
-const interfaceCatModel = require("../models/interfaceCat");
-const followModel = require("../models/follow");
+const ModelInterfaceCase = require("../models/interfaceCase");
+const { ModelInterface } = require("../models/interface");
+const ModelInterfaceCat = require("../models/interfaceCat");
+const ModelFollow = require("../models/follow");
 const { ModelUser } = require("../models/user");
 
 const ControllerBase = require("./base");
@@ -31,13 +31,13 @@ xU.emitHook("import_data", importDataModule);
 class openController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelProject = xU.orm(modelProject);
+		this.modelProject = xU.orm(ModelProject);
 		this.interfaceColModel = xU.orm(interfaceColModel);
-		this.interfaceCaseModel = xU.orm(interfaceCaseModel);
-		this.interfaceModel = xU.orm(interfaceModel);
-		this.interfaceCatModel = xU.orm(interfaceCatModel);
-		this.followModel = xU.orm(followModel);
-		this.ModelUser = xU.orm(ModelUser);
+		this.modelInterfaceCase = xU.orm(ModelInterfaceCase);
+		this.modelInterface = xU.orm(ModelInterface);
+		this.modelInterfaceCat = xU.orm(ModelInterfaceCat);
+		this.modelFollow = xU.orm(ModelFollow);
+		this.modelUser = xU.orm(ModelUser);
 		this.handleValue = this.handleValue.bind(this);
 		this.schemaMap = {
 			runAutoTest: {
@@ -129,13 +129,13 @@ class openController extends ControllerBase {
 			return (ctx.body = xU.resReturn(null, 40022, "json 格式有误:" + e));
 		}
 
-		let menuList = await this.interfaceCatModel.list(project_id);
+		let menuList = await this.modelInterfaceCat.list(project_id);
 		/**
 		 * 防止分类被都被删除时取不到 selectCatid
 		 * 如果没有分类,增加一个默认分类
 		 */
 		if (menuList.length === 0) {
-			const catInst = xU.orm(interfaceCatModel);
+			const catInst = xU.orm(ModelInterfaceCat);
 			const menu = await catInst.save({
 				name: "默认分类",
 				project_id: project_id,

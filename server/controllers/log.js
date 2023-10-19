@@ -2,16 +2,16 @@ const modelLog = require("../models/log");
 
 const ControllerBase = require("./base");
 const ModelGroup = require("../models/group");
-const modelProject = require("../models/project");
-const interfaceModel = require("../models/interface");
+const ModelProject = require("../models/project");
+const { ModelInterface } = require("../models/interface");
 
 class logController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.orm(modelLog);
-		this.ModelGroup = xU.orm(ModelGroup);
-		this.modelProject = xU.orm(modelProject);
-		this.interfaceModel = xU.orm(interfaceModel);
+		this.model = xU.orm(modelLog);
+		this.modelGroup = xU.orm(ModelGroup);
+		this.modelProject = xU.orm(ModelProject);
+		this.modelInterface = xU.orm(ModelInterface);
 		this.schemaMap = {
 			listByUpdate: {
 				"*type": "string",
@@ -60,7 +60,7 @@ class logController extends ControllerBase {
 					projectDatas[projectList[i]._id] = projectList[i];
 					projectIds[i] = projectList[i]._id;
 				}
-				let projectLogList = await this.Model.listWithPagingByGroup(
+				let projectLogList = await this.model.listWithPagingByGroup(
 					typeid,
 					projectIds,
 					page,
@@ -76,20 +76,20 @@ class logController extends ControllerBase {
 					}
 					projectLogList[index] = item;
 				});
-				let total = await this.Model.listCountByGroup(typeid, projectIds);
+				let total = await this.model.listCountByGroup(typeid, projectIds);
 				ctx.body = xU.resReturn({
 					list: projectLogList,
 					total
 				});
 			} else if (type === "project") {
-				let result = await this.Model.listWithPaging(
+				let result = await this.model.listWithPaging(
 					typeid,
 					type,
 					page,
 					limit,
 					selectValue
 				);
-				let count = await this.Model.listCount(typeid, type, selectValue);
+				let count = await this.model.listCount(typeid, type, selectValue);
 
 				ctx.body = xU.resReturn({
 					total: Math.ceil(count / limit),
@@ -131,7 +131,7 @@ class logController extends ControllerBase {
 							? api.path.substr(basePath.length)
 							: api.path;
 				}
-				let interfaceIdList = await this.interfaceModel.getByPath(
+				let interfaceIdList = await this.modelInterface.getByPath(
 					typeid,
 					api.path,
 					api.method,
@@ -141,13 +141,13 @@ class logController extends ControllerBase {
 				for (let j = 0; j < interfaceIdList.length; j++) {
 					let interfaceId = interfaceIdList[j];
 					let id = interfaceId.id;
-					let result = await this.Model.listWithCatid(typeid, type, id);
+					let result = await this.model.listWithCatid(typeid, type, id);
 
 					list = list.concat(result);
 				}
 			}
 
-			// let result = await this.Model.listWithCatid(typeid, type, catId);
+			// let result = await this.model.listWithCatid(typeid, type, catId);
 			ctx.body = xU.resReturn(list);
 		} catch (err) {
 			ctx.body = xU.resReturn(null, 402, err.message);

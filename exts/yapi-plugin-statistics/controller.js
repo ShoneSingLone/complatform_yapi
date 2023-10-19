@@ -4,7 +4,7 @@
 const ControllerBase = require("server/controllers/base");
 const ModelGroup = require("server/models/group");
 const ModelProject = require("server/models/project");
-const ModelInterface = require("server/models/interface");
+const { ModelInterface } = require("server/models/interface");
 const ModelInterfaceCase = require("server/models/interfaceCase");
 const ModelStatisMock = require("./statisMockModel");
 
@@ -18,8 +18,8 @@ class statisMockController extends ControllerBase {
 		this.modelStatisMock = xU.orm(ModelStatisMock);
 		this.modelGroup = xU.orm(ModelGroup);
 		this.modelProject = xU.orm(ModelProject);
-		this.interfaceModel = xU.orm(ModelInterface);
-		this.interfaceCaseModel = xU.orm(ModelInterfaceCase);
+		this.modelInterface = xU.orm(ModelInterface);
+		this.modelInterfaceCase = xU.orm(ModelInterfaceCase);
 	}
 
 	/**
@@ -34,9 +34,9 @@ class statisMockController extends ControllerBase {
 		try {
 			let groupCount = await this.modelGroup.getGroupListCount();
 			let projectCount = await this.modelProject.getProjectListCount();
-			let interfaceCount = await this.interfaceModel.getInterfaceListCount();
+			let interfaceCount = await this.modelInterface.getInterfaceListCount();
 			let interfaceCaseCount =
-				await this.interfaceCaseModel.getInterfaceCaseListCount();
+				await this.modelInterfaceCase.getInterfaceCaseListCount();
 
 			return (ctx.body = xU.resReturn({
 				groupCount,
@@ -148,7 +148,7 @@ class statisMockController extends ControllerBase {
 				let interfaceCount = 0;
 				for (let j = 0; j < projectData.length; j++) {
 					let project = projectData[j];
-					interfaceCount += await this.interfaceModel.listCount({
+					interfaceCount += await this.modelInterface.listCount({
 						project_id: project._id
 					});
 				}

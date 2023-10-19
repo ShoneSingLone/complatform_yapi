@@ -1,14 +1,14 @@
-const interfaceModel = require("../models/interface");
-const interfaceCatModel = require("../models/interfaceCat");
-const interfaceCaseModel = require("../models/interfaceCase");
-const followModel = require("../models/follow");
+const { ModelUser } = require("../models/user");
+const { ModelInterface } = require("../models/interface");
+const ModelInterfaceCat = require("../models/interfaceCat");
+const ModelInterfaceCase = require("../models/interfaceCase");
+const ModelFollow = require("../models/follow");
 const ModelGroup = require("../models/group");
+const ModelProject = require("../models/project");
 const _ = require("lodash");
 const url = require("url");
 const ControllerBase = require("./base");
 
-const { ModelUser } = require("../models/user");
-const modelProject = require("../models/project");
 const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
 const showDiffMsg = require("../../common/diff-view");
@@ -67,13 +67,13 @@ function handleHeaders(values) {
 class ControllerInterface extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.orm(interfaceModel);
-		this.catModel = xU.orm(interfaceCatModel);
-		this.modelProject = xU.orm(modelProject);
-		this.caseModel = xU.orm(interfaceCaseModel);
-		this.followModel = xU.orm(followModel);
-		this.ModelUser = xU.orm(ModelUser);
-		this.ModelGroup = xU.orm(ModelGroup);
+		this.model = xU.orm(ModelInterface);
+		this.catModel = xU.orm(ModelInterfaceCat);
+		this.modelProject = xU.orm(ModelProject);
+		this.caseModel = xU.orm(ModelInterfaceCase);
+		this.modelFollow = xU.orm(ModelFollow);
+		this.modelUser = xU.orm(ModelUser);
+		this.modelGroup = xU.orm(ModelGroup);
 
 		const minLengthStringField = {
 			type: "string",
@@ -250,7 +250,7 @@ class ControllerInterface extends ControllerBase {
 			});
 		});
 
-		let checkRepeat = await this.Model.checkRepeat(
+		let checkRepeat = await this.model.checkRepeat(
 			params.project_id,
 			params.path,
 			params.method
@@ -295,7 +295,7 @@ class ControllerInterface extends ControllerBase {
 			}
 		}
 
-		let result = await this.Model.save(data);
+		let result = await this.model.save(data);
 		xU.emitHook("interface_add", result).then();
 		this.catModel.get(params.catid).then(cate => {
 			let username = this.getUsername();
@@ -373,7 +373,7 @@ class ControllerInterface extends ControllerBase {
 			));
 		}
 
-		let result = await this.Model.getByPath(
+		let result = await this.model.getByPath(
 			params.project_id,
 			params.path,
 			params.method,
@@ -485,7 +485,7 @@ class ControllerInterface extends ControllerBase {
 		}
 
 		try {
-			let result = await this.Model.get(params.id);
+			let result = await this.model.get(params.id);
 			if (this.$tokenAuth) {
 				if (params.project_id !== result.project_id) {
 					ctx.body = xU.resReturn(null, 400, "token有误");
@@ -496,7 +496,7 @@ class ControllerInterface extends ControllerBase {
 			if (!result) {
 				return (ctx.body = xU.resReturn(null, 490, "不存在的"));
 			}
-			let userinfo = await this.ModelUser.findById(result.uid);
+			let userinfo = await this.modelUser.findById(result.uid);
 			let project = await this.modelProject.getBaseInfo(result.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
@@ -511,74 +511,6 @@ class ControllerInterface extends ControllerBase {
 			ctx.body = xU.resReturn(result);
 		} catch (e) {
 			ctx.body = xU.resReturn(null, 402, e.message);
-		}
-	}
-
-	/**
-	 * 接口列表
-	 * @interface /interface/list
-	 * @method GET
-	 * @category interface
-	 * @foldnumber 10
-	 * @param {Number}   project_id 项目id，不能为空
-	 * @param {Number}   page 当前页
-	 * @param {Number}   limit 每一页限制条数
-	 * @returns {Object}
-	 * @example ./api/interface/list.json
-	 */
-	async list(ctx) {
-		let project_id = ctx.params.project_id;
-		let page = ctx.request.query.page || 1,
-			limit = ctx.request.query.limit || 10;
-		let status = ctx.request.query.status,
-			tag = ctx.request.query.tag;
-		let project = await this.modelProject.getBaseInfo(project_id);
-		if (!project) {
-			return (ctx.body = xU.resReturn(null, 407, "不存在的项目"));
-		}
-		if (project.project_type === "private") {
-			if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-				return (ctx.body = xU.resReturn(null, 406, "没有权限"));
-			}
-		}
-		if (!project_id) {
-			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
-		}
-
-		try {
-			let result, count;
-			if (limit === "all") {
-				result = await this.Model.list(project_id);
-				count = await this.Model.listCount({ project_id });
-			} else {
-				let option = { project_id };
-				if (status) {
-					if (Array.isArray(status)) {
-						option.status = { $in: status };
-					} else {
-						option.status = status;
-					}
-				}
-				if (tag) {
-					if (Array.isArray(tag)) {
-						option.tag = { $in: tag };
-					} else {
-						option.tag = tag;
-					}
-				}
-
-				result = await this.Model.listByOptionWithPage(option, page, limit);
-				count = await this.Model.listCount(option);
-			}
-
-			ctx.body = xU.resReturn({
-				count: count,
-				total: Math.ceil(count / limit),
-				list: result
-			});
-			xU.emitHook("interface_list", result).then();
-		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
 		}
 	}
 
@@ -628,9 +560,9 @@ class ControllerInterface extends ControllerBase {
 				}
 			}
 
-			let result = await this.Model.listByOptionWithPage(option, page, limit);
+			let result = await this.model.listByOptionWithPage(option, page, limit);
 
-			let count = await this.Model.listCount(option);
+			let count = await this.model.listCount(option);
 
 			ctx.body = xU.resReturn({
 				count: count,
@@ -663,7 +595,7 @@ class ControllerInterface extends ControllerBase {
 				newResult = [];
 			for (let i = 0, item, list; i < result.length; i++) {
 				item = result[i].toObject();
-				list = await this.Model.listByCatid(item._id);
+				list = await this.model.listByCatid(item._id);
 				for (let j = 0; j < list.length; j++) {
 					list[j] = list[j].toObject();
 				}
@@ -719,7 +651,7 @@ class ControllerInterface extends ControllerBase {
 
 		handleHeaders(params);
 
-		let interfaceData = await this.Model.get(id);
+		let interfaceData = await this.model.get(id);
 		if (!interfaceData) {
 			return (ctx.body = xU.resReturn(null, 400, "不存在的接口"));
 		}
@@ -769,7 +701,7 @@ class ControllerInterface extends ControllerBase {
 			(params.path !== interfaceData.path ||
 				params.method !== interfaceData.method)
 		) {
-			let checkRepeat = await this.Model.checkRepeat(
+			let checkRepeat = await this.model.checkRepeat(
 				interfaceData.project_id,
 				params.path,
 				params.method
@@ -791,9 +723,9 @@ class ControllerInterface extends ControllerBase {
 				data.req_params = [];
 			}
 		}
-		let result = await this.Model.up(id, data);
+		let result = await this.model.up(id, data);
 		let username = this.getUsername();
-		let CurrentInterfaceData = await this.Model.get(id);
+		let CurrentInterfaceData = await this.model.get(id);
 		let logData = {
 			interface_id: id,
 			cat_id: data.catid,
@@ -910,7 +842,7 @@ class ControllerInterface extends ControllerBase {
 				return (ctx.body = xU.resReturn(null, 400, "接口id不能为空"));
 			}
 
-			let data = await this.Model.get(id);
+			let data = await this.model.get(id);
 
 			if (data.uid != this.getUid()) {
 				let auth = await this.checkAuth(data.project_id, "project", "danger");
@@ -919,8 +851,8 @@ class ControllerInterface extends ControllerBase {
 				}
 			}
 
-			// let inter = await this.Model.get(id);
-			let result = await this.Model.del(id);
+			// let inter = await this.model.get(id);
+			let result = await this.model.del(id);
 			xU.emitHook("interface_del", id).then();
 			await this.caseModel.delByInterfaceId(id);
 			let username = this.getUsername();
@@ -956,7 +888,7 @@ class ControllerInterface extends ControllerBase {
 			if (!id) {
 				return ctx.websocket.send("id 参数有误");
 			}
-			result = await this.Model.get(id);
+			result = await this.model.get(id);
 
 			if (result.edit_uid !== 0 && result.edit_uid !== this.$uid) {
 				userInst = xU.orm(ModelUser);
@@ -966,7 +898,7 @@ class ControllerInterface extends ControllerBase {
 					data: { uid: result.edit_uid, username: userinfo.username }
 				};
 			} else {
-				await this.Model.upEditUid(id, this.getUid()).then();
+				await this.model.upEditUid(id, this.getUid()).then();
 				data = {
 					errno: 0,
 					data: result
@@ -974,7 +906,7 @@ class ControllerInterface extends ControllerBase {
 			}
 			ctx.websocket.send(JSON.stringify(data));
 			ctx.websocket.on("close", () => {
-				this.Model.upEditUid(id, 0).then();
+				this.model.upEditUid(id, 0).then();
 			});
 		} catch (err) {
 			xU.applog.error(err);
@@ -1094,7 +1026,7 @@ class ControllerInterface extends ControllerBase {
 				typeid: catData.project_id
 			});
 
-			let interfaceData = await this.Model.listByCatid(id);
+			let interfaceData = await this.model.listByCatid(id);
 
 			interfaceData.forEach(async item => {
 				try {
@@ -1105,7 +1037,7 @@ class ControllerInterface extends ControllerBase {
 				}
 			});
 			await this.catModel.del(id);
-			let r = await this.Model.delByCatid(id);
+			let r = await this.model.delByCatid(id);
 			return (ctx.body = xU.resReturn(r));
 		} catch (e) {
 			xU.resReturn(null, 400, e.message);
@@ -1164,7 +1096,7 @@ class ControllerInterface extends ControllerBase {
 
 		try {
 			//  查找有customFieldName的分组（group）
-			let groups = await this.ModelGroup.getcustomFieldName(customFieldName);
+			let groups = await this.modelGroup.getcustomFieldName(customFieldName);
 			if (groups.length === 0) {
 				return (ctx.body = xU.resReturn(null, 404, "没有找到对应自定义接口"));
 			}
@@ -1177,7 +1109,7 @@ class ControllerInterface extends ControllerBase {
 				// 在每个项目（project）中查找interface下的custom_field_value
 				for (let j = 0; j < projects.length; j++) {
 					let data = {};
-					let inter = await this.Model.getcustomFieldValue(
+					let inter = await this.model.getcustomFieldValue(
 						projects[j]._id,
 						customFieldValue
 					);
@@ -1228,7 +1160,7 @@ class ControllerInterface extends ControllerBase {
 			await Promise.all(
 				params.map(item => {
 					if (item.id) {
-						return this.Model.upIndex(item.id, item.index);
+						return this.model.upIndex(item.id, item.index);
 					}
 				})
 			);
@@ -1307,7 +1239,7 @@ class ControllerInterface extends ControllerBase {
 
 			for (let i = 0, item, list; i < result.length; i++) {
 				item = result[i].toObject();
-				list = await this.Model.listByInterStatus(item._id, "open");
+				list = await this.model.listByInterStatus(item._id, "open");
 				for (let j = 0; j < list.length; j++) {
 					list[j] = list[j].toObject();
 					list[j].basepath = basepath;

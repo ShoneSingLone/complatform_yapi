@@ -1,9 +1,9 @@
 const { ModelUser } = require("../models/user");
 const ControllerBase = require("./base");
 const { ldapQuery } = require("../utils/ldap");
-const interfaceModel = require("../models/interface");
+const { ModelInterface } = require("../models/interface");
 const ModelGroup = require("../models/group");
-const modelProject = require("../models/project");
+const ModelProject = require("../models/project");
 const avatarModel = require("../models/avatar");
 const { customCookies } = require("../utils/customCookies");
 
@@ -460,7 +460,7 @@ class userController extends ControllerBase {
 			};
 			let groupInst = xU.orm(ModelGroup);
 			await groupInst.updateMember(member);
-			let projectInst = xU.orm(modelProject);
+			let projectInst = xU.orm(ModelProject);
 			await projectInst.updateMember(member);
 
 			let result = await userInst.update(id, data);
@@ -611,7 +611,7 @@ class userController extends ControllerBase {
 		let result = {};
 		try {
 			if (type === "interface") {
-				let interfaceInst = xU.orm(interfaceModel);
+				let interfaceInst = xU.orm(ModelInterface);
 				let interfaceData = await interfaceInst.get(id);
 				result.interface = interfaceData;
 				type = "project";
@@ -619,7 +619,7 @@ class userController extends ControllerBase {
 			}
 
 			if (type === "project") {
-				let projectInst = xU.orm(modelProject);
+				let projectInst = xU.orm(ModelProject);
 				let projectData = await projectInst.get(id);
 				result.project = projectData.toObject();
 				let ownerAuth = await this.checkAuth(id, "project", "danger"),

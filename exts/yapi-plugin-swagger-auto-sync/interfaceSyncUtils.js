@@ -1,6 +1,6 @@
 const schedule = require("node-schedule");
 const openController = require("server/controllers/open");
-const modelProject = require("server/models/project");
+const ModelProject = require("server/models/project");
 const syncModel = require("./syncModel");
 const tokenModel = require("server/models/token");
 
@@ -18,7 +18,7 @@ class SyncUtils {
 		this.openController = xU.orm(openController);
 		this.syncModel = xU.orm(syncModel);
 		this.tokenModel = xU.orm(tokenModel);
-		this.modelProject = xU.orm(modelProject);
+		this.modelProject = xU.orm(ModelProject);
 		this.init();
 	}
 

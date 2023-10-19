@@ -1,5 +1,5 @@
-const modelProject = require("../models/project");
-const interfaceModel = require("../models/interface");
+const ModelProject = require("../models/project");
+const { ModelInterface } = require("../models/interface");
 const mockExtra = require("../../common/mock-extra");
 const { schemaValidator } = require("../../common/utils");
 const { customCookies } = require("../utils/customCookies");
@@ -252,7 +252,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		return (ctx.body = xU.resReturn(null, 400, "projectId不能为空"));
 	}
 
-	let projectInst = xU.orm(modelProject);
+	let projectInst = xU.orm(ModelProject);
 	let project;
 	try {
 		project = await projectInst.get(projectId);
@@ -266,7 +266,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 	let interfaceData;
 	let realUrlPath;
-	let interfaceInst = xU.orm(interfaceModel);
+	let interfaceInst = xU.orm(ModelInterface);
 
 	try {
 		/* TODO:获取当前链接的对应代理地址

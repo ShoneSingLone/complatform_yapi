@@ -1,6 +1,6 @@
 const ModelBase = require("server/models/base");
 
-class interfaceModel extends ModelBase {
+class ModelInterface extends ModelBase {
 	getName() {
 		return "interface";
 	}
@@ -351,4 +351,4 @@ class interfaceModel extends ModelBase {
 	}
 }
 
-module.exports = interfaceModel;
+exports.ModelInterface = ModelInterface;

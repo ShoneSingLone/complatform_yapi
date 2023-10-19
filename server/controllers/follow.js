@@ -1,12 +1,12 @@
 const ControllerBase = require("./base");
-const followModel = require("../models/follow");
-const modelProject = require("../models/project");
+const ModelFollow = require("../models/follow");
+const ModelProject = require("../models/project");
 
 class followController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.orm(followModel);
-		this.modelProject = xU.orm(modelProject);
+		this.model = xU.orm(ModelFollow);
+		this.modelProject = xU.orm(ModelProject);
 	}
 
 	/**
@@ -32,7 +32,7 @@ class followController extends ControllerBase {
 		}
 
 		try {
-			let result = await this.Model.list(uid);
+			let result = await this.model.list(uid);
 
 			ctx.body = xU.resReturn({
 				list: result
@@ -61,7 +61,7 @@ class followController extends ControllerBase {
 			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
 		}
 
-		let checkRepeat = await this.Model.checkProjectRepeat(
+		let checkRepeat = await this.model.checkProjectRepeat(
 			uid,
 			params.projectid
 		);
@@ -71,7 +71,7 @@ class followController extends ControllerBase {
 		}
 
 		try {
-			let result = await this.Model.del(params.projectid, this.getUid());
+			let result = await this.model.del(params.projectid, this.getUid());
 			ctx.body = xU.resReturn(result);
 		} catch (e) {
 			ctx.body = xU.resReturn(null, 402, e.message);
@@ -103,7 +103,7 @@ class followController extends ControllerBase {
 			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
 		}
 
-		let checkRepeat = await this.Model.checkProjectRepeat(
+		let checkRepeat = await this.model.checkProjectRepeat(
 			uid,
 			params.projectid
 		);
@@ -121,7 +121,7 @@ class followController extends ControllerBase {
 				icon: project.icon,
 				color: project.color
 			};
-			let result = await this.Model.save(data);
+			let result = await this.model.save(data);
 			result = xU.fieldSelect(result, [
 				"_id",
 				"uid",

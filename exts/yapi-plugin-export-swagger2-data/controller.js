@@ -1,14 +1,14 @@
 const ControllerBase = require("server/controllers/base");
-const interfaceModel = require("server/models/interface");
-const modelProject = require("server/models/project");
-const interfaceCatModel = require("server/models/interfaceCat");
+const { ModelInterface } = require("server/models/interface");
+const ModelProject = require("server/models/project");
+const ModelInterfaceCat = require("server/models/interfaceCat");
 
 class exportSwaggerController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.catModel = xU.orm(interfaceCatModel);
-		this.interModel = xU.orm(interfaceModel);
-		this.modelProject = xU.orm(modelProject);
+		this.catModel = xU.orm(ModelInterfaceCat);
+		this.interModel = xU.orm(ModelInterface);
+		this.modelProject = xU.orm(ModelProject);
 	}
 
 	/*

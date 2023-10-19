@@ -1,8 +1,8 @@
 const ControllerBase = require("server/controllers/base");
-const interfaceModel = require("server/models/interface");
-const modelProject = require("server/models/project");
+const { ModelInterface } = require("server/models/interface");
+const ModelProject = require("server/models/project");
 // const modelWiki = require('../yapi-plugin-wiki/modelWiki.js');
-const interfaceCatModel = require("server/models/interfaceCat");
+const ModelInterfaceCat = require("server/models/interfaceCat");
 
 const markdownIt = require("markdown-it");
 const markdownItAnchor = require("markdown-it-anchor");
@@ -14,9 +14,9 @@ const md = require("../../common/markdown");
 class exportController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.catModel = xU.orm(interfaceCatModel);
-		this.interModel = xU.orm(interfaceModel);
-		this.modelProject = xU.orm(modelProject);
+		this.catModel = xU.orm(ModelInterfaceCat);
+		this.interModel = xU.orm(ModelInterface);
+		this.modelProject = xU.orm(ModelProject);
 	}
 
 	async handleListClass(pid, status) {

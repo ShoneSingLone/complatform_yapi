@@ -1,4 +1,5 @@
 var cors = require("koa2-cors");
+var chalk = require("chalk");
 var _ = require("lodash");
 
 const middlewareCORS = () => {
@@ -20,7 +21,7 @@ const middlewareCORS = () => {
 					ctx.url = ctx.url.replace(/^\/0/, "");
 					return url;
 				} else {
-					console.log("🚀:", "cors fail", url, ctx.url);
+					console.log(chalk.blue.bgRed.bold(`cors fail: `), url, ctx.url);
 					return false;
 				}
 			} else {

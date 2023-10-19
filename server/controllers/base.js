@@ -1,6 +1,6 @@
-const modelProject = require("../models/project");
+const ModelProject = require("../models/project");
 const { ModelUser } = require("../models/user");
-const interfaceModel = require("../models/interface");
+const { ModelInterface } = require("../models/interface");
 const ModelGroup = require("../models/group");
 const tokenModel = require("../models/token");
 const _ = require("lodash");
@@ -41,7 +41,7 @@ class ControllerBase {
 	async init(ctx) {
 		this.$user = null;
 		this.tokenModel = xU.orm(tokenModel);
-		this.modelProject = xU.orm(modelProject);
+		this.modelProject = xU.orm(ModelProject);
 		let ignoreRouter = [
 			"/api/user/login_by_token",
 			"/api/user/login",
@@ -147,10 +147,6 @@ class ControllerBase {
 			}
 
 			const { passsalt } = currUserInfo;
-			console.log(
-				"🚀 ~ file: base.js:56 ~ ControllerBase ~ checkLogin ~ currUserInfo.passsalt:",
-				currUserInfo.passsalt
-			);
 
 			let decoded;
 			try {
@@ -250,7 +246,7 @@ class ControllerBase {
 				return "admin";
 			}
 			if (type === "interface") {
-				let interfaceInst = xU.orm(interfaceModel);
+				let interfaceInst = xU.orm(ModelInterface);
 				let interfaceData = await interfaceInst.get(id);
 				result.interfaceData = interfaceData;
 				// 项目创建者相当于 owner
@@ -262,7 +258,7 @@ class ControllerBase {
 			}
 
 			if (type === "project") {
-				let projectInst = xU.orm(modelProject);
+				let projectInst = xU.orm(ModelProject);
 				let projectData = await projectInst.get(id);
 				if (projectData.uid === this.getUid()) {
 					// 建立项目的人

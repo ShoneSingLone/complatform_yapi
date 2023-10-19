@@ -1,6 +1,6 @@
 const ControllerBase = require("server/controllers/base");
 const modelWiki = require("./modelWiki");
-const modelProject = require("server/models/project");
+const ModelProject = require("server/models/project");
 const { ModelUser } = require("server/models/user");
 const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
@@ -12,8 +12,8 @@ const showDiffMsg = require("../../common/diff-view");
 class ControllerWiki extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.Model = xU.orm(modelWiki);
-		this.modelProject = xU.orm(modelProject);
+		this.model = xU.orm(modelWiki);
+		this.modelProject = xU.orm(ModelProject);
 	}
 
 	/**
@@ -30,7 +30,7 @@ class ControllerWiki extends ControllerBase {
 			if (!project_id) {
 				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
 			}
-			let result = await this.Model.get(project_id);
+			let result = await this.model.get(project_id);
 			return (ctx.body = xU.resReturn(result));
 		} catch (err) {
 			ctx.body = xU.resReturn(null, 400, err.message);
@@ -71,7 +71,7 @@ class ControllerWiki extends ControllerBase {
 			const uid = this.getUid();
 
 			// 如果当前数据库里面没有数据
-			let result = await this.Model.get(params.project_id);
+			let result = await this.model.get(params.project_id);
 			if (!result) {
 				let data = Object.assign(params, {
 					username,
@@ -80,7 +80,7 @@ class ControllerWiki extends ControllerBase {
 					up_time: xU.time()
 				});
 
-				let res = await this.Model.save(data);
+				let res = await this.model.save(data);
 				ctx.body = xU.resReturn(res);
 			} else {
 				let data = Object.assign(params, {
@@ -88,7 +88,7 @@ class ControllerWiki extends ControllerBase {
 					uid,
 					up_time: xU.time()
 				});
-				let upRes = await this.Model.up(result._id, data);
+				let upRes = await this.model.up(result._id, data);
 				ctx.body = xU.resReturn(upRes);
 			}
 
@@ -175,7 +175,7 @@ class ControllerWiki extends ControllerBase {
 				if (!id) {
 					return ctx.websocket.send("id 参数有误");
 				}
-				result = await this.Model.get(id);
+				result = await this.model.get(id);
 				let data = await this.websocketMsgMap(message, result);
 				if (data) {
 					ctx.websocket.send(JSON.stringify(data));
@@ -200,14 +200,14 @@ class ControllerWiki extends ControllerBase {
 	// socket 开始链接
 	async startFunc(result) {
 		if (result && result.edit_uid === this.getUid()) {
-			await this.Model.upEditUid(result._id, 0);
+			await this.model.upEditUid(result._id, 0);
 		}
 	}
 
 	// socket 结束链接
 	async endFunc(result) {
 		if (result) {
-			await this.Model.upEditUid(result._id, 0);
+			await this.model.upEditUid(result._id, 0);
 		}
 	}
 
@@ -223,7 +223,7 @@ class ControllerWiki extends ControllerBase {
 			};
 		} else {
 			if (result) {
-				await this.Model.upEditUid(result._id, this.getUid());
+				await this.model.upEditUid(result._id, this.getUid());
 			}
 			data = {
 				errno: 0,

@@ -9,7 +9,7 @@ class advMockController extends ControllerBase {
 		super(ctx);
 		this.orm_adv = xU.orm(advModel);
 		this.caseModel = xU.orm(caseModel);
-		this.ModelUser = xU.orm(ModelUser);
+		this.modelUser = xU.orm(ModelUser);
 	}
 
 	async getMock(ctx) {
@@ -65,7 +65,7 @@ class advMockController extends ControllerBase {
 			}
 			let result = await this.caseModel.list(id);
 			for (let i = 0, len = result.length; i < len; i++) {
-				let userinfo = await this.ModelUser.findById(result[i].uid);
+				let userinfo = await this.modelUser.findById(result[i].uid);
 				result[i] = result[i].toObject();
 				// if (userinfo) {
 				result[i].username = userinfo.username;

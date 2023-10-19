@@ -1,11 +1,11 @@
 const ModelGroup = require("../models/group");
 
 const ControllerBase = require("./base");
-const modelProject = require("../models/project");
+const ModelProject = require("../models/project");
 const { ModelUser } = require("../models/user");
-const interfaceModel = require("../models/interface");
+const { ModelInterface } = require("../models/interface");
 const interfaceColModel = require("../models/interfaceCol");
-const interfaceCaseModel = require("../models/interfaceCase");
+const ModelInterfaceCase = require("../models/interfaceCase");
 const _ = require("lodash");
 
 const ROLE_NAME = {
@@ -387,7 +387,7 @@ class groupController extends ControllerBase {
 	 */
 	async list(ctx) {
 		var groupInst = xU.orm(ModelGroup);
-		let projectInst = xU.orm(modelProject);
+		let projectInst = xU.orm(ModelProject);
 
 		let privateGroup = await groupInst.getByPrivateUid(this.getUid());
 		let newResult = [];
@@ -470,10 +470,10 @@ class groupController extends ControllerBase {
 		}
 
 		let groupInst = xU.orm(ModelGroup);
-		let projectInst = xU.orm(modelProject);
-		let interfaceInst = xU.orm(interfaceModel);
+		let projectInst = xU.orm(ModelProject);
+		let interfaceInst = xU.orm(ModelInterface);
 		let interfaceColInst = xU.orm(interfaceColModel);
-		let interfaceCaseInst = xU.orm(interfaceCaseModel);
+		let interfaceCaseInst = xU.orm(ModelInterfaceCase);
 		let id = ctx.params.id;
 
 		let projectList = await projectInst.list(id, true);

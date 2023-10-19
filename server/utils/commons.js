@@ -1,11 +1,11 @@
 const dayjs = require("dayjs");
 const sha1 = require("sha1");
 const modelLog = require("../models/log");
-const modelProject = require("../models/project");
+const ModelProject = require("../models/project");
 const { ModelUser } = require("../models/user");
 const interfaceColModel = require("../models/interfaceCol");
-const interfaceCaseModel = require("../models/interfaceCase");
-const interfaceModel = require("../models/interface");
+const ModelInterfaceCase = require("../models/interfaceCase");
+const { ModelInterface } = require("../models/interface");
 const json5 = require("json5");
 const _ = require("lodash");
 const Ajv = require("ajv");
@@ -821,10 +821,10 @@ function handleParamsValue(params, val) {
 }
 
 async function getCaseList(id) {
-	const caseInst = orm(interfaceCaseModel);
+	const caseInst = orm(ModelInterfaceCase);
 	const colInst = orm(interfaceColModel);
-	const projectInst = orm(modelProject);
-	const interfaceInst = orm(interfaceModel);
+	const projectInst = orm(ModelProject);
+	const interfaceInst = orm(ModelInterface);
 
 	let resultList = await caseInst.list(id, "all");
 	let colData = await colInst.get(id);
@@ -910,7 +910,7 @@ async function runCaseScript(params, colId, interfaceId) {
 		}
 
 		if (colData.checkResponseSchema) {
-			const interfaceInst = orm(interfaceModel);
+			const interfaceInst = orm(ModelInterface);
 			let interfaceData = await interfaceInst.get(interfaceId);
 			if (interfaceData.res_body_is_json_schema && interfaceData.res_body) {
 				let schema = JSON.parse(interfaceData.res_body);

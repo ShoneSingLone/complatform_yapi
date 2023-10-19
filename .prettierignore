@@ -11,3 +11,6 @@ Ventose.css
 prd
 Ventose
 static
+AllMusic.js
+AllMusicClient.json
+server/plugins/pluginAutowareRoutes/swagger_assets/*
