@@ -45,6 +45,7 @@ function autowareRoute({ controller, controllerName }) {
 		return;
 	}
 	swaggerJSON.tags.push({ ...controller.tag, name: controllerName });
+	/* 各个controller definitions合并,所以除了通用的定义，命名需要加上命名空间 */
 	if (controller.definitions) {
 		swaggerJSON.definitions = _n.merge(
 			swaggerJSON.definitions,
@@ -66,13 +67,22 @@ function autowareRoute({ controller, controllerName }) {
 				tags: [controllerName],
 				consumes: ["application/json"],
 				produces: ["application/json"],
+				"responses": {
+					"200": {
+						"description": "通用成功响应，换句话说就是没有添加response",
+						"schema": {
+							"$ref": "#/definitions/ApiResponse"
+						}
+					}
+				},
 				..._n.pick(handlerInfo, [
 					"tags",
 					"summary",
 					"description",
 					"operationId",
 					"consumes",
-					"produces"
+					"produces",
+					"responses"
 				])
 			};
 
