@@ -1,11 +1,11 @@
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 
 const _ = require("lodash");
 const ControllerBase = require("./base");
 const { ModelInterface } = require("../models/interface");
 const interfaceColModel = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");
-const ModelInterfaceCat = require("../models/interfaceCat");
+const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 const ModelGroup = require("../models/group");
 const { ModelUser } = require("../models/user");
 const modelLog = require("../models/log");
@@ -253,7 +253,7 @@ data:data||{}
 
 		let result = await this.model.save(data);
 		let colInst = xU.orm(interfaceColModel);
-		let catInst = xU.orm(ModelInterfaceCat);
+		let catInst = xU.orm(ModelInterfaceCategory);
 		if (result._id) {
 			await colInst.save({
 				name: "公共测试集",
@@ -330,7 +330,7 @@ data:data||{}
 			delete data._id;
 			let result = await this.model.save(data);
 			let colInst = xU.orm(interfaceColModel);
-			let catInst = xU.orm(ModelInterfaceCat);
+			let catInst = xU.orm(ModelInterfaceCategory);
 
 			// 增加集合
 			if (result._id) {
@@ -565,7 +565,7 @@ data:data||{}
 			}
 		}
 		result = result.toObject();
-		let catInst = xU.orm(ModelInterfaceCat);
+		let catInst = xU.orm(ModelInterfaceCategory);
 		let cat = await catInst.list(params.id);
 		result.cat = cat;
 		if (result.env.length === 0) {

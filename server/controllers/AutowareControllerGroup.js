@@ -1,5 +1,5 @@
 const ModelGroup = require("server/models/group");
-const ModelProject = require("server/models/project");
+const { ModelProject } = require("server/models/project");
 
 async function getMineGroup(ctx) {
 	var groupInst = xU.orm(ModelGroup);
@@ -103,7 +103,7 @@ module.exports = {
 				description:
 					"不需要参数，获取当前登录用户能够访问的分组，个人空间，作为成员所在的分组，作为成员所在项目关联的分组",
 				request: {},
-				handler: getMineGroup,
+				handler: getMineGroup
 			}
 		}
 	}

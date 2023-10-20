@@ -2,8 +2,10 @@ const ModelBase = require("server/models/base");
 
 /**
  * 接口分类
+ * @class ModelInterfaceCategory
+ * @extends {ModelBase}
  */
-class interfaceCat extends ModelBase {
+class ModelInterfaceCategory extends ModelBase {
 	getName() {
 		return "interface_cat";
 	}
@@ -82,4 +84,4 @@ class interfaceCat extends ModelBase {
 	}
 }
 
-module.exports = interfaceCat;
+exports.ModelInterfaceCategory = ModelInterfaceCategory;

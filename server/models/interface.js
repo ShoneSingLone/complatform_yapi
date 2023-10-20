@@ -1,5 +1,11 @@
 const ModelBase = require("server/models/base");
 
+/**
+ * 接口相关
+ *
+ * @class ModelInterface
+ * @extends {ModelBase}
+ */
 class ModelInterface extends ModelBase {
 	getName() {
 		return "interface";

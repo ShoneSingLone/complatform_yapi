@@ -1,6 +1,6 @@
 const ControllerBase = require("server/controllers/base");
 const modelWiki = require("./modelWiki");
-const ModelProject = require("server/models/project");
+const { ModelProject } = require("server/models/project");
 const { ModelUser } = require("server/models/user");
 const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;

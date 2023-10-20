@@ -3,7 +3,7 @@ const ControllerBase = require("./base");
 const { ldapQuery } = require("../utils/ldap");
 const { ModelInterface } = require("../models/interface");
 const ModelGroup = require("../models/group");
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 const avatarModel = require("../models/avatar");
 const { customCookies } = require("../utils/customCookies");
 
@@ -317,8 +317,7 @@ class userController extends ControllerBase {
 			let user = await userInst.listWithPaging(page, limit);
 			let count = await userInst.listCount();
 			return (ctx.body = xU.resReturn({
-				count: count,
-				total: Math.ceil(count / limit),
+				total: count,
 				list: user
 			}));
 		} catch (e) {

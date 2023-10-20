@@ -365,11 +365,6 @@ let routerConfig = {
 			method: "get"
 		},
 		{
-			action: "listByMenu",
-			path: "list_menu",
-			method: "get"
-		},
-		{
 			action: "listByOpen",
 			path: "list_open",
 			method: "get"

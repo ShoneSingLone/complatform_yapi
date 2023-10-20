@@ -1,10 +1,10 @@
 const { ModelUser } = require("../models/user");
 const { ModelInterface } = require("../models/interface");
-const ModelInterfaceCat = require("../models/interfaceCat");
+const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const ModelFollow = require("../models/follow");
 const ModelGroup = require("../models/group");
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 const _ = require("lodash");
 const url = require("url");
 const ControllerBase = require("./base");
@@ -68,7 +68,7 @@ class ControllerInterface extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.model = xU.orm(ModelInterface);
-		this.catModel = xU.orm(ModelInterfaceCat);
+		this.modelInterfaceCategory = xU.orm(ModelInterfaceCategory);
 		this.modelProject = xU.orm(ModelProject);
 		this.caseModel = xU.orm(ModelInterfaceCase);
 		this.modelFollow = xU.orm(ModelFollow);
@@ -297,7 +297,7 @@ class ControllerInterface extends ControllerBase {
 
 		let result = await this.model.save(data);
 		xU.emitHook("interface_add", result).then();
-		this.catModel.get(params.catid).then(cate => {
+		this.modelInterfaceCategory.get(params.catid).then(cate => {
 			let username = this.getUsername();
 			let title = `<a href="/user/profile/${this.getUid()}">${username}</a> 为分类 <a href="/project/${
 				params.project_id
@@ -535,7 +535,7 @@ class ControllerInterface extends ControllerBase {
 			return (ctx.body = xU.resReturn(null, 400, "catid不能为空"));
 		}
 		try {
-			let catdata = await this.catModel.get(catid);
+			let catdata = await this.modelInterfaceCategory.get(catid);
 
 			let project = await this.modelProject.getBaseInfo(catdata.project_id);
 			if (project.project_type === "private") {
@@ -565,47 +565,11 @@ class ControllerInterface extends ControllerBase {
 			let count = await this.model.listCount(option);
 
 			ctx.body = xU.resReturn({
-				count: count,
-				total: Math.ceil(count / limit),
+				total: count,
 				list: result
 			});
 		} catch (err) {
 			ctx.body = xU.resReturn(null, 402, err.message + "1");
-		}
-	}
-
-	async listByMenu(ctx) {
-		let project_id = ctx.params.project_id;
-		if (!project_id) {
-			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
-		}
-
-		let project = await this.modelProject.getBaseInfo(project_id);
-		if (!project) {
-			return (ctx.body = xU.resReturn(null, 406, "不存在的项目"));
-		}
-		if (project.project_type === "private") {
-			if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-				return (ctx.body = xU.resReturn(null, 406, "没有权限"));
-			}
-		}
-
-		try {
-			let result = await this.catModel.list(project_id),
-				newResult = [];
-			for (let i = 0, item, list; i < result.length; i++) {
-				item = result[i].toObject();
-				list = await this.model.listByCatid(item._id);
-				for (let j = 0; j < list.length; j++) {
-					list[j] = list[j].toObject();
-				}
-
-				item.list = list;
-				newResult[i] = item;
-			}
-			ctx.body = xU.resReturn(newResult);
-		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
 		}
 	}
 
@@ -733,7 +697,7 @@ class ControllerInterface extends ControllerBase {
 			old: interfaceData.toObject()
 		};
 
-		this.catModel.get(interfaceData.catid).then(cate => {
+		this.modelInterfaceCategory.get(interfaceData.catid).then(cate => {
 			let diffView2 = showDiffMsg(jsondiffpatch, formattersHtml, logData);
 			if (diffView2.length <= 0) {
 				return; // 没有变化时，不写日志
@@ -856,7 +820,7 @@ class ControllerInterface extends ControllerBase {
 			xU.emitHook("interface_del", id).then();
 			await this.caseModel.delByInterfaceId(id);
 			let username = this.getUsername();
-			this.catModel.get(data.catid).then(cate => {
+			this.modelInterfaceCategory.get(data.catid).then(cate => {
 				xU.saveLog({
 					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 <a href="/project/${
 						cate.project_id
@@ -936,7 +900,7 @@ class ControllerInterface extends ControllerBase {
 				return (ctx.body = xU.resReturn(null, 400, "名称不能为空"));
 			}
 
-			let result = await this.catModel.save({
+			let result = await this.modelInterfaceCategory.save({
 				name: params.name,
 				project_id: params.project_id,
 				desc: params.desc,
@@ -967,14 +931,14 @@ class ControllerInterface extends ControllerBase {
 			let params = ctx.request.body;
 
 			let username = this.getUsername();
-			let cate = await this.catModel.get(params.catid);
+			let cate = await this.modelInterfaceCategory.get(params.catid);
 
 			let auth = await this.checkAuth(cate.project_id, "project", "edit");
 			if (!auth) {
 				return (ctx.body = xU.resReturn(null, 400, "没有权限"));
 			}
 
-			let result = await this.catModel.up(params.catid, {
+			let result = await this.modelInterfaceCategory.up(params.catid, {
 				name: params.name,
 				desc: params.desc,
 				up_time: xU.time()
@@ -999,7 +963,7 @@ class ControllerInterface extends ControllerBase {
 	async delCat(ctx) {
 		try {
 			let id = ctx.request.body.catid;
-			let catData = await this.catModel.get(id);
+			let catData = await this.modelInterfaceCategory.get(id);
 			if (!catData) {
 				ctx.body = xU.resReturn(null, 400, "不存在的分类");
 			}
@@ -1036,7 +1000,7 @@ class ControllerInterface extends ControllerBase {
 					xU.applog.error(e.message);
 				}
 			});
-			await this.catModel.del(id);
+			await this.modelInterfaceCategory.del(id);
 			let r = await this.model.delByCatid(id);
 			return (ctx.body = xU.resReturn(r));
 		} catch (e) {
@@ -1068,7 +1032,7 @@ class ControllerInterface extends ControllerBase {
 					return (ctx.body = xU.resReturn(null, 406, "没有权限"));
 				}
 			}
-			let res = await this.catModel.list(project_id);
+			let res = await this.modelInterfaceCategory.list(project_id);
 			return (ctx.body = xU.resReturn(res));
 		} catch (e) {
 			xU.resReturn(null, 400, e.message);
@@ -1191,7 +1155,7 @@ class ControllerInterface extends ControllerBase {
 			await Promise.all(
 				params.map(item => {
 					if (item.id) {
-						return this.catModel.upCatIndex(item.id, item.index);
+						return this.modelInterfaceCategory.upCatIndex(item.id, item.index);
 					}
 				})
 			);
@@ -1234,7 +1198,7 @@ class ControllerInterface extends ControllerBase {
 
 		let basepath = project.basepath;
 		try {
-			let result = await this.catModel.list(project_id),
+			let result = await this.modelInterfaceCategory.list(project_id),
 				newResult = [];
 
 			for (let i = 0, item, list; i < result.length; i++) {

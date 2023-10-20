@@ -1,8 +1,8 @@
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 const interfaceColModel = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const { ModelInterface } = require("../models/interface");
-const ModelInterfaceCat = require("../models/interfaceCat");
+const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 const ModelFollow = require("../models/follow");
 const { ModelUser } = require("../models/user");
 
@@ -35,7 +35,7 @@ class openController extends ControllerBase {
 		this.interfaceColModel = xU.orm(interfaceColModel);
 		this.modelInterfaceCase = xU.orm(ModelInterfaceCase);
 		this.modelInterface = xU.orm(ModelInterface);
-		this.modelInterfaceCat = xU.orm(ModelInterfaceCat);
+		this.modelInterfaceCat = xU.orm(ModelInterfaceCategory);
 		this.modelFollow = xU.orm(ModelFollow);
 		this.modelUser = xU.orm(ModelUser);
 		this.handleValue = this.handleValue.bind(this);
@@ -135,7 +135,7 @@ class openController extends ControllerBase {
 		 * 如果没有分类,增加一个默认分类
 		 */
 		if (menuList.length === 0) {
-			const catInst = xU.orm(ModelInterfaceCat);
+			const catInst = xU.orm(ModelInterfaceCategory);
 			const menu = await catInst.save({
 				name: "默认分类",
 				project_id: project_id,

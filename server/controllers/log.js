@@ -2,7 +2,7 @@ const modelLog = require("../models/log");
 
 const ControllerBase = require("./base");
 const ModelGroup = require("../models/group");
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 const { ModelInterface } = require("../models/interface");
 
 class logController extends ControllerBase {
@@ -92,7 +92,7 @@ class logController extends ControllerBase {
 				let count = await this.model.listCount(typeid, type, selectValue);
 
 				ctx.body = xU.resReturn({
-					total: Math.ceil(count / limit),
+					total: count,
 					list: result
 				});
 			}

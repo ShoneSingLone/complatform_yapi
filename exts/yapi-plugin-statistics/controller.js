@@ -3,7 +3,7 @@
  */
 const ControllerBase = require("server/controllers/base");
 const ModelGroup = require("server/models/group");
-const ModelProject = require("server/models/project");
+const { ModelProject } = require("server/models/project");
 const { ModelInterface } = require("server/models/interface");
 const ModelInterfaceCase = require("server/models/interfaceCase");
 const ModelStatisMock = require("./statisMockModel");

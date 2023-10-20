@@ -1,7 +1,7 @@
 const interfaceColModel = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const { ModelInterface } = require("../models/interface");
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 const ControllerBase = require("./base");
 
 const _ = require("lodash");

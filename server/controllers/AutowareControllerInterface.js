@@ -1,5 +1,6 @@
 const { ModelInterface } = require("server/models/interface");
-const ModelProject = require("server/models/project");
+const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
+const { ModelProject } = require("server/models/project");
 
 module.exports = {
 	definitions: {},
@@ -9,8 +10,8 @@ module.exports = {
 	paths: {
 		"/interface/list": {
 			get: {
-				summary: "接口列表",
-				description: "接口列表",
+				summary: "interface list",
+				description: "interface list",
 				request: {
 					query: {
 						project_id: {
@@ -23,7 +24,14 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
+					/**
+					 * @type ModelProject
+					 */
 					const modelProject = await xU.orm(ModelProject);
+
+					/**
+					 * @type ModelInterface
+					 */
 					const modelInterface = await xU.orm(ModelInterface);
 
 					let { project_id, page, limit, status, tag } = ctx.payload || {};
@@ -77,11 +85,77 @@ module.exports = {
 						}
 
 						ctx.body = xU.resReturn({
-							count: count,
-							total: Math.ceil(count / limit),
+							total: count,
 							list: result
 						});
 						xU.emitHook("interface_list", result).then();
+					} catch (err) {
+						ctx.body = xU.resReturn(null, 402, err.message);
+					}
+				}
+			}
+		},
+		"/interface/list_menu": {
+			get: {
+				summary: "list_menu",
+				description: "list_menu有嵌套",
+				request: {
+					query: {
+						project_id: {
+							description: "项目id，不能为空",
+							required: true,
+							type: "number"
+						}
+					}
+				},
+				async handler(ctx) {
+					/**
+					 * @type ModelProject
+					 */
+					const modelProject = await xU.orm(ModelProject);
+					/**
+					 * @type ModelInterfaceCategory
+					 */
+					const modelInterfaceCategory = await xU.orm(ModelInterfaceCategory);
+					/**
+					 * @type ModelInterface
+					 */
+					const modelInterface = await xU.orm(ModelInterface);
+
+					let { project_id } = ctx.payload;
+
+					if (!project_id) {
+						return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+					}
+
+					let project = await modelProject.getBaseInfo(project_id);
+
+					if (!project) {
+						return (ctx.body = xU.resReturn(null, 406, "不存在的项目"));
+					}
+
+					if (project.project_type === "private") {
+						if (
+							(await this.checkAuth(project._id, "project", "view")) !== true
+						) {
+							return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+						}
+					}
+
+					try {
+						let result = await modelInterfaceCategory.list(project_id),
+							newResult = [];
+						for (let i = 0, item, list; i < result.length; i++) {
+							item = result[i].toObject();
+							list = await modelInterface.listByCatid(item._id);
+							for (let j = 0; j < list.length; j++) {
+								list[j] = list[j].toObject();
+							}
+
+							item.list = list;
+							newResult[i] = item;
+						}
+						ctx.body = xU.resReturn(newResult);
 					} catch (err) {
 						ctx.body = xU.resReturn(null, 402, err.message);
 					}

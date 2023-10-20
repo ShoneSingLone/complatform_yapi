@@ -1,7 +1,7 @@
 const dayjs = require("dayjs");
 const sha1 = require("sha1");
 const modelLog = require("../models/log");
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 const { ModelUser } = require("../models/user");
 const interfaceColModel = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");

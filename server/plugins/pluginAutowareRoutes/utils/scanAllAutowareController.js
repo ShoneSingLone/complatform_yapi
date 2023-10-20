@@ -67,11 +67,11 @@ function autowareRoute({ controller, controllerName }) {
 				tags: [controllerName],
 				consumes: ["application/json"],
 				produces: ["application/json"],
-				"responses": {
-					"200": {
-						"description": "通用成功响应，换句话说就是没有添加response",
-						"schema": {
-							"$ref": "#/definitions/ApiResponse"
+				responses: {
+					200: {
+						description: "通用成功响应，换句话说就是没有添加response",
+						schema: {
+							$ref: "#/definitions/ApiResponse"
 						}
 					}
 				},

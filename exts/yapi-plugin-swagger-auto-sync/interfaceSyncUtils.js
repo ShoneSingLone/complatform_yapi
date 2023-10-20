@@ -1,6 +1,6 @@
 const schedule = require("node-schedule");
 const openController = require("server/controllers/open");
-const ModelProject = require("server/models/project");
+const { ModelProject } = require("server/models/project");
 const syncModel = require("./syncModel");
 const tokenModel = require("server/models/token");
 

@@ -1,6 +1,6 @@
 const ControllerBase = require("./base");
 const ModelFollow = require("../models/follow");
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 
 class followController extends ControllerBase {
 	constructor(ctx) {

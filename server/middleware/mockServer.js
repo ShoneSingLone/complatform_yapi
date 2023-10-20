@@ -1,4 +1,4 @@
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 const { ModelInterface } = require("../models/interface");
 const mockExtra = require("../../common/mock-extra");
 const { schemaValidator } = require("../../common/utils");

@@ -1,7 +1,7 @@
 const ModelGroup = require("../models/group");
 
 const ControllerBase = require("./base");
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 const { ModelUser } = require("../models/user");
 const { ModelInterface } = require("../models/interface");
 const interfaceColModel = require("../models/interfaceCol");

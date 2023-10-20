@@ -1,7 +1,7 @@
 const ControllerBase = require("server/controllers/base");
 
 const syncModel = require("../syncModel");
-const ModelProject = require("server/models/project");
+const { ModelProject } = require("server/models/project");
 const interfaceSyncUtils = require("../interfaceSyncUtils");
 
 class syncController extends ControllerBase {

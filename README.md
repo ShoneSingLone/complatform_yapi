@@ -20,3 +20,5 @@ db.col.update(
 	{ multi: true }
 );
 ```
+
+Ajv 接口校验 scheme 的参数

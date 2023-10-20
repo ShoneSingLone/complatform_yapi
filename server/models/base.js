@@ -12,7 +12,6 @@ function dbModel(modelName, schema) {
 /**
  * 所有的model都需要继承baseModel, 且需要 getSchema和getName方法，不然会报错
  */
-
 class ModelBase {
 	constructor() {
 		/* 约定优于配置，不要东搞西搞 */
@@ -36,13 +35,19 @@ class ModelBase {
 
 	/**
 	 * 获取collection的schema结构
+	 * @abstract
+	 * @return {string}
 	 */
 	getSchema() {
-		xU.applog.error("Model Class need getSchema function");
+		throw new Error("Model need getSchema function");
 	}
 
+	/**
+	 * @abstract
+	 * @return {string}
+	 */
 	getName() {
-		xU.applog.error("Model Class need name");
+		throw new Error("Model need name");
 	}
 }
 

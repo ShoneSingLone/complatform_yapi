@@ -1,5 +1,5 @@
 const ModelGroup = require("server/models/group");
-const ModelProject = require("server/models/project");
+const { ModelProject } = require("server/models/project");
 
 module.exports = {
 	definitions: {},

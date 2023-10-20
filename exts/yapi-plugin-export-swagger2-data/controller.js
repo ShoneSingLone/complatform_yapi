@@ -1,12 +1,12 @@
 const ControllerBase = require("server/controllers/base");
 const { ModelInterface } = require("server/models/interface");
-const ModelProject = require("server/models/project");
-const ModelInterfaceCat = require("server/models/interfaceCat");
+const { ModelProject } = require("server/models/project");
+const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 
 class exportSwaggerController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.catModel = xU.orm(ModelInterfaceCat);
+		this.modelInterfaceCategory = xU.orm(ModelInterfaceCategory);
 		this.interModel = xU.orm(ModelInterface);
 		this.modelProject = xU.orm(ModelProject);
 	}
@@ -17,7 +17,7 @@ class exportSwaggerController extends ControllerBase {
 	*/
 
 	async handleListClass(pid, status) {
-		let result = await this.catModel.list(pid),
+		let result = await this.modelInterfaceCategory.list(pid),
 			newResult = [];
 		for (let i = 0, item, list; i < result.length; i++) {
 			item = result[i].toObject();

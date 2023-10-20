@@ -1,5 +1,10 @@
 const ModelBase = require("server/models/base");
 
+/**
+ * @namespace {type} ModelProject
+ * @class ModelProject
+ * @extends {ModelBase}
+ */
 class ModelProject extends ModelBase {
 	getName() {
 		return "project";
@@ -334,4 +339,4 @@ class ModelProject extends ModelBase {
 	}
 }
 
-module.exports = ModelProject;
+exports.ModelProject = ModelProject;

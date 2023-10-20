@@ -1,8 +1,8 @@
 const ControllerBase = require("server/controllers/base");
 const { ModelInterface } = require("server/models/interface");
-const ModelProject = require("server/models/project");
+const { ModelProject } = require("server/models/project");
 // const modelWiki = require('../yapi-plugin-wiki/modelWiki.js');
-const ModelInterfaceCat = require("server/models/interfaceCat");
+const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 
 const markdownIt = require("markdown-it");
 const markdownItAnchor = require("markdown-it-anchor");
@@ -14,13 +14,13 @@ const md = require("../../common/markdown");
 class exportController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.catModel = xU.orm(ModelInterfaceCat);
+		this.modelInterfaceCategory = xU.orm(ModelInterfaceCategory);
 		this.interModel = xU.orm(ModelInterface);
 		this.modelProject = xU.orm(ModelProject);
 	}
 
 	async handleListClass(pid, status) {
-		let result = await this.catModel.list(pid),
+		let result = await this.modelInterfaceCategory.list(pid),
 			newResult = [];
 		for (let i = 0, item, list; i < result.length; i++) {
 			item = result[i].toObject();

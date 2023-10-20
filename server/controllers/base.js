@@ -1,4 +1,4 @@
-const ModelProject = require("../models/project");
+const { ModelProject } = require("server/models/project");
 const { ModelUser } = require("../models/user");
 const { ModelInterface } = require("../models/interface");
 const ModelGroup = require("../models/group");
