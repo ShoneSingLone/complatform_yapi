@@ -19,9 +19,8 @@ exports.getResponseThroghProxy = function ({ ctx, path, host, port }) {
 			filesLength;
 
 		function hanldeError(error) {
-			console.log("Error=====================>\n", error);
-			console.log(`Error===${new Date().toDateString()}======>\n\n`);
-			resolve({ headers, body: { errormsg: error.message, code: 555 } });
+			xU.applog.error(error);
+			resolve({ headers, body: { error, code: "Y-API_server_500" } });
 		}
 
 		delete ctx.request?.header.host;

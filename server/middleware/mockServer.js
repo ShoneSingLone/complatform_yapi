@@ -1,39 +1,64 @@
-const { ModelProject } = require("server/models/project");
-const { ModelInterface } = require("../models/interface");
-const mockExtra = require("../../common/mock-extra");
-const { schemaValidator } = require("../../common/utils");
-const { customCookies } = require("../utils/customCookies");
-const _ = require("lodash");
-const Mock = require("mockjs");
-const { ObjectId } = require("mongodb");
-const { getResponseThroghProxy } = require("./requestProxy");
+const { ModelProject } = require('server/models/project');
+const { ModelInterface } = require('../models/interface');
+const mockExtra = require('../../common/mock-extra');
+const { schemaValidator } = require('../../common/utils');
+const { customCookies } = require('../utils/customCookies');
+const _ = require('lodash');
+const Mock = require('mockjs');
+const { ObjectId } = require('mongodb');
+const { getResponseThroghProxy } = require('./requestProxy');
+
+/**
+ * @description 如果是成功的响应，需要备一个份
+ * @param {any} {
+ * 	ctx, modelInterface, interfaceData
+ * } 
+ */
+async function ifTheResponseIsSuccessfulACopyIsRequired({
+	ctx, modelInterface, interfaceData
+}) {
+	if (ctx.status != 200) {
+		return;
+	}
+	const data = {};
+	try {
+		if (Object.prototype.toString.call(ctx.body) === `[object Uint8Array]`) {
+			data.resBackupJson = ctx.body.toString();
+		} else if (typeof ctx.body === "object") {
+			data.resBackupJson = JSON.stringify(ctx.body);
+		}
+		await modelInterface.up(interfaceData._id, data);
+	} catch (error) {
+		xU.applog.error(error);
+	}
+}
 
 async function handleProxy(ctx, { domain, projectId }) {
-	const targetURL = ctx.originalUrl.replace(`/mock/${projectId}`, "");
+	const targetURL = ctx.originalUrl.replace(`/mock/${projectId}`, '');
 	const headers = (() => {
 		return { ...ctx.headers };
 	})();
 
 	const [path, proxyHOST, proxyPORT] = (() => {
 		let path, proxyHOST, proxyPORT;
-		if (headers["yapi-run-test"]) {
-			path = headers["yapi-run-test"];
+		if (headers['yapi-run-test']) {
+			path = headers['yapi-run-test'];
 		} else {
 			path = `${domain}${targetURL}`;
 		}
 
-		if (headers["yapi-proxy-host"]) {
-			proxyHOST = headers["yapi-proxy-host"];
+		if (headers['yapi-proxy-host']) {
+			proxyHOST = headers['yapi-proxy-host'];
 		}
 
-		if (headers["yapi-proxy-port"]) {
-			proxyPORT = headers["yapi-proxy-port"];
+		if (headers['yapi-proxy-port']) {
+			proxyPORT = headers['yapi-proxy-port'];
 		}
 
 		return [path, proxyHOST, proxyPORT];
 	})();
 
-	let body = xU.resReturn(null, 500, "代理失败");
+	let body = xU.resReturn(null, 500, '代理失败');
 	let response;
 	console.clear();
 	try {
@@ -62,7 +87,7 @@ async function handleProxy(ctx, { domain, projectId }) {
 			_.each(response.headers, (value, prop) => {
 				/* TODO: */
 				/* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
-				if (prop === "transfer-encoding") {
+				if (prop === 'transfer-encoding') {
 					return;
 				}
 				ctx.set(prop, value);
@@ -72,7 +97,7 @@ async function handleProxy(ctx, { domain, projectId }) {
 		body = xU.resReturn(null, 555, `错误来自yapi服务器： ${error.message}`);
 	}
 	ctx.body = body || {};
-	return;
+	return ctx.body;
 }
 
 /**
@@ -81,8 +106,8 @@ async function handleProxy(ctx, { domain, projectId }) {
  * @param {*} apiRule /user/:username
  */
 function matchApi(apiPath, apiRule) {
-	let apiRules = apiRule.split("/");
-	let apiPaths = apiPath.split("/");
+	let apiRules = apiRule.split('/');
+	let apiPaths = apiPath.split('/');
 	let pathParams = {
 		__weight: 0
 	};
@@ -98,21 +123,21 @@ function matchApi(apiPath, apiRule) {
 		}
 		if (
 			apiRules[i].length > 2 &&
-			apiRules[i][0] === "{" &&
-			apiRules[i][apiRules[i].length - 1] === "}"
+			apiRules[i][0] === '{' &&
+			apiRules[i][apiRules[i].length - 1] === '}'
 		) {
 			pathParams[apiRules[i].substr(1, apiRules[i].length - 2)] = apiPaths[i];
-		} else if (apiRules[i].indexOf(":") === 0) {
+		} else if (apiRules[i].indexOf(':') === 0) {
 			pathParams[apiRules[i].substr(1)] = apiPaths[i];
 		} else if (
 			apiRules[i].length > 2 &&
-			apiRules[i].indexOf("{") > -1 &&
-			apiRules[i].indexOf("}") > -1
+			apiRules[i].indexOf('{') > -1 &&
+			apiRules[i].indexOf('}') > -1
 		) {
 			let params = [];
 			apiRules[i] = apiRules[i].replace(/\{(.+?)\}/g, function (src, match) {
 				params.push(match);
-				return "([^\\/\\s]+)";
+				return '([^\\/\\s]+)';
 			});
 			apiRules[i] = new RegExp(apiRules[i]);
 			if (!apiRules[i].test(apiPaths[i])) {
@@ -136,30 +161,30 @@ function matchApi(apiPath, apiRule) {
 }
 
 function parseCookie(str) {
-	if (!str || typeof str !== "string") {
+	if (!str || typeof str !== 'string') {
 		return str;
 	}
-	if (str.split(";")[0]) {
-		let c = str.split(";")[0].split("=");
-		return { name: c[0], value: c[1] || "" };
+	if (str.split(';')[0]) {
+		let c = str.split(';')[0].split('=');
+		return { name: c[0], value: c[1] || '' };
 	}
 	return null;
 }
 
 function handleCorsRequest(ctx) {
 	let header = ctx.request.header;
-	ctx.set("Access-Control-Allow-Origin", header.origin);
+	ctx.set('Access-Control-Allow-Origin', header.origin);
 	ctx.set(
-		"Access-Control-Allow-Methods",
-		"GET, POST, PUT, DELETE, HEADER, PATCH, OPTIONS"
+		'Access-Control-Allow-Methods',
+		'GET, POST, PUT, DELETE, HEADER, PATCH, OPTIONS'
 	);
 	ctx.set(
-		"Access-Control-Allow-Headers",
-		header["access-control-request-headers"]
+		'Access-Control-Allow-Headers',
+		header['access-control-request-headers']
 	);
-	ctx.set("Access-Control-Allow-Credentials", true);
-	ctx.set("Access-Control-Max-Age", 1728000);
-	ctx.body = "ok";
+	ctx.set('Access-Control-Allow-Credentials', true);
+	ctx.set('Access-Control-Max-Age', 1728000);
+	ctx.body = 'ok';
 }
 
 // 必填字段是否填写好
@@ -169,11 +194,11 @@ function mockValidator(interfaceData, ctx) {
 		l,
 		len,
 		noRequiredArr = [];
-	let method = interfaceData.method.toUpperCase() || "GET";
+	let method = interfaceData.method.toUpperCase() || 'GET';
 	// query 判断
 	for (i = 0, l = interfaceData.req_query.length; i < l; i++) {
 		let curQuery = interfaceData.req_query[i];
-		if (curQuery && typeof curQuery === "object" && curQuery.required === "1") {
+		if (curQuery && typeof curQuery === 'object' && curQuery.required === '1') {
 			if (!ctx.query[curQuery.name]) {
 				noRequiredArr.push(curQuery.name);
 			}
@@ -182,11 +207,11 @@ function mockValidator(interfaceData, ctx) {
 	// form 表单判断
 	if (
 		xU.var.HTTP_METHOD[method].request_body &&
-		interfaceData.req_body_type === "form"
+		interfaceData.req_body_type === 'form'
 	) {
 		for (j = 0, len = interfaceData.req_body_form.length; j < len; j++) {
 			let curForm = interfaceData.req_body_form[j];
-			if (curForm && typeof curForm === "object" && curForm.required === "1") {
+			if (curForm && typeof curForm === 'object' && curForm.required === '1') {
 				if (
 					ctx.request.body[curForm.name] ||
 					(ctx.request.body.fields && ctx.request.body.fields[curForm.name]) ||
@@ -203,7 +228,7 @@ function mockValidator(interfaceData, ctx) {
 	// json schema 判断
 	if (
 		xU.var.HTTP_METHOD[method].request_body &&
-		interfaceData.req_body_type === "json" &&
+		interfaceData.req_body_type === 'json' &&
 		interfaceData.req_body_is_json_schema === true
 	) {
 		const schema = xU.json_parse(interfaceData.req_body_other);
@@ -214,12 +239,12 @@ function mockValidator(interfaceData, ctx) {
 		let message = `错误信息：`;
 		message +=
 			noRequiredArr.length > 0
-				? `缺少必须字段 ${noRequiredArr.join(",")}  `
-				: "";
+				? `缺少必须字段 ${noRequiredArr.join(',')}  `
+				: '';
 		message +=
 			validResult && !validResult.valid
 				? `schema 验证请求参数 ${validResult.message}`
-				: "";
+				: '';
 
 		return {
 			valid: false,
@@ -231,25 +256,25 @@ function mockValidator(interfaceData, ctx) {
 }
 
 const middlewareMockServer = () => async (ctx, next) => {
-	ctx.callme.push("middlewareMockServer");
+	ctx.callme.push('middlewareMockServer');
 	let path = ctx.path;
 	let header = ctx.request.header;
 	/*** 如果不是/Mock/链接，不做代理 */
-	if (path.indexOf("/mock/") !== 0) {
+	if (path.indexOf('/mock/') !== 0) {
 		if (next) await next();
 		return true;
 	}
 
-	let paths = path.split("/");
+	let paths = path.split('/');
 	let projectId = paths[2];
 	paths.splice(0, 3);
-	path = "/" + paths.join("/");
+	path = '/' + paths.join('/');
 
-	ctx.set("Access-Control-Allow-Origin", header.origin);
-	ctx.set("Access-Control-Allow-Credentials", true);
+	ctx.set('Access-Control-Allow-Origin', header.origin);
+	ctx.set('Access-Control-Allow-Credentials', true);
 
 	if (!projectId) {
-		return (ctx.body = xU.resReturn(null, 400, "projectId不能为空"));
+		return (ctx.body = xU.resReturn(null, 400, 'projectId不能为空'));
 	}
 
 	let projectInst = xU.orm(ModelProject);
@@ -261,78 +286,60 @@ const middlewareMockServer = () => async (ctx, next) => {
 	}
 
 	if (!project) {
-		return (ctx.body = xU.resReturn(null, 400, "不存在的项目"));
+		return (ctx.body = xU.resReturn(null, 400, '不存在的项目'));
 	}
 
+	/*用于初步确定Interface的中间变量*/
+	let interfaceArray;
+	/*具体的interfac数据*/
 	let interfaceData;
-	let realUrlPath;
-	let interfaceInst = xU.orm(ModelInterface);
+	/**
+	 * @type ModelInterface
+	 */
+	let modelInterface = xU.orm(ModelInterface);
 
 	try {
-		/* TODO:获取当前链接的对应代理地址
-	/* 如果该接口是已完成状态 */
-		/* 尝试访问实际的主机 */
-		/* 获取真实的响应数据 */
-		/* 否则 */
-		/* 使用mock设定 */
-		realUrlPath = path.substr(project.basepath.length);
-		interfaceData = await interfaceInst.getByPath(
-			project._id,
-			realUrlPath,
-			ctx.method
-		);
-		/* 通过realUrlPath，method 来获取API的信息 */
-		let queryPathInterfaceData = await interfaceInst.getByQueryPath(
-			project._id,
-			realUrlPath,
-			ctx.method
-		);
-		//处理query_path情况  url 中有 ?params=xxx
-		if (
-			!interfaceData ||
-			interfaceData.length != queryPathInterfaceData.length
-		) {
-			let i,
-				l,
-				j,
-				len,
-				curQuery,
-				match = false;
-			for (i = 0, l = queryPathInterfaceData.length; i < l; i++) {
-				match = false;
-				let currentInterfaceData = queryPathInterfaceData[i];
-				curQuery = currentInterfaceData.query_path;
-				if (!curQuery || typeof curQuery !== "object" || !curQuery.path) {
-					continue;
-				}
-				for (j = 0, len = curQuery.params.length; j < len; j++) {
-					if (ctx.query[curQuery.params[j].name] !== curQuery.params[j].value) {
-						continue;
-					}
-					if (j === len - 1) {
-						match = true;
-					}
-				}
+		/**
+		 * TODO：
+		 *  获取当前链接的对应代理地址
+		 * 如果该接口是已完成状态
+		 * 尝试访问实际的主机
+		 * 获取真实的响应数据
+		 * 否则 -
+		 *
+		 */
 
-				if (match) {
-					interfaceData = [currentInterfaceData];
-					break;
-				}
-				// if (i === l - 1) {
-				//   interfaceData = [];
-				// }
-			}
+		/* 使用mock设定 */
+		/* basepath 有前缀，去掉前缀，方便匹配链接 */
+		const REAL_URL_PATH = path.substr(project.basepath.length);
+		/*直接通过url获取接口信息*/
+		interfaceArray = await modelInterface.getByPath(
+			project._id,
+			REAL_URL_PATH,
+			ctx.method
+		);
+
+		/* 通过realUrlPath，method 来获取API的信息 */
+		const interfaceArray_byQueryPath = await modelInterface.getByQueryPath(
+			project._id,
+			REAL_URL_PATH,
+			ctx.method
+		);
+
+		//处理query_path情况  url 中有 ?params=xxx
+		if (!interfaceArray || interfaceArray.length != interfaceArray_byQueryPath.length) {
+			interfaceArray = handleQueryInUrlPath(ctx.query, interfaceArray_byQueryPath, interfaceArray);
 		}
 
 		//处理动态路由
-		if (!interfaceData || interfaceData.length === 0) {
-			let newData = await interfaceInst.getVar(project._id, ctx.method);
+		if (!interfaceArray || interfaceArray.length === 0) {
+			let newData = await modelInterface.getVar(project._id, ctx.method);
 
 			let findInterface;
 			let weight = 0;
 			/* fixed: /{xxxId} ：简直是陋习*/
 			_.some(newData, item => {
-				let m = matchApi(realUrlPath, item.path);
+				let m = matchApi(REAL_URL_PATH, item.path);
 				console.log(item.path);
 				if (m !== false) {
 					if (m.__weight >= weight) {
@@ -348,8 +355,8 @@ const middlewareMockServer = () => async (ctx, next) => {
 			if (!findInterface) {
 				//非正常跨域预检请求回应
 				if (
-					ctx.method === "OPTIONS" &&
-					ctx.request.header["access-control-request-method"]
+					ctx.method === 'OPTIONS' &&
+					ctx.request.header['access-control-request-method']
 				) {
 					return handleCorsRequest(ctx);
 				}
@@ -357,16 +364,16 @@ const middlewareMockServer = () => async (ctx, next) => {
 				return (ctx.body = xU.resReturn(
 					null,
 					404,
-					`当前使用yAPI代理，${ctx.method} ${realUrlPath}，但API不存在。请确认GET?POST?URL?是否正确`
+					`当前使用yAPI代理，${ctx.method} ${REAL_URL_PATH}，但API不存在。请确认GET?POST?URL?是否正确`
 				));
 			}
-			interfaceData = [await interfaceInst.get(findInterface._id)];
+			interfaceArray = [await modelInterface.get(findInterface._id)];
 		}
 
-		if (interfaceData.length > 1) {
-			return (ctx.body = xU.resReturn(null, 405, "存在多个api，请检查数据库"));
+		if (interfaceArray.length > 1) {
+			return (ctx.body = xU.resReturn(null, 405, '存在多个api，请检查数据库'));
 		} else {
-			interfaceData = interfaceData[0];
+			interfaceData = interfaceArray[0];
 		}
 
 		// 必填字段是否填写好
@@ -381,18 +388,25 @@ const middlewareMockServer = () => async (ctx, next) => {
 			}
 		}
 
-		if (interfaceData.isProxy || ctx.headers["yapi-run-test"]) {
+		if (interfaceData.isProxy || ctx.headers['yapi-run-test']) {
 			const env = _.find(project.env, i => {
 				try {
 					const id = ObjectId(i._id).toString();
 					return id === interfaceData.witchEnv;
-				} catch (error) {}
+				} catch (error) {
+				}
 				return false;
 			});
 			await handleProxy(ctx, {
 				projectId: project._id,
 				domain: env && env.domain,
-				yapiRun: ctx.headers["yapi-run-test"]
+				yapiRun: ctx.headers['yapi-run-test']
+			});
+
+			ifTheResponseIsSuccessfulACopyIsRequired({
+				ctx,
+				modelInterface,
+				interfaceData
 			});
 			return;
 		}
@@ -401,7 +415,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		// mock 返回值处理
 		res = interfaceData.res_body;
 		try {
-			if (interfaceData.res_body_type === "json") {
+			if (interfaceData.res_body_type === 'json') {
 				if (interfaceData.res_body_is_json_schema === true) {
 					//json-schema
 					const schema = xU.json_parse(interfaceData.res_body);
@@ -413,9 +427,9 @@ const middlewareMockServer = () => async (ctx, next) => {
 					// 处理 format-data
 
 					if (
-						_.isString(ctx.request.header["content-type"]) &&
-						ctx.request.header["content-type"].indexOf("multipart/form-data") >
-							-1
+						_.isString(ctx.request.header['content-type']) &&
+						ctx.request.header['content-type'].indexOf('multipart/form-data') >
+						-1
 					) {
 						ctx.request.body = ctx.request.body.fields;
 					}
@@ -432,7 +446,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 				try {
 					res = Mock.mock(res);
 				} catch (e) {
-					console.log("err", e.message);
+					console.log('err', e.message);
 					xU.applog.error(e);
 				}
 			}
@@ -453,7 +467,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 				xU.handleMockScript(script, context);
 			}
 
-			await xU.emitHook("mock_after", context);
+			await xU.emitHook('mock_after', context);
 
 			let handleMock = new Promise(resolve => {
 				setTimeout(() => {
@@ -461,16 +475,16 @@ const middlewareMockServer = () => async (ctx, next) => {
 				}, context.delay);
 			});
 			await handleMock;
-			if (context.resHeader && typeof context.resHeader === "object") {
+			if (context.resHeader && typeof context.resHeader === 'object') {
 				for (let i in context.resHeader) {
 					let cookie;
-					if (i === "Set-Cookie") {
+					if (i === 'Set-Cookie') {
 						if (
 							context.resHeader[i] &&
-							typeof context.resHeader[i] === "string"
+							typeof context.resHeader[i] === 'string'
 						) {
 							cookie = parseCookie(context.resHeader[i]);
-							if (cookie && typeof cookie === "object") {
+							if (cookie && typeof cookie === 'object') {
 								customCookies(ctx, cookie.name, cookie.value, {
 									maxAge: 864000000,
 									httpOnly: false
@@ -482,7 +496,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 						) {
 							context.resHeader[i].forEach(item => {
 								cookie = parseCookie(item);
-								if (cookie && typeof cookie === "object") {
+								if (cookie && typeof cookie === 'object') {
 									customCookies(ctx, cookie.name, cookie.value, {
 										maxAge: 864000000,
 										httpOnly: false
@@ -498,11 +512,11 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 			ctx.status = context.httpCode;
 			let responseByMock = {};
-			let msg = "ok";
+			let msg = 'ok';
 			let A_TIPS = `由yAPI MockJson 模拟数据`;
 			try {
 				/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
-				if (interfaceData.res_body_type === "backup") {
+				if (interfaceData.res_body_type === 'backup') {
 					responseByMock = JSON.parse(interfaceData.resBackupJson);
 					A_TIPS = `使用备份的JSON数据`;
 				} else if (_.isPlainObject(context.mockJson)) {
@@ -523,7 +537,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			xU.applog.error(e);
 			return (ctx.body = {
 				errcode: 400,
-				errmsg: "解析出错，请检查。Error: " + e.message,
+				errmsg: '解析出错，请检查。Error: ' + e.message,
 				data: null
 			});
 		}
@@ -537,4 +551,31 @@ module.exports = async function (app) {
 	app.use(middlewareMockServer());
 };
 
-exports.handleProxy = handleProxy;
+
+
+function handleQueryInUrlPath(ctxQuery, interfaceArray_byQueryPath) {
+	let i, l, j, len, curQuery, match = false;
+	for (const currentInterfaceData of interfaceArray_byQueryPath) {
+		match = false;
+		curQuery = currentInterfaceData.query_path;
+		if (!curQuery || typeof curQuery !== 'object' || !curQuery.path) {
+			continue;
+		}
+
+		let j = 0;
+		for (const queryParmas of curQuery.params) {
+			if (ctxQuery[queryParmas.name] !== queryParmas.value) {
+				continue;
+			}
+			/* 这是个啥意思？ */
+			if (++j === curQuery.params.length) {
+				match = true;
+			}
+		}
+		if (match) {
+			return [currentInterfaceData];
+		}
+	}
+	return [];
+}
+

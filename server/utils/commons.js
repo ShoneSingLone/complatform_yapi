@@ -40,6 +40,14 @@ fs.ensureDirSync(APP_LOG_DIR);
  * @example
  * orm(ModelGroup, arg1, arg2)
  */
+/**
+ * @description MongoDB model
+ * @typedef {function} orm
+ * 
+ * @param {any} ormModel 
+ * @param {any} args 
+ * @returns 
+ */
 function orm(ormModel, ...args) {
 	if (!MAP_ORM.get(ormModel)) {
 		MAP_ORM.set(ormModel, new ormModel(args));
