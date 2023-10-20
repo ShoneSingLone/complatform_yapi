@@ -43,10 +43,10 @@ fs.ensureDirSync(APP_LOG_DIR);
 /**
  * @description MongoDB model
  * @typedef {function} orm
- * 
- * @param {any} ormModel 
- * @param {any} args 
- * @returns 
+ *
+ * @param {any} ormModel
+ * @param {any} args
+ * @returns
  */
 function orm(ormModel, ...args) {
 	if (!MAP_ORM.get(ormModel)) {

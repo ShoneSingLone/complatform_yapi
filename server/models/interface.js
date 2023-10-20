@@ -7,6 +7,21 @@ const ModelBase = require("server/models/base");
  * @extends {ModelBase}
  */
 class ModelInterface extends ModelBase {
+	constructor() {
+		super();
+		this.schema.virtual("isSetBackupData").get(function () {
+			return !!this.resBackupJson;
+		});
+		/* this.schema.set("toJson", {
+			virtuals: true,
+			getters: true,
+		}); */
+		this.schema.set("toObject", {
+			virtuals: true,
+			getters: true
+		});
+	}
+
 	getName() {
 		return "interface";
 	}
@@ -94,7 +109,7 @@ class ModelInterface extends ModelBase {
 			req_body_other: String,
 			res_body_type: {
 				type: String,
-				enum: ["json", "text", "xml", "raw", "json-schema", "backup"]
+				enum: ["json", "text", "xml", "raw", "json-schema", "backup", "file"]
 			},
 			res_body: String,
 			resBackupJson: String,
@@ -154,7 +169,7 @@ class ModelInterface extends ModelBase {
 	getByPath(project_id, path, method, select) {
 		select =
 			select ||
-			"_id isProxy witchEnv title uid path method project_id catid edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
+			"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
 		return this.model
 			.find({
 				project_id: project_id,
@@ -182,7 +197,7 @@ class ModelInterface extends ModelBase {
 	list(project_id, select) {
 		select =
 			select ||
-			"_id isProxy witchEnv title uid path method project_id catid edit_uid status add_time up_time";
+			"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid status add_time up_time";
 		return this.model
 			.find({
 				project_id: project_id
@@ -203,7 +218,7 @@ class ModelInterface extends ModelBase {
 			.skip((page - 1) * limit)
 			.limit(limit)
 			.select(
-				"_id isProxy witchEnv title uid path method project_id catid api_opened edit_uid status add_time up_time tag"
+				"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid api_opened edit_uid status add_time up_time tag"
 			)
 			.exec();
 	}
@@ -225,7 +240,7 @@ class ModelInterface extends ModelBase {
 	listByCatid(catid, select) {
 		select =
 			select ||
-			"_id isProxy witchEnv title uid path method project_id catid edit_uid status add_time up_time index tag";
+			"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid status add_time up_time index tag";
 		return this.model
 			.find({
 				catid: catid
@@ -246,7 +261,7 @@ class ModelInterface extends ModelBase {
 			.skip((page - 1) * limit)
 			.limit(limit)
 			.select(
-				"_id isProxy witchEnv title uid path method project_id catid edit_uid api_opened status add_time up_time, index, tag"
+				"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid api_opened status add_time up_time, index, tag"
 			)
 			.exec();
 	}
@@ -260,7 +275,7 @@ class ModelInterface extends ModelBase {
 			.skip((page - 1) * limit)
 			.limit(limit)
 			.select(
-				"_id isProxy witchEnv title uid path method project_id catid edit_uid api_opened status add_time up_time, index, tag"
+				"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid api_opened status add_time up_time, index, tag"
 			)
 			.exec();
 	}
