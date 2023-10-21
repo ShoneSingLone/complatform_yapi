@@ -143,3 +143,15 @@ YApi 是<strong>高效</strong>、<strong>易用</strong>、<strong>功能强大
 ### License
 
 Apache License 2.0
+
+
+
+https://www.mongodb.com/docs/manual/reference/installation-ubuntu-community-troubleshooting/
+
+```bash
+cat /etc/lsb-release
+sudo apt-key list
+sudo apt list --installed | grep mongo
+sudo apt install -y mongodb-org
+cat /etc/apt/sources.list.d/mongodb-org-7.0.list
+```
