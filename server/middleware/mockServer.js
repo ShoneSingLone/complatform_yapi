@@ -19,9 +19,13 @@ async function ifTheResponseIsSuccessfulACopyIsRequired({
 	modelInterface,
 	interfaceData
 }) {
-	if (ctx.status != 200) {
+	if (ctx.status != 200 || ["text/html"].includes(ctx.type)) {
 		return;
 	}
+	console.log(
+		"ifTheResponseIsSuccessfulACopyIsRequired: ctx.type===",
+		ctx.type
+	);
 	const data = {};
 	try {
 		if (Object.prototype.toString.call(ctx.body) === `[object Uint8Array]`) {
@@ -62,7 +66,6 @@ async function handleProxy(ctx, { domain, projectId }) {
 
 	let body = xU.resReturn(null, 500, "代理失败");
 	let response;
-	console.clear();
 	try {
 		response = await getResponseThroghProxy({
 			ctx,
@@ -266,7 +269,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		if (next) await next();
 		return true;
 	}
-
+	console.log(`🚀useMockServer: ${ctx.path}`);
 	let paths = path.split("/");
 	let projectId = paths[2];
 	paths.splice(0, 3);
@@ -303,12 +306,11 @@ const middlewareMockServer = () => async (ctx, next) => {
 	try {
 		/**
 		 * TODO：
-		 *  获取当前链接的对应代理地址
+		 * 获取当前链接的对应代理地址
 		 * 如果该接口是已完成状态
 		 * 尝试访问实际的主机
 		 * 获取真实的响应数据
 		 * 否则 -
-		 *
 		 */
 
 		/* 使用mock设定 */

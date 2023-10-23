@@ -66,14 +66,14 @@ class SyncUtils {
 
 	//同步接口
 	async syncInterface(projectId, swaggerUrl, syncMode, uid, projectToken) {
-		xU.applog.info(
+		console.log(
 			"定时器触发, syncJsonUrl:" + swaggerUrl + ",合并模式:" + syncMode
 		);
 		let oldPorjectData;
 		try {
 			oldPorjectData = await this.modelProject.get(projectId);
 		} catch (e) {
-			xU.applog.info("获取项目:" + projectId + "失败");
+			xU.applog.error("获取项目:" + projectId + "失败");
 			this.deleteSyncJob(projectId);
 			//删除数据库定时任务
 			await this.syncModel.delByProjectId(projectId);
@@ -81,7 +81,7 @@ class SyncUtils {
 		}
 		//如果项目已经删除了
 		if (!oldPorjectData) {
-			xU.applog.info("项目:" + projectId + "不存在");
+			xU.applog.error("项目:" + projectId + "不存在");
 			this.deleteSyncJob(projectId);
 			//删除数据库定时任务
 			await this.syncModel.delByProjectId(projectId);
@@ -91,7 +91,7 @@ class SyncUtils {
 		try {
 			newSwaggerJsonData = await this.getSwaggerContent(swaggerUrl);
 			if (!newSwaggerJsonData || typeof newSwaggerJsonData !== "object") {
-				xU.applog.info("数据格式出错，请检查");
+				xU.applog.error("数据格式出错，请检查");
 				this.saveSyncLog(0, syncMode, "数据格式出错，请检查", uid, projectId);
 			}
 			newSwaggerJsonData = JSON.stringify(newSwaggerJsonData);

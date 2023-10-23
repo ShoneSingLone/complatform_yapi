@@ -91,6 +91,9 @@ exports.getResponseThroghProxy = function ({ ctx, path, host, port }) {
 		try {
 			/* TODO: 开启了代理直接走代理，目前是使用whistle起的服务，所以只考虑http */
 			let httpRequest = newHttpRequest(httpRequestOptions);
+			try {
+				xU.applog.log("use proxy", JSON.stringify(httpRequestOptions));
+			} catch (error) {}
 			httpRequest.on("error", hanldeError);
 
 			if (bodyFiles) {
