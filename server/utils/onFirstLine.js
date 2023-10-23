@@ -43,7 +43,7 @@ module.exports = async function () {
 	require.extensions[".ts"] = require.extensions[".js"];
 	/* ********************************************************************************  */
 
-	global.WEBCONFIG = require("../../../yapiConfigs");
+	global.WEBCONFIG = require("../../../yapi_configs");
 	/*上面的代码运行之后，server就可以直接访问到*/
 	require("server/utils/commons");
 	await require("server/utils/db")();

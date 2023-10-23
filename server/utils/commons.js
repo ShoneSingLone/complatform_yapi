@@ -30,8 +30,9 @@ if (WEBCONFIG.mail && WEBCONFIG.mail.enable) {
 const MAP_ORM = new Map();
 const APP_ROOT_DIR = path.resolve(__dirname, "../.."); //路径
 const APP_ROOT_SERVER_DIR = path.resolve(__dirname, "..");
+const YAPI_LOGS_DIR = "yapi_logs";
 
-const APP_LOG_DIR = path.join(APP_ROOT_SERVER_DIR, "log");
+const APP_LOG_DIR = path.join(APP_ROOT_SERVER_DIR, YAPI_LOGS_DIR);
 fs.ensureDirSync(APP_LOG_DIR);
 
 /**
@@ -432,7 +433,7 @@ function log(msg, type = "info") {
 			} else {
 				errorThrowAt += `\n(${errorAt.split("    at ")[1]})`;
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 	/* let date = new Date(); let year = date.getFullYear();
   let month = date.getMonth() + 1; */
@@ -814,7 +815,7 @@ function handleParamsValue(params, val) {
 	let value = {};
 	try {
 		params = params.toObject();
-	} catch (e) {}
+	} catch (e) { }
 	if (params.length === 0 || val.length === 0) {
 		return params;
 	}
