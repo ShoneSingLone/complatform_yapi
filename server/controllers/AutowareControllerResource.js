@@ -162,9 +162,8 @@ module.exports = {
 						return;
 					}
 
-					const resourcePath = path.resolve(
-						WEBCONFIG.RESOURCE_ASSETS_REMOTE,
-						record.url
+					const resourcePath = path.resolve.apply(path,
+						[WEBCONFIG.RESOURCE_ASSETS_REMOTE,...String(record.url).split("\\")]
 					);
 
 					try {
