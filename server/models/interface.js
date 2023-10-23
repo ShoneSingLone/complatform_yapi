@@ -22,10 +22,9 @@ const BASE_SELECT = Object.keys({
 class ModelInterface extends ModelBase {
 	constructor() {
 		super();
-		this.schema.virtual("isSetBackupData")
-			.get(function () {
-				return !!this.resBackupJson;
-			});
+		this.schema.virtual("isSetBackupData").get(function () {
+			return !!this.resBackupJson;
+		});
 		/* this.schema.set("toJson", {
 			virtuals: true,
 			getters: true,
@@ -185,7 +184,7 @@ class ModelInterface extends ModelBase {
 		select =
 			select ||
 			BASE_SELECT.join(" ") +
-			" edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
+				" edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
 		return this.model
 			.find({
 				project_id: project_id,
@@ -231,7 +230,10 @@ class ModelInterface extends ModelBase {
 			.sort({ title: 1 })
 			.skip((page - 1) * limit)
 			.limit(limit)
-			.select(BASE_SELECT.join(" ") + " api_opened edit_uid status add_time up_time tag")
+			.select(
+				BASE_SELECT.join(" ") +
+					" api_opened edit_uid status add_time up_time tag"
+			)
 			.exec();
 	}
 
@@ -252,13 +254,15 @@ class ModelInterface extends ModelBase {
 	listByCatid(catid, select) {
 		const SELF_SELECT = `resBackupJson edit_uid status add_time up_time index tag`;
 		select = select || BASE_SELECT.join(" ") + " " + SELF_SELECT;
-		return this.model
-			.find({ catid })
-			/* 计算isSetBackupData需要resBackupJson */
-			.select(select)
-			/* 菜单里面不需要resBackupJson */
-			.sort({ index: 1 })
-			.exec();
+		return (
+			this.model
+				.find({ catid })
+				/* 计算isSetBackupData需要resBackupJson */
+				.select(select)
+				/* 菜单里面不需要resBackupJson */
+				.sort({ index: 1 })
+				.exec()
+		);
 	}
 
 	listByCatidWithPage(catid, page, limit) {
@@ -273,7 +277,7 @@ class ModelInterface extends ModelBase {
 			.limit(limit)
 			.select(
 				BASE_SELECT.join(" ") +
-				" edit_uid api_opened status add_time up_time, index, tag"
+					" edit_uid api_opened status add_time up_time, index, tag"
 			)
 			.exec();
 	}
@@ -288,7 +292,7 @@ class ModelInterface extends ModelBase {
 			.limit(limit)
 			.select(
 				BASE_SELECT.join(" ") +
-				" edit_uid api_opened status add_time up_time, index, tag"
+					" edit_uid api_opened status add_time up_time, index, tag"
 			)
 			.exec();
 	}
@@ -354,7 +358,7 @@ class ModelInterface extends ModelBase {
 			})
 			.select(
 				BASE_SELECT.join(" ") +
-				" edit_uid status desc add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value"
+					" edit_uid status desc add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value"
 			)
 			.exec();
 	}

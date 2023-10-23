@@ -144,8 +144,6 @@ YApi 是<strong>高效</strong>、<strong>易用</strong>、<strong>功能强大
 
 Apache License 2.0
 
-
-
 https://www.mongodb.com/docs/manual/reference/installation-ubuntu-community-troubleshooting/
 
 ```bash

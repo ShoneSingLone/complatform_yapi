@@ -148,7 +148,9 @@ module.exports = {
 						const interfaceMenuTree = [];
 						for (const categoryMongoose of categoryArray) {
 							let category = categoryMongoose.toObject();
-							let interfaceArray = await modelInterface.listByCatid(category._id);
+							let interfaceArray = await modelInterface.listByCatid(
+								category._id
+							);
 							category.list = [];
 							for (const interfaceMongooose of interfaceArray) {
 								let interface = interfaceMongooose.toObject();

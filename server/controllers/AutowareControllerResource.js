@@ -162,9 +162,10 @@ module.exports = {
 						return;
 					}
 
-					const resourcePath = path.resolve.apply(path,
-						[WEBCONFIG.RESOURCE_ASSETS_REMOTE,...String(record.url).split("\\")]
-					);
+					const resourcePath = path.resolve.apply(path, [
+						WEBCONFIG.RESOURCE_ASSETS_REMOTE,
+						...String(record.url).split("\\")
+					]);
 
 					try {
 						if (headers.range) {
