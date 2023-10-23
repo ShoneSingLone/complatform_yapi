@@ -143,19 +143,23 @@ module.exports = {
 					}
 
 					try {
-						let result = await modelInterfaceCategory.list(project_id),
-							newResult = [];
-						for (let i = 0, item, list; i < result.length; i++) {
-							item = result[i].toObject();
-							list = await modelInterface.listByCatid(item._id);
-							for (let j = 0; j < list.length; j++) {
-								list[j] = list[j].toObject();
+						/* 获取项目接口的分类 */
+						let categoryArray = await modelInterfaceCategory.list(project_id);
+						const interfaceMenuTree = [];
+						for (const categoryMongoose of categoryArray) {
+							let category = categoryMongoose.toObject();
+							let interfaceArray = await modelInterface.listByCatid(category._id);
+							category.list = [];
+							for (const interfaceMongooose of interfaceArray) {
+								let interface = interfaceMongooose.toObject();
+								// interface.isSetBackupData = !!interface.resBackupJson;
+								/* 菜单里面不需要resBackupJson */
+								delete interface.resBackupJson;
+								category.list.push(interface);
 							}
-
-							item.list = list;
-							newResult[i] = item;
+							interfaceMenuTree.push(category);
 						}
-						ctx.body = xU.resReturn(newResult);
+						ctx.body = xU.resReturn(interfaceMenuTree);
 					} catch (err) {
 						ctx.body = xU.resReturn(null, 402, err.message);
 					}

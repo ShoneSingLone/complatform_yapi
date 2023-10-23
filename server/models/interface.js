@@ -1,4 +1,17 @@
 const ModelBase = require("server/models/base");
+const BASE_SELECT = Object.keys({
+	_id: "_id",
+	isProxy: "isProxy",
+	witchEnv: "witchEnv",
+	res_body_type: "res_body_type",
+	isSetBackupData: "isSetBackupData",
+	title: "title",
+	uid: "uid",
+	path: "path",
+	method: "method",
+	project_id: "project_id",
+	catid: "catid"
+});
 
 /**
  * 接口相关
@@ -9,13 +22,15 @@ const ModelBase = require("server/models/base");
 class ModelInterface extends ModelBase {
 	constructor() {
 		super();
-		this.schema.virtual("isSetBackupData").get(function () {
-			return !!this.resBackupJson;
-		});
+		this.schema.virtual("isSetBackupData")
+			.get(function () {
+				return !!this.resBackupJson;
+			});
 		/* this.schema.set("toJson", {
 			virtuals: true,
 			getters: true,
 		}); */
+		/* 虚拟属性=计算属性computed， */
 		this.schema.set("toObject", {
 			virtuals: true,
 			getters: true
@@ -169,7 +184,8 @@ class ModelInterface extends ModelBase {
 	getByPath(project_id, path, method, select) {
 		select =
 			select ||
-			"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
+			BASE_SELECT.join(" ") +
+			" edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
 		return this.model
 			.find({
 				project_id: project_id,
@@ -195,9 +211,7 @@ class ModelInterface extends ModelBase {
 	}
 
 	list(project_id, select) {
-		select =
-			select ||
-			"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid status add_time up_time";
+		select = select || " edit_uid status add_time up_time";
 		return this.model
 			.find({
 				project_id: project_id
@@ -217,9 +231,7 @@ class ModelInterface extends ModelBase {
 			.sort({ title: 1 })
 			.skip((page - 1) * limit)
 			.limit(limit)
-			.select(
-				"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid api_opened edit_uid status add_time up_time tag"
-			)
+			.select(BASE_SELECT.join(" ") + " api_opened edit_uid status add_time up_time tag")
 			.exec();
 	}
 
@@ -238,14 +250,13 @@ class ModelInterface extends ModelBase {
 	}
 
 	listByCatid(catid, select) {
-		select =
-			select ||
-			"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid status add_time up_time index tag";
+		const SELF_SELECT = `resBackupJson edit_uid status add_time up_time index tag`;
+		select = select || BASE_SELECT.join(" ") + " " + SELF_SELECT;
 		return this.model
-			.find({
-				catid: catid
-			})
+			.find({ catid })
+			/* 计算isSetBackupData需要resBackupJson */
 			.select(select)
+			/* 菜单里面不需要resBackupJson */
 			.sort({ index: 1 })
 			.exec();
 	}
@@ -261,7 +272,8 @@ class ModelInterface extends ModelBase {
 			.skip((page - 1) * limit)
 			.limit(limit)
 			.select(
-				"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid api_opened status add_time up_time, index, tag"
+				BASE_SELECT.join(" ") +
+				" edit_uid api_opened status add_time up_time, index, tag"
 			)
 			.exec();
 	}
@@ -275,7 +287,8 @@ class ModelInterface extends ModelBase {
 			.skip((page - 1) * limit)
 			.limit(limit)
 			.select(
-				"_id isProxy witchEnv res_body_type isSetBackupData title uid path method project_id catid edit_uid api_opened status add_time up_time, index, tag"
+				BASE_SELECT.join(" ") +
+				" edit_uid api_opened status add_time up_time, index, tag"
 			)
 			.exec();
 	}
@@ -340,7 +353,8 @@ class ModelInterface extends ModelBase {
 				custom_field_value: value
 			})
 			.select(
-				"title uid path method edit_uid status desc add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value"
+				BASE_SELECT.join(" ") +
+				" edit_uid status desc add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value"
 			)
 			.exec();
 	}

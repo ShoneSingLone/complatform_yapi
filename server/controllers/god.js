@@ -9,12 +9,6 @@ const dayjs = require("dayjs");
 const json5 = require("json5");
 const mime = require("mime-types");
 
-let TARGET_PREFIX = path.join(
-	xU.var.APP_ROOT_SERVER_DIR,
-	xU.var.UPLOADS,
-	xU.var.RESOURCE_ASSETS
-);
-
 class ControllerGod extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);

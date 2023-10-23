@@ -102,6 +102,9 @@ const applog = {
 	}
 };
 
+/**
+ * @type {object} any
+ */
 global.xU = new Proxy(
 	{
 		_,

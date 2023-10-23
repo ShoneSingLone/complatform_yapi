@@ -2,12 +2,6 @@ const { ModelWiki } = require("server/models/wiki");
 const { ModelWikiOrder } = require("server/models/WikiOrder");
 const { diffText } = require("common/diff-view");
 
-let TARGET_PREFIX = xU.path.join(
-	xU.var.APP_ROOT_SERVER_DIR,
-	xU.var.UPLOADS,
-	xU.var.RESOURCE_ASSETS
-);
-
 const swagger_belong_type = {
 	description: "该资源所属",
 	required: true,
