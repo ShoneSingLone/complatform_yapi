@@ -132,6 +132,34 @@ module.exports = {
 				}
 			}
 		},
+		"/resource/ls": {
+			post: {
+				summary: "根据提供的path",
+				description: "文件保存在服务器上",
+				request: {
+					body: {
+						path: {
+							description: "文件夹路径",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						if (this.$user?.role === 'admin') {
+							const { path: dirpath } = ctx.payload;
+							let targetPath = xU.path.resolve(WEBCONFIG.RESOURCE_ASSETS, dirpath || "");
+							ctx.body = await fs.promises.readdir(targetPath);
+						} else {
+							throw new Error("auth");
+						}
+					} catch (e) {
+						ctx.body = xU.resReturn(null, 404, "not found");
+						xU.applog.error(e.message);
+					}
+				}
+			}
+		},
 		"/resource/remote_music_file": {
 			get: {
 				summary: "媒体文件流",
