@@ -1,4 +1,4 @@
-import { d as defineComponent, s as stateApp, a as cptRouter, f as xU, h as createVNode, r as resolveComponent, F as Fragment, z as ADMIN, x as xI, v as createTextVNode, b as defItem, e as API, W as components, j as isVNode, O as OWNER, w as withDirectives, l as resolveDirective, i as itemsInvalid, aj as ErrMsg, u as PRIVATE, ak as index, al as defPagination, am as METHOD_COLOR, an as LOG_TYPE, ao as _$timeAgo, ap as jsondiffpatch, H as _export_sfc, I as openBlock, J as createElementBlock, K as withCtx, L as renderList, o as xScope, aq as onMounted, ar as defColumns, ai as getAvatarSrcByid, D as DEV, as as TAB_KEY_PROJECT_LIST, at as TAB_KEY_MEMBER_LIST, y as PUBLIC, au as TAB_KEY_GROUP_LOG, av as TAB_KEY_GROUP_WIKI, G as GROUP, M as aHashLink, aw as OPEN_BLANK } from "./index.js";
+import { d as defineComponent, s as stateApp, a as cptRouter, f as xU, h as createVNode, r as resolveComponent, F as Fragment, z as ADMIN, x as xI, v as createTextVNode, b as defItem, e as API, Z as components, R as defineComponentProps, S as usePrivateItemValue, j as isVNode, U as itemBaseProps, O as OWNER, w as withDirectives, l as resolveDirective, i as itemsInvalid, am as ErrMsg, u as PRIVATE, an as index, ao as defPagination, ap as METHOD_COLOR, aq as LOG_TYPE, ar as _$timeAgo, as as jsondiffpatch, H as _export_sfc, I as openBlock, J as createElementBlock, K as withCtx, L as renderList, o as xScope, at as onMounted, au as defColumns, al as getAvatarSrcByid, D as DEV, av as TAB_KEY_PROJECT_LIST, aw as TAB_KEY_MEMBER_LIST, y as PUBLIC, ax as TAB_KEY_GROUP_LOG, ay as TAB_KEY_GROUP_WIKI, G as GROUP, M as aHashLink, az as OPEN_BLANK } from "./index.js";
 import { F as FormRules, p as pickValueFrom } from "./common.FormRules.js";
 import { V as VNodeCollection } from "./VNodeRender.js";
 import { P as ProjectCard, D as DialogAddProject, l as lib } from "./TuiEditor.js";
@@ -226,7 +226,12 @@ function _isSlot$2(s) {
   return typeof s === "function" || Object.prototype.toString.call(s) === "[object Object]" && !isVNode(s);
 }
 const ItemUAC = defineComponent({
-  props: ["properties", "slots", "listeners", "propsWillDeleteFromConfigs"],
+  props: defineComponentProps(itemBaseProps),
+  setup(props) {
+    return {
+      _itemValue: usePrivateItemValue(props)
+    };
+  },
   data() {
     this.doSearch = xU.debounce(async (params) => {
       try {
@@ -258,20 +263,12 @@ const ItemUAC = defineComponent({
     }
   },
   computed: {
-    _modelValue: {
-      get() {
-        return this.properties.value;
-      },
-      set(val) {
-        this.listeners["onEmitItemValue"](val);
-      }
-    },
     selectOptionsVNode() {
       return xU.map(this.optionArray, ({
         username,
         uid
       }) => {
-        return createVNode(resolveComponent("ElOption"), {
+        return createVNode(resolveComponent("elOption"), {
           "key": uid,
           "value": uid,
           "label": username
@@ -282,13 +279,13 @@ const ItemUAC = defineComponent({
     }
   },
   render() {
-    return createVNode(resolveComponent("ElSelect"), {
+    return createVNode(resolveComponent("elSelect"), {
       "multiple": true,
       "filterable": true,
       "remote": true,
       "remote-show-suffix": true,
-      "modelValue": this._modelValue,
-      "onUpdate:modelValue": ($event) => this._modelValue = $event,
+      "modelValue": this._itemValue,
+      "onUpdate:modelValue": ($event) => this._itemValue = $event,
       "remoteMethod": this.onSearch,
       "style": {
         width: "100%"
@@ -488,7 +485,7 @@ const GroupAside = defineComponent({
           undefined: otherOwner
         } = xU.groupBy(owner, "privateSpace");
         groupListForShow = [{
-          ...privateSpace[0],
+          ...(privateSpace == null ? void 0 : privateSpace[0]) || {},
           icon: "icon_group_personal"
         }, {
           group_name: "\u5206\u7EC4\u6210\u5458",

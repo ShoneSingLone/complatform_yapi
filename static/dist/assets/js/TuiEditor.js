@@ -1,4 +1,4 @@
-import { d as defineComponent, s as stateApp, b as defItem, i as itemsInvalid$1, e as API, f as xU, _ as _$handlePath, h as createVNode, r as resolveComponent, F as Fragment, j as isVNode, u as PRIVATE, v as createTextVNode, y as PUBLIC, D as DEV, O as OWNER, z as ADMIN, w as withDirectives, l as resolveDirective, B as _$randomValueAndProp, C as PROJECT_COLOR, x as xI$1, E as PROJECT_ICON, H as _export_sfc, I as openBlock, J as createElementBlock, K as withCtx, L as renderList, a as cptRouter, M as aHashLink, N as toRaw, Q as diff, R as markRaw, S as defXVirTableConfigs, T as defCol, U as h, V as inject, W as components, $, X as setDataGridInfo, Y as defDataGrid, Z as MonacoEditor, n as compositionAPI, a0 as HTTP_REQUEST_HEADER, a1 as compileVNode, a2 as QUERY, a3 as GET, a4 as HTTP_METHOD, a5 as BODY, a6 as defineAsyncComponent, a7 as MkitTheme, a8 as PreprocessHTML } from "./index.js";
+import { d as defineComponent, s as stateApp, b as defItem, i as itemsInvalid, e as API, f as xU, _ as _$handlePath, h as createVNode, r as resolveComponent, F as Fragment, j as isVNode, u as PRIVATE, v as createTextVNode, y as PUBLIC, D as DEV, O as OWNER, z as ADMIN, w as withDirectives, l as resolveDirective, B as _$randomValueAndProp, C as PROJECT_COLOR, x as xI$1, E as PROJECT_ICON, H as _export_sfc, I as openBlock, J as createElementBlock, K as withCtx, L as renderList, a as cptRouter, M as aHashLink, N as toRaw, Q as diff, R as defineComponentProps, S as usePrivateItemValue, T as markRaw, U as itemBaseProps, V as defXVirTableConfigs, W as defCol, X as h, Y as inject, Z as components, $, a0 as setDataGridInfo, a1 as defDataGrid, a2 as MonacoEditor, n as compositionAPI, a3 as HTTP_REQUEST_HEADER, a4 as compileVNode, a5 as QUERY, a6 as GET, a7 as HTTP_METHOD, a8 as BODY, a9 as defineAsyncComponent, aa as MkitTheme, ab as PreprocessHTML } from "./index.js";
 import { p as pickValueFrom, F as FormRules, n as newRule, s as setValueTo } from "./common.FormRules.js";
 import { I as ITEM_OPTIONS, a as ITEM_OPTIONS_VDOM } from "./common.options.js";
 const ProjectCard$1 = "";
@@ -28,6 +28,7 @@ const optionsXIcon = [
   "feedback",
   "folder",
   "folderOpen",
+  "folder_contennt",
   "follow",
   "frown-o",
   "github",
@@ -288,7 +289,7 @@ const DialogAddProject = defineComponent({
     async submit() {
       const vm = this;
       try {
-        if (!await itemsInvalid$1()) {
+        if (!await itemsInvalid()) {
           const {
             projectGroupId,
             projectName,
@@ -375,7 +376,7 @@ const _sfc_main = defineComponent({
   },
   methods: {
     async onOk() {
-      if (!await itemsInvalid$1()) {
+      if (!await itemsInvalid()) {
         const {
           name,
           icon
@@ -642,11 +643,11 @@ function orderAsc(a, b) {
 }
 const InputKeyValue = defineComponent({
   props: [
-    "items",
+    "modelValue",
     "genItem",
     "fnCheck"
   ],
-  emits: ["update:items"],
+  emits: ["update:modelValue"],
   setup() {
     return {
       stateApp
@@ -659,10 +660,10 @@ const InputKeyValue = defineComponent({
     };
   },
   watch: {
-    items: {
+    modelValue: {
       deep: true,
       handler() {
-        const diffContent = toRaw(diff(this.items, this.oldItems));
+        const diffContent = toRaw(diff(this.modelValue, this.oldItems));
         if (diffContent) {
           this.setPrivateItems();
         }
@@ -690,13 +691,13 @@ const InputKeyValue = defineComponent({
   methods: {
     setPrivateItems() {
       const {
-        items
+        modelValue
       } = this;
-      this.oldItems = items;
+      this.oldItems = modelValue;
       const vm = this;
-      if (xU.isArrayFill(items)) {
+      if (xU.isArrayFill(modelValue)) {
         let index = 1;
-        vm.privateItems = xU.reduce(items, (_items, tag) => {
+        vm.privateItems = xU.reduce(modelValue, (_items, tag) => {
           _items[index] = vm.genItem({
             ...tag,
             index
@@ -722,7 +723,7 @@ const InputKeyValue = defineComponent({
           }
           return _value;
         }, []);
-        this.$emit("update:items", value);
+        this.$emit("update:modelValue", value);
       }
       this.isLoading = false;
     }, 1e3),
@@ -1257,25 +1258,26 @@ const DialogUpsertProxyEnv = defineComponent({
   }
 });
 const KeyValuePanel = defineComponent({
-  props: ["properties", "slots", "listeners", "propsWillDeleteFromConfigs"],
-  methods: {
-    fnUpdate(val) {
-      this.listeners["onEmitItemValue"](val);
-    }
+  props: defineComponentProps(itemBaseProps),
+  setup(props) {
+    return {
+      _itemValue: usePrivateItemValue(props, [])
+    };
   },
-  render(vm) {
+  components: {
+    InputKeyValue
+  },
+  render() {
     const {
-      properties,
-      fnUpdate
+      properties
     } = this;
-    properties.value = properties.value || [];
     properties.fnCheck = properties.fnCheck || false;
     return createVNode("div", {
       "class": "ant-card ant-card-bordered",
       "style": "padding:10px"
     }, [createVNode(InputKeyValue, {
-      "items": properties.value,
-      "onUpdate:items": fnUpdate,
+      "modelValue": this._itemValue,
+      "onUpdate:modelValue": ($event) => this._itemValue = $event,
       "genItem": properties.genItem,
       "fnCheck": properties.fnCheck
     }, null)]);
@@ -2889,7 +2891,7 @@ const SchemaEditor = defineComponent({
       } = this.currentNode;
       const currentTypeNeedProps = baseProps.concat(SUB_PROPS_STRATEGY[type]);
       const targetValues = xU.pick(this.currentNode, currentTypeNeedProps);
-      if (!await itemsInvalid$1()) {
+      if (!await itemsInvalid()) {
         const oldkey = String(this.currentNode.key);
         const newKey = (() => {
           const array = oldkey.split(SPE);
@@ -4328,7 +4330,7 @@ const DialogBulkValues = defineComponent({
       return {
         onCancel: this.propOptions.$close,
         onOk: async () => {
-          if (!await itemsInvalid$1()) {
+          if (!await itemsInvalid()) {
             const {
               bulkValue
             } = pickValueFrom(this.formItems);
@@ -4819,15 +4821,15 @@ const RequestArgsPanel = defineComponent({
       }
       return `${BODY} ${(_d = this.params) == null ? void 0 : _d.req_body_type}`;
     })();
-    return createVNode(resolveComponent("ElCollapse"), {
-      "activeKey": this.collapseActive,
-      "onUpdate:activeKey": ($event) => this.collapseActive = $event
+    return createVNode(resolveComponent("elCollapse"), {
+      "modelValue": this.collapseActive,
+      "onUpdate:modelValue": ($event) => this.collapseActive = $event
     }, {
       default: () => {
         var _a, _b;
-        return [createVNode(resolveComponent("ElCollapseItem"), {
+        return [createVNode(resolveComponent("elCollapseItem"), {
           "key": "header",
-          "header": `header ${(_a = this.params) == null ? void 0 : _a.req_headers.length}`
+          "title": `header ${(_a = this.params) == null ? void 0 : _a.req_headers.length}`
         }, {
           default: () => {
             var _a2;
@@ -4838,9 +4840,9 @@ const RequestArgsPanel = defineComponent({
               }))
             }, null)];
           }
-        }), createVNode(resolveComponent("ElCollapseItem"), {
+        }), createVNode(resolveComponent("elCollapseItem"), {
           "key": QUERY,
-          "header": `${QUERY} ${(_b = this.params) == null ? void 0 : _b.req_query.length}`
+          "title": `${QUERY} ${(_b = this.params) == null ? void 0 : _b.req_query.length}`
         }, {
           default: () => {
             var _a2;
@@ -4851,9 +4853,9 @@ const RequestArgsPanel = defineComponent({
               }))
             }, null)];
           }
-        }), createVNode(resolveComponent("ElCollapseItem"), {
+        }), createVNode(resolveComponent("elCollapseItem"), {
           "key": BODY,
-          "header": bodyHeader,
+          "title": bodyHeader,
           "collapsible": this.bodyCollapsible
         }, {
           default: () => [createVNode(BodyParamsPanel, {
@@ -4866,15 +4868,16 @@ const RequestArgsPanel = defineComponent({
   }
 });
 const ResponsePanel = defineComponent({
-  props: ["body", "bodyType"],
-  emits: ["update:body", "update:bodyType"],
+  props: ["body", "bodyType", "resBackupJson"],
+  emits: ["update:body", "update:bodyType", "update:resBackupJson"],
   data() {
+    const configsPrivateBodyType = defItem({
+      prop: "configsPrivateBodyType",
+      itemType: "RadioGroup",
+      options: ITEM_OPTIONS.interfaceBodyType
+    });
     return {
-      configsPrivateBodyType: defItem({
-        prop: "configsPrivateBodyType",
-        itemType: "RadioGroup",
-        options: xU.filter(ITEM_OPTIONS.interfaceBodyType, (i) => ["json", "raw"].includes(i.label))
-      })
+      configsPrivateBodyType
     };
   },
   computed: {
@@ -4893,11 +4896,20 @@ const ResponsePanel = defineComponent({
       set(val) {
         this.$emit("update:bodyType", val);
       }
+    },
+    _resBackupJson: {
+      get() {
+        return this.resBackupJson || `{}`;
+      },
+      set(val) {
+        this.$emit("update:resBackupJson", val);
+      }
     }
   },
   render() {
     return createVNode(resolveComponent("elCard"), null, {
-      title: () => {
+      header: () => {
+        console.log("this.privateBodyType", this.privateBodyType);
         return createVNode(resolveComponent("xItem"), {
           "modelValue": this.privateBodyType,
           "onUpdate:modelValue": ($event) => this.privateBodyType = $event,
@@ -4911,6 +4923,16 @@ const ResponsePanel = defineComponent({
             "onUpdate:schemaString": ($event) => this.privateBody = $event,
             "style": "height:400px;"
           }, null);
+        }
+        if (this.privateBodyType === "backup") {
+          return createVNode("div", {
+            "style": "height:400px;"
+          }, [createVNode(resolveComponent("MonacoEditor"), {
+            "class": "flex1",
+            "code": this._resBackupJson,
+            "onUpdate:code": ($event) => this._resBackupJson = $event,
+            "language": "json"
+          }, null)]);
         }
         return createVNode("div", {
           "style": "height:400px;"
@@ -4930,7 +4952,10 @@ const TuiEditor = defineAsyncComponent(async () => {
     pathname,
     origin
   } = window.location;
-  const toastui = await xU.asyncGlobalJS("toastui", `${origin}${pathname}assets/libs/toastui-editor-all.js`);
+  let toastui = await xU.asyncGlobalJS("toastui", `${origin}${pathname}assets/libs/toastui-editor-all.js`);
+  if (!toastui) {
+    return;
+  }
   const {
     Editor
   } = toastui;
