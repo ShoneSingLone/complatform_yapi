@@ -1,3 +1,5 @@
+const path = require("path");
+
 function getIPAdress() {
 	var interfaces = require("os").networkInterfaces();
 	const content = JSON.stringify(interfaces);
@@ -11,4 +13,7 @@ function getIPAdress() {
 		}
 	});
 }
+
+console.log(path.dirname(path.resolve("./")));
+
 getIPAdress();
