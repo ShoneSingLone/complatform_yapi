@@ -5,7 +5,8 @@ const { useAutowareRoutes } = require("./pluginAutowareRoutes/pluginEntry");
  * @param {*} app
  */
 module.exports = async app => {
-	useAutowareRoutes(app);
+	await useAutowareRoutes(app);
+	return Promise.resolve();
 
 
 	/*
