@@ -28,12 +28,19 @@ async function ifTheResponseIsSuccessfulACopyIsRequired({
 	);
 	const data = {};
 	try {
+		let res;
 		if (Object.prototype.toString.call(ctx.body) === `[object Uint8Array]`) {
-			data.resBackupJson = ctx.body.toString();
+			res = JSON.parse(ctx.body.toString());
 		} else if (typeof ctx.body === "object") {
-			data.resBackupJson = JSON.stringify(ctx.body);
+			res = ctx.body;
 		}
-		await modelInterface.up(interfaceData._id, data);
+
+		if (String(res.code) === "0") {
+			data.resBackupJson = JSON.stringify(res);
+			await modelInterface.up(interfaceData._id, data);
+		} else {
+			console.error(res);
+		}
 	} catch (error) {
 		xU.applog.error(error);
 	}
@@ -404,7 +411,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 				try {
 					const id = ObjectId(i._id).toString();
 					return id === interfaceData.witchEnv;
-				} catch (error) {}
+				} catch (error) { }
 				return false;
 			});
 			await handleProxy(ctx, {
@@ -439,7 +446,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 					if (
 						_.isString(ctx.request.header["content-type"]) &&
 						ctx.request.header["content-type"].indexOf("multipart/form-data") >
-							-1
+						-1
 					) {
 						ctx.request.body = ctx.request.body.fields;
 					}
