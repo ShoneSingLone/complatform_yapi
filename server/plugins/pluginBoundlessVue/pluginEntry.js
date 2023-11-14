@@ -9,7 +9,7 @@ module.exports = async function (app) {
         if (ctx.path === "/doc") {
             ctx.status = 200;
             ctx.set("Content-Type", "text/html");
-            const docPath = path.resolve(app._root_path, "static/doc.html");
+            const docPath = path.resolve(xU.var.APP_ROOT_DIR, "static/doc.html");
             const indexHtmlString = await fs.promises.readFile(docPath, "utf-8");
             const $ = cheerio.load(indexHtmlString);
             $("#src-root").attr("data-app-version", app._version);
@@ -18,7 +18,7 @@ module.exports = async function (app) {
         }
 
         if (/^\/boundless\//.test(ctx.path)) {
-            let indexPath = path.join(app._root_path, "static", ctx.path.substring("/boundless".length + 1));
+            let indexPath = path.join(xU.var.APP_ROOT_DIR, "static", ctx.path.substring("/boundless".length + 1));
             if (xU.fileExist(indexPath)) {
                 ctx.status = 200;
                 ctx.set("Content-Type", mime.lookup(indexPath));
