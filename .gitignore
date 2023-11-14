@@ -55,3 +55,4 @@ server/uploads/upload_*
 server/uploads/resourceAssets
 server/uploads/RESOURCE_ASSETS
 yapi.installed
+static/dist
