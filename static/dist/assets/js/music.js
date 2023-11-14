@@ -414,7 +414,7 @@ const Actions_Music = {
           params.push(`${prop}=${val}`);
         });
         params = params.join("&");
-        audioSrc = `https://www.singlone.work/s/0/api/resource/remote_music_file?${params}`;
+        audioSrc = `/api/resource/remote_music_file?${params}`;
       } else {
         const res = await API.music.getSongUrlBuId(id);
         audioSrc = xU.first(res == null ? void 0 : res.data).url;

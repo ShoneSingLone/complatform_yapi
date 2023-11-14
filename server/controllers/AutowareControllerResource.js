@@ -320,7 +320,7 @@ module.exports = {
 };
 
 function isAudioType(type) {
-	return ["audio/mpeg", "audio/x-flac"].includes(type);
+	return ["audio/mpeg", "audio/x-flac", "audio/mp4"].includes(type);
 }
 
 async function getAudioRecord({ filePath, id, size, type }) {

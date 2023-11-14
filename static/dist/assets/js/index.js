@@ -101770,7 +101770,7 @@ const Actions_Music = {
           params.push(`${prop}=${val}`);
         });
         params = params.join("&");
-        audioSrc = `${window.__BASE_URL}/s/0/api/resource/remote_music_file?${params}`;
+        audioSrc = `${window.__BASE_URL}/api/resource/remote_music_file?${params}`;
       } else {
         const res = await API.music.getSongUrlBuId(id);
         audioSrc = xU$1.first(res == null ? void 0 : res.data).url;
