@@ -32,8 +32,9 @@ function appUseSwagger(app, swaggerJSON) {
 
 function appAddRoutes(app, routes) {
 	routes.forEach(({ url, method, handler }) => {
-		url = `${WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath || ""
-			}${url}`;
+		url = `${
+			WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath || ""
+		}${url}`;
 		const urlObj = RouteMap.get(url) || {};
 		urlObj[String(method).toLowerCase()] = handler;
 		RouteMap.set(url, urlObj);
@@ -84,10 +85,12 @@ function appAddRoutes(app, routes) {
 	});
 }
 
-exports.useAutowareRoutes = async function (app) {
+module.exports = async function (app) {
 	/*autoware controllers文件夹下面带有Auto前缀的controller*/
-	const { routes, swaggerJSON } = await require("./utils/scanAllAutowareController")(app);
+	const { routes, swaggerJSON } =
+		await require("./utils/scanAllAutowareController")(app);
 	appAddRoutes(app, routes);
+
 	/*是否开启swagger: 用环境变量也可以，用配置文件也行，内网使用，一直开启也无妨，当然，默认是关闭*/
 	if (WEBCONFIG?.isUsePlugin?.AutowareRoutes?.isUseSwagger) {
 		appUseSwagger(app, swaggerJSON);
