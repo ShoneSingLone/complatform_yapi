@@ -28,4 +28,5 @@ module.exports = async app => {
 			return Promise.resolve();
 		})
 	);
- */};
+ */
+};

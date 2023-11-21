@@ -2,7 +2,6 @@ const Koa = require("koa");
 const KoaWS = require("koa-websocket");
 const path = require("path");
 
-
 async function main() {
 	const koaInstance = new Koa();
 	const app = KoaWS(koaInstance);

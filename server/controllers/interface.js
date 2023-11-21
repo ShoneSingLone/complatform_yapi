@@ -227,7 +227,7 @@ class ControllerInterface extends ControllerBase {
 		params.req_params = params.req_params || [];
 		params.res_body_type = params.res_body_type
 			? params.res_body_type.toLowerCase()
-			: "json";
+			: "backup";
 		let http_path = url.parse(params.path, true);
 
 		if (!xU.verifyPath(http_path.pathname)) {

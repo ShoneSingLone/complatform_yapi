@@ -26,8 +26,8 @@ type: 'image/png' */
 			size: Number,
 			desc: String,
 			uploadBy: String,
-			uploadBy: String,
-			add_time: Number
+			add_time: Number,
+			basecode: String
 		};
 	}
 
@@ -43,6 +43,13 @@ type: 'image/png' */
 			})
 			.exec();
 	}
+	getResourceByName(name) {
+		return this.model
+			.findOne({
+				name
+			})
+			.exec();
+	}
 
 	search(keyword) {
 		return this.model
@@ -50,7 +57,7 @@ type: 'image/png' */
 				{
 					$or: [
 						{ email: new RegExp(keyword, "i") },
-						{ username: new RegExp(keyword, "i") }
+						{ username: new RegExp(keyword, "i") },
 					]
 				},
 				{
