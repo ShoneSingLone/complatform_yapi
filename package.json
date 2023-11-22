@@ -5,7 +5,7 @@
 	"scripts": {
 		"start": "cross-env NODE_ENV=production node server/app.js",
 		"pull": "git pull && git pull a master && git pull b master",
-		"push": "git push && git push a && git pull b",
+		"push": "git push && git push a && git push b",
 		"lint": "prettier --write .",
 		"install-server": "node server/install.js",
 		"test": "ava",
