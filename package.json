@@ -4,6 +4,8 @@
 	"description": "YAPI",
 	"scripts": {
 		"start": "cross-env NODE_ENV=production node server/app.js",
+		"pull": "git pull && git pull a master && git pull b master",
+		"push": "git push && git push a && git pull b",
 		"lint": "prettier --write .",
 		"install-server": "node server/install.js",
 		"test": "ava",

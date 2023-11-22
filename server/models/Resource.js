@@ -36,6 +36,14 @@ type: 'image/png' */
 		return modelVM.save();
 	}
 
+	update(_id, newResource) {
+		return this.model.updateOne(
+			{ _id },
+			newResource
+		);
+	}
+
+
 	getResourceById(_id) {
 		return this.model
 			.findOne({
@@ -50,6 +58,11 @@ type: 'image/png' */
 			})
 			.exec();
 	}
+
+	findAll() {
+		return this.model.find().select("_id name path type size desc uploadBy add_time basecode").exec();
+	}
+
 
 	search(keyword) {
 		return this.model

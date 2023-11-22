@@ -79,6 +79,7 @@ module.exports = {
 							path: `${useFor}/${add_time}/${name}/`,
 							size,
 							basecode,
+							uploadBy: this.$uid,
 							add_time
 						};
 						const res = await xU.orm(ModelResource).save(wikiInfo);
