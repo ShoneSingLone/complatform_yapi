@@ -88303,7 +88303,7 @@ const xInfoCard = defineComponent({
     });
     return function() {
       return withDirectives(createVNode("div", {
-        "class": "xInfoCard el-descriptions"
+        "class": "xInfoCard el-descriptions flex vertical"
       }, [createVNode("div", {
         "class": "el-descriptions__header"
       }, [createVNode("div", {
@@ -91227,6 +91227,13 @@ const resource = {
       headers: {
         "Content-Type": "multipart/form-data"
       },
+      data: data2
+    });
+  },
+  saveImgByBase64(data2) {
+    return ajax({
+      method: "post",
+      url: "/api/resource/base64img",
       data: data2
     });
   }
@@ -101773,7 +101780,7 @@ const Actions_Music = {
           params.push(`${prop}=${val}`);
         });
         params = params.join("&");
-        audioSrc = `${window.__BASE_URL}/api/resource/remote_music_file?${params}`;
+        audioSrc = `${window.__BASE_URL}/s/0/api/resource/remote_music_file?${params}`;
       } else {
         const res = await API.music.getSongUrlBuId(id);
         audioSrc = xU$1.first(res == null ? void 0 : res.data).url;

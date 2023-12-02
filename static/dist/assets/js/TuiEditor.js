@@ -5154,13 +5154,29 @@ const TuiEditor = defineAsyncComponent(async () => {
                   vm.emitModelValueDebounce && vm.emitModelValueDebounce();
                 },
                 addImageBlobHook: async (blob, callback) => {
-                  let formData = new FormData();
-                  formData.append("file", blob);
-                  formData.append("useFor", "wiki");
                   const {
-                    data
-                  } = await API.resource.upload(formData);
-                  callback(`_id:${data._id}`);
+                    name,
+                    size,
+                    type
+                  } = blob;
+                  var reader = new FileReader();
+                  reader.onload = async function(_a) {
+                    var {
+                      result: basecode
+                    } = _a.target;
+                    debugger;
+                    const {
+                      data
+                    } = await API.resource.saveImgByBase64({
+                      basecode,
+                      useFor: "wiki",
+                      name,
+                      size,
+                      type
+                    });
+                    return callback(`_id:${data._id}`);
+                  };
+                  reader.readAsDataURL(blob);
                 }
               }
             });

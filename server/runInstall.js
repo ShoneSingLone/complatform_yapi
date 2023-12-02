@@ -1,3 +1,5 @@
+const { ModelResource } = require("./models/Resource");
+
 (async function () {
 	await require("./utils/onFirstLine")();
 	const path = require("path");
@@ -32,6 +34,20 @@
 			add_time: xU.time(),
 			up_time: xU.time()
 		});
+
+
+		(function () {
+			let resourceInst = xU.orm(ModelResource);
+			var bitmap = fs.readFileSync(path.resolve(__dirname, "./uploads/RESOURCE_ASSETS/common/404.png"));
+			resourceInst.save({
+				name: `SYSTEM_404`,
+				useFor: "all",
+				type: "image/png",
+				path: `${TARGET_PREFIX}/common/404.webp`,
+				basecode: new Buffer(bitmap).toString('base64'),
+				add_time: Date.now()
+			});
+		})();
 
 		(function () {
 			let storageCol = mongoose.connection.db.collection("storage");

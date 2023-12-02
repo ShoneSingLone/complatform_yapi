@@ -11,6 +11,14 @@ let TARGET_PREFIX = xU.path.join(
 	xU.var.RESOURCE_ASSETS
 );
 
+function returnBase64Body(basecode) {
+	if (basecode.indexOf('base64') > -1) {
+		return new Buffer(basecode.split("base64")[1], 'base64');
+	} else {
+		return new Buffer(basecode, 'base64');
+	}
+}
+
 module.exports = {
 	definitions: {
 		ResponseSelf: {
@@ -39,6 +47,50 @@ module.exports = {
 		description: "文件资源的管理，例如wiki 截图的上传下载"
 	},
 	paths: {
+		"/resource/base64img": {
+			post: {
+				summary: "上传图片",
+				description: "以base64形式",
+				request: {
+					body: {
+						basecode: {
+							description: "base64",
+							type: "string"
+						},
+						name: { description: "name", type: "string" },
+						size: { description: "size", type: "string" },
+						type: { description: "type", type: "string" },
+						useFor: {
+							required: true,
+							type: "string",
+							enum: ["wiki"],
+							default: "wiki"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						const { useFor, basecode, name, size, type } = ctx.payload;
+						const add_time = xU.time();
+						const wikiInfo = {
+							name: `${useFor}_${add_time}_${name}`,
+							useFor: useFor,
+							type,
+							path: `${useFor}/${add_time}/${name}/`,
+							size,
+							basecode,
+							uploadBy: this.$uid,
+							add_time
+						};
+						const res = await xU.orm(ModelResource).save(wikiInfo);
+						ctx.body = xU.resReturn({ _id: res._id });
+					} catch (e) {
+						ctx.body = xU.resReturn(null, 400, e.message);
+						xU.applog.error(e.message);
+					}
+				}
+			}
+		},
 		"/resource/single_upload": {
 			post: {
 				summary: "上传单个文件",
@@ -111,20 +163,30 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
+
 					try {
-						const res = await xU
-							.orm(ModelResource)
-							.getResourceById(ctx.query.id);
-						if (res) {
-							let targetPath = xU.path.resolve(`${TARGET_PREFIX}${res.path}`);
+						const targetResource = await xU.orm(ModelResource).getResourceById(ctx.query.id);
+						/* base64 存储 */
+						if (targetResource?.basecode) {
+							type = targetResource.type;
+							ctx.set('Content-type', type);
+							ctx.body = returnBase64Body(targetResource.basecode);
+							return;
+						}
+
+						/* 文件形式存储，需要path路径 */
+						if (targetResource) {
+							let targetPath = xU.path.resolve(`${TARGET_PREFIX}${targetResource.path}`);
 							const isExist = xU.fileExist(targetPath);
 							if (isExist) {
 								xU.applog.info("targetPath", targetPath);
 								ctx.status = 200;
-								ctx.set("Content-Type", mime.lookup(res.path));
+								ctx.set("Content-Type", mime.lookup(targetResource.path));
 								ctx.body = xU.fs.createReadStream(targetPath);
 							} else {
-								ctx.body = xU.$response(null, 404, "not found");
+								const targetResource = await xU.orm(ModelResource).getResourceByName("SYSTEM_404");
+								ctx.set('Content-type', "image/png");
+								ctx.body = returnBase64Body(targetResource.basecode);
 							}
 						}
 					} catch (e) {
