@@ -38,7 +38,7 @@ class AdvMock extends Component {
 			if (res.data.errcode === 0) {
 				message.success("保存成功");
 			} else {
-				message.error(res.data.errmsg);
+				message.error(res.data.message);
 			}
 		});
 	};

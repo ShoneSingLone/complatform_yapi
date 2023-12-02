@@ -44,7 +44,7 @@ async function handle(
 					let result = await axios.post(apipath, data);
 
 					if (result.data.errcode) {
-						messageError(result.data.errmsg);
+						messageError(result.data.message);
 						callback({ showLoading: false });
 						return false;
 					}
@@ -119,7 +119,7 @@ async function handle(
 				if (result.data.errcode) {
 					successNum--;
 					callback({ showLoading: false });
-					messageError(result.data.errmsg);
+					messageError(result.data.message);
 				} else {
 					existNum = existNum + result.data.data.length;
 				}

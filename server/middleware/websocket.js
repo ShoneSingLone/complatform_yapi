@@ -210,7 +210,7 @@ exports.appSetupWebsocket = function appSetupWebsocket(app) {
 		return ctx.websocket.send(
 			JSON.stringify({
 				errcode: 404,
-				errmsg: "No Fount."
+				message: "No Fount."
 			})
 		);
 	});

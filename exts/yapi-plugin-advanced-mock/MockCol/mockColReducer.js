@@ -28,7 +28,7 @@ export async function fetchMockCol(interfaceId) {
 		"/api/plugin/advmock/case/list?interface_id=" + interfaceId
 	);
 	if (result.errcode !== 0) {
-		message.error(result.errmsg);
+		message.error(result.message);
 	}
 	return {
 		type: FETCH_MOCK_COL,

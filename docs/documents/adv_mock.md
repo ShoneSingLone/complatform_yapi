@@ -74,17 +74,17 @@ YApi 提供了写  JS 脚本方式处理这一问题，可以根据用户请求
 ```
 if(params.type == 1){
   mockJson.errcode = 400;
-  mockJson.errmsg = 'error';
+  mockJson.message = 'error';
 }
 
 if(header.token == 't'){
   mockJson.errcode = 300;
-  mockJson.errmsg = 'error';
+  mockJson.message = 'error';
 }
 
 if(cookie.type == 'a'){
   mockJson.errcode = 500;
-  mockJson.errmsg = 'error';
+  mockJson.message = 'error';
 }
 
 ```

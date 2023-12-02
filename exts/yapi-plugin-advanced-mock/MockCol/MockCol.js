@@ -97,7 +97,7 @@ export default class MockCol extends Component {
 					await this.props.fetchMockCol(interface_id);
 					this.setState({ caseDesModalVisible: false });
 				} else {
-					message.error(res.data.errmsg);
+					message.error(res.data.message);
 				}
 			});
 	};
@@ -109,7 +109,7 @@ export default class MockCol extends Component {
 				message.success("删除成功");
 				await this.props.fetchMockCol(interface_id);
 			} else {
-				message.error(res.data.errmsg);
+				message.error(res.data.message);
 			}
 		});
 	};
@@ -128,7 +128,7 @@ export default class MockCol extends Component {
 					message.success("修改成功");
 					await this.props.fetchMockCol(interface_id);
 				} else {
-					message.error(res.data.errmsg);
+					message.error(res.data.message);
 				}
 			});
 	};

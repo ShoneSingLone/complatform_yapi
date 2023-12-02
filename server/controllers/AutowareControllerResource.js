@@ -33,7 +33,7 @@ module.exports = {
 			type: "object",
 			properties: {
 				errcode: { type: "integer" },
-				errmsg: { type: "int32" },
+				message: { type: "int32" },
 				data: {
 					type: "object",
 					properties: {

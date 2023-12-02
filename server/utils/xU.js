@@ -405,10 +405,10 @@ function schemaToJson(schema, options = {}) {
 	return result;
 }
 
-function $response(data, errcode, errmsg) {
+function $response(data, errcode, message) {
 	return {
 		errcode: errcode || 0,
-		errmsg: errmsg || "",
+		message: message || "",
 		data: data || {}
 	};
 }

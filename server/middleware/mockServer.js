@@ -555,7 +555,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			xU.applog.error(e);
 			return (ctx.body = {
 				errcode: 400,
-				errmsg: "解析出错，请检查。Error: " + e.message,
+				message: "解析出错，请检查。Error: " + e.message,
 				data: null
 			});
 		}
