@@ -70,7 +70,7 @@ class exportSwaggerController extends ControllerBase {
 		let status = ctx.request.query.status;
 
 		if (!pid) {
-			ctx.body = xU.resReturn(null, 200, "pid 不为空");
+			ctx.body = xU.$response(null, 200, "pid 不为空");
 		}
 		let curProject;
 		let tp = "";
@@ -92,12 +92,12 @@ class exportSwaggerController extends ControllerBase {
 					return (ctx.body = tp);
 				}
 				default: {
-					ctx.body = xU.resReturn(null, 400, "type 无效参数");
+					ctx.body = xU.$response(null, 400, "type 无效参数");
 				}
 			}
 		} catch (error) {
 			xU.applog.error(error);
-			ctx.body = xU.resReturn(null, 502, "下载出错");
+			ctx.body = xU.$response(null, 502, "下载出错");
 		}
 
 		//Convert to SwaggerV2.0 (OpenAPI 2.0)

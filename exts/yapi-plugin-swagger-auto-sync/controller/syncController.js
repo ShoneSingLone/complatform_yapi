@@ -20,11 +20,11 @@ class syncController extends ControllerBase {
 		let requestBody = ctx.request.body;
 		let projectId = requestBody.project_id;
 		if (!projectId) {
-			return (ctx.body = xU.resReturn(null, 408, "缺少项目Id"));
+			return (ctx.body = xU.$response(null, 408, "缺少项目Id"));
 		}
 
 		if ((await this.checkAuth(projectId, "project", "edit")) !== true) {
-			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
 		let result;
@@ -46,7 +46,7 @@ class syncController extends ControllerBase {
 		} else {
 			this.interfaceSyncUtils.deleteSyncJob(projectId);
 		}
-		return (ctx.body = xU.resReturn(result));
+		return (ctx.body = xU.$response(result));
 	}
 
 	/**
@@ -56,10 +56,10 @@ class syncController extends ControllerBase {
 	async getSync(ctx) {
 		let projectId = ctx.query.project_id;
 		if (!projectId) {
-			return (ctx.body = xU.resReturn(null, 408, "缺少项目Id"));
+			return (ctx.body = xU.$response(null, 408, "缺少项目Id"));
 		}
 		let result = await this.syncModel.getByProjectId(projectId);
-		return (ctx.body = xU.resReturn(result));
+		return (ctx.body = xU.$response(result));
 	}
 }
 

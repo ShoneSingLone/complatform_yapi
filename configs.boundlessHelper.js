@@ -1,5 +1,5 @@
 module.exports = {
-    "alias": {
-        "^server": "/server"
-    }
+	alias: {
+		"^server": "/server"
+	}
 };

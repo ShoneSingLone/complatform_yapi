@@ -78,7 +78,7 @@ async function getMineGroup(ctx) {
 		newResult.unshift(privateGroup);
 	}
 
-	ctx.body = xU.resReturn(newResult);
+	ctx.body = xU.$response(newResult);
 }
 
 module.exports = {

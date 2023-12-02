@@ -7,7 +7,7 @@ type t_xU = {
 
 type t_all_lodash_and_mine = LoDashStatic & typeof global.xU & t_xU;
 
-type t_WEBCONFIG = {
+type t_yapi_configs = {
 	/*如果有 对象属性为plugin名称 value也是一个object ，是配置信息*/
 	/*
   *isUsePlugin: {
@@ -45,6 +45,6 @@ type t_WEBCONFIG = {
 };
 
 declare global {
-	var WEBCONFIG: t_WEBCONFIG;
+	var yapi_configs: t_yapi_configs;
 	var xU: t_all_lodash_and_mine;
 }

@@ -17,7 +17,7 @@ module.exports = async app => {
 		dirs.map(async dirname => {
 			const [pluginDirname, pluginName] =
 				String(dirname).match(/^plugin(.*)$/) || [];
-			if (pluginName && WEBCONFIG?.isUsePlugin?.[pluginName]) {
+			if (pluginName && yapi_configs?.isUsePlugin?.[pluginName]) {
 				const pluginPath = xU.path.resolve(
 					__dirname,
 					pluginDirname,
@@ -28,4 +28,5 @@ module.exports = async app => {
 			return Promise.resolve();
 		})
 	);
- */};
+ */
+};

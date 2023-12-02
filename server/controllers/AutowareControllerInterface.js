@@ -41,17 +41,17 @@ module.exports = {
 
 					let project = modelProject.getBaseInfo(project_id);
 					if (!project) {
-						return (ctx.body = xU.resReturn(null, 407, "不存在的项目"));
+						return (ctx.body = xU.$response(null, 407, "不存在的项目"));
 					}
 					if (project.project_type === "private") {
 						if (
 							(await this.checkAuth(project._id, "project", "view")) !== true
 						) {
-							return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+							return (ctx.body = xU.$response(null, 406, "没有权限"));
 						}
 					}
 					if (!project_id) {
-						return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+						return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 					}
 
 					try {
@@ -84,13 +84,13 @@ module.exports = {
 							count = await modelInterface.listCount(option);
 						}
 
-						ctx.body = xU.resReturn({
+						ctx.body = xU.$response({
 							total: count,
 							list: result
 						});
 						xU.emitHook("interface_list", result).then();
 					} catch (err) {
-						ctx.body = xU.resReturn(null, 402, err.message);
+						ctx.body = xU.$response(null, 402, err.message);
 					}
 				}
 			}
@@ -125,20 +125,20 @@ module.exports = {
 					let { project_id } = ctx.payload;
 
 					if (!project_id) {
-						return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+						return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 					}
 
 					let project = await modelProject.getBaseInfo(project_id);
 
 					if (!project) {
-						return (ctx.body = xU.resReturn(null, 406, "不存在的项目"));
+						return (ctx.body = xU.$response(null, 406, "不存在的项目"));
 					}
 
 					if (project.project_type === "private") {
 						if (
 							(await this.checkAuth(project._id, "project", "view")) !== true
 						) {
-							return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+							return (ctx.body = xU.$response(null, 406, "没有权限"));
 						}
 					}
 
@@ -161,9 +161,9 @@ module.exports = {
 							}
 							interfaceMenuTree.push(category);
 						}
-						ctx.body = xU.resReturn(interfaceMenuTree);
+						ctx.body = xU.$response(interfaceMenuTree);
 					} catch (err) {
-						ctx.body = xU.resReturn(null, 402, err.message);
+						ctx.body = xU.$response(null, 402, err.message);
 					}
 				}
 			}

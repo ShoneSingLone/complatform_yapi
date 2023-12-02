@@ -3,6 +3,9 @@ const { Module } = require("module");
 
 /*
 {
+
+	isCloseRegister:false,
+	passsalt:"xxxxxx",
 	port: "0000",
 	adminAccount: "xxx@xxx.xxx",
 	db: {
@@ -43,8 +46,8 @@ module.exports = async function () {
 	require.extensions[".ts"] = require.extensions[".js"];
 	/* ********************************************************************************  */
 
-	global.WEBCONFIG = require("../../../yapi_configs.js");
+	global.yapi_configs = require("../../../yapi_configs.js");
 	/*上面的代码运行之后，server就可以直接访问到*/
-	require("server/utils/commons");
+	require("server/utils/xU");
 	await require("server/utils/db")();
 };

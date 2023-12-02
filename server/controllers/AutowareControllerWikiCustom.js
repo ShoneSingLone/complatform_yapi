@@ -71,7 +71,7 @@ const postWikiUpsertOne = {
 			payload._id = res._id;
 		}
 
-		ctx.body = xU.resReturn({ msg: res });
+		ctx.body = xU.$response({ msg: res });
 	}
 };
 
@@ -98,7 +98,7 @@ const getWikiMenu = {
 
 			const { order } =
 				(await xU.orm(ModelWikiOrder).detail(queryConditions)) || {};
-			ctx.body = xU.resReturn({
+			ctx.body = xU.$response({
 				list: await xU.orm(ModelWiki).menu({ belong_type, belong_id }),
 				orderArray: order || []
 			});
@@ -118,7 +118,7 @@ const getWikiDetail = {
 	async handler(ctx) {
 		try {
 			const { _id } = ctx.payload;
-			ctx.body = xU.resReturn(await xU.orm(ModelWiki).detail(_id));
+			ctx.body = xU.$response(await xU.orm(ModelWiki).detail(_id));
 		} catch (e) {
 			xU.applog.error(e.message);
 		}
@@ -129,7 +129,7 @@ const getWikiList = {
 	summary: "文档 list",
 	async handler(ctx) {
 		try {
-			ctx.body = xU.resReturn({ list: await xU.orm(ModelWiki).list() });
+			ctx.body = xU.$response({ list: await xU.orm(ModelWiki).list() });
 		} catch (e) {
 			xU.applog.error(e.message);
 		}
@@ -160,7 +160,7 @@ const postWikiResetMenuOrder = {
 				belong_id = this.$uid;
 			}
 
-			ctx.body = xU.resReturn(
+			ctx.body = xU.$response(
 				await xU.orm(ModelWikiOrder).upsertOne({
 					belong_type,
 					belong_id,
@@ -185,7 +185,7 @@ const deleteWikiDelete = {
 			const { _id } = ctx.payload;
 			/* 标记删除 */
 			await xU.orm(ModelWiki).delete(_id);
-			ctx.body = xU.resReturn({});
+			ctx.body = xU.$response({});
 		} catch (e) {
 			xU.applog.error(e.message);
 		}

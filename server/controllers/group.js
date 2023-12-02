@@ -107,7 +107,7 @@ class groupController extends ControllerBase {
 			if (result.type === "private") {
 				result.group_name = "个人空间";
 			}
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		}
 	}
 
@@ -129,7 +129,7 @@ class groupController extends ControllerBase {
 		// 新版每个人都有权限添加分组
 
 		// if (this.getRole() !== 'admin') {
-		//   return (ctx.body = xU.resReturn(null, 401, '没有权限'));
+		//   return (ctx.body = xU.$response(null, 401, '没有权限'));
 		// }
 
 		let owners = [];
@@ -150,10 +150,10 @@ class groupController extends ControllerBase {
 
 		let groupInst = xU.orm(ModelGroup);
 
-		let checkRepeat = await groupInst.checkRepeat(params.group_name);
+		let count = await groupInst.count(params.group_name);
 
-		if (checkRepeat > 0) {
-			return (ctx.body = xU.resReturn(null, 401, "项目分组名已存在"));
+		if (count > 0) {
+			return (ctx.body = xU.$response(null, 401, "项目分组名已存在"));
 		}
 
 		let data = {
@@ -184,7 +184,7 @@ class groupController extends ControllerBase {
 			username: username,
 			typeid: result._id
 		});
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	/**
@@ -262,7 +262,7 @@ class groupController extends ControllerBase {
 				typeid: params.id
 			});
 		}
-		ctx.body = xU.resReturn({
+		ctx.body = xU.$response({
 			result,
 			add_members,
 			exist_members,
@@ -288,10 +288,10 @@ class groupController extends ControllerBase {
 
 		var check = await groupInst.checkMemberRepeat(params.id, params.member_uid);
 		if (check === 0) {
-			return (ctx.body = xU.resReturn(null, 400, "分组成员不存在"));
+			return (ctx.body = xU.$response(null, 400, "分组成员不存在"));
 		}
 		if ((await this.checkAuth(params.id, "group", "danger")) !== true) {
-			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
 		params.role =
@@ -316,7 +316,7 @@ class groupController extends ControllerBase {
 			username: username,
 			typeid: params.id
 		});
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	/**
@@ -334,7 +334,7 @@ class groupController extends ControllerBase {
 		let params = ctx.params;
 		let groupInst = xU.orm(ModelGroup);
 		let group = await groupInst.get(params.id);
-		ctx.body = xU.resReturn(group.members);
+		ctx.body = xU.$response(group.members);
 	}
 
 	/**
@@ -354,10 +354,10 @@ class groupController extends ControllerBase {
 		let groupInst = xU.orm(ModelGroup);
 		var check = await groupInst.checkMemberRepeat(params.id, params.member_uid);
 		if (check === 0) {
-			return (ctx.body = xU.resReturn(null, 400, "分组成员不存在"));
+			return (ctx.body = xU.$response(null, 400, "分组成员不存在"));
 		}
 		if ((await this.checkAuth(params.id, "group", "danger")) !== true) {
-			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
 		let result = await groupInst.delMember(params.id, params.member_uid);
@@ -373,7 +373,7 @@ class groupController extends ControllerBase {
 			username: username,
 			typeid: params.id
 		});
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	/**
@@ -451,7 +451,7 @@ class groupController extends ControllerBase {
 			newResult.unshift(privateGroup);
 		}
 
-		ctx.body = xU.resReturn(newResult);
+		ctx.body = xU.$response(newResult);
 	}
 
 	/**
@@ -466,7 +466,7 @@ class groupController extends ControllerBase {
 	 */
 	async del(ctx) {
 		if (this.getRole() !== "admin") {
-			return (ctx.body = xU.resReturn(null, 401, "没有权限"));
+			return (ctx.body = xU.$response(null, 401, "没有权限"));
 		}
 
 		let groupInst = xU.orm(ModelGroup);
@@ -487,7 +487,7 @@ class groupController extends ControllerBase {
 		}
 
 		let result = await groupInst.del(id);
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	/**
@@ -507,7 +507,7 @@ class groupController extends ControllerBase {
 		let params = ctx.params;
 
 		if ((await this.checkAuth(params.id, "group", "danger")) !== true) {
-			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
 		let result = await groupInst.up(params.id, params);
@@ -521,7 +521,7 @@ class groupController extends ControllerBase {
 			username: username,
 			typeid: params.id
 		});
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 }
 

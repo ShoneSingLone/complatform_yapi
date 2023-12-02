@@ -22,9 +22,9 @@ class interfaceColController extends ControllerBase {
 				expires: xU.expireDate(7),
 				httpOnly: true
 			});
-			ctx.body = xU.resReturn(query);
+			ctx.body = xU.$response(query);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -40,9 +40,9 @@ class interfaceColController extends ControllerBase {
 		try {
 			let params = ctx.request.body;
 			ctx.status = +ctx.query.code || 200;
-			ctx.body = xU.resReturn(params);
+			ctx.body = xU.$response(params);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -56,9 +56,9 @@ class interfaceColController extends ControllerBase {
 	async testPost(ctx) {
 		try {
 			let params = ctx.request.body;
-			ctx.body = xU.resReturn(params);
+			ctx.body = xU.$response(params);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -96,14 +96,14 @@ class interfaceColController extends ControllerBase {
 					path.join(xU.var.APP_ROOT_DIR, "test.text"),
 					data,
 					function (err) {
-						return (ctx.body = xU.resReturn(null, 402, "写入失败"));
+						return (ctx.body = xU.$response(null, 402, "写入失败"));
 					}
 				);
 			});
 
-			ctx.body = xU.resReturn({ res: "上传成功" });
+			ctx.body = xU.$response({ res: "上传成功" });
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -119,9 +119,9 @@ class interfaceColController extends ControllerBase {
 			let file = ctx.request.body.files.file;
 			let newPath = path.join(xU.var.APP_ROOT_DIR, "test.text");
 			fs.renameSync(file.path, newPath);
-			ctx.body = xU.resReturn({ res: "上传成功" });
+			ctx.body = xU.$response({ res: "上传成功" });
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -135,9 +135,9 @@ class interfaceColController extends ControllerBase {
 	async testPut(ctx) {
 		try {
 			let params = ctx.request.body;
-			ctx.body = xU.resReturn(params);
+			ctx.body = xU.$response(params);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -151,9 +151,9 @@ class interfaceColController extends ControllerBase {
 	async testDelete(ctx) {
 		try {
 			let body = ctx.request.body;
-			ctx.body = xU.resReturn(body);
+			ctx.body = xU.$response(body);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -167,9 +167,9 @@ class interfaceColController extends ControllerBase {
 	async testHead(ctx) {
 		try {
 			let query = ctx.query;
-			ctx.body = xU.resReturn(query);
+			ctx.body = xU.$response(query);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -183,9 +183,9 @@ class interfaceColController extends ControllerBase {
 	async testOptions(ctx) {
 		try {
 			let query = ctx.query;
-			ctx.body = xU.resReturn(query);
+			ctx.body = xU.$response(query);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -199,9 +199,9 @@ class interfaceColController extends ControllerBase {
 	async testPatch(ctx) {
 		try {
 			let params = ctx.request.body;
-			ctx.body = xU.resReturn(params);
+			ctx.body = xU.$response(params);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 	/**
@@ -214,9 +214,9 @@ class interfaceColController extends ControllerBase {
 	async testRaw(ctx) {
 		try {
 			let params = ctx.request.body;
-			ctx.body = xU.resReturn(params);
+			ctx.body = xU.$response(params);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -237,7 +237,7 @@ class interfaceColController extends ControllerBase {
 			console.log(ctx.response);
 			ctx.body = result;
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 }

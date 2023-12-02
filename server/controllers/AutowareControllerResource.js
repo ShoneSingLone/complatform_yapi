@@ -89,10 +89,10 @@ module.exports = {
 							add_time: xU.time()
 						};
 						const res = await xU.orm(ModelResource).save(wikiInfo);
-						ctx.body = xU.resReturn({ _id: res._id });
+						ctx.body = xU.$response({ _id: res._id });
 					} catch (e) {
 						xU.applog.error(e.message);
-						ctx.body = xU.resReturn(null, 402, e.message);
+						ctx.body = xU.$response(null, 402, e.message);
 					}
 				}
 			}
@@ -124,7 +124,7 @@ module.exports = {
 								ctx.set("Content-Type", mime.lookup(res.path));
 								ctx.body = xU.fs.createReadStream(targetPath);
 							} else {
-								ctx.body = xU.resReturn(null, 404, "not found");
+								ctx.body = xU.$response(null, 404, "not found");
 							}
 						}
 					} catch (e) {
@@ -153,16 +153,16 @@ module.exports = {
 								throw new Error("auth");
 							}
 							let targetPath = xU.path.resolve(
-								WEBCONFIG.RESOURCE_ASSETS_REMOTE,
+								yapi_configs.RESOURCE_ASSETS_REMOTE,
 								dirpath || ""
 							);
 							const dirlsArray = await fs.promises.readdir(targetPath);
-							ctx.body = xU.resReturn(dirlsArray);
+							ctx.body = xU.$response(dirlsArray);
 						} else {
 							throw new Error("auth");
 						}
 					} catch (e) {
-						ctx.body = xU.resReturn(null, 404, "not found");
+						ctx.body = xU.$response(null, 404, "not found");
 						xU.applog.error(e.message);
 					}
 				}
@@ -189,7 +189,7 @@ module.exports = {
 							}
 							dirpath = dirpath.replace(/^\//, "");
 							let targetPath = xU.path.resolve(
-								WEBCONFIG.RESOURCE_ASSETS_REMOTE,
+								yapi_configs.RESOURCE_ASSETS_REMOTE,
 								dirpath || ""
 							);
 
@@ -198,7 +198,7 @@ module.exports = {
 								const dirlsArray = await fs.promises.readdir(targetPath);
 								const dirname = path.dirname(targetPath);
 								const rootDirName = xU.path.resolve(
-									WEBCONFIG.RESOURCE_ASSETS_REMOTE
+									yapi_configs.RESOURCE_ASSETS_REMOTE
 								);
 
 								let parentDir;
@@ -213,7 +213,7 @@ module.exports = {
 								}
 
 								const current = dirpath;
-								ctx.body = xU.resReturn({
+								ctx.body = xU.$response({
 									type: "directory",
 									parent: parentDir,
 									current,
@@ -230,7 +230,7 @@ module.exports = {
 										size: stat.size,
 										type
 									});
-									ctx.body = xU.resReturn({
+									ctx.body = xU.$response({
 										type: "audio",
 										record
 									});
@@ -241,7 +241,7 @@ module.exports = {
 
 						throw new Error("auth");
 					} catch (e) {
-						ctx.body = xU.resReturn(null, 404, "not found");
+						ctx.body = xU.$response(null, 404, "not found");
 						xU.applog.error(e.message);
 					}
 				}
@@ -264,7 +264,7 @@ module.exports = {
 					const { headers, payload } = ctx;
 					const { id: dirpath } = payload;
 					let resourcePath = xU.path.resolve(
-						WEBCONFIG.RESOURCE_ASSETS_REMOTE,
+						yapi_configs.RESOURCE_ASSETS_REMOTE,
 						dirpath || ""
 					);
 					const stat = await fs.promises.stat(resourcePath);
@@ -306,13 +306,19 @@ module.exports = {
 									ctx.body = fs.createReadStream(resourcePath);
 								}
 							} catch (error) {
-								ctx.body = xU.resReturn(null, 400, error);
+								ctx.body = xU.$response(null, 400, error);
 							}
 
 							return;
 						}
 					}
-					ctx.body = xU.resReturn(null, 404, "Not Found");
+					ctx.body = xU.$response(
+						{
+							msg: "not found"
+						},
+						404,
+						"Not Found"
+					);
 				}
 			}
 		}

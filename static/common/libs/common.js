@@ -241,7 +241,7 @@
 	 * @name _.$doNoting
 	 * 啥都不干的函数
 	 */
-	_.$doNoting = () => {};
+	_.$doNoting = () => { };
 
 	/**
 	 * @name _.$sleep

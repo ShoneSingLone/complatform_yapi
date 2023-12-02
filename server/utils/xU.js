@@ -1,3 +1,4 @@
+const CryptoJS = require("crypto-js");
 const dayjs = require("dayjs");
 const sha1 = require("sha1");
 const modelLog = require("../models/log");
@@ -20,12 +21,15 @@ const fs = require("fs-extra");
 const nodemailer = require("nodemailer");
 const { isUsePlugin } = require("./isUsePlugin");
 
-WEBCONFIG.isUsePlugin = isUsePlugin;
+yapi_configs.isUsePlugin = isUsePlugin;
 
-let mail = () => null;
-if (WEBCONFIG.mail && WEBCONFIG.mail.enable) {
-	mail = nodemailer.createTransport(WEBCONFIG.mail);
-}
+const mail = (function () {
+	if (yapi_configs.mail) {
+		return nodemailer.createTransport(yapi_configs.mail);
+	} else {
+		return () => null;
+	}
+})();
 
 const MAP_ORM = new Map();
 const APP_ROOT_DIR = path.resolve(__dirname, "../.."); //路径
@@ -401,12 +405,11 @@ function schemaToJson(schema, options = {}) {
 	return result;
 }
 
-function resReturn(data, errcode, errmsg) {
-	errcode = errcode || 0;
+function $response(data, errcode, errmsg) {
 	return {
-		errcode,
-		errmsg: errmsg || "成功！",
-		data
+		errcode: errcode || 0,
+		errmsg: errmsg || "",
+		data: data || {}
 	};
 }
 
@@ -506,7 +509,8 @@ function getIp(ctx) {
 	return ip;
 }
 
-function generatePassword(password, passsalt) {
+/* 用配置的密码加密，纯函数*/
+function $saltIt(password, passsalt) {
 	return sha1(password + sha1(passsalt));
 }
 
@@ -515,32 +519,34 @@ function expireDate(day) {
 	date.setTime(date.getTime() + day * 86400000);
 	return date;
 }
+function expireDay(day) {
+	return Date.now() + day * 86400000;
+}
 
+const defaultSendmailCallback = function (err, options) {
+	if (err) {
+		xU.applog.error("send mail " + options.to + " error," + err.message);
+	} else {
+		xU.applog.info("send mail " + options.to + " success");
+	}
+};
+
+/* 用配置的邮件发送邮件 */
 function sendMail(options, cb) {
 	if (!xU.mail) return false;
 	options.subject = options.subject
 		? options.subject + "-YApi 平台"
 		: "YApi 平台";
-
-	cb =
-		cb ||
-		function (err) {
-			if (err) {
-				xU.applog.error("send mail " + options.to + " error," + err.message);
-			} else {
-				xU.applog.info("send mail " + options.to + " success");
-			}
-		};
-
+	cb = cb || defaultSendmailCallback;
 	try {
 		xU.mail.sendMail(
 			{
-				from: WEBCONFIG.mail.from,
+				from: yapi_configs.mail.from,
 				to: options.to,
 				subject: options.subject,
 				html: options.contents
 			},
-			cb
+			error => cb(error, options)
 		);
 	} catch (e) {
 		xU.applog.error(e.message);
@@ -672,7 +678,7 @@ function rtrim(str) {
  * @keys Object {a: 'string', b: 'number'}
  * @return Object {a: 'ab', b: 123}
  */
-function handleParams(params, keys) {
+function ensureParamsType(params, keys) {
 	if (
 		!params ||
 		typeof params !== "object" ||
@@ -787,7 +793,7 @@ function createAction(
 				let validResult = xU.validateParams(inst.schemaMap[action], ctx.params);
 
 				if (!validResult.valid) {
-					return (ctx.body = xU.resReturn(null, 400, validResult.message));
+					return (ctx.body = xU.$response(null, 400, validResult.message));
 				}
 			}
 			if (inst.$auth === true) {
@@ -796,11 +802,11 @@ function createAction(
 				if (ws === true) {
 					ctx.ws.send("请登录...");
 				} else {
-					ctx.body = xU.resReturn(null, 40011, "请登录...");
+					ctx.body = xU.$response(null, 40011, "请登录...");
 				}
 			}
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 40012, err.message);
+			ctx.body = xU.$response(null, 40012, err.message);
 			xU.applog.error(err);
 		}
 	});
@@ -868,7 +874,7 @@ async function getCaseList(id) {
 	resultList = resultList.sort((a, b) => {
 		return a.index - b.index;
 	});
-	let ctxBody = xU.resReturn(resultList);
+	let ctxBody = xU.$response(resultList);
 	ctxBody.colData = colData;
 	return ctxBody;
 }
@@ -951,11 +957,11 @@ ${JSON.stringify(schema, null, 2)}`;
 			result = await sandboxFn(context, script);
 		}
 		result.logs = logs;
-		return xU.resReturn(result);
+		return xU.$response(result);
 	} catch (err) {
 		logs.push(convertString(err));
 		result.logs = logs;
-		return xU.resReturn(result, 400, err.name + ": " + err.message);
+		return xU.$response(result, 400, err.name + ": " + err.message);
 	}
 }
 
@@ -1059,7 +1065,7 @@ exports.applog = applog;
 exports.mail = mail;
 exports.orm = orm;
 exports.schemaToJson = schemaToJson;
-exports.resReturn = resReturn;
+exports.$response = $response;
 exports.log = log;
 exports.fileExist = fileExist;
 exports.time = time;
@@ -1068,8 +1074,9 @@ exports.rand = rand;
 exports.json_parse = json_parse;
 exports.randStr = randStr;
 exports.getIp = getIp;
-exports.generatePassword = generatePassword;
+exports.$saltIt = $saltIt;
 exports.expireDate = expireDate;
+exports.expireDay = expireDay;
 exports.sendMail = sendMail;
 exports.validateSearchKeyword = validateSearchKeyword;
 exports.filterRes = filterRes;
@@ -1079,7 +1086,7 @@ exports.sandbox = sandbox;
 exports.trim = trim;
 exports.ltrim = ltrim;
 exports.rtrim = rtrim;
-exports.handleParams = handleParams;
+exports.handleParams = ensureParamsType;
 exports.validateParams = validateParams;
 exports.saveLog = saveLog;
 exports.createAction = createAction;
@@ -1091,3 +1098,8 @@ exports.handleMockScript = handleMockScript;
 exports.createWebAPIRequest = createWebAPIRequest;
 exports.storageCreator = storageCreator;
 exports.dayjs = dayjs;
+exports.$hashCode = function $hashCode(Salt) {
+	/* https://cryptojs.gitbook.io/docs/ */
+	const hash = CryptoJS.SHA256(Salt + Date.now());
+	return hash.toString(CryptoJS.enc.Hex);
+};

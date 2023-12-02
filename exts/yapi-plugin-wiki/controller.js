@@ -28,12 +28,12 @@ class ControllerWiki extends ControllerBase {
 		try {
 			let project_id = ctx.request.query.project_id;
 			if (!project_id) {
-				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 			}
 			let result = await this.model.get(project_id);
-			return (ctx.body = xU.resReturn(result));
+			return (ctx.body = xU.$response(result));
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 400, err.message);
+			ctx.body = xU.$response(null, 400, err.message);
 		}
 	}
 
@@ -49,19 +49,19 @@ class ControllerWiki extends ControllerBase {
 	async uplodaWikiDesc(ctx) {
 		try {
 			let params = ctx.request.body;
-			params = xU.handleParams(params, {
+			params = xU.ensureParamsType(params, {
 				project_id: "number",
 				desc: "string",
 				markdown: "string"
 			});
 
 			if (!params.project_id) {
-				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 			}
 			if (!this.$tokenAuth) {
 				let auth = await this.checkAuth(params.project_id, "project", "edit");
 				if (!auth) {
-					return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+					return (ctx.body = xU.$response(null, 400, "没有权限"));
 				}
 			}
 
@@ -81,7 +81,7 @@ class ControllerWiki extends ControllerBase {
 				});
 
 				let res = await this.model.save(data);
-				ctx.body = xU.resReturn(res);
+				ctx.body = xU.$response(res);
 			} else {
 				let data = Object.assign(params, {
 					username,
@@ -89,7 +89,7 @@ class ControllerWiki extends ControllerBase {
 					up_time: xU.time()
 				});
 				let upRes = await this.model.up(result._id, data);
-				ctx.body = xU.resReturn(upRes);
+				ctx.body = xU.$response(upRes);
 			}
 
 			let logData = {
@@ -150,7 +150,7 @@ class ControllerWiki extends ControllerBase {
 			});
 			return 1;
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 400, err.message);
+			ctx.body = xU.$response(null, 400, err.message);
 		}
 	}
 	diffHTML(html) {

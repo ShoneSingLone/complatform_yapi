@@ -93,11 +93,11 @@ class openController extends ControllerBase {
 
 		let token = ctx.params.token;
 		if (!type || !importDataModule[type]) {
-			return (ctx.body = xU.resReturn(null, 40022, "不存在的导入方式"));
+			return (ctx.body = xU.$response(null, 40022, "不存在的导入方式"));
 		}
 
 		if (!content && !ctx.params.url) {
-			return (ctx.body = xU.resReturn(
+			return (ctx.body = xU.$response(
 				null,
 				40022,
 				"json 或者 url 参数，不能都为空"
@@ -126,7 +126,7 @@ class openController extends ControllerBase {
 			}
 			content = JSON.parse(content);
 		} catch (e) {
-			return (ctx.body = xU.resReturn(null, 40022, "json 格式有误:" + e));
+			return (ctx.body = xU.$response(null, 40022, "json 格式有误:" + e));
 		}
 
 		let menuList = await this.modelInterfaceCat.list(project_id);
@@ -167,13 +167,13 @@ class openController extends ControllerBase {
 			},
 			() => {},
 			token,
-			WEBCONFIG.port
+			yapi_configs.port
 		);
 
 		if (errorMessage.length > 0) {
-			return (ctx.body = xU.resReturn(null, 404, errorMessage.join("\n")));
+			return (ctx.body = xU.$response(null, 404, errorMessage.join("\n")));
 		}
-		ctx.body = xU.resReturn(null, 0, successMessage + warnMessage);
+		ctx.body = xU.$response(null, 0, successMessage + warnMessage);
 	}
 
 	async projectInterfaceData(ctx) {
@@ -199,7 +199,7 @@ class openController extends ControllerBase {
 	}
 	async runAutoTest(ctx) {
 		if (!this.$tokenAuth) {
-			return (ctx.body = xU.resReturn(null, 40022, "token 验证失败"));
+			return (ctx.body = xU.$response(null, 40022, "token 验证失败"));
 		}
 		// console.log(1231312)
 		const token = ctx.query.token;
@@ -214,7 +214,7 @@ class openController extends ControllerBase {
 
 		let colData = await this.interfaceColModel.get(id);
 		if (!colData) {
-			return (ctx.body = xU.resReturn(null, 40022, "id值不存在"));
+			return (ctx.body = xU.$response(null, 40022, "id值不存在"));
 		}
 
 		let projectData = await this.modelProject.get(projectId);

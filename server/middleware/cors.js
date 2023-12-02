@@ -6,13 +6,13 @@ const middlewareCORS = () => {
 	return cors({
 		credentials: true,
 		origin: ctx => {
-			if (WEBCONFIG?.cors?.allow) {
+			if (yapi_configs?.cors?.allow) {
 				const url = String(
 					ctx.headers.origin || ctx.headers.referer
 				).toLowerCase();
 
 				if (
-					_.some(WEBCONFIG.cors.allow, allow => {
+					_.some(yapi_configs.cors.allow, allow => {
 						return ~url.indexOf(String(allow).toLowerCase());
 					})
 				) {

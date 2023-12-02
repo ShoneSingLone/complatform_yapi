@@ -50,11 +50,6 @@ xU.sendNotice = async function (projectId, data) {
 				);
 			}
 		});
-		// xU.sendMail({
-		//   to: emails,
-		//   contents: data.content,
-		//   subject: data.title
-		// });
 	} catch (e) {
 		xU.applog.error("发送失败：" + e);
 	}

@@ -2,13 +2,21 @@ const koaStatic = require("koa-static");
 const ControllerBase = require("server/controllers/base");
 const RouteMap = new Map();
 
+/* isHideInSwagger */
+/* auth */
+
 /* 便捷使用schema */
 xU.schema = schema => ({ $ref: `#/definitions/${schema}` });
 xU.swagger_id = desc => ({
 	description: desc,
 	type: "string"
 });
-
+function getRoute(url, method) {
+	const urlObj = RouteMap.get(url);
+	if (urlObj) {
+		return urlObj[String(method).toLowerCase()];
+	}
+}
 function appUseSwagger(app, swaggerJSON) {
 	app.use(async (ctx, next) => {
 		if (ctx.path === "/swagger") {
@@ -31,52 +39,49 @@ function appUseSwagger(app, swaggerJSON) {
 }
 
 function appAddRoutes(app, routes) {
-	routes.forEach(({ url, method, handler }) => {
-		url = `${
-			WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath || ""
-		}${url}`;
-		const urlObj = RouteMap.get(url) || {};
-		urlObj[String(method).toLowerCase()] = handler;
-		RouteMap.set(url, urlObj);
+	routes.forEach(route => {
+		const { url, method } = route;
+		const basePath =
+			yapi_configs?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.basePath || "";
+		let key = `${basePath}${url}`;
+		const urlObj = RouteMap.get(key) || {};
+		urlObj[String(method).toLowerCase()] = route;
+		RouteMap.set(key, urlObj);
 	});
 
 	app.use(async (ctx, next) => {
 		const isDone = await (async () => {
-			const urlObj = RouteMap.get(ctx.path);
-			if (urlObj) {
-				const handler = urlObj[String(ctx.method).toLowerCase()];
-				if (handler) {
-					/* AOP */
-					const vm = new ControllerBase(ctx);
-					try {
-						await vm.init(ctx);
-						if (vm.$auth) {
-							vm.ctx.payload = xU.merge(
-								{},
-								ctx.params || {},
-								ctx.query || {},
-								ctx.request.body || {}
-							);
-							try {
-								await handler.call(vm, ctx);
-							} catch (error) {
-								error.message += `\n${ctx.path} ${ctx.method} handler error`;
-								throw error;
-							}
-							return true;
-						} else {
-							ctx.body = xU.resReturn(
-								{ msg: "未获取授权" },
-								40011,
-								"请登录..."
-							);
+			/* AOP */
+			const route = getRoute(ctx.path, ctx.method);
+			if (route) {
+				const { handler, auth } = route;
+				const vm = new ControllerBase(ctx);
+				try {
+					await vm.init(ctx);
+					/* TODO: 权限控制  */
+					if (vm.$auth || auth) {
+						vm.ctx.payload = xU.merge(
+							{},
+							ctx.params || {},
+							ctx.query || {},
+							ctx.request.body || {}
+						);
+						/* TODO: 参数校验 根据route的schema校验 */
+						try {
+							await handler.call(vm, ctx);
+						} catch (error) {
+							error.message += `\n${ctx.path} ${ctx.method} handler error`;
+							throw error;
 						}
-					} catch (err) {
-						xU.applog.error(err);
+						return true;
+					} else {
+						ctx.body = xU.$response({ msg: "未获取授权" }, 40011, "请登录...");
 					}
-				} else {
-					ctx.body = xU.resReturn(null, 404, "API 使用了错误的 METHOD");
+				} catch (err) {
+					xU.applog.error(err);
 				}
+			} else {
+				ctx.body = xU.$response(null, 404, "API 使用了错误的 METHOD");
 			}
 		})();
 		if (!isDone) {
@@ -92,7 +97,7 @@ module.exports = async function (app) {
 	appAddRoutes(app, routes);
 
 	/*是否开启swagger: 用环境变量也可以，用配置文件也行，内网使用，一直开启也无妨，当然，默认是关闭*/
-	if (WEBCONFIG?.isUsePlugin?.AutowareRoutes?.isUseSwagger) {
+	if (yapi_configs?.isUsePlugin?.AutowareRoutes?.isUseSwagger) {
 		appUseSwagger(app, swaggerJSON);
 	}
 };

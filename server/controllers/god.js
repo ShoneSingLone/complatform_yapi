@@ -29,12 +29,12 @@ class ControllerGod extends ControllerBase {
 		if (strategy) {
 			try {
 				const res = await strategy.call(this, ctx);
-				ctx.body = xU.resReturn(res);
+				ctx.body = xU.$response(res);
 			} catch (err) {
-				ctx.body = xU.resReturn(null, 402, err.message);
+				ctx.body = xU.$response(null, 402, err.message);
 			}
 		} else {
-			ctx.body = xU.resReturn(null, 404, incantations);
+			ctx.body = xU.$response(null, 404, incantations);
 		}
 	}
 }

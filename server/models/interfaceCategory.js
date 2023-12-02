@@ -35,7 +35,7 @@ class ModelInterfaceCategory extends ModelBase {
 			.exec();
 	}
 
-	checkRepeat(name) {
+	count(name) {
 		return this.model.countDocuments({
 			name: name
 		});

@@ -16,9 +16,9 @@ class advMockController extends ControllerBase {
 		let id = ctx.query.interface_id;
 		let mockData = await this.orm_adv.get(id);
 		if (!mockData) {
-			return (ctx.body = xU.resReturn(null, 408, "mock脚本不存在"));
+			return (ctx.body = xU.$response(null, 408, "mock脚本不存在"));
 		}
-		return (ctx.body = xU.resReturn(mockData));
+		return (ctx.body = xU.$response(mockData));
 	}
 
 	async upMock(ctx) {
@@ -27,14 +27,14 @@ class advMockController extends ControllerBase {
 			let auth = await this.checkAuth(params.project_id, "project", "edit");
 
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 40033, "没有权限"));
+				return (ctx.body = xU.$response(null, 40033, "没有权限"));
 			}
 
 			if (!params.interface_id) {
-				return (ctx.body = xU.resReturn(null, 408, "缺少interface_id"));
+				return (ctx.body = xU.$response(null, 408, "缺少interface_id"));
 			}
 			if (!params.project_id) {
-				return (ctx.body = xU.resReturn(null, 408, "缺少project_id"));
+				return (ctx.body = xU.$response(null, 408, "缺少project_id"));
 			}
 
 			let data = {
@@ -51,9 +51,9 @@ class advMockController extends ControllerBase {
 			} else {
 				result = await this.orm_adv.save(data);
 			}
-			return (ctx.body = xU.resReturn(result));
+			return (ctx.body = xU.$response(result));
 		} catch (e) {
-			return (ctx.body = xU.resReturn(null, 400, e.message));
+			return (ctx.body = xU.$response(null, 400, e.message));
 		}
 	}
 
@@ -61,7 +61,7 @@ class advMockController extends ControllerBase {
 		try {
 			let id = ctx.query.interface_id;
 			if (!id) {
-				return (ctx.body = xU.resReturn(null, 400, "缺少 interface_id"));
+				return (ctx.body = xU.$response(null, 400, "缺少 interface_id"));
 			}
 			let result = await this.caseModel.list(id);
 			for (let i = 0, len = result.length; i < len; i++) {
@@ -72,36 +72,36 @@ class advMockController extends ControllerBase {
 				// }
 			}
 
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 400, err.message);
+			ctx.body = xU.$response(null, 400, err.message);
 		}
 	}
 
 	async getCase(ctx) {
 		let id = ctx.query.id;
 		if (!id) {
-			return (ctx.body = xU.resReturn(null, 400, "缺少 id"));
+			return (ctx.body = xU.$response(null, 400, "缺少 id"));
 		}
 		let result = await this.caseModel.get({
 			_id: id
 		});
 
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	async saveCase(ctx) {
 		let params = ctx.request.body;
 
 		if (!params.interface_id) {
-			return (ctx.body = xU.resReturn(null, 408, "缺少interface_id"));
+			return (ctx.body = xU.$response(null, 408, "缺少interface_id"));
 		}
 		if (!params.project_id) {
-			return (ctx.body = xU.resReturn(null, 408, "缺少project_id"));
+			return (ctx.body = xU.$response(null, 408, "缺少project_id"));
 		}
 
 		if (!params.res_body) {
-			return (ctx.body = xU.resReturn(null, 408, "请输入 Response Body"));
+			return (ctx.body = xU.$response(null, 408, "请输入 Response Body"));
 		}
 
 		let data = {
@@ -122,7 +122,7 @@ class advMockController extends ControllerBase {
 		data.code = isNaN(data.code) ? 200 : +data.code;
 		data.delay = isNaN(data.delay) ? 0 : +data.delay;
 		if (config.httpCodes.indexOf(data.code) === -1) {
-			return (ctx.body = xU.resReturn(null, 408, "非法的 httpCode"));
+			return (ctx.body = xU.$response(null, 408, "非法的 httpCode"));
 		}
 
 		let findRepeat, findRepeatParams;
@@ -149,7 +149,7 @@ class advMockController extends ControllerBase {
 		findRepeat = await this.caseModel.get(findRepeatParams);
 
 		if (findRepeat && findRepeat._id !== params.id) {
-			return (ctx.body = xU.resReturn(null, 400, "已存在的期望"));
+			return (ctx.body = xU.$response(null, 400, "已存在的期望"));
 		}
 
 		let result;
@@ -159,30 +159,30 @@ class advMockController extends ControllerBase {
 		} else {
 			result = await this.caseModel.save(data);
 		}
-		return (ctx.body = xU.resReturn(result));
+		return (ctx.body = xU.$response(result));
 	}
 
 	async delCase(ctx) {
 		let id = ctx.request.body.id;
 		if (!id) {
-			return (ctx.body = xU.resReturn(null, 408, "缺少 id"));
+			return (ctx.body = xU.$response(null, 408, "缺少 id"));
 		}
 		let result = await this.caseModel.del(id);
-		return (ctx.body = xU.resReturn(result));
+		return (ctx.body = xU.$response(result));
 	}
 
 	async hideCase(ctx) {
 		let id = ctx.request.body.id;
 		let enable = ctx.request.body.enable;
 		if (!id) {
-			return (ctx.body = xU.resReturn(null, 408, "缺少 id"));
+			return (ctx.body = xU.$response(null, 408, "缺少 id"));
 		}
 		let data = {
 			id,
 			case_enable: enable
 		};
 		let result = await this.caseModel.up(data);
-		return (ctx.body = xU.resReturn(result));
+		return (ctx.body = xU.$response(result));
 	}
 }
 

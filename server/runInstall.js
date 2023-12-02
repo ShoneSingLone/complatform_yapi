@@ -21,12 +21,12 @@
 		let userInst = xU.orm(ModelUser);
 		let passsalt = xU.randStr();
 		let result = userInst.save({
-			username: WEBCONFIG.adminAccount.substr(
+			username: yapi_configs.adminAccount.substr(
 				0,
-				WEBCONFIG.adminAccount.indexOf("@")
+				yapi_configs.adminAccount.indexOf("@")
 			),
-			email: WEBCONFIG.adminAccount,
-			password: xU.generatePassword(WEBCONFIG.adminPwd, passsalt),
+			email: yapi_configs.adminAccount,
+			password: xU.$saltIt(yapi_configs.adminPwd, passsalt),
 			passsalt: passsalt,
 			role: "admin",
 			add_time: xU.time(),
@@ -146,14 +146,14 @@
 				function () {
 					fs.ensureFileSync(path.join(xU.var.APP_ROOT_DIR, "yapi.installed"));
 					console.log(
-						`初始化管理员账号成功,账号名："${WEBCONFIG.adminAccount}"，密码："${WEBCONFIG.adminPwd}"`
+						`初始化管理员账号成功,账号名："${yapi_configs.adminAccount}"，密码："${yapi_configs.adminPwd}"`
 					);
 
 					process.exit(0);
 				},
 				function (err) {
 					throw new Error(
-						`初始化管理员账号 "${WEBCONFIG.adminAccount}" 失败, ${err.message}`
+						`初始化管理员账号 "${yapi_configs.adminAccount}" 失败, ${err.message}`
 					);
 				}
 			);
