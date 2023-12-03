@@ -2,7 +2,7 @@ const { ModelUser } = require("../models/user");
 const ControllerBase = require("./base");
 const { ldapQuery } = require("../utils/ldap");
 const { ModelInterface } = require("../models/interface");
-const ModelGroup = require("../models/group");
+const { ModelGroup } = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 const avatarModel = require("../models/avatar");
 const { customCookies } = require("../utils/customCookies");
@@ -206,17 +206,6 @@ class userController extends ControllerBase {
 		}
 	}
 
-	async handlePrivateGroup(uid) {
-		var groupInst = xU.orm(ModelGroup);
-		await groupInst.save({
-			uid: uid,
-			group_name: "User-" + uid,
-			add_time: xU.time(),
-			up_time: xU.time(),
-			type: "private"
-		});
-	}
-
 	/**
 	 * 获取用户列表
 	 * @interface /user/list
@@ -282,40 +271,6 @@ class userController extends ControllerBase {
 			}));
 		} catch (e) {
 			return (ctx.body = xU.$response(null, 402, e.message));
-		}
-	}
-
-	/**
-	 * 删除用户,只有admin用户才有此权限
-	 * @interface /user/del
-	 * @method POST
-	 * @param id 用户uid
-	 * @category user
-	 * @foldnumber 10
-	 * @returns {Object}
-	 * @example
-	 */
-	async del(ctx) {
-		//根据id删除一个用户
-		try {
-			if (this.getRole() !== "admin") {
-				return (ctx.body = xU.$response(null, 402, "Without permission."));
-			}
-
-			let userInst = xU.orm(ModelUser);
-			let id = ctx.request.body.id;
-			if (id == this.getUid()) {
-				return (ctx.body = xU.$response(null, 403, "禁止删除管理员"));
-			}
-			if (!id) {
-				return (ctx.body = xU.$response(null, 400, "uid不能为空"));
-			}
-
-			let result = await userInst.del(id);
-
-			ctx.body = xU.$response(result);
-		} catch (e) {
-			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 

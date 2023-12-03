@@ -12,10 +12,10 @@ let TARGET_PREFIX = xU.path.join(
 );
 
 function returnBase64Body(basecode) {
-	if (basecode.indexOf('base64') > -1) {
-		return new Buffer(basecode.split("base64")[1], 'base64');
+	if (basecode.indexOf("base64") > -1) {
+		return new Buffer(basecode.split("base64")[1], "base64");
 	} else {
-		return new Buffer(basecode, 'base64');
+		return new Buffer(basecode, "base64");
 	}
 }
 
@@ -163,20 +163,23 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-
 					try {
-						const targetResource = await xU.orm(ModelResource).getResourceById(ctx.query.id);
+						const targetResource = await xU
+							.orm(ModelResource)
+							.getResourceById(ctx.query.id);
 						/* base64 存储 */
 						if (targetResource?.basecode) {
 							type = targetResource.type;
-							ctx.set('Content-type', type);
+							ctx.set("Content-type", type);
 							ctx.body = returnBase64Body(targetResource.basecode);
 							return;
 						}
 
 						/* 文件形式存储，需要path路径 */
 						if (targetResource) {
-							let targetPath = xU.path.resolve(`${TARGET_PREFIX}${targetResource.path}`);
+							let targetPath = xU.path.resolve(
+								`${TARGET_PREFIX}${targetResource.path}`
+							);
 							const isExist = xU.fileExist(targetPath);
 							if (isExist) {
 								xU.applog.info("targetPath", targetPath);
@@ -184,8 +187,10 @@ module.exports = {
 								ctx.set("Content-Type", mime.lookup(targetResource.path));
 								ctx.body = xU.fs.createReadStream(targetPath);
 							} else {
-								const targetResource = await xU.orm(ModelResource).getResourceByName("SYSTEM_404");
-								ctx.set('Content-type', "image/png");
+								const targetResource = await xU
+									.orm(ModelResource)
+									.getResourceByName("SYSTEM_404");
+								ctx.set("Content-type", "image/png");
 								ctx.body = returnBase64Body(targetResource.basecode);
 							}
 						}

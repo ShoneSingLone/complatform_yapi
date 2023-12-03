@@ -78,10 +78,13 @@ function appAddRoutes(app, routes) {
 						ctx.body = xU.$response({ msg: "未获取授权" }, 40011, "请登录...");
 					}
 				} catch (err) {
+					ctx.body = xU.$response(null, 500, err.message);
 					xU.applog.error(err);
+					return true;
 				}
 			} else {
-				ctx.body = xU.$response(null, 404, "API 使用了错误的 METHOD");
+				// ctx.body = xU.$response(null, 404, `API ${ctx.url} 使用了错误的 METHOD`);
+				return false
 			}
 		})();
 		if (!isDone) {

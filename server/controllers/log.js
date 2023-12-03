@@ -1,7 +1,7 @@
 const modelLog = require("../models/log");
 
 const ControllerBase = require("./base");
-const ModelGroup = require("../models/group");
+const { ModelGroup } = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 const { ModelInterface } = require("../models/interface");
 
@@ -70,8 +70,7 @@ class logController extends ControllerBase {
 					item = item.toObject();
 					if (item.type === "project") {
 						item.content =
-							`在 <a href="/project/${item.typeid}">${
-								projectDatas[item.typeid].name
+							`在 <a href="/project/${item.typeid}">${projectDatas[item.typeid].name
 							}</a> 项目: ` + item.content;
 					}
 					projectLogList[index] = item;

@@ -54,10 +54,16 @@ fs.ensureDirSync(APP_LOG_DIR);
  * @returns
  */
 function orm(ormModel, ...args) {
-	if (!MAP_ORM.get(ormModel)) {
-		MAP_ORM.set(ormModel, new ormModel(args));
+	let inst = MAP_ORM.get(ormModel);
+	if (!inst) {
+		try {
+			inst = new ormModel(args);
+			MAP_ORM.set(ormModel, inst);
+		} catch (error) {
+			xU.applog.error(error);
+		}
 	}
-	return MAP_ORM.get(ormModel);
+	return inst;
 }
 
 function delInst(m) {
@@ -436,22 +442,21 @@ function log(msg, type = "info") {
 			} else {
 				errorThrowAt += `\n(${errorAt.split("    at ")[1]})`;
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 	/* let date = new Date(); let year = date.getFullYear();
   let month = date.getMonth() + 1; */
 	const date = Date.now();
-	let logfile = path.join(
-		APP_LOG_DIR,
-		`${dayjs(date).format("YYYY-MM-DD_HH")}.log`
-	);
+	let logfile = path.join(APP_LOG_DIR, `${dayjs(date).format("YYYY-MM-DD_HH")}.log`);
 	const errorContent = `===\n【${dayjs(date).format(
 		"YYYY-MM-DD HH:mm:ss"
 	)}-${date}】：【${type}】：【${msg}】${errorThrowAt}\n===`;
+
 	fs.writeFileSync(logfile, errorContent, {
 		flag: "a"
 	});
 	let logFn = console[type];
+
 	logFn(errorContent);
 }
 
@@ -534,17 +539,21 @@ const defaultSendmailCallback = function (err, options) {
 /* 用配置的邮件发送邮件 */
 function sendMail(options, cb) {
 	if (!xU.mail) return false;
-	options.subject = options.subject
-		? options.subject + "-YApi 平台"
-		: "YApi 平台";
+	let subject = (function () {
+		if (options.subject) {
+			return "Y-API_" + options.subject;
+		}
+		return "Y-API";
+	})();
+
 	cb = cb || defaultSendmailCallback;
 	try {
 		xU.mail.sendMail(
 			{
 				from: yapi_configs.mail.from,
 				to: options.to,
-				subject: options.subject,
-				html: options.contents
+				html: options.contents,
+				subject,
 			},
 			error => cb(error, options)
 		);
@@ -821,7 +830,7 @@ function handleParamsValue(params, val) {
 	let value = {};
 	try {
 		params = params.toObject();
-	} catch (e) {}
+	} catch (e) { }
 	if (params.length === 0 || val.length === 0) {
 		return params;
 	}
@@ -1086,7 +1095,7 @@ exports.sandbox = sandbox;
 exports.trim = trim;
 exports.ltrim = ltrim;
 exports.rtrim = rtrim;
-exports.handleParams = ensureParamsType;
+exports.ensureParamsType = ensureParamsType;
 exports.validateParams = validateParams;
 exports.saveLog = saveLog;
 exports.createAction = createAction;

@@ -37,12 +37,8 @@ type: 'image/png' */
 	}
 
 	update(_id, newResource) {
-		return this.model.updateOne(
-			{ _id },
-			newResource
-		);
+		return this.model.updateOne({ _id }, newResource);
 	}
-
 
 	getResourceById(_id) {
 		return this.model
@@ -60,9 +56,11 @@ type: 'image/png' */
 	}
 
 	findAll() {
-		return this.model.find().select("_id name path type size desc uploadBy add_time basecode").exec();
+		return this.model
+			.find()
+			.select("_id name path type size desc uploadBy add_time basecode")
+			.exec();
 	}
-
 
 	search(keyword) {
 		return this.model
@@ -70,7 +68,7 @@ type: 'image/png' */
 				{
 					$or: [
 						{ email: new RegExp(keyword, "i") },
-						{ username: new RegExp(keyword, "i") },
+						{ username: new RegExp(keyword, "i") }
 					]
 				},
 				{

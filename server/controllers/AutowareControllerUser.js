@@ -1,8 +1,19 @@
 const { ModelUser } = require("server/models/user");
+const { ModelGroup } = require("server/models/group");
 const { ModelVerifyCode } = require("server/models/VerifyCode");
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const { customCookies } = require("server/utils/customCookies");
+async function makeNewUserPrivateGroup(uid) {
+	var groupInst = xU.orm(ModelGroup);
+	await groupInst.save({
+		uid: uid,
+		group_name: "User-" + uid,
+		add_time: xU.time(),
+		up_time: xU.time(),
+		type: "private"
+	});
+}
 
 module.exports = {
 	definitions: {},
@@ -12,6 +23,7 @@ module.exports = {
 	paths: {
 		"/user/login": {
 			post: {
+				auth: true,
 				summary: "用户登录接口",
 				description: "",
 				request: {
@@ -141,18 +153,21 @@ module.exports = {
 							expires: xU.expireDay(1)
 						});
 						xU.sendMail({
+							subject: "验证码",
 							to: email,
 							contents: `<h3>亲爱的用户：</h3>
 							<p>您好，感谢使用YApi可视化接口平台</p>
 							<p>验证码为：</p>
-							<h1>${code}</h1>
+							<h1 style="color:#34ff34;background-color:black;padding:16px;">
+								${code}
+							</h1>
 							<p>请在24小时内填写，如非本人操作，请忽略此邮件。</p>`
 						});
 						ctx.body = xU.$response({ msg: "验证码已发送，请检查邮箱" });
 					}
 
 					if (result) {
-						ctx.body = xU.$response(null, 405, "用户已存在");
+						ctx.body = xU.$response(null, 405, "用户已存在，请直接登录");
 					} else {
 						let verifyCode = await verifyCodeInst.findByEmail(email);
 						if (verifyCode?.code) {
@@ -213,10 +228,16 @@ module.exports = {
 					let payload = xU.ensureParamsType(ctx.payload, {
 						username: "string",
 						password: "string",
-						email: "string"
+						email: "string",
+						code: "string"
 					});
 
-					if (!payload.email) {
+					if (payload.email) {
+						let result = await xU.orm(ModelUser).findByEmail(payload.email);
+						if (result) {
+							return (ctx.body = xU.$response(null, 405, "用户已存在，请直接登录"));
+						}
+					} else {
 						return (ctx.body = xU.$response(null, 400, "邮箱不能为空"));
 					}
 
@@ -224,13 +245,17 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 400, "密码不能为空"));
 					}
 
-					if (!payload.verifyCode) {
+					if (!payload.code) {
 						return (ctx.body = xU.$response(null, 400, "验证码不能为空"));
 					} else {
 						let verifyCodeInst = xU.orm(ModelVerifyCode);
 						let verifyCode = await verifyCodeInst.findByEmail(payload.email);
-						if (verifyCode !== parent.verifyCode) {
-							return (ctx.body = xU.$response(null, 400, "验证码有误，请确认"));
+						if (verifyCode) {
+							if (verifyCode.code !== payload.code) {
+								return (ctx.body = xU.$response(null, 400, "验证码不匹配，请确认"));
+							}
+						} else {
+							return (ctx.body = xU.$response(null, 400, "请重新获取验证码"));
 						}
 					}
 
@@ -238,7 +263,7 @@ module.exports = {
 					let count = await userInst.count(payload.email);
 
 					if (count) {
-						return (ctx.body = xU.$response(null, 401, "该email已经注册"));
+						return (ctx.body = xU.$response(null, 401, "该E-mail已经注册"));
 					}
 
 					let passsalt = xU.randStr();
@@ -256,16 +281,20 @@ module.exports = {
 					if (!data.username) {
 						data.username = data.email.substr(0, data.email.indexOf("@"));
 					}
-
+					let user;
 					try {
-						let user = await userInst.save(data);
-						await this.handlePrivateGroup(user._id, user.username, user.email);
+						user = await userInst.save(data);
+						await makeNewUserPrivateGroup(user._id);
 						xU.sendMail({
+							subject: "注册成功",
 							to: user.email,
-							contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您的账号 ${payload.email} 已经注册成功</p>`
+							contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您已经注册成功</p>
+							<pre>
+								<code>${JSON.stringify(payload)}</code>
+							</pre>`
 						});
 						/* 删除验证码 */
-						await verifyCodeInst.del(payload.email);
+						await xU.orm(ModelVerifyCode).del(payload.email);
 
 						ctx.body = xU.$response({
 							uid: user._id,
@@ -279,6 +308,49 @@ module.exports = {
 						});
 					} catch (e) {
 						ctx.body = xU.$response(null, 401, e.message);
+					}
+				}
+			}
+		},
+		/* 删除用户 */
+		"/user/del": {
+			post: {
+				summary: "根据id删除一个用户",
+				description: "只有`admin`用户才有此权限",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "用户id",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					/* TODO:真的不考虑从group 项目里面清除？ */
+					try {
+						if (this.getRole() === "admin") {
+							let { id } = ctx.payload;
+
+							if (!id) {
+								return (ctx.body = xU.$response(null, 400, "uid不能为空"));
+							}
+							if (id == this.getUid()) {
+								/* 管理员能删除其他人员，但是管理员不能删除自己 */
+								return (ctx.body = xU.$response(null, 403, "禁止删除管理员"));
+							}
+							let userInst = xU.orm(ModelUser);
+							let result = await userInst.del(id);
+							ctx.body = xU.$response(result);
+						} else {
+							return (ctx.body = xU.$response(
+								null,
+								402,
+								"Without permission."
+							));
+						}
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
 					}
 				}
 			}

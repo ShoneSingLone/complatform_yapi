@@ -1,4 +1,4 @@
-const ModelGroup = require("server/models/group");
+const {ModelGroup} = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 
 module.exports = {

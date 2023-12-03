@@ -1,7 +1,7 @@
 const { ModelProject } = require("server/models/project");
 const { ModelUser } = require("../models/user");
 const { ModelInterface } = require("../models/interface");
-const ModelGroup = require("../models/group");
+const { ModelGroup } = require("server/models/group");
 const tokenModel = require("../models/token");
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
