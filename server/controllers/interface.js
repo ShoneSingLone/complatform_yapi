@@ -3,7 +3,7 @@ const { ModelInterface } = require("../models/interface");
 const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const ModelFollow = require("../models/follow");
-const ModelGroup = require("../models/group");
+const { ModelGroup } = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 const _ = require("lodash");
 const url = require("url");
@@ -209,7 +209,7 @@ class ControllerInterface extends ControllerBase {
 			let auth = await this.checkAuth(params.project_id, "project", "edit");
 
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 40033, "没有权限"));
+				return (ctx.body = xU.$response(null, 40033, "没有权限"));
 			}
 		}
 		params.method = params.method || "GET";
@@ -227,11 +227,11 @@ class ControllerInterface extends ControllerBase {
 		params.req_params = params.req_params || [];
 		params.res_body_type = params.res_body_type
 			? params.res_body_type.toLowerCase()
-			: "json";
+			: "backup";
 		let http_path = url.parse(params.path, true);
 
 		if (!xU.verifyPath(http_path.pathname)) {
-			return (ctx.body = xU.resReturn(
+			return (ctx.body = xU.$response(
 				null,
 				400,
 				"path第一位必需为 /, 只允许由 字母数字-/_:.! 组成"
@@ -250,14 +250,14 @@ class ControllerInterface extends ControllerBase {
 			});
 		});
 
-		let checkRepeat = await this.model.checkRepeat(
+		let count = await this.model.count(
 			params.project_id,
 			params.path,
 			params.method
 		);
 
-		if (checkRepeat > 0) {
-			return (ctx.body = xU.resReturn(
+		if (count > 0) {
+			return (ctx.body = xU.$response(
 				null,
 				40022,
 				"已存在的接口:" + params.path + "[" + params.method + "]"
@@ -321,7 +321,7 @@ class ControllerInterface extends ControllerBase {
 
 		await this.autoAddTag(params);
 
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	/**
@@ -357,7 +357,7 @@ class ControllerInterface extends ControllerBase {
 		if (!this.$tokenAuth) {
 			let auth = await this.checkAuth(params.project_id, "project", "edit");
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 40033, "没有权限"));
+				return (ctx.body = xU.$response(null, 40033, "没有权限"));
 			}
 		}
 		params.method = params.method || "GET";
@@ -366,7 +366,7 @@ class ControllerInterface extends ControllerBase {
 		let http_path = url.parse(params.path, true);
 
 		if (!xU.verifyPath(http_path.pathname)) {
-			return (ctx.body = xU.resReturn(
+			return (ctx.body = xU.$response(
 				null,
 				400,
 				"path第一位必需为 /, 只允许由 字母数字-/_:.! 组成"
@@ -403,7 +403,7 @@ class ControllerInterface extends ControllerBase {
 					}
 					await this.up(data);
 				} else {
-					return (ctx.body = xU.resReturn(null, 400, validResult.message));
+					return (ctx.body = xU.$response(null, 400, validResult.message));
 				}
 			});
 		} else {
@@ -413,11 +413,11 @@ class ControllerInterface extends ControllerBase {
 				data.params = params;
 				await this.add(data);
 			} else {
-				return (ctx.body = xU.resReturn(null, 400, validResult.message));
+				return (ctx.body = xU.$response(null, 400, validResult.message));
 			}
 		}
-		ctx.body = xU.resReturn(result);
-		// return ctx.body = xU.resReturn(null, 400, 'path第一位必需为 /, 只允许由 字母数字-/_:.! 组成');
+		ctx.body = xU.$response(result);
+		// return ctx.body = xU.$response(null, 400, 'path第一位必需为 /, 只允许由 字母数字-/_:.! 组成');
 	}
 
 	async autoAddTag(params) {
@@ -481,26 +481,26 @@ class ControllerInterface extends ControllerBase {
 	async get(ctx) {
 		let params = ctx.params;
 		if (!params.id) {
-			return (ctx.body = xU.resReturn(null, 400, "接口id不能为空"));
+			return (ctx.body = xU.$response(null, 400, "接口id不能为空"));
 		}
 
 		try {
 			let result = await this.model.get(params.id);
 			if (this.$tokenAuth) {
 				if (params.project_id !== result.project_id) {
-					ctx.body = xU.resReturn(null, 400, "token有误");
+					ctx.body = xU.$response(null, 400, "token有误");
 					return;
 				}
 			}
 			// console.log('result', result);
 			if (!result) {
-				return (ctx.body = xU.resReturn(null, 490, "不存在的"));
+				return (ctx.body = xU.$response(null, 490, "不存在的"));
 			}
 			let userinfo = await this.modelUser.findById(result.uid);
 			let project = await this.modelProject.getBaseInfo(result.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-					return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+					return (ctx.body = xU.$response(null, 406, "没有权限"));
 				}
 			}
 			xU.emitHook("interface_get", result).then();
@@ -508,9 +508,9 @@ class ControllerInterface extends ControllerBase {
 			if (userinfo) {
 				result.username = userinfo.username;
 			}
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -532,7 +532,7 @@ class ControllerInterface extends ControllerBase {
 			tag = ctx.request.query.tag;
 
 		if (!catid) {
-			return (ctx.body = xU.resReturn(null, 400, "catid不能为空"));
+			return (ctx.body = xU.$response(null, 400, "catid不能为空"));
 		}
 		try {
 			let catdata = await this.modelInterfaceCategory.get(catid);
@@ -540,7 +540,7 @@ class ControllerInterface extends ControllerBase {
 			let project = await this.modelProject.getBaseInfo(catdata.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-					return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+					return (ctx.body = xU.$response(null, 406, "没有权限"));
 				}
 			}
 
@@ -564,12 +564,12 @@ class ControllerInterface extends ControllerBase {
 
 			let count = await this.model.listCount(option);
 
-			ctx.body = xU.resReturn({
+			ctx.body = xU.$response({
 				total: count,
 				list: result
 			});
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message + "1");
+			ctx.body = xU.$response(null, 402, err.message + "1");
 		}
 	}
 
@@ -617,7 +617,7 @@ class ControllerInterface extends ControllerBase {
 
 		let interfaceData = await this.model.get(id);
 		if (!interfaceData) {
-			return (ctx.body = xU.resReturn(null, 400, "不存在的接口"));
+			return (ctx.body = xU.$response(null, 400, "不存在的接口"));
 		}
 		if (!this.$tokenAuth) {
 			let auth = await this.checkAuth(
@@ -626,7 +626,7 @@ class ControllerInterface extends ControllerBase {
 				"edit"
 			);
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+				return (ctx.body = xU.$response(null, 400, "没有权限"));
 			}
 		}
 
@@ -642,7 +642,7 @@ class ControllerInterface extends ControllerBase {
 			http_path = url.parse(params.path, true);
 
 			if (!xU.verifyPath(http_path.pathname)) {
-				return (ctx.body = xU.resReturn(
+				return (ctx.body = xU.$response(
 					null,
 					400,
 					"path第一位必需为 /, 只允许由 字母数字-/_:.! 组成"
@@ -665,13 +665,13 @@ class ControllerInterface extends ControllerBase {
 			(params.path !== interfaceData.path ||
 				params.method !== interfaceData.method)
 		) {
-			let checkRepeat = await this.model.checkRepeat(
+			let count = await this.model.count(
 				interfaceData.project_id,
 				params.path,
 				params.method
 			);
-			if (checkRepeat > 0) {
-				return (ctx.body = xU.resReturn(
+			if (count > 0) {
+				return (ctx.body = xU.$response(
 					null,
 					401,
 					"已存在的接口:" + params.path + "[" + params.method + "]"
@@ -770,7 +770,7 @@ class ControllerInterface extends ControllerBase {
 		xU.emitHook("interface_update", id).then();
 		await this.autoAddTag(params);
 
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 		return 1;
 	}
 
@@ -803,7 +803,7 @@ class ControllerInterface extends ControllerBase {
 			let id = ctx.request.body.id;
 
 			if (!id) {
-				return (ctx.body = xU.resReturn(null, 400, "接口id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "接口id不能为空"));
 			}
 
 			let data = await this.model.get(id);
@@ -811,7 +811,7 @@ class ControllerInterface extends ControllerBase {
 			if (data.uid != this.getUid()) {
 				let auth = await this.checkAuth(data.project_id, "project", "danger");
 				if (!auth) {
-					return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+					return (ctx.body = xU.$response(null, 400, "没有权限"));
 				}
 			}
 
@@ -836,9 +836,9 @@ class ControllerInterface extends ControllerBase {
 			this.modelProject
 				.up(data.project_id, { up_time: new Date().getTime() })
 				.then();
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
+			ctx.body = xU.$response(null, 402, err.message);
 		}
 	}
 	// 处理编辑冲突
@@ -880,24 +880,24 @@ class ControllerInterface extends ControllerBase {
 	async addCat(ctx) {
 		try {
 			let params = ctx.request.body;
-			params = xU.handleParams(params, {
+			params = xU.ensureParamsType(params, {
 				name: "string",
 				project_id: "number",
 				desc: "string"
 			});
 
 			if (!params.project_id) {
-				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 			}
 			if (!this.$tokenAuth) {
 				let auth = await this.checkAuth(params.project_id, "project", "edit");
 				if (!auth) {
-					return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+					return (ctx.body = xU.$response(null, 400, "没有权限"));
 				}
 			}
 
 			if (!params.name) {
-				return (ctx.body = xU.resReturn(null, 400, "名称不能为空"));
+				return (ctx.body = xU.$response(null, 400, "名称不能为空"));
 			}
 
 			let result = await this.modelInterfaceCategory.save({
@@ -920,9 +920,9 @@ class ControllerInterface extends ControllerBase {
 				typeid: params.project_id
 			});
 
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -935,7 +935,7 @@ class ControllerInterface extends ControllerBase {
 
 			let auth = await this.checkAuth(cate.project_id, "project", "edit");
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+				return (ctx.body = xU.$response(null, 400, "没有权限"));
 			}
 
 			let result = await this.modelInterfaceCategory.up(params.catid, {
@@ -954,9 +954,9 @@ class ControllerInterface extends ControllerBase {
 				typeid: cate.project_id
 			});
 
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 400, e.message);
+			ctx.body = xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -965,7 +965,7 @@ class ControllerInterface extends ControllerBase {
 			let id = ctx.request.body.catid;
 			let catData = await this.modelInterfaceCategory.get(id);
 			if (!catData) {
-				ctx.body = xU.resReturn(null, 400, "不存在的分类");
+				ctx.body = xU.$response(null, 400, "不存在的分类");
 			}
 
 			if (catData.uid !== this.getUid()) {
@@ -975,7 +975,7 @@ class ControllerInterface extends ControllerBase {
 					"danger"
 				);
 				if (!auth) {
-					return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+					return (ctx.body = xU.$response(null, 400, "没有权限"));
 				}
 			}
 
@@ -1002,9 +1002,9 @@ class ControllerInterface extends ControllerBase {
 			});
 			await this.modelInterfaceCategory.del(id);
 			let r = await this.model.delByCatid(id);
-			return (ctx.body = xU.resReturn(r));
+			return (ctx.body = xU.$response(r));
 		} catch (e) {
-			xU.resReturn(null, 400, e.message);
+			xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -1022,20 +1022,20 @@ class ControllerInterface extends ControllerBase {
 		let project_id = ctx.params.project_id;
 
 		if (!project_id || isNaN(project_id)) {
-			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+			return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 		}
 
 		try {
 			let project = await this.modelProject.getBaseInfo(project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "edit")) !== true) {
-					return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+					return (ctx.body = xU.$response(null, 406, "没有权限"));
 				}
 			}
 			let res = await this.modelInterfaceCategory.list(project_id);
-			return (ctx.body = xU.resReturn(res));
+			return (ctx.body = xU.$response(res));
 		} catch (e) {
-			xU.resReturn(null, 400, e.message);
+			xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -1053,7 +1053,7 @@ class ControllerInterface extends ControllerBase {
 		let params = ctx.request.query;
 
 		if (Object.keys(params).length !== 1) {
-			return (ctx.body = xU.resReturn(null, 400, "参数数量错误"));
+			return (ctx.body = xU.$response(null, 400, "参数数量错误"));
 		}
 		let customFieldName = Object.keys(params)[0];
 		let customFieldValue = params[customFieldName];
@@ -1062,7 +1062,7 @@ class ControllerInterface extends ControllerBase {
 			//  查找有customFieldName的分组（group）
 			let groups = await this.modelGroup.getcustomFieldName(customFieldName);
 			if (groups.length === 0) {
-				return (ctx.body = xU.resReturn(null, 404, "没有找到对应自定义接口"));
+				return (ctx.body = xU.$response(null, 404, "没有找到对应自定义接口"));
 			}
 
 			// 在每个分组（group）下查找对应project的id值
@@ -1093,9 +1093,9 @@ class ControllerInterface extends ControllerBase {
 					}
 				}
 			}
-			return (ctx.body = xU.resReturn(interfaces));
+			return (ctx.body = xU.$response(interfaces));
 		} catch (e) {
-			xU.resReturn(null, 400, e.message);
+			xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -1119,7 +1119,7 @@ class ControllerInterface extends ControllerBase {
 		try {
 			let params = ctx.request.body;
 			if (!params || !Array.isArray(params)) {
-				ctx.body = xU.resReturn(null, 400, "请求参数必须是数组");
+				ctx.body = xU.$response(null, 400, "请求参数必须是数组");
 			}
 			await Promise.all(
 				params.map(item => {
@@ -1129,10 +1129,10 @@ class ControllerInterface extends ControllerBase {
 				})
 			);
 
-			return (ctx.body = xU.resReturn("成功！"));
+			return (ctx.body = xU.$response("成功！"));
 		} catch (e) {
 			xU.applog.error(e.message);
-			ctx.body = xU.resReturn(null, 400, e.message);
+			ctx.body = xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -1150,7 +1150,7 @@ class ControllerInterface extends ControllerBase {
 		try {
 			let params = ctx.request.body;
 			if (!params || !Array.isArray(params)) {
-				ctx.body = xU.resReturn(null, 400, "请求参数必须是数组");
+				ctx.body = xU.$response(null, 400, "请求参数必须是数组");
 			}
 			await Promise.all(
 				params.map(item => {
@@ -1160,10 +1160,10 @@ class ControllerInterface extends ControllerBase {
 				})
 			);
 			/* ???? 都没有保证事务，能返回成功？ */
-			return (ctx.body = xU.resReturn("成功！"));
+			return (ctx.body = xU.$response("成功！"));
 		} catch (e) {
 			xU.applog.error(e.message);
-			ctx.body = xU.resReturn(null, 400, e.message);
+			ctx.body = xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -1183,16 +1183,16 @@ class ControllerInterface extends ControllerBase {
 		let project_id = ctx.request.query.project_id;
 
 		if (!project_id) {
-			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+			return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 		}
 
 		let project = await this.modelProject.getBaseInfo(project_id);
 		if (!project) {
-			return (ctx.body = xU.resReturn(null, 406, "不存在的项目"));
+			return (ctx.body = xU.$response(null, 406, "不存在的项目"));
 		}
 		if (project.project_type === "private") {
 			if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-				return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+				return (ctx.body = xU.$response(null, 406, "没有权限"));
 			}
 		}
 
@@ -1212,9 +1212,9 @@ class ControllerInterface extends ControllerBase {
 				newResult = [].concat(newResult, list);
 			}
 
-			ctx.body = xU.resReturn(newResult);
+			ctx.body = xU.$response(newResult);
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
+			ctx.body = xU.$response(null, 402, err.message);
 		}
 	}
 }

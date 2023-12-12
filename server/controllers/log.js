@@ -1,7 +1,7 @@
 const modelLog = require("../models/log");
 
 const ControllerBase = require("./base");
-const ModelGroup = require("../models/group");
+const { ModelGroup } = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 const { ModelInterface } = require("../models/interface");
 
@@ -46,10 +46,10 @@ class logController extends ControllerBase {
 			type = ctx.request.query.type,
 			selectValue = ctx.request.query.selectValue;
 		if (!typeid) {
-			return (ctx.body = xU.resReturn(null, 400, "typeid不能为空"));
+			return (ctx.body = xU.$response(null, 400, "typeid不能为空"));
 		}
 		if (!type) {
-			return (ctx.body = xU.resReturn(null, 400, "type不能为空"));
+			return (ctx.body = xU.$response(null, 400, "type不能为空"));
 		}
 		try {
 			if (type === "group") {
@@ -70,14 +70,13 @@ class logController extends ControllerBase {
 					item = item.toObject();
 					if (item.type === "project") {
 						item.content =
-							`在 <a href="/project/${item.typeid}">${
-								projectDatas[item.typeid].name
+							`在 <a href="/project/${item.typeid}">${projectDatas[item.typeid].name
 							}</a> 项目: ` + item.content;
 					}
 					projectLogList[index] = item;
 				});
 				let total = await this.model.listCountByGroup(typeid, projectIds);
-				ctx.body = xU.resReturn({
+				ctx.body = xU.$response({
 					list: projectLogList,
 					total
 				});
@@ -91,13 +90,13 @@ class logController extends ControllerBase {
 				);
 				let count = await this.model.listCount(typeid, type, selectValue);
 
-				ctx.body = xU.resReturn({
+				ctx.body = xU.$response({
 					total: count,
 					list: result
 				});
 			}
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
+			ctx.body = xU.$response(null, 402, err.message);
 		}
 	}
 	/**
@@ -148,9 +147,9 @@ class logController extends ControllerBase {
 			}
 
 			// let result = await this.model.listWithCatid(typeid, type, catId);
-			ctx.body = xU.resReturn(list);
+			ctx.body = xU.$response(list);
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
+			ctx.body = xU.$response(null, 402, err.message);
 		}
 	}
 }

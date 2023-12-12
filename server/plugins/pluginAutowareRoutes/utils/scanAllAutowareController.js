@@ -1,7 +1,7 @@
 const { _n } = require("@ventose/utils-node");
 const { newSwaggerJSON } = require("./swagger.json");
 const swaggerJSON = newSwaggerJSON(
-	WEBCONFIG?.isUsePlugin?.AutowareRoutes?.swaggerInfo
+	yapi_configs?.isUsePlugin?.AutowareRoutes?.swaggerInfo
 );
 const routes = [];
 async function scanAllAutowareController(app) {
@@ -57,11 +57,10 @@ function autowareRoute({ controller, controllerName }) {
 		_n.each(pathInfo, (handlerInfo, method) => {
 			/* 注册路由 */
 			routes.push({
+				...handlerInfo,
 				url: propPath,
 				method,
-				Controller: controller,
-				prefix: _n.snakeCase(controllerName),
-				handler: handlerInfo.handler
+				prefix: _n.snakeCase(controllerName)
 			});
 			swaggerJSON.paths[propPath][method] = {
 				tags: [controllerName],
@@ -69,7 +68,8 @@ function autowareRoute({ controller, controllerName }) {
 				produces: ["application/json"],
 				responses: {
 					200: {
-						description: "通用成功响应，换句话说就是没有添加response",
+						description:
+							"默认的success response，换句话说就是没有添加自定义的 response",
 						schema: {
 							$ref: "#/definitions/ApiResponse"
 						}

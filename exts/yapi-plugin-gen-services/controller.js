@@ -80,7 +80,7 @@ class exportController extends ControllerBase {
 		let isWiki = ctx.request.query.isWiki;
 
 		if (!pid) {
-			return (ctx.body = xU.resReturn(null, 200, "pid 不为空"));
+			return (ctx.body = xU.$response(null, 200, "pid 不为空"));
 		}
 		let curProject, wikiData;
 		let tp = "";
@@ -132,7 +132,7 @@ class exportController extends ControllerBase {
 			}
 		} catch (error) {
 			xU.applog.error(error);
-			ctx.body = xU.resReturn(null, 502, "下载出错");
+			ctx.body = xU.$response(null, 502, "下载出错");
 		}
 
 		async function createHtml(list) {
@@ -203,7 +203,7 @@ class exportController extends ControllerBase {
 				return mdTemplate;
 			} catch (e) {
 				xU.applog.error(e);
-				ctx.body = xU.resReturn(null, 502, "下载出错");
+				ctx.body = xU.$response(null, 502, "下载出错");
 			}
 		}
 	}

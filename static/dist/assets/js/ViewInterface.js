@@ -3100,7 +3100,8 @@ const InterfaceDetailPreview = defineComponent({
         return createVNode(Fragment, null, [createVNode(resolveComponent("xGap"), {
           "t": "20"
         }, null), createVNode(resolveComponent("xInfoCard"), {
-          "title": "Response\u4FE1\u606F"
+          "title": "Response\u4FE1\u606F",
+          "style": "min-height:500px;"
         }, _isSlot(_slot3 = (() => {
           if (stateInterface.currInterface.res_body_type === "json") {
             return createVNode(JsonSchemaMonaco, {

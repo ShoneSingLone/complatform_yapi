@@ -34,7 +34,7 @@ class ModelUser extends ModelBase {
 		return user.save();
 	}
 
-	checkRepeat(email) {
+	count(email) {
 		return this.model.countDocuments({
 			email: email
 		});

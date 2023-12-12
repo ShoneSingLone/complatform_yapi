@@ -16,10 +16,11 @@ const AutowareRoutes = {
 	swaggerInfo: {
 		swagger: "2.0",
 		info: {
-			title: "Y-API 【本项目不支持使用路径参数】",
+			title: "Y-API ",
 			version: "0.0.1",
 			description: `本项目用的接口[yapi](./api/swagger-doc)
-            填写字段主要参考[swagger.json](./swagger_assets/swagger.json)复制地址到Explore可以参考结果`,
+            填写字段主要参考[swagger.json](./swagger_assets/swagger.json)复制地址到Explore可以参考结果
+			>【本项目不支持使用路径参数】/user/{id}这种的不要来`,
 			contact: {
 				email: "xinglong.xiang@gh-ca.com"
 			},

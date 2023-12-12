@@ -2,7 +2,7 @@
  * Created by gxl.gao on 2017/10/24.
  */
 const ControllerBase = require("server/controllers/base");
-const ModelGroup = require("server/models/group");
+const {ModelGroup} = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 const { ModelInterface } = require("server/models/interface");
 const ModelInterfaceCase = require("server/models/interfaceCase");
@@ -38,14 +38,14 @@ class statisMockController extends ControllerBase {
 			let interfaceCaseCount =
 				await this.modelInterfaceCase.getInterfaceCaseListCount();
 
-			return (ctx.body = xU.resReturn({
+			return (ctx.body = xU.$response({
 				groupCount,
 				projectCount,
 				interfaceCount,
 				interfaceCaseCount
 			}));
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 400, err.message);
+			ctx.body = xU.$response(null, 400, err.message);
 		}
 	}
 
@@ -63,14 +63,14 @@ class statisMockController extends ControllerBase {
 			let mockDateList = [];
 
 			if (!this.getRole() === "admin") {
-				return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+				return (ctx.body = xU.$response(null, 405, "没有权限"));
 			}
 			//  默认时间是30 天为一周期
 			let dateInterval = commons.getDateRange();
 			mockDateList = await this.modelStatisMock.getDayCount(dateInterval);
-			return (ctx.body = xU.resReturn({ mockCount, mockDateList }));
+			return (ctx.body = xU.$response({ mockCount, mockDateList }));
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 400, err.message);
+			ctx.body = xU.$response(null, 400, err.message);
 		}
 	}
 
@@ -85,9 +85,9 @@ class statisMockController extends ControllerBase {
 	async getSystemStatus(ctx) {
 		try {
 			let mail = "";
-			if (WEBCONFIG.mail && WEBCONFIG.mail.enable) {
+			if (yapi_configs.mail && yapi_configs.mail.enable) {
 				mail = await this.checkEmail();
-				// return ctx.body = xU.resReturn(result);
+				// return ctx.body = xU.$response(result);
 			} else {
 				mail = "未配置";
 			}
@@ -107,9 +107,9 @@ class statisMockController extends ControllerBase {
 				uptime,
 				load: load.toFixed(2)
 			};
-			return (ctx.body = xU.resReturn(data));
+			return (ctx.body = xU.$response(data));
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 400, err.message);
+			ctx.body = xU.$response(null, 400, err.message);
 		}
 	}
 
@@ -157,9 +157,9 @@ class statisMockController extends ControllerBase {
 				data.project = projectCount;
 				data.mock = mockCount;
 			}
-			return (ctx.body = xU.resReturn(result));
+			return (ctx.body = xU.$response(result));
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 400, err.message);
+			ctx.body = xU.$response(null, 400, err.message);
 		}
 	}
 

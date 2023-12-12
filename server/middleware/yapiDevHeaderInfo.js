@@ -42,7 +42,7 @@ const middlewareWhenDev = () => async (ctx, next) => {
 		);
 	} catch (error) {
 		console.error(error);
-		ctx.body = xU.resReturn(null, 503, error.message);
+		ctx.body = xU.$response(null, 503, error.message);
 	}
 };
 

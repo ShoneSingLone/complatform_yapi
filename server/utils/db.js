@@ -14,30 +14,30 @@ async function setYapiMongooseAsync() {
 			useUnifiedTopology: true
 		};
 
-		if (WEBCONFIG.db.user) {
-			options.user = WEBCONFIG.db.user;
-			options.pass = WEBCONFIG.db.pass;
+		if (yapi_configs.db.user) {
+			options.user = yapi_configs.db.user;
+			options.pass = yapi_configs.db.pass;
 		}
 
-		if (WEBCONFIG.db.reconnectTries) {
-			options.reconnectTries = WEBCONFIG.db.reconnectTries;
+		if (yapi_configs.db.reconnectTries) {
+			options.reconnectTries = yapi_configs.db.reconnectTries;
 		}
 
-		if (WEBCONFIG.db.reconnectInterval) {
-			options.reconnectInterval = WEBCONFIG.db.reconnectInterval;
+		if (yapi_configs.db.reconnectInterval) {
+			options.reconnectInterval = yapi_configs.db.reconnectInterval;
 		}
 
-		options = Object.assign({}, options, WEBCONFIG.db.options);
+		options = Object.assign({}, options, yapi_configs.db.options);
 
 		var connectString = "";
 
-		if (WEBCONFIG.db.connectString) {
-			connectString = WEBCONFIG.db.connectString;
+		if (yapi_configs.db.connectString) {
+			connectString = yapi_configs.db.connectString;
 		} else {
-			connectString = `mongodb://${WEBCONFIG.db.servername}:${WEBCONFIG.db.port}/${WEBCONFIG.db.DATABASE}`;
-			if (WEBCONFIG.db.authSource) {
+			connectString = `mongodb://${yapi_configs.db.servername}:${yapi_configs.db.port}/${yapi_configs.db.DATABASE}`;
+			if (yapi_configs.db.authSource) {
 				connectString =
-					connectString + `?authSource=${WEBCONFIG.db.authSource}`;
+					connectString + `?authSource=${yapi_configs.db.authSource}`;
 			}
 		}
 

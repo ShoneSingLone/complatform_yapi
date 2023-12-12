@@ -54,7 +54,7 @@
 
 {
     "errcode": 0,
-    "errmsg": "@word",
+    "message": "@word",
     "data": {
         "id": "@id", //@id 随机生成 id
         "name": "@name" //@name 随机生成用户名

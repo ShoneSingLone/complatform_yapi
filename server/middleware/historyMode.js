@@ -27,7 +27,7 @@ const middlewareNotFound = () => async (ctx, next) => {
 			) {
 				ctx.status = 404;
 				ctx.set("Content-Type", "application/json");
-				ctx.body = xU.resReturn(null, 404, "NOT_FOUND");
+				ctx.body = xU.$response(null, 404, "NOT_FOUND");
 				return;
 			}
 

@@ -195,7 +195,7 @@ class ModelInterface extends ModelBase {
 			.exec();
 	}
 
-	checkRepeat(id, path, method) {
+	count(id, path, method) {
 		return this.model.countDocuments({
 			project_id: id,
 			path: path,

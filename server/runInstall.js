@@ -1,3 +1,5 @@
+const { ModelResource } = require("./models/Resource");
+
 (async function () {
 	await require("./utils/onFirstLine")();
 	const path = require("path");
@@ -21,17 +23,32 @@
 		let userInst = xU.orm(ModelUser);
 		let passsalt = xU.randStr();
 		let result = userInst.save({
-			username: WEBCONFIG.adminAccount.substr(
+			username: yapi_configs.adminAccount.substr(
 				0,
-				WEBCONFIG.adminAccount.indexOf("@")
+				yapi_configs.adminAccount.indexOf("@")
 			),
-			email: WEBCONFIG.adminAccount,
-			password: xU.generatePassword(WEBCONFIG.adminPwd, passsalt),
+			email: yapi_configs.adminAccount,
+			password: xU.$saltIt(yapi_configs.adminPwd, passsalt),
 			passsalt: passsalt,
 			role: "admin",
 			add_time: xU.time(),
 			up_time: xU.time()
 		});
+
+		(function () {
+			let resourceInst = xU.orm(ModelResource);
+			var bitmap = fs.readFileSync(
+				path.resolve(__dirname, "./uploads/RESOURCE_ASSETS/common/404.png")
+			);
+			resourceInst.save({
+				name: `SYSTEM_404`,
+				useFor: "all",
+				type: "image/png",
+				path: `${TARGET_PREFIX}/common/404.webp`,
+				basecode: new Buffer(bitmap).toString("base64"),
+				add_time: Date.now()
+			});
+		})();
 
 		(function () {
 			let storageCol = mongoose.connection.db.collection("storage");
@@ -146,14 +163,14 @@
 				function () {
 					fs.ensureFileSync(path.join(xU.var.APP_ROOT_DIR, "yapi.installed"));
 					console.log(
-						`初始化管理员账号成功,账号名："${WEBCONFIG.adminAccount}"，密码："${WEBCONFIG.adminPwd}"`
+						`初始化管理员账号成功,账号名："${yapi_configs.adminAccount}"，密码："${yapi_configs.adminPwd}"`
 					);
 
 					process.exit(0);
 				},
 				function (err) {
 					throw new Error(
-						`初始化管理员账号 "${WEBCONFIG.adminAccount}" 失败, ${err.message}`
+						`初始化管理员账号 "${yapi_configs.adminAccount}" 失败, ${err.message}`
 					);
 				}
 			);

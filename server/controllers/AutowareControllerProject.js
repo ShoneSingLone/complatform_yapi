@@ -1,4 +1,4 @@
-const ModelGroup = require("server/models/group");
+const {ModelGroup} = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 
 module.exports = {
@@ -36,7 +36,7 @@ module.exports = {
 						let id = ctx.request.body.id;
 						let params = ctx.payload;
 
-						params = xU.handleParams(params, {
+						params = xU.ensureParamsType(params, {
 							name: "string",
 							basepath: "string",
 							group_id: "number",
@@ -47,11 +47,11 @@ module.exports = {
 						});
 
 						if (!id) {
-							return (ctx.body = xU.resReturn(null, 405, "项目id不能为空"));
+							return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
 						}
 
 						if ((await this.checkAuth(id, "project", "danger")) !== true) {
-							return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
 
 						let projectData = await xU.orm(ModelProject).get(id);
@@ -61,7 +61,7 @@ module.exports = {
 								(params.basepath = this.handleBasepath(params.basepath)) ===
 								false
 							) {
-								return (ctx.body = xU.resReturn(null, 401, "basepath格式有误"));
+								return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
 							}
 						}
 
@@ -70,11 +70,11 @@ module.exports = {
 						}
 
 						if (params.name) {
-							let checkRepeat = await xU
+							let count = await xU
 								.orm(ModelProject)
 								.checkNameRepeat(params.name, params.group_id);
-							if (checkRepeat > 0) {
-								return (ctx.body = xU.resReturn(null, 401, "已存在的项目名"));
+							if (count > 0) {
+								return (ctx.body = xU.$response(null, 401, "已存在的项目名"));
 							}
 						}
 
@@ -96,9 +96,9 @@ module.exports = {
 							typeid: id
 						});
 						xU.emitHook("project_up", result).then();
-						ctx.body = xU.resReturn(result);
+						ctx.body = xU.$response(result);
 					} catch (e) {
-						ctx.body = xU.resReturn(null, 402, e.message);
+						ctx.body = xU.$response(null, 402, e.message);
 					}
 				}
 			}

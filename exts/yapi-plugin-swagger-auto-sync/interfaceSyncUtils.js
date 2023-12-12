@@ -138,7 +138,7 @@ class SyncUtils {
 		this.saveSyncLog(
 			requestObj.body.errcode,
 			syncMode,
-			requestObj.body.errmsg,
+			requestObj.body.message,
 			uid,
 			projectId
 		);

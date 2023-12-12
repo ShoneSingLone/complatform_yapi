@@ -26,8 +26,8 @@ type: 'image/png' */
 			size: Number,
 			desc: String,
 			uploadBy: String,
-			uploadBy: String,
-			add_time: Number
+			add_time: Number,
+			basecode: String
 		};
 	}
 
@@ -36,11 +36,29 @@ type: 'image/png' */
 		return modelVM.save();
 	}
 
+	update(_id, newResource) {
+		return this.model.updateOne({ _id }, newResource);
+	}
+
 	getResourceById(_id) {
 		return this.model
 			.findOne({
 				_id
 			})
+			.exec();
+	}
+	getResourceByName(name) {
+		return this.model
+			.findOne({
+				name
+			})
+			.exec();
+	}
+
+	findAll() {
+		return this.model
+			.find()
+			.select("_id name path type size desc uploadBy add_time basecode")
 			.exec();
 	}
 

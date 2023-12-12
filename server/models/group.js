@@ -84,7 +84,7 @@ class ModelGroup extends ModelBase {
 			.exec();
 	}
 
-	checkRepeat(name) {
+	count(name) {
 		return this.model.countDocuments({
 			group_name: name
 		});
@@ -224,4 +224,4 @@ class ModelGroup extends ModelBase {
 	}
 }
 
-module.exports = ModelGroup;
+exports.ModelGroup = ModelGroup;

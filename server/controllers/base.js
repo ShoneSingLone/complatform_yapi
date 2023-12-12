@@ -1,7 +1,7 @@
 const { ModelProject } = require("server/models/project");
 const { ModelUser } = require("../models/user");
 const { ModelInterface } = require("../models/interface");
-const ModelGroup = require("../models/group");
+const { ModelGroup } = require("server/models/group");
 const tokenModel = require("../models/token");
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
@@ -42,14 +42,7 @@ class ControllerBase {
 		this.$user = null;
 		this.tokenModel = xU.orm(tokenModel);
 		this.modelProject = xU.orm(ModelProject);
-		let ignoreRouter = [
-			"/api/user/login_by_token",
-			"/api/user/login",
-			"/api/user/reg",
-			"/api/user/logout",
-			"/api/user/avatar",
-			"/api/user/login_by_ldap"
-		];
+		let ignoreRouter = ["/api/user/login_by_token", "/api/user/login_by_ldap"];
 		if (ignoreRouter.indexOf(ctx.path) > -1) {
 			this.$auth = true;
 		} else {
@@ -103,7 +96,7 @@ class ControllerBase {
 
 			let checkId = await this.getProjectIdByToken(token);
 			if (!checkId) {
-				ctx.body = xU.resReturn(null, 42014, "token 无效");
+				ctx.body = xU.$response(null, 42014, "token 无效");
 			}
 			let projectData = await this.modelProject.get(checkId);
 			if (projectData) {
@@ -182,8 +175,8 @@ class ControllerBase {
 	}
 
 	async checkRegister() {
-		// console.log('config', WEBCONFIG);
-		if (WEBCONFIG.closeRegister) {
+		// console.log('config', yapi_configs);
+		if (yapi_configs.isCloseRegister) {
 			return false;
 		} else {
 			return true;
@@ -191,11 +184,11 @@ class ControllerBase {
 	}
 
 	async checkLDAP() {
-		// console.log('config', WEBCONFIG);
-		if (!WEBCONFIG.ldapLogin) {
+		// console.log('config', yapi_configs);
+		if (!yapi_configs.ldapLogin) {
 			return false;
 		} else {
-			return WEBCONFIG.ldapLogin.enable || false;
+			return yapi_configs.ldapLogin.enable || false;
 		}
 	}
 	/**
@@ -217,9 +210,9 @@ class ControllerBase {
 				"type",
 				"study"
 			]);
-			body = xU.resReturn(result);
+			body = xU.$response(result);
 		} else {
-			body = xU.resReturn(null, 40011, "请登录...");
+			body = xU.$response(null, 40011, "请登录...");
 		}
 
 		body.ladp = await this.checkLDAP();

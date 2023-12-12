@@ -168,7 +168,7 @@ class WikiPage extends Component {
 				});
 			}
 		} else {
-			message.error(`请求数据失败： ${result.data.errmsg}`);
+			message.error(`请求数据失败： ${result.data.message}`);
 		}
 	};
 
@@ -186,7 +186,7 @@ class WikiPage extends Component {
 			await this.handleData({ project_id: currProjectId });
 			this.setState({ isEditor: false });
 		} else {
-			message.error(`更新失败： ${result.data.errmsg}`);
+			message.error(`更新失败： ${result.data.message}`);
 		}
 		this.endWebSocket();
 		// this.WebSocket.send('end');

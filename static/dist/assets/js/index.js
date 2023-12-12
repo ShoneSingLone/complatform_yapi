@@ -88303,7 +88303,7 @@ const xInfoCard = defineComponent({
     });
     return function() {
       return withDirectives(createVNode("div", {
-        "class": "xInfoCard el-descriptions"
+        "class": "xInfoCard el-descriptions flex vertical"
       }, [createVNode("div", {
         "class": "el-descriptions__header"
       }, [createVNode("div", {
@@ -88995,12 +88995,17 @@ ajax.interceptors.request.use((config) => {
   }
   return config;
 }, (error) => Promise.reject(error));
+const goLogin = xU$1.debounce(function() {
+  stateApp.user.isLogin = false;
+  cptRouter.value.go("/login");
+}, 1e3);
 ajax.interceptors.response.use(async (response) => {
   var _a3, _b, _c, _d;
   if (!lStorage["x_token"]) {
     cptRouter.value.go("/login");
   }
   if (((_a3 = response == null ? void 0 : response.data) == null ? void 0 : _a3.errcode) == 40011) {
+    goLogin();
     return Promise.resolve(response == null ? void 0 : response.data);
   }
   if (response.config.url == "/api/interface/schema2json") {
@@ -91222,6 +91227,13 @@ const resource = {
       headers: {
         "Content-Type": "multipart/form-data"
       },
+      data: data2
+    });
+  },
+  saveImgByBase64(data2) {
+    return ajax({
+      method: "post",
+      url: "/api/resource/base64img",
       data: data2
     });
   }
@@ -101653,8 +101665,6 @@ const Actions_Music = {
       stateMusic.playlist.splice(itemIndex, 1);
       stateMusic.playlistIdSet.delete(id);
     }
-  },
-  async loadAllMusicClient() {
   },
   playMethods,
   palyPrevSong() {

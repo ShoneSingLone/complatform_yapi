@@ -4,6 +4,8 @@
 	"description": "YAPI",
 	"scripts": {
 		"start": "cross-env NODE_ENV=production node server/app.js",
+		"pull": "git pull && git pull a master && git pull b master",
+		"push": "git push && git push a && git push b",
 		"lint": "prettier --write .",
 		"install-server": "node server/install.js",
 		"test": "ava",
@@ -58,6 +60,7 @@
 		"ava": "^0.22.0",
 		"axios": "1.2.0",
 		"chalk": "4.1.2",
+		"cheerio": "1.0.0-rc.12",
 		"compare-versions": "^3.4.0",
 		"copy-to-clipboard": "3.0.8",
 		"cpu-load": "^1.0.0",
@@ -68,7 +71,6 @@
 		"deref": "^0.7.3",
 		"easy-json-schema": "0.0.2-beta",
 		"electron-cookies": "^1.1.0",
-		"eslint": "^3.19.0",
 		"fs-extra": "^3.0.1",
 		"generate-schema": "^2.6.0",
 		"ghooks": "^2.0.0",
@@ -135,6 +137,7 @@
 		"@types/node": "^20.3.3",
 		"@ventose/utils-node": "^0.0.15",
 		"cross-env": "^7.0.3",
+		"eslint": "^3.19.0",
 		"mime-types": "^2.1.35",
 		"nodemon": "^1.19.4"
 	}

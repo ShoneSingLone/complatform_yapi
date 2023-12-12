@@ -6,7 +6,7 @@ const { ModelInterface } = require("../models/interface");
 const interfaceColModel = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
-const ModelGroup = require("../models/group");
+const { ModelGroup } = require("server/models/group");
 const { ModelUser } = require("../models/user");
 const modelLog = require("../models/log");
 const ModelFollow = require("../models/follow");
@@ -156,17 +156,17 @@ class projectController extends ControllerBase {
 			let group_id = ctx.request.query.group_id;
 
 			if (!name) {
-				return (ctx.body = xU.resReturn(null, 401, "项目名不能为空"));
+				return (ctx.body = xU.$response(null, 401, "项目名不能为空"));
 			}
-			let checkRepeat = await this.model.checkNameRepeat(name, group_id);
+			let count = await this.model.checkNameRepeat(name, group_id);
 
-			if (checkRepeat > 0) {
-				return (ctx.body = xU.resReturn(null, 401, "已存在的项目名"));
+			if (count > 0) {
+				return (ctx.body = xU.$response(null, 401, "已存在的项目名"));
 			}
 
-			ctx.body = xU.resReturn({});
+			ctx.body = xU.$response({});
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
+			ctx.body = xU.$response(null, 402, err.message);
 		}
 	}
 
@@ -189,22 +189,19 @@ class projectController extends ControllerBase {
 		let params = ctx.params;
 
 		if ((await this.checkAuth(params.group_id, "group", "edit")) !== true) {
-			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
-		let checkRepeat = await this.model.checkNameRepeat(
-			params.name,
-			params.group_id
-		);
+		let count = await this.model.checkNameRepeat(params.name, params.group_id);
 
-		if (checkRepeat > 0) {
-			return (ctx.body = xU.resReturn(null, 401, "已存在的项目名"));
+		if (count > 0) {
+			return (ctx.body = xU.$response(null, 401, "已存在的项目名"));
 		}
 
 		params.basepath = params.basepath || "";
 
 		if ((params.basepath = this.handleBasepath(params.basepath)) === false) {
-			return (ctx.body = xU.resReturn(null, 401, "basepath格式有误"));
+			return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
 		}
 
 		const requestCode = function ({
@@ -289,7 +286,7 @@ data:data||{}
 			typeid: result._id
 		});
 		xU.emitHook("project_add", result).then();
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	/**
@@ -314,7 +311,7 @@ data:data||{}
 			// 拷贝项目的ID
 			let copyId = params._id;
 			if ((await this.checkAuth(params.group_id, "group", "edit")) !== true) {
-				return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+				return (ctx.body = xU.$response(null, 405, "没有权限"));
 			}
 
 			params.basepath = params.basepath || "";
@@ -406,9 +403,9 @@ data:data||{}
 				username: username,
 				typeid: result._id
 			});
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
+			ctx.body = xU.$response(null, 402, err.message);
 		}
 	}
 
@@ -426,7 +423,7 @@ data:data||{}
 	async addMember(ctx) {
 		let params = ctx.params;
 		if ((await this.checkAuth(params.id, "project", "edit")) !== true) {
-			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
 		params.role =
@@ -462,7 +459,7 @@ data:data||{}
 				typeid: params.id
 			});
 		}
-		ctx.body = xU.resReturn({
+		ctx.body = xU.$response({
 			result,
 			add_members,
 			exist_members,
@@ -490,11 +487,11 @@ data:data||{}
 				params.member_uid
 			);
 			if (check === 0) {
-				return (ctx.body = xU.resReturn(null, 400, "项目成员不存在"));
+				return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
 			}
 
 			if ((await this.checkAuth(params.id, "project", "danger")) !== true) {
-				return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+				return (ctx.body = xU.$response(null, 405, "没有权限"));
 			}
 
 			let result = await this.model.delMember(params.id, params.member_uid);
@@ -513,9 +510,9 @@ data:data||{}
 						typeid: params.id
 					});
 				});
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -533,11 +530,11 @@ data:data||{}
 	async getMemberList(ctx) {
 		let params = ctx.params;
 		if (!params.id) {
-			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+			return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 		}
 
 		let project = await this.model.get(params.id);
-		ctx.body = xU.resReturn(project.members);
+		ctx.body = xU.$response(project.members);
 	}
 
 	/**
@@ -557,11 +554,11 @@ data:data||{}
 		let result = await this.model.getBaseInfo(projectId);
 
 		if (!result) {
-			return (ctx.body = xU.resReturn(null, 400, "不存在的项目"));
+			return (ctx.body = xU.$response(null, 400, "不存在的项目"));
 		}
 		if (result.project_type === "private") {
 			if ((await this.checkAuth(result._id, "project", "view")) !== true) {
-				return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+				return (ctx.body = xU.$response(null, 406, "没有权限"));
 			}
 		}
 		result = result.toObject();
@@ -574,7 +571,7 @@ data:data||{}
 		result.role = await this.getProjectRole(params.id, "project");
 
 		xU.emitHook("project_get", result).then();
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	/**
@@ -632,7 +629,7 @@ data:data||{}
 			project_list = _.uniq(follow.concat(result), item => item._id);
 		}
 
-		ctx.body = xU.resReturn({
+		ctx.body = xU.$response({
 			list: project_list
 		});
 	}
@@ -652,7 +649,7 @@ data:data||{}
 		let id = ctx.params.id;
 
 		if ((await this.checkAuth(id, "project", "danger")) !== true) {
-			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
 		let interfaceInst = xU.orm(ModelInterface);
@@ -664,7 +661,7 @@ data:data||{}
 		await this.modelFollow.delByProjectId(id);
 		xU.emitHook("project_del", id).then();
 		let result = await this.model.del(id);
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	/**
@@ -688,10 +685,10 @@ data:data||{}
 			params.member_uid
 		);
 		if (check === 0) {
-			return (ctx.body = xU.resReturn(null, 400, "项目成员不存在"));
+			return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
 		}
 		if ((await this.checkAuth(params.id, "project", "danger")) !== true) {
-			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
 		params.role =
@@ -723,7 +720,7 @@ data:data||{}
 					typeid: params.id
 				});
 			});
-		ctx.body = xU.resReturn(result);
+		ctx.body = xU.$response(result);
 	}
 
 	/**
@@ -747,7 +744,7 @@ data:data||{}
 				params.member_uid
 			);
 			if (check === 0) {
-				return (ctx.body = xU.resReturn(null, 400, "项目成员不存在"));
+				return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
 			}
 
 			let result = await projectInst.changeMemberEmailNotice(
@@ -755,9 +752,9 @@ data:data||{}
 				params.member_uid,
 				params.notice
 			);
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -777,18 +774,18 @@ data:data||{}
 		let id = ctx.request.body.id;
 		let data = {};
 		if ((await this.checkAuth(id, "project", "danger")) !== true) {
-			return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 		data.color = ctx.request.body.color;
 		data.icon = ctx.request.body.icon;
 		if (!id) {
-			return (ctx.body = xU.resReturn(null, 405, "项目id不能为空"));
+			return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
 		}
 		try {
 			let result = await this.model.up(id, data);
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 		try {
 			this.modelFollow.updateById(this.getUid(), id, data).then(() => {
@@ -825,15 +822,15 @@ data:data||{}
 			let id = ctx.request.body.id;
 			let params = ctx.request.body;
 			if (!id) {
-				return (ctx.body = xU.resReturn(null, 405, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
 			}
 
 			if ((await this.checkAuth(id, "project", "edit")) !== true) {
-				return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+				return (ctx.body = xU.$response(null, 405, "没有权限"));
 			}
 
 			if (!params.env || !Array.isArray(params.env)) {
-				return (ctx.body = xU.resReturn(null, 405, "env参数格式有误"));
+				return (ctx.body = xU.$response(null, 405, "env参数格式有误"));
 			}
 
 			let projectData = await this.model.get(id);
@@ -844,7 +841,7 @@ data:data||{}
 			data.env = params.env;
 			let isRepeat = this.arrRepeat(data.env, "name");
 			if (isRepeat) {
-				return (ctx.body = xU.resReturn(null, 405, "环境变量名重复"));
+				return (ctx.body = xU.$response(null, 405, "环境变量名重复"));
 			}
 			let result = await this.model.up(id, data);
 			let username = this.getUsername();
@@ -857,9 +854,9 @@ data:data||{}
 				username: username,
 				typeid: id
 			});
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -881,15 +878,15 @@ data:data||{}
 			let id = ctx.request.body.id;
 			let params = ctx.request.body;
 			if (!id) {
-				return (ctx.body = xU.resReturn(null, 405, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
 			}
 
 			if ((await this.checkAuth(id, "project", "edit")) !== true) {
-				return (ctx.body = xU.resReturn(null, 405, "没有权限"));
+				return (ctx.body = xU.$response(null, 405, "没有权限"));
 			}
 
 			if (!params.tag || !Array.isArray(params.tag)) {
-				return (ctx.body = xU.resReturn(null, 405, "tag参数格式有误"));
+				return (ctx.body = xU.$response(null, 405, "tag参数格式有误"));
 			}
 
 			let projectData = await this.model.get(id);
@@ -909,9 +906,9 @@ data:data||{}
 				username: username,
 				typeid: id
 			});
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -932,19 +929,19 @@ data:data||{}
 			let project_id = ctx.request.query.project_id;
 			// let params = ctx.request.body;
 			if (!project_id) {
-				return (ctx.body = xU.resReturn(null, 405, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
 			}
 
 			// 去掉权限判断
 			// if ((await this.checkAuth(project_id, 'project', 'edit')) !== true) {
-			//   return (ctx.body = xU.resReturn(null, 405, '没有权限'));
+			//   return (ctx.body = xU.$response(null, 405, '没有权限'));
 			// }
 
 			let env = await this.model.getByEnv(project_id);
 
-			ctx.body = xU.resReturn(env);
+			ctx.body = xU.$response(env);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -980,9 +977,9 @@ data:data||{}
 
 			token = getToken(token, this.getUid());
 
-			ctx.body = xU.resReturn(token);
+			ctx.body = xU.$response(token);
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
+			ctx.body = xU.$response(null, 402, err.message);
 		}
 	}
 
@@ -1008,12 +1005,12 @@ data:data||{}
 				token = getToken(token);
 				result.token = token;
 			} else {
-				ctx.body = xU.resReturn(null, 402, "没有查到token信息");
+				ctx.body = xU.$response(null, 402, "没有查到token信息");
 			}
 
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
+			ctx.body = xU.$response(null, 402, err.message);
 		}
 	}
 
@@ -1031,11 +1028,11 @@ data:data||{}
 		const { q } = ctx.request.query;
 
 		if (!q) {
-			return (ctx.body = xU.resReturn(void 0, 400, "No keyword."));
+			return (ctx.body = xU.$response(void 0, 400, "No keyword."));
 		}
 
 		if (!xU.validateSearchKeyword(q)) {
-			return (ctx.body = xU.resReturn(void 0, 400, "Bad query."));
+			return (ctx.body = xU.$response(void 0, 400, "Bad query."));
 		}
 
 		let projectList = await this.model.search(q);
@@ -1079,7 +1076,7 @@ data:data||{}
 			interface: interfaceList
 		};
 
-		return (ctx.body = xU.resReturn(queryList, 0, "ok"));
+		return (ctx.body = xU.$response(queryList, 0, "ok"));
 	}
 
 	// 输入 swagger url 的时候 node 端请求数据
@@ -1090,9 +1087,9 @@ data:data||{}
 			if (data == null || typeof data !== "object") {
 				throw new Error("返回数据格式不是 JSON");
 			}
-			ctx.body = xU.resReturn(data);
+			ctx.body = xU.$response(data);
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, String(err));
+			ctx.body = xU.$response(null, 402, String(err));
 		}
 	}
 }

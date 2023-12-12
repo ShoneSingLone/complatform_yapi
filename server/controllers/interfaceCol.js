@@ -31,7 +31,7 @@ class interfaceColController extends ControllerBase {
 			let project = await this.modelProject.getBaseInfo(id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-					return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+					return (ctx.body = xU.$response(null, 406, "没有权限"));
 				}
 			}
 			let result = await this.colModel.list(id);
@@ -57,9 +57,9 @@ class interfaceColController extends ControllerBase {
 				});
 				result[i].caseList = caseList;
 			}
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -79,22 +79,22 @@ class interfaceColController extends ControllerBase {
 	async addCol(ctx) {
 		try {
 			let params = ctx.request.body;
-			params = xU.handleParams(params, {
+			params = xU.ensureParamsType(params, {
 				name: "string",
 				project_id: "number",
 				desc: "string"
 			});
 
 			if (!params.project_id) {
-				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 			}
 			if (!params.name) {
-				return (ctx.body = xU.resReturn(null, 400, "名称不能为空"));
+				return (ctx.body = xU.$response(null, 400, "名称不能为空"));
 			}
 
 			let auth = await this.checkAuth(params.project_id, "project", "edit");
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+				return (ctx.body = xU.$response(null, 400, "没有权限"));
 			}
 
 			let result = await this.colModel.save({
@@ -116,9 +116,9 @@ class interfaceColController extends ControllerBase {
 				typeid: params.project_id
 			});
 			// this.modelProject.up(params.project_id,{up_time: new Date().getTime()}).then();
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -136,20 +136,20 @@ class interfaceColController extends ControllerBase {
 		try {
 			let id = ctx.query.col_id;
 			if (!id || id == 0) {
-				return (ctx.body = xU.resReturn(null, 407, "col_id不能为空"));
+				return (ctx.body = xU.$response(null, 407, "col_id不能为空"));
 			}
 
 			let colData = await this.colModel.get(id);
 			let project = await this.modelProject.getBaseInfo(colData.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-					return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+					return (ctx.body = xU.$response(null, 406, "没有权限"));
 				}
 			}
 
 			ctx.body = await xU.getCaseList(id);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -167,14 +167,14 @@ class interfaceColController extends ControllerBase {
 		try {
 			let id = ctx.query.col_id;
 			if (!id || id == 0) {
-				return (ctx.body = xU.resReturn(null, 407, "col_id不能为空"));
+				return (ctx.body = xU.$response(null, 407, "col_id不能为空"));
 			}
 
 			let colData = await this.colModel.get(id);
 			let project = await this.modelProject.getBaseInfo(colData.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-					return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+					return (ctx.body = xU.$response(null, 406, "没有权限"));
 				}
 			}
 
@@ -192,9 +192,9 @@ class interfaceColController extends ControllerBase {
 				);
 				projectEnvList.push(result);
 			}
-			ctx.body = xU.resReturn(projectEnvList);
+			ctx.body = xU.$response(projectEnvList);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -224,11 +224,11 @@ class interfaceColController extends ControllerBase {
 		try {
 			let id = ctx.query.col_id;
 			if (!id || id == 0) {
-				return (ctx.body = xU.resReturn(null, 407, "col_id不能为空"));
+				return (ctx.body = xU.$response(null, 407, "col_id不能为空"));
 			}
 			let resultList = await this.caseModel.list(id, "all");
 			if (resultList.length === 0) {
-				return (ctx.body = xU.resReturn([]));
+				return (ctx.body = xU.$response([]));
 			}
 			let project = await this.modelProject.getBaseInfo(
 				resultList[0].project_id
@@ -236,7 +236,7 @@ class interfaceColController extends ControllerBase {
 
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-					return (ctx.body = xU.resReturn(null, 406, "没有权限"));
+					return (ctx.body = xU.$response(null, 406, "没有权限"));
 				}
 			}
 
@@ -280,9 +280,9 @@ class interfaceColController extends ControllerBase {
 				resultList[index] = item;
 			}
 
-			ctx.body = xU.resReturn(resultList);
+			ctx.body = xU.$response(resultList);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -310,7 +310,7 @@ class interfaceColController extends ControllerBase {
 	async addCase(ctx) {
 		try {
 			let params = ctx.request.body;
-			params = xU.handleParams(params, {
+			params = xU.ensureParamsType(params, {
 				casename: "string",
 				project_id: "number",
 				col_id: "number",
@@ -319,24 +319,24 @@ class interfaceColController extends ControllerBase {
 			});
 
 			if (!params.project_id) {
-				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 			}
 
 			if (!params.interface_id) {
-				return (ctx.body = xU.resReturn(null, 400, "接口id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "接口id不能为空"));
 			}
 
 			let auth = await this.checkAuth(params.project_id, "project", "edit");
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+				return (ctx.body = xU.$response(null, 400, "没有权限"));
 			}
 
 			if (!params.col_id) {
-				return (ctx.body = xU.resReturn(null, 400, "接口集id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "接口集id不能为空"));
 			}
 
 			if (!params.casename) {
-				return (ctx.body = xU.resReturn(null, 400, "用例名称不能为空"));
+				return (ctx.body = xU.$response(null, 400, "用例名称不能为空"));
 			}
 
 			params.uid = this.getUid();
@@ -365,34 +365,34 @@ class interfaceColController extends ControllerBase {
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
 
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
 	async addCaseList(ctx) {
 		try {
 			let params = ctx.request.body;
-			params = xU.handleParams(params, {
+			params = xU.ensureParamsType(params, {
 				project_id: "number",
 				col_id: "number"
 			});
 			if (!params.interface_list || !Array.isArray(params.interface_list)) {
-				return (ctx.body = xU.resReturn(null, 400, "interface_list 参数有误"));
+				return (ctx.body = xU.$response(null, 400, "interface_list 参数有误"));
 			}
 
 			if (!params.project_id) {
-				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 			}
 
 			let auth = await this.checkAuth(params.project_id, "project", "edit");
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+				return (ctx.body = xU.$response(null, 400, "没有权限"));
 			}
 
 			if (!params.col_id) {
-				return (ctx.body = xU.resReturn(null, 400, "接口集id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "接口集id不能为空"));
 			}
 
 			let data = {
@@ -451,16 +451,16 @@ class interfaceColController extends ControllerBase {
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
 
-			ctx.body = xU.resReturn("ok");
+			ctx.body = xU.$response("ok");
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
 	async cloneCaseList(ctx) {
 		try {
 			let params = ctx.request.body;
-			params = xU.handleParams(params, {
+			params = xU.ensureParamsType(params, {
 				project_id: "number",
 				col_id: "number",
 				new_col_id: "number"
@@ -469,21 +469,21 @@ class interfaceColController extends ControllerBase {
 			const { project_id, col_id, new_col_id } = params;
 
 			if (!project_id) {
-				return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 			}
 
 			let auth = await this.checkAuth(params.project_id, "project", "edit");
 
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+				return (ctx.body = xU.$response(null, 400, "没有权限"));
 			}
 
 			if (!col_id) {
-				return (ctx.body = xU.resReturn(null, 400, "被克隆的接口集id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "被克隆的接口集id不能为空"));
 			}
 
 			if (!new_col_id) {
-				return (ctx.body = xU.resReturn(null, 400, "克隆的接口集id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "克隆的接口集id不能为空"));
 			}
 
 			let oldColCaselistData = await this.caseModel.list(col_id, "all");
@@ -548,9 +548,9 @@ class interfaceColController extends ControllerBase {
 			this.modelProject
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
-			ctx.body = xU.resReturn("ok");
+			ctx.body = xU.$response("ok");
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -577,23 +577,23 @@ class interfaceColController extends ControllerBase {
 	async upCase(ctx) {
 		try {
 			let params = ctx.request.body;
-			params = xU.handleParams(params, {
+			params = xU.ensureParamsType(params, {
 				id: "number",
 				casename: "string"
 			});
 
 			if (!params.id) {
-				return (ctx.body = xU.resReturn(null, 400, "用例id不能为空"));
+				return (ctx.body = xU.$response(null, 400, "用例id不能为空"));
 			}
 
 			// if (!params.casename) {
-			//   return (ctx.body = xU.resReturn(null, 400, '用例名称不能为空'));
+			//   return (ctx.body = xU.$response(null, 400, '用例名称不能为空'));
 			// }
 
 			let caseData = await this.caseModel.get(params.id);
 			let auth = await this.checkAuth(caseData.project_id, "project", "edit");
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+				return (ctx.body = xU.$response(null, 400, "没有权限"));
 			}
 
 			params.uid = this.getUid();
@@ -625,9 +625,9 @@ class interfaceColController extends ControllerBase {
 				.up(caseData.project_id, { up_time: new Date().getTime() })
 				.then();
 
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -647,12 +647,12 @@ class interfaceColController extends ControllerBase {
 			let id = ctx.query.caseid;
 			let result = await this.caseModel.get(id);
 			if (!result) {
-				return (ctx.body = xU.resReturn(null, 400, "不存在的case"));
+				return (ctx.body = xU.$response(null, 400, "不存在的case"));
 			}
 			result = result.toObject();
 			let data = await this.modelInterface.get(result.interface_id);
 			if (!data) {
-				return (ctx.body = xU.resReturn(
+				return (ctx.body = xU.$response(
 					null,
 					400,
 					"找不到对应的接口，请联系管理员"
@@ -682,9 +682,9 @@ class interfaceColController extends ControllerBase {
 			result.interface_up_time = data.up_time;
 			result.req_body_is_json_schema = data.req_body_is_json_schema;
 			result.res_body_is_json_schema = data.res_body_is_json_schema;
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 400, e.message);
+			ctx.body = xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -705,15 +705,15 @@ class interfaceColController extends ControllerBase {
 			let params = ctx.request.body;
 			let id = params.col_id;
 			if (!id) {
-				return (ctx.body = xU.resReturn(null, 400, "缺少 col_id 参数"));
+				return (ctx.body = xU.$response(null, 400, "缺少 col_id 参数"));
 			}
 			let colData = await this.colModel.get(id);
 			if (!colData) {
-				return (ctx.body = xU.resReturn(null, 400, "不存在"));
+				return (ctx.body = xU.$response(null, 400, "不存在"));
 			}
 			let auth = await this.checkAuth(colData.project_id, "project", "edit");
 			if (!auth) {
-				return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+				return (ctx.body = xU.$response(null, 400, "没有权限"));
 			}
 			delete params.col_id;
 			let result = await this.colModel.up(id, params);
@@ -728,9 +728,9 @@ class interfaceColController extends ControllerBase {
 				typeid: colData.project_id
 			});
 
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 400, e.message);
+			ctx.body = xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -749,7 +749,7 @@ class interfaceColController extends ControllerBase {
 		try {
 			let params = ctx.request.body;
 			if (!params || !Array.isArray(params)) {
-				ctx.body = xU.resReturn(null, 400, "请求参数必须是数组");
+				ctx.body = xU.$response(null, 400, "请求参数必须是数组");
 			}
 			params.forEach(item => {
 				if (item.id) {
@@ -762,9 +762,9 @@ class interfaceColController extends ControllerBase {
 				}
 			});
 
-			return (ctx.body = xU.resReturn("成功！"));
+			return (ctx.body = xU.$response("成功！"));
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 400, e.message);
+			ctx.body = xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -783,7 +783,7 @@ class interfaceColController extends ControllerBase {
 		try {
 			let params = ctx.request.body;
 			if (!params || !Array.isArray(params)) {
-				ctx.body = xU.resReturn(null, 400, "请求参数必须是数组");
+				ctx.body = xU.$response(null, 400, "请求参数必须是数组");
 			}
 			params.forEach(item => {
 				if (item.id) {
@@ -796,9 +796,9 @@ class interfaceColController extends ControllerBase {
 				}
 			});
 
-			return (ctx.body = xU.resReturn("成功！"));
+			return (ctx.body = xU.$response("成功！"));
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 400, e.message);
+			ctx.body = xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -818,7 +818,7 @@ class interfaceColController extends ControllerBase {
 			let id = ctx.query.col_id;
 			let colData = await this.colModel.get(id);
 			if (!colData) {
-				ctx.body = xU.resReturn(null, 400, "不存在的id");
+				ctx.body = xU.$response(null, 400, "不存在的id");
 			}
 
 			if (colData.uid !== this.getUid()) {
@@ -828,7 +828,7 @@ class interfaceColController extends ControllerBase {
 					"danger"
 				);
 				if (!auth) {
-					return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+					return (ctx.body = xU.$response(null, 400, "没有权限"));
 				}
 			}
 			let result = await this.colModel.del(id);
@@ -843,9 +843,9 @@ class interfaceColController extends ControllerBase {
 				username: username,
 				typeid: colData.project_id
 			});
-			return (ctx.body = xU.resReturn(result));
+			return (ctx.body = xU.$response(result));
 		} catch (e) {
-			xU.resReturn(null, 400, e.message);
+			xU.$response(null, 400, e.message);
 		}
 	}
 
@@ -859,7 +859,7 @@ class interfaceColController extends ControllerBase {
 			let caseid = ctx.query.caseid;
 			let caseData = await this.caseModel.get(caseid);
 			if (!caseData) {
-				ctx.body = xU.resReturn(null, 400, "不存在的caseid");
+				ctx.body = xU.$response(null, 400, "不存在的caseid");
 			}
 
 			if (caseData.uid !== this.getUid()) {
@@ -869,7 +869,7 @@ class interfaceColController extends ControllerBase {
 					"danger"
 				);
 				if (!auth) {
-					return (ctx.body = xU.resReturn(null, 400, "没有权限"));
+					return (ctx.body = xU.$response(null, 400, "没有权限"));
 				}
 			}
 
@@ -893,9 +893,9 @@ class interfaceColController extends ControllerBase {
 			this.modelProject
 				.up(caseData.project_id, { up_time: new Date().getTime() })
 				.then();
-			return (ctx.body = xU.resReturn(result));
+			return (ctx.body = xU.$response(result));
 		} catch (e) {
-			xU.resReturn(null, 400, e.message);
+			xU.$response(null, 400, e.message);
 		}
 	}
 

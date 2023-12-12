@@ -28,17 +28,17 @@ class followController extends ControllerBase {
 		// limit = ctx.request.query.limit || 10;
 
 		if (!uid) {
-			return (ctx.body = xU.resReturn(null, 400, "用户id不能为空"));
+			return (ctx.body = xU.$response(null, 400, "用户id不能为空"));
 		}
 
 		try {
 			let result = await this.model.list(uid);
 
-			ctx.body = xU.resReturn({
+			ctx.body = xU.$response({
 				list: result
 			});
 		} catch (err) {
-			ctx.body = xU.resReturn(null, 402, err.message);
+			ctx.body = xU.$response(null, 402, err.message);
 		}
 	}
 
@@ -58,23 +58,20 @@ class followController extends ControllerBase {
 			uid = this.getUid();
 
 		if (!params.projectid) {
-			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+			return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 		}
 
-		let checkRepeat = await this.model.checkProjectRepeat(
-			uid,
-			params.projectid
-		);
+		let count = await this.model.checkProjectRepeat(uid, params.projectid);
 
-		if (checkRepeat == 0) {
-			return (ctx.body = xU.resReturn(null, 401, "项目未关注"));
+		if (count == 0) {
+			return (ctx.body = xU.$response(null, 401, "项目未关注"));
 		}
 
 		try {
 			let result = await this.model.del(params.projectid, this.getUid());
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -93,23 +90,20 @@ class followController extends ControllerBase {
 
 	async add(ctx) {
 		let params = ctx.request.body;
-		params = xU.handleParams(params, {
+		params = xU.ensureParamsType(params, {
 			projectid: "number"
 		});
 
 		let uid = this.getUid();
 
 		if (!params.projectid) {
-			return (ctx.body = xU.resReturn(null, 400, "项目id不能为空"));
+			return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 		}
 
-		let checkRepeat = await this.model.checkProjectRepeat(
-			uid,
-			params.projectid
-		);
+		let count = await this.model.checkProjectRepeat(uid, params.projectid);
 
-		if (checkRepeat) {
-			return (ctx.body = xU.resReturn(null, 401, "项目已关注"));
+		if (count) {
+			return (ctx.body = xU.$response(null, 401, "项目已关注"));
 		}
 
 		try {
@@ -130,9 +124,9 @@ class followController extends ControllerBase {
 				"icon",
 				"color"
 			]);
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 }

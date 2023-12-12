@@ -2,7 +2,7 @@ const { ModelUser } = require("../models/user");
 const ControllerBase = require("./base");
 const { ldapQuery } = require("../utils/ldap");
 const { ModelInterface } = require("../models/interface");
-const ModelGroup = require("../models/group");
+const { ModelGroup } = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 const avatarModel = require("../models/avatar");
 const { customCookies } = require("../utils/customCookies");
@@ -26,7 +26,7 @@ class userController extends ControllerBase {
 	async logout(ctx) {
 		customCookies(ctx, "_yapi_token", null);
 		customCookies(ctx, "_yapi_uid", null);
-		ctx.body = xU.resReturn("ok");
+		ctx.body = xU.$response("ok");
 	}
 
 	/**
@@ -47,9 +47,9 @@ class userController extends ControllerBase {
 		};
 		try {
 			let result = await userInst.update(this.getUid(), data);
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 401, e.message);
+			ctx.body = xU.$response(null, 401, e.message);
 		}
 	}
 
@@ -84,19 +84,20 @@ class userController extends ControllerBase {
 			// const username = email.split(/\@/g)[0];
 			const { info: ldapInfo } = await ldapQuery(email, password);
 			const emailPrefix = email.split(/\@/g)[0];
-			const emailPostfix = WEBCONFIG.ldapLogin.emailPostfix;
+			const emailPostfix = yapi_configs.ldapLogin.emailPostfix;
 
 			const emailParams =
-				ldapInfo[WEBCONFIG.ldapLogin.emailKey || "mail"] ||
+				ldapInfo[yapi_configs.ldapLogin.emailKey || "mail"] ||
 				(emailPostfix ? emailPrefix + emailPostfix : email);
-			const username = ldapInfo[WEBCONFIG.ldapLogin.usernameKey] || emailPrefix;
+			const username =
+				ldapInfo[yapi_configs.ldapLogin.usernameKey] || emailPrefix;
 
 			let login = await this.handleThirdLogin(emailParams, username);
 
 			if (login === true) {
 				let userInst = xU.orm(ModelUser); //创建user实体
 				let result = await userInst.findByEmail(emailParams);
-				return (ctx.body = xU.resReturn(
+				return (ctx.body = xU.$response(
 					{
 						username: result.username,
 						role: result.role,
@@ -113,7 +114,7 @@ class userController extends ControllerBase {
 			}
 		} catch (e) {
 			xU.applog.error(e.message);
-			return (ctx.body = xU.resReturn(null, 401, e.message));
+			return (ctx.body = xU.$response(null, 401, e.message));
 		}
 	}
 
@@ -130,7 +131,7 @@ class userController extends ControllerBase {
 				passsalt = xU.randStr();
 				data = {
 					username: username,
-					password: xU.generatePassword(passsalt, passsalt),
+					password: xU.$saltIt(passsalt, passsalt),
 					email: email,
 					passsalt: passsalt,
 					role: "member",
@@ -169,131 +170,39 @@ class userController extends ControllerBase {
 		let userInst = xU.orm(ModelUser);
 
 		if (!params.uid) {
-			return (ctx.body = xU.resReturn(null, 400, "uid不能为空"));
+			return (ctx.body = xU.$response(null, 400, "uid不能为空"));
 		}
 
 		if (!params.password) {
-			return (ctx.body = xU.resReturn(null, 400, "密码不能为空"));
+			return (ctx.body = xU.$response(null, 400, "密码不能为空"));
 		}
 
 		let user = await userInst.findById(params.uid);
 		if (this.getRole() !== "admin" && params.uid != this.getUid()) {
-			return (ctx.body = xU.resReturn(null, 402, "没有权限"));
+			return (ctx.body = xU.$response(null, 402, "没有权限"));
 		}
 
 		if (this.getRole() !== "admin" || user.role === "admin") {
 			if (!params.old_password) {
-				return (ctx.body = xU.resReturn(null, 400, "旧密码不能为空"));
+				return (ctx.body = xU.$response(null, 400, "旧密码不能为空"));
 			}
 
-			if (
-				xU.generatePassword(params.old_password, user.passsalt) !==
-				user.password
-			) {
-				return (ctx.body = xU.resReturn(null, 402, "旧密码错误"));
+			if (xU.$saltIt(params.old_password, user.passsalt) !== user.password) {
+				return (ctx.body = xU.$response(null, 402, "旧密码错误"));
 			}
 		}
 
 		let passsalt = xU.randStr();
 		let data = {
 			up_time: xU.time(),
-			password: xU.generatePassword(params.password, passsalt),
+			password: xU.$saltIt(params.password, passsalt),
 			passsalt: passsalt
 		};
 		try {
 			let result = await userInst.update(params.uid, data);
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 401, e.message);
-		}
-	}
-
-	async handlePrivateGroup(uid) {
-		var groupInst = xU.orm(ModelGroup);
-		await groupInst.save({
-			uid: uid,
-			group_name: "User-" + uid,
-			add_time: xU.time(),
-			up_time: xU.time(),
-			type: "private"
-		});
-	}
-
-	/**
-	 * 用户注册接口
-	 * @interface /user/reg
-	 * @method POST
-	 * @category user
-	 * @foldnumber 10
-	 * @param {String} email email名称，不能为空
-	 * @param  {String} password 密码，不能为空
-	 * @param {String} [username] 用户名
-	 * @returns {Object}
-	 * @example ./api/user/login.json
-	 */
-	async reg(ctx) {
-		//注册
-		if (WEBCONFIG.closeRegister) {
-			return (ctx.body = xU.resReturn(null, 400, "禁止注册，请联系管理员"));
-		}
-		let userInst = xU.orm(ModelUser);
-		let params = ctx.request.body; //获取请求的参数,检查是否存在用户名和密码
-
-		params = xU.handleParams(params, {
-			username: "string",
-			password: "string",
-			email: "string"
-		});
-
-		if (!params.email) {
-			return (ctx.body = xU.resReturn(null, 400, "邮箱不能为空"));
-		}
-
-		if (!params.password) {
-			return (ctx.body = xU.resReturn(null, 400, "密码不能为空"));
-		}
-
-		let checkRepeat = await userInst.checkRepeat(params.email); //然后检查是否已经存在该用户
-
-		if (checkRepeat > 0) {
-			return (ctx.body = xU.resReturn(null, 401, "该email已经注册"));
-		}
-
-		let passsalt = xU.randStr();
-		let data = {
-			username: params.username,
-			password: xU.generatePassword(params.password, passsalt), //加密
-			email: params.email,
-			passsalt: passsalt,
-			role: "member",
-			add_time: xU.time(),
-			up_time: xU.time(),
-			type: "site"
-		};
-
-		if (!data.username) {
-			data.username = data.email.substr(0, data.email.indexOf("@"));
-		}
-
-		try {
-			let user = await userInst.save(data);
-			await this.handlePrivateGroup(user._id, user.username, user.email);
-			ctx.body = xU.resReturn({
-				uid: user._id,
-				email: user.email,
-				username: user.username,
-				add_time: user.add_time,
-				up_time: user.up_time,
-				role: "member",
-				type: user.type,
-				study: false
-			});
-			xU.sendMail({
-				to: user.email,
-				contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您的账号 ${params.email} 已经注册成功</p>`
-			});
-		} catch (e) {
-			ctx.body = xU.resReturn(null, 401, e.message);
+			ctx.body = xU.$response(null, 401, e.message);
 		}
 	}
 
@@ -316,12 +225,12 @@ class userController extends ControllerBase {
 		try {
 			let user = await userInst.listWithPaging(page, limit);
 			let count = await userInst.listCount();
-			return (ctx.body = xU.resReturn({
+			return (ctx.body = xU.$response({
 				total: count,
 				list: user
 			}));
 		} catch (e) {
-			return (ctx.body = xU.resReturn(null, 402, e.message));
+			return (ctx.body = xU.$response(null, 402, e.message));
 		}
 	}
 
@@ -342,16 +251,16 @@ class userController extends ControllerBase {
 			let id = ctx.request.query.id;
 
 			if (!id) {
-				return (ctx.body = xU.resReturn(null, 400, "uid不能为空"));
+				return (ctx.body = xU.$response(null, 400, "uid不能为空"));
 			}
 
 			let result = await userInst.findById(id);
 
 			if (!result) {
-				return (ctx.body = xU.resReturn(null, 402, "不存在的用户"));
+				return (ctx.body = xU.$response(null, 402, "不存在的用户"));
 			}
 
-			return (ctx.body = xU.resReturn({
+			return (ctx.body = xU.$response({
 				uid: result._id,
 				username: result.username,
 				email: result.email,
@@ -361,41 +270,7 @@ class userController extends ControllerBase {
 				up_time: result.up_time
 			}));
 		} catch (e) {
-			return (ctx.body = xU.resReturn(null, 402, e.message));
-		}
-	}
-
-	/**
-	 * 删除用户,只有admin用户才有此权限
-	 * @interface /user/del
-	 * @method POST
-	 * @param id 用户uid
-	 * @category user
-	 * @foldnumber 10
-	 * @returns {Object}
-	 * @example
-	 */
-	async del(ctx) {
-		//根据id删除一个用户
-		try {
-			if (this.getRole() !== "admin") {
-				return (ctx.body = xU.resReturn(null, 402, "Without permission."));
-			}
-
-			let userInst = xU.orm(ModelUser);
-			let id = ctx.request.body.id;
-			if (id == this.getUid()) {
-				return (ctx.body = xU.resReturn(null, 403, "禁止删除管理员"));
-			}
-			if (!id) {
-				return (ctx.body = xU.resReturn(null, 400, "uid不能为空"));
-			}
-
-			let result = await userInst.del(id);
-
-			ctx.body = xU.resReturn(result);
-		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			return (ctx.body = xU.$response(null, 402, e.message));
 		}
 	}
 
@@ -417,25 +292,25 @@ class userController extends ControllerBase {
 		try {
 			let params = ctx.request.body;
 
-			params = xU.handleParams(params, {
+			params = xU.ensureParamsType(params, {
 				username: "string",
 				email: "string"
 			});
 
 			if (this.getRole() !== "admin" && params.uid != this.getUid()) {
-				return (ctx.body = xU.resReturn(null, 401, "没有权限"));
+				return (ctx.body = xU.$response(null, 401, "没有权限"));
 			}
 
 			let userInst = xU.orm(ModelUser);
 			let id = params.uid;
 
 			if (!id) {
-				return (ctx.body = xU.resReturn(null, 400, "uid不能为空"));
+				return (ctx.body = xU.$response(null, 400, "uid不能为空"));
 			}
 
 			let userData = await userInst.findById(id);
 			if (!userData) {
-				return (ctx.body = xU.resReturn(null, 400, "uid不存在"));
+				return (ctx.body = xU.$response(null, 400, "uid不存在"));
 			}
 
 			let data = {
@@ -446,9 +321,9 @@ class userController extends ControllerBase {
 			params.email && (data.email = params.email);
 
 			if (data.email) {
-				var checkRepeat = await userInst.checkRepeat(data.email); //然后检查是否已经存在该用户
-				if (checkRepeat > 0) {
-					return (ctx.body = xU.resReturn(null, 401, "该email已经注册"));
+				var count = await userInst.count(data.email); //然后检查是否已经存在该用户
+				if (count > 0) {
+					return (ctx.body = xU.$response(null, 401, "该email已经注册"));
 				}
 			}
 
@@ -463,9 +338,9 @@ class userController extends ControllerBase {
 			await projectInst.updateMember(member);
 
 			let result = await userInst.update(id, data);
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 402, e.message);
+			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
@@ -483,7 +358,7 @@ class userController extends ControllerBase {
 		try {
 			let basecode = ctx.request.body.basecode;
 			if (!basecode) {
-				return (ctx.body = xU.resReturn(null, 400, "basecode不能为空"));
+				return (ctx.body = xU.$response(null, 400, "basecode不能为空"));
 			}
 			let pngPrefix = "data:image/png;base64,";
 			let jpegPrefix = "data:image/jpeg;base64,";
@@ -495,7 +370,7 @@ class userController extends ControllerBase {
 				basecode = basecode.substr(jpegPrefix.length);
 				type = "image/jpeg";
 			} else {
-				return (ctx.body = xU.resReturn(
+				return (ctx.body = xU.$response(
 					null,
 					400,
 					"仅支持jpeg和png格式的图片"
@@ -503,14 +378,14 @@ class userController extends ControllerBase {
 			}
 			let strLength = basecode.length;
 			if (parseInt(strLength - (strLength / 8) * 2) > 200000) {
-				return (ctx.body = xU.resReturn(null, 400, "图片大小不能超过200kb"));
+				return (ctx.body = xU.$response(null, 400, "图片大小不能超过200kb"));
 			}
 
 			let avatarInst = xU.orm(avatarModel);
 			let result = await avatarInst.up(this.getUid(), basecode, type);
-			ctx.body = xU.resReturn(result);
+			ctx.body = xU.$response(result);
 		} catch (e) {
-			ctx.body = xU.resReturn(null, 401, e.message);
+			ctx.body = xU.$response(null, 401, e.message);
 		}
 	}
 
@@ -580,18 +455,18 @@ class userController extends ControllerBase {
 		if (!q) {
 			let queryList = await this.modelUser.list();
 			let filteredRes = xU.filterRes(queryList, rules);
-			return (ctx.body = xU.resReturn(filteredRes, 0, "ok"));
+			return (ctx.body = xU.$response(filteredRes, 0, "ok"));
 		}
 
 		if (!xU.validateSearchKeyword(q)) {
-			return (ctx.body = xU.resReturn(void 0, 400, "Bad query."));
+			return (ctx.body = xU.$response(void 0, 400, "Bad query."));
 		}
 
 		let queryList = await this.modelUser.search(q);
 
 		let filteredRes = xU.filterRes(queryList, rules);
 
-		return (ctx.body = xU.resReturn(filteredRes, 0, "ok"));
+		return (ctx.body = xU.$response(filteredRes, 0, "ok"));
 	}
 
 	/**
@@ -655,9 +530,9 @@ class userController extends ControllerBase {
 				}
 			}
 
-			return (ctx.body = xU.resReturn(result));
+			return (ctx.body = xU.$response(result));
 		} catch (e) {
-			return (ctx.body = xU.resReturn(result, 422, e.message));
+			return (ctx.body = xU.$response(result, 422, e.message));
 		}
 	}
 }

@@ -37,7 +37,7 @@ test("schemaValidator", t => {
 			errcode: {
 				type: "number"
 			},
-			errmsg: {
+			message: {
 				type: "string"
 			},
 			data: {
@@ -45,12 +45,12 @@ test("schemaValidator", t => {
 				properties: {}
 			}
 		},
-		required: ["errcode", "errmsg"]
+		required: ["errcode", "message"]
 	};
 
 	const data1 = {
 		errcode: 0,
-		errmsg: "成功！",
+		message: "成功！",
 		data: {}
 	};
 

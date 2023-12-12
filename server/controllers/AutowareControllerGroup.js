@@ -1,4 +1,4 @@
-const ModelGroup = require("server/models/group");
+const { ModelGroup } = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 
 async function getMineGroup(ctx) {
@@ -78,7 +78,7 @@ async function getMineGroup(ctx) {
 		newResult.unshift(privateGroup);
 	}
 
-	ctx.body = xU.resReturn(newResult);
+	ctx.body = xU.$response(newResult);
 }
 
 module.exports = {
@@ -104,6 +104,41 @@ module.exports = {
 					"不需要参数，获取当前登录用户能够访问的分组，个人空间，作为成员所在的分组，作为成员所在项目关联的分组",
 				request: {},
 				handler: getMineGroup
+			}
+		},
+		/* 通过ID获取group */
+		"/group/get": {
+			get: {
+				summary: "通过ID获取分组信息",
+				description: "通过ID获取分组信息",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目分组ID",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let { id: groupId } = ctx.payload;
+					let groupInst = xU.orm(ModelGroup);
+					let result = {};
+					result = await groupInst.getGroupById(groupId);
+					if (result) {
+						result = result.toObject();
+					} else {
+						result = {};
+					}
+
+					let role = await this.getProjectRole(groupId, "group");
+					result.role = role;
+					if (result.type === "private") {
+						result.group_name = "个人空间";
+					}
+					ctx.body = xU.$response(result);
+
+				}
 			}
 		}
 	}

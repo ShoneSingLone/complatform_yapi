@@ -153,12 +153,12 @@ node server/app.js //启动服务器后，请访问 127.0.0.1:{config.json配置
 
 ## 禁止注册
 
-在 config.json 添加 `closeRegister:true` 配置项,就可以禁止用户注册 yapi 平台，修改完成后，请重启 yapi 服务器。
+在 config.json 添加 `isCloseRegister:true` 配置项,就可以禁止用户注册 yapi 平台，修改完成后，请重启 yapi 服务器。
 
 ```json
 {
 	"port": "*****",
-	"closeRegister": true
+	"isCloseRegister": true
 }
 ```
 

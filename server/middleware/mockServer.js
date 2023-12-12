@@ -28,12 +28,19 @@ async function ifTheResponseIsSuccessfulACopyIsRequired({
 	);
 	const data = {};
 	try {
+		let res;
 		if (Object.prototype.toString.call(ctx.body) === `[object Uint8Array]`) {
-			data.resBackupJson = ctx.body.toString();
+			res = JSON.parse(ctx.body.toString());
 		} else if (typeof ctx.body === "object") {
-			data.resBackupJson = JSON.stringify(ctx.body);
+			res = ctx.body;
 		}
-		await modelInterface.up(interfaceData._id, data);
+
+		if (String(res.code) === "0") {
+			data.resBackupJson = JSON.stringify(res);
+			await modelInterface.up(interfaceData._id, data);
+		} else {
+			console.error(res);
+		}
 	} catch (error) {
 		xU.applog.error(error);
 	}
@@ -64,7 +71,7 @@ async function handleProxy(ctx, { domain, projectId }) {
 		return [path, proxyHOST, proxyPORT];
 	})();
 
-	let body = xU.resReturn(null, 500, "代理失败");
+	let body = xU.$response(null, 500, "代理失败");
 	let response;
 	try {
 		response = await getResponseThroghProxy({
@@ -99,7 +106,7 @@ async function handleProxy(ctx, { domain, projectId }) {
 			});
 		}
 	} catch (error) {
-		body = xU.resReturn(null, 555, `错误来自yapi服务器： ${error.message}`);
+		body = xU.$response(null, 555, `错误来自yapi服务器： ${error.message}`);
 	}
 	ctx.body = body || {};
 	return ctx.body;
@@ -279,7 +286,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 	ctx.set("Access-Control-Allow-Credentials", true);
 
 	if (!projectId) {
-		return (ctx.body = xU.resReturn(null, 400, "projectId不能为空"));
+		return (ctx.body = xU.$response(null, 400, "projectId不能为空"));
 	}
 
 	let projectInst = xU.orm(ModelProject);
@@ -287,11 +294,11 @@ const middlewareMockServer = () => async (ctx, next) => {
 	try {
 		project = await projectInst.get(projectId);
 	} catch (e) {
-		return (ctx.body = xU.resReturn(null, 403, e.message));
+		return (ctx.body = xU.$response(null, 403, e.message));
 	}
 
 	if (!project) {
-		return (ctx.body = xU.resReturn(null, 400, "不存在的项目"));
+		return (ctx.body = xU.$response(null, 400, "不存在的项目"));
 	}
 
 	/*用于初步确定Interface的中间变量*/
@@ -372,7 +379,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 					return handleCorsRequest(ctx);
 				}
 
-				return (ctx.body = xU.resReturn(
+				return (ctx.body = xU.$response(
 					null,
 					404,
 					`当前使用yAPI代理，${ctx.method} ${REAL_URL_PATH}，但API不存在。请确认GET?POST?URL?是否正确`
@@ -382,7 +389,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		}
 
 		if (interfaceArray.length > 1) {
-			return (ctx.body = xU.resReturn(null, 405, "存在多个api，请检查数据库"));
+			return (ctx.body = xU.$response(null, 405, "存在多个api，请检查数据库"));
 		} else {
 			interfaceData = interfaceArray[0];
 		}
@@ -391,7 +398,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		if (project.strice) {
 			const validResult = mockValidator(interfaceData, ctx);
 			if (!validResult.valid) {
-				return (ctx.body = xU.resReturn(
+				return (ctx.body = xU.$response(
 					null,
 					404,
 					`接口字段验证不通过, ${validResult.message}`
@@ -549,13 +556,13 @@ const middlewareMockServer = () => async (ctx, next) => {
 			xU.applog.error(e);
 			return (ctx.body = {
 				errcode: 400,
-				errmsg: "解析出错，请检查。Error: " + e.message,
+				message: "解析出错，请检查。Error: " + e.message,
 				data: null
 			});
 		}
 	} catch (e) {
 		xU.applog.error(e);
-		return (ctx.body = xU.resReturn(null, 409, e.message));
+		return (ctx.body = xU.$response(null, 409, e.message));
 	}
 };
 

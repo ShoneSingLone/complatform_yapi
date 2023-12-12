@@ -235,7 +235,7 @@ xU.bindHook = bindHook;
 xU.emitHook = emitHook;
 xU.emitHookSync = emitHook;
 
-let pluginsConfig = initPlugins(WEBCONFIG.plugins, "plugin");
+let pluginsConfig = initPlugins(yapi_configs.plugins, "plugin");
 pluginsConfig.forEach(plugin => {
 	if (!plugin || plugin.enable === false || plugin.server === false)
 		return null;
