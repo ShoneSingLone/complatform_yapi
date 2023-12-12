@@ -96,6 +96,19 @@ module.exports = {
 				}
 			}
 		},
+		/* 退出 */
+		"/user/logout": {
+			post: {
+				auth: true,
+				summary: "用户退出接口",
+				description: "",
+				async handler(ctx) {
+					customCookies(ctx, "_yapi_token", null);
+					customCookies(ctx, "_yapi_uid", null);
+					ctx.body = xU.$response("ok");
+				}
+			}
+		},
 		"/user/status": {
 			get: {
 				summary: "获取用户信息",

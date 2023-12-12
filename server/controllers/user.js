@@ -13,21 +13,6 @@ class userController extends ControllerBase {
 		this.modelUser = xU.orm(ModelUser);
 	}
 
-	/**
-	 * 退出登录接口
-	 * @interface /user/logout
-	 * @method GET
-	 * @category user
-	 * @foldnumber 10
-	 * @returns {Object}
-	 * @example ./api/user/logout.json
-	 */
-
-	async logout(ctx) {
-		customCookies(ctx, "_yapi_token", null);
-		customCookies(ctx, "_yapi_uid", null);
-		ctx.body = xU.$response("ok");
-	}
 
 	/**
 	 * 更新
