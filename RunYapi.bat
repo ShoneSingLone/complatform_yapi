@@ -1,1 +1,1 @@
-npm run preview
+pnpm start

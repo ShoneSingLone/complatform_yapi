@@ -527,6 +527,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			let A_TIPS = `由yAPI MockJson 模拟数据`;
 			try {
 				/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
+				/* isUseBackup */
 				if (interfaceData.res_body_type === "backup") {
 					responseByMock = JSON.parse(interfaceData.resBackupJson);
 					A_TIPS = `使用备份的JSON数据`;
