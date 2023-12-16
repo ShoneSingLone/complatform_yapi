@@ -5,12 +5,12 @@ const mime = require("mime-types");
 
 module.exports = async function (app) {
 	app.use(async (ctx, next) => {
-		if (ctx.path === "/ssl") {
+		if (ctx.path === "/") {
 			ctx.status = 200;
 			ctx.set("Content-Type", "text/html");
 			const docPath = path.resolve(
 				xU.var.APP_ROOT_DIR,
-				"static/boundless.html"
+				"static/index.html"
 			);
 			const indexHtmlString = await fs.promises.readFile(docPath, "utf-8");
 			const $ = cheerio.load(indexHtmlString);

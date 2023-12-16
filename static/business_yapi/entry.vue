@@ -169,7 +169,11 @@ export default async function () {
 				}
 
 				if (!this.cptGroupId) {
-					this.routerUpsertQuery({ groupId: _.first(this.groupList)._id });
+					const firstGroup = _.first(this.groupList);
+					
+					if(firstGroup){
+						this.routerUpsertQuery({ groupId: firstGroup._id });
+					}
 				}
 			},
 			async updateGroupList() {
