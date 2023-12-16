@@ -23,7 +23,7 @@ async function main() {
 	await require("server/assets")(app);
 	await require("server/router")(app);
 	/*  */
-	await require("server/middleware/historyMode")(app);
+	// await require("server/middleware/historyMode")(app);
 	await require("server/utils/appListen")(app);
 }
 
