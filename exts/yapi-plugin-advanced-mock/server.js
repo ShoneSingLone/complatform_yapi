@@ -169,11 +169,11 @@ module.exports = function () {
 	});
 	/**
    * let context = {
-      projectData: project,
-      interfaceData: interfaceData,
-      ctx: ctx,
-      mockJson: res
-    }
+	  projectData: project,
+	  interfaceData: interfaceData,
+	  ctx: ctx,
+	  mockJson: res
+	}
    */
 	this.bindHook("mock_after", async function (context) {
 		let interfaceId = context.interfaceData._id;

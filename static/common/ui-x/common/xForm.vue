@@ -9,7 +9,7 @@ export default async function () {
 			return function () {
 				const slotsVNode = this.renderSlot("default");
 				return h(
-					"form",
+					"div",
 					{
 						ref: "xForm",
 						class: "xForm",
@@ -48,17 +48,12 @@ export default async function () {
 	grid-template-columns: var(--xForm-col);
 
 	.xFormItem {
-		min-height: 58px;
-
 		display: flex;
-		align-items: center;
+		align-items: baseline;
+		margin-top: var(--ui-one);
 
 		> div {
 			width: 100%;
-		}
-
-		& + .xFormItem {
-			//margin-top: var(--ui-one);
 		}
 	}
 

@@ -1,4 +1,10 @@
+const isDev = !!localStorage.isDev;
+
 (function () {
+	if (isDev) {
+		console.log("common.js");
+	}
+
 	/* lodash 主要是纯函数 $前缀的是自定义函数*/
 	window.defItem = (...args) => {
 		let options = _.merge.apply(_, args);
@@ -8,6 +14,180 @@
 		}
 		return Vue.reactive(options);
 	};
+
+	/* 从jQuery对象中，获取leftTop的数值 */
+	_.$getLeftTopFromAbsolute = $ele => {
+		const _top = $ele.css("top");
+		const _left = $ele.css("left");
+		const getNum = x => {
+			const match = String(x).match(/^(.*)px$/);
+			if (match && match[1]) {
+				return Number(match[1]);
+			} else {
+				return 0;
+			}
+		};
+		const top = getNum(_top);
+		const left = getNum(_left);
+		return { top, left };
+	};
+	_.$getLeftTopFromTranslate = ($ele /*  JQuery */) => {
+		const transform = $ele.css("transform");
+		const match = String(transform).match(/^matrix\((.*)\)$/);
+		if (!match) {
+			return { top: 0, left: 0 };
+		}
+		if (match && match[1]) {
+			const [a, b, c, d, e, f] = String(match[1])
+				.split(",")
+				.map(i => Number(_.trim(i)));
+
+			return {
+				left: a + c + e,
+				top: b + d + f
+			};
+		}
+	};
+
+	/***
+	 *  pathname search
+	 * @param urlLike
+	 * @param query
+	 */
+	function transToUrl(urlLike, query) {
+		const _url = new URL(String(urlLike).replace("#", ""), location.origin);
+		_url.search = new URLSearchParams(query).toString();
+		const { pathname, search } = _url;
+		return {
+			href: `${pathname}${search}`,
+			url: _url
+		};
+	}
+
+	_.$aHashLink = (urlLike, query) => {
+		const { url } = transToUrl(urlLike, query);
+		const targetUrl = new URL(location.href, location.origin);
+		targetUrl.hash = url.href.replace(url.origin, "");
+		return targetUrl.href;
+	};
+
+	_.$isSame = (a, b) => String(a) === String(b);
+
+	_.$isIE = function () {
+		return !Vue.prototype.$isServer && !isNaN(Number(document.documentMode));
+	};
+
+	_.$isEdge = function () {
+		return !Vue.prototype.$isServer && navigator.userAgent.indexOf("Edge") > -1;
+	};
+
+	_.$isFirefox = function () {
+		return !Vue.prototype.$isServer && !!window.navigator.userAgent.match(/firefox/i);
+	};
+
+	_.$valueEquals = (a, b) => {
+		// see: https://stackoverflow.com/questions/3115982/how-to-check-if-two-arrays-are-equal-with-javascript
+		if (a === b) return true;
+		if (!(a instanceof Array)) return false;
+		if (!(b instanceof Array)) return false;
+		if (a.length !== b.length) return false;
+		for (let i = 0; i !== a.length; ++i) {
+			if (a[i] !== b[i]) return false;
+		}
+		return true;
+	};
+
+	_.$scrollIntoView = function (container, selected) {
+		/* scrollIntoView api */
+		if (!selected) {
+			container.scrollTop = 0;
+			return;
+		}
+		const offsetParents = [];
+		let pointer = selected.offsetParent;
+		while (pointer && container !== pointer && container.contains(pointer)) {
+			offsetParents.push(pointer);
+			pointer = pointer.offsetParent;
+		}
+		const top = selected.offsetTop + offsetParents.reduce((prev, curr) => prev + curr.offsetTop, 0);
+		const bottom = top + selected.offsetHeight;
+		const viewRectTop = container.scrollTop;
+		const viewRectBottom = viewRectTop + container.clientHeight;
+
+		if (top < viewRectTop) {
+			container.scrollTop = top;
+		} else if (bottom > viewRectBottom) {
+			container.scrollTop = bottom - container.clientHeight;
+		}
+	};
+
+	_.$firstUpperCase = function (str) {
+		return str.toLowerCase().replace(/( |^)[a-z]/g, L => L.toUpperCase());
+	};
+
+	/* 判断是否是Mac */
+	_.$isMac = function () {
+		return /macintosh|mac os x/i.test(navigator.userAgent);
+	};
+
+	/* 数字 非 NaN */
+	_.$isNumber = value => {
+		return _.isNumber(value) && !_.isNaN(value);
+	};
+
+	_.$isKorean = function (text) {
+		const reg = /([(\uAC00-\uD7AF)|(\u3130-\u318F)])+/gi;
+		return reg.test(text);
+	};
+
+	/* 返回元素不为空的数组 */
+	_.$filterSomeInput = arr => {
+		return _.filter(arr, item => {
+			return _.some(item, val => {
+				return _.$isInput(val);
+			});
+		});
+	};
+
+	_.$filterAllInput = arr => {
+		return _.filter(arr, item => {
+			return _.every(item, val => {
+				return _.$isInput(val);
+			});
+		});
+	};
+
+	_.$trylog = asyncFn => {
+		try {
+			return asyncFn();
+		} catch (error) {
+			console.error(asyncFn.toString());
+			console.error(error);
+		}
+	};
+
+	_.$lStorage = new Proxy(localStorage, {
+		set(_localStorage, prop, value) {
+			if (_.isPlainObject(value)) {
+				_localStorage[prop] = JSON.stringify(value);
+			} else {
+				_localStorage[prop] = value;
+			}
+			return true;
+		},
+		get(_localStorage, prop) {
+			const objString = _localStorage[prop];
+			try {
+				return JSON.parse(objString);
+			} catch (error) {
+				if (objString === "undefined") {
+					return false;
+				}
+				return objString || false;
+			}
+		}
+	});
+
 	/**
 	 * @name _.$ajax
 	 * 请求API的工具函数
@@ -50,8 +230,7 @@
 			})(["POST", "PUT"].includes(_.toUpper(type)));
 
 			const headers = _.merge({ "X-Language": localStorage["X-Language"] }, options.headers);
-
-			const errorCodeArray = [400, 404, 500, 555];
+			const errorCodeArray = [400, 401, 402, 403, 404, 405, 500, 555];
 			return {
 				headers,
 				dataType: "json",
@@ -62,9 +241,12 @@
 				dataType: "JSON",
 				success(response) {
 					if (_.isPlainObject(response)) {
-						if (response?.code) {
-							if (errorCodeArray.includes(response.code)) {
-								reject(response.body);
+						/* 兼容 */
+						const errcode = response?.errcode || response?.code;
+
+						if (errcode) {
+							if (errorCodeArray.includes(errcode)) {
+								reject(response.body || response);
 								return;
 							}
 						}
@@ -210,12 +392,23 @@
 	_.$is200 = function is200(val) {
 		return String(val) === "200";
 	};
-
-	_.$isEveryInput = function (obj) {
+	/**
+	 * 默认检测obj上每一个属性都能通过isInput，如果给定keys，	则只检测keys中的属性
+	 * @param {*} obj
+	 * @param {*} keys
+	 * @returns
+	 */
+	_.$isEveryInput = function (obj, keys = []) {
 		if (Object.keys(obj).length > 0) {
-			return _.every(Object.entries(obj), ([val]) => {
-				return _.$isInput(val);
-			});
+			if (_.$isArrayFill(keys)) {
+				return _.every(keys, key => {
+					return _.$isInput(obj[key]);
+				});
+			} else {
+				return _.every(Object.entries(obj), ([key, value]) => {
+					return _.$isInput(value);
+				});
+			}
 		}
 		return false;
 	};
@@ -241,7 +434,7 @@
 	 * @name _.$doNoting
 	 * 啥都不干的函数
 	 */
-	_.$doNoting = () => { };
+	_.$doNoting = () => {};
 
 	/**
 	 * @name _.$sleep
@@ -294,7 +487,6 @@
 	 * 开发模式下才会在console打印日志
 	 */
 	const genConsole = type => {
-		const isDev = !!localStorage.isDev;
 		const mustShowLog = localStorage.mustShowLog;
 		if (isDev || mustShowLog) {
 			return console[type].bind(console);
@@ -587,7 +779,7 @@
 					if (timer) {
 						clearTimeout(timer);
 					}
-					resolve();
+					resolve(value);
 					_.$ensure.collection.delete(fnString);
 					logEnsure();
 					return;
@@ -601,6 +793,13 @@
 	};
 	_.$ensure.collection = new Set();
 
+	/**
+	 * @deprecated _.$appendScript可以缓存，不用每次都重新加载
+	 * @description 动态方式添加js，在pendding阶段的调用都会等待
+	 * @param {any} globalName
+	 * @param {any} url
+	 * @returns
+	 */
 	async function $globalVar(globalName, url) {
 		url = _.$resolvePath(url);
 		return new Promise(async resolve => {
@@ -691,19 +890,20 @@
 
 		/**
 		 *
-		 * @param {any} url
+		 * @param {any} resolvedURL
 		 * @param {any} param1
 		 * @returns
 		 */
-		async function GenComponentOptions(url, { scritpSourceCode, templateSourceCode, payload }) {
+
+		_.$GenComponentOptions = async function ({ resolvedURL, scritpSourceCode, templateSourceCode, payload }) {
 			payload = payload || {};
 			try {
 				scritpSourceCode = scritpSourceCode.replace("export default", "");
-				const isShowTemplate = templateSourceCode && localStorage.isDev;
+				const isShowTemplate = templateSourceCode && isDev;
 				const innerCode = [
-					`console.info("${url}");`,
+					`console.info("${resolvedURL}");`,
 					isShowTemplate ? `(()=>\`${templateSourceCode}\`)();` : ``,
-					`try{const ${_.camelCase(url)} = ${scritpSourceCode};return ${_.camelCase(url)}.call({THIS_FILE_URL:"${url}"},payload);}catch(e){console.error(e)}`
+					`try{const ${_.camelCase(resolvedURL)} = ${scritpSourceCode};return ${_.camelCase(resolvedURL)}.call({THIS_FILE_URL:"${resolvedURL}"},payload);}catch(e){console.error(e)}`
 				].join("\n");
 				let scfObjAsyncFn;
 				let component = {};
@@ -723,7 +923,7 @@
 					}
 				});
 				try {
-					_.THIS_FILE_URL.push(url);
+					_.THIS_FILE_URL.push(resolvedURL);
 					component = await scfObjAsyncFn(fnPayload);
 				} catch (e) {
 					console.warn(scfObjAsyncFn.toString());
@@ -740,28 +940,68 @@
 			} catch (error) {
 				console.error(error);
 			}
-		}
+		};
 
-		_.$GenComponentOptions = GenComponentOptions;
+		/**
+		 * 全局单例：同步
+		 * @param {*} prop win doc
+		 * @returns
+		 */
+		_.$single = new Proxy(
+			{},
+			{
+				get(target, prop) {
+					if (!target[prop]) {
+						if (prop === "doc") {
+							target[prop] = $(window.document);
+						}
+						if (prop === "body") {
+							target[prop] = $(window.document.body);
+						}
+						if (prop === "win") {
+							target[prop] = $(window);
+						}
+						if (prop === "shadowTemplate") {
+							const attrs = {
+								style: "opacity: 0;position: fixed;z-index: -1;",
+								// style: "opacity: 1;position: fixed;z-index: 1;",
+								class: "shadow-template-wrapper"
+							};
+							target[prop] = $("<div/>", attrs).appendTo(_.$single.body);
+						}
+						if (prop === "mask") {
+							const $mask = $("#x-layer-move");
+							if ($mask.length) {
+								target[prop] = $mask;
+							} else {
+								target[prop] = $(`<div id="x-layer-move" class="x-layer-move" />`).appendTo(_.$single.body);
+							}
+						}
+					}
+					return target[prop];
+				}
+			}
+		);
 
 		/**
 		 *
 		 * @returns { scritpSourceCode, templateSourceCode, styleSourceCode }
 		 */
-		async function SourceCode_SFC(url) {
-			/* 非开发模式下，如果已经加载，直接返回，否则每次都获取最新的代码 */
-			if (!localStorage.isDev && VUE_COMPONENTS_CACHE[url]) {
-				return VUE_COMPONENTS_CACHE[url];
-			} else {
-				/* 缓存 */
-				const scfSourceCode = await _.$loadText(url);
-				VUE_COMPONENTS_CACHE[url] = VueLoader(scfSourceCode);
-				$appendSfcStyle(VUE_COMPONENTS_CACHE[url].styleSourceCode, url);
-				return VUE_COMPONENTS_CACHE[url];
-			}
-		}
 
-		_.$SourceCode_SFC = SourceCode_SFC;
+		_.$sourceCodeSFC = async function ({ resolvedURL, sourceCode }) {
+			/* 非开发模式下，如果已经加载，直接返回，否则每次都获取最新的代码 */
+			if (!isDev && VUE_COMPONENTS_CACHE[resolvedURL]) {
+				return VUE_COMPONENTS_CACHE[resolvedURL];
+			}
+
+			if (!sourceCode) {
+				sourceCode = await _.$loadText(resolvedURL);
+			}
+			/* 缓存 */
+			VUE_COMPONENTS_CACHE[resolvedURL] = VueLoader(sourceCode);
+			$appendSfcStyle(VUE_COMPONENTS_CACHE[resolvedURL].styleSourceCode, resolvedURL);
+			return VUE_COMPONENTS_CACHE[resolvedURL];
+		};
 
 		/**
 		 * 利用less添加样式,独立处理资源路径
@@ -771,8 +1011,7 @@
 		async function $appendSfcStyle(styleSourceCode, url) {
 			/* style */
 			if (styleSourceCode) {
-				await _.$appendScript("/common/libs/less.js");
-				const { render } = window.less;
+				const { render } = await _.$appendScript("/common/libs/less.min.js", "less");
 				let cssContent = await new Promise(resolve => {
 					render(_.$resolveCssAssetsPath(styleSourceCode), {}, (error, cssContent) => {
 						if (error) {
@@ -804,27 +1043,37 @@
 		 * @returns
 		 */
 		_.$importVue = async function (url, payload = {}) {
+			if (_.isPlainObject(url)) {
+				/* 直接传入对象 */
+				return url;
+			}
 			if (_.isArray(url)) {
 				return Promise.all(_.map(url, _url => _.$importVue(_url)));
 			}
 			const resolvedURL = _.$resolvePath(url);
-			// localStorage.isDev && console.time(url);
-			if (url === "ANY") {
-				url = "/common/any.vue";
-			}
+			return _.$sfcVueObject({ resolvedURL, payload });
+		};
+
+		_.$sfcVueObject = async function ({ resolvedURL, payload, sourceCode }) {
+			/* hmr使用sourceCode不用发请求获取源码， */
+			payload = payload || {};
 			/* 切换页面时的动效 */
 			if (_.$importVue?.Nprogress) {
 				_.$importVue?.Nprogress.start();
 			}
 			try {
-				const { scritpSourceCode, templateSourceCode } = await _.$SourceCode_SFC(resolvedURL);
+				/* 源文件加载之后会有缓存，但是payload会有变化 */
+				/* 所以只用异步组件不加payload，是可以用hmr，window需要自己重新加载 */
+				const { scritpSourceCode, templateSourceCode } = await _.$sourceCodeSFC({ resolvedURL, sourceCode });
 				/* script and template*/
-				const ComponentOptions =
-					(await _.$GenComponentOptions(url, {
-						scritpSourceCode,
-						templateSourceCode,
-						payload
-					})) || {};
+				const params = {
+					resolvedURL,
+					scritpSourceCode,
+					templateSourceCode,
+					payload
+				};
+				const ComponentOptions = (await _.$GenComponentOptions(params)) || {};
+
 				if (payload?.parent) {
 					ComponentOptions.parent = payload?.parent;
 				}
@@ -836,7 +1085,6 @@
 				if (_.$importVue?.Nprogress) {
 					_.$importVue?.Nprogress.done();
 				}
-				// localStorage.isDev && console.timeEnd(url);
 			}
 		};
 
@@ -904,7 +1152,7 @@
 		let $wrapper = getWrapperBy(selector);
 
 		const $target = (function () {
-			let $target = $wrapper.find(`[data-form-item-id^=gh_form_id_]`);
+			let $target = $wrapper.find(`[data-form-item-id^=x_form_id_]`);
 
 			if ($target.length === 0) {
 				return $wrapper;
@@ -937,10 +1185,17 @@
 		const errorArray = [];
 		for (const dom of $target) {
 			const { formItemId } = dom.dataset;
-			const vm = Vue.GH_FORM_ITEM_MAP[formItemId];
-			const msg = await vm.validate();
-			if (msg) {
-				errorArray.push([msg, vm]);
+			if (formItemId) {
+				const vm = Vue._X_ITEM_VM_S[formItemId];
+				let msg;
+				if (vm?.validate) {
+					msg = await vm.validate();
+				} else {
+					console.log("miss vm in _X_ITEM_VM_S");
+				}
+				if (msg) {
+					errorArray.push([msg, vm]);
+				}
 			}
 		}
 		if (errorArray.length > 0) {
@@ -950,6 +1205,9 @@
 		}
 	};
 
+	_.$hideRow = async (refTable, filterFn) => {
+		_.$setTableData(refTable.configs, { list: _.filter(refTable.configs.data.list, (row, index) => filterFn({ row, index })) });
+	};
 	/**
 	 * 修改xItem的属性
 	 * @param {*} selector
@@ -959,9 +1217,9 @@
 		const $target = getTargetBy(selector);
 		for (const dom of $target) {
 			const { formItemId } = dom.dataset || {};
-			const vm = Vue.GH_FORM_ITEM_MAP?.[formItemId || "________No"];
+			const vm = Vue._X_ITEM_VM_S?.[formItemId || "________No"];
 			_.each(attrs, (val, key) => {
-				if (vm && key === "disabled") {
+				if (vm && key === "disabled" && Vue.hasOwn(vm.privateState, "isDisabled")) {
 					vm.privateState.isDisabled = val ? "disabled" : "";
 				} else {
 					if (vm?.configs) {
@@ -972,6 +1230,17 @@
 		}
 	};
 
+	_.$getVmById = id => {
+		let vm = {};
+		try {
+			const targetDom = document.querySelector(`#${id}`);
+			const { formItemId } = targetDom.dataset || {};
+			vm = Vue._X_ITEM_VM_S?.[formItemId || "________No"] || {};
+		} catch (error) {
+		} finally {
+			return vm;
+		}
+	};
 	/* 从Table 中获取xItem的vm */
 	_.$getCellItemVm = (rowIndex, colProp, selector) => {
 		let vm = {};
@@ -980,7 +1249,7 @@
 			const itemSelector = `.el-table__body-wrapper [data-row-index=${rowIndex}][data-col-prop=${colProp}]`;
 			const targetDom = $wrapper.find(itemSelector);
 			const { formItemId } = targetDom?.[0].dataset || {};
-			vm = Vue.GH_FORM_ITEM_MAP?.[formItemId || "________No"] || {};
+			vm = Vue._X_ITEM_VM_S?.[formItemId || "________No"] || {};
 		} catch (error) {
 		} finally {
 			return vm;
@@ -1009,6 +1278,24 @@
 		});
 	};
 
+	_.$fillBackData = async function ({ form, data, order }) {
+		let target;
+		while ((target = order.shift())) {
+			/* 如果current是prop字符串,等待100毫秒 */
+			if (_.isString(target)) {
+				const prop = target;
+				form[prop].value = data[prop];
+				await _.$sleep(100);
+			}
+
+			if (_.isPlainObject(target)) {
+				const { prop, until } = target;
+				await until();
+				form[prop].value = data[prop];
+			}
+		}
+	};
+
 	/**
 	 * 适用于xItem不使用v-mode，form的configs带有value form.xxx.value, {xxx:"value"}
 	 * @param {any} form xItem 配置信息，config带有value属性
@@ -1028,7 +1315,7 @@
 	 * @param {any} configs
 	 * @returns
 	 */
-	_.$pickValueFromConfigs = function pickValueFromConfigs(configs) {
+	_.$pickValueFromConfigs = function (configs) {
 		return _.reduce(
 			configs,
 			(_params, configs, prop) => {
@@ -1050,6 +1337,68 @@
 		}
 		return defaultValue;
 	};
+
+	/*  */
+	_.$firstIpFrom = ip => {
+		const arr = ip.split(".");
+		arr[3] = 0;
+		return arr.join(".");
+	};
+
+	_.$getIpInRangeAndUseable = function (ipOld, cidr, used) {
+		const range = _.$calculateCidrRange(cidr);
+		const isIpOldInRange = _.$isIp4InCidr(ipOld)(cidr);
+		if (isIpOldInRange) {
+			return {
+				newValue: ipOld,
+				range
+			};
+		} else {
+			let newValue = (function () {
+				const [start, end] = range;
+				const startInt = _.$ip4ToInt(start);
+				const endInt = _.$ip4ToInt(end);
+
+				for (let ipInt = startInt + 1; ipInt <= endInt; ipInt++) {
+					const value = _.$intToIp4(ipInt);
+					if (!used.includes(value)) {
+						return value;
+					}
+				}
+				return ``;
+			})();
+
+			return {
+				newValue,
+				range
+			};
+		}
+	};
+
+	_.$intToIp4 = int => [(int >>> 24) & 0xff, (int >>> 16) & 0xff, (int >>> 8) & 0xff, int & 0xff].join(".");
+	_.$ip4ToInt = ip => ip.split(".").reduce((int, oct) => (int << 8) + parseInt(oct, 10), 0) >>> 0;
+	_.$isIp4InCidr = ip => cidr => {
+		const [range, bits = 32] = cidr.split("/");
+		const mask = ~(2 ** (32 - bits) - 1);
+		const inRange = (_.$ip4ToInt(ip) & mask) === (_.$ip4ToInt(range) & mask);
+		if (inRange) {
+			const [start, end] = _.$calculateCidrRange(cidr);
+			return ip !== start && ip !== end;
+		}
+		return false;
+	};
+	_.$intToBin = int =>
+		(int >>> 0)
+			.toString(2)
+			.padStart(32, 0)
+			.match(/.{1,8}/g)
+			.join(".");
+
+	_.$calculateCidrRange = cidr => {
+		const [range, bits = 32] = cidr.split("/");
+		const mask = ~(2 ** (32 - bits) - 1);
+		return [_.$intToIp4(_.$ip4ToInt(range) & mask), _.$intToIp4(_.$ip4ToInt(range) | ~mask)];
+	};
 })();
 
 (async function () {
@@ -1066,7 +1415,7 @@
 		};
 		/* 国际化 */
 		window.i18n = i18n;
-		await _.$globalVar("i18n.options", `@/i18n/${I18N_LANGUAGE}.js`);
+		await _.$appendScript(`@/i18n/${I18N_LANGUAGE}.js`);
 		Vue.prototype.$i18n = i18n;
 		Vue.prototype.i18n = i18n;
 	})();
@@ -1077,9 +1426,9 @@
 		_.$importVue.Nprogress = await _.$importVue("/common/libs/Nprogress.vue");
 	})();
 
-	document.title = window.i18n("adminConsole");
+	// document.title = window.i18n("adminConsole");
 	const APP = await _.$importVue(`${SRC_ROOT_PATH}/business_${APP_NAME}/${APP_ENTRY_NAME}.vue`);
-	if (localStorage.isDev) {
-		window.APP = APP;
+	if (isDev) {
+		window.HMR_APP = APP;
 	}
 })();

@@ -86,81 +86,6 @@ class groupController extends ControllerBase {
 	}
 
 	/**
-	 * 添加项目分组
-	 * @interface /group/add
-	 * @method POST
-	 * @category group
-	 * @foldnumber 10
-	 * @param {String} group_name 项目分组名称，不能为空
-	 * @param {String} [group_desc] 项目分组描述
-	 * @param {String} [owner_uids]  组长[uid]
-	 * @returns {Object}
-	 * @example ./api/group/add.json
-	 */
-	async add(ctx) {
-		let params = ctx.params;
-
-		// 新版每个人都有权限添加分组
-
-		// if (this.getRole() !== 'admin') {
-		//   return (ctx.body = xU.$response(null, 401, '没有权限'));
-		// }
-
-		let owners = [];
-
-		if (params.owner_uids.length === 0) {
-			params.owner_uids.push(this.getUid());
-		}
-
-		if (params.owner_uids) {
-			for (let i = 0, len = params.owner_uids.length; i < len; i++) {
-				let id = params.owner_uids[i];
-				let groupUserdata = await this.getUserdata(id, "owner");
-				if (groupUserdata) {
-					owners.push(groupUserdata);
-				}
-			}
-		}
-
-		let groupInst = xU.orm(ModelGroup);
-
-		let count = await groupInst.count(params.group_name);
-
-		if (count > 0) {
-			return (ctx.body = xU.$response(null, 401, "项目分组名已存在"));
-		}
-
-		let data = {
-			group_name: params.group_name,
-			group_desc: params.group_desc,
-			uid: this.getUid(),
-			add_time: xU.time(),
-			up_time: xU.time(),
-			members: owners
-		};
-
-		let result = await groupInst.save(data);
-		result = xU.fieldSelect(result, [
-			"_id",
-			"group_name",
-			"group_desc",
-			"uid",
-			"members",
-			"type"
-		]);
-		let username = this.getUsername();
-		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组 <a href="/group/${result._id
-				}">${params.group_name}</a>`,
-			type: "group",
-			uid: this.getUid(),
-			username: username,
-			typeid: result._id
-		});
-		ctx.body = xU.$response(result);
-	}
-
-	/**
 	 * 获取用户数据
 	 * @param uid
 	 * @param role
@@ -207,7 +132,7 @@ class groupController extends ControllerBase {
 		for (let i = 0, len = params.member_uids.length; i < len; i++) {
 			let id = params.member_uids[i];
 			let check = await groupInst.checkMemberRepeat(params.id, id);
-			let userdata = await this.getUserdata(id, params.role);
+			let userdata = await xU.getUserdata(id, params.role);
 			if (check > 0) {
 				exist_members.push(userdata);
 			} else if (!userdata) {
@@ -276,7 +201,7 @@ class groupController extends ControllerBase {
 		);
 		let username = this.getUsername();
 
-		let groupUserdata = await this.getUserdata(params.member_uid, params.role);
+		let groupUserdata = await xU.getUserdata(params.member_uid, params.role);
 		xU.saveLog({
 			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更改了分组成员 <a href="/user/profile/${params.member_uid
 				}">${groupUserdata ? groupUserdata.username : ""}</a> 的权限为 "${ROLE_NAME[params.role]
@@ -333,7 +258,7 @@ class groupController extends ControllerBase {
 		let result = await groupInst.delMember(params.id, params.member_uid);
 		let username = this.getUsername();
 
-		let groupUserdata = await this.getUserdata(params.member_uid, params.role);
+		let groupUserdata = await xU.getUserdata(params.member_uid, params.role);
 		xU.saveLog({
 			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分组成员 <a href="/user/profile/${params.member_uid
 				}">${groupUserdata ? groupUserdata.username : ""}</a>`,

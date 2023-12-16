@@ -407,54 +407,6 @@ class userController extends ControllerBase {
 	}
 
 	/**
-	 * 模糊搜索用户名或者email
-	 * @interface /user/search
-	 * @method GET
-	 * @category user
-	 * @foldnumber 10
-	 * @param {String} q
-	 * @return {Object}
-	 * @example ./api/user/search.json
-	 */
-	async search(ctx) {
-		const { q } = ctx.request.query;
-
-		let rules = [
-			{
-				key: "_id",
-				alias: "uid"
-			},
-			"username",
-			"email",
-			"role",
-			{
-				key: "add_time",
-				alias: "addTime"
-			},
-			{
-				key: "up_time",
-				alias: "upTime"
-			}
-		];
-
-		if (!q) {
-			let queryList = await this.modelUser.list();
-			let filteredRes = xU.filterRes(queryList, rules);
-			return (ctx.body = xU.$response(filteredRes, 0, "ok"));
-		}
-
-		if (!xU.validateSearchKeyword(q)) {
-			return (ctx.body = xU.$response(void 0, 400, "Bad query."));
-		}
-
-		let queryList = await this.modelUser.search(q);
-
-		let filteredRes = xU.filterRes(queryList, rules);
-
-		return (ctx.body = xU.$response(filteredRes, 0, "ok"));
-	}
-
-	/**
 	 * 根据路由id初始化项目数据
 	 * @interface /user/project
 	 * @method GET

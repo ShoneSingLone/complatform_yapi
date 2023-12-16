@@ -5,9 +5,12 @@
 	const last = arr => (arr.length ? arr[arr.length - 1] : false);
 
 	function camelCase(str) {
-		return str.replace(camelizeRE, function (_, c) {
-			return c ? c.toUpperCase() : "";
-		});
+		return (
+			str &&
+			str.replace(camelizeRE, function (_, c) {
+				return c ? c.toUpperCase() : "";
+			})
+		);
 	}
 
 	const $idb = (function idb_keyval() {
@@ -78,7 +81,11 @@
 	})();
 
 	(function loadBaseInfo() {
-		const { srcRoot, appName, appEntryName, appVersion } = $$id("src-root").dataset;
+		const srcRootDom = $$id("src-root");
+		const { src } = srcRootDom;
+		const srcRoot = src.replace("/common/libs/seed.js", "");
+
+		const { appName, appEntryName, appVersion } = srcRootDom.dataset;
 
 		window.SRC_ROOT_PATH = srcRoot || "";
 		window.APP_NAME = appName || "";
@@ -89,21 +96,21 @@
 
 	function ajax(url) {
 		return new Promise((resolve, reject) => {
-			var oReq = new XMLHttpRequest();
+			var xhr = new XMLHttpRequest();
 
-			oReq.addEventListener("progress", updateProgress);
-			oReq.addEventListener("load", transferComplete);
-			oReq.addEventListener("error", transferFailed);
-			oReq.addEventListener("abort", transferCanceled);
+			xhr.addEventListener("progress", updateProgress);
+			xhr.addEventListener("load", transferComplete);
+			xhr.addEventListener("error", transferFailed);
+			xhr.addEventListener("abort", transferCanceled);
 
-			oReq.open("GET", `${url}?_t=${Date.now()}`);
-			oReq.send();
+			xhr.open("GET", `${url}?_t=${Date.now()}`);
+			xhr.send();
 
 			// 服务端到客户端的传输进程（下载）
 			function updateProgress(oEvent) {
 				if (oEvent.lengthComputable && oEvent.total) {
 					var percentComplete = (oEvent.loaded / oEvent.total) * 100;
-					console.log("🚀 ~ updateProgress ~ percentComplete:", percentComplete);
+					/* TODO: progress*/
 				} else {
 					// 总大小未知时不能计算进程信息
 				}
@@ -127,6 +134,9 @@
 		item = item || {};
 		const isVue2 = item._isVue;
 		const fnVue$set = item.$set;
+		if (!_.isString(prop)) {
+			throw new Error("prop must be a string");
+		}
 		const propArray = prop.split(".");
 		let key = "";
 		let nextItem = item;
@@ -228,7 +238,11 @@
 	}
 	$resolvePath.cache = {};
 
-	/*  */
+	/**
+	 * @description 加载纯文本,包括vue js css html,
+	 * @param {any} url
+	 * @returns
+	 */
 	async function $loadText(url) {
 		return new Promise(async (resolve, reject) => {
 			const key = camelCase(url);
@@ -268,7 +282,7 @@
 		return $loadText;
 	})();
 
-	async function $appendScript(url) {
+	async function $appendScript(url, globalName = "") {
 		const id = camelCase(url);
 		let $script = $$id(id);
 		if (!$script) {
@@ -278,6 +292,9 @@
 			const body = $$tags("body")[0];
 			body.appendChild($script);
 			$script.innerHTML = innerHtml;
+		}
+		if (globalName) {
+			return $val(window, globalName);
 		}
 	}
 

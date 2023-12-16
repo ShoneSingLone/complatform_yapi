@@ -140,6 +140,95 @@ module.exports = {
 
 				}
 			}
+		},
+		/* 添加项目分组 */
+		"/group/add": {/*  */
+			post: {
+				summary: "添加项目分组",
+				description: "添加项目分组",
+				request: {
+					body: {
+						group_name: {
+							required: true,
+							description: "分组名称",
+							type: "string"
+						},
+						group_desc: {
+							required: false,
+							description: "分组描述",
+						},
+						owner_uids: {
+							required: true,
+							description: "分组拥有者uids",
+							type: "array"
+						},
+					}
+				},
+				async handler(ctx) {
+					let { owner_uids,
+						group_desc,
+						group_name } = ctx.payload;
+
+					// 新版每个人都有权限添加分组
+
+					// if (this.getRole() !== 'admin') {
+					//   return (ctx.body = xU.$response(null, 401, '没有权限'));
+					// }
+
+					let owners = [];
+
+					if (owner_uids.length === 0) {
+						owner_uids.push(this.getUid());
+					}
+
+					if (owner_uids) {
+						for (let i = 0, len = owner_uids.length; i < len; i++) {
+							let id = owner_uids[i];
+							let groupUserdata = await xU.getUserdata(id, "owner");
+							if (groupUserdata) {
+								owners.push(groupUserdata);
+							}
+						}
+					}
+
+					let groupInst = xU.orm(ModelGroup);
+
+					let count = await groupInst.count(group_name);
+
+					if (count > 0) {
+						return (ctx.body = xU.$response(null, 401, "项目分组名已存在"));
+					}
+
+					let data = {
+						group_name: group_name,
+						group_desc: group_desc,
+						uid: this.getUid(),
+						add_time: xU.time(),
+						up_time: xU.time(),
+						members: owners
+					};
+
+					let result = await groupInst.save(data);
+					result = xU.fieldSelect(result, [
+						"_id",
+						"group_name",
+						"group_desc",
+						"uid",
+						"members",
+						"type"
+					]);
+					let username = this.getUsername();
+					xU.saveLog({
+						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组 <a href="/group/${result._id
+							}">${group_name}</a>`,
+						type: "group",
+						uid: this.getUid(),
+						username: username,
+						typeid: result._id
+					});
+					ctx.body = xU.$response(result);
+				}
+			}
 		}
 	}
 };

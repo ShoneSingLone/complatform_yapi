@@ -367,6 +367,62 @@ module.exports = {
 					}
 				}
 			}
+		},
+
+		/* 模糊搜索用户名或者email */
+		"/user/search": {
+			get: {
+				summary: "模糊搜索用户名或者email",
+				description: "搜索用户名或者email",
+				request: {
+					query: {
+						q: {
+							description: "搜索内容",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					const { q } = ctx.payload;
+
+					let rules = [
+						{
+							key: "_id",
+							alias: "uid"
+						},
+						"username",
+						"email",
+						"role",
+						{
+							key: "add_time",
+							alias: "addTime"
+						},
+						{
+							key: "up_time",
+							alias: "upTime"
+						}
+					];
+
+					let userInst = xU.orm(ModelUser);
+
+
+					if (!q) {
+						let queryList = await userInst.list();
+						let filteredRes = xU.filterRes(queryList, rules);
+						return (ctx.body = xU.$response(filteredRes, 0, "ok"));
+					}
+
+					if (!xU.validateSearchKeyword(q)) {
+						return (ctx.body = xU.$response(void 0, 400, "Bad query."));
+					}
+
+					let queryList = await userInst.search(q);
+
+					let filteredRes = xU.filterRes(queryList, rules);
+
+					return (ctx.body = xU.$response(filteredRes, 0, "ok"));
+				}
+			}
 		}
 	}
 };

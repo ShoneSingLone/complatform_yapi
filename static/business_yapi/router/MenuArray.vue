@@ -19,23 +19,12 @@ export default async function () {
 		},
 		{
 			icon: "_icon_report",
-			label: i18n("指令"),
-			children: [
-				{
-					icon: "_icon_report",
-					label: i18n("水波纹"),
-					href: "/directive_ripple"
-				}
-			]
-		},
-		{
-			icon: "_icon_report",
 			label: i18n("组件"),
 			children: [
 				{
 					icon: "_icon_report",
-					label: i18n("xCard"),
-					href: "/xCard"
+					label: i18n("xBlock"),
+					href: "/xBlock"
 				},
 				{
 					icon: "_icon_report",
@@ -46,6 +35,11 @@ export default async function () {
 					icon: "_icon_report",
 					label: i18n("xTable"),
 					href: "/xTable"
+				},
+				{
+					icon: "_icon_report",
+					label: i18n("xTableDiv"),
+					href: "/xTableDiv"
 				},
 				{
 					icon: "_icon_report",
