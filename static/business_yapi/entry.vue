@@ -5,9 +5,10 @@ export default async function () {
 			size: "small",
 			I18N_LANGUAGE: window.I18N_LANGUAGE
 		}),
-		_.$importVue("/common/ui-x/useXui.vue")
 	]);
 
+	await _.$importVue("/common/ui-x/useXui.vue");
+	
 	/*anxin应用用到的组件*/
 	_.each(
 		{
