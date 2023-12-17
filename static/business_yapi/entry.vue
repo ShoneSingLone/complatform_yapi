@@ -4,11 +4,11 @@ export default async function () {
 		_.$importVue("/common/ui-element/useElementUI.vue", {
 			size: "small",
 			I18N_LANGUAGE: window.I18N_LANGUAGE
-		}),
+		})
 	]);
 
 	await _.$importVue("/common/ui-x/useXui.vue");
-	
+
 	/*anxin应用用到的组件*/
 	_.each(
 		{
@@ -113,14 +113,15 @@ export default async function () {
 					}
 				});
 			},
-
 			async refreshUserInfo() {
 				try {
 					const { data: userInfo } = await Vue._yapi_api.getUserStatus();
-					this._setUser(userInfo);
-					/* TODO: 跳转到首页 或者note应用*/
-					if (!this.cptGroupId) {
-						this.$router.push({ path: "/api/group" });
+					if (userInfo?._id) {
+						this._setUser(userInfo);
+						/* TODO: 跳转到首页 或者note应用*/
+						if (!this.cptGroupId) {
+							this.$router.push({ path: "/api/group" });
+						}
 					}
 				} catch (error) {
 					/* 未登录，跳转登录界面 */
@@ -171,8 +172,8 @@ export default async function () {
 
 				if (!this.cptGroupId) {
 					const firstGroup = _.first(this.groupList);
-					
-					if(firstGroup){
+
+					if (firstGroup) {
 						this.routerUpsertQuery({ groupId: firstGroup._id });
 					}
 				}
@@ -204,7 +205,7 @@ export default async function () {
 		},
 		computed: {
 			cptAvatarUrl() {
-				return `/api/user/avatar?uid=${this.user._id}`;
+				return `${window._URL_PREFIX}/api/user/avatar?uid=${this.user._id}`;
 			},
 			cptGroupId() {
 				return this.$route.query.groupId;
