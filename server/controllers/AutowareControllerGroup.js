@@ -229,6 +229,28 @@ module.exports = {
 					ctx.body = xU.$response(result);
 				}
 			}
+		},
+		/* 获取所有项目成员 */
+		"/group/get_member_list": {
+			get: {
+				summary: "获取所有项目成员",
+				description: "获取所有项目成员",
+				request: {
+					query: {
+						id: {
+							required: true,
+							description: "项目分组ID",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let { id } = ctx.payload;
+					let groupInst = xU.orm(ModelGroup);
+					let group = await groupInst.get(id);
+					ctx.body = xU.$response(group.members);
+				}
+			}
 		}
 	}
 };

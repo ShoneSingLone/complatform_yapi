@@ -1,6 +1,6 @@
 const ModelBase = require("server/models/base");
 
-class avatarModel extends ModelBase {
+class ModelAvatar extends ModelBase {
 	getName() {
 		return "avatar";
 	}
@@ -35,4 +35,4 @@ class avatarModel extends ModelBase {
 	}
 }
 
-module.exports = avatarModel;
+exports.ModelAvatar = ModelAvatar;

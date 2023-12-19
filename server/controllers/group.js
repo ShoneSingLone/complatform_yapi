@@ -214,23 +214,6 @@ class groupController extends ControllerBase {
 		ctx.body = xU.$response(result);
 	}
 
-	/**
-	 * 获取所有项目成员
-	 * @interface /group/get_member_list
-	 * @method GET
-	 * @category group
-	 * @foldnumber 10
-	 * @param {String} id 项目分组id
-	 * @returns {Object}
-	 * @example
-	 */
-
-	async getMemberList(ctx) {
-		let params = ctx.params;
-		let groupInst = xU.orm(ModelGroup);
-		let group = await groupInst.get(params.id);
-		ctx.body = xU.$response(group.members);
-	}
 
 	/**
 	 * 删除项目成员

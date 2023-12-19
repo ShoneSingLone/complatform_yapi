@@ -4,7 +4,7 @@ const { ldapQuery } = require("../utils/ldap");
 const { ModelInterface } = require("../models/interface");
 const { ModelGroup } = require("server/models/group");
 const { ModelProject } = require("server/models/project");
-const avatarModel = require("../models/avatar");
+const { ModelAvatar } = require("server/models/avatar");
 const { customCookies } = require("../utils/customCookies");
 
 class userController extends ControllerBase {
@@ -366,43 +366,11 @@ class userController extends ControllerBase {
 				return (ctx.body = xU.$response(null, 400, "图片大小不能超过200kb"));
 			}
 
-			let avatarInst = xU.orm(avatarModel);
+			let avatarInst = xU.orm(ModelAvatar);
 			let result = await avatarInst.up(this.getUid(), basecode, type);
 			ctx.body = xU.$response(result);
 		} catch (e) {
 			ctx.body = xU.$response(null, 401, e.message);
-		}
-	}
-
-	/**
-	 * 根据用户uid头像
-	 * @interface /user/avatar
-	 * @method GET
-	 * @param {*} uid
-	 * @category user
-	 * @returns {Object}
-	 * @example
-	 */
-	async avatar(ctx) {
-		try {
-			let uid = ctx.query.uid ? ctx.query.uid : this.getUid();
-			let avatarInst = xU.orm(avatarModel);
-			let data = await avatarInst.get(uid);
-			let dataBuffer, type;
-			if (!data || !data.basecode) {
-				dataBuffer = xU.fs.readFileSync(
-					xU.path.join(xU.var.WEBROOT, "static/image/avatar.png")
-				);
-				type = "image/png";
-			} else {
-				type = data.type;
-				dataBuffer = new Buffer(data.basecode, "base64");
-			}
-
-			ctx.set("Content-type", type);
-			ctx.body = dataBuffer;
-		} catch (err) {
-			ctx.body = "error:" + err.message;
 		}
 	}
 

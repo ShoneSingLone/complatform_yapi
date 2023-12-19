@@ -1,6 +1,8 @@
 const { ModelUser } = require("server/models/user");
 const { ModelGroup } = require("server/models/group");
 const { ModelVerifyCode } = require("server/models/VerifyCode");
+const { ModelAvatar } = require("server/models/avatar");
+
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const { customCookies } = require("server/utils/customCookies");
@@ -16,7 +18,12 @@ async function makeNewUserPrivateGroup(uid) {
 }
 
 module.exports = {
-	definitions: {},
+	definitions: {
+		UserAvatar: {
+			type: "string",
+			format: "binary"
+		}
+	},
 	tag: {
 		description: "用户信息"
 	},
@@ -421,6 +428,59 @@ module.exports = {
 					let filteredRes = xU.filterRes(queryList, rules);
 
 					return (ctx.body = xU.$response(filteredRes, 0, "ok"));
+				}
+			}
+		},
+		/* 根据用户uid获取头像 */
+		"/user/avatar": {
+			get: {
+				summary: "根据用户uid获取头像",
+				description: "根据用户uid获取头像",
+				request: {
+					query: {
+						uid: {
+							description: "用户uid",
+							type: "string"
+						}
+					}
+				},
+				response: {
+					200: {
+						description: "成功",
+						content: {
+							"image/png": {
+								schema: {
+									type: "string",
+									format: "binary"
+								}
+							}
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let { uid } = ctx.payload;
+						uid = uid ? uid : this.getUid();
+						let avatarInst = xU.orm(ModelAvatar);
+						let data = await avatarInst.get(uid);
+						let dataBuffer, type;
+						if (!data || !data.basecode) {
+							dataBuffer = xU.fs.readFileSync(
+								xU.path.join(xU.var.APP_ROOT_DIR, "static/image/avatar.png")
+							);
+							type = "image/png";
+						} else {
+							type = data.type;
+							dataBuffer = new Buffer(data.basecode, "base64");
+						}
+
+						ctx.set("Content-type", type);
+						ctx.body = dataBuffer;
+					} catch (err) {
+						ctx.body = "error:" + err.message;
+					}
+
+
 				}
 			}
 		}
