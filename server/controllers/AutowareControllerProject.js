@@ -1,7 +1,6 @@
-const { ModelGroup } = require("server/models/group");
+const { ModelInterfaceCol } = require("server/models/interfaceCol");
+const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 const { ModelProject } = require("server/models/project");
-
-
 
 async function checkProjectName(name, groupId) {
 	if (!name) {
@@ -138,10 +137,10 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 405, "没有权限"));
 					}
 
-					let count = await checkProjectName(name, group_id);
-
-					if (count) {
-						return (ctx.body = xU.$response(null, 401, "已存在的项目名"));
+					let errorMsg = await checkProjectName(name, group_id);
+					if (errorMsg) {
+						ctx.body = xU.$response(null, 401, errorMsg);
+						return;
 					}
 
 					basepath = basepath || "";
@@ -186,16 +185,16 @@ data:data||{}
 						uid: this.getUid(),
 						group_id: group_id,
 						group_name: group_name,
-						icon: icon,
-						color: color,
+						icon: icon || "3d",
+						color: color || "white",
 						add_time: xU.time(),
 						up_time: xU.time(),
 						is_json5: false,
 						env: [{ name: "local", domain: "http://127.0.0.1" }],
 						requestCode: requestCode.toString()
 					};
-
-					let result = await xU.orm(ModelProject).save(data);
+					const modelProject = xU.orm(ModelProject);
+					let result = await modelProject.save(data);
 					let colInst = xU.orm(ModelInterfaceCol);
 					let catInst = xU.orm(ModelInterfaceCategory);
 					if (result._id) {
@@ -220,7 +219,7 @@ data:data||{}
 					// 将项目添加者变成项目组长,除admin以外
 					if (this.getRole() !== "admin") {
 						let userdata = await xU.getUserdata(uid, "owner");
-						await this.model.addMember(result._id, [userdata]);
+						await modelProject.addMember(result._id, [userdata]);
 					}
 					let username = this.getUsername();
 					xU.saveLog({
@@ -233,7 +232,7 @@ data:data||{}
 					});
 					xU.emitHook("project_add", result).then();
 					ctx.body = xU.$response(result);
-
+					return;
 				}
 			}
 		},

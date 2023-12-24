@@ -23,7 +23,7 @@ xU.emitHook("addNotice", noticeObj);
 
 xU.sendNotice = async function (projectId, data) {
 	const { ModelProject } = require("server/models/project");
-	const { ModelUser } = require("../models/user");
+	const { ModelUser } = require("server/models/user");
 	const ModelFollow = require("../models/follow");
 	const followInst = xU.orm(ModelFollow);
 	const userInst = xU.orm(ModelUser);

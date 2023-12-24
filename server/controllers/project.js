@@ -2,12 +2,12 @@ const { ModelProject } = require("server/models/project");
 
 const _ = require("lodash");
 const ControllerBase = require("./base");
-const { ModelInterface } = require("../models/interface");
-const ModelInterfaceCol = require("../models/interfaceCol");
-const ModelInterfaceCase = require("../models/interfaceCase");
+const { ModelInterface } = require("server/models/interface");
+const {ModelInterfaceCol} = require("server/models/interfaceCol");
+const { ModelInterfaceCase } = require("server/models/interfaceCase");
 const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 const { ModelGroup } = require("server/models/group");
-const { ModelUser } = require("../models/user");
+const { ModelUser } = require("server/models/user");
 const { ModelLog } = require("server/models/log");
 const ModelFollow = require("../models/follow");
 const tokenModel = require("../models/token");

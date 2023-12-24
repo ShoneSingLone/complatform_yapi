@@ -1,7 +1,7 @@
-const { ModelUser } = require("../models/user");
-const { ModelInterface } = require("../models/interface");
+const { ModelUser } = require("server/models/user");
+const { ModelInterface } = require("server/models/interface");
 const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
-const ModelInterfaceCase = require("../models/interfaceCase");
+const { ModelInterfaceCase } = require("server/models/interfaceCase");
 const ModelFollow = require("../models/follow");
 const { ModelGroup } = require("server/models/group");
 const { ModelProject } = require("server/models/project");

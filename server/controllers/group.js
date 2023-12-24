@@ -2,10 +2,10 @@ const { ModelGroup } = require("server/models/group");
 
 const ControllerBase = require("./base");
 const { ModelProject } = require("server/models/project");
-const { ModelUser } = require("../models/user");
-const { ModelInterface } = require("../models/interface");
-const ModelInterfaceCol = require("../models/interfaceCol");
-const ModelInterfaceCase = require("../models/interfaceCase");
+const { ModelUser } = require("server/models/user");
+const { ModelInterface } = require("server/models/interface");
+const { ModelInterfaceCase } = require("server/models/interfaceCase");
+const { ModelInterfaceCol } = require("server/models/interfaceCol");
 const _ = require("lodash");
 
 const ROLE_NAME = {

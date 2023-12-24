@@ -2,7 +2,7 @@ const ModelBase = require("server/models/base");
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-class interfaceCase extends ModelBase {
+class ModelInterfaceCase extends ModelBase {
 	getName() {
 		return "interface_case";
 	}
@@ -131,4 +131,4 @@ class interfaceCase extends ModelBase {
 	}
 }
 
-module.exports = interfaceCase;
+exports.ModelInterfaceCase = ModelInterfaceCase;

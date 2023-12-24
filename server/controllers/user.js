@@ -1,7 +1,7 @@
-const { ModelUser } = require("../models/user");
+const { ModelUser } = require("server/models/user");
 const ControllerBase = require("./base");
 const { ldapQuery } = require("../utils/ldap");
-const { ModelInterface } = require("../models/interface");
+const { ModelInterface } = require("server/models/interface");
 const { ModelGroup } = require("server/models/group");
 const { ModelProject } = require("server/models/project");
 const { ModelAvatar } = require("server/models/avatar");

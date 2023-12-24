@@ -1,10 +1,10 @@
 const { ModelProject } = require("server/models/project");
-const ModelInterfaceCol = require("../models/interfaceCol");
-const ModelInterfaceCase = require("../models/interfaceCase");
-const { ModelInterface } = require("../models/interface");
+const {ModelInterfaceCol} = require("server/models/interfaceCol");
+const { ModelInterfaceCase } = require("server/models/interfaceCase");
+const { ModelInterface } = require("server/models/interface");
 const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 const ModelFollow = require("../models/follow");
-const { ModelUser } = require("../models/user");
+const { ModelUser } = require("server/models/user");
 
 const ControllerBase = require("./base");
 const {

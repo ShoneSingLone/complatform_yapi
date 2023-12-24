@@ -1,6 +1,6 @@
 const { ModelProject } = require("server/models/project");
-const { ModelUser } = require("../models/user");
-const { ModelInterface } = require("../models/interface");
+const { ModelUser } = require("server/models/user");
+const { ModelInterface } = require("server/models/interface");
 const { ModelGroup } = require("server/models/group");
 const tokenModel = require("../models/token");
 const _ = require("lodash");

@@ -1,6 +1,6 @@
 const ControllerBase = require("server/controllers/base");
 const ModelAdv = require("./advMockModel");
-const ModelCase = require("./modelCase");
+const { ModelCase } = require("./modelCase");
 const { ModelUser } = require("server/models/user");
 const config = require("./index");
 

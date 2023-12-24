@@ -1,6 +1,6 @@
-const ModelInterfaceCol = require("../models/interfaceCol");
-const ModelInterfaceCase = require("../models/interfaceCase");
-const { ModelInterface } = require("../models/interface");
+const { ModelInterfaceCol } = require("server/models/interfaceCol");
+const { ModelInterfaceCase } = require("server/models/interfaceCase");
+const { ModelInterface } = require("server/models/interface");
 const { ModelProject } = require("server/models/project");
 const ControllerBase = require("./base");
 
@@ -107,9 +107,8 @@ class interfaceColController extends ControllerBase {
 			});
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了接口集 <a href="/project/${
-					params.project_id
-				}/interface/col/${result._id}">${params.name}</a>`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了接口集 <a href="/project/${params.project_id
+					}/interface/col/${result._id}">${params.name}</a>`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -348,13 +347,10 @@ class interfaceColController extends ControllerBase {
 
 			this.colModel.get(params.col_id).then(col => {
 				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${
-						params.project_id
-					}/interface/col/${params.col_id}">${
-						col.name
-					}</a> 下添加了测试用例 <a href="/project/${
-						params.project_id
-					}/interface/case/${result._id}">${params.casename}</a>`,
+					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${params.project_id
+						}/interface/col/${params.col_id}">${col.name
+						}</a> 下添加了测试用例 <a href="/project/${params.project_id
+						}/interface/case/${result._id}">${params.casename}</a>`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
@@ -432,13 +428,10 @@ class interfaceColController extends ControllerBase {
 				let username = this.getUsername();
 				this.colModel.get(params.col_id).then(col => {
 					xU.saveLog({
-						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${
-							params.project_id
-						}/interface/col/${params.col_id}">${
-							col.name
-						}</a> 下导入了测试用例 <a href="/project/${
-							params.project_id
-						}/interface/case/${caseResultData._id}">${data.casename}</a>`,
+						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${params.project_id
+							}/interface/col/${params.col_id}">${col.name
+							}</a> 下导入了测试用例 <a href="/project/${params.project_id
+							}/interface/case/${caseResultData._id}">${data.casename}</a>`,
 						type: "project",
 						uid: this.getUid(),
 						username: username,
@@ -605,15 +598,11 @@ class interfaceColController extends ControllerBase {
 			let username = this.getUsername();
 			this.colModel.get(caseData.col_id).then(col => {
 				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${
-						caseData.project_id
-					}/interface/col/${caseData.col_id}">${
-						col.name
-					}</a> 更新了测试用例 <a href="/project/${
-						caseData.project_id
-					}/interface/case/${params.id}">${
-						params.casename || caseData.casename
-					}</a>`,
+					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${caseData.project_id
+						}/interface/col/${caseData.col_id}">${col.name
+						}</a> 更新了测试用例 <a href="/project/${caseData.project_id
+						}/interface/case/${params.id}">${params.casename || caseData.casename
+						}</a>`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
@@ -719,9 +708,8 @@ class interfaceColController extends ControllerBase {
 			let result = await this.colModel.up(id, params);
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了测试集合 <a href="/project/${
-					colData.project_id
-				}/interface/col/${id}">${colData.name}</a> 的信息`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了测试集合 <a href="/project/${colData.project_id
+					}/interface/col/${id}">${colData.name}</a> 的信息`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -754,7 +742,7 @@ class interfaceColController extends ControllerBase {
 			params.forEach(item => {
 				if (item.id) {
 					this.modelCase.upCaseIndex(item.id, item.index).then(
-						res => {},
+						res => { },
 						err => {
 							xU.applog.error(err.message);
 						}
@@ -788,7 +776,7 @@ class interfaceColController extends ControllerBase {
 			params.forEach(item => {
 				if (item.id) {
 					this.colModel.upColIndex(item.id, item.index).then(
-						res => {},
+						res => { },
 						err => {
 							xU.applog.error(err.message);
 						}
@@ -835,9 +823,8 @@ class interfaceColController extends ControllerBase {
 			await this.modelCase.delByCol(id);
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 ${
-					colData.name
-				} 及其下面的接口`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 ${colData.name
+					} 及其下面的接口`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -878,11 +865,9 @@ class interfaceColController extends ControllerBase {
 			let username = this.getUsername();
 			this.colModel.get(caseData.col_id).then(col => {
 				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 <a href="/project/${
-						caseData.project_id
-					}/interface/col/${caseData.col_id}">${col.name}</a> 下的接口 ${
-						caseData.casename
-					}`,
+					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 <a href="/project/${caseData.project_id
+						}/interface/col/${caseData.col_id}">${col.name}</a> 下的接口 ${caseData.casename
+						}`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
