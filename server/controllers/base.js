@@ -1,22 +1,37 @@
-const { ModelProject } = require("server/models/project");
-const { ModelUser } = require("server/models/user");
-const { ModelInterface } = require("server/models/interface");
-const { ModelGroup } = require("server/models/group");
-const tokenModel = require("../models/token");
+
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const { parseToken } = require("../utils/token");
 const { customCookies } = require("../utils/customCookies");
 
+
+const MODEL_MAP = {
+	token: require("server/models/token"),
+	project: require("server/models/project").ModelProject,
+	user: require("server/models/user").ModelUser,
+	interface: require("server/models/interface").ModelInterface,
+	group: require("server/models/group").ModelGroup,
+};
+
+
+
+const orm = new Proxy({}, {
+	get(target, name) {
+		const Model = MODEL_MAP[name];
+		return xU.orm(Model);
+	}
+});
+
 class ControllerBase {
 	constructor(ctx) {
 		this.ctx = ctx;
-		ctx.$instance = this;
+		this.orm = orm;
 		//网站上线后，role对象key是不能修改的，value可以修改
 		this.roles = {
 			admin: "Admin",
 			member: "网站会员"
 		};
+		ctx.$instance = this;
 	}
 
 	handleBasepath(basepath) {
@@ -40,8 +55,6 @@ class ControllerBase {
 
 	async init(ctx) {
 		this.$user = null;
-		this.tokenModel = xU.orm(tokenModel);
-		this.modelProject = xU.orm(ModelProject);
 		let ignoreRouter = ["/api/user/login_by_token", "/api/user/login_by_ldap"];
 		if (ignoreRouter.indexOf(ctx.path) > -1) {
 			this.$auth = true;
@@ -98,7 +111,7 @@ class ControllerBase {
 			if (!checkId) {
 				ctx.body = xU.$response(null, 42014, "token 无效");
 			}
-			let projectData = await this.modelProject.get(checkId);
+			let projectData = await this.orm.project.get(checkId);
 			if (projectData) {
 				ctx.query.pid = checkId; // 兼容：/api/plugin/export
 				ctx.params.project_id = checkId;
@@ -112,7 +125,7 @@ class ControllerBase {
 						username: "system"
 					};
 				} else {
-					let userInst = xU.orm(ModelUser); //创建user实体
+					let userInst = this.orm.user; //创建user实体
 					result = await userInst.findById(tokenUid);
 				}
 
@@ -131,8 +144,7 @@ class ControllerBase {
 				xU.applog.info("未携带认证信息");
 				return false;
 			}
-			let userDBCollection = xU.orm(ModelUser); //创建user实体
-			let currUserInfo = await userDBCollection.findById(uid);
+			let currUserInfo = await this.orm.user.findById(uid);
 			/* 用户不存在 */
 			if (!currUserInfo) {
 				xU.applog.info("用户不存在");
@@ -164,7 +176,7 @@ class ControllerBase {
 	}
 
 	async getProjectIdByToken(token) {
-		let projectId = await this.tokenModel.findId(token);
+		let projectId = await this.orm.token.findId(token);
 		if (projectId) {
 			return projectId.toObject().project_id;
 		}
@@ -239,7 +251,7 @@ class ControllerBase {
 				return "admin";
 			}
 			if (type === "interface") {
-				let interfaceInst = xU.orm(ModelInterface);
+				let interfaceInst = this.orm.interface;
 				let interfaceData = await interfaceInst.get(id);
 				result.interfaceData = interfaceData;
 				// 项目创建者相当于 owner
@@ -251,7 +263,7 @@ class ControllerBase {
 			}
 
 			if (type === "project") {
-				let projectInst = xU.orm(ModelProject);
+				let projectInst = this.orm.project;
 				let projectData = await projectInst.get(id);
 				if (projectData.uid === this.getUid()) {
 					// 建立项目的人
@@ -277,7 +289,7 @@ class ControllerBase {
 			}
 
 			if (type === "group") {
-				let groupInst = xU.orm(ModelGroup);
+				let groupInst = this.orm.group;
 				let groupData = await groupInst.get(id);
 
 				// 建立分组的人

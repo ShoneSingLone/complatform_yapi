@@ -7,14 +7,14 @@ const routes = [];
 async function scanAllAutowareController(app) {
 	try {
 		const [_, files] = await _n.asyncAllDirAndFile([
-			xU.path.resolve(xU.var.APP_ROOT_SERVER_DIR, "controllers")
+			xU.path.resolve(xU.var.APP_ROOT_SERVER_DIR, "controllers/Autoware")
 		]);
 		const autoControllers = _n.reduce(
 			files,
 			(target, file) => {
 				const fileName = xU.path.basename(file);
 				const [_, controllerName] =
-					String(fileName).match(/^AutowareController(.*).js/) || [];
+					String(fileName).match(/^(.*).js/) || [];
 				if (controllerName) {
 					target.push([file, controllerName]);
 				}
