@@ -63,6 +63,7 @@ async function getMineGroup(ctx) {
 		}
 		/* 根据group_id获取group */
 		let newData = await groupInst.findByGroups(newGroupIds);
+
 		newData.forEach(_data => {
 			_data = _data.toObject();
 			_data.notInGroup = true;
@@ -169,12 +170,6 @@ module.exports = {
 						group_desc,
 						group_name } = ctx.payload;
 
-					// 新版每个人都有权限添加分组
-
-					// if (this.getRole() !== 'admin') {
-					//   return (ctx.body = xU.$response(null, 401, '没有权限'));
-					// }
-
 					let owners = [];
 
 					if (owner_uids.length === 0) {
@@ -217,10 +212,10 @@ module.exports = {
 						"members",
 						"type"
 					]);
+
 					let username = this.getUsername();
 					xU.saveLog({
-						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组 <a href="/group/${result._id
-							}">${group_name}</a>`,
+						content: `<a href="/user/profile/${this.getUid()}"> ${username} </a> 新增了分组 <a href="/group/${result._id}"> ${group_name} </a>`,
 						type: "group",
 						uid: this.getUid(),
 						username: username,

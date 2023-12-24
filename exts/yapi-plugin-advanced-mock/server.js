@@ -1,7 +1,7 @@
 const { DbConnection } = xU;
 const controller = require("./controller");
 const advModel = require("./advMockModel");
-const caseModel = require("./caseModel");
+const modelCase = require("./modelCase");
 
 const _ = require("lodash");
 const path = require("path");
@@ -41,7 +41,7 @@ module.exports = function () {
 
 	async function checkCase(ctx, interfaceId) {
 		let reqParams = Object.assign({}, ctx.query, ctx.request.body);
-		let caseInst = xU.orm(caseModel);
+		let caseInst = xU.orm(modelCase);
 
 		// let ip = ctx.ip.match(/\d+.\d+.\d+.\d+/)[0];
 		// request.ip
@@ -92,7 +92,7 @@ module.exports = function () {
 	}
 
 	async function handleByCase(caseData) {
-		let caseInst = xU.orm(caseModel);
+		let caseInst = xU.orm(modelCase);
 		let result = await caseInst.get({
 			_id: caseData._id
 		});

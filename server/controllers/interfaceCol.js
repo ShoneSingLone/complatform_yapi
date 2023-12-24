@@ -10,7 +10,7 @@ class interfaceColController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.colModel = xU.orm(ModelInterfaceCol);
-		this.caseModel = xU.orm(ModelInterfaceCase);
+		this.modelCase = xU.orm(ModelInterfaceCase);
 		this.modelInterface = xU.orm(ModelInterface);
 		this.modelProject = xU.orm(ModelProject);
 	}
@@ -41,7 +41,7 @@ class interfaceColController extends ControllerBase {
 
 			for (let i = 0; i < result.length; i++) {
 				result[i] = result[i].toObject();
-				let caseList = await this.caseModel.list(result[i]._id);
+				let caseList = await this.modelCase.list(result[i]._id);
 
 				for (let j = 0; j < caseList.length; j++) {
 					let item = caseList[j].toObject();
@@ -179,7 +179,7 @@ class interfaceColController extends ControllerBase {
 			}
 
 			// 通过col_id 找到 caseList
-			let projectList = await this.caseModel.list(id, "project_id");
+			let projectList = await this.modelCase.list(id, "project_id");
 			// 对projectList 进行去重处理
 			projectList = this.unique(projectList, "project_id");
 
@@ -226,7 +226,7 @@ class interfaceColController extends ControllerBase {
 			if (!id || id == 0) {
 				return (ctx.body = xU.$response(null, 407, "col_id不能为空"));
 			}
-			let resultList = await this.caseModel.list(id, "all");
+			let resultList = await this.modelCase.list(id, "all");
 			if (resultList.length === 0) {
 				return (ctx.body = xU.$response([]));
 			}
@@ -249,7 +249,7 @@ class interfaceColController extends ControllerBase {
 					pathParams;
 				let data = await this.modelInterface.get(result.interface_id);
 				if (!data) {
-					await this.caseModel.del(result._id);
+					await this.modelCase.del(result._id);
 					continue;
 				}
 				item._id = result._id;
@@ -343,7 +343,7 @@ class interfaceColController extends ControllerBase {
 			params.index = 0;
 			params.add_time = xU.time();
 			params.up_time = xU.time();
-			let result = await this.caseModel.save(params);
+			let result = await this.modelCase.save(params);
 			let username = this.getUsername();
 
 			this.colModel.get(params.col_id).then(col => {
@@ -428,7 +428,7 @@ class interfaceColController extends ControllerBase {
 				}
 
 				data.req_body_type = interfaceData.req_body_type;
-				let caseResultData = await this.caseModel.save(data);
+				let caseResultData = await this.modelCase.save(data);
 				let username = this.getUsername();
 				this.colModel.get(params.col_id).then(col => {
 					xU.saveLog({
@@ -486,7 +486,7 @@ class interfaceColController extends ControllerBase {
 				return (ctx.body = xU.$response(null, 400, "克隆的接口集id不能为空"));
 			}
 
-			let oldColCaselistData = await this.caseModel.list(col_id, "all");
+			let oldColCaselistData = await this.modelCase.list(col_id, "all");
 
 			oldColCaselistData = oldColCaselistData.sort((a, b) => {
 				return a.index - b.index;
@@ -541,7 +541,7 @@ class interfaceColController extends ControllerBase {
 				// 将被克隆的id和位置绑定
 				oldCaseObj[obj._id] = i;
 				let caseData = handleParams(obj);
-				let newCase = await this.caseModel.save(caseData);
+				let newCase = await this.modelCase.save(caseData);
 				newCaseList.push(newCase._id);
 			}
 
@@ -590,7 +590,7 @@ class interfaceColController extends ControllerBase {
 			//   return (ctx.body = xU.$response(null, 400, '用例名称不能为空'));
 			// }
 
-			let caseData = await this.caseModel.get(params.id);
+			let caseData = await this.modelCase.get(params.id);
 			let auth = await this.checkAuth(caseData.project_id, "project", "edit");
 			if (!auth) {
 				return (ctx.body = xU.$response(null, 400, "没有权限"));
@@ -601,7 +601,7 @@ class interfaceColController extends ControllerBase {
 			//不允许修改接口id和项目id
 			delete params.interface_id;
 			delete params.project_id;
-			let result = await this.caseModel.up(params.id, params);
+			let result = await this.modelCase.up(params.id, params);
 			let username = this.getUsername();
 			this.colModel.get(caseData.col_id).then(col => {
 				xU.saveLog({
@@ -645,7 +645,7 @@ class interfaceColController extends ControllerBase {
 	async getCase(ctx) {
 		try {
 			let id = ctx.query.caseid;
-			let result = await this.caseModel.get(id);
+			let result = await this.modelCase.get(id);
 			if (!result) {
 				return (ctx.body = xU.$response(null, 400, "不存在的case"));
 			}
@@ -753,7 +753,7 @@ class interfaceColController extends ControllerBase {
 			}
 			params.forEach(item => {
 				if (item.id) {
-					this.caseModel.upCaseIndex(item.id, item.index).then(
+					this.modelCase.upCaseIndex(item.id, item.index).then(
 						res => {},
 						err => {
 							xU.applog.error(err.message);
@@ -832,7 +832,7 @@ class interfaceColController extends ControllerBase {
 				}
 			}
 			let result = await this.colModel.del(id);
-			await this.caseModel.delByCol(id);
+			await this.modelCase.delByCol(id);
 			let username = this.getUsername();
 			xU.saveLog({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 ${
@@ -857,7 +857,7 @@ class interfaceColController extends ControllerBase {
 	async delCase(ctx) {
 		try {
 			let caseid = ctx.query.caseid;
-			let caseData = await this.caseModel.get(caseid);
+			let caseData = await this.modelCase.get(caseid);
 			if (!caseData) {
 				ctx.body = xU.$response(null, 400, "不存在的caseid");
 			}
@@ -873,7 +873,7 @@ class interfaceColController extends ControllerBase {
 				}
 			}
 
-			let result = await this.caseModel.del(caseid);
+			let result = await this.modelCase.del(caseid);
 
 			let username = this.getUsername();
 			this.colModel.get(caseData.col_id).then(col => {

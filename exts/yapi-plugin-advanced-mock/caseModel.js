@@ -1,7 +1,7 @@
 const ModelBase = require("server/models/base");
 const mongoose = require("mongoose");
 
-class caseModel extends ModelBase {
+class modelCase extends ModelBase {
 	getName() {
 		return "adv_mock_case";
 	}
@@ -76,4 +76,4 @@ class caseModel extends ModelBase {
 	}
 }
 
-module.exports = caseModel;
+module.exports = modelCase;

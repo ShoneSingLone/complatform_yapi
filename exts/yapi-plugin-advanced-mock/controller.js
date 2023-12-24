@@ -1,20 +1,20 @@
 const ControllerBase = require("server/controllers/base");
-const advModel = require("./advMockModel");
-const caseModel = require("./caseModel");
+const ModelAdv = require("./advMockModel");
+const ModelCase = require("./modelCase");
 const { ModelUser } = require("server/models/user");
 const config = require("./index");
 
 class advMockController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.orm_adv = xU.orm(advModel);
-		this.caseModel = xU.orm(caseModel);
+		this.modelAdv = xU.orm(ModelAdv);
+		this.modelCase = xU.orm(ModelCase);
 		this.modelUser = xU.orm(ModelUser);
 	}
 
 	async getMock(ctx) {
 		let id = ctx.query.interface_id;
-		let mockData = await this.orm_adv.get(id);
+		let mockData = await this.modelAdv.get(id);
 		if (!mockData) {
 			return (ctx.body = xU.$response(null, 408, "mock脚本不存在"));
 		}
@@ -45,11 +45,11 @@ class advMockController extends ControllerBase {
 				enable: params.enable === true ? true : false
 			};
 			let result;
-			let mockData = await this.orm_adv.get(data.interface_id);
+			let mockData = await this.modelAdv.get(data.interface_id);
 			if (mockData) {
-				result = await this.orm_adv.up(data);
+				result = await this.modelAdv.up(data);
 			} else {
-				result = await this.orm_adv.save(data);
+				result = await this.modelAdv.save(data);
 			}
 			return (ctx.body = xU.$response(result));
 		} catch (e) {
@@ -63,7 +63,7 @@ class advMockController extends ControllerBase {
 			if (!id) {
 				return (ctx.body = xU.$response(null, 400, "缺少 interface_id"));
 			}
-			let result = await this.caseModel.list(id);
+			let result = await this.modelCase.list(id);
 			for (let i = 0, len = result.length; i < len; i++) {
 				let userinfo = await this.modelUser.findById(result[i].uid);
 				result[i] = result[i].toObject();
@@ -83,7 +83,7 @@ class advMockController extends ControllerBase {
 		if (!id) {
 			return (ctx.body = xU.$response(null, 400, "缺少 id"));
 		}
-		let result = await this.caseModel.get({
+		let result = await this.modelCase.get({
 			_id: id
 		});
 
@@ -146,7 +146,7 @@ class advMockController extends ControllerBase {
 			findRepeatParams.ip = data.ip;
 		}
 
-		findRepeat = await this.caseModel.get(findRepeatParams);
+		findRepeat = await this.modelCase.get(findRepeatParams);
 
 		if (findRepeat && findRepeat._id !== params.id) {
 			return (ctx.body = xU.$response(null, 400, "已存在的期望"));
@@ -155,9 +155,9 @@ class advMockController extends ControllerBase {
 		let result;
 		if (params.id && !isNaN(params.id)) {
 			data.id = +params.id;
-			result = await this.caseModel.up(data);
+			result = await this.modelCase.up(data);
 		} else {
-			result = await this.caseModel.save(data);
+			result = await this.modelCase.save(data);
 		}
 		return (ctx.body = xU.$response(result));
 	}
@@ -167,7 +167,7 @@ class advMockController extends ControllerBase {
 		if (!id) {
 			return (ctx.body = xU.$response(null, 408, "缺少 id"));
 		}
-		let result = await this.caseModel.del(id);
+		let result = await this.modelCase.del(id);
 		return (ctx.body = xU.$response(result));
 	}
 
@@ -181,7 +181,7 @@ class advMockController extends ControllerBase {
 			id,
 			case_enable: enable
 		};
-		let result = await this.caseModel.up(data);
+		let result = await this.modelCase.up(data);
 		return (ctx.body = xU.$response(result));
 	}
 }

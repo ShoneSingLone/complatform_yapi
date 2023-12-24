@@ -70,7 +70,7 @@ class ControllerInterface extends ControllerBase {
 		this.model = xU.orm(ModelInterface);
 		this.modelInterfaceCategory = xU.orm(ModelInterfaceCategory);
 		this.modelProject = xU.orm(ModelProject);
-		this.caseModel = xU.orm(ModelInterfaceCase);
+		this.modelCase = xU.orm(ModelInterfaceCase);
 		this.modelFollow = xU.orm(ModelFollow);
 		this.modelUser = xU.orm(ModelUser);
 		this.modelGroup = xU.orm(ModelGroup);
@@ -818,7 +818,7 @@ class ControllerInterface extends ControllerBase {
 			// let inter = await this.model.get(id);
 			let result = await this.model.del(id);
 			xU.emitHook("interface_del", id).then();
-			await this.caseModel.delByInterfaceId(id);
+			await this.modelCase.delByInterfaceId(id);
 			let username = this.getUsername();
 			this.modelInterfaceCategory.get(data.catid).then(cate => {
 				xU.saveLog({
@@ -995,7 +995,7 @@ class ControllerInterface extends ControllerBase {
 			interfaceData.forEach(async item => {
 				try {
 					xU.emitHook("interface_del", item._id).then();
-					await this.caseModel.delByInterfaceId(item._id);
+					await this.modelCase.delByInterfaceId(item._id);
 				} catch (e) {
 					xU.applog.error(e.message);
 				}
