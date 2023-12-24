@@ -1,5 +1,5 @@
 const { ModelProject } = require("server/models/project");
-const interfaceColModel = require("../models/interfaceCol");
+const ModelInterfaceCol = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const { ModelInterface } = require("../models/interface");
 const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
@@ -32,7 +32,7 @@ class openController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.modelProject = xU.orm(ModelProject);
-		this.interfaceColModel = xU.orm(interfaceColModel);
+		this.ModelInterfaceCol = xU.orm(ModelInterfaceCol);
 		this.modelInterfaceCase = xU.orm(ModelInterfaceCase);
 		this.modelInterface = xU.orm(ModelInterface);
 		this.modelInterfaceCat = xU.orm(ModelInterfaceCategory);
@@ -212,7 +212,7 @@ class openController extends ControllerBase {
 		let id = ctx.params.id;
 		let curEnvList = this.handleEvnParams(ctx.params);
 
-		let colData = await this.interfaceColModel.get(id);
+		let colData = await this.ModelInterfaceCol.get(id);
 		if (!colData) {
 			return (ctx.body = xU.$response(null, 40022, "id值不存在"));
 		}

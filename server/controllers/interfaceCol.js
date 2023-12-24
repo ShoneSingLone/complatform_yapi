@@ -1,4 +1,4 @@
-const interfaceColModel = require("../models/interfaceCol");
+const ModelInterfaceCol = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const { ModelInterface } = require("../models/interface");
 const { ModelProject } = require("server/models/project");
@@ -9,7 +9,7 @@ const _ = require("lodash");
 class interfaceColController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.colModel = xU.orm(interfaceColModel);
+		this.colModel = xU.orm(ModelInterfaceCol);
 		this.caseModel = xU.orm(ModelInterfaceCase);
 		this.modelInterface = xU.orm(ModelInterface);
 		this.modelProject = xU.orm(ModelProject);

@@ -9,8 +9,16 @@ class ModelAvatar extends ModelBase {
 		return {
 			uid: { type: Number, required: true },
 			basecode: String,
-			type: String
+			type: String,
+			usedBy: String
 		};
+	}
+
+	getBy(uid, usedBy = "user") {
+		return this.model.findOne({
+			uid: uid,
+			usedBy
+		});
 	}
 
 	get(uid) {
@@ -19,14 +27,15 @@ class ModelAvatar extends ModelBase {
 		});
 	}
 
-	up(uid, basecode, type) {
+	upsert({ uid, basecode, type, usedBy }) {
 		return this.model.update(
 			{
-				uid: uid
+				uid
 			},
 			{
-				type: type,
-				basecode: basecode
+				type,
+				basecode,
+				usedBy
 			},
 			{
 				upsert: true

@@ -3,12 +3,12 @@ const { ModelProject } = require("server/models/project");
 const _ = require("lodash");
 const ControllerBase = require("./base");
 const { ModelInterface } = require("../models/interface");
-const interfaceColModel = require("../models/interfaceCol");
+const ModelInterfaceCol = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 const { ModelGroup } = require("server/models/group");
 const { ModelUser } = require("../models/user");
-const modelLog = require("../models/log");
+const { ModelLog } = require("server/models/log");
 const ModelFollow = require("../models/follow");
 const tokenModel = require("../models/token");
 const { getToken } = require("../utils/token");
@@ -20,7 +20,7 @@ class projectController extends ControllerBase {
 		super(ctx);
 		this.model = xU.orm(ModelProject);
 		this.modelGroup = xU.orm(ModelGroup);
-		this.modelLog = xU.orm(modelLog);
+		this.ModelLog = xU.orm(ModelLog);
 		this.modelFollow = xU.orm(ModelFollow);
 		this.tokenModel = xU.orm(tokenModel);
 		this.modelInterface = xU.orm(ModelInterface);
@@ -145,151 +145,6 @@ class projectController extends ControllerBase {
 	}
 
 	/**
-	 * 判断分组名称是否重复
-	 * @interface /project/check_project_name
-	 * @method get
-	 */
-
-	async checkProjectName(ctx) {
-		try {
-			let name = ctx.request.query.name;
-			let group_id = ctx.request.query.group_id;
-
-			if (!name) {
-				return (ctx.body = xU.$response(null, 401, "项目名不能为空"));
-			}
-			let count = await this.model.checkNameRepeat(name, group_id);
-
-			if (count > 0) {
-				return (ctx.body = xU.$response(null, 401, "已存在的项目名"));
-			}
-
-			ctx.body = xU.$response({});
-		} catch (err) {
-			ctx.body = xU.$response(null, 402, err.message);
-		}
-	}
-
-	/**
-	 * 添加项目分组
-	 * @interface /project/add
-	 * @method POST
-	 * @category project
-	 * @foldnumber 10
-	 * @param {String} name 项目名称，不能为空
-	 * @param {String} basepath 项目基本路径，不能为空
-	 * @param {Number} group_id 项目分组id，不能为空
-	 * @param {Number} group_name 项目分组名称，不能为空
-	 * @param {String} project_type private public
-	 * @param  {String} [desc] 项目描述
-	 * @returns {Object}
-	 * @example ./api/project/add.json
-	 */
-	async add(ctx) {
-		let params = ctx.params;
-
-		if ((await this.checkAuth(params.group_id, "group", "edit")) !== true) {
-			return (ctx.body = xU.$response(null, 405, "没有权限"));
-		}
-
-		let count = await this.model.checkNameRepeat(params.name, params.group_id);
-
-		if (count > 0) {
-			return (ctx.body = xU.$response(null, 401, "已存在的项目名"));
-		}
-
-		params.basepath = params.basepath || "";
-
-		if ((params.basepath = this.handleBasepath(params.basepath)) === false) {
-			return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
-		}
-
-		const requestCode = function ({
-			title,
-			projectId,
-			interfaceId,
-			path,
-			method,
-			xU
-		}) {
-			return `\`\`\`js
-/**
-*  ${title}
-*  ${window.location.href}
-*  http://10.143.133.216:3001/project/${projectId}/interface/api/${interfaceId}
-*/
-async ${xU.camelCase(path)}({params,data}) {
-return await request({
-method: "${method}",
-url: \`${path}\`,
-params:params||{},
-data:data||{}
-});
-}
-\`\`\`
-`;
-		};
-
-		let data = {
-			name: params.name,
-			desc: params.desc,
-			basepath: params.basepath,
-			members: [],
-			project_type: params.project_type || "private",
-			uid: this.getUid(),
-			group_id: params.group_id,
-			group_name: params.group_name,
-			icon: params.icon,
-			color: params.color,
-			add_time: xU.time(),
-			up_time: xU.time(),
-			is_json5: false,
-			env: [{ name: "local", domain: "http://127.0.0.1" }],
-			requestCode: requestCode.toString()
-		};
-
-		let result = await this.model.save(data);
-		let colInst = xU.orm(interfaceColModel);
-		let catInst = xU.orm(ModelInterfaceCategory);
-		if (result._id) {
-			await colInst.save({
-				name: "公共测试集",
-				project_id: result._id,
-				desc: "公共测试集",
-				uid: this.getUid(),
-				add_time: xU.time(),
-				up_time: xU.time()
-			});
-			await catInst.save({
-				name: "公共分类",
-				project_id: result._id,
-				desc: "公共分类",
-				uid: this.getUid(),
-				add_time: xU.time(),
-				up_time: xU.time()
-			});
-		}
-		let uid = this.getUid();
-		// 将项目添加者变成项目组长,除admin以外
-		if (this.getRole() !== "admin") {
-			let userdata = await xU.getUserdata(uid, "owner");
-			await this.model.addMember(result._id, [userdata]);
-		}
-		let username = this.getUsername();
-		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了项目 <a href="/project/${
-				result._id
-			}">${params.name}</a>`,
-			type: "project",
-			uid,
-			username: username,
-			typeid: result._id
-		});
-		xU.emitHook("project_add", result).then();
-		ctx.body = xU.$response(result);
-	}
-
-	/**
 	 * 拷贝项目分组
 	 * @interface /project/copy
 	 * @method POST
@@ -326,7 +181,7 @@ data:data||{}
 
 			delete data._id;
 			let result = await this.model.save(data);
-			let colInst = xU.orm(interfaceColModel);
+			let colInst = xU.orm(ModelInterfaceCol);
 			let catInst = xU.orm(ModelInterfaceCategory);
 
 			// 增加集合
@@ -395,9 +250,8 @@ data:data||{}
 
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 复制了项目 ${
-					params.preName
-				} 为 <a href="/project/${result._id}">${params.name}</a>`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 复制了项目 ${params.preName
+					} 为 <a href="/project/${result._id}">${params.name}</a>`,
 				type: "project",
 				uid,
 				username: username,
@@ -501,9 +355,8 @@ data:data||{}
 				.findById(params.member_uid)
 				.then(member => {
 					xU.saveLog({
-						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了项目中的成员 <a href="/user/profile/${
-							params.member_uid
-						}">${member ? member.username : ""}</a>`,
+						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了项目中的成员 <a href="/user/profile/${params.member_uid
+							}">${member ? member.username : ""}</a>`,
 						type: "project",
 						uid: this.getUid(),
 						username: username,
@@ -653,7 +506,7 @@ data:data||{}
 		}
 
 		let interfaceInst = xU.orm(ModelInterface);
-		let interfaceColInst = xU.orm(interfaceColModel);
+		let interfaceColInst = xU.orm(ModelInterfaceCol);
 		let interfaceCaseInst = xU.orm(ModelInterfaceCase);
 		await interfaceInst.delByProjectId(id);
 		await interfaceCaseInst.delByProjectId(id);
@@ -711,9 +564,8 @@ data:data||{}
 			.findById(params.member_uid)
 			.then(member => {
 				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 修改了项目中的成员 <a href="/user/profile/${
-						params.member_uid
-					}">${member.username}</a> 的角色为 "${rolename[params.role]}"`,
+					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 修改了项目中的成员 <a href="/user/profile/${params.member_uid
+						}">${member.username}</a> 的角色为 "${rolename[params.role]}"`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
@@ -846,9 +698,8 @@ data:data||{}
 			let result = await this.model.up(id, data);
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
-					projectData.name
-				}</a> 的环境`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${projectData.name
+					}</a> 的环境`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -898,9 +749,8 @@ data:data||{}
 			let result = await this.model.up(id, data);
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
-					projectData.name
-				}</a> 的tag`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${projectData.name
+					}</a> 的tag`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,

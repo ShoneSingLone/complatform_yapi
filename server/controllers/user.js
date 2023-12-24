@@ -220,46 +220,6 @@ class userController extends ControllerBase {
 	}
 
 	/**
-	 * 获取用户个人信息
-	 * @interface /user/find
-	 * @method GET
-	 * @param id 用户uid
-	 * @category user
-	 * @foldnumber 10
-	 * @returns {Object}
-	 * @example
-	 */
-	async findById(ctx) {
-		//根据id获取用户信息
-		try {
-			let userInst = xU.orm(ModelUser);
-			let id = ctx.request.query.id;
-
-			if (!id) {
-				return (ctx.body = xU.$response(null, 400, "uid不能为空"));
-			}
-
-			let result = await userInst.findById(id);
-
-			if (!result) {
-				return (ctx.body = xU.$response(null, 402, "不存在的用户"));
-			}
-
-			return (ctx.body = xU.$response({
-				uid: result._id,
-				username: result.username,
-				email: result.email,
-				role: result.role,
-				type: result.type,
-				add_time: result.add_time,
-				up_time: result.up_time
-			}));
-		} catch (e) {
-			return (ctx.body = xU.$response(null, 402, e.message));
-		}
-	}
-
-	/**
 	 * 更新用户个人信息
 	 * @interface /user/update
 	 * @method POST
@@ -329,50 +289,6 @@ class userController extends ControllerBase {
 		}
 	}
 
-	/**
-	 * 上传用户头像
-	 * @interface /user/upload_avatar
-	 * @method POST
-	 * @param {*} basecode  base64编码，通过h5 api传给后端
-	 * @category user
-	 * @returns {Object}
-	 * @example
-	 */
-
-	async uploadAvatar(ctx) {
-		try {
-			let basecode = ctx.request.body.basecode;
-			if (!basecode) {
-				return (ctx.body = xU.$response(null, 400, "basecode不能为空"));
-			}
-			let pngPrefix = "data:image/png;base64,";
-			let jpegPrefix = "data:image/jpeg;base64,";
-			let type;
-			if (basecode.substr(0, pngPrefix.length) === pngPrefix) {
-				basecode = basecode.substr(pngPrefix.length);
-				type = "image/png";
-			} else if (basecode.substr(0, jpegPrefix.length) === jpegPrefix) {
-				basecode = basecode.substr(jpegPrefix.length);
-				type = "image/jpeg";
-			} else {
-				return (ctx.body = xU.$response(
-					null,
-					400,
-					"仅支持jpeg和png格式的图片"
-				));
-			}
-			let strLength = basecode.length;
-			if (parseInt(strLength - (strLength / 8) * 2) > 200000) {
-				return (ctx.body = xU.$response(null, 400, "图片大小不能超过200kb"));
-			}
-
-			let avatarInst = xU.orm(ModelAvatar);
-			let result = await avatarInst.up(this.getUid(), basecode, type);
-			ctx.body = xU.$response(result);
-		} catch (e) {
-			ctx.body = xU.$response(null, 401, e.message);
-		}
-	}
 
 	/**
 	 * 根据路由id初始化项目数据

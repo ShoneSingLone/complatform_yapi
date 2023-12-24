@@ -6,7 +6,6 @@ const userController = require("./controllers/user");
 const interfaceColController = require("./controllers/interfaceCol");
 const testController = require("./controllers/test");
 const projectController = require("./controllers/project");
-const logController = require("./controllers/log");
 const followController = require("./controllers/follow");
 const openController = require("./controllers/open");
 
@@ -61,10 +60,6 @@ let INTERFACE_CONFIG = {
 	project: {
 		prefix: "/project/",
 		controller: projectController
-	},
-	log: {
-		prefix: "/log/",
-		controller: logController
 	},
 	follow: {
 		prefix: "/follow/",
@@ -148,11 +143,6 @@ let routerConfig = {
 		{
 			action: "list",
 			path: "list",
-			method: "get"
-		},
-		{
-			action: "findById",
-			path: "find",
 			method: "get"
 		},
 		{
@@ -407,18 +397,6 @@ let routerConfig = {
 		{
 			action: "schema2json",
 			path: "schema2json",
-			method: "post"
-		}
-	],
-	log: [
-		{
-			action: "list",
-			path: "list",
-			method: "get"
-		},
-		{
-			action: "listByUpdate",
-			path: "list_by_update",
 			method: "post"
 		}
 	],

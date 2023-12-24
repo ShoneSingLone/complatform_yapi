@@ -441,6 +441,15 @@ module.exports = {
 						uid: {
 							description: "用户uid",
 							type: "string"
+						},
+						usedBy: {
+							description: "头像类型：分组、项目、接口。。。有_id的都可以",
+							type: "array",
+							items: {
+								type: "string",
+								enum: ["user", "group", "project"],
+								default: "user"
+							}
 						}
 					}
 				},
@@ -459,11 +468,19 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						let { uid } = ctx.payload;
+						let { uid, usedBy } = ctx.payload;
 						uid = uid ? uid : this.getUid();
 						let avatarInst = xU.orm(ModelAvatar);
-						let data = await avatarInst.get(uid);
+						let data = await (function () {
+							if (usedBy) {
+								return avatarInst.getBy(uid, usedBy);
+							} else {
+								/* 默认是用户头像 */
+								return avatarInst.get(uid);
+							}
+						})();
 						let dataBuffer, type;
+
 						if (!data || !data.basecode) {
 							dataBuffer = xU.fs.readFileSync(
 								xU.path.join(xU.var.APP_ROOT_DIR, "static/image/avatar.png")
@@ -480,6 +497,121 @@ module.exports = {
 						ctx.body = "error:" + err.message;
 					}
 
+
+				}
+			}
+		},
+		/* 上传用户头像 */
+		"/user/upload_avatar": {
+			post: {
+				summary: "上传用户头像",
+				description: "上传用户头像",
+				request: {
+					body: {
+						basecode: {
+							required: true,
+							description: "base64编码，通过h5 api传给后端",
+							type: "string"
+						},
+						uid: {
+							description: "用户uid",
+							type: "string"
+						},
+						usedBy: {
+							required: true,
+							description: "头像类型：分组、项目、接口。。。有_id的都可以",
+							type: "array",
+							items: {
+								type: "string",
+								enum: ["user", "group", "project"],
+								default: "user"
+							}
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let { basecode, uid, usedBy } = ctx.payload;
+						usedBy = usedBy || "user";
+						uid = uid || this.getUid();
+
+						if (!basecode) {
+							return (ctx.body = xU.$response(null, 400, "basecode不能为空"));
+						}
+						let pngPrefix = "data:image/png;base64,";
+						let jpegPrefix = "data:image/jpeg;base64,";
+						let type;
+						if (basecode.substr(0, pngPrefix.length) === pngPrefix) {
+							basecode = basecode.substr(pngPrefix.length);
+							type = "image/png";
+						} else if (basecode.substr(0, jpegPrefix.length) === jpegPrefix) {
+							basecode = basecode.substr(jpegPrefix.length);
+							type = "image/jpeg";
+						} else {
+							return (ctx.body = xU.$response(
+								null,
+								400,
+								"仅支持jpeg和png格式的图片"
+							));
+						}
+						let strLength = basecode.length;
+						if (parseInt(strLength - (strLength / 8) * 2) > 200000) {
+							return (ctx.body = xU.$response(null, 400, "图片大小不能超过200kb"));
+						}
+
+						let avatarInst = xU.orm(ModelAvatar);
+						let result = await avatarInst.upsert({ uid, basecode, type, usedBy });
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 401, e.message);
+					}
+				}
+			}
+
+		},
+
+		/* 获取用户个人信息 */
+		"/user/find": {
+			get: {
+				summary: "根据用户uid获取用户个人信息",
+				description: "根据用户uid获取用户个人信息",
+				request: {
+					query: {
+						uid: {
+							description: "用户uid",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+
+					//根据id获取用户信息
+					try {
+						let userInst = xU.orm(ModelUser);
+						let { id } = ctx.payload;
+
+						if (!id) {
+							return (ctx.body = xU.$response(null, 400, "uid不能为空"));
+						}
+
+						let result = await userInst.findById(id);
+
+						if (!result) {
+							return (ctx.body = xU.$response(null, 402, "不存在的用户"));
+						}
+
+						return (ctx.body = xU.$response({
+							uid: result._id,
+							username: result.username,
+							email: result.email,
+							role: result.role,
+							type: result.type,
+							add_time: result.add_time,
+							up_time: result.up_time
+						}));
+					} catch (e) {
+						return (ctx.body = xU.$response(null, 402, e.message));
+					}
 
 				}
 			}

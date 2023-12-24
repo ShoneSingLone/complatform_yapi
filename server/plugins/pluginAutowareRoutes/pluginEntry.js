@@ -67,6 +67,8 @@ function appAddRoutes(app, routes) {
 							ctx.request.body || {}
 						);
 						/* TODO: 参数校验 根据route的schema校验 */
+						/* let validResult = xU.validateParams(inst.schemaMap[action], ctx.params); */
+
 						try {
 							await handler.call(vm, ctx);
 						} catch (error) {
@@ -84,7 +86,7 @@ function appAddRoutes(app, routes) {
 				}
 			} else {
 				// ctx.body = xU.$response(null, 404, `API ${ctx.url} 使用了错误的 METHOD`);
-				return false
+				return false;
 			}
 		})();
 		if (!isDone) {

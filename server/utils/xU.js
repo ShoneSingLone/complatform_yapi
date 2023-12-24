@@ -1,10 +1,10 @@
 const CryptoJS = require("crypto-js");
 const dayjs = require("dayjs");
 const sha1 = require("sha1");
-const modelLog = require("../models/log");
+const { ModelLog } = require("server/models/log");
 const { ModelProject } = require("server/models/project");
 const { ModelUser } = require("../models/user");
-const interfaceColModel = require("../models/interfaceCol");
+const ModelInterfaceCol = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const { ModelInterface } = require("../models/interface");
 const json5 = require("json5");
@@ -748,7 +748,7 @@ function validateParams(schema2, params) {
 
 function saveLog(logData) {
 	try {
-		let logInst = orm(modelLog);
+		let logInst = orm(ModelLog);
 		let data = {
 			content: logData.content,
 			type: logData.type,
@@ -849,7 +849,7 @@ function handleParamsValue(params, val) {
 
 async function getCaseList(id) {
 	const caseInst = orm(ModelInterfaceCase);
-	const colInst = orm(interfaceColModel);
+	const colInst = orm(ModelInterfaceCol);
 	const projectInst = orm(ModelProject);
 	const interfaceInst = orm(ModelInterface);
 
@@ -903,7 +903,7 @@ function convertString(variable) {
 }
 
 async function runCaseScript(params, colId, interfaceId) {
-	const colInst = orm(interfaceColModel);
+	const colInst = orm(ModelInterfaceCol);
 	let colData = await colInst.get(colId);
 	const logs = [];
 	const context = {

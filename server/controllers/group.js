@@ -4,7 +4,7 @@ const ControllerBase = require("./base");
 const { ModelProject } = require("server/models/project");
 const { ModelUser } = require("../models/user");
 const { ModelInterface } = require("../models/interface");
-const interfaceColModel = require("../models/interfaceCol");
+const ModelInterfaceCol = require("../models/interfaceCol");
 const ModelInterfaceCase = require("../models/interfaceCase");
 const _ = require("lodash");
 
@@ -349,7 +349,7 @@ class groupController extends ControllerBase {
 		let groupInst = xU.orm(ModelGroup);
 		let projectInst = xU.orm(ModelProject);
 		let interfaceInst = xU.orm(ModelInterface);
-		let interfaceColInst = xU.orm(interfaceColModel);
+		let interfaceColInst = xU.orm(ModelInterfaceCol);
 		let interfaceCaseInst = xU.orm(ModelInterfaceCase);
 		let id = ctx.params.id;
 
