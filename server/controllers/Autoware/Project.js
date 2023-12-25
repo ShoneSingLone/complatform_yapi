@@ -3,13 +3,12 @@ async function checkProjectName(name, groupId) {
 	if (!name) {
 		return "项目名不能为空";
 	}
-	let count = await this.orm.project.checkNameRepeat(name, groupId);
+	let count = await orm.project.checkNameRepeat(name, groupId);
 
 	if (count > 0) {
 		return "已存在的项目名";
 	}
 }
-
 
 module.exports = {
 	definitions: {},
@@ -64,13 +63,10 @@ module.exports = {
 							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
 
-						let projectData = await this.orm.project.get(id);
+						let projectData = await orm.project.get(id);
 
 						if (basepath) {
-							if (
-								(basepath = this.handleBasepath(basepath)) ===
-								false
-							) {
+							if ((basepath = this.handleBasepath(basepath)) === false) {
 								return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
 							}
 						}
@@ -94,11 +90,12 @@ module.exports = {
 
 						data = Object.assign({}, data, params);
 
-						let result = await this.orm.project.up(id, data);
+						let result = await orm.project.up(id, data);
 						let username = this.getUsername();
 						xU.saveLog({
-							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${projectData.name
-								}</a>`,
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
+								projectData.name
+							}</a>`,
 							type: "project",
 							uid: this.getUid(),
 							username: username,
@@ -118,17 +115,47 @@ module.exports = {
 				description: "",
 				request: {
 					body: {
-						name: { required: true, description: "项目名称，不能为空", type: "string" },
-						basepath: { required: true, description: "项目基本路径，不能为空", type: "string" },
-						group_id: { required: true, description: "项目分组id，不能为空", type: "string" },
-						group_name: { required: true, description: "项目分组名称，不能为空", "type": "string", },
-						project_type: { required: true, description: "项目类型", type: "string", "enum": ["private", "public"], "default": "public" },
+						name: {
+							required: true,
+							description: "项目名称，不能为空",
+							type: "string"
+						},
+						basepath: {
+							required: true,
+							description: "项目基本路径，不能为空",
+							type: "string"
+						},
+						group_id: {
+							required: true,
+							description: "项目分组id，不能为空",
+							type: "string"
+						},
+						group_name: {
+							required: true,
+							description: "项目分组名称，不能为空",
+							type: "string"
+						},
+						project_type: {
+							required: true,
+							description: "项目类型",
+							type: "string",
+							enum: ["private", "public"],
+							default: "public"
+						},
 						desc: { description: "描述", type: "string" }
 					}
 				},
 				async handler(ctx) {
-
-					let { name, basepath, group_id, group_name, project_type, desc, icon, color } = ctx.payload;
+					let {
+						name,
+						basepath,
+						group_id,
+						group_name,
+						project_type,
+						desc,
+						icon,
+						color
+					} = ctx.payload;
 
 					if ((await this.checkAuth(group_id, "group", "edit")) !== true) {
 						return (ctx.body = xU.$response(null, 405, "没有权限"));
@@ -172,7 +199,6 @@ data:data||{}
 `;
 					};
 
-
 					let data = {
 						name: name,
 						desc: desc,
@@ -190,10 +216,10 @@ data:data||{}
 						env: [{ name: "local", domain: "http://127.0.0.1" }],
 						requestCode: requestCode.toString()
 					};
-					const modelProject = this.orm.project;
+					const modelProject = orm.project;
 					let result = await modelProject.save(data);
-					let colInst = this.orm.interfaceCol;
-					let catInst = this.orm.interfaceCategory;
+					let colInst = orm.interfaceCol;
+					let catInst = orm.interfaceCategory;
 					if (result._id) {
 						await colInst.save({
 							name: "公共测试集",
@@ -220,8 +246,9 @@ data:data||{}
 					}
 					let username = this.getUsername();
 					xU.saveLog({
-						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了项目 <a href="/project/${result._id
-							}">${name}</a>`,
+						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了项目 <a href="/project/${
+							result._id
+						}">${name}</a>`,
 						type: "project",
 						uid,
 						username: username,
@@ -239,10 +266,19 @@ data:data||{}
 				description: "",
 				request: {
 					query: {
-						name: { required: true, description: "项目名称，不能为空", type: "string" },
-						group_id: { required: true, description: "项目分组id，不能为空", type: "string" }
+						name: {
+							required: true,
+							description: "项目名称，不能为空",
+							type: "string"
+						},
+						group_id: {
+							required: true,
+							description: "项目分组id，不能为空",
+							type: "string"
+						}
 					}
-				}, handler(ctx) {
+				},
+				handler(ctx) {
 					let { name, group_id } = ctx.payload;
 					let count = checkProjectName(name, group_id);
 					if (count) {
@@ -259,7 +295,11 @@ data:data||{}
 				description: "",
 				request: {
 					query: {
-						group_id: { required: true, description: "项目分组id，不能为空", type: "string" }
+						group_id: {
+							required: true,
+							description: "项目分组id，不能为空",
+							type: "string"
+						}
 					}
 				},
 				async handler(ctx) {
@@ -267,20 +307,20 @@ data:data||{}
 					let project_list = [];
 					const uid = this.getUid();
 
-					let groupData = await this.orm.group.get(group_id);
+					let groupData = await orm.group.get(group_id);
 
 					let isPrivateGroup = false;
 					if (groupData.type === "private" && uid === groupData.uid) {
 						isPrivateGroup = true;
 					}
 					let auth = await this.checkAuth(group_id, "group", "view");
-					let result = await this.orm.project.list(group_id);
-					let follow = await this.orm.follow.list(uid);
+					let result = await orm.project.list(group_id);
+					let follow = await orm.follow.list(uid);
 					if (isPrivateGroup === false) {
 						for (let index = 0, item, r = 1; index < result.length; index++) {
 							item = result[index].toObject();
 							if (item.project_type === "private" && auth === false) {
-								r = await this.orm.project.checkMemberRepeat(item._id, uid);
+								r = await orm.project.checkMemberRepeat(item._id, uid);
 								if (r === 0) {
 									continue;
 								}
@@ -319,12 +359,33 @@ data:data||{}
 				description: "",
 				request: {
 					query: {
-						name: { required: true, description: "项目名称，不能为空", type: "string" },
-						basepath: { required: true, description: "项目基本路径，不能为空", type: "string" },
-						group_id: { required: true, description: "项目分组id，不能为空", type: "number" },
-						group_name: { required: true, description: "项目分组名称，不能为空", type: "number" },
-						project_type: { required: true, description: "类型", type: "string", enum: ["private", "public"] },
-						desc: { required: true, description: "项目描述", type: "string" },
+						name: {
+							required: true,
+							description: "项目名称，不能为空",
+							type: "string"
+						},
+						basepath: {
+							required: true,
+							description: "项目基本路径，不能为空",
+							type: "string"
+						},
+						group_id: {
+							required: true,
+							description: "项目分组id，不能为空",
+							type: "number"
+						},
+						group_name: {
+							required: true,
+							description: "项目分组名称，不能为空",
+							type: "number"
+						},
+						project_type: {
+							required: true,
+							description: "类型",
+							type: "string",
+							enum: ["private", "public"]
+						},
+						desc: { required: true, description: "项目描述", type: "string" }
 					}
 				},
 				async handler(ctx) {
@@ -332,7 +393,9 @@ data:data||{}
 						let { payload } = ctx;
 						// 拷贝项目的ID
 						let copyId = payload._id;
-						if ((await this.checkAuth(payload.group_id, "group", "edit")) !== true) {
+						if (
+							(await this.checkAuth(payload.group_id, "group", "edit")) !== true
+						) {
 							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
 
@@ -343,13 +406,15 @@ data:data||{}
 							uid: this.getUid(),
 							add_time: xU.time(),
 							up_time: xU.time(),
-							env: payload.env || [{ name: "local", domain: "http://127.0.0.1" }]
+							env: payload.env || [
+								{ name: "local", domain: "http://127.0.0.1" }
+							]
 						});
 
 						delete data._id;
-						let result = await this.model.save(data);
-						let colInst = this.orm.interfaceCol;
-						let catInst = this.orm.interfaceCategory;
+						let result = await orm.project.save(data);
+						let colInst = orm.interfaceCol;
+						let catInst = orm.interfaceCategory;
 
 						// 增加集合
 						if (result._id) {
@@ -377,7 +442,7 @@ data:data||{}
 								let catResult = await catInst.save(catDate);
 
 								// 获取每个集合中的interface
-								let interfaceData = await this.modelInterface.listByInterStatus(
+								let interfaceData = await orm.interface.listByInterStatus(
 									item._id
 								);
 
@@ -393,32 +458,33 @@ data:data||{}
 									});
 									delete data._id;
 
-									await this.modelInterface.save(data);
+									await orm.interface.save(data);
 								}
 							}
 						}
 
 						// 增加member
-						let copyProject = await this.model.get(copyId);
+						let copyProject = await orm.project.get(copyId);
 						let copyProjectMembers = copyProject.members;
 
 						let uid = this.getUid();
 						// 将项目添加者变成项目组长,除admin以外
 						if (this.getRole() !== "admin") {
 							let userdata = await xU.getUserdata(uid, "owner");
-							let check = await this.model.checkMemberRepeat(copyId, uid);
+							let check = await orm.project.checkMemberRepeat(copyId, uid);
 							if (check === 0) {
 								copyProjectMembers.push(userdata);
 							}
 						}
-						await this.model.addMember(result._id, copyProjectMembers);
+						await orm.project.addMember(result._id, copyProjectMembers);
 
 						// 在每个测试结合下添加interface
 
 						let username = this.getUsername();
 						xU.saveLog({
-							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 复制了项目 ${payload.preName
-								} 为 <a href="/project/${result._id}">${payload.name}</a>`,
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 复制了项目 ${
+								payload.preName
+							} 为 <a href="/project/${result._id}">${payload.name}</a>`,
 							type: "project",
 							uid,
 							username: username,
@@ -430,6 +496,6 @@ data:data||{}
 					}
 				}
 			}
-		},
+		}
 	}
 };

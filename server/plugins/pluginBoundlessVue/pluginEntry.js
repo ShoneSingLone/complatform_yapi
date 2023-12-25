@@ -8,10 +8,7 @@ module.exports = async function (app) {
 		if (ctx.path === "/") {
 			ctx.status = 200;
 			ctx.set("Content-Type", "text/html");
-			const docPath = path.resolve(
-				xU.var.APP_ROOT_DIR,
-				"static/index.html"
-			);
+			const docPath = path.resolve(xU.var.APP_ROOT_DIR, "static/index.html");
 			const indexHtmlString = await fs.promises.readFile(docPath, "utf-8");
 			const $ = cheerio.load(indexHtmlString);
 			$("#src-root").attr("data-app-version", app._version);

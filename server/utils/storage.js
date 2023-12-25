@@ -1,6 +1,5 @@
 module.exports = function storageCreator(id) {
 	const storageModel = require("../models/storage");
-	const yapi = require("./utils");
 	const defaultData = {};
 	return {
 		getItem: async (name = "") => {

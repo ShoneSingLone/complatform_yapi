@@ -5,7 +5,7 @@ const { ModelResource } = require("./models/Resource");
 	const path = require("path");
 	const mongoose = require("mongoose");
 	const fs = require("fs-extra");
-	const { ModelUser } = require("server/models/user");
+	const ModelUser = require("server/models/user");
 
 	function install() {
 		const fileExistURL = path.join(xU.var.APP_ROOT_DIR, "..", "yapi.installed");
@@ -20,7 +20,7 @@ const { ModelResource } = require("./models/Resource");
 	}
 
 	function setupSql() {
-		let userInst = xU.orm(ModelUser);
+		let userInst = orm.user;
 		let passsalt = xU.randStr();
 		let result = userInst.save({
 			username: yapi_configs.adminAccount.substr(

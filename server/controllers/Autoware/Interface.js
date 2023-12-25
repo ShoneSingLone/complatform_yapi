@@ -1,6 +1,6 @@
-const { ModelInterface } = require("server/models/interface");
-const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
-const { ModelProject } = require("server/models/project");
+const ModelInterface = require("server/models/interface");
+const ModelInterfaceCategory = require("server/models/interfaceCategory");
+const ModelProject = require("server/models/project");
 
 module.exports = {
 	definitions: {},
@@ -27,12 +27,12 @@ module.exports = {
 					/**
 					 * @type ModelProject
 					 */
-					const modelProject = await xU.orm(ModelProject);
+					const modelProject = await orm.project;
 
 					/**
 					 * @type ModelInterface
 					 */
-					const modelInterface = await xU.orm(ModelInterface);
+					const modelInterface = await orm.interface;
 
 					let { project_id, page, limit, status, tag } = ctx.payload || {};
 
@@ -112,15 +112,15 @@ module.exports = {
 					/**
 					 * @type ModelProject
 					 */
-					const modelProject = await xU.orm(ModelProject);
+					const modelProject = await orm.project;
 					/**
 					 * @type ModelInterfaceCategory
 					 */
-					const modelInterfaceCategory = await this.orm.interfaceCategory;
+					const modelInterfaceCategory = await orm.interfaceCategory;
 					/**
 					 * @type ModelInterface
 					 */
-					const modelInterface = await xU.orm(ModelInterface);
+					const modelInterface = await orm.interface;
 
 					let { project_id } = ctx.payload;
 

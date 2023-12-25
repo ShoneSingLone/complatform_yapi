@@ -390,4 +390,4 @@ class ModelInterface extends ModelBase {
 	}
 }
 
-exports.ModelInterface = ModelInterface;
+module.exports = ModelInterface;

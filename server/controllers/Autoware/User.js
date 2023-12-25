@@ -1,5 +1,5 @@
-const { ModelUser } = require("server/models/user");
-const { ModelGroup } = require("server/models/group");
+const ModelUser = require("server/models/user");
+const ModelGroup = require("server/models/group");
 const { ModelVerifyCode } = require("server/models/VerifyCode");
 const { ModelAvatar } = require("server/models/avatar");
 
@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const { customCookies } = require("server/utils/customCookies");
 async function makeNewUserPrivateGroup(uid) {
-	var groupInst = xU.orm(ModelGroup);
+	var groupInst = orm.group;
 	await groupInst.save({
 		uid: uid,
 		group_name: "User-" + uid,
@@ -49,7 +49,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					//登录
-					let userInst = xU.orm(ModelUser); //创建user实体
+					let userInst = orm.user; //创建user实体
 					let email = ctx.payload.email;
 					email = (email || "").trim();
 					let password = ctx.payload.password;
@@ -161,7 +161,7 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 405, "非法邮箱字符"));
 					}
 					/* email用户是否存在 */
-					let userInst = xU.orm(ModelUser); //创建user实体
+					let userInst = orm.user; //创建user实体
 					let verifyCodeInst = xU.orm(ModelVerifyCode); //创建user实体
 					let result = await userInst.findByEmail(email);
 
@@ -243,7 +243,7 @@ module.exports = {
 							"禁止注册，请联系管理员"
 						));
 					}
-					let userInst = xU.orm(ModelUser);
+					let userInst = orm.user;
 					//获取请求的参数,检查是否存在用户名和密码
 					let payload = xU.ensureParamsType(ctx.payload, {
 						username: "string",
@@ -253,9 +253,13 @@ module.exports = {
 					});
 
 					if (payload.email) {
-						let result = await xU.orm(ModelUser).findByEmail(payload.email);
+						let result = await orm.user.findByEmail(payload.email);
 						if (result) {
-							return (ctx.body = xU.$response(null, 405, "用户已存在，请直接登录"));
+							return (ctx.body = xU.$response(
+								null,
+								405,
+								"用户已存在，请直接登录"
+							));
 						}
 					} else {
 						return (ctx.body = xU.$response(null, 400, "邮箱不能为空"));
@@ -272,7 +276,11 @@ module.exports = {
 						let verifyCode = await verifyCodeInst.findByEmail(payload.email);
 						if (verifyCode) {
 							if (verifyCode.code !== payload.code) {
-								return (ctx.body = xU.$response(null, 400, "验证码不匹配，请确认"));
+								return (ctx.body = xU.$response(
+									null,
+									400,
+									"验证码不匹配，请确认"
+								));
 							}
 						} else {
 							return (ctx.body = xU.$response(null, 400, "请重新获取验证码"));
@@ -359,7 +367,7 @@ module.exports = {
 								/* 管理员能删除其他人员，但是管理员不能删除自己 */
 								return (ctx.body = xU.$response(null, 403, "禁止删除管理员"));
 							}
-							let userInst = xU.orm(ModelUser);
+							let userInst = orm.user;
 							let result = await userInst.del(id);
 							ctx.body = xU.$response(result);
 						} else {
@@ -410,8 +418,7 @@ module.exports = {
 						}
 					];
 
-					let userInst = xU.orm(ModelUser);
-
+					let userInst = orm.user;
 
 					if (!q) {
 						let queryList = await userInst.list();
@@ -496,8 +503,6 @@ module.exports = {
 					} catch (err) {
 						ctx.body = "error:" + err.message;
 					}
-
-
 				}
 			}
 		},
@@ -556,18 +561,26 @@ module.exports = {
 						}
 						let strLength = basecode.length;
 						if (parseInt(strLength - (strLength / 8) * 2) > 200000) {
-							return (ctx.body = xU.$response(null, 400, "图片大小不能超过200kb"));
+							return (ctx.body = xU.$response(
+								null,
+								400,
+								"图片大小不能超过200kb"
+							));
 						}
 
 						let avatarInst = xU.orm(ModelAvatar);
-						let result = await avatarInst.upsert({ uid, basecode, type, usedBy });
+						let result = await avatarInst.upsert({
+							uid,
+							basecode,
+							type,
+							usedBy
+						});
 						ctx.body = xU.$response(result);
 					} catch (e) {
 						ctx.body = xU.$response(null, 401, e.message);
 					}
 				}
 			}
-
 		},
 
 		/* 获取用户个人信息 */
@@ -584,10 +597,9 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-
 					//根据id获取用户信息
 					try {
-						let userInst = xU.orm(ModelUser);
+						let userInst = orm.user;
 						let { id } = ctx.payload;
 
 						if (!id) {
@@ -612,7 +624,6 @@ module.exports = {
 					} catch (e) {
 						return (ctx.body = xU.$response(null, 402, e.message));
 					}
-
 				}
 			}
 		}

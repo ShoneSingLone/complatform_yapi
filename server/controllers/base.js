@@ -1,11 +1,7 @@
-
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const { parseToken } = require("../utils/token");
 const { customCookies } = require("../utils/customCookies");
-
-
-
 
 class ControllerBase {
 	constructor(ctx) {
@@ -96,7 +92,7 @@ class ControllerBase {
 			if (!checkId) {
 				ctx.body = xU.$response(null, 42014, "token 无效");
 			}
-			let projectData = await this.orm.project.get(checkId);
+			let projectData = await orm.project.get(checkId);
 			if (projectData) {
 				ctx.query.pid = checkId; // 兼容：/api/plugin/export
 				ctx.params.project_id = checkId;
@@ -110,7 +106,7 @@ class ControllerBase {
 						username: "system"
 					};
 				} else {
-					let userInst = this.orm.user; //创建user实体
+					let userInst = orm.user; //创建user实体
 					result = await userInst.findById(tokenUid);
 				}
 
@@ -129,7 +125,7 @@ class ControllerBase {
 				xU.applog.info("未携带认证信息");
 				return false;
 			}
-			let currUserInfo = await this.orm.user.findById(uid);
+			let currUserInfo = await orm.user.findById(uid);
 			/* 用户不存在 */
 			if (!currUserInfo) {
 				xU.applog.info("用户不存在");
@@ -161,7 +157,7 @@ class ControllerBase {
 	}
 
 	async getProjectIdByToken(token) {
-		let projectId = await this.orm.token.findId(token);
+		let projectId = await orm.token.findId(token);
 		if (projectId) {
 			return projectId.toObject().project_id;
 		}
@@ -236,7 +232,7 @@ class ControllerBase {
 				return "admin";
 			}
 			if (type === "interface") {
-				let interfaceInst = this.orm.interface;
+				let interfaceInst = orm.interface;
 				let interfaceData = await interfaceInst.get(id);
 				result.interfaceData = interfaceData;
 				// 项目创建者相当于 owner
@@ -248,7 +244,6 @@ class ControllerBase {
 			}
 
 			if (type === "project") {
-				let projectInst = this.orm.project;
 				let projectData = await projectInst.get(id);
 				if (projectData.uid === this.getUid()) {
 					// 建立项目的人
@@ -274,8 +269,7 @@ class ControllerBase {
 			}
 
 			if (type === "group") {
-				let groupInst = this.orm.group;
-				let groupData = await groupInst.get(id);
+				let groupData = await orm.group.get(id);
 
 				// 建立分组的人
 				if (groupData.uid === this.getUid()) {

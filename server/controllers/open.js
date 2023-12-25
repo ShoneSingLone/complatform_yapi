@@ -1,10 +1,10 @@
-const { ModelProject } = require("server/models/project");
-const { ModelInterfaceCol } = require("server/models/interfaceCol");
-const { ModelInterfaceCase } = require("server/models/interfaceCase");
-const { ModelInterface } = require("server/models/interface");
-const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
+const ModelProject = require("server/models/project");
+const ModelInterfaceCol = require("server/models/interfaceCol");
+const ModelInterfaceCase = require("server/models/interfaceCase");
+const ModelInterface = require("server/models/interface");
+const ModelInterfaceCategory = require("server/models/interfaceCategory");
 const ModelFollow = require("../models/follow");
-const { ModelUser } = require("server/models/user");
+const ModelUser = require("server/models/user");
 
 const ControllerBase = require("./base");
 const {
@@ -31,11 +31,11 @@ xU.emitHook("import_data", importDataModule);
 class openController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		
-		this.ModelInterfaceCol = xU.orm(ModelInterfaceCol);
-		this.modelInterfaceCase = xU.orm(ModelInterfaceCase);
-		this.modelInterface = xU.orm(ModelInterface);
-		this.modelInterfaceCat = this.orm.interfaceCategory;
+
+		this.ModelInterfaceCol = orm.interfaceCol;
+		this.modelInterfaceCase = orm.interfaceCase;
+		this.modelInterface = orm.interface;
+		this.modelInterfaceCat = orm.interfaceCategory;
 		this.handleValue = this.handleValue.bind(this);
 		this.schemaMap = {
 			runAutoTest: {
@@ -87,7 +87,7 @@ class openController extends ControllerBase {
 					"importData Api 已废弃 dataSync 传参，请联系管理员将 dataSync 改为 merge.";
 				dataSync = ctx.params.dataSync;
 			}
-		} catch (e) { }
+		} catch (e) {}
 
 		let token = ctx.params.token;
 		if (!type || !importDataModule[type]) {
@@ -133,7 +133,7 @@ class openController extends ControllerBase {
 		 * 如果没有分类,增加一个默认分类
 		 */
 		if (menuList.length === 0) {
-			const catInst = this.orm.interfaceCategory;
+			const catInst = orm.interfaceCategory;
 			const menu = await catInst.save({
 				name: "默认分类",
 				project_id: project_id,
@@ -145,7 +145,7 @@ class openController extends ControllerBase {
 			menuList.push(menu);
 		}
 		let selectCatid = menuList[0]._id;
-		let projectData = await this.orm.project.get(project_id);
+		let projectData = await orm.project.get(project_id);
 		let res = await importDataModule[type](content);
 
 		let successMessage;
@@ -163,7 +163,7 @@ class openController extends ControllerBase {
 			msg => {
 				successMessage = msg;
 			},
-			() => { },
+			() => {},
 			token,
 			yapi_configs.port
 		);
@@ -215,7 +215,7 @@ class openController extends ControllerBase {
 			return (ctx.body = xU.$response(null, 40022, "id值不存在"));
 		}
 
-		let projectData = await this.orm.project.get(projectId);
+		let projectData = await orm.project.get(projectId);
 
 		let caseList = await xU.getCaseList(id);
 		if (caseList.errcode !== 0) {
@@ -224,7 +224,7 @@ class openController extends ControllerBase {
 		caseList = caseList.data;
 		for (let i = 0, l = caseList.length; i < l; i++) {
 			let item = caseList[i];
-			let projectEvn = await this.orm.project.getByEnv(item.project_id);
+			let projectEvn = await orm.project.getByEnv(item.project_id);
 
 			item.id = item._id;
 			let curEnvItem = _.find(curEnvList, key => {

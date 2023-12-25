@@ -1,5 +1,5 @@
-const { ModelProject } = require("server/models/project");
-const { ModelInterface } = require("server/models/interface");
+const ModelProject = require("server/models/project");
+const ModelInterface = require("server/models/interface");
 const mockExtra = require("../../common/mock-extra");
 const { schemaValidator } = require("../../common/utils");
 const { customCookies } = require("../utils/customCookies");
@@ -289,7 +289,6 @@ const middlewareMockServer = () => async (ctx, next) => {
 		return (ctx.body = xU.$response(null, 400, "projectId不能为空"));
 	}
 
-	let projectInst = xU.orm(ModelProject);
 	let project;
 	try {
 		project = await projectInst.get(projectId);
@@ -308,7 +307,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 	/**
 	 * @type ModelInterface
 	 */
-	let modelInterface = xU.orm(ModelInterface);
+	let modelInterface = orm.interface;
 
 	try {
 		/**

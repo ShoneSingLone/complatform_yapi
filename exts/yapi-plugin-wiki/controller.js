@@ -1,7 +1,7 @@
 const ControllerBase = require("server/controllers/base");
 const modelWiki = require("./modelWiki");
-const { ModelProject } = require("server/models/project");
-const { ModelUser } = require("server/models/user");
+const ModelProject = require("server/models/project");
+const ModelUser = require("server/models/user");
 const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
 
@@ -13,7 +13,6 @@ class ControllerWiki extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.model = xU.orm(modelWiki);
-		
 	}
 
 	/**
@@ -117,7 +116,7 @@ class ControllerWiki extends ControllerBase {
 					),
 					"utf8"
 				);
-				let project = await this.orm.project.getBaseInfo(params.project_id);
+				let project = await orm.project.getBaseInfo(params.project_id);
 
 				xU.sendNotice(params.project_id, {
 					title: `${username} 更新了wiki说明`,
@@ -215,7 +214,7 @@ class ControllerWiki extends ControllerBase {
 	async editorFunc(result) {
 		let userInst, userinfo, data;
 		if (result && result.edit_uid !== 0 && result.edit_uid !== this.getUid()) {
-			userInst = xU.orm(ModelUser);
+			userInst = orm.user;
 			userinfo = await userInst.findById(result.edit_uid);
 			data = {
 				errno: result.edit_uid,

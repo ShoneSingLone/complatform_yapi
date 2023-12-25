@@ -131,4 +131,4 @@ class ModelInterfaceCase extends ModelBase {
 	}
 }
 
-exports.ModelInterfaceCase = ModelInterfaceCase;
+module.exports = ModelInterfaceCase;

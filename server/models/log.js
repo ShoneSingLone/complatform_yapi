@@ -159,4 +159,4 @@ class ModelLog extends ModelBase {
 	}
 }
 
-exports.ModelLog = ModelLog;
+module.exports = ModelLog;

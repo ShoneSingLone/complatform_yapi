@@ -1,7 +1,6 @@
 const ControllerBase = require("server/controllers/base");
 const ModelAdv = require("./advMockModel");
 const { ModelCase } = require("./modelCase");
-const { ModelUser } = require("server/models/user");
 const config = require("./index");
 
 class advMockController extends ControllerBase {
@@ -64,7 +63,7 @@ class advMockController extends ControllerBase {
 			}
 			let result = await this.modelCase.list(id);
 			for (let i = 0, len = result.length; i < len; i++) {
-				let userinfo = await this.orm.user.findById(result[i].uid);
+				let userinfo = await orm.user.findById(result[i].uid);
 				result[i] = result[i].toObject();
 				// if (userinfo) {
 				result[i].username = userinfo.username;

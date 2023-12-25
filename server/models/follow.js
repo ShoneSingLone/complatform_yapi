@@ -81,4 +81,4 @@ class ModelFollow extends ModelBase {
 	}
 }
 
-exports.ModelFollow = ModelFollow;
+module.exports = ModelFollow;

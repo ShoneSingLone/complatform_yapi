@@ -339,4 +339,4 @@ class ModelProject extends ModelBase {
 	}
 }
 
-exports.ModelProject = ModelProject;
+module.exports = ModelProject;

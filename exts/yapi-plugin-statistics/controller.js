@@ -2,10 +2,6 @@
  * Created by gxl.gao on 2017/10/24.
  */
 const ControllerBase = require("server/controllers/base");
-const { ModelGroup } = require("server/models/group");
-const { ModelProject } = require("server/models/project");
-const { ModelInterface } = require("server/models/interface");
-const { ModelInterfaceCase } = require("server/models/interfaceCase");
 const ModelStatisMock = require("./statisMockModel");
 
 const commons = require("./util");
@@ -16,10 +12,6 @@ class statisMockController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.modelStatisMock = xU.orm(ModelStatisMock);
-		this.modelGroup = xU.orm(ModelGroup);
-		
-		this.modelInterface = xU.orm(ModelInterface);
-		this.modelInterfaceCase = xU.orm(ModelInterfaceCase);
 	}
 
 	/**
@@ -32,11 +24,11 @@ class statisMockController extends ControllerBase {
 	 */
 	async getStatisCount(ctx) {
 		try {
-			let groupCount = await this.modelGroup.getGroupListCount();
-			let projectCount = await this.orm.project.getProjectListCount();
-			let interfaceCount = await this.modelInterface.getInterfaceListCount();
+			let groupCount = await orm.group.getGroupListCount();
+			let projectCount = await orm.project.getProjectListCount();
+			let interfaceCount = await orm.interface.getInterfaceListCount();
 			let interfaceCaseCount =
-				await this.modelInterfaceCase.getInterfaceCaseListCount();
+				await orm.interfaceCase.getInterfaceCaseListCount();
 
 			return (ctx.body = xU.$response({
 				groupCount,
@@ -130,7 +122,7 @@ class statisMockController extends ControllerBase {
 
 	async groupDataStatis(ctx) {
 		try {
-			let groupData = await this.modelGroup.list();
+			let groupData = await orm.group.list();
 			let result = [];
 			for (let i = 0; i < groupData.length; i++) {
 				let group = groupData[i];
@@ -143,12 +135,12 @@ class statisMockController extends ControllerBase {
 				};
 				result.push(data);
 
-				let projectCount = await this.orm.project.listCount(groupId);
-				let projectData = await this.orm.project.list(groupId);
+				let projectCount = await orm.project.listCount(groupId);
+				let projectData = await orm.project.list(groupId);
 				let interfaceCount = 0;
 				for (let j = 0; j < projectData.length; j++) {
 					let project = projectData[j];
-					interfaceCount += await this.modelInterface.listCount({
+					interfaceCount += await orm.interface.listCount({
 						project_id: project._id
 					});
 				}

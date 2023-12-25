@@ -113,4 +113,4 @@ class ModelInterfaceCol extends ModelBase {
 	}
 }
 
-exports.ModelInterfaceCol = ModelInterfaceCol;
+module.exports = ModelInterfaceCol;

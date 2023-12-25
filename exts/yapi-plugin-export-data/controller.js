@@ -9,9 +9,8 @@ const md = require("../../common/markdown");
 class exportController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelInterfaceCategory = this.orm.interfaceCategory;
-		this.interModel = xU.orm(ModelInterface);
-		
+		this.modelInterfaceCategory = orm.interfaceCategory;
+		this.interModel = orm.interface;
 	}
 
 	async handleListClass(pid, status) {
@@ -74,7 +73,7 @@ class exportController extends ControllerBase {
 		let curProject, wikiData;
 		let tp = "";
 		try {
-			curProject = await this.orm.project.get(pid);
+			curProject = await orm.project.get(pid);
 			if (isWiki === "true") {
 				const modelWiki = require("../yapi-plugin-wiki/modelWiki");
 				wikiData = await xU.orm(modelWiki).get(pid);

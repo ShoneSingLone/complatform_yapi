@@ -224,4 +224,4 @@ class ModelGroup extends ModelBase {
 	}
 }
 
-exports.ModelGroup = ModelGroup;
+module.exports = ModelGroup;

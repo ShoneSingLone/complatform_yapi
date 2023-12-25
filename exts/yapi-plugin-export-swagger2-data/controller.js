@@ -1,14 +1,11 @@
 const ControllerBase = require("server/controllers/base");
-const { ModelInterface } = require("server/models/interface");
-const { ModelProject } = require("server/models/project");
-const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
+const ModelInterface = require("server/models/interface");
 
 class exportSwaggerController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelInterfaceCategory = this.orm.interfaceCategory;
-		this.interModel = xU.orm(ModelInterface);
-		
+		this.modelInterfaceCategory = orm.interfaceCategory;
+		this.interModel = orm.interface;
 	}
 
 	/*
@@ -75,7 +72,7 @@ class exportSwaggerController extends ControllerBase {
 		let curProject;
 		let tp = "";
 		try {
-			curProject = await this.orm.project.get(pid);
+			curProject = await orm.project.get(pid);
 			ctx.set("Content-Type", "application/octet-stream");
 			const list = await this.handleListClass(pid, status);
 

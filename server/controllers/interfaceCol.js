@@ -1,7 +1,7 @@
-const { ModelInterfaceCol } = require("server/models/interfaceCol");
-const { ModelInterfaceCase } = require("server/models/interfaceCase");
-const { ModelInterface } = require("server/models/interface");
-const { ModelProject } = require("server/models/project");
+const ModelInterfaceCol = require("server/models/interfaceCol");
+const ModelInterfaceCase = require("server/models/interfaceCase");
+const ModelInterface = require("server/models/interface");
+const ModelProject = require("server/models/project");
 const ControllerBase = require("./base");
 
 const _ = require("lodash");
@@ -9,10 +9,9 @@ const _ = require("lodash");
 class interfaceColController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.colModel = xU.orm(ModelInterfaceCol);
-		this.modelCase = xU.orm(ModelInterfaceCase);
-		this.modelInterface = xU.orm(ModelInterface);
-
+		this.colModel = orm.interfaceCol;
+		this.modelCase = orm.interfaceCase;
+		this.modelInterface = orm.interface;
 	}
 
 	/**
@@ -28,7 +27,7 @@ class interfaceColController extends ControllerBase {
 	async list(ctx) {
 		try {
 			let id = ctx.query.project_id;
-			let project = await this.orm.project.getBaseInfo(id);
+			let project = await orm.project.getBaseInfo(id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 					return (ctx.body = xU.$response(null, 406, "没有权限"));
@@ -107,14 +106,15 @@ class interfaceColController extends ControllerBase {
 			});
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了接口集 <a href="/project/${params.project_id
-					}/interface/col/${result._id}">${params.name}</a>`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了接口集 <a href="/project/${
+					params.project_id
+				}/interface/col/${result._id}">${params.name}</a>`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
 				typeid: params.project_id
 			});
-			// this.orm.project.up(params.project_id,{up_time: new Date().getTime()}).then();
+			// orm.project.up(params.project_id,{up_time: new Date().getTime()}).then();
 			ctx.body = xU.$response(result);
 		} catch (e) {
 			ctx.body = xU.$response(null, 402, e.message);
@@ -139,7 +139,7 @@ class interfaceColController extends ControllerBase {
 			}
 
 			let colData = await this.colModel.get(id);
-			let project = await this.orm.project.getBaseInfo(colData.project_id);
+			let project = await orm.project.getBaseInfo(colData.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 					return (ctx.body = xU.$response(null, 406, "没有权限"));
@@ -170,7 +170,7 @@ class interfaceColController extends ControllerBase {
 			}
 
 			let colData = await this.colModel.get(id);
-			let project = await this.orm.project.getBaseInfo(colData.project_id);
+			let project = await orm.project.getBaseInfo(colData.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 					return (ctx.body = xU.$response(null, 406, "没有权限"));
@@ -185,10 +185,7 @@ class interfaceColController extends ControllerBase {
 			// 遍历projectList 找到项目和env
 			let projectEnvList = [];
 			for (let i = 0; i < projectList.length; i++) {
-				let result = await this.orm.project.getBaseInfo(
-					projectList[i],
-					"name  env"
-				);
+				let result = await orm.project.getBaseInfo(projectList[i], "name  env");
 				projectEnvList.push(result);
 			}
 			ctx.body = xU.$response(projectEnvList);
@@ -229,9 +226,7 @@ class interfaceColController extends ControllerBase {
 			if (resultList.length === 0) {
 				return (ctx.body = xU.$response([]));
 			}
-			let project = await this.orm.project.getBaseInfo(
-				resultList[0].project_id
-			);
+			let project = await orm.project.getBaseInfo(resultList[0].project_id);
 
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
@@ -347,17 +342,20 @@ class interfaceColController extends ControllerBase {
 
 			this.colModel.get(params.col_id).then(col => {
 				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${params.project_id
-						}/interface/col/${params.col_id}">${col.name
-						}</a> 下添加了测试用例 <a href="/project/${params.project_id
-						}/interface/case/${result._id}">${params.casename}</a>`,
+					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${
+						params.project_id
+					}/interface/col/${params.col_id}">${
+						col.name
+					}</a> 下添加了测试用例 <a href="/project/${
+						params.project_id
+					}/interface/case/${result._id}">${params.casename}</a>`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
 					typeid: params.project_id
 				});
 			});
-			this.orm.project
+			orm.project
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
 
@@ -428,10 +426,13 @@ class interfaceColController extends ControllerBase {
 				let username = this.getUsername();
 				this.colModel.get(params.col_id).then(col => {
 					xU.saveLog({
-						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${params.project_id
-							}/interface/col/${params.col_id}">${col.name
-							}</a> 下导入了测试用例 <a href="/project/${params.project_id
-							}/interface/case/${caseResultData._id}">${data.casename}</a>`,
+						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${
+							params.project_id
+						}/interface/col/${params.col_id}">${
+							col.name
+						}</a> 下导入了测试用例 <a href="/project/${
+							params.project_id
+						}/interface/case/${caseResultData._id}">${data.casename}</a>`,
 						type: "project",
 						uid: this.getUid(),
 						username: username,
@@ -440,7 +441,7 @@ class interfaceColController extends ControllerBase {
 				});
 			}
 
-			this.orm.project
+			orm.project
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
 
@@ -538,7 +539,7 @@ class interfaceColController extends ControllerBase {
 				newCaseList.push(newCase._id);
 			}
 
-			this.orm.project
+			orm.project
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
 			ctx.body = xU.$response("ok");
@@ -598,11 +599,15 @@ class interfaceColController extends ControllerBase {
 			let username = this.getUsername();
 			this.colModel.get(caseData.col_id).then(col => {
 				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${caseData.project_id
-						}/interface/col/${caseData.col_id}">${col.name
-						}</a> 更新了测试用例 <a href="/project/${caseData.project_id
-						}/interface/case/${params.id}">${params.casename || caseData.casename
-						}</a>`,
+					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${
+						caseData.project_id
+					}/interface/col/${caseData.col_id}">${
+						col.name
+					}</a> 更新了测试用例 <a href="/project/${
+						caseData.project_id
+					}/interface/case/${params.id}">${
+						params.casename || caseData.casename
+					}</a>`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
@@ -610,7 +615,7 @@ class interfaceColController extends ControllerBase {
 				});
 			});
 
-			this.orm.project
+			orm.project
 				.up(caseData.project_id, { up_time: new Date().getTime() })
 				.then();
 
@@ -649,7 +654,7 @@ class interfaceColController extends ControllerBase {
 			}
 			data = data.toObject();
 
-			let projectData = await this.orm.project.getBaseInfo(data.project_id);
+			let projectData = await orm.project.getBaseInfo(data.project_id);
 			result.path = projectData.basepath + data.path;
 			result.method = data.method;
 			result.req_body_type = data.req_body_type;
@@ -708,8 +713,9 @@ class interfaceColController extends ControllerBase {
 			let result = await this.colModel.up(id, params);
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了测试集合 <a href="/project/${colData.project_id
-					}/interface/col/${id}">${colData.name}</a> 的信息`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了测试集合 <a href="/project/${
+					colData.project_id
+				}/interface/col/${id}">${colData.name}</a> 的信息`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -742,7 +748,7 @@ class interfaceColController extends ControllerBase {
 			params.forEach(item => {
 				if (item.id) {
 					this.modelCase.upCaseIndex(item.id, item.index).then(
-						res => { },
+						res => {},
 						err => {
 							xU.applog.error(err.message);
 						}
@@ -776,7 +782,7 @@ class interfaceColController extends ControllerBase {
 			params.forEach(item => {
 				if (item.id) {
 					this.colModel.upColIndex(item.id, item.index).then(
-						res => { },
+						res => {},
 						err => {
 							xU.applog.error(err.message);
 						}
@@ -823,8 +829,9 @@ class interfaceColController extends ControllerBase {
 			await this.modelCase.delByCol(id);
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 ${colData.name
-					} 及其下面的接口`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 ${
+					colData.name
+				} 及其下面的接口`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -865,9 +872,11 @@ class interfaceColController extends ControllerBase {
 			let username = this.getUsername();
 			this.colModel.get(caseData.col_id).then(col => {
 				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 <a href="/project/${caseData.project_id
-						}/interface/col/${caseData.col_id}">${col.name}</a> 下的接口 ${caseData.casename
-						}`,
+					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 <a href="/project/${
+						caseData.project_id
+					}/interface/col/${caseData.col_id}">${col.name}</a> 下的接口 ${
+						caseData.casename
+					}`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
@@ -875,7 +884,7 @@ class interfaceColController extends ControllerBase {
 				});
 			});
 
-			this.orm.project
+			orm.project
 				.up(caseData.project_id, { up_time: new Date().getTime() })
 				.then();
 			return (ctx.body = xU.$response(result));

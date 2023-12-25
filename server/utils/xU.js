@@ -1,12 +1,11 @@
 const CryptoJS = require("crypto-js");
 const dayjs = require("dayjs");
 const sha1 = require("sha1");
-const { ModelLog } = require("server/models/log");
-const { ModelProject } = require("server/models/project");
-const { ModelUser } = require("server/models/user");
-const { ModelInterfaceCol } = require("server/models/interfaceCol");
-const { ModelInterfaceCase } = require("server/models/interfaceCase");
-const { ModelInterface } = require("server/models/interface");
+const ModelProject = require("server/models/project");
+const ModelUser = require("server/models/user");
+const ModelInterfaceCol = require("server/models/interfaceCol");
+const ModelInterfaceCase = require("server/models/interfaceCase");
+const ModelInterface = require("server/models/interface");
 const json5 = require("json5");
 const _ = require("lodash");
 const Ajv = require("ajv");
@@ -114,45 +113,25 @@ const applog = {
 	}
 };
 
-global.orm = new Proxy({}, {
-	get(target, name) {
-		return target[name]
-			|| (function () {
-				if ("token" === name) {
-					target[name] = require("server/models/token");
-				}
-				if ("project" === name) {
-					target[name] = require("server/models/project").ModelProject;
-				}
-				if ("user" === name) {
-					target[name] = require("server/models/user").ModelUser;
-				}
-				if ("group" === name) {
-					target[name] = require("server/models/group").ModelGroup;
-				}
-				if ("groupMember" === name) {
-					target[name] = require("server/models/group").ModelGroup;
-				}
-				if ("project" === name) {
-					target[name] = require("server/models/project").ModelProject;
-				}
-				if ("follow" === name) {
-					target[name] = require("server/models/follow").ModelFollow;
-				}
-				if ("interface" === name) {
-					target[name] = require("server/models/interface").ModelInterface;
-				}
-				if ("interfaceCol" === name) {
-					target[name] = require("server/models/interfaceCol").ModelInterfaceCol;
-				}
-				if ("interfaceCategory" === name) {
-					target[name] = require("server/models/interfaceCategory").ModelInterfaceCategory;
-				}
-				return target[name];
-			})();
+global.orm = new Proxy(
+	{},
+	{
+		get(target, modelName) {
+			return (
+				target[modelName] ||
+				(function () {
+					let Model = require(`server/models/${modelName}`);
+					target[modelName] = new Model();
+					return target[modelName];
+				})()
+			);
+		},
+		set(target, modelName, value) {
+			target[modelName] = value;
+			return true;
+		}
 	}
-});
-
+);
 
 /**
  * @type {object} any
@@ -483,12 +462,15 @@ function log(msg, type = "info") {
 			} else {
 				errorThrowAt += `\n(${errorAt.split("    at ")[1]})`;
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 	/* let date = new Date(); let year = date.getFullYear();
   let month = date.getMonth() + 1; */
 	const date = Date.now();
-	let logfile = path.join(APP_LOG_DIR, `${dayjs(date).format("YYYY-MM-DD_HH")}.log`);
+	let logfile = path.join(
+		APP_LOG_DIR,
+		`${dayjs(date).format("YYYY-MM-DD_HH")}.log`
+	);
 	const errorContent = `===\n【${dayjs(date).format(
 		"YYYY-MM-DD HH:mm:ss"
 	)}-${date}】：【${type}】：【${msg}】${errorThrowAt}\n===`;
@@ -594,7 +576,7 @@ function sendMail(options, cb) {
 				from: yapi_configs.mail.from,
 				to: options.to,
 				html: options.contents,
-				subject,
+				subject
 			},
 			error => cb(error, options)
 		);
@@ -789,7 +771,7 @@ function validateParams(schema2, params) {
 
 function saveLog(logData) {
 	try {
-		let logInst = orm(ModelLog);
+		let logInst = orm.log;
 		let data = {
 			content: logData.content,
 			type: logData.type,
@@ -871,7 +853,7 @@ function handleParamsValue(params, val) {
 	let value = {};
 	try {
 		params = params.toObject();
-	} catch (e) { }
+	} catch (e) {}
 	if (params.length === 0 || val.length === 0) {
 		return params;
 	}

@@ -1,9 +1,9 @@
-const { ModelUser } = require("server/models/user");
+const ModelUser = require("server/models/user");
 const ControllerBase = require("./base");
 const { ldapQuery } = require("../utils/ldap");
-const { ModelInterface } = require("server/models/interface");
-const { ModelGroup } = require("server/models/group");
-const { ModelProject } = require("server/models/project");
+const ModelInterface = require("server/models/interface");
+const ModelGroup = require("server/models/group");
+const ModelProject = require("server/models/project");
 const { ModelAvatar } = require("server/models/avatar");
 const { customCookies } = require("../utils/customCookies");
 
@@ -11,7 +11,6 @@ class userController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 	}
-
 
 	/**
 	 * 更新
@@ -24,7 +23,7 @@ class userController extends ControllerBase {
 	 */
 
 	async upStudy(ctx) {
-		let userInst = xU.orm(ModelUser); //创建user实体
+		let userInst = orm.user; //创建user实体
 		let data = {
 			up_time: xU.time(),
 			study: true
@@ -79,7 +78,7 @@ class userController extends ControllerBase {
 			let login = await this.handleThirdLogin(emailParams, username);
 
 			if (login === true) {
-				let userInst = xU.orm(ModelUser); //创建user实体
+				let userInst = orm.user; //创建user实体
 				let result = await userInst.findByEmail(emailParams);
 				return (ctx.body = xU.$response(
 					{
@@ -105,7 +104,7 @@ class userController extends ControllerBase {
 	// 处理第三方登录
 	async handleThirdLogin(email, username) {
 		let user, data, passsalt;
-		let userInst = xU.orm(ModelUser);
+		let userInst = orm.user;
 
 		try {
 			user = await userInst.findByEmail(email);
@@ -151,7 +150,7 @@ class userController extends ControllerBase {
 	 */
 	async changePassword(ctx) {
 		let params = ctx.request.body;
-		let userInst = xU.orm(ModelUser);
+		let userInst = orm.user;
 
 		if (!params.uid) {
 			return (ctx.body = xU.$response(null, 400, "uid不能为空"));
@@ -205,7 +204,7 @@ class userController extends ControllerBase {
 		let page = ctx.request.query.page || 1,
 			limit = ctx.request.query.limit || 10;
 
-		const userInst = xU.orm(ModelUser);
+		const userInst = orm.user;
 		try {
 			let user = await userInst.listWithPaging(page, limit);
 			let count = await userInst.listCount();
@@ -245,7 +244,7 @@ class userController extends ControllerBase {
 				return (ctx.body = xU.$response(null, 401, "没有权限"));
 			}
 
-			let userInst = xU.orm(ModelUser);
+			let userInst = orm.user;
 			let id = params.uid;
 
 			if (!id) {
@@ -276,9 +275,9 @@ class userController extends ControllerBase {
 				username: data.username || userData.username,
 				email: data.email || userData.email
 			};
-			let groupInst = xU.orm(ModelGroup);
+			let groupInst = orm.group;
 			await groupInst.updateMember(member);
-			let projectInst = xU.orm(ModelProject);
+
 			await projectInst.updateMember(member);
 
 			let result = await userInst.update(id, data);
@@ -287,7 +286,6 @@ class userController extends ControllerBase {
 			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
-
 
 	/**
 	 * 根据路由id初始化项目数据
@@ -305,7 +303,7 @@ class userController extends ControllerBase {
 		let result = {};
 		try {
 			if (type === "interface") {
-				let interfaceInst = xU.orm(ModelInterface);
+				let interfaceInst = orm.interface;
 				let interfaceData = await interfaceInst.get(id);
 				result.interface = interfaceData;
 				type = "project";
@@ -313,7 +311,6 @@ class userController extends ControllerBase {
 			}
 
 			if (type === "project") {
-				let projectInst = xU.orm(ModelProject);
 				let projectData = await projectInst.get(id);
 				result.project = projectData.toObject();
 				let ownerAuth = await this.checkAuth(id, "project", "danger"),
@@ -333,7 +330,7 @@ class userController extends ControllerBase {
 			}
 
 			if (type === "group") {
-				let groupInst = xU.orm(ModelGroup);
+				let groupInst = orm.group;
 				let groupData = await groupInst.get(id);
 				result.group = groupData.toObject();
 				let ownerAuth = await this.checkAuth(id, "group", "danger"),

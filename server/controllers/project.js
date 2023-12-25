@@ -1,16 +1,7 @@
-const { ModelProject } = require("server/models/project");
+const ModelProject = require("server/models/project");
 
 const _ = require("lodash");
 const ControllerBase = require("./base");
-const { ModelInterface } = require("server/models/interface");
-const { ModelInterfaceCol } = require("server/models/interfaceCol");
-const { ModelInterfaceCase } = require("server/models/interfaceCase");
-const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
-const { ModelGroup } = require("server/models/group");
-const { ModelUser } = require("server/models/user");
-const { ModelLog } = require("server/models/log");
-const ModelFollow = require("../models/follow");
-const tokenModel = require("../models/token");
 const { getToken } = require("../utils/token");
 const sha = require("sha.js");
 const axios = require("axios").default;
@@ -18,12 +9,12 @@ const axios = require("axios").default;
 class projectController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.model = xU.orm(ModelProject);
-		this.modelGroup = xU.orm(ModelGroup);
-		this.ModelLog = xU.orm(ModelLog);
-		this.modelFollow = xU.orm(ModelFollow);
-		this.tokenModel = xU.orm(tokenModel);
-		this.modelInterface = xU.orm(ModelInterface);
+		this.model = orm.project;
+		this.modelGroup = orm.group;
+		this.ModelLog = orm.log;
+		this.modelFollow = orm.follow;
+		this.tokenModel = orm.token;
+		this.modelInterface = orm.interface;
 
 		const id = "number";
 		const member_uid = ["number"];
@@ -231,19 +222,18 @@ class projectController extends ControllerBase {
 
 			let result = await this.model.delMember(params.id, params.member_uid);
 			let username = this.getUsername();
-			yapi
-				.orm(ModelUser)
-				.findById(params.member_uid)
-				.then(member => {
-					xU.saveLog({
-						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了项目中的成员 <a href="/user/profile/${params.member_uid
-							}">${member ? member.username : ""}</a>`,
-						type: "project",
-						uid: this.getUid(),
-						username: username,
-						typeid: params.id
-					});
+
+			orm.user.findById(params.member_uid).then(member => {
+				xU.saveLog({
+					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了项目中的成员 <a href="/user/profile/${
+						params.member_uid
+					}">${member ? member.username : ""}</a>`,
+					type: "project",
+					uid: this.getUid(),
+					username: username,
+					typeid: params.id
 				});
+			});
 			ctx.body = xU.$response(result);
 		} catch (e) {
 			ctx.body = xU.$response(null, 402, e.message);
@@ -296,7 +286,7 @@ class projectController extends ControllerBase {
 			}
 		}
 		result = result.toObject();
-		let catInst = this.orm.interfaceCategory;
+		let catInst = orm.interfaceCategory;
 		let cat = await catInst.list(params.id);
 		result.cat = cat;
 		if (result.env.length === 0) {
@@ -326,9 +316,10 @@ class projectController extends ControllerBase {
 			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
-		let interfaceInst = xU.orm(ModelInterface);
-		let interfaceColInst = xU.orm(ModelInterfaceCol);
-		let interfaceCaseInst = xU.orm(ModelInterfaceCase);
+		let interfaceInst = orm.interface;
+		let interfaceColInst = orm.interfaceCol;
+		let interfaceCaseInst = orm.interfaceCase;
+
 		await interfaceInst.delByProjectId(id);
 		await interfaceCaseInst.delByProjectId(id);
 		await interfaceColInst.delByProjectId(id);
@@ -352,7 +343,6 @@ class projectController extends ControllerBase {
 	 */
 	async changeMemberRole(ctx) {
 		let params = ctx.request.body;
-		let projectInst = xU.orm(ModelProject);
 
 		var check = await projectInst.checkMemberRepeat(
 			params.id,
@@ -380,19 +370,17 @@ class projectController extends ControllerBase {
 		);
 
 		let username = this.getUsername();
-		yapi
-			.orm(ModelUser)
-			.findById(params.member_uid)
-			.then(member => {
-				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 修改了项目中的成员 <a href="/user/profile/${params.member_uid
-						}">${member.username}</a> 的角色为 "${rolename[params.role]}"`,
-					type: "project",
-					uid: this.getUid(),
-					username: username,
-					typeid: params.id
-				});
+		orm.user.findById(params.member_uid).then(member => {
+			xU.saveLog({
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 修改了项目中的成员 <a href="/user/profile/${
+					params.member_uid
+				}">${member.username}</a> 的角色为 "${rolename[params.role]}"`,
+				type: "project",
+				uid: this.getUid(),
+				username: username,
+				typeid: params.id
 			});
+		});
 		ctx.body = xU.$response(result);
 	}
 
@@ -411,7 +399,7 @@ class projectController extends ControllerBase {
 	async changeMemberEmailNotice(ctx) {
 		try {
 			let params = ctx.request.body;
-			let projectInst = xU.orm(ModelProject);
+
 			var check = await projectInst.checkMemberRepeat(
 				params.id,
 				params.member_uid
@@ -519,8 +507,9 @@ class projectController extends ControllerBase {
 			let result = await this.model.up(id, data);
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${projectData.name
-					}</a> 的环境`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
+					projectData.name
+				}</a> 的环境`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -570,8 +559,9 @@ class projectController extends ControllerBase {
 			let result = await this.model.up(id, data);
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${projectData.name
-					}</a> 的tag`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
+					projectData.name
+				}</a> 的tag`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,

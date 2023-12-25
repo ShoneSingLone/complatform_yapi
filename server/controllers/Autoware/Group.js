@@ -1,9 +1,8 @@
-const { ModelGroup } = require("server/models/group");
-const { ModelProject } = require("server/models/project");
+const ModelGroup = require("server/models/group");
+const ModelProject = require("server/models/project");
 
 async function getMineGroup(ctx) {
-	var groupInst = xU.orm(ModelGroup);
-	let projectInst = xU.orm(ModelProject);
+	var groupInst = orm.group;
 
 	let privateGroup = await groupInst.getByPrivateUid(this.getUid());
 	let newResult = [];
@@ -123,7 +122,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					let { id: groupId } = ctx.payload;
-					let groupInst = xU.orm(ModelGroup);
+					let groupInst = orm.group;
 					let result = {};
 					result = await groupInst.getGroupById(groupId);
 					if (result) {
@@ -138,12 +137,12 @@ module.exports = {
 						result.group_name = "个人空间";
 					}
 					ctx.body = xU.$response(result);
-
 				}
 			}
 		},
 		/* 添加项目分组 */
-		"/group/add": {/*  */
+		"/group/add": {
+			/*  */
 			post: {
 				summary: "添加项目分组",
 				description: "添加项目分组",
@@ -156,19 +155,17 @@ module.exports = {
 						},
 						group_desc: {
 							required: false,
-							description: "分组描述",
+							description: "分组描述"
 						},
 						owner_uids: {
 							required: true,
 							description: "分组拥有者uids",
 							type: "array"
-						},
+						}
 					}
 				},
 				async handler(ctx) {
-					let { owner_uids,
-						group_desc,
-						group_name } = ctx.payload;
+					let { owner_uids, group_desc, group_name } = ctx.payload;
 
 					let owners = [];
 
@@ -186,7 +183,7 @@ module.exports = {
 						}
 					}
 
-					let groupInst = xU.orm(ModelGroup);
+					let groupInst = orm.group;
 
 					let count = await groupInst.count(group_name);
 
@@ -215,7 +212,9 @@ module.exports = {
 
 					let username = this.getUsername();
 					xU.saveLog({
-						content: `<a href="/user/profile/${this.getUid()}"> ${username} </a> 新增了分组 <a href="/group/${result._id}"> ${group_name} </a>`,
+						content: `<a href="/user/profile/${this.getUid()}"> ${username} </a> 新增了分组 <a href="/group/${
+							result._id
+						}"> ${group_name} </a>`,
 						type: "group",
 						uid: this.getUid(),
 						username: username,
@@ -241,7 +240,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					let { id } = ctx.payload;
-					let groupInst = xU.orm(ModelGroup);
+					let groupInst = orm.group;
 					let group = await groupInst.get(id);
 					ctx.body = xU.$response(group.members);
 				}

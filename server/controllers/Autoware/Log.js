@@ -1,7 +1,3 @@
-const { ModelLog } = require("server/models/log");
-const { ModelProject } = require("server/models/project");
-
-
 module.exports = {
 	definitions: {},
 	tag: {
@@ -23,8 +19,8 @@ module.exports = {
 						type: {
 							required: true,
 							description: "动态类型",
-							"type": "string",
-							"enum": ["wiki", "group"],
+							type: "string",
+							enum: ["wiki", "group"]
 						},
 						page: {
 							required: true,
@@ -39,12 +35,12 @@ module.exports = {
 						selectValue: {
 							description: "********",
 							type: "string"
-						},
+						}
 					}
 				},
 				async handler(ctx) {
-					const modelLog = xU.orm(ModelLog);
-					const modelProject = xU.orm(ModelProject);
+					const modelLog = orm.log;
+					const modelProject = orm.project;
 					try {
 						const { typeid, page, limit, type, selectValue } = ctx.payload;
 						if (!typeid) {
@@ -73,7 +69,8 @@ module.exports = {
 									item = item.toObject();
 									if (item.type === "project") {
 										item.content =
-											`在 <a href="/project/${item.typeid}">${projectDatas[item.typeid].name
+											`在 <a href="/project/${item.typeid}">${
+												projectDatas[item.typeid].name
 											}</a> 项目: ` + item.content;
 									}
 									projectLogList[index] = item;
@@ -101,8 +98,6 @@ module.exports = {
 						} catch (err) {
 							ctx.body = xU.$response(null, 402, err.message);
 						}
-
-
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);
 					}
@@ -120,11 +115,11 @@ module.exports = {
 							required: true,
 							description: "动态类型id， 不能为空",
 							type: "number"
-						},
+						}
 					}
 				},
 				async handler(ctx) {
-					const modelLog = xU.orm(ModelLog);
+					const modelLog = orm.log;
 
 					try {
 						let { typeid, type, apis } = ctx.payload;
@@ -164,8 +159,6 @@ module.exports = {
 					}
 				}
 			}
-		},
-
-
+		}
 	}
 };

@@ -1,6 +1,6 @@
 const schedule = require("node-schedule");
 const openController = require("server/controllers/open");
-const { ModelProject } = require("server/models/project");
+const ModelProject = require("server/models/project");
 const syncModel = require("./syncModel");
 const tokenModel = require("server/models/token");
 
@@ -17,8 +17,8 @@ class SyncUtils {
 		this.ctx = ctx;
 		this.openController = xU.orm(openController);
 		this.syncModel = xU.orm(syncModel);
-		this.tokenModel = xU.orm(tokenModel);
-		
+		this.tokenModel = orm.token;
+
 		this.init();
 	}
 
@@ -71,7 +71,7 @@ class SyncUtils {
 		);
 		let oldPorjectData;
 		try {
-			oldPorjectData = await this.orm.project.get(projectId);
+			oldPorjectData = await orm.project.get(projectId);
 		} catch (e) {
 			xU.applog.error("获取项目:" + projectId + "失败");
 			this.deleteSyncJob(projectId);

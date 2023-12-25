@@ -1,4 +1,3 @@
-
 module.exports = {
 	definitions: {},
 	tag: {
@@ -16,7 +15,7 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 400, "用户id不能为空"));
 					}
 					try {
-						let result = await this.orm.project.list(uid);
+						let result = await orm.project.list(uid);
 
 						ctx.body = xU.$response({
 							list: result
@@ -50,14 +49,14 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 					}
 
-					let count = await this.orm.follow.checkProjectRepeat(uid, projectid);
+					let count = await orm.follow.checkProjectRepeat(uid, projectid);
 
 					if (count == 0) {
 						return (ctx.body = xU.$response(null, 401, "项目未关注"));
 					}
 
 					try {
-						let result = await this.orm.follow.del(projectid, this.getUid());
+						let result = await orm.follow.del(projectid, this.getUid());
 						ctx.body = xU.$response(result);
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);
@@ -86,12 +85,13 @@ module.exports = {
 							// required: true,
 							description: "项目icon",
 							type: "string"
-						},
+						}
 					}
 				},
 				async handler(ctx) {
-
-					let payload = xU.ensureParamsType(ctx.payload, { projectid: "number" });
+					let payload = xU.ensureParamsType(ctx.payload, {
+						projectid: "number"
+					});
 
 					let uid = this.getUid();
 
@@ -99,14 +99,17 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 					}
 
-					let count = await this.orm.follow.checkProjectRepeat(uid, payload.projectid);
+					let count = await orm.follow.checkProjectRepeat(
+						uid,
+						payload.projectid
+					);
 
 					if (count) {
 						return (ctx.body = xU.$response(null, 401, "项目已关注"));
 					}
 
 					try {
-						let project = await this.orm.project.get(payload.projectid);
+						let project = await orm.project.get(payload.projectid);
 						let data = {
 							uid: uid,
 							projectid: payload.projectid,
@@ -114,7 +117,7 @@ module.exports = {
 							icon: project.icon,
 							color: project.color
 						};
-						let result = await this.orm.follow.save(data);
+						let result = await orm.follow.save(data);
 						result = xU.fieldSelect(result, [
 							"_id",
 							"uid",
@@ -127,8 +130,6 @@ module.exports = {
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);
 					}
-
-
 				}
 			}
 		}

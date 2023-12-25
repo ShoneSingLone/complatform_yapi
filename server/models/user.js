@@ -115,4 +115,4 @@ class ModelUser extends ModelBase {
 	}
 }
 
-exports.ModelUser = ModelUser;
+module.exports = ModelUser;

@@ -84,4 +84,4 @@ class ModelInterfaceCategory extends ModelBase {
 	}
 }
 
-exports.ModelInterfaceCategory = ModelInterfaceCategory;
+module.exports = ModelInterfaceCategory;
