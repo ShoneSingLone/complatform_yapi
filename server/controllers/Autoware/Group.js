@@ -113,7 +113,7 @@ module.exports = {
 				summary: "通过ID获取分组信息",
 				description: "通过ID获取分组信息",
 				request: {
-					body: {
+					query: {
 						id: {
 							required: true,
 							description: "项目分组ID",

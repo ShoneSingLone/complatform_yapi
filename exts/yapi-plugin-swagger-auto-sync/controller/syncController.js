@@ -8,7 +8,7 @@ class syncController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.syncModel = xU.orm(syncModel);
-		this.modelProject = xU.orm(ModelProject);
+		
 		this.interfaceSyncUtils = xU.orm(interfaceSyncUtils);
 	}
 

@@ -4,7 +4,7 @@ const sha1 = require("sha1");
 const { ModelLog } = require("server/models/log");
 const { ModelProject } = require("server/models/project");
 const { ModelUser } = require("server/models/user");
-const {ModelInterfaceCol} = require("server/models/interfaceCol");
+const { ModelInterfaceCol } = require("server/models/interfaceCol");
 const { ModelInterfaceCase } = require("server/models/interfaceCase");
 const { ModelInterface } = require("server/models/interface");
 const json5 = require("json5");
@@ -105,13 +105,54 @@ const applog = {
 	info(msg) {
 		log(msg, "info");
 	},
-	error(msg) {
+	error(msg, payload) {
+		console.log(payload);
 		log(msg, "error");
 	},
 	warn(msg) {
 		log(msg, "warn");
 	}
 };
+
+global.orm = new Proxy({}, {
+	get(target, name) {
+		return target[name]
+			|| (function () {
+				if ("token" === name) {
+					target[name] = require("server/models/token");
+				}
+				if ("project" === name) {
+					target[name] = require("server/models/project").ModelProject;
+				}
+				if ("user" === name) {
+					target[name] = require("server/models/user").ModelUser;
+				}
+				if ("group" === name) {
+					target[name] = require("server/models/group").ModelGroup;
+				}
+				if ("groupMember" === name) {
+					target[name] = require("server/models/group").ModelGroup;
+				}
+				if ("project" === name) {
+					target[name] = require("server/models/project").ModelProject;
+				}
+				if ("follow" === name) {
+					target[name] = require("server/models/follow").ModelFollow;
+				}
+				if ("interface" === name) {
+					target[name] = require("server/models/interface").ModelInterface;
+				}
+				if ("interfaceCol" === name) {
+					target[name] = require("server/models/interfaceCol").ModelInterfaceCol;
+				}
+				if ("interfaceCategory" === name) {
+					target[name] = require("server/models/interfaceCategory").ModelInterfaceCategory;
+				}
+				return target[name];
+			})();
+	}
+});
+
 
 /**
  * @type {object} any

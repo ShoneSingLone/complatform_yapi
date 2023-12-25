@@ -1,7 +1,4 @@
 const ControllerBase = require("server/controllers/base");
-const { ModelInterface } = require("server/models/interface");
-const { ModelProject } = require("server/models/project");
-const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 const markdownIt = require("markdown-it");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItTableOfContents = require("markdown-it-table-of-contents");
@@ -12,9 +9,9 @@ const md = require("../../common/markdown");
 class exportController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelInterfaceCategory = xU.orm(ModelInterfaceCategory);
+		this.modelInterfaceCategory = this.orm.interfaceCategory;
 		this.interModel = xU.orm(ModelInterface);
-		this.modelProject = xU.orm(ModelProject);
+		
 	}
 
 	async handleListClass(pid, status) {
@@ -77,7 +74,7 @@ class exportController extends ControllerBase {
 		let curProject, wikiData;
 		let tp = "";
 		try {
-			curProject = await this.modelProject.get(pid);
+			curProject = await this.orm.project.get(pid);
 			if (isWiki === "true") {
 				const modelWiki = require("../yapi-plugin-wiki/modelWiki");
 				wikiData = await xU.orm(modelWiki).get(pid);

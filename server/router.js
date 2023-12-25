@@ -6,7 +6,6 @@ const userController = require("./controllers/user");
 const interfaceColController = require("./controllers/interfaceCol");
 const testController = require("./controllers/test");
 const projectController = require("./controllers/project");
-const followController = require("./controllers/follow");
 const openController = require("./controllers/open");
 
 const wsRouter = koaRouter();
@@ -60,10 +59,6 @@ let INTERFACE_CONFIG = {
 	project: {
 		prefix: "/project/",
 		controller: projectController
-	},
-	follow: {
-		prefix: "/follow/",
-		controller: followController
 	},
 	col: {
 		prefix: "/col/",
@@ -397,23 +392,6 @@ let routerConfig = {
 		{
 			action: "schema2json",
 			path: "schema2json",
-			method: "post"
-		}
-	],
-	follow: [
-		{
-			action: "list",
-			path: "list",
-			method: "get"
-		},
-		{
-			action: "add",
-			path: "add",
-			method: "post"
-		},
-		{
-			action: "del",
-			path: "del",
 			method: "post"
 		}
 	],

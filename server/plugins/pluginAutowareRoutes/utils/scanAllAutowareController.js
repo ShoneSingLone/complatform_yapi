@@ -10,7 +10,7 @@ async function scanAllAutowareController(app) {
 			xU.path.resolve(xU.var.APP_ROOT_SERVER_DIR, "controllers/Autoware")
 		]);
 		const autoControllers = _n.reduce(
-			files,
+			files.sort(),
 			(target, file) => {
 				const fileName = xU.path.basename(file);
 				const [_, controllerName] =

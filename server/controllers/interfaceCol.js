@@ -12,7 +12,7 @@ class interfaceColController extends ControllerBase {
 		this.colModel = xU.orm(ModelInterfaceCol);
 		this.modelCase = xU.orm(ModelInterfaceCase);
 		this.modelInterface = xU.orm(ModelInterface);
-		this.modelProject = xU.orm(ModelProject);
+
 	}
 
 	/**
@@ -28,7 +28,7 @@ class interfaceColController extends ControllerBase {
 	async list(ctx) {
 		try {
 			let id = ctx.query.project_id;
-			let project = await this.modelProject.getBaseInfo(id);
+			let project = await this.orm.project.getBaseInfo(id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 					return (ctx.body = xU.$response(null, 406, "没有权限"));
@@ -114,7 +114,7 @@ class interfaceColController extends ControllerBase {
 				username: username,
 				typeid: params.project_id
 			});
-			// this.modelProject.up(params.project_id,{up_time: new Date().getTime()}).then();
+			// this.orm.project.up(params.project_id,{up_time: new Date().getTime()}).then();
 			ctx.body = xU.$response(result);
 		} catch (e) {
 			ctx.body = xU.$response(null, 402, e.message);
@@ -139,7 +139,7 @@ class interfaceColController extends ControllerBase {
 			}
 
 			let colData = await this.colModel.get(id);
-			let project = await this.modelProject.getBaseInfo(colData.project_id);
+			let project = await this.orm.project.getBaseInfo(colData.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 					return (ctx.body = xU.$response(null, 406, "没有权限"));
@@ -170,7 +170,7 @@ class interfaceColController extends ControllerBase {
 			}
 
 			let colData = await this.colModel.get(id);
-			let project = await this.modelProject.getBaseInfo(colData.project_id);
+			let project = await this.orm.project.getBaseInfo(colData.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 					return (ctx.body = xU.$response(null, 406, "没有权限"));
@@ -185,7 +185,7 @@ class interfaceColController extends ControllerBase {
 			// 遍历projectList 找到项目和env
 			let projectEnvList = [];
 			for (let i = 0; i < projectList.length; i++) {
-				let result = await this.modelProject.getBaseInfo(
+				let result = await this.orm.project.getBaseInfo(
 					projectList[i],
 					"name  env"
 				);
@@ -229,7 +229,7 @@ class interfaceColController extends ControllerBase {
 			if (resultList.length === 0) {
 				return (ctx.body = xU.$response([]));
 			}
-			let project = await this.modelProject.getBaseInfo(
+			let project = await this.orm.project.getBaseInfo(
 				resultList[0].project_id
 			);
 
@@ -357,7 +357,7 @@ class interfaceColController extends ControllerBase {
 					typeid: params.project_id
 				});
 			});
-			this.modelProject
+			this.orm.project
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
 
@@ -440,7 +440,7 @@ class interfaceColController extends ControllerBase {
 				});
 			}
 
-			this.modelProject
+			this.orm.project
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
 
@@ -538,7 +538,7 @@ class interfaceColController extends ControllerBase {
 				newCaseList.push(newCase._id);
 			}
 
-			this.modelProject
+			this.orm.project
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
 			ctx.body = xU.$response("ok");
@@ -610,7 +610,7 @@ class interfaceColController extends ControllerBase {
 				});
 			});
 
-			this.modelProject
+			this.orm.project
 				.up(caseData.project_id, { up_time: new Date().getTime() })
 				.then();
 
@@ -649,7 +649,7 @@ class interfaceColController extends ControllerBase {
 			}
 			data = data.toObject();
 
-			let projectData = await this.modelProject.getBaseInfo(data.project_id);
+			let projectData = await this.orm.project.getBaseInfo(data.project_id);
 			result.path = projectData.basepath + data.path;
 			result.method = data.method;
 			result.req_body_type = data.req_body_type;
@@ -875,7 +875,7 @@ class interfaceColController extends ControllerBase {
 				});
 			});
 
-			this.modelProject
+			this.orm.project
 				.up(caseData.project_id, { up_time: new Date().getTime() })
 				.then();
 			return (ctx.body = xU.$response(result));

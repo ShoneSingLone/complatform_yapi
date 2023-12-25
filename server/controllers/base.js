@@ -5,22 +5,7 @@ const { parseToken } = require("../utils/token");
 const { customCookies } = require("../utils/customCookies");
 
 
-const MODEL_MAP = {
-	token: require("server/models/token"),
-	project: require("server/models/project").ModelProject,
-	user: require("server/models/user").ModelUser,
-	interface: require("server/models/interface").ModelInterface,
-	group: require("server/models/group").ModelGroup,
-};
 
-
-
-const orm = new Proxy({}, {
-	get(target, name) {
-		const Model = MODEL_MAP[name];
-		return xU.orm(Model);
-	}
-});
 
 class ControllerBase {
 	constructor(ctx) {

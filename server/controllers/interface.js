@@ -48,11 +48,11 @@ function handleHeaders(values) {
 	} else if (values.req_body_type === "json") {
 		values.req_headers
 			? values.req_headers.map(item => {
-					if (item.name === "Content-Type") {
-						item.value = "application/json";
-						isHaveContentType = true;
-					}
-			  })
+				if (item.name === "Content-Type") {
+					item.value = "application/json";
+					isHaveContentType = true;
+				}
+			})
 			: [];
 		if (isHaveContentType === false) {
 			values.req_headers = values.req_headers || [];
@@ -68,11 +68,10 @@ class ControllerInterface extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.model = xU.orm(ModelInterface);
-		this.modelInterfaceCategory = xU.orm(ModelInterfaceCategory);
-		this.modelProject = xU.orm(ModelProject);
+		this.modelInterfaceCategory = this.orm.interfaceCategory;
+		
 		this.modelCase = xU.orm(ModelInterfaceCase);
 		this.modelFollow = xU.orm(ModelFollow);
-		this.modelUser = xU.orm(ModelUser);
 		this.modelGroup = xU.orm(ModelGroup);
 
 		const minLengthStringField = {
@@ -286,12 +285,12 @@ class ControllerInterface extends ControllerBase {
 		if (this.getRole() !== "admin" && uid !== 999999) {
 			let userdata = await xU.getUserdata(uid, "dev");
 			// 检查一下是否有这个人
-			let check = await this.modelProject.checkMemberRepeat(
+			let check = await this.orm.project.checkMemberRepeat(
 				params.project_id,
 				uid
 			);
 			if (check === 0 && userdata) {
-				await this.modelProject.addMember(params.project_id, [userdata]);
+				await this.orm.project.addMember(params.project_id, [userdata]);
 			}
 		}
 
@@ -299,13 +298,10 @@ class ControllerInterface extends ControllerBase {
 		xU.emitHook("interface_add", result).then();
 		this.modelInterfaceCategory.get(params.catid).then(cate => {
 			let username = this.getUsername();
-			let title = `<a href="/user/profile/${this.getUid()}">${username}</a> 为分类 <a href="/project/${
-				params.project_id
-			}/interface/api/cat_${params.catid}">${
-				cate.name
-			}</a> 添加了接口 <a href="/project/${params.project_id}/interface/api/${
-				result._id
-			}">${data.title}</a> `;
+			let title = `<a href="/user/profile/${this.getUid()}">${username}</a> 为分类 <a href="/project/${params.project_id
+				}/interface/api/cat_${params.catid}">${cate.name
+				}</a> 添加了接口 <a href="/project/${params.project_id}/interface/api/${result._id
+				}">${data.title}</a> `;
 
 			xU.saveLog({
 				content: title,
@@ -314,7 +310,7 @@ class ControllerInterface extends ControllerBase {
 				username: username,
 				typeid: params.project_id
 			});
-			this.modelProject
+			this.orm.project
 				.up(params.project_id, { up_time: new Date().getTime() })
 				.then();
 		});
@@ -399,7 +395,7 @@ class ControllerInterface extends ControllerBase {
 								null,
 								2
 							);
-						} catch (err) {}
+						} catch (err) { }
 					}
 					await this.up(data);
 				} else {
@@ -425,7 +421,7 @@ class ControllerInterface extends ControllerBase {
 		let tags = params.tag;
 		if (tags && Array.isArray(tags) && tags.length > 0) {
 			if (!params.project_id) return;
-			let projectData = await this.modelProject.get(params.project_id);
+			let projectData = await this.orm.project.get(params.project_id);
 			let tagsInProject = projectData.tag;
 			let needUpdate = false;
 			if (
@@ -463,7 +459,7 @@ class ControllerInterface extends ControllerBase {
 					tag: tagsInProject,
 					up_time: xU.time()
 				};
-				await this.modelProject.up(params.project_id, data);
+				await this.orm.project.up(params.project_id, data);
 			}
 		}
 	}
@@ -496,8 +492,8 @@ class ControllerInterface extends ControllerBase {
 			if (!result) {
 				return (ctx.body = xU.$response(null, 490, "不存在的"));
 			}
-			let userinfo = await this.modelUser.findById(result.uid);
-			let project = await this.modelProject.getBaseInfo(result.project_id);
+			let userinfo = await this.orm.user.findById(result.uid);
+			let project = await this.orm.project.getBaseInfo(result.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 					return (ctx.body = xU.$response(null, 406, "没有权限"));
@@ -537,7 +533,7 @@ class ControllerInterface extends ControllerBase {
 		try {
 			let catdata = await this.modelInterfaceCategory.get(catid);
 
-			let project = await this.modelProject.getBaseInfo(catdata.project_id);
+			let project = await this.orm.project.getBaseInfo(catdata.project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 					return (ctx.body = xU.$response(null, 406, "没有权限"));
@@ -704,14 +700,11 @@ class ControllerInterface extends ControllerBase {
 			}
 			xU.saveLog({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 
-                    更新了分类 <a href="/project/${
-											cate.project_id
-										}/interface/api/cat_${data.catid}">${cate.name}</a> 
-                    下的接口 <a href="/project/${
-											cate.project_id
-										}/interface/api/${id}">${interfaceData.title}</a><p>${
-					params.message
-				}</p>`,
+                    更新了分类 <a href="/project/${cate.project_id
+					}/interface/api/cat_${data.catid}">${cate.name}</a> 
+                    下的接口 <a href="/project/${cate.project_id
+					}/interface/api/${id}">${interfaceData.title}</a><p>${params.message
+					}</p>`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -720,7 +713,7 @@ class ControllerInterface extends ControllerBase {
 			});
 		});
 
-		this.modelProject
+		this.orm.project
 			.up(interfaceData.project_id, { up_time: new Date().getTime() })
 			.then();
 		if (params.switch_notice === true) {
@@ -740,7 +733,7 @@ class ControllerInterface extends ControllerBase {
 				"utf8"
 			);
 
-			let project = await this.modelProject.getBaseInfo(
+			let project = await this.orm.project.getBaseInfo(
 				interfaceData.project_id
 			);
 
@@ -822,18 +815,16 @@ class ControllerInterface extends ControllerBase {
 			let username = this.getUsername();
 			this.modelInterfaceCategory.get(data.catid).then(cate => {
 				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 <a href="/project/${
-						cate.project_id
-					}/interface/api/cat_${data.catid}">${cate.name}</a> 下的接口 "${
-						data.title
-					}"`,
+					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 <a href="/project/${cate.project_id
+						}/interface/api/cat_${data.catid}">${cate.name}</a> 下的接口 "${data.title
+						}"`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
 					typeid: cate.project_id
 				});
 			});
-			this.modelProject
+			this.orm.project
 				.up(data.project_id, { up_time: new Date().getTime() })
 				.then();
 			ctx.body = xU.$response(result);
@@ -911,9 +902,8 @@ class ControllerInterface extends ControllerBase {
 
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了分类  <a href="/project/${
-					params.project_id
-				}/interface/api/cat_${result._id}">${params.name}</a>`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了分类  <a href="/project/${params.project_id
+					}/interface/api/cat_${result._id}">${params.name}</a>`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -945,9 +935,8 @@ class ControllerInterface extends ControllerBase {
 			});
 
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${
-					cate.project_id
-				}/interface/api/cat_${params.catid}">${cate.name}</a>`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${cate.project_id
+					}/interface/api/cat_${params.catid}">${cate.name}</a>`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -981,9 +970,8 @@ class ControllerInterface extends ControllerBase {
 
 			let username = this.getUsername();
 			xU.saveLog({
-				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 "${
-					catData.name
-				}" 及该分类下的接口`,
+				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 "${catData.name
+					}" 及该分类下的接口`,
 				type: "project",
 				uid: this.getUid(),
 				username: username,
@@ -1026,7 +1014,7 @@ class ControllerInterface extends ControllerBase {
 		}
 
 		try {
-			let project = await this.modelProject.getBaseInfo(project_id);
+			let project = await this.orm.project.getBaseInfo(project_id);
 			if (project.project_type === "private") {
 				if ((await this.checkAuth(project._id, "project", "edit")) !== true) {
 					return (ctx.body = xU.$response(null, 406, "没有权限"));
@@ -1068,7 +1056,7 @@ class ControllerInterface extends ControllerBase {
 			// 在每个分组（group）下查找对应project的id值
 			let interfaces = [];
 			for (let i = 0; i < groups.length; i++) {
-				let projects = await this.modelProject.list(groups[i]._id);
+				let projects = await this.orm.project.list(groups[i]._id);
 
 				// 在每个项目（project）中查找interface下的custom_field_value
 				for (let j = 0; j < projects.length; j++) {
@@ -1186,7 +1174,7 @@ class ControllerInterface extends ControllerBase {
 			return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 		}
 
-		let project = await this.modelProject.getBaseInfo(project_id);
+		let project = await this.orm.project.getBaseInfo(project_id);
 		if (!project) {
 			return (ctx.body = xU.$response(null, 406, "不存在的项目"));
 		}

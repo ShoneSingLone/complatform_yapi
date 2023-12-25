@@ -13,7 +13,7 @@ class ControllerWiki extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
 		this.model = xU.orm(modelWiki);
-		this.modelProject = xU.orm(ModelProject);
+		
 	}
 
 	/**
@@ -117,7 +117,7 @@ class ControllerWiki extends ControllerBase {
 					),
 					"utf8"
 				);
-				let project = await this.modelProject.getBaseInfo(params.project_id);
+				let project = await this.orm.project.getBaseInfo(params.project_id);
 
 				xU.sendNotice(params.project_id, {
 					title: `${username} 更新了wiki说明`,

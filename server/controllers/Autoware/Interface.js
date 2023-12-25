@@ -116,7 +116,7 @@ module.exports = {
 					/**
 					 * @type ModelInterfaceCategory
 					 */
-					const modelInterfaceCategory = await xU.orm(ModelInterfaceCategory);
+					const modelInterfaceCategory = await this.orm.interfaceCategory;
 					/**
 					 * @type ModelInterface
 					 */

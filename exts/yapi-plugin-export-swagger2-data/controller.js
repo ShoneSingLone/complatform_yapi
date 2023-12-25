@@ -6,9 +6,9 @@ const { ModelInterfaceCategory } = require("server/models/interfaceCategory");
 class exportSwaggerController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelInterfaceCategory = xU.orm(ModelInterfaceCategory);
+		this.modelInterfaceCategory = this.orm.interfaceCategory;
 		this.interModel = xU.orm(ModelInterface);
-		this.modelProject = xU.orm(ModelProject);
+		
 	}
 
 	/*
@@ -75,7 +75,7 @@ class exportSwaggerController extends ControllerBase {
 		let curProject;
 		let tp = "";
 		try {
-			curProject = await this.modelProject.get(pid);
+			curProject = await this.orm.project.get(pid);
 			ctx.set("Content-Type", "application/octet-stream");
 			const list = await this.handleListClass(pid, status);
 

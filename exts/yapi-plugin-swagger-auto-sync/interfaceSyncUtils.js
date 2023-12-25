@@ -18,7 +18,7 @@ class SyncUtils {
 		this.openController = xU.orm(openController);
 		this.syncModel = xU.orm(syncModel);
 		this.tokenModel = xU.orm(tokenModel);
-		this.modelProject = xU.orm(ModelProject);
+		
 		this.init();
 	}
 
@@ -71,7 +71,7 @@ class SyncUtils {
 		);
 		let oldPorjectData;
 		try {
-			oldPorjectData = await this.modelProject.get(projectId);
+			oldPorjectData = await this.orm.project.get(projectId);
 		} catch (e) {
 			xU.applog.error("获取项目:" + projectId + "失败");
 			this.deleteSyncJob(projectId);

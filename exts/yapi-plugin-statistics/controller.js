@@ -17,7 +17,7 @@ class statisMockController extends ControllerBase {
 		super(ctx);
 		this.modelStatisMock = xU.orm(ModelStatisMock);
 		this.modelGroup = xU.orm(ModelGroup);
-		this.modelProject = xU.orm(ModelProject);
+		
 		this.modelInterface = xU.orm(ModelInterface);
 		this.modelInterfaceCase = xU.orm(ModelInterfaceCase);
 	}
@@ -33,7 +33,7 @@ class statisMockController extends ControllerBase {
 	async getStatisCount(ctx) {
 		try {
 			let groupCount = await this.modelGroup.getGroupListCount();
-			let projectCount = await this.modelProject.getProjectListCount();
+			let projectCount = await this.orm.project.getProjectListCount();
 			let interfaceCount = await this.modelInterface.getInterfaceListCount();
 			let interfaceCaseCount =
 				await this.modelInterfaceCase.getInterfaceCaseListCount();
@@ -143,8 +143,8 @@ class statisMockController extends ControllerBase {
 				};
 				result.push(data);
 
-				let projectCount = await this.modelProject.listCount(groupId);
-				let projectData = await this.modelProject.list(groupId);
+				let projectCount = await this.orm.project.listCount(groupId);
+				let projectData = await this.orm.project.list(groupId);
 				let interfaceCount = 0;
 				for (let j = 0; j < projectData.length; j++) {
 					let project = projectData[j];

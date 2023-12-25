@@ -10,7 +10,6 @@ const { customCookies } = require("../utils/customCookies");
 class userController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelUser = xU.orm(ModelUser);
 	}
 
 
