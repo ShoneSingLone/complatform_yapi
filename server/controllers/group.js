@@ -300,7 +300,7 @@ class groupController extends ControllerBase {
 			const newGroupIds = [];
 
 			/* 从项目里面直接加的人，但是没有在group中添加member， */
-			let groupByProject = await projectInst.getAuthList(this.getUid());
+			let groupByProject = await orm.project.getAuthList(this.getUid());
 			if (groupByProject && groupByProject.length > 0) {
 				groupByProject.forEach(_data => {
 					const _temp = [...groupIds, ...newGroupIds];
@@ -348,14 +348,14 @@ class groupController extends ControllerBase {
 		let interfaceCaseInst = orm.interfaceCase;
 		let id = ctx.params.id;
 
-		let projectList = await projectInst.list(id, true);
+		let projectList = await orm.project.list(id, true);
 		projectList.forEach(async p => {
 			await interfaceInst.delByProjectId(p._id);
 			await interfaceCaseInst.delByProjectId(p._id);
 			await interfaceColInst.delByProjectId(p._id);
 		});
 		if (projectList.length > 0) {
-			await projectInst.delByGroupid(id);
+			await orm.project.delByGroupid(id);
 		}
 
 		let result = await orm.group.del(id);

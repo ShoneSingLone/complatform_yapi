@@ -51,7 +51,7 @@ async function getMineGroup(ctx) {
 		const newGroupIds = [];
 
 		/* 从项目里面直接加的人，但是没有在group中添加member， */
-		let groupByProject = await projectInst.getAuthList(this.getUid());
+		let groupByProject = await orm.project.getAuthList(this.getUid());
 		if (groupByProject && groupByProject.length > 0) {
 			groupByProject.forEach(_data => {
 				/* 不在已确认的分组中则添加进来 */

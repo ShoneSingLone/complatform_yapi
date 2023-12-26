@@ -244,7 +244,7 @@ class ControllerBase {
 			}
 
 			if (type === "project") {
-				let projectData = await projectInst.get(id);
+				let projectData = await orm.project.get(id);
 				if (projectData.uid === this.getUid()) {
 					// 建立项目的人
 					return "owner";

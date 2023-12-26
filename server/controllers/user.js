@@ -278,7 +278,7 @@ class userController extends ControllerBase {
 			let groupInst = orm.group;
 			await groupInst.updateMember(member);
 
-			await projectInst.updateMember(member);
+			await orm.project.updateMember(member);
 
 			let result = await userInst.update(id, data);
 			ctx.body = xU.$response(result);
@@ -311,7 +311,7 @@ class userController extends ControllerBase {
 			}
 
 			if (type === "project") {
-				let projectData = await projectInst.get(id);
+				let projectData = await orm.project.get(id);
 				result.project = projectData.toObject();
 				let ownerAuth = await this.checkAuth(id, "project", "danger"),
 					devAuth;

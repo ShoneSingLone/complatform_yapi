@@ -344,7 +344,7 @@ class projectController extends ControllerBase {
 	async changeMemberRole(ctx) {
 		let params = ctx.request.body;
 
-		var check = await projectInst.checkMemberRepeat(
+		var check = await orm.project.checkMemberRepeat(
 			params.id,
 			params.member_uid
 		);
@@ -363,7 +363,7 @@ class projectController extends ControllerBase {
 			guest: "访客"
 		};
 
-		let result = await projectInst.changeMemberRole(
+		let result = await orm.project.changeMemberRole(
 			params.id,
 			params.member_uid,
 			params.role
@@ -400,7 +400,7 @@ class projectController extends ControllerBase {
 		try {
 			let params = ctx.request.body;
 
-			var check = await projectInst.checkMemberRepeat(
+			var check = await orm.project.checkMemberRepeat(
 				params.id,
 				params.member_uid
 			);
@@ -408,7 +408,7 @@ class projectController extends ControllerBase {
 				return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
 			}
 
-			let result = await projectInst.changeMemberEmailNotice(
+			let result = await orm.project.changeMemberEmailNotice(
 				params.id,
 				params.member_uid,
 				params.notice

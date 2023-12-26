@@ -291,7 +291,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 	let project;
 	try {
-		project = await projectInst.get(projectId);
+		project = await orm.project.get(projectId);
 	} catch (e) {
 		return (ctx.body = xU.$response(null, 403, e.message));
 	}

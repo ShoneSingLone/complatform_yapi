@@ -462,7 +462,7 @@ function log(msg, type = "info") {
 			} else {
 				errorThrowAt += `\n(${errorAt.split("    at ")[1]})`;
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 	/* let date = new Date(); let year = date.getFullYear();
   let month = date.getMonth() + 1; */
@@ -853,7 +853,7 @@ function handleParamsValue(params, val) {
 	let value = {};
 	try {
 		params = params.toObject();
-	} catch (e) {}
+	} catch (e) { }
 	if (params.length === 0 || val.length === 0) {
 		return params;
 	}
@@ -873,7 +873,6 @@ function handleParamsValue(params, val) {
 async function getCaseList(id) {
 	const caseInst = orm(ModelInterfaceCase);
 	const colInst = orm(ModelInterfaceCol);
-	const projectInst = orm(ModelProject);
 	const interfaceInst = orm(ModelInterface);
 
 	let resultList = await caseInst.list(id, "all");
@@ -885,7 +884,7 @@ async function getCaseList(id) {
 			await caseInst.del(result._id);
 			continue;
 		}
-		let projectData = await projectInst.getBaseInfo(data.project_id);
+		let projectData = await orm.project.getBaseInfo(data.project_id);
 		result.path = projectData.basepath + data.path;
 		result.method = data.method;
 		result.title = data.title;
