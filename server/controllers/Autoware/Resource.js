@@ -82,7 +82,7 @@ module.exports = {
 							uploadBy: this.$uid,
 							add_time
 						};
-						const res = await xU.orm(ModelResource).save(wikiInfo);
+						const res = await xU.$orm(ModelResource).save(wikiInfo);
 						ctx.body = xU.resReturn({ _id: res._id });
 					} catch (e) {
 						ctx.body = xU.resReturn(null, 400, e.message);
@@ -140,7 +140,7 @@ module.exports = {
 							uploadBy: this.$uid,
 							add_time: xU.time()
 						};
-						const res = await xU.orm(ModelResource).save(wikiInfo);
+						const res = await xU.$orm(ModelResource).save(wikiInfo);
 						ctx.body = xU.$response({ _id: res._id });
 					} catch (e) {
 						xU.applog.error(e.message);

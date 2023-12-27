@@ -1,7 +1,4 @@
-const ModelUser = require("server/models/user");
-const ModelGroup = require("server/models/group");
 const { ModelVerifyCode } = require("server/models/VerifyCode");
-const { ModelAvatar } = require("server/models/avatar");
 
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
@@ -161,8 +158,9 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 405, "非法邮箱字符"));
 					}
 					/* email用户是否存在 */
-					let userInst = orm.user; //创建user实体
-					let verifyCodeInst = xU.orm(ModelVerifyCode); //创建user实体
+
+					let userInst = orm.user;
+					let verifyCodeInst = orm.VerifyCode;
 					let result = await userInst.findByEmail(email);
 
 					async function sendNewVarifyCode() {
@@ -272,7 +270,7 @@ module.exports = {
 					if (!payload.code) {
 						return (ctx.body = xU.$response(null, 400, "验证码不能为空"));
 					} else {
-						let verifyCodeInst = xU.orm(ModelVerifyCode);
+						let verifyCodeInst = orm.VerifyCode;
 						let verifyCode = await verifyCodeInst.findByEmail(payload.email);
 						if (verifyCode) {
 							if (verifyCode.code !== payload.code) {
@@ -322,7 +320,7 @@ module.exports = {
 							</pre>`
 						});
 						/* 删除验证码 */
-						await xU.orm(ModelVerifyCode).del(payload.email);
+						await orm.VerifyCode.del(payload.email);
 
 						ctx.body = xU.$response({
 							uid: user._id,
@@ -476,8 +474,8 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						let { uid, usedBy } = ctx.payload;
-						uid = uid ? uid : this.getUid();
-						let avatarInst = xU.orm(ModelAvatar);
+/*  */						uid = uid ? uid : this.getUid();
+						let avatarInst = orm.avatar;
 						let data = await (function () {
 							if (usedBy) {
 								return avatarInst.getBy(uid, usedBy);
@@ -537,8 +535,13 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						let { basecode, uid, usedBy } = ctx.payload;
+						const currentUserUid = this.getUid();
+						/* 如果没有usedBy，则默认是用户头像 ，用户头像只能由用户自己修改*/
+						if (!usedBy && uid !== currentUserUid) {
+							return (ctx.body = xU.$response(null, 403, "没有权限"));
+						}
 						usedBy = usedBy || "user";
-						uid = uid || this.getUid();
+						uid = uid || currentUserUid;
 
 						if (!basecode) {
 							return (ctx.body = xU.$response(null, 400, "basecode不能为空"));
@@ -568,7 +571,7 @@ module.exports = {
 							));
 						}
 
-						let avatarInst = xU.orm(ModelAvatar);
+						let avatarInst = orm.avatar;
 						let result = await avatarInst.upsert({
 							uid,
 							basecode,

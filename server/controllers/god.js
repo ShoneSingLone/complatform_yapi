@@ -12,8 +12,8 @@ const mime = require("mime-types");
 class ControllerGod extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.orm_i18n = xU.orm(ModelI18n);
-		this.orm_resource = xU.orm(ModelResource);
+		this.orm_i18n = xU.$orm(ModelI18n);
+		this.orm_resource = xU.$orm(ModelResource);
 	}
 
 	/*

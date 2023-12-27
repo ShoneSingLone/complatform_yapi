@@ -22,6 +22,28 @@ const { isUsePlugin } = require("./isUsePlugin");
 
 yapi_configs.isUsePlugin = isUsePlugin;
 
+global.orm = new Proxy(
+	{},
+	{
+		get(target, modelName) {
+			return (
+				target[modelName] ||
+				(function () {
+					let Model = require(`server/models/${modelName}`);
+					target[modelName] = new Model();
+					return target[modelName];
+				})()
+			);
+		},
+		set(target, modelName, value) {
+			target[modelName] = value;
+			return true;
+		}
+	}
+);
+
+
+
 const mail = (function () {
 	if (yapi_configs.mail) {
 		return nodemailer.createTransport(yapi_configs.mail);
@@ -52,7 +74,7 @@ fs.ensureDirSync(APP_LOG_DIR);
  * @param {any} args
  * @returns
  */
-function orm(ormModel, ...args) {
+function $orm(ormModel, ...args) {
 	let inst = MAP_ORM.get(ormModel);
 	if (!inst) {
 		try {
@@ -74,26 +96,23 @@ function delInst(m) {
 }
 
 function storageCreator(id) {
-	const storageModel = require("../models/storage");
 	const defaultData = {};
 	return {
 		getItem: async (name = "") => {
-			let inst = orm(storageModel);
-			let data = await inst.get(id);
+			let data = await orm.storage.get(id);
 			data = data || defaultData;
 			if (name) return data[name];
 			return data;
 		},
 		setItem: async (name, value) => {
-			let orm_storage = orm(storageModel);
-			let curData = await orm_storage.get(id);
+			let curData = await orm.storage.get(id);
 			let data = curData || defaultData;
 			let result;
 			data[name] = value;
 			if (!curData) {
-				result = await orm_storage.save(id, data, true);
+				result = await orm.storage.save(id, data, true);
 			} else {
-				result = await orm_storage.save(id, data, false);
+				result = await orm.storage.save(id, data, false);
 			}
 			return result;
 		}
@@ -113,25 +132,6 @@ const applog = {
 	}
 };
 
-global.orm = new Proxy(
-	{},
-	{
-		get(target, modelName) {
-			return (
-				target[modelName] ||
-				(function () {
-					let Model = require(`server/models/${modelName}`);
-					target[modelName] = new Model();
-					return target[modelName];
-				})()
-			);
-		},
-		set(target, modelName, value) {
-			target[modelName] = value;
-			return true;
-		}
-	}
-);
 
 /**
  * @type {object} any
@@ -1094,7 +1094,7 @@ exports.handleBasepath = function (basepath) {
 
 exports.applog = applog;
 exports.mail = mail;
-exports.orm = orm;
+exports.$orm = $orm;
 exports.schemaToJson = schemaToJson;
 exports.$response = $response;
 exports.log = log;

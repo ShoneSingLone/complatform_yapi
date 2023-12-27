@@ -3,7 +3,7 @@ const controller = require("./controller/syncController");
 const interfaceSyncUtils = require("./interfaceSyncUtils");
 
 module.exports = function () {
-	xU.orm(interfaceSyncUtils);
+	xU.$orm(interfaceSyncUtils);
 	this.bindHook("add_router", function (addRouter) {
 		addRouter({
 			controller: controller,

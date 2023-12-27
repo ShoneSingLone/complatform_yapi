@@ -88,7 +88,7 @@ class exportController extends ControllerBase {
 			const basepath = curProject.basepath;
 			if (isWiki === "true") {
 				const modelWiki = require("../yapi-plugin-wiki/modelWiki");
-				wikiData = await xU.orm(modelWiki).get(pid);
+				wikiData = await xU.$orm(modelWiki).get(pid);
 			}
 			ctx.set("Content-Type", "application/octet-stream");
 			const list = await this.handleListClass(pid, status);

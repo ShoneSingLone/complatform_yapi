@@ -1,6 +1,6 @@
 const ModelBase = require("server/models/base");
 
-class ModelVerifyCode extends ModelBase {
+module.exports = class ModelVerifyCode extends ModelBase {
 	getName() {
 		return "VerifyCode";
 	}
@@ -34,4 +34,3 @@ class ModelVerifyCode extends ModelBase {
 	}
 }
 
-exports.ModelVerifyCode = ModelVerifyCode;

@@ -12,7 +12,7 @@ const showDiffMsg = require("../../common/diff-view");
 class ControllerWiki extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.model = xU.orm(modelWiki);
+		this.model = xU.$orm(modelWiki);
 	}
 
 	/**

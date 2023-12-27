@@ -51,9 +51,9 @@ const postWikiUpsertOne = {
 
 		if (_id) {
 			/* 修改 */
-			const oldWikiArticle = await xU.orm(ModelWiki).detail(_id);
+			const oldWikiArticle = await xU.$orm(ModelWiki).detail(_id);
 			const oldmarkdown = oldWikiArticle?.markdown || "";
-			res = await xU.orm(ModelWiki).up(_id, payload);
+			res = await xU.$orm(ModelWiki).up(_id, payload);
 			const result = diffText(oldmarkdown, markdown);
 			if (result) {
 				xU.saveLog({
@@ -67,7 +67,7 @@ const postWikiUpsertOne = {
 			}
 		} else {
 			/* 新增 */
-			res = await xU.orm(ModelWiki).save(payload);
+			res = await xU.$orm(ModelWiki).save(payload);
 			payload._id = res._id;
 		}
 
@@ -97,9 +97,9 @@ const getWikiMenu = {
 			}
 
 			const { order } =
-				(await xU.orm(ModelWikiOrder).detail(queryConditions)) || {};
+				(await xU.$orm(ModelWikiOrder).detail(queryConditions)) || {};
 			ctx.body = xU.$response({
-				list: await xU.orm(ModelWiki).menu({ belong_type, belong_id }),
+				list: await xU.$orm(ModelWiki).menu({ belong_type, belong_id }),
 				orderArray: order || []
 			});
 		} catch (e) {
@@ -118,7 +118,7 @@ const getWikiDetail = {
 	async handler(ctx) {
 		try {
 			const { _id } = ctx.payload;
-			ctx.body = xU.$response(await xU.orm(ModelWiki).detail(_id));
+			ctx.body = xU.$response(await xU.$orm(ModelWiki).detail(_id));
 		} catch (e) {
 			xU.applog.error(e.message);
 		}
@@ -129,7 +129,7 @@ const getWikiList = {
 	summary: "文档 list",
 	async handler(ctx) {
 		try {
-			ctx.body = xU.$response({ list: await xU.orm(ModelWiki).list() });
+			ctx.body = xU.$response({ list: await xU.$orm(ModelWiki).list() });
 		} catch (e) {
 			xU.applog.error(e.message);
 		}
@@ -161,7 +161,7 @@ const postWikiResetMenuOrder = {
 			}
 
 			ctx.body = xU.$response(
-				await xU.orm(ModelWikiOrder).upsertOne({
+				await xU.$orm(ModelWikiOrder).upsertOne({
 					belong_type,
 					belong_id,
 					order
@@ -184,7 +184,7 @@ const deleteWikiDelete = {
 		try {
 			const { _id } = ctx.payload;
 			/* 标记删除 */
-			await xU.orm(ModelWiki).delete(_id);
+			await xU.$orm(ModelWiki).delete(_id);
 			ctx.body = xU.$response({});
 		} catch (e) {
 			xU.applog.error(e.message);

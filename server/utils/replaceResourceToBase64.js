@@ -5,7 +5,7 @@ const fs = require("fs");
 	const { ModelResource } = require("../models/Resource");
 	const path = require("path");
 
-	let resourceInst = xU.orm(ModelResource);
+	let resourceInst = xU.$orm(ModelResource);
 
 	let TARGET_PREFIX = xU.path.join(
 		xU.var.APP_ROOT_SERVER_DIR,

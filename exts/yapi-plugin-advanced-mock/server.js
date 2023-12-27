@@ -41,7 +41,7 @@ module.exports = function () {
 
 	async function checkCase(ctx, interfaceId) {
 		let reqParams = Object.assign({}, ctx.query, ctx.request.body);
-		let caseInst = xU.orm(modelCase);
+		let caseInst = xU.$orm(modelCase);
 
 		// let ip = ctx.ip.match(/\d+.\d+.\d+.\d+/)[0];
 		// request.ip
@@ -92,7 +92,7 @@ module.exports = function () {
 	}
 
 	async function handleByCase(caseData) {
-		let caseInst = xU.orm(modelCase);
+		let caseInst = xU.$orm(modelCase);
 		let result = await caseInst.get({
 			_id: caseData._id
 		});
@@ -160,11 +160,11 @@ module.exports = function () {
 		});
 	});
 	this.bindHook("interface_del", async function (id) {
-		let inst = xU.orm(advModel);
+		let inst = xU.$orm(advModel);
 		await inst.delByInterfaceId(id);
 	});
 	this.bindHook("project_del", async function (id) {
-		let inst = xU.orm(advModel);
+		let inst = xU.$orm(advModel);
 		await inst.delByProjectId(id);
 	});
 	/**
@@ -206,7 +206,7 @@ module.exports = function () {
 			context.delay = data.delay;
 			return true;
 		}
-		let inst = xU.orm(advModel);
+		let inst = xU.$orm(advModel);
 		let data = await inst.get(interfaceId);
 
 		if (!data || !data.enable || !data.mock_script) {

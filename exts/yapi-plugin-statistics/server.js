@@ -71,7 +71,7 @@ module.exports = function () {
 			ip: ip,
 			date: commons.formatYMD(new Date())
 		};
-		let inst = xU.orm(statisModel);
+		let inst = xU.$orm(statisModel);
 
 		try {
 			inst.save(data).then();

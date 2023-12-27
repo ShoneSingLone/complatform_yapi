@@ -11,7 +11,7 @@ let cpu = require("cpu-load");
 class statisMockController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelStatisMock = xU.orm(ModelStatisMock);
+		this.modelStatisMock = xU.$orm(ModelStatisMock);
 	}
 
 	/**

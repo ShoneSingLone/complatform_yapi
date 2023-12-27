@@ -7,9 +7,9 @@ const interfaceSyncUtils = require("../interfaceSyncUtils");
 class syncController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.syncModel = xU.orm(syncModel);
+		this.syncModel = xU.$orm(syncModel);
 
-		this.interfaceSyncUtils = xU.orm(interfaceSyncUtils);
+		this.interfaceSyncUtils = xU.$orm(interfaceSyncUtils);
 	}
 
 	/**

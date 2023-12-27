@@ -15,8 +15,8 @@ class SyncUtils {
 			"-------------------------------------swaggerSyncUtils constructor-----------------------------------------------"
 		);
 		this.ctx = ctx;
-		this.openController = xU.orm(openController);
-		this.syncModel = xU.orm(syncModel);
+		this.openController = xU.$orm(openController);
+		this.syncModel = xU.$orm(syncModel);
 		this.tokenModel = orm.token;
 
 		this.init();

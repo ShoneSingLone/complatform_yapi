@@ -6,8 +6,8 @@ const config = require("./index");
 class advMockController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.modelAdv = xU.orm(ModelAdv);
-		this.modelCase = xU.orm(ModelCase);
+		this.modelAdv = xU.$orm(ModelAdv);
+		this.modelCase = xU.$orm(ModelCase);
 	}
 
 	async getMock(ctx) {

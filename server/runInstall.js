@@ -36,7 +36,7 @@ const { ModelResource } = require("./models/Resource");
 		});
 
 		(function () {
-			let resourceInst = xU.orm(ModelResource);
+			let resourceInst = xU.$orm(ModelResource);
 			var bitmap = fs.readFileSync(
 				path.resolve(__dirname, "./uploads/RESOURCE_ASSETS/common/404.png")
 			);
