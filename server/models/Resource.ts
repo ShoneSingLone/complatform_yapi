@@ -1,6 +1,6 @@
 const ModelBase = require("server/models/base");
 
-exports.ModelResource = class ModelResource extends ModelBase {
+module.exports = class ModelResource extends ModelBase {
 	getName() {
 		return "resource";
 	}

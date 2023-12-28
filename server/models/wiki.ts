@@ -70,4 +70,4 @@ class ModelWiki extends ModelBase {
 	}
 }
 
-exports.ModelWiki = ModelWiki;
+module.exports = ModelWiki;

@@ -4,12 +4,12 @@ const asyncFs = require("fs").promises;
 
 async function main(params) {
 	const [dir, files] = await _n.asyncAllDirAndFile([
-		path.resolve(__dirname, "../server")
+		path.resolve(__dirname, "../server/plugins/pluginAutowareRoutes/swagger_assets")
 	]);
 
 	_n.each(files, async i => {
-		if (path.extname(i) === ".js") {
-			await asyncFs.rename(i, i.replace(/.js$/, ".ts"));
+		if (path.extname(i) === ".ts") {
+			await asyncFs.rename(i, i.replace(/.ts$/, ".js"));
 		}
 	});
 }

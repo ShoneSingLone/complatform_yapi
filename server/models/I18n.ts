@@ -86,4 +86,4 @@ class ModelI18n extends ModelBase {
 	}
 }
 
-exports.ModelI18n = ModelI18n;
+module.exports = ModelI18n;

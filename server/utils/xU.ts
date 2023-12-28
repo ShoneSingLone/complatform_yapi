@@ -42,8 +42,6 @@ global.orm = new Proxy(
 	}
 );
 
-
-
 const mail = (function () {
 	if (yapi_configs.mail) {
 		return nodemailer.createTransport(yapi_configs.mail);
@@ -131,7 +129,6 @@ const applog = {
 		log(msg, "warn");
 	}
 };
-
 
 /**
  * @type {object} any
@@ -462,7 +459,7 @@ function log(msg, type = "info") {
 			} else {
 				errorThrowAt += `\n(${errorAt.split("    at ")[1]})`;
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 	/* let date = new Date(); let year = date.getFullYear();
   let month = date.getMonth() + 1; */
@@ -853,7 +850,7 @@ function handleParamsValue(params, val) {
 	let value = {};
 	try {
 		params = params.toObject();
-	} catch (e) { }
+	} catch (e) {}
 	if (params.length === 0 || val.length === 0) {
 		return params;
 	}

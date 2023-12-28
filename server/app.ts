@@ -8,7 +8,7 @@ async function main() {
 	app._version = Date.now();
 
 	/* 此代码必先调用,后面的代码才可以使用根目录下的文件夹名为别名  */
-	await require("./utils/onFirstLine")();
+	await require("./utils/onFirstLine.ts")();
 	/* base */
 	await require("server/plugin");
 	await require("server/utils/notice");

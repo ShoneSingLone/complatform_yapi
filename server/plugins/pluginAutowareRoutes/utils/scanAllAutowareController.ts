@@ -13,7 +13,7 @@ async function scanAllAutowareController(app) {
 			files.sort(),
 			(target, file) => {
 				const fileName = xU.path.basename(file);
-				const [_, controllerName] = String(fileName).match(/^(.*).js/) || [];
+				const [_, controllerName] = String(fileName).match(/^(.*).ts/) || [];
 				if (controllerName) {
 					target.push([file, controllerName]);
 				}

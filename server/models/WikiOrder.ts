@@ -47,4 +47,4 @@ class ModelWikiOrder extends ModelBase {
 	}
 }
 
-exports.ModelWikiOrder = ModelWikiOrder;
+module.exports = ModelWikiOrder;

@@ -474,7 +474,7 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						let { uid, usedBy } = ctx.payload;
-/*  */						uid = uid ? uid : this.getUid();
+						/*  */ uid = uid ? uid : this.getUid();
 						let avatarInst = orm.avatar;
 						let data = await (function () {
 							if (usedBy) {

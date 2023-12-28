@@ -32,5 +32,4 @@ module.exports = class ModelVerifyCode extends ModelBase {
 			email
 		});
 	}
-}
-
+};

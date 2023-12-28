@@ -3,7 +3,7 @@
 	"version": "1.10.2",
 	"description": "YAPI",
 	"scripts": {
-		"start": "cross-env NODE_ENV=production node server/app.js",
+		"start": "cross-env NODE_ENV=production node server/app.ts",
 		"pull": "git pull && git pull a master && git pull b master",
 		"push": "git push && git push a && git push b",
 		"lint": "prettier --write .",
