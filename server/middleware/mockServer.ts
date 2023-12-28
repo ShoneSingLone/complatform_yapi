@@ -410,7 +410,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 				try {
 					const id = ObjectId(i._id).toString();
 					return id === interfaceData.witchEnv;
-				} catch (error) { }
+				} catch (error) {}
 				return false;
 			});
 			await handleProxy(ctx, {
@@ -445,7 +445,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 					if (
 						_.isString(ctx.request.header["content-type"]) &&
 						ctx.request.header["content-type"].indexOf("multipart/form-data") >
-						-1
+							-1
 					) {
 						ctx.request.body = ctx.request.body.fields;
 					}

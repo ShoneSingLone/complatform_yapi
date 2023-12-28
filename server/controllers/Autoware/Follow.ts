@@ -16,7 +16,6 @@ module.exports = {
 					}
 					try {
 						let result = await orm.project.list(uid);
-
 						ctx.body = xU.$response({
 							list: result
 						});

@@ -4,7 +4,10 @@ const asyncFs = require("fs").promises;
 
 async function main(params) {
 	const [dir, files] = await _n.asyncAllDirAndFile([
-		path.resolve(__dirname, "../server/plugins/pluginAutowareRoutes/swagger_assets")
+		path.resolve(
+			__dirname,
+			"../server/plugins/pluginAutowareRoutes/swagger_assets"
+		)
 	]);
 
 	_n.each(files, async i => {

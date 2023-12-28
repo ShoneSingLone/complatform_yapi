@@ -88,7 +88,7 @@ const STRATEGY = {
 						if (typeof i18nObj === "object") {
 							return i18nObj;
 						}
-					} catch (error) { }
+					} catch (error) {}
 					return [];
 				}
 
