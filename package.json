@@ -118,7 +118,13 @@
 		"url": "0.11.0",
 		"validate-commit-msg": "^2.12.2",
 		"vm2": "^3.8.4",
-		"yapi-plugin-qsso": "^1.1.0"
+		"yapi-plugin-qsso": "^1.1.0",
+		"@types/node": "^20.3.3",
+		"@ventose/utils-node": "^0.0.15",
+		"cross-env": "^7.0.3",
+		"eslint": "^3.19.0",
+		"mime-types": "^2.1.35",
+		"nodemon": "^1.19.4"
 	},
 	"engines": {
 		"node": ">= 7.6.0",
@@ -132,13 +138,5 @@
 			"babel-register"
 		],
 		"babel": "inherit"
-	},
-	"devDependencies": {
-		"@types/node": "^20.3.3",
-		"@ventose/utils-node": "^0.0.15",
-		"cross-env": "^7.0.3",
-		"eslint": "^3.19.0",
-		"mime-types": "^2.1.35",
-		"nodemon": "^1.19.4"
 	}
 }

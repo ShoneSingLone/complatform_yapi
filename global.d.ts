@@ -47,4 +47,7 @@ type t_yapi_configs = {
 declare global {
 	var yapi_configs: t_yapi_configs;
 	var xU: t_all_lodash_and_mine;
+	var orm: {
+		project: Object;
+	};
 }

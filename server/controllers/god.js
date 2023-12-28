@@ -1,19 +1,10 @@
 const ControllerBase = require("server/controllers/base");
-const { ModelI18n } = require("server/models/I18n");
-const { ModelResource } = require("server/models/Resource");
-const { _n } = require("@ventose/utils-node");
 const _ = require("lodash");
 const fs = require("fs");
-const path = require("path");
-const dayjs = require("dayjs");
-const json5 = require("json5");
-const mime = require("mime-types");
 
 class ControllerGod extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
-		this.orm_i18n = xU.$orm(ModelI18n);
-		this.orm_resource = xU.$orm(ModelResource);
 	}
 
 	/*
@@ -44,13 +35,13 @@ const STRATEGY = {
 		const params = _.omit(ctx.params, ["incantations"]);
 		let res;
 		if (params._id) {
-			res = await this.orm_i18n.up(params._id, params);
+			res = await orm.I18n.up(params._id, params);
 		} else {
-			const existedRecord = await this.orm_i18n.detailByKey(params?.key);
+			const existedRecord = await orm.I18n.detailByKey(params?.key);
 			if (existedRecord?._id) {
 				throw new Error(`Key ${params?.key} Duplicated`);
 			}
-			res = await this.orm_i18n.save(params);
+			res = await orm.I18n.save(params);
 		}
 		return { msg: res };
 	},
@@ -59,9 +50,9 @@ const STRATEGY = {
 			msg: await Promise.all(
 				_.map(_.omit(ctx.params, ["incantations"]), async row => {
 					if (row._id) {
-						return this.orm_i18n.up(row._id, row);
+						return orm.I18n.up(row._id, row);
 					} else {
-						return this.orm_i18n.save(row);
+						return orm.I18n.save(row);
 					}
 				})
 			)
@@ -70,18 +61,18 @@ const STRATEGY = {
 	async i18nRecords(ctx) {
 		const { condition } = ctx.params;
 		if (condition && Object.keys(condition)?.length > 0) {
-			return this.orm_i18n.keyValue(condition);
+			return orm.I18n.keyValue(condition);
 		} else {
-			return this.orm_i18n.list();
+			return orm.I18n.list();
 		}
 	},
 	async i18nRecordById(ctx) {
 		const _id = ctx.params._id;
-		return this.orm_i18n.detail({ _id });
+		return orm.I18n.detail({ _id });
 	},
 	async deleteI18nRecords(ctx) {
 		const ids = ctx.params.ids;
-		return this.orm_i18n.deleteMany({ ids });
+		return orm.I18n.deleteMany({ ids });
 	},
 	async importI18nJSON(ctx) {
 		let path = ctx.params?.files?.file?.path;
@@ -97,7 +88,7 @@ const STRATEGY = {
 						if (typeof i18nObj === "object") {
 							return i18nObj;
 						}
-					} catch (error) {}
+					} catch (error) { }
 					return [];
 				}
 
@@ -110,7 +101,7 @@ const STRATEGY = {
 						valueArray: JSON.stringify(valueArray)
 					};
 				});
-				return this.orm_i18n.insertMany(newRecords);
+				return orm.I18n.insertMany(newRecords);
 			} catch (error) {
 				msg = error.message;
 			} finally {

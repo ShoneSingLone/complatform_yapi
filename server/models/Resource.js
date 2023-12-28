@@ -4,13 +4,6 @@ exports.ModelResource = class ModelResource extends ModelBase {
 	getName() {
 		return "resource";
 	}
-	/* 
-hash: null
-lastModifiedDate: Tue Jul 11 2023 23:24:36 GMT+0800 (中国标准时间)
-name: 'image.png'
-path: 'D:\\Users\\abbor\\Documents\\github\\yapi\\server\\uploads\\upload_76306635c45646473fec671f374c0617.png'
-size: 1619
-type: 'image/png' */
 
 	getSchema() {
 		return {
