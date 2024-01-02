@@ -1,6 +1,6 @@
 const ModelBase = require("server/models/base");
 
-module.exports = class ModelResource extends ModelBase {
+class ModelResource extends ModelBase {
 	getName() {
 		return "resource";
 	}
@@ -71,4 +71,6 @@ module.exports = class ModelResource extends ModelBase {
 			)
 			.limit(10);
 	}
-};
+}
+
+module.exports = ModelResource;

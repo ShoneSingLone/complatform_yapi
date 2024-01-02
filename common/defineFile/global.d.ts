@@ -2,6 +2,8 @@ import { t_orm, t_xU } from "./customType";
 
 declare global {
 	var yapi_configs: {
+		RESOURCE_ASSETS_REMOTE: string;
+		passsalt?: string;
 		isCloseRegister?: boolean;
 		/*如果有 对象属性为plugin名称 value也是一个object ，是配置信息*/
 		/* *isUsePlugin: {

@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const { _n } = require("@ventose/utils-node");
+var esprima = require("esprima-next");
+var { traverse, getCode } = require("esprima-ast-utils");
 
 (async function () {
 	await require("../../server/utils/onFirstLine.ts")();
@@ -29,38 +31,36 @@ const { _n } = require("@ventose/utils-node");
 		const [, files] = await _n.asyncAllDirAndFile([
 			path.resolve(__dirname, "../../server/models")
 		]);
-		const ormTypes = _.map(files, fileName => {
-			const prop = path.basename(fileName).replace(/.ts$/, "");
-			if ("base" === prop) {
-				return "";
-			}
-			const CurrentModel = require(fileName);
-			let currentModel = new CurrentModel();
-			let subTypeArray = [];
-			for (let prop in currentModel) {
-				const fn = currentModel[prop];
-				let type = typeof fn;
-				if (type === "function") {
-					type = `Function`;
+		const ormTypes = await Promise.all(
+			_.map(files, async fileName => {
+				const prop = path.basename(fileName).replace(/.ts$/, "");
+				if ("base" === prop) {
+					return "";
 				}
-				subTypeArray.push(`${prop}:${type};`);
-			}
 
-			for (let prop in Object.getOwnPropertyNames(currentModel.__proto__)) {
-				console.log(prop);
-				// const fn = currentModel[prop];
-				// let type = typeof fn;
-				// if (type === "function") {
-				// 	type = `Function`;
-				// }
-				// subTypeArray.push(`${prop}:${type};`);
-			}
-			const subTypes = subTypeArray.join("\n");
+				const doc = await fs.promises.readFile(fileName, "utf8");
+				var ast = await esprima.parseScript(doc, {
+					comment: false,
+					jsx: false,
+					loc: false,
+					range: false
+				});
 
-			return `${prop}:{
+				let subTypeArray = [];
+				traverse(ast, function (node) {
+					if (node.type === "ClassDeclaration") {
+						_.each(node.body.body, method => {
+							subTypeArray.push(`${method.key.name}:Function;`);
+						});
+					}
+				});
+				const subTypes = subTypeArray.join("\n");
+				return `${prop}:{
                 ${subTypes}
             };`;
-		});
+			})
+		);
+
 		types.push(`export type t_orm = {
             ${ormTypes.join("\n")}
         }; `);
@@ -70,6 +70,6 @@ const { _n } = require("@ventose/utils-node");
     ${types.join("\n\n")}
     `;
 
-	// await fs.promises.writeFile("./customType.ts", content, "utf-8");
+	await fs.promises.writeFile("./customType.ts", content, "utf-8");
 	throw new Error("🚀");
 })();

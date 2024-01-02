@@ -54,6 +54,7 @@ module.exports = {
 							after_script: "string",
 							project_mock_script: "string"
 						});
+						const { basepath, name, group_id } = params;
 
 						if (!id) {
 							return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
@@ -66,19 +67,17 @@ module.exports = {
 						let projectData = await orm.project.get(id);
 
 						if (basepath) {
-							if ((basepath = this.handleBasepath(basepath)) === false) {
+							if (!this.handleBasepath(basepath)) {
 								return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
 							}
 						}
 
 						if (projectData.name === name) {
-							delete name;
+							delete projectData.name;
 						}
 
-						if (name) {
-							let count = await xU
-								.orm(ModelProject)
-								.checkNameRepeat(name, group_id);
+						if (projectData.name) {
+							let count = await orm.project.checkNameRepeat(name, group_id);
 							if (count > 0) {
 								return (ctx.body = xU.$response(null, 401, "已存在的项目名"));
 							}

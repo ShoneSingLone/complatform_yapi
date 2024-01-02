@@ -5,7 +5,7 @@ const { ModelResource } = require("server/models/Resource");
 const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
 
-let TARGET_PREFIX = xU.path.join(
+let TARGET_PREFIX = path.join(
 	xU.var.APP_ROOT_SERVER_DIR,
 	xU.var.UPLOADS,
 	xU.var.RESOURCE_ASSETS
@@ -82,10 +82,10 @@ module.exports = {
 							uploadBy: this.$uid,
 							add_time
 						};
-						const res = await xU.$orm(ModelResource).save(wikiInfo);
-						ctx.body = xU.resReturn({ _id: res._id });
+						const res = await orm.Resource.save(wikiInfo);
+						ctx.body = xU.$response({ _id: res._id });
 					} catch (e) {
-						ctx.body = xU.resReturn(null, 400, e.message);
+						ctx.body = xU.$response(null, 400, e.message);
 						xU.applog.error(e.message);
 					}
 				}
@@ -121,14 +121,14 @@ module.exports = {
 						const { file } = files;
 						const { useFor } = fields;
 						const sourcePath = file.path;
-						let targetPath = xU.path.resolve(
+						let targetPath = path.resolve(
 							TARGET_PREFIX,
 							useFor,
 							xU.dayjs().format("YYYY_MM_DD")
 						);
 						await _n.asyncSafeMakeDir(targetPath);
-						const basename = xU.path.basename(sourcePath);
-						targetPath = xU.path.resolve(targetPath, basename);
+						const basename = path.basename(sourcePath);
+						targetPath = path.resolve(targetPath, basename);
 						await xU.fs.promises.copyFile(sourcePath, targetPath);
 						await xU.fs.promises.unlink(sourcePath);
 						const wikiInfo = {
@@ -140,7 +140,7 @@ module.exports = {
 							uploadBy: this.$uid,
 							add_time: xU.time()
 						};
-						const res = await xU.$orm(ModelResource).save(wikiInfo);
+						const res = await orm.Resource.save(wikiInfo);
 						ctx.body = xU.$response({ _id: res._id });
 					} catch (e) {
 						xU.applog.error(e.message);
@@ -164,9 +164,10 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						const targetResource = await xU
-							.orm(ModelResource)
-							.getResourceById(ctx.query.id);
+						const targetResource = await orm.Resource.getResourceById(
+							ctx.query.id
+						);
+						var type;
 						/* base64 存储 */
 						if (targetResource?.basecode) {
 							type = targetResource.type;
@@ -177,7 +178,7 @@ module.exports = {
 
 						/* 文件形式存储，需要path路径 */
 						if (targetResource) {
-							let targetPath = xU.path.resolve(
+							let targetPath = path.resolve(
 								`${TARGET_PREFIX}${targetResource.path}`
 							);
 							const isExist = xU.fileExist(targetPath);
@@ -187,9 +188,9 @@ module.exports = {
 								ctx.set("Content-Type", mime.lookup(targetResource.path));
 								ctx.body = xU.fs.createReadStream(targetPath);
 							} else {
-								const targetResource = await xU
-									.orm(ModelResource)
-									.getResourceByName("SYSTEM_404");
+								const targetResource = await orm.Resource.getResourceByName(
+									"SYSTEM_404"
+								);
 								ctx.set("Content-type", "image/png");
 								ctx.body = returnBase64Body(targetResource.basecode);
 							}
@@ -219,7 +220,7 @@ module.exports = {
 							if (dirpath === "/") {
 								throw new Error("auth");
 							}
-							let targetPath = xU.path.resolve(
+							let targetPath = path.resolve(
 								yapi_configs.RESOURCE_ASSETS_REMOTE,
 								dirpath || ""
 							);
@@ -255,7 +256,7 @@ module.exports = {
 								throw new Error("auth");
 							}
 							dirpath = dirpath.replace(/^\//, "");
-							let targetPath = xU.path.resolve(
+							let targetPath = path.resolve(
 								yapi_configs.RESOURCE_ASSETS_REMOTE,
 								dirpath || ""
 							);
@@ -264,7 +265,7 @@ module.exports = {
 							if (stat.isDirectory()) {
 								const dirlsArray = await fs.promises.readdir(targetPath);
 								const dirname = path.dirname(targetPath);
-								const rootDirName = xU.path.resolve(
+								const rootDirName = path.resolve(
 									yapi_configs.RESOURCE_ASSETS_REMOTE
 								);
 
@@ -330,7 +331,7 @@ module.exports = {
 				async handler(ctx) {
 					const { headers, payload } = ctx;
 					const { id: dirpath } = payload;
-					let resourcePath = xU.path.resolve(
+					let resourcePath = path.resolve(
 						yapi_configs.RESOURCE_ASSETS_REMOTE,
 						dirpath || ""
 					);
