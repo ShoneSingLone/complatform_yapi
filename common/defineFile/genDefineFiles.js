@@ -34,19 +34,29 @@ const { _n } = require("@ventose/utils-node");
 			if ("base" === prop) {
 				return "";
 			}
-			const currModel = require(fileName);
-			let model = new currModel();
-			for (let key in model) {
-				console.log(key);
-			}
-
-			const subTypes = _.map(model, (fn, prop) => {
+			const CurrentModel = require(fileName);
+			let currentModel = new CurrentModel();
+			let subTypeArray = [];
+			for (let prop in currentModel) {
+				const fn = currentModel[prop];
 				let type = typeof fn;
 				if (type === "function") {
 					type = `Function`;
 				}
-				return `${prop}:${type};`;
-			}).join("\n");
+				subTypeArray.push(`${prop}:${type};`);
+			}
+
+			for (let prop in Object.getOwnPropertyNames(currentModel.__proto__)) {
+				console.log(prop);
+				// const fn = currentModel[prop];
+				// let type = typeof fn;
+				// if (type === "function") {
+				// 	type = `Function`;
+				// }
+				// subTypeArray.push(`${prop}:${type};`);
+			}
+			const subTypes = subTypeArray.join("\n");
+
 			return `${prop}:{
                 ${subTypes}
             };`;
@@ -60,6 +70,6 @@ const { _n } = require("@ventose/utils-node");
     ${types.join("\n\n")}
     `;
 
-	await fs.promises.writeFile("./customType.ts", content, "utf-8");
+	// await fs.promises.writeFile("./customType.ts", content, "utf-8");
 	throw new Error("🚀");
 })();

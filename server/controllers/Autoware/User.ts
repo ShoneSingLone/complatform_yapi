@@ -1,5 +1,3 @@
-const { ModelVerifyCode } = require("server/models/VerifyCode");
-
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const { customCookies } = require("server/utils/customCookies");
