@@ -868,9 +868,9 @@ function handleParamsValue(params, val) {
 }
 
 async function getCaseList(id) {
-	const caseInst = orm(ModelInterfaceCase);
-	const colInst = orm(ModelInterfaceCol);
-	const interfaceInst = orm(ModelInterface);
+	const caseInst = orm.interfaceCase;
+	const colInst = orm.interfaceCol;
+	const interfaceInst = orm.interface;
 
 	let resultList = await caseInst.list(id, "all");
 	let colData = await colInst.get(id);
@@ -922,7 +922,7 @@ function convertString(variable) {
 }
 
 async function runCaseScript(params, colId, interfaceId) {
-	const colInst = orm(ModelInterfaceCol);
+	const colInst = orm.interfaceCol;
 	let colData = await colInst.get(colId);
 	const logs = [];
 	const context = {
@@ -956,7 +956,7 @@ async function runCaseScript(params, colId, interfaceId) {
 		}
 
 		if (colData.checkResponseSchema) {
-			const interfaceInst = orm(ModelInterface);
+			const interfaceInst = orm.interface;
 			let interfaceData = await interfaceInst.get(interfaceId);
 			if (interfaceData.res_body_is_json_schema && interfaceData.res_body) {
 				let schema = JSON.parse(interfaceData.res_body);
@@ -995,7 +995,7 @@ ${JSON.stringify(schema, null, 2)}`;
 
 async function getUserdata(uid, role) {
 	role = role || "dev";
-	let userInst = orm(ModelUser);
+	let userInst = orm.user;
 	let userData = await userInst.findById(uid);
 	if (!userData) {
 		return null;
