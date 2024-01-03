@@ -1,6 +1,5 @@
 const Koa = require("koa");
 const KoaWS = require("koa-websocket");
-const path = require("path");
 
 async function main() {
 	const koaInstance = new Koa();
@@ -30,5 +29,5 @@ async function main() {
 try {
 	main();
 } catch (error) {
-	console.log("🚀 ~ file: app.js:99 ~ error", error);
+	console.log("🚀app error", error);
 }
