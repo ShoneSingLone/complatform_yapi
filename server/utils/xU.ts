@@ -1,11 +1,6 @@
 const CryptoJS = require("crypto-js");
 const dayjs = require("dayjs");
 const sha1 = require("sha1");
-const ModelProject = require("server/models/project");
-const ModelUser = require("server/models/user");
-const ModelInterfaceCol = require("server/models/interfaceCol");
-const ModelInterfaceCase = require("server/models/interfaceCase");
-const ModelInterface = require("server/models/interface");
 const json5 = require("json5");
 const _ = require("lodash");
 const Ajv = require("ajv");
@@ -29,7 +24,7 @@ global.orm = new Proxy(
 			return (
 				target[modelName] ||
 				(function () {
-					let Model = require(`server/models/${modelName}`);
+					let Model = require(`server/models/${String(modelName)}`);
 					target[modelName] = new Model();
 					return target[modelName];
 				})()
@@ -83,14 +78,6 @@ function $orm(ormModel, ...args) {
 		}
 	}
 	return inst;
-}
-
-function delInst(m) {
-	try {
-		MAP_ORM.delete(m);
-	} catch (err) {
-		console.error(err); // eslint-disable-line
-	}
 }
 
 function storageCreator(id) {
