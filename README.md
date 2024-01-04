@@ -22,3 +22,6 @@ db.col.update(
 ```
 
 Ajv 接口校验 scheme 的参数
+
+
+[如何使用JavaScript嵌套函数从jsDoc创建类型定义(.d.ts)文件。](https://www.volcengine.com/theme/4203294-R-7-1)
