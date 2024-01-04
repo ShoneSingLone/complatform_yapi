@@ -1,8 +1,11 @@
+const iconv = require('iconv-lite');
+const fs = require("fs");
 const Mock = require("mockjs");
 const filter = require("./power-string").filter;
 const stringUtils = require("./power-string").utils;
 const json5 = require("json5");
 const Ajv = require("ajv");
+
 /**
  * 作用：解析规则串 key ，然后根据规则串的规则以及路径找到在 json 中对应的数据
  * 规则串：$.{key}.{body||params}.{dataPath} 其中 body 为返回数据，params 为请求数据，datapath 为数据的路径
@@ -293,3 +296,7 @@ exports.schemaValidator = function (schema, params) {
 		};
 	}
 };
+
+
+exports.iconv = iconv;
+exports.fs = fs;

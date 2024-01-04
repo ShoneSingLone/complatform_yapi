@@ -24,6 +24,7 @@ module.exports = function appListen(
 	app.server.on("error", function handleAppError(e) {
 		if (e.code === "EADDRINUSE") {
 			setTimeout(() => {
+				app.server.close();
 				appListen(app, ++currPort, "Address in use, retrying...");
 			}, 100);
 		}
