@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "yapi",
+            "script": "npm",
+            "args" : "start"
+        }
+    ]
+}
