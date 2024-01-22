@@ -24,14 +24,7 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					/**
-					 * @type ModelProject
-					 */
 					const modelProject = await orm.project;
-
-					/**
-					 * @type ModelInterface
-					 */
 					const modelInterface = await orm.interface;
 
 					let { project_id, page, limit, status, tag } = ctx.payload || {};
