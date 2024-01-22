@@ -355,16 +355,6 @@ let routerConfig = {
 			method: "get"
 		},
 		{
-			action: "addCat",
-			path: "add_cat",
-			method: "post"
-		},
-		{
-			action: "upCat",
-			path: "up_cat",
-			method: "post"
-		},
-		{
 			action: "delCat",
 			path: "del_cat",
 			method: "post"

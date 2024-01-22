@@ -109,26 +109,13 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					/**
-					 * @type ModelProject
-					 */
-					const modelProject = await orm.project;
-					/**
-					 * @type ModelInterfaceCategory
-					 */
-					const modelInterfaceCategory = await orm.interfaceCategory;
-					/**
-					 * @type ModelInterface
-					 */
-					const modelInterface = await orm.interface;
-
 					let { project_id } = ctx.payload;
 
 					if (!project_id) {
 						return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 					}
 
-					let project = await modelProject.getBaseInfo(project_id);
+					let project = await orm.project.getBaseInfo(project_id);
 
 					if (!project) {
 						return (ctx.body = xU.$response(null, 406, "不存在的项目"));
@@ -144,11 +131,11 @@ module.exports = {
 
 					try {
 						/* 获取项目接口的分类 */
-						let categoryArray = await modelInterfaceCategory.list(project_id);
+						let categoryArray = await orm.interfaceCategory.list(project_id);
 						const interfaceMenuTree = [];
 						for (const categoryMongoose of categoryArray) {
 							let category = categoryMongoose.toObject();
-							let interfaceArray = await modelInterface.listByCatid(
+							let interfaceArray = await orm.interface.listByCatid(
 								category._id
 							);
 							category.list = [];
@@ -164,6 +151,140 @@ module.exports = {
 						ctx.body = xU.$response(interfaceMenuTree);
 					} catch (err) {
 						ctx.body = xU.$response(null, 402, err.message);
+					}
+				}
+			}
+		},
+		"/interface/up_cat": {
+			post: {
+				summary: "更新分类",
+				description: "更新分类",
+				request: {
+					body: {
+						catid: {
+							required: true,
+							description: "分类ID",
+							type: "string"
+						},
+						name: {
+							required: false,
+							description: "分类名称",
+							type: "string"
+						},
+						desc: {
+							required: true,
+							description: "分类描述",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let { payload } = ctx;
+						let username = this.getUsername();
+						let cate = await orm.interfaceCategory.get(payload.catid);
+						let auth = await this.checkAuth(cate.project_id, "project", "edit");
+
+						if (!auth) {
+							return (ctx.body = xU.$response(null, 400, "没有权限"));
+						}
+
+						let result = await orm.interfaceCategory.up(payload.catid, {
+							name: payload.name,
+							desc: payload.desc,
+							up_time: xU.time()
+						});
+
+						xU.saveLog({
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${
+								cate.project_id
+							}/interface/api/cat_${payload.catid}">${cate.name}</a>`,
+							type: "project",
+							uid: this.getUid(),
+							username: username,
+							typeid: cate.project_id
+						});
+
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 400, e.message);
+					}
+				}
+			}
+		},
+		"/interface/add_cat": {
+			post: {
+				summary: "新增分类",
+				description: "新增分类",
+				request: {
+					body: {
+						project_id: {
+							required: true,
+							description: "所属项目ID",
+							type: "string"
+						},
+						name: {
+							required: false,
+							description: "分类名称",
+							type: "string"
+						},
+						desc: {
+							required: true,
+							description: "分类描述",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let params = ctx.request.body;
+						params = xU.ensureParamsType(params, {
+							name: "string",
+							project_id: "number",
+							desc: "string"
+						});
+
+						if (!params.project_id) {
+							return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
+						}
+						if (!this.$tokenAuth) {
+							let auth = await this.checkAuth(
+								params.project_id,
+								"project",
+								"edit"
+							);
+							if (!auth) {
+								return (ctx.body = xU.$response(null, 400, "没有权限"));
+							}
+						}
+
+						if (!params.name) {
+							return (ctx.body = xU.$response(null, 400, "名称不能为空"));
+						}
+
+						let result = await orm.interfaceCategory.save({
+							name: params.name,
+							project_id: params.project_id,
+							desc: params.desc,
+							uid: this.getUid(),
+							add_time: xU.time(),
+							up_time: xU.time()
+						});
+
+						let username = this.getUsername();
+						xU.saveLog({
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了分类  <a href="/project/${
+								params.project_id
+							}/interface/api/cat_${result._id}">${params.name}</a>`,
+							type: "project",
+							uid: this.getUid(),
+							username: username,
+							typeid: params.project_id
+						});
+
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
 					}
 				}
 			}

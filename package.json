@@ -5,7 +5,7 @@
 	"scripts": {
 		"start": "cross-env NODE_ENV=production node server/app.ts",
 		"lint": "prettier --write .",
-		"install-server": "node server/install.js",
+		"install-server": "node server/runInstall.ts",
 		"test": "ava",
 		"changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
 	},

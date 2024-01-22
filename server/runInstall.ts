@@ -1,12 +1,15 @@
-const { ModelResource } = require("./models/Resource");
-
 (async function () {
-	await require("./utils/onFirstLine")();
+	await require("./utils/onFirstLine.ts")();
 	const path = require("path");
 	const mongoose = require("mongoose");
 	const fs = require("fs-extra");
 	const ModelUser = require("server/models/user");
 
+	let TARGET_PREFIX = path.join(
+		xU.var.APP_ROOT_SERVER_DIR,
+		xU.var.UPLOADS,
+		xU.var.RESOURCE_ASSETS
+	);
 	function install() {
 		const fileExistURL = path.join(xU.var.APP_ROOT_DIR, "..", "yapi.installed");
 		let isExist = xU.fileExist(fileExistURL);
@@ -36,7 +39,7 @@ const { ModelResource } = require("./models/Resource");
 		});
 
 		(function () {
-			let resourceInst = xU.$orm(ModelResource);
+			let resourceInst = orm.resource;
 			var bitmap = fs.readFileSync(
 				path.resolve(__dirname, "./uploads/RESOURCE_ASSETS/common/404.png")
 			);
