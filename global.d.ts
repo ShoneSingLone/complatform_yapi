@@ -1,6 +1,9 @@
-import { t_orm, t_xU } from "./customType";
+import { t_orm, t_xU } from "./common/defineFile/customType";
 
 declare global {
+	var orm: t_orm;
+	var xU: t_xU;
+
 	var yapi_configs: {
 		RESOURCE_ASSETS_REMOTE: string;
 		passsalt?: string;
@@ -46,7 +49,4 @@ declare global {
 			};
 		};
 	};
-
-	var orm: t_orm;
-	var xU: t_xU;
 }

@@ -1,6 +1,382 @@
-const ModelInterface = require("server/models/interface");
-const ModelInterfaceCategory = require("server/models/interfaceCategory");
-const ModelProject = require("server/models/project");
+const { parse: urlParse } = require("url");
+const _ = require("lodash");
+
+function handleHeaders(values) {
+	let isfile = false,
+		isHaveContentType = false;
+	if (values.req_body_type === "form") {
+		values.req_body_form.forEach(item => {
+			if (item.type === "file") {
+				isfile = true;
+			}
+		});
+
+		values.req_headers.map(item => {
+			if (item.name === "Content-Type") {
+				item.value = isfile
+					? "multipart/form-data"
+					: "application/x-www-form-urlencoded";
+				isHaveContentType = true;
+			}
+		});
+		if (isHaveContentType === false) {
+			values.req_headers.unshift({
+				name: "Content-Type",
+				value: isfile
+					? "multipart/form-data"
+					: "application/x-www-form-urlencoded"
+			});
+		}
+	} else if (values.req_body_type === "json") {
+		values.req_headers
+			? values.req_headers.map(item => {
+					if (item.name === "Content-Type") {
+						item.value = "application/json";
+						isHaveContentType = true;
+					}
+			  })
+			: [];
+		if (isHaveContentType === false) {
+			values.req_headers = values.req_headers || [];
+			values.req_headers.unshift({
+				name: "Content-Type",
+				value: "application/json"
+			});
+		}
+	}
+}
+
+async function hander_interface_add(ctx) {
+	let { payload } = ctx;
+
+	if (!this.$tokenAuth) {
+		let auth = await this.checkAuth(payload.project_id, "project", "edit");
+
+		if (!auth) {
+			return (ctx.body = xU.$response(null, 40033, "没有权限"));
+		}
+	}
+	payload.method = payload.method || "GET";
+	payload.res_body_is_json_schema = _.isUndefined(
+		payload.res_body_is_json_schema
+	)
+		? false
+		: payload.res_body_is_json_schema;
+	payload.req_body_is_json_schema = _.isUndefined(
+		payload.req_body_is_json_schema
+	)
+		? false
+		: payload.req_body_is_json_schema;
+	payload.method = payload.method.toUpperCase();
+	payload.req_params = payload.req_params || [];
+	payload.res_body_type = payload.res_body_type
+		? payload.res_body_type.toLowerCase()
+		: "backup";
+	let http_path = urlParse(payload.path, true);
+
+	if (!xU.verifyPath(http_path.pathname)) {
+		return (ctx.body = xU.$response(
+			null,
+			400,
+			"path第一位必需为 /, 只允许由 字母数字-/_:.! 组成"
+		));
+	}
+
+	handleHeaders(payload);
+
+	payload.query_path = {};
+	payload.query_path.path = http_path.pathname;
+	payload.query_path.params = [];
+	Object.keys(http_path.query).forEach(item => {
+		payload.query_path.params.push({
+			name: item,
+			value: http_path.query[item]
+		});
+	});
+
+	let count = await this.model.count(
+		payload.project_id,
+		payload.path,
+		payload.method
+	);
+
+	if (count > 0) {
+		return (ctx.body = xU.$response(
+			null,
+			40022,
+			"已存在的接口:" + payload.path + "[" + payload.method + "]"
+		));
+	}
+
+	let data = Object.assign(payload, {
+		uid: this.getUid(),
+		add_time: xU.time(),
+		up_time: xU.time()
+	});
+
+	xU.handleVarPath(payload.path, payload.req_params);
+
+	if (payload.req_params.length > 0) {
+		data.type = "var";
+		data.req_params = payload.req_params;
+	} else {
+		data.type = "static";
+	}
+
+	// 新建接口的人成为项目dev  如果不存在的话
+	// 命令行导入时无法获知导入接口人的信息，其uid 为 999999
+	let uid = this.getUid();
+
+	if (this.getRole() !== "admin" && uid !== 999999) {
+		let userdata = await xU.getUserdata(uid, "dev");
+		// 检查一下是否有这个人
+		let check = await orm.project.checkMemberRepeat(payload.project_id, uid);
+		if (check === 0 && userdata) {
+			await orm.project.addMember(payload.project_id, [userdata]);
+		}
+	}
+
+	let result = await this.model.save(data);
+	xU.emitHook("interface_add", result).then();
+	this.modelInterfaceCategory.get(payload.catid).then(cate => {
+		let username = this.getUsername();
+		let title = `<a href="/user/profile/${this.getUid()}">${username}</a> 为分类 <a href="/project/${
+			payload.project_id
+		}/interface/api/cat_${payload.catid}">${
+			cate.name
+		}</a> 添加了接口 <a href="/project/${payload.project_id}/interface/api/${
+			result._id
+		}">${data.title}</a> `;
+
+		xU.saveLog({
+			content: title,
+			type: "project",
+			uid: this.getUid(),
+			username: username,
+			typeid: payload.project_id
+		});
+		orm.project
+			.up(payload.project_id, { up_time: new Date().getTime() })
+			.then();
+	});
+
+	await this.autoAddTag(payload);
+
+	ctx.body = xU.$response(result);
+}
+
+const interfaceUpsertRequest = {
+	body: {
+		project_id: {
+			required: true,
+			description: "项目id，不能为空",
+			type: "number"
+		},
+		title: {
+			required: true,
+			description: "接口标题，不能为空",
+			type: "string"
+		},
+		path: {
+			required: true,
+			description: "接口请求路径，不能为空",
+			type: "string"
+		},
+		method: { required: true, description: "请求方式", type: "string" },
+		req_headers: {
+			description: "请求的header信息",
+			type: "array",
+			items: {
+				type: "object",
+				properties: {
+					name: {
+						type: "string",
+						description: "请求的header信息名"
+					},
+					value: {
+						type: "string",
+						description: "请求的header信息值"
+					},
+					required: {
+						type: "string",
+						description: "是否是必须，默认为否"
+					},
+					type: {
+						type: "string",
+						description: "header描述",
+						enum: ["text", "file"]
+					}
+				}
+			}
+		},
+		req_body_type: {
+			required: true,
+			description: "请求方式",
+			type: "string",
+			enum: ["form", "json", "text", "xml"]
+		},
+		req_params: {
+			description: "url search params",
+			type: "array",
+			items: {
+				type: "object",
+				properties: {
+					name: {
+						type: "string",
+						description: "key"
+					},
+					desc: {
+						type: "string",
+						description: "value"
+					}
+				}
+			}
+		},
+		req_body_form: {
+			description:
+				"请求参数,如果请求方式是form，参数是Array数组，其他格式请求参数是字符串",
+			type: "array",
+			items: {
+				type: "object",
+				properties: {
+					name: {
+						type: "string",
+						description: "请求的body"
+					},
+					value: {
+						type: "string",
+						description:
+							"请求参数值，可填写生成规则（mock）。如@email，随机生成一条email"
+					},
+					type: {
+						type: "string",
+						description: "请求参数类型",
+						enum: ["text", "file"]
+					}
+				}
+			}
+		},
+		req_body_other: {
+			required: true,
+			description: "非form类型的请求参数可保存到此字段",
+			type: "string"
+		},
+		/* 响应 */
+		res_body_type: {
+			required: true,
+			description: "响应方式",
+			type: "string",
+			enum: ["json", "text", "xml"]
+		},
+		res_body: {
+			type: "string",
+			description:
+				"响应信息，可填写任意字符串，如果res_body_type是json,则会调用mock功能"
+		},
+		desc: {
+			type: "string",
+			description: "header描述"
+		}
+	}
+};
+
+const minLengthStringField = {
+	type: "string",
+	minLength: 1
+};
+
+const addAndUpCommonField = {
+	desc: "string",
+	status: "string",
+	isProxy: "boolean",
+	witchEnv: "string",
+	req_query: [
+		{
+			name: "string",
+			value: "string",
+			example: "string",
+			desc: "string",
+			required: "string"
+		}
+	],
+	req_headers: [
+		{
+			name: "string",
+			value: "string",
+			example: "string",
+			desc: "string",
+			required: "string"
+		}
+	],
+	req_body_type: "string",
+	req_params: [
+		{
+			name: "string",
+			example: "string",
+			desc: "string"
+		}
+	],
+	req_body_form: [
+		{
+			name: "string",
+			type: {
+				type: "string"
+			},
+			example: "string",
+			desc: "string",
+			required: "string"
+		}
+	],
+	req_body_other: "string",
+	res_body_type: "string",
+	res_body: "string",
+	resBackupJson: "string",
+	custom_field_value: "string",
+	api_opened: "boolean",
+	req_body_is_json_schema: "string",
+	res_body_is_json_schema: "string",
+	markdown: "string",
+	tag: "array"
+};
+
+const SCHEMA_MAP = {
+	add: Object.assign(
+		{
+			"*project_id": "number",
+			"*path": minLengthStringField,
+			"*title": minLengthStringField,
+			"*method": minLengthStringField,
+			"*catid": "number"
+		},
+		addAndUpCommonField
+	),
+	up: Object.assign(
+		{
+			"*id": "number",
+			project_id: "number",
+			path: minLengthStringField,
+			title: minLengthStringField,
+			method: minLengthStringField,
+			catid: "number",
+			switch_notice: "boolean",
+			message: minLengthStringField
+		},
+		addAndUpCommonField
+	),
+	save: Object.assign(
+		{
+			project_id: "number",
+			catid: "number",
+			title: minLengthStringField,
+			path: minLengthStringField,
+			method: minLengthStringField,
+			message: minLengthStringField,
+			switch_notice: "boolean",
+			dataSync: "string"
+		},
+		addAndUpCommonField
+	)
+};
 
 module.exports = {
 	definitions: {},
@@ -24,15 +400,12 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					const modelProject = await orm.project;
-					const modelInterface = await orm.interface;
-
 					let { project_id, page, limit, status, tag } = ctx.payload || {};
 
 					page = page || 1;
 					limit = limit || 10;
 
-					let project = modelProject.getBaseInfo(project_id);
+					let project = orm.project.getBaseInfo(project_id);
 					if (!project) {
 						return (ctx.body = xU.$response(null, 407, "不存在的项目"));
 					}
@@ -50,8 +423,8 @@ module.exports = {
 					try {
 						let result, count;
 						if (limit === "all") {
-							result = await modelInterface.list(project_id);
-							count = await modelInterface.listCount({ project_id });
+							result = await orm.interface.list(project_id);
+							count = await orm.interface.listCount({ project_id });
 						} else {
 							let option = { project_id };
 							if (status) {
@@ -69,12 +442,12 @@ module.exports = {
 								}
 							}
 
-							result = await modelInterface.listByOptionWithPage(
+							result = await orm.interface.listByOptionWithPage(
 								option,
 								page,
 								limit
 							);
-							count = await modelInterface.listCount(option);
+							count = await orm.interface.listCount(option);
 						}
 
 						ctx.body = xU.$response({
@@ -148,6 +521,100 @@ module.exports = {
 				}
 			}
 		},
+		"/interface/upsert": {
+			post: {
+				summary:
+					"保存接口数据，如果接口存在则更新数据，如果接口不存在则添加数据",
+				description: "更新分类",
+				request: interfaceUpsertRequest,
+				async handler(ctx) {
+					let payload = ctx.payload;
+
+					if (!this.$tokenAuth) {
+						let auth = await this.checkAuth(
+							payload.project_id,
+							"project",
+							"edit"
+						);
+						if (!auth) {
+							return (ctx.body = xU.$response(null, 40033, "没有权限"));
+						}
+					}
+					payload.method = payload.method || "GET";
+					payload.method = payload.method.toUpperCase();
+
+					let http_path = urlParse(payload.path, true);
+
+					if (!xU.verifyPath(http_path.path)) {
+						return (ctx.body = xU.$response(
+							null,
+							400,
+							"path第一位必需为 /, 只允许由 字母数字-/_:.! 组成"
+						));
+					}
+
+					let result = await orm.interface.getByPath(
+						payload.project_id,
+						payload.path,
+						payload.method,
+						"_id res_body"
+					);
+
+					if (result.length > 0) {
+						result.forEach(async item => {
+							payload.id = item._id;
+							// console.log(SCHEMA_MAP['up'])
+							let validParams = Object.assign({}, payload);
+							let validResult = xU.validateParams(SCHEMA_MAP.up, validParams);
+							if (validResult.valid) {
+								let data = Object.assign({}, ctx);
+								data.params = validParams;
+
+								if (
+									payload.res_body_is_json_schema &&
+									payload.dataSync === "good"
+								) {
+									try {
+										let new_res_body = xU.json_parse(payload.res_body);
+										let old_res_body = xU.json_parse(item.res_body);
+										data.params.res_body = JSON.stringify(
+											mergeJsonSchema(old_res_body, new_res_body),
+											null,
+											2
+										);
+									} catch (err) {}
+								}
+								await this.up(data);
+							} else {
+								return (ctx.body = xU.$response(
+									null,
+									400,
+									validResult.message
+								));
+							}
+						});
+					} else {
+						let validResult = xU.validateParams(SCHEMA_MAP.add, payload);
+						if (validResult.valid) {
+							const data = { payload };
+							await hander_interface_add.call(this, data);
+						} else {
+							return (ctx.body = xU.$response(null, 400, validResult.message));
+						}
+					}
+					ctx.body = xU.$response(result);
+					// return ctx.body = xU.$response(null, 400, 'path第一位必需为 /, 只允许由 字母数字-/_:.! 组成');
+				}
+			}
+		},
+		"/interface/add": {
+			post: {
+				summary: "添加项目分组",
+				description: "添加项目分组",
+				request: interfaceUpsertRequest,
+				handler: hander_interface_add
+			}
+		},
 		"/interface/up_cat": {
 			post: {
 				summary: "更新分类",
@@ -208,7 +675,7 @@ module.exports = {
 		"/interface/add_cat": {
 			post: {
 				summary: "新增分类",
-				description: "新增分类",
+				description: "新增分类,不允许有同名的",
 				request: {
 					body: {
 						project_id: {
@@ -253,6 +720,14 @@ module.exports = {
 
 						if (!params.name) {
 							return (ctx.body = xU.$response(null, 400, "名称不能为空"));
+						}
+
+						const res = await orm.interfaceCategory.search({
+							project_id: params.project_id,
+							name: params.name
+						});
+						if (res?.length) {
+							return (ctx.body = xU.$response(null, 400, "名称已存在"));
 						}
 
 						let result = await orm.interfaceCategory.save({

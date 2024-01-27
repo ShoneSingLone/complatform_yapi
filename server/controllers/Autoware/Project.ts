@@ -260,6 +260,35 @@ data:data||{}
 				}
 			}
 		},
+		"/project/del": {
+			post: {
+				summary: "删除项目",
+				description: "",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目分组id，不能为空",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let { id } = ctx.payload;
+					if ((await this.checkAuth(id, "project", "danger")) !== true) {
+						return (ctx.body = xU.$response(null, 405, "没有权限"));
+					}
+
+					await orm.interface.delByProjectId(id);
+					await orm.interfaceCol.delByProjectId(id);
+					await orm.interfaceCase.delByProjectId(id);
+					await orm.follow.delByProjectId(id);
+					xU.emitHook("project_del", id).then();
+					let result = await orm.project.del(id);
+					ctx.body = xU.$response(result);
+				}
+			}
+		},
 		"/project/check_project_name": {
 			get: {
 				summary: "检查项目名是否重复",

@@ -163,6 +163,7 @@ export type t_orm = {
 		upColIndex: Function;
 	};
 	interfaceCategory: {
+		search: Function;
 		getName: Function;
 		getSchema: Function;
 		save: Function;

@@ -472,7 +472,7 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						let { uid, usedBy } = ctx.payload;
-						/*  */ uid = uid ? uid : this.getUid();
+						uid = uid ? uid : this.getUid();
 						let avatarInst = orm.avatar;
 						let data = await (function () {
 							if (usedBy) {
@@ -486,7 +486,10 @@ module.exports = {
 
 						if (!data || !data.basecode) {
 							dataBuffer = xU.fs.readFileSync(
-								xU.path.join(xU.var.APP_ROOT_DIR, "static/image/avatar.png")
+								xU.path.join(
+									xU.var.APP_ROOT_DIR,
+									usedBy ? "static/image/favicon.png" : "static/image/avatar.png"
+								)
 							);
 							type = "image/png";
 						} else {
@@ -515,7 +518,8 @@ module.exports = {
 							type: "string"
 						},
 						uid: {
-							description: "用户uid",
+							description:
+								"用户uid 与usedBy对应：分组、项目、接口。。。有_id的都可以",
 							type: "string"
 						},
 						usedBy: {

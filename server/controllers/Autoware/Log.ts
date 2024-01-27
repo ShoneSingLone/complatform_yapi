@@ -104,17 +104,28 @@ module.exports = {
 				}
 			}
 		},
-		/* 获取特定cat_id下最新修改的动态信息 */
 		"/log/list_by_update": {
 			post: {
-				summary: "获取动态列表",
+				summary: "获取特定cat_id下最新修改的动态信息",
 				description: "",
 				request: {
 					body: {
+						type: {
+							required: true,
+							description:
+								"日志记录的分类，分别属性何种类型，需要配合动态ID才能查询出对应的记录",
+							type: "string",
+							enum: ["wiki", "group", "project", "interface"]
+						},
 						typeid: {
 							required: true,
 							description: "动态类型id， 不能为空",
 							type: "number"
+						},
+						apis: {
+							required: true,
+							description: "",
+							type: "array"
 						}
 					}
 				},
@@ -128,8 +139,8 @@ module.exports = {
 							typeid,
 							"basepath"
 						);
-	
-					let basePath = projectDatas.toObject().basepath;
+
+						let basePath = projectDatas.toObject().basepath;
 
 						for (let i = 0; i < apis.length; i++) {
 							let api = apis[i];
@@ -139,7 +150,7 @@ module.exports = {
 										? api.path.substr(basePath.length)
 										: api.path;
 							}
-							let interfaceIdList = await this.modelInterface.getByPath(
+							let interfaceIdList = await orm.interface.getByPath(
 								typeid,
 								api.path,
 								api.method,

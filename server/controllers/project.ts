@@ -299,37 +299,6 @@ class projectController extends ControllerBase {
 	}
 
 	/**
-	 * 删除项目
-	 * @interface /project/del
-	 * @method POST
-	 * @category project
-	 * @foldnumber 10
-	 * @param {Number} id 项目id，不能为空
-	 * @returns {Object}
-	 * @example ./api/project/del.json
-	 */
-
-	async del(ctx) {
-		let id = ctx.params.id;
-
-		if ((await this.checkAuth(id, "project", "danger")) !== true) {
-			return (ctx.body = xU.$response(null, 405, "没有权限"));
-		}
-
-		let interfaceInst = orm.interface;
-		let interfaceColInst = orm.interfaceCol;
-		let interfaceCaseInst = orm.interfaceCase;
-
-		await interfaceInst.delByProjectId(id);
-		await interfaceCaseInst.delByProjectId(id);
-		await interfaceColInst.delByProjectId(id);
-		await this.modelFollow.delByProjectId(id);
-		xU.emitHook("project_del", id).then();
-		let result = await this.model.del(id);
-		ctx.body = xU.$response(result);
-	}
-
-	/**
 	 * 修改项目成员角色
 	 * @interface /project/change_member_role
 	 * @method POST

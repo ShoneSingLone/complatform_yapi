@@ -29,7 +29,7 @@
 
 - 修复测试集合部分情况下闪动问题
 - 修改 ldap filter 的匹配规则，使其可以匹配&和|操作符 Merge pull request #1631 from vvkkhjt/master
-- support switch_notice for /interface/save Merge pull request #1646 from tangcent/feature/openapi_notice
+- support switch_notice for /interface/upsert Merge pull request #1646 from tangcent/feature/openapi_notice
 - 自动化测试时服务端测试 node 默认 2 分钟没有返回就直接断掉连接，可以手动设置一个超时时间 Merge pull request #1675 from liugddx/master
 - 修复导出的 swagger.json 中 required 一直是 false 的 bug
 - 修复 schema2json 传 required 参数时，导致 faker 失败

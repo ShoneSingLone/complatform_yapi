@@ -50,6 +50,11 @@ class ModelInterfaceCategory extends ModelBase {
 			.exec();
 	}
 
+	search(condition) {
+		/* { project_id: project_id } */
+		return this.model.find(condition).sort({ index: 1 }).exec();
+	}
+
 	del(id) {
 		return this.model.remove({
 			_id: id

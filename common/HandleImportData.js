@@ -110,7 +110,7 @@ async function handle(
 			if (dataSync !== "normal") {
 				// 开启同步功能
 				count++;
-				let apipath = "/api/interface/save";
+				let apipath = "/api/interface/upsert";
 				if (isNode) {
 					apipath = "http://127.0.0.1:" + port + apipath;
 				}
