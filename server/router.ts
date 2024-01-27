@@ -291,16 +291,6 @@ let routerConfig = {
 			action: "checkProjectName",
 			path: "check_project_name",
 			method: "get"
-		},
-		{
-			action: "copy",
-			path: "copy",
-			method: "post"
-		},
-		{
-			action: "swaggerUrl",
-			path: "swagger_url",
-			method: "get"
 		}
 	],
 	interface: [

@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const axios = require("axios");
 async function checkProjectName(name, groupId) {
 	if (!name) {
 		return "项目名不能为空";
@@ -492,6 +493,51 @@ data:data||{}
 						ctx.body = xU.$response(result);
 					} catch (err) {
 						ctx.body = xU.$response(null, 402, err.message);
+					}
+				}
+			}
+		},
+		"/project/swagger_url": {
+			post: {
+				summary: " 输入 swagger url 的时候 node 端请求数据",
+				description: "",
+				request: {
+					body: {
+						url: {
+							required: true,
+							description: "去取数据的url",
+							type: "string"
+						},
+						type: {
+							required: true,
+							description: "数据对应的标准类型",
+							type: "string",
+							/* "postman" */
+							enum: ["swagger"]
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						const { url, type } = ctx.payload;
+						const { data } = await axios.get(url);
+						let res;
+						if (data == null || typeof data !== "object") {
+							throw new Error("返回数据格式不是 JSON");
+						}
+
+						if (type === "swagger") {
+							const swaggerParse = require("exts/yapi-plugin-import-swagger/run");
+							res = await swaggerParse(data);
+						}
+
+						if (res) {
+							ctx.body = xU.$response(res);
+						} else {
+							throw new Error("获取失败");
+						}
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, String(err));
 					}
 				}
 			}

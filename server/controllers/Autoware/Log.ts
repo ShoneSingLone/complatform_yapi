@@ -124,11 +124,12 @@ module.exports = {
 					try {
 						let { typeid, type, apis } = ctx.payload;
 						let list = [];
-						let projectDatas = await modelProject.getBaseInfo(
+						let projectDatas = await orm.project.getBaseInfo(
 							typeid,
 							"basepath"
 						);
-						let basePath = projectDatas.toObject().basepath;
+	
+					let basePath = projectDatas.toObject().basepath;
 
 						for (let i = 0; i < apis.length; i++) {
 							let api = apis[i];

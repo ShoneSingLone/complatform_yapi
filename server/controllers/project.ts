@@ -739,20 +739,6 @@ class projectController extends ControllerBase {
 
 		return (ctx.body = xU.$response(queryList, 0, "ok"));
 	}
-
-	// 输入 swagger url 的时候 node 端请求数据
-	async swaggerUrl(ctx) {
-		try {
-			const { url } = ctx.request.query;
-			const { data } = await axios.get(url);
-			if (data == null || typeof data !== "object") {
-				throw new Error("返回数据格式不是 JSON");
-			}
-			ctx.body = xU.$response(data);
-		} catch (err) {
-			ctx.body = xU.$response(null, 402, String(err));
-		}
-	}
 }
 
 module.exports = projectController;
