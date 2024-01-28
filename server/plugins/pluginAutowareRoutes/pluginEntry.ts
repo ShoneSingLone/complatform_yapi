@@ -1,5 +1,5 @@
-const koaStatic = require("koa-static");
 const ControllerBase = require("server/controllers/base");
+const koaStatic = require("koa-static");
 const RouteMap = new Map();
 
 /* isHideInSwagger */

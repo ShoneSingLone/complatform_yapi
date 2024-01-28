@@ -1,6 +1,22 @@
+const showDiffMsg = require("common/diff-view");
+const jsondiffpatch = require("jsondiffpatch");
+const formattersHtml = jsondiffpatch.formatters.html;
 const mergeJsonSchema = require("../../../common/mergeJsonSchema");
 const { parse: urlParse } = require("url");
 const _ = require("lodash");
+
+function diffHTML(html) {
+	if (html.length === 0) {
+		return `<span style="color: #555">没有改动，该操作未改动Api数据</span>`;
+	}
+
+	return html.map(item => {
+		return `<div>
+  <h4 class="title">${item.title}</h4>
+  <div>${item.content}</div>
+</div>`;
+	});
+}
 
 async function autoAddTag(params) {
 	//检查是否提交了目前不存在的tag
@@ -565,6 +581,186 @@ module.exports = {
 				}
 			}
 		},
+		"/interface/up": {
+			post: {
+				summary: `更新接口`,
+				description: "更新接口",
+				request: interfaceUpsertRequest,
+				async handler(ctx) {
+					let params = ctx.payload;
+
+					if (!_.isUndefined(params.method)) {
+						params.method = params.method || "GET";
+						params.method = params.method.toUpperCase();
+					}
+
+					let id = params.id;
+					params.message = params.message || "";
+					params.message = params.message.replace(/\n/g, "<br>");
+					// params.res_body_is_json_schema = _.isUndefined (params.res_body_is_json_schema) ? true : params.res_body_is_json_schema;
+					// params.req_body_is_json_schema = _.isUndefined(params.req_body_is_json_schema) ?  true : params.req_body_is_json_schema;
+
+					handleHeaders(params);
+
+					let interfaceData = await orm.interface.get(id);
+					if (!interfaceData) {
+						return (ctx.body = xU.$response(null, 400, "不存在的接口"));
+					}
+					if (!this.$tokenAuth) {
+						let auth = await this.checkAuth(
+							interfaceData.project_id,
+							"project",
+							"edit"
+						);
+						if (!auth) {
+							return (ctx.body = xU.$response(null, 400, "没有权限"));
+						}
+					}
+
+					let data = Object.assign(
+						{
+							up_time: xU.time()
+						},
+						params
+					);
+
+					if (params.path) {
+						let http_path;
+						http_path = urlParse(params.path, true);
+
+						if (!xU.verifyPath(http_path.pathname)) {
+							return (ctx.body = xU.$response(
+								null,
+								400,
+								"path第一位必需为 /, 只允许由 字母数字-/_:.! 组成"
+							));
+						}
+						params.query_path = {};
+						params.query_path.path = http_path.pathname;
+						params.query_path.params = [];
+						Object.keys(http_path.query).forEach(item => {
+							params.query_path.params.push({
+								name: item,
+								value: http_path.query[item]
+							});
+						});
+						data.query_path = params.query_path;
+					}
+
+					if (
+						params.path &&
+						(params.path !== interfaceData.path ||
+							params.method !== interfaceData.method)
+					) {
+						let count = await orm.interface.count(
+							interfaceData.project_id,
+							params.path,
+							params.method
+						);
+						if (count > 0) {
+							return (ctx.body = xU.$response(
+								null,
+								401,
+								"已存在的接口:" + params.path + "[" + params.method + "]"
+							));
+						}
+					}
+
+					if (!_.isUndefined(data.req_params)) {
+						if (Array.isArray(data.req_params) && data.req_params.length > 0) {
+							data.type = "var";
+						} else {
+							data.type = "static";
+							data.req_params = [];
+						}
+					}
+					let result = await orm.interface.up(id, data);
+					let username = this.getUsername();
+					let CurrentInterfaceData = await orm.interface.get(id);
+					let logData = {
+						interface_id: id,
+						cat_id: data.catid,
+						current: CurrentInterfaceData.toObject(),
+						old: interfaceData.toObject()
+					};
+
+					orm.interfaceCategory.get(interfaceData.catid).then(cate => {
+						let diffView2 = showDiffMsg(jsondiffpatch, formattersHtml, logData);
+						if (diffView2.length <= 0) {
+							return; // 没有变化时，不写日志
+						}
+						xU.saveLog({
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 
+								更新了分类 <a href="/project/${cate.project_id}/interface/api/cat_${
+								data.catid
+							}">${cate.name}</a> 
+								下的接口 <a href="/project/${cate.project_id}/interface/api/${id}">${
+								interfaceData.title
+							}</a><p>${params.message}</p>`,
+							type: "project",
+							uid: this.getUid(),
+							username: username,
+							typeid: cate.project_id,
+							data: logData
+						});
+					});
+
+					orm.project
+						.up(interfaceData.project_id, { up_time: new Date().getTime() })
+						.then();
+					if (params.switch_notice === true) {
+						let diffView = showDiffMsg(jsondiffpatch, formattersHtml, logData);
+						let annotatedCss = fs.readFileSync(
+							path.resolve(
+								xU.var.APP_ROOT_DIR,
+								"node_modules/jsondiffpatch/dist/formatters-styles/annotated.css"
+							),
+							"utf8"
+						);
+						let htmlCss = fs.readFileSync(
+							path.resolve(
+								xU.var.APP_ROOT_DIR,
+								"node_modules/jsondiffpatch/dist/formatters-styles/html.css"
+							),
+							"utf8"
+						);
+
+						let project = await orm.project.getBaseInfo(
+							interfaceData.project_id
+						);
+
+						let interfaceUrl = `${ctx.request.origin}/project/${interfaceData.project_id}/interface/api/${id}`;
+
+						xU.sendNotice(interfaceData.project_id, {
+							title: `${username} 更新了接口`,
+							content: `<html>
+					<head>
+					<style>
+					${annotatedCss}
+					${htmlCss}
+					</style>
+					</head>
+					<body>
+					<div><h3>${username}更新了接口(${data.title})</h3>
+					<p>项目名：${project.name} </p>
+					<p>修改用户: ${username}</p>
+					<p>接口名: <a href="${interfaceUrl}">${data.title}</a></p>
+					<p>接口路径: [${data.method}]${data.path}</p>
+					<p>详细改动日志: ${diffHTML(diffView)}</p></div>
+					</body>
+					</html>`
+						});
+					}
+
+					xU.emitHook("interface_update", id).then();
+					await autoAddTag(params);
+
+					ctx.body = xU.$response(result);
+					return 1;
+				}
+			}
+		},
+
 		"/interface/upsert": {
 			post: {
 				summary: `保存接口数据，如果接口存在则更新数据，如果接口不存在则添加数据
