@@ -533,7 +533,7 @@ data:data||{}
 				request: {
 					body: {
 						url: {
-							required: true,
+							required: false,
 							description: "去取数据的url",
 							type: "string"
 						},
@@ -543,13 +543,25 @@ data:data||{}
 							type: "string",
 							/* "postman" */
 							enum: ["swagger"]
+						},
+						json: {
+							required: false,
+							description: "数据JSON的字符串源码；用于上传读取本地的jons文件",
+							type: "string"
 						}
 					}
 				},
 				async handler(ctx) {
 					try {
-						const { url, type } = ctx.payload;
-						const { data } = await axios.get(url);
+						const { url, type, json } = ctx.payload;
+						const { data } = await (async function () {
+							if (json) {
+								return {
+									data: JSON.parse(json)
+								};
+							}
+							return axios.get(url);
+						})();
 						let res;
 						if (data == null || typeof data !== "object") {
 							throw new Error("返回数据格式不是 JSON");

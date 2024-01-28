@@ -1,5 +1,54 @@
+const mergeJsonSchema = require("../../../common/mergeJsonSchema");
 const { parse: urlParse } = require("url");
 const _ = require("lodash");
+
+async function autoAddTag(params) {
+	//检查是否提交了目前不存在的tag
+	let tags = params.tag;
+	if (tags && Array.isArray(tags) && tags.length > 0) {
+		if (!params.project_id) return;
+		let projectData = await orm.project.get(params.project_id);
+		let tagsInProject = projectData.tag;
+		let needUpdate = false;
+		if (
+			tagsInProject &&
+			Array.isArray(tagsInProject) &&
+			tagsInProject.length > 0
+		) {
+			tags.forEach(tag => {
+				if (
+					!_.find(tagsInProject, item => {
+						return item.name === tag;
+					})
+				) {
+					//tag不存在
+					needUpdate = true;
+					tagsInProject.push({
+						name: tag,
+						desc: tag
+					});
+				}
+			});
+		} else {
+			needUpdate = true;
+			tagsInProject = [];
+			tags.forEach(tag => {
+				tagsInProject.push({
+					name: tag,
+					desc: tag
+				});
+			});
+		}
+		if (needUpdate) {
+			//需要更新tag
+			let data = {
+				tag: tagsInProject,
+				up_time: xU.time()
+			};
+			await orm.project.up(params.project_id, data);
+		}
+	}
+}
 
 function handleHeaders(values) {
 	let isfile = false,
@@ -57,21 +106,16 @@ async function hander_interface_add(ctx) {
 		}
 	}
 	payload.method = payload.method || "GET";
-	payload.res_body_is_json_schema = _.isUndefined(
-		payload.res_body_is_json_schema
-	)
-		? false
-		: payload.res_body_is_json_schema;
-	payload.req_body_is_json_schema = _.isUndefined(
-		payload.req_body_is_json_schema
-	)
-		? false
-		: payload.req_body_is_json_schema;
+
+	payload.res_body_is_json_schema = payload.res_body_is_json_schema || false;
+	payload.req_body_is_json_schema = payload.req_body_is_json_schema || false;
+
 	payload.method = payload.method.toUpperCase();
 	payload.req_params = payload.req_params || [];
 	payload.res_body_type = payload.res_body_type
 		? payload.res_body_type.toLowerCase()
 		: "backup";
+
 	let http_path = urlParse(payload.path, true);
 
 	if (!xU.verifyPath(http_path.pathname)) {
@@ -87,14 +131,14 @@ async function hander_interface_add(ctx) {
 	payload.query_path = {};
 	payload.query_path.path = http_path.pathname;
 	payload.query_path.params = [];
-	Object.keys(http_path.query).forEach(item => {
+	_.each(http_path.query, (value, name) => {
 		payload.query_path.params.push({
-			name: item,
-			value: http_path.query[item]
+			name: name,
+			value: value
 		});
 	});
 
-	let count = await this.model.count(
+	let count = await orm.interface.count(
 		payload.project_id,
 		payload.path,
 		payload.method
@@ -136,9 +180,9 @@ async function hander_interface_add(ctx) {
 		}
 	}
 
-	let result = await this.model.save(data);
+	let result = await orm.interface.save(data);
 	xU.emitHook("interface_add", result).then();
-	this.modelInterfaceCategory.get(payload.catid).then(cate => {
+	orm.interfaceCategory.get(payload.catid).then(cate => {
 		let username = this.getUsername();
 		let title = `<a href="/user/profile/${this.getUid()}">${username}</a> 为分类 <a href="/project/${
 			payload.project_id
@@ -160,7 +204,7 @@ async function hander_interface_add(ctx) {
 			.then();
 	});
 
-	await this.autoAddTag(payload);
+	await autoAddTag(payload);
 
 	ctx.body = xU.$response(result);
 }
@@ -523,8 +567,8 @@ module.exports = {
 		},
 		"/interface/upsert": {
 			post: {
-				summary:
-					"保存接口数据，如果接口存在则更新数据，如果接口不存在则添加数据",
+				summary: `保存接口数据，如果接口存在则更新数据，如果接口不存在则添加数据
+会用path和name来判断是否已经添加`,
 				description: "更新分类",
 				request: interfaceUpsertRequest,
 				async handler(ctx) {
@@ -560,23 +604,24 @@ module.exports = {
 						"_id res_body"
 					);
 
+					/* 证明存在 */
 					if (result.length > 0) {
-						result.forEach(async item => {
-							payload.id = item._id;
-							// console.log(SCHEMA_MAP['up'])
+						/* 证明存在 更新 */
+						result.forEach(async interfaceInfo => {
+							payload.id = interfaceInfo._id;
 							let validParams = Object.assign({}, payload);
 							let validResult = xU.validateParams(SCHEMA_MAP.up, validParams);
 							if (validResult.valid) {
 								let data = Object.assign({}, ctx);
 								data.params = validParams;
-
+								/* 智能合并 */
 								if (
 									payload.res_body_is_json_schema &&
 									payload.dataSync === "good"
 								) {
 									try {
 										let new_res_body = xU.json_parse(payload.res_body);
-										let old_res_body = xU.json_parse(item.res_body);
+										let old_res_body = xU.json_parse(interfaceInfo.res_body);
 										data.params.res_body = JSON.stringify(
 											mergeJsonSchema(old_res_body, new_res_body),
 											null,
@@ -584,7 +629,7 @@ module.exports = {
 										);
 									} catch (err) {}
 								}
-								await this.up(data);
+								await orm.interface.up(interfaceInfo._id, data.params);
 							} else {
 								return (ctx.body = xU.$response(
 									null,
@@ -594,6 +639,7 @@ module.exports = {
 							}
 						});
 					} else {
+						/* 新增 */
 						let validResult = xU.validateParams(SCHEMA_MAP.add, payload);
 						if (validResult.valid) {
 							const data = { payload };
