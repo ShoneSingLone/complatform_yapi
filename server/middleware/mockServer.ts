@@ -307,7 +307,6 @@ const middlewareMockServer = () => async (ctx, next) => {
 	/**
 	 * @type ModelInterface
 	 */
-	let modelInterface = orm.interface;
 
 	try {
 		/**
@@ -323,34 +322,29 @@ const middlewareMockServer = () => async (ctx, next) => {
 		/* basepath 有前缀，去掉前缀，方便匹配链接 */
 		const REAL_URL_PATH = path.substr(project.basepath.length);
 		/*直接通过url获取接口信息*/
-		interfaceArray = await modelInterface.getByPath(
-			project._id,
-			REAL_URL_PATH,
-			ctx.method
-		);
-
-		/* 通过realUrlPath，method 来获取API的信息 */
-		const interfaceArray_byQueryPath = await modelInterface.getByQueryPath(
+		interfaceArray = await orm.interface.getByPath(
 			project._id,
 			REAL_URL_PATH,
 			ctx.method
 		);
 
 		//处理query_path情况  url 中有 ?params=xxx
-		if (
-			!interfaceArray ||
-			interfaceArray.length != interfaceArray_byQueryPath.length
-		) {
+		if (!interfaceArray) {
+			/* 通过realUrlPath，method 来获取API的信息 */
+			const interfaceArray_byQueryPath = await orm.interface.getByQueryPath(
+				project._id,
+				REAL_URL_PATH,
+				ctx.method
+			);
+
 			interfaceArray = handleQueryInUrlPath(
 				ctx.query,
-				interfaceArray_byQueryPath,
-				interfaceArray
+				interfaceArray_byQueryPath
+				// interfaceArray
 			);
-		}
-
-		//处理动态路由
-		if (!interfaceArray || interfaceArray.length === 0) {
-			let newData = await modelInterface.getVar(project._id, ctx.method);
+			//处理动态路由
+		} else if (interfaceArray.length === 0) {
+			let newData = await orm.interface.getVar(project._id, ctx.method);
 
 			let findInterface;
 			let weight = 0;
@@ -384,10 +378,8 @@ const middlewareMockServer = () => async (ctx, next) => {
 					`当前使用yAPI代理，${ctx.method} ${REAL_URL_PATH}，但API不存在。请确认GET?POST?URL?是否正确`
 				));
 			}
-			interfaceArray = [await modelInterface.get(findInterface._id)];
-		}
-
-		if (interfaceArray.length > 1) {
+			interfaceArray = [await orm.interface.get(findInterface._id)];
+		} else if (interfaceArray.length > 1) {
 			return (ctx.body = xU.$response(null, 405, "存在多个api，请检查数据库"));
 		} else {
 			interfaceData = interfaceArray[0];
@@ -421,7 +413,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 			ifTheResponseIsSuccessfulACopyIsRequired({
 				ctx,
-				modelInterface,
+				modelInterface: orm.interface,
 				interfaceData
 			});
 			return;

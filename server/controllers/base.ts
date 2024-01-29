@@ -17,8 +17,9 @@ class ControllerBase {
 
 	handleBasepath(basepath) {
 		if (!basepath) {
-			return "";
+			basepath = "/";
 		}
+
 		if (basepath[0] !== "/") {
 			basepath = "/" + basepath;
 		}
