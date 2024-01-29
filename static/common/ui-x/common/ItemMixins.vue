@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 export default async function () {
 	if (!Vue._itemMixins) {
 		const EVENT_ARRAY = ["change", "blur", "input", "focus"];
@@ -164,7 +164,7 @@ export default async function () {
 							if (this.value === val) {
 								return;
 							}
-							return this.$emit("change", val);
+							return this.$emit("change", val, "5");
 						}
 					},
 					mixin_listeners() {

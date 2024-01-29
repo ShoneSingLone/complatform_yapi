@@ -1,4 +1,12 @@
 <style lang="less">
+.xDataGrid_table {
+	&.small {
+		.el-table-v2__row-cell {
+			font-size: 12px;
+		}
+	}
+}
+
 .xDataGrid {
 	position: relative;
 	//outline: 1px solid red;
@@ -15,8 +23,35 @@
 			width: 2px;
 			top: 0;
 			bottom: 0;
-			// background-color: red;
 			cursor: col-resize;
+		}
+
+		display: flex;
+		font-size: 13px;
+		align-items: center;
+		padding: 0 8px;
+		height: 100%;
+		// user-select: none;
+		overflow: hidden;
+		background-color: var(--el-table-header-bg-color);
+		color: var(--el-table-header-text-color);
+		// font-weight: 700;
+
+		&.is-align-center {
+			justify-content: center;
+			text-align: center;
+		}
+		&.is-align-right {
+			justify-content: flex-end;
+			text-align: right;
+		}
+		&.is-sortable {
+			cursor: pointer;
+		}
+		&:hover {
+			.el-icon {
+				display: block;
+			}
 		}
 	}
 
@@ -55,10 +90,10 @@
 	--el-table-border-color: var(--el-border-color-lighter);
 	--el-table-border: 1px solid var(--el-table-border-color);
 	--el-table-text-color: var(--el-text-color-regular);
-	--el-table-header-text-color: var(--el-text-color-secondary);
+	--el-table-header-text-color: var(--el-text-color-primary);
 	--el-table-row-hover-bg-color: var(--el-fill-color-light);
-	--el-table-current-row-bg-color: var(--el-color-primary-light-9);
-	--el-table-header-bg-color: var(--el-bg-color);
+	--el-table-current-row-bg-color: var(--ui-primary-light-9);
+	--el-table-header-bg-color: var(--el-border-color-lighter);
 	--el-table-fixed-box-shadow: var(--el-box-shadow-light);
 	--el-table-bg-color: var(--el-fill-color-blank);
 	--el-table-tr-bg-color: var(--el-fill-color-blank);
@@ -187,6 +222,7 @@
 }
 
 .el-table-v2__header {
+	background-color: var(--el-table-header-bg-color);
 	position: relative;
 	overflow: hidden;
 }
@@ -216,39 +252,6 @@
 .el-table-v2__header-row {
 	display: flex;
 	border-bottom: var(--el-table-border);
-}
-
-.el-table-v2__header-cell {
-	display: flex;
-	align-items: center;
-	padding: 0 8px;
-	height: 100%;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	overflow: hidden;
-	background-color: var(--el-table-header-bg-color);
-	color: var(--el-table-header-text-color);
-	font-weight: 700;
-}
-
-.el-table-v2__header-cell.is-align-center {
-	justify-content: center;
-	text-align: center;
-}
-
-.el-table-v2__header-cell.is-align-right {
-	justify-content: flex-end;
-	text-align: right;
-}
-
-.el-table-v2__header-cell.is-sortable {
-	cursor: pointer;
-}
-
-.el-table-v2__header-cell:hover .el-icon {
-	display: block;
 }
 
 .el-table-v2__sort-icon {
@@ -330,9 +333,9 @@
 }
 </style>
 
-<script>
+<script lang="ts">
 export default async function () {
-	const exports = {};
+	const { emptyRender } = await _.$importVue("/common/ui-x/components/data/xTableVir/xTableEmptyRender.vue");
 	_.each(
 		{
 			ComponentTableV2HeaderRow: "/common/ui-x/components/data/xTableVir/ComponentTableV2HeaderRow.vue",
@@ -354,11 +357,10 @@ export default async function () {
 		useNamespace,
 		addUnit,
 		/* **************** */
-		definePropType,
 		buildProp,
 		buildProps,
 		tableV2Props
-	} = Vue._useXui;
+	} = _useXui;
 
 	/* resolveDynamicComponent */
 	const { merge_hFnProps } = Vue;
@@ -366,19 +368,11 @@ export default async function () {
 
 	isClient && ((_a = window == null ? void 0 : window.navigator) == null ? void 0 : _a.userAgent) && /iP(ad|hone|od)/.test(window.navigator.userAgent);
 
-	const _global = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+	const _global = window;
 	const globalKey = "__vueuse_ssr_handlers__";
 	_global[globalKey] = _global[globalKey] || {};
 	_global[globalKey];
 
-	var SwipeDirection;
-	(function (SwipeDirection2) {
-		SwipeDirection2["UP"] = "UP";
-		SwipeDirection2["RIGHT"] = "RIGHT";
-		SwipeDirection2["DOWN"] = "DOWN";
-		SwipeDirection2["LEFT"] = "LEFT";
-		SwipeDirection2["NONE"] = "NONE";
-	})(SwipeDirection || (SwipeDirection = {}));
 	var __defProp = Object.defineProperty;
 	var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 	var __propIsEnum = Object.prototype.propertyIsEnumerable;
@@ -389,7 +383,7 @@ export default async function () {
 					configurable: true,
 					writable: true,
 					value
-			  })
+				})
 			: (obj[key] = value);
 	var __spreadValues = (a, b) => {
 		for (var prop in b || (b = {})) if (hasOwnProperty.call(b, prop)) __defNormalProp(a, prop, b[prop]);
@@ -1105,19 +1099,6 @@ export default async function () {
 		["__file", "sort-up.vue"]
 	]);
 
-	const withInstall = (main, extra) => {
-		main.install = app => {
-			for (const comp of [main, ...Object.values(extra ?? {})]) {
-				app.component(comp.name, comp);
-			}
-		};
-		if (extra) {
-			for (const [key, comp] of Object.entries(extra)) {
-				main[key] = comp;
-			}
-		}
-		return main;
-	};
 	const EVENT_CODE = {
 		tab: "Tab",
 		enter: "Enter",
@@ -1328,11 +1309,11 @@ export default async function () {
 	if (isClient) useEventListener(document, "keydown", closeModal);
 
 	buildProp({
-		type: definePropType(Boolean),
+		type: Boolean,
 		default: null
 	});
 	buildProp({
-		type: definePropType(Function)
+		type: Function
 	});
 	const defaultIdInjection = {
 		prefix: Math.floor(Math.random() * 1e4),
@@ -1344,26 +1325,10 @@ export default async function () {
 	};
 	const useId = deterministicId => {
 		const idInjection = useIdInjection();
-		const namespace = useGetDerivedNamespace();
+		const namespace = _useXui.useGetDerivedNamespace();
 		const idRef = computed(() => unref(deterministicId) || `${namespace.value}-id-${idInjection.prefix}-${idInjection.current++}`);
 		return idRef;
 	};
-	buildProps({
-		showAfter: {
-			type: Number,
-			default: 0
-		},
-		hideAfter: {
-			type: Number,
-			default: 200
-		},
-		autoClose: {
-			type: Number,
-			default: 0
-		}
-	});
-	ref(0);
-	buildProps({});
 	buildProp({
 		type: String,
 		values: componentSizes,
@@ -1398,7 +1363,7 @@ export default async function () {
 				: {
 						flexGrow: column.flexGrow || 0,
 						flexShrink: column.flexShrink || 1
-				  })
+					})
 		};
 		if (!fixed) {
 			flex.flexShrink = 1;
@@ -1929,7 +1894,7 @@ export default async function () {
 			return h(
 				"div",
 				{
-					class: props.classV2,
+					class: props.class,
 					attrs: {
 						title: displayText
 					},
@@ -1956,13 +1921,13 @@ export default async function () {
 							}
 						},
 						[props.column?.label]
-				  );
+					);
 		}
 	};
 
 	const iconProps = buildProps({
 		size: {
-			type: definePropType([Number, String])
+			type: [Number, String]
 		},
 		color: {
 			type: String
@@ -2010,17 +1975,15 @@ export default async function () {
 		);
 	};
 	var _sfc_staticRenderFns$2 = [];
-	var __component__$2 = /* @__PURE__ */ normalizeComponent(_sfc_main$2, _sfc_render$2, _sfc_staticRenderFns$2, false, null, null, null, null);
+	var __component__$2 = /* @__PURE__ */ _useXui.normalizeComponent(_sfc_main$2, _sfc_render$2, _sfc_staticRenderFns$2, false, null, null, null, null);
 	var Icon = __component__$2.exports;
-	const ElIcon = withInstall(Icon);
-	var ElIcon$1 = ElIcon;
 
 	const SortIcon = {
 		functional: true,
 		render: (h, props) => {
 			const { sortOrder } = props;
 			return h(
-				ElIcon$1,
+				Icon,
 				{
 					attrs: {
 						size: 14
@@ -2072,6 +2035,7 @@ export default async function () {
 			);
 		}
 	};
+
 	const ComponentLeftTable = {
 		functional: true,
 		render: (h, { data: { leftTableRef, $vSlots, ...rest } }) => {
@@ -2088,6 +2052,7 @@ export default async function () {
 			);
 		}
 	};
+
 	const ComponentRightTable = {
 		functional: true,
 		render: (h, { data: { rightTableRef, $vSlots, ...rest } }) => {
@@ -2103,6 +2068,7 @@ export default async function () {
 			);
 		}
 	};
+
 	const RowRenderer = {
 		functional: true,
 		render: (h, { data: props }) => {
@@ -2189,6 +2155,7 @@ export default async function () {
 		}
 	};
 	const CellRenderer = {
+		inheritAttrs: false,
 		functional: true,
 		render: (h, context) => {
 			const { data } = context;
@@ -2211,6 +2178,7 @@ export default async function () {
 				rowKey: rowKey2,
 				$vSlots: slots
 			} = data;
+
 			const cellStyle = enforceUnit(style);
 			if (column.placeholderSign === placeholderSign) {
 				return h("div", {
@@ -2237,8 +2205,8 @@ export default async function () {
 						columnIndex,
 						rowData,
 						rowIndex
-				  })
-				: get(rowData, prop ?? "");
+					})
+				: get(rowData, prop || "", null);
 			const extraCellProps = tryCall(_cellProps, {
 				cellData,
 				columns: columns2,
@@ -2305,7 +2273,7 @@ export default async function () {
 			);
 		}
 	};
-	CellRenderer.inheritAttrs = false;
+
 	const HeaderRenderer = {
 		functional: true,
 		render: (h, { data: { columns: columns2, columnsStyles, headerIndex, style, headerClass, headerProps, ns, $vSlots } }) => {
@@ -2359,7 +2327,8 @@ export default async function () {
 
 				return props2 => h(HeaderCell, props2);
 			})();
-			const Cell = cellRenderer(cellProps);
+			const vm = getCurrentInstance();
+			const Cell = cellRenderer(cellProps, { vm });
 			const { sortBy, sortState, headerCellProps } = props;
 			let sorting, sortOrder;
 			if (sortState) {
@@ -2402,6 +2371,7 @@ export default async function () {
 		}
 	};
 	const ComponentFooter = {
+		displayName: "ElTableV2Footer",
 		functional: true,
 		render: (h, { data: props, slots }) => {
 			return h(
@@ -2414,321 +2384,6 @@ export default async function () {
 			);
 		}
 	};
-	ComponentFooter.displayName = "ElTableV2Footer";
-	var _sfc_main$1 = /* @__PURE__ */ defineComponent({
-		__name: "img-empty",
-		setup(__props) {
-			defineComponent({
-				name: "ImgEmpty"
-			});
-			const ns = useNamespace("empty");
-			const id = useId();
-			return { __sfc: true, ns, id };
-		}
-	});
-	var _sfc_render$1 = function render() {
-		var _vm = this,
-			_c = _vm._self._c,
-			_setup = _vm._self._setupProxy;
-		return _c(
-			"svg",
-			{
-				attrs: {
-					viewBox: "0 0 79 86",
-					version: "1.1",
-					xmlns: "http://www.w3.org/2000/svg",
-					"xmlns:xlink": "http://www.w3.org/1999/xlink"
-				}
-			},
-			[
-				_c(
-					"defs",
-					[
-						_c(
-							"linearGradient",
-							{
-								attrs: {
-									id: `linearGradient-1-${_setup.id}`,
-									x1: "38.8503086%",
-									y1: "0%",
-									x2: "61.1496914%",
-									y2: "100%"
-								}
-							},
-							[
-								_c("stop", {
-									attrs: {
-										"stop-color": `var(${_setup.ns.cssVarBlockName("fill-color-1")})`,
-										offset: "0%"
-									}
-								}),
-								_c("stop", {
-									attrs: {
-										"stop-color": `var(${_setup.ns.cssVarBlockName("fill-color-4")})`,
-										offset: "100%"
-									}
-								})
-							],
-							1
-						),
-						_c(
-							"linearGradient",
-							{
-								attrs: {
-									id: `linearGradient-2-${_setup.id}`,
-									x1: "0%",
-									y1: "9.5%",
-									x2: "100%",
-									y2: "90.5%"
-								}
-							},
-							[
-								_c("stop", {
-									attrs: {
-										"stop-color": `var(${_setup.ns.cssVarBlockName("fill-color-1")})`,
-										offset: "0%"
-									}
-								}),
-								_c("stop", {
-									attrs: {
-										"stop-color": `var(${_setup.ns.cssVarBlockName("fill-color-6")})`,
-										offset: "100%"
-									}
-								})
-							],
-							1
-						),
-						_c("rect", {
-							attrs: {
-								id: `path-3-${_setup.id}`,
-								x: "0",
-								y: "0",
-								width: "17",
-								height: "36"
-							}
-						})
-					],
-					1
-				),
-				_c(
-					"g",
-					{
-						attrs: {
-							id: "Illustrations",
-							stroke: "none",
-							"stroke-width": "1",
-							fill: "none",
-							"fill-rule": "evenodd"
-						}
-					},
-					[
-						_c(
-							"g",
-							{
-								attrs: {
-									id: "B-type",
-									transform: "translate(-1268.000000, -535.000000)"
-								}
-							},
-							[
-								_c(
-									"g",
-									{
-										attrs: {
-											id: "Group-2",
-											transform: "translate(1268.000000, 535.000000)"
-										}
-									},
-									[
-										_c("path", {
-											attrs: {
-												id: "Oval-Copy-2",
-												d: "M39.5,86 C61.3152476,86 79,83.9106622 79,81.3333333 C79,78.7560045 57.3152476,78 35.5,78 C13.6847524,78 0,78.7560045 0,81.3333333 C0,83.9106622 17.6847524,86 39.5,86 Z",
-												fill: `var(${_setup.ns.cssVarBlockName("fill-color-3")})`
-											}
-										}),
-										_c("polygon", {
-											attrs: {
-												id: "Rectangle-Copy-14",
-												fill: `var(${_setup.ns.cssVarBlockName("fill-color-7")})`,
-												transform: "translate(27.500000, 51.500000) scale(1, -1) translate(-27.500000, -51.500000) ",
-												points: "13 58 53 58 42 45 2 45"
-											}
-										}),
-										_c(
-											"g",
-											{
-												attrs: {
-													id: "Group-Copy",
-													transform: "translate(34.500000, 31.500000) scale(-1, 1) rotate(-25.000000) translate(-34.500000, -31.500000) translate(7.000000, 10.000000)"
-												}
-											},
-											[
-												_c("polygon", {
-													attrs: {
-														id: "Rectangle-Copy-10",
-														fill: `var(${_setup.ns.cssVarBlockName("fill-color-7")})`,
-														transform: "translate(11.500000, 5.000000) scale(1, -1) translate(-11.500000, -5.000000) ",
-														points: "2.84078316e-14 3 18 3 23 7 5 7"
-													}
-												}),
-												_c("polygon", {
-													attrs: {
-														id: "Rectangle-Copy-11",
-														fill: `var(${_setup.ns.cssVarBlockName("fill-color-5")})`,
-														points: "-3.69149156e-15 7 38 7 38 43 -3.69149156e-15 43"
-													}
-												}),
-												_c("rect", {
-													attrs: {
-														id: "Rectangle-Copy-12",
-														fill: `url(#linearGradient-1-${_setup.id})`,
-														transform: "translate(46.500000, 25.000000) scale(-1, 1) translate(-46.500000, -25.000000) ",
-														x: "38",
-														y: "7",
-														width: "17",
-														height: "36"
-													}
-												}),
-												_c("polygon", {
-													attrs: {
-														id: "Rectangle-Copy-13",
-														fill: `var(${_setup.ns.cssVarBlockName("fill-color-2")})`,
-														transform: "translate(39.500000, 3.500000) scale(-1, 1) translate(-39.500000, -3.500000) ",
-														points: "24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"
-													}
-												})
-											]
-										),
-										_c("rect", {
-											attrs: {
-												id: "Rectangle-Copy-15",
-												fill: `url(#linearGradient-2-${_setup.id})`,
-												x: "13",
-												y: "45",
-												width: "40",
-												height: "36"
-											}
-										}),
-										_c(
-											"g",
-											{
-												attrs: {
-													id: "Rectangle-Copy-17",
-													transform: "translate(53.000000, 45.000000)"
-												}
-											},
-											[
-												_c("use", {
-													attrs: {
-														id: "Mask",
-														fill: `var(${_setup.ns.cssVarBlockName("fill-color-8")})`,
-														transform: "translate(8.500000, 18.000000) scale(-1, 1) translate(-8.500000, -18.000000) ",
-														"xlink:href": `#path-3-${_setup.id}`
-													}
-												}),
-												_c("polygon", {
-													attrs: {
-														id: "Rectangle-Copy",
-														fill: `var(${_setup.ns.cssVarBlockName("fill-color-9")})`,
-														mask: `url(#mask-4-${_setup.id})`,
-														transform: "translate(12.000000, 9.000000) scale(-1, 1) translate(-12.000000, -9.000000) ",
-														points: "7 0 24 0 20 18 7 16.5"
-													}
-												})
-											]
-										),
-										_c("polygon", {
-											attrs: {
-												id: "Rectangle-Copy-18",
-												fill: `var(${_setup.ns.cssVarBlockName("fill-color-2")})`,
-												transform: "translate(66.000000, 51.500000) scale(-1, 1) translate(-66.000000, -51.500000) ",
-												points: "62 45 79 45 70 58 53 58"
-											}
-										})
-									]
-								)
-							]
-						)
-					]
-				)
-			]
-		);
-	};
-	var _sfc_staticRenderFns$1 = [];
-	var __component__$1 = /* @__PURE__ */ normalizeComponent(_sfc_main$1, _sfc_render$1, _sfc_staticRenderFns$1, false, null, null, null, null);
-	var ImgEmpty = __component__$1.exports;
-	const emptyProps = buildProps({
-		image: {
-			type: String,
-			default: ""
-		},
-		imageSize: Number,
-		description: {
-			type: String,
-			default: ""
-		}
-	});
-	var _sfc_main = /* @__PURE__ */ defineComponent({
-		__name: "empty",
-		props: emptyProps,
-		setup(__props) {
-			const props = __props;
-			defineComponent({
-				name: "ElEmpty"
-			});
-			const { t } = useLocale();
-			const ns = useNamespace("empty");
-			const emptyDescription = computed(() => props.description || t("el.table.emptyText"));
-			const imageStyle = computed(() => ({
-				width: addUnit(props.imageSize)
-			}));
-			return {
-				__sfc: true,
-				props,
-				t,
-				ns,
-				emptyDescription,
-				imageStyle,
-				ImgEmpty
-			};
-		}
-	});
-
-	var _sfc_render = function render() {
-		var _vm = this,
-			_c = _vm._self._c,
-			_setup = _vm._self._setupProxy;
-		return _c("div", { class: _setup.ns.b() }, [
-			_c(
-				"div",
-				{
-					class: _setup.ns.e("image"),
-					style: _setup.imageStyle
-				},
-				[
-					_vm.image
-						? _c("img", {
-								attrs: {
-									src: _vm.image,
-									ondragstart: "return false"
-								}
-						  })
-						: _vm._t("image", function () {
-								return [_c(_setup.ImgEmpty)];
-						  })
-				],
-				2
-			),
-			_c("div", { class: _setup.ns.e("description") }, [_vm.$slots.description ? _vm._t("description") : _c("p", [_vm._v(_vm._s(_setup.emptyDescription))])], 2),
-			_vm.$slots.default ? _c("div", { class: _setup.ns.e("bottom") }, [_vm._t("default")], 2) : _vm._e()
-		]);
-	};
-	var _sfc_staticRenderFns = [];
-	var __component__ = /* @__PURE__ */ normalizeComponent(_sfc_main, _sfc_render, _sfc_staticRenderFns, false, null, null, null, null);
-	var Empty = __component__.exports;
-	const ElEmpty = withInstall(Empty);
-	var ElEmpty$1 = ElEmpty;
 
 	const ComponentEmpty = {
 		displayName: "ComponentEmpty",
@@ -2737,17 +2392,22 @@ export default async function () {
 			return h(
 				"div",
 				{
-					class: props.classV2,
-					style: props.styleV2
+					class: props.class,
+					style: {
+						top: "50%",
+						transform: "translateY(-50%)",
+						position: "relative",
+						width: "100%"
+					}
 				},
-				[slots.default ? slots.default() : h(ElEmpty$1)]
+				[slots.default ? slots.default() : emptyRender()]
 			);
 		}
 	};
 
 	const ComponentOverlay = {
-		functional: true,
 		displayName: "ComponentOverlay",
+		functional: true,
 		render: (h, { data: props, slots }) => {
 			return h(
 				"div",
@@ -2957,8 +2617,31 @@ export default async function () {
 				};
 
 				const tableSlots = {
-					row: props2 => {
-						return h(RowRenderer, merge_hFnProps([props2, tableRowProps]), [
+					header: props2 => {
+						const HeaderRendererProps = merge_hFnProps([props2, tableHeaderProps]);
+						return h(HeaderRenderer, HeaderRendererProps, [
+							{
+								header: vmTable.$vSlots.header,
+								cell: cellProps => {
+									if (vmTable.$vSlots["header-cell"]) {
+										const HeaderCellRendererProps = merge_hFnProps([props2, tableHeaderProps]);
+										return h(HeaderCellRenderer, HeaderCellRendererProps, [vmTable.$vSlots["header-cell"](cellProps)]);
+									} else {
+										const HeaderCellRendererProps = merge_hFnProps([
+											cellProps,
+											tableHeaderCellProps,
+											{
+												style: columnsStyles.value[cellProps.column.key]
+											}
+										]);
+										return h(HeaderCellRenderer, HeaderCellRendererProps);
+									}
+								}
+							}
+						]);
+					},
+					row: props => {
+						return h(RowRenderer, merge_hFnProps([props, tableRowProps]), [
 							{
 								row: vmTable.$vSlots.row,
 								cell: props3 => {
@@ -2989,31 +2672,9 @@ export default async function () {
 								}
 							}
 						]);
-					},
-					header: props2 => {
-						const HeaderRendererProps = merge_hFnProps([props2, tableHeaderProps]);
-						return h(HeaderRenderer, HeaderRendererProps, [
-							{
-								header: vmTable.$vSlots.header,
-								cell: cellProps => {
-									if (vmTable.$vSlots["header-cell"]) {
-										const HeaderCellRendererProps = merge_hFnProps([props2, tableHeaderProps]);
-										return h(HeaderCellRenderer, HeaderCellRendererProps, [vmTable.$vSlots["header-cell"](cellProps)]);
-									} else {
-										const HeaderCellRendererProps = merge_hFnProps([
-											cellProps,
-											tableHeaderCellProps,
-											{
-												style: columnsStyles.value[cellProps.column.key]
-											}
-										]);
-										return h(HeaderCellRenderer, HeaderCellRendererProps);
-									}
-								}
-							}
-						]);
 					}
 				};
+
 				const rootKls = [
 					props.classV2,
 					ns.b(),
@@ -3022,7 +2683,9 @@ export default async function () {
 						[ns.is("dynamic")]: unref(isDynamic)
 					}
 				];
+
 				const footerProps = {
+					vIf: vmTable.$vSlots.footer,
 					class: ns.e("footer"),
 					style: unref(footerHeight)
 				};
@@ -3045,31 +2708,20 @@ export default async function () {
 						h(ComponentRightTable, rightTableProps, [tableSlots]),
 						createEmptyVNode("ComponentRightTable"),
 						createEmptyVNode("ComponentFooter"),
-						(function () {
-							if (vmTable.$vSlots.footer) {
-								return h(ComponentFooter, footerProps, [{ default: vmTable.$vSlots.footer }]);
-							}
-						})(),
+						h(ComponentFooter, footerProps, [{ default: vmTable.$vSlots.footer }]),
 						createEmptyVNode("ComponentFooter"),
 						createEmptyVNode("ComponentEmpty"),
-						(function () {
-							if (unref(showEmpty)) {
-								return h(
-									ComponentEmpty,
-									{
-										class: ns.e("empty"),
-										style: unref(emptyStyle)
-									},
-									[{ default: vmTable.$vSlots.empty }]
-								);
-							}
-						})(),
+						h(
+							ComponentEmpty,
+							{
+								vIf: showEmpty.value,
+								class: ns.e("empty"),
+								style: unref(emptyStyle)
+							},
+							[{ default: vmTable.$vSlots.empty }]
+						),
 						createEmptyVNode("ComponentOverlay"),
-						(function () {
-							if (vmTable.$vSlots.overlay) {
-								return h(ComponentOverlay, { class: ns.e("overlay") }, [{ default: vmTable.$vSlots.overlay }]);
-							}
-						})(),
+						h(ComponentOverlay, { vIf: vmTable.$vSlots.overlay, class: ns.e("overlay") }, [{ default: vmTable.$vSlots.overlay }]),
 						createEmptyVNode("ComponentOverlay")
 					]
 				);
@@ -3077,13 +2729,13 @@ export default async function () {
 		}
 	});
 
-	exports.TableV2Alignment = Alignment;
+	/* 	exports.TableV2Alignment = Alignment;
 	exports.TableV2FixedDir = FixedDir;
 	exports.TableV2Placeholder = placeholderSign;
 	exports.TableV2SortOrder = SortOrder;
 	exports.tableV2Props = tableV2Props;
 
-	let curr = {
+ */ let curr = {
 		id: 0,
 		x: 0,
 		grow: 0
@@ -3154,39 +2806,102 @@ export default async function () {
 				delete vmCollection[vm._uid];
 			});
 		},
-		computed: {
-			cpt_columns() {
-				return _.map(this.$props.columns, column => {
+		methods: {
+			columnAutoWidth({ width, height }) {
+				if (!width) {
+					return this.$props.columns;
+				}
+				const currentShouldShow = _.reduce(
+					this.$props.columns,
+					(columnsForShow, column) => {
+						const _column = (() => {
+							if (hasOwn(column, "isShow")) {
+								if (!column.isShow) {
+									/* 明确false,则不显示 */
+									return false;
+								} else {
+									return column;
+								}
+							} else {
+								/* 默认显示 */
+								return column;
+							}
+						})();
+						if (_column) {
+							columnsForShow.push(_column);
+						}
+						return columnsForShow;
+					},
+					[]
+				);
+
+				const unsetWidth = {};
+				let usedWidth = 0,
+					/* 平分剩余的宽度 */
+					eachWidth;
+
+				_.each(currentShouldShow, (column, index) => {
+					if (column.width) {
+						usedWidth += column.width;
+					} else {
+						/* 没有设置width就会自动分配 */
+						unsetWidth[index] = true;
+					}
+				});
+				/* 剩余的宽度 */
+				const remainWidth = width - usedWidth;
+				const unsetCount = Object.keys(unsetWidth).length;
+
+				if (unsetCount) {
+					/* 没有设置宽度的列平分剩余的宽度 */
+					eachWidth = Math.floor(remainWidth / unsetCount);
+					/* 最小宽度 */
+					eachWidth = eachWidth > 80 ? eachWidth : 80;
+				}
+
+				return _.map(currentShouldShow, column => {
+					if (!hasOwn(column, "width")) {
+						_.$val(column, "width", eachWidth);
+					}
 					return {
 						dataKey: column.prop,
 						title: column.label,
 						key: column.prop,
-						...column
+						...column,
+						width: column.width
 					};
 				});
+			},
+			getHeight(height) {
+				if (hasOwn(this.$attrs, "noscroll")) {
+					height = this.$attrs.rowHeight || 50;
+				}
+				return height;
 			}
 		},
 		render() {
 			const vm = this;
+			/* @ts-ignore */
 			return h("xAutoResizer", {
 				staticClass: "xDataGrid",
 				attrs: { "data-table-resizer-id": vm._uid },
 				$vSlots: {
 					default: ({ width, height }) => {
 						const xTableVirProps = {
-							staticClass: "xDataGrid_table",
+							staticClass: ["xDataGrid_table", vm.$ELEMENT.size].join(" "),
 							attrs: { "data-table": vm._uid },
 							width,
-							height,
+							height: this.getHeight(height),
 							fixed: true,
 							...this.$attrs,
-							columns: this.cpt_columns
+							columns: this.columnAutoWidth({ width, height })
 						};
 						const divProps = {
 							staticClass: "xDataGrid_mask",
 							attrs: { "data-table-mask": vm._uid }
 						};
 
+						/* 拖动列宽 */
 						const vDomLine = h("div", { staticClass: "xDataGrid_mask-line" }, []);
 
 						return [h(xTableVir, xTableVirProps), h("div", divProps, [vDomLine])];

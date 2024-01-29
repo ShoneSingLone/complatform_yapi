@@ -12,7 +12,7 @@
 		</xCard>
 	</div>
 </template>
-<script>
+<script lang="ts">
 export default async function () {
 	return defineComponent({
 		data() {
@@ -31,15 +31,6 @@ export default async function () {
 
 	.item {
 		margin-bottom: 18px;
-	}
-
-	.clearfix:before,
-	.clearfix:after {
-		display: table;
-		content: "";
-	}
-	.clearfix:after {
-		clear: both;
 	}
 
 	.box-card {

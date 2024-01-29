@@ -1,5 +1,5 @@
 <template>
-	<xDialog id="WindowConfirm">
+	<xDialog id="WindowTrans">
 		{{ content }}
 		<template #footer>
 			<xBtn :configs="btnOk" />
@@ -8,7 +8,7 @@
 	</xDialog>
 </template>
 
-<script>
+<script lang="ts">
 export default async function ({ onOk, onCancel, content }) {
 	const isUpdate = false;
 	/*  */
@@ -85,11 +85,6 @@ export default async function ({ onOk, onCancel, content }) {
 </script>
 
 <style lang="less">
-#WindowConfirm {
-	.xDialog-footer {
-		display: flex;
-		justify-content: center;
-		align-items: middle;
-	}
+#WindowTrans {
 }
 </style>

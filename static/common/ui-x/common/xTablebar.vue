@@ -5,14 +5,14 @@
 		</div>
 		<div class="oprations-tab_search">
 			<slot />
-			<xInquire v-if="isShowInquire" @click="configs.onQuery({ current: 0 })" />
+			<xInquire v-if="isShowInquire" @click="configs.onQuery({ page: 1 })" />
 			<slot name="right" />
 			<xTableFilter v-if="isShowFilter" :configs="configs" />
 		</div>
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 export default async function () {
 	return defineComponent({
 		props: ["configs"],

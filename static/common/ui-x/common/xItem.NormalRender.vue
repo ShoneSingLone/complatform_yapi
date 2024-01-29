@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 export default async function () {
 	return function render() {
 		const vm = this;
@@ -25,12 +25,14 @@ export default async function () {
 				vm.p_value = val;
 			}
 		};
+
 		return h(
 			"div",
 			{
 				vIf: !vm.cpt_isHide,
 				staticClass: "xItem-wrapper flex vertical",
 				attrs: {
+					"data-form-item-type": vm.itemType,
 					"data-form-item-id": vm.cpt_id
 				}
 			},
@@ -38,7 +40,7 @@ export default async function () {
 				h(
 					"div",
 					{
-						staticClass: "flex middle center flex1"
+						staticClass: "xItem-wrapper_layout"
 					},
 					[
 						/* label */
@@ -47,7 +49,7 @@ export default async function () {
 							{
 								ref: "refItemLabel",
 								vIf: vm.cpt_label,
-								staticClass: "xItem_label flex end middle"
+								staticClass: "xItem_label flex middle"
 							},
 							[
 								h(
@@ -62,9 +64,9 @@ export default async function () {
 								h(
 									"elTooltip",
 									{
-										vIf: vm.cptTips,
+										vIf: vm.calTips(),
 										// effect: "dark",
-										content: vm.cptTips,
+										content: vm.calTips(),
 										placement: "top-end"
 									},
 									[
@@ -112,7 +114,7 @@ export default async function () {
 					]
 				),
 				/* 信息提示 */
-				h("div", { vIf: vm.cptMsg, staticClass: "xItem_info-msg", style: { overflow: "hidden", margin: `8px 0 16px ${vm.width + 16}px` } }, [vm.cptMsg])
+				h("div", { vIf: vm.calMsg(), staticClass: "xItem_info-msg", style: { overflow: "hidden", margin: `8px 0 16px ${vm.width + 16}px` } }, [vm.calMsg()])
 			]
 		);
 	};
