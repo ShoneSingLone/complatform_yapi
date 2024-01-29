@@ -134,6 +134,7 @@ async function hander_interface_add(ctx) {
 
 	let http_path = urlParse(payload.path, true);
 
+	http_path.pathname = this.handleBasepath(http_path.pathname);
 	if (!xU.verifyPath(http_path.pathname)) {
 		return (ctx.body = xU.$response(
 			null,
@@ -627,7 +628,7 @@ module.exports = {
 					if (params.path) {
 						let http_path;
 						http_path = urlParse(params.path, true);
-
+						http_path.pathname = this.handleBasepath(http_path.pathname);
 						if (!xU.verifyPath(http_path.pathname)) {
 							return (ctx.body = xU.$response(
 								null,
@@ -784,6 +785,7 @@ module.exports = {
 					payload.method = payload.method.toUpperCase();
 
 					let http_path = urlParse(payload.path, true);
+					http_path.pathname = this.handleBasepath(http_path.pathname);
 
 					if (!xU.verifyPath(http_path.path)) {
 						return (ctx.body = xU.$response(
@@ -845,7 +847,6 @@ module.exports = {
 						}
 					}
 					ctx.body = xU.$response(result);
-					// return ctx.body = xU.$response(null, 400, 'path第一位必需为 /, 只允许由 字母数字-/_:.! 组成');
 				}
 			}
 		},

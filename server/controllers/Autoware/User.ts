@@ -58,11 +58,11 @@ module.exports = {
 
 					let result = await userInst.findByEmail(email);
 
+					const saltPwd = xU.$saltIt(password, result.passsalt);
 					if (!result) {
 						return (ctx.body = xU.$response(null, 404, "该用户不存在"));
-					} else if (
-						xU.$saltIt(password, result.passsalt) === result.password
-					) {
+					}
+					if (saltPwd === result.password) {
 						this.$user = result;
 						const { _id: uid, passsalt } = result;
 						const TOKEN = jwt.sign({ uid }, passsalt);
@@ -488,7 +488,9 @@ module.exports = {
 							dataBuffer = xU.fs.readFileSync(
 								xU.path.join(
 									xU.var.APP_ROOT_DIR,
-									usedBy ? "static/image/favicon.png" : "static/image/avatar.png"
+									usedBy
+										? "static/image/favicon.png"
+										: "static/image/avatar.png"
 								)
 							);
 							type = "image/png";

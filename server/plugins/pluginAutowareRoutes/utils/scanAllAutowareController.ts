@@ -23,11 +23,15 @@ async function scanAllAutowareController(app) {
 		);
 		let controllerInfo;
 		while ((controllerInfo = autoControllers.pop())) {
-			/* Demo:AutowareControllerUseSwagger.js 获取的 info:["AutowareControllerUseSwagger","UseSwagger","use_swagger"] */
-			autowareRoute({
-				controller: require(controllerInfo[0]),
-				controllerName: controllerInfo[1]
-			});
+			try {
+				/* Demo:AutowareControllerUseSwagger.js 获取的 info:["AutowareControllerUseSwagger","UseSwagger","use_swagger"] */
+				autowareRoute({
+					controller: require(controllerInfo[0]),
+					controllerName: controllerInfo[1]
+				});
+			} catch (error) {
+				console.error(error);
+			}
 		}
 	} catch (error) {
 		console.error(error);

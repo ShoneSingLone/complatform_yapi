@@ -9,12 +9,13 @@ declare global {
 		passsalt?: string;
 		isCloseRegister?: boolean;
 		/*如果有 对象属性为plugin名称 value也是一个object ，是配置信息*/
-		/* *isUsePlugin: {
-		AutowareRoutes: {
-		  isUseSwagger: true
-		}
-	  },
-	  * */
+		/**
+		 * isUsePlugin: {
+		 * AutowareRoutes: {
+		 * isUseSwagger: true
+		 * }
+		 *  },
+		 *  */
 		isUsePlugin?: {
 			AutowareRoutes?: {
 				isUseSwagger?: boolean;

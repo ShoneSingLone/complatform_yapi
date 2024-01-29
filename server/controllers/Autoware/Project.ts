@@ -1,5 +1,6 @@
 const _ = require("lodash");
 const axios = require("axios");
+const https = require("https");
 async function checkProjectName(name, groupId) {
 	if (!name) {
 		return "项目名不能为空";
@@ -55,7 +56,7 @@ module.exports = {
 							after_script: "string",
 							project_mock_script: "string"
 						});
-						const { basepath, name, group_id } = params;
+						let { basepath, name, group_id } = params;
 
 						if (!id) {
 							return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
@@ -67,10 +68,10 @@ module.exports = {
 
 						let projectData = await orm.project.get(id);
 
-						if (basepath) {
-							if (!this.handleBasepath(basepath)) {
-								return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
-							}
+						basepath = this.handleBasepath(basepath);
+
+						if (!basepath) {
+							return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
 						}
 
 						if (projectData.name === name) {
@@ -167,9 +168,9 @@ module.exports = {
 						return;
 					}
 
-					basepath = basepath || "";
+					basepath = this.handleBasepath(basepath);
 
-					if ((basepath = this.handleBasepath(basepath)) === false) {
+					if (!basepath) {
 						return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
 					}
 
@@ -559,6 +560,16 @@ data:data||{}
 								return {
 									data: JSON.parse(json)
 								};
+							}
+
+							if (/^https/.test(url)) {
+								return axios({
+									httpsAgent: new https.Agent({
+										rejectUnauthorized: false
+									}),
+									method: "get",
+									url
+								});
 							}
 							return axios.get(url);
 						})();
