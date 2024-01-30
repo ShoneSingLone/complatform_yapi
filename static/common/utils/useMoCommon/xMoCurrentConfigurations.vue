@@ -20,6 +20,7 @@
 	<xBlock :header="i18n('当前配置')" class="xMoCurrentConfigurations">
 		<xForm col="1" style="width: var(--xMoCurrentConfigurations-width); --xdesc-item-width: 80px">
 			<xDescItem :item="itemConfigs" v-for="(itemConfigs, prop) in items" :key="prop" />
+			{{ items }}
 		</xForm>
 	</xBlock>
 </template>

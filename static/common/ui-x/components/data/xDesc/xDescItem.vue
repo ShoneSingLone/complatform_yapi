@@ -80,7 +80,7 @@ export default async function () {
 					if (_.isFunction(options)) {
 						options = options();
 					}
-					content = _.find(options, { value: this.item.value })?.label;
+					content = _.find(options, { value: this.item?.value })?.label;
 				}
 
 				if (_.isBoolean(content)) {
