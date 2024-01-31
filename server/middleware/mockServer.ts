@@ -320,7 +320,13 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 		/* 使用mock设定 */
 		/* basepath 有前缀，去掉前缀，方便匹配链接 */
-		const REAL_URL_PATH = path.substr(project.basepath.length);
+		const REAL_URL_PATH = (function () {
+			if (project.basepath === "/") {
+				return path;
+			} else {
+				return path.substr(project.basepath.length);
+			}
+		})();
 		/*直接通过url获取接口信息*/
 		interfaceArray = await orm.interface.getByPath(
 			project._id,
@@ -381,7 +387,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			interfaceArray = [await orm.interface.get(findInterface._id)];
 		} else if (interfaceArray.length > 1) {
 			return (ctx.body = xU.$response(null, 405, "存在多个api，请检查数据库"));
-		} 
+		}
 		interfaceData = interfaceArray[0];
 
 		// 必填字段是否填写好
