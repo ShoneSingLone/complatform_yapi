@@ -381,9 +381,8 @@ const middlewareMockServer = () => async (ctx, next) => {
 			interfaceArray = [await orm.interface.get(findInterface._id)];
 		} else if (interfaceArray.length > 1) {
 			return (ctx.body = xU.$response(null, 405, "存在多个api，请检查数据库"));
-		} else {
-			interfaceData = interfaceArray[0];
-		}
+		} 
+		interfaceData = interfaceArray[0];
 
 		// 必填字段是否填写好
 		if (project.strice) {
@@ -397,7 +396,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			}
 		}
 
-		if (interfaceData.isProxy || ctx.headers["yapi-run-test"]) {
+		if (interfaceData?.isProxy || ctx.headers["yapi-run-test"]) {
 			const env = _.find(project.env, i => {
 				try {
 					const id = ObjectId(i._id).toString();

@@ -56,3 +56,4 @@ server/uploads/resourceAssets
 server/uploads/RESOURCE_ASSETS
 yapi.installed
 static/dist
+server/app.js
