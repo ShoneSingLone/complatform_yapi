@@ -18,12 +18,12 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ domainData, originData, allCategory, dataSync }) {
+export default async function ({ domainData, originData, dataSync }) {
 	const token = "";
 	/* 必要，混入"$closeWindow", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
-		inject: ["APP"],
+		inject: ["APP", "inject_project"],
 		props: useDialogProps(),
 		data() {
 			return {
@@ -62,8 +62,8 @@ export default async function ({ domainData, originData, allCategory, dataSync }
 					disabled() {
 						return !_.$isArrayFill(vm.apis);
 					},
-					onClick: async () => {
-						return this.handleAddInterface();
+					async onClick() {
+						return vm.handleAddInterface();
 					}
 				};
 			},
@@ -78,33 +78,36 @@ export default async function ({ domainData, originData, allCategory, dataSync }
 			}
 		},
 		methods: {
-			async preprocessCategory(cats) {
+			async ensureAllCategoryExist(cats) {
 				try {
 					const vm = this;
 					let catsObj = {};
 					if (_.isArray(cats)) {
-						for (let i = 0; i < cats.length; i++) {
-							let cat = cats[i];
-							let findCat = _.find(allCategory, { name: cat.name });
-							catsObj[cat.name] = cat;
-							/* 如果已经存在，直接使用 */
-							if (findCat) {
-								cat.id = findCat._id;
-							} else {
-								/* 调用接口=>新增  */
-								let res = await _api.yapi.interfaceAddCat({
-									name: cat.name,
-									project_id: vm.APP.cptProjectId,
-									desc: cat.desc
-								});
-								if (res?.errcode === 0) {
-									cat.id = res._id;
+						try {
+							for (const cat of cats) {
+								const findCat = _.find(vm.inject_project.allCategory, c => c.name === cat.name);
+								if (findCat) {
+									catsObj[cat.name] = findCat;
+									/* TODO:是否需要更新desc */
 								} else {
-									throw new Error(res.message);
+									const params = {
+										project_id: vm.APP.cptProjectId,
+										name: cat.name,
+										desc: cat.desc
+									};
+									const res = await _api.yapi.interfaceAddCat(params);
+									if (res?.errcode === 0) {
+										cat.id = res._id;
+									} else {
+										throw new Error(res.message);
+									}
 								}
 							}
+						} catch (error) {
+							console.error("Error adding or finding cats:", error);
 						}
 					}
+					await vm.inject_project.getInterfaceList();
 					return catsObj;
 				} catch (error) {
 					_.$msgError(error);
@@ -115,10 +118,7 @@ export default async function ({ domainData, originData, allCategory, dataSync }
 				_.$loading(true);
 				try {
 					const vm = this;
-					const cats = await this.preprocessCategory(originData.cats);
-					if (cats === false) {
-						return;
-					}
+					const cats = await this.ensureAllCategoryExist(originData.cats);
 					let { basePath } = originData;
 					vm.hasDone = 0;
 					vm.successNum = 0;
@@ -139,13 +139,15 @@ export default async function ({ domainData, originData, allCategory, dataSync }
 							let interfaceInfo = Object.assign(api, {
 								project_id: projectId
 							});
-							if (basePath) {
-								interfaceInfo.path = interfaceInfo.path.indexOf(basePath) === 0 ? interfaceInfo.path.substr(basePath.length) : interfaceInfo.path;
-							}
-							if (interfaceInfo.catname && cats[interfaceInfo.catname] && typeof cats[interfaceInfo.catname] === "object" && cats[interfaceInfo.catname].id) {
-								interfaceInfo.catid = cats[interfaceInfo.catname].id;
+							const category = cats[interfaceInfo.catname];
+
+							if (interfaceInfo.catname && category?._id) {
+								interfaceInfo.catid = category._id;
+							} else {
+								throw new Error("接口分类不存在" + interfaceInfo.catname);
 							}
 							interfaceInfo.token = token;
+							/* 只新增 */
 							if (dataSync === "normal") {
 								// normal
 								let res = await _api.yapi.interface_add(interfaceInfo);
@@ -159,6 +161,7 @@ export default async function ({ domainData, originData, allCategory, dataSync }
 									vm.successNum++;
 								}
 							} else {
+								/* 覆盖、智能合并 */
 								// merge good
 								interfaceInfo.dataSync = dataSync;
 								let res = await _api.yapi.interface_upsert(interfaceInfo);
@@ -169,6 +172,7 @@ export default async function ({ domainData, originData, allCategory, dataSync }
 								}
 							}
 						} catch (error) {
+							_.$msgError(error.message);
 						} finally {
 							vm.hasDone++;
 						}

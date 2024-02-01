@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function () {
+export default async function (options = {}) {
 	/* @ts-ignore */
 	window._api = window._api || {};
 	/* @ts-ignore */
@@ -22,6 +22,9 @@ export default async function () {
 			)
 		)
 	]);
+	if (_.isFunction(options.bootstrap)) {
+		await options.bootstrap(window._useXui);
+	}
 
 	await (async function lazyLoadAllComponents() {
 		const ALL_COMPONENTS = await _.$importVue("/common/ui-x/allComponents.vue");

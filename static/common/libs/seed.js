@@ -259,7 +259,7 @@
 					}
 				}
 			}
-		} catch (error) {}
+		} catch (error) { }
 
 		if (/^@/.test(url)) {
 			/* 业务代码 */
@@ -349,7 +349,6 @@
 				body.appendChild($script);
 			}
 		}
-
 		if (globalName) {
 			return $val(window, globalName);
 		}

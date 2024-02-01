@@ -200,137 +200,182 @@ const isDev = !!localStorage.isDev;
 	 *  $前缀的是自定义函数
 	 */
 
-	/*  */
-	window.defTable = options => {
-		if (!Vue.hasOwn(options, "isHideFilter")) {
-			options.isHideFilter = false;
-		}
-		if (!Vue.hasOwn(options, "isHideQuery")) {
-			options.isHideQuery = false;
-		}
-		if (!Vue.hasOwn(options, "pagination")) {
-			options.pagination = {
-				page: 1,
-				total: 0,
-				size: 10
-			};
-		}
-		if (!Vue.hasOwn(options, "disabled")) {
-			options.disabled = false;
-		}
-		return options;
-	};
-
-	window.defTable.colMultiple = ({ by, getConfigs }) => {
-		const { h } = Vue;
-		const checkbox = {
-			prop: "COL_MULTIPLE",
-			label: i18n("checkbox"),
-			width: 48,
-			fixed: "left",
-			headerCellRenderer(_props) {
-				const tableConfigs = getConfigs();
-				const isChecked = tableConfigs.data.list.length > 0 && tableConfigs.data.set.size === tableConfigs.data.list.length;
-				const isIndeterminate = tableConfigs.data.set.size > 0 && tableConfigs.data.set.size < tableConfigs.data.list.length;
-				const checkBoxProps = {
-					indeterminate: isIndeterminate,
-					value: isChecked,
-					onChange() {
-						if (tableConfigs.data.set.size < tableConfigs.data.list.length) {
-							tableConfigs.data.set = new Set(_.map(tableConfigs.data.list, i => i[by]));
-						} else {
-							tableConfigs.data.set = new Set();
-						}
-					}
+	(function () {
+		/*  */
+		window.defTable = options => {
+			if (!Vue.hasOwn(options, "isHideFilter")) {
+				options.isHideFilter = false;
+			}
+			if (!Vue.hasOwn(options, "isHideQuery")) {
+				options.isHideQuery = false;
+			}
+			if (!Vue.hasOwn(options, "pagination")) {
+				options.pagination = {
+					page: 1,
+					total: 0,
+					size: 10
 				};
-				const checkBoxVnode = h("elCheckbox", checkBoxProps);
-				return h(
-					"div",
-					{
-						class: "flex center width100"
-					},
-					[checkBoxVnode]
-				);
-			},
-			cellRenderer: ({ rowData }) => {
-				const tableConfigs = getConfigs();
-				const isChecked = tableConfigs.data.set.has(rowData[by]);
-				return h(
-					"div",
-					{
-						class: "flex center width100"
-					},
-					[
-						h("elCheckbox", {
-							value: isChecked,
-							onChange(value) {
-								if (value) {
-									tableConfigs.data.set.add(rowData[by]);
-								} else {
-									tableConfigs.data.set.delete(rowData[by]);
-								}
-								/* vue2 未对set map 做响应式支持？？？ */
-								tableConfigs.data.set = _.clone(tableConfigs.data.set);
-							}
-						})
-					]
-				);
 			}
-		};
-		return checkbox;
-	};
-	window.defTable.colSingle = ({ by, getConfigs }) => {
-		const { h } = Vue;
-		const checkbox = {
-			prop: "COL_MULTIPLE",
-			label: i18n("checkbox"),
-			width: 48,
-			fixed: "left",
-			headerCellRenderer(_props) {
-				return null;
-			},
-			cellRenderer: ({ rowData }) => {
-				const tableConfigs = getConfigs();
-				const isChecked = tableConfigs.data.set.has(rowData[by]);
-				return h(
-					"div",
-					{
-						class: "flex center width100"
-					},
-					[
-						h("elCheckbox", {
-							value: isChecked,
-							onChange(value) {
-								const id = rowData[by];
-								if (value) {
-									tableConfigs.data.set = new Set([id]);
-								} else {
-									tableConfigs.data.set = new Set();
-								}
-							}
-						})
-					]
-				);
+			if (!Vue.hasOwn(options, "disabled")) {
+				options.disabled = false;
 			}
-		};
-		return checkbox;
-	};
-	window.defTable.colActions = ({ cellRenderer, width, fixed = "right" }) => {
-		const columnDefaultConfigs = {
-			prop: "COL_ACTIONS",
-			label: i18n("checkbox"),
-			fixed,
-			width,
-			headerCellRenderer(_props) {
-				return i18n("操作");
-			}
+			return options;
 		};
 
-		if (cellRenderer) {
-			columnDefaultConfigs.cellRenderer = cellRenderer;
+		function SetAddAll(targetSet, sourceSet) {
+			for (const item of sourceSet) {
+				targetSet.add(item);
+			}
 		}
-		return columnDefaultConfigs;
-	};
+
+		/* ((((((((((((((((((((((coltypes))))))))))))))))))))))  */
+		window.defTable.colMultiple = ({ by, getConfigs }) => {
+			const { h } = Vue;
+			const checkbox = {
+				prop: "COL_MULTIPLE",
+				label: i18n("checkbox"),
+				width: 48,
+				fixed: "left",
+				headerCellRenderer(_props) {
+					const tableConfigs = getConfigs();
+					const isChecked = tableConfigs.data.list.length > 0 && tableConfigs.data.set.size === tableConfigs.data.list.length;
+					const isIndeterminate = tableConfigs.data.set.size > 0 && tableConfigs.data.set.size < tableConfigs.data.list.length;
+					const checkBoxProps = {
+						indeterminate: isIndeterminate,
+						value: isChecked,
+						onChange() {
+							const old = Array.from(tableConfigs.data.set);
+							if (tableConfigs.data.set.size < tableConfigs.data.list.length) {
+								_.each(tableConfigs.data.list, i => tableConfigs.data.set.add(i[by]));
+								tableConfigs.data.set = new Set(Array.from(tableConfigs.data.set));
+							} else {
+								_.each(tableConfigs.data.list, i => tableConfigs.data.set.delete(i[by]));
+								tableConfigs.data.set = new Set(Array.from(tableConfigs.data.set));
+							}
+
+							if (tableConfigs.onSelectedChange) {
+								tableConfigs.onSelectedChange(Array.from(tableConfigs.data.set), old);
+							}
+						}
+					};
+					const checkBoxVnode = h("elCheckbox", checkBoxProps);
+					return h(
+						"div",
+						{
+							class: "flex center width100"
+						},
+						[checkBoxVnode]
+					);
+				},
+				cellRenderer: ({ rowData }) => {
+					const tableConfigs = getConfigs();
+					const isChecked = tableConfigs.data.set.has(rowData[by]);
+					return h(
+						"div",
+						{
+							class: "flex center width100"
+						},
+						[
+							h("elCheckbox", {
+								value: isChecked,
+								onChange(value) {
+									const old = Array.from(tableConfigs.data.set);
+
+									if (value) {
+										tableConfigs.data.set.add(rowData[by]);
+									} else {
+										tableConfigs.data.set.delete(rowData[by]);
+									}
+									/* vue2 未对set map 做响应式支持？？？ */
+									tableConfigs.data.set = _.clone(tableConfigs.data.set);
+									if (tableConfigs.onSelectedChange) {
+										tableConfigs.onSelectedChange(Array.from(tableConfigs.data.set), old);
+									}
+								}
+							})
+						]
+					);
+				}
+			};
+			return checkbox;
+		};
+		window.defTable.colSingle = ({ by, getConfigs, disabled }) => {
+			const { h } = Vue;
+			const checkbox = {
+				prop: "COL_SINGLE",
+				label: i18n("checkbox"),
+				width: 48,
+				fixed: "left",
+				headerCellRenderer(_props) {
+					return null;
+				},
+				cellRenderer: (params) => {
+					const { rowData } = params;
+					const tableConfigs = getConfigs();
+					const isChecked = tableConfigs.data.set.has(rowData[by]);
+					let disabledTips = "";
+					let isDisabled = (() => {
+						if (_.isFunction(disabled)) {
+							return disabled(params);
+						}
+						return false;
+					})();
+
+					if (_.isString(isDisabled)) {
+						disabledTips = isDisabled;
+						isDisabled = !!isDisabled;
+					}
+
+
+					return h(
+						"div",
+						{
+							class: "flex center width100"
+						},
+						[
+							h("elCheckbox", {
+								value: isChecked,
+								disabled: isDisabled,
+								attrs: {
+									title: disabledTips,
+								},
+								onChange(value) {
+									const old = Array.from(tableConfigs.data.set);
+
+									const id = rowData[by];
+									if (value) {
+										tableConfigs.data.set = new Set([id]);
+									} else {
+										tableConfigs.data.set = new Set();
+									}
+									if (tableConfigs.onSelectedChange) {
+										tableConfigs.onSelectedChange(Array.from(tableConfigs.data.set), old);
+									}
+								}
+							})
+						]
+					);
+				}
+			};
+			return checkbox;
+		};
+		window.defTable.colActions = ({ cellRenderer, width, fixed = "right" }) => {
+			const columnDefaultConfigs = {
+				prop: "COL_ACTIONS",
+				label: i18n("checkbox"),
+				fixed,
+				width,
+				headerCellRenderer(_props) {
+					return i18n("操作");
+				}
+			};
+
+			if (cellRenderer) {
+				columnDefaultConfigs.cellRenderer = cellRenderer;
+			}
+			return columnDefaultConfigs;
+		};
+	})();
 
 	window.defItems = options => {
 		return _.reduce(

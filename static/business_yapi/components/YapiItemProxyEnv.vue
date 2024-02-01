@@ -28,9 +28,7 @@ export default async function () {
 		render() {
 			const vm = this;
 			let attrs = {};
-			if (_.isFunction(_useXui?.globalConfigs?.xItemSelect?.defaultProps)) {
-				attrs = _useXui.globalConfigs.xItemSelect.defaultProps(vm, vm.$attrs);
-			}
+
 			return h(
 				"xSelect",
 				merge_hFnProps([

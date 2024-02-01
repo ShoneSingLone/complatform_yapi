@@ -30,7 +30,7 @@ export default async function () {
 	return {
 		name: "xItem",
 		componentName: "xItem",
-		props: ["emitVM", "configs", "value", "payload", "readOnlyAs", /* 直接加在xItem上 */ "label", "rules", "disabled"],
+		props: ["configs", "value", "payload", "readOnlyAs", /* 直接加在xItem上 */ "label", "rules", "disabled"],
 		provide() {
 			const xItem = this;
 			return {
@@ -43,9 +43,8 @@ export default async function () {
 		},
 		setup(props) {
 			const vm = this;
-			if (vm.emitVM) {
-				vm.emitVM(vm);
-			}
+			/*** xItem对外暴露自身实例*/
+			vm.$emit("setup", { xItem: vm });
 			const { cptPlaceholder } = useProps(vm);
 
 			function forceUpdate() {
@@ -258,6 +257,7 @@ export default async function () {
 				vm.p_debounceValidate = _.debounce(vm.validate, 1000);
 			}, 1000 * 3);
 			return {
+				componentName: "xItem",
 				errorTips: "",
 				p_style: {},
 				p_props: {},

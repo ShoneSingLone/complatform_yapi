@@ -1,11 +1,26 @@
-<style lang="less"></style>
+<style lang="less">
+.ProjectInterfaceSectionInterfaceList {
+	.xItem-wrapper {
+		margin-bottom: var(--ui-one);
+	}
+}
+</style>
 <template>
-	<div class="height100 flex vertical">
-		<xTablebar style="--xItem-wrapper-width: 424px; --xItem-label-width: 76px" :configs="inject_project_interface_section.configsTable">
+	<div class="height100 flex vertical ProjectInterfaceSectionInterfaceList">
+		<xTablebar style="--xItem-wrapper-width: 424px; --xItem-label-width: 100px" :configs="inject_project_interface_section.configsTable">
 			<template #left>
 				<xBtn :configs="btnChaneProxy" />
+				<div class="flex like-float">
+					<xItem :configs="inject_project_interface_section.form.path" />
+					<xItem :configs="inject_project_interface_section.form.catid" />
+					<xItem :configs="inject_project_interface_section.form.method" />
+					<xItem :configs="inject_project_interface_section.form.tag" />
+					<xItem :configs="inject_project_interface_section.form.isUseBackup" />
+					<xItem :configs="inject_project_interface_section.form.witchEnv" />
+				</div>
 			</template>
-			<xItem :configs="inject_project_interface_section.form.path" />
+			<!-- 名称或者路径 -->
+
 			<template #right>
 				<xBtn :configs="btnRest" class="ml4" />
 			</template>

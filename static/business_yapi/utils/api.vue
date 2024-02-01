@@ -28,6 +28,11 @@ export default async function () {
 						data
 					});
 				},
+				apiInterfaceListMenu(project_id) {
+					return _.$ajax.get("/api/interface/list_menu", {
+						data: { project_id }
+					});
+				},
 				interface_get_by_id(data) {
 					return _.$ajax.get("/api/interface/get", {
 						data
@@ -70,11 +75,6 @@ export default async function () {
 					});
 				},
 				/* project */
-				apiInterfaceListMenu(project_id) {
-					return _.$ajax.get("/api/interface/list_menu", {
-						data: { project_id }
-					});
-				},
 				getProjectByGroupId(group_id) {
 					return _.$ajax.get("/api/project/list", {
 						data: { group_id }

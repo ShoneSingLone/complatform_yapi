@@ -76,13 +76,20 @@ export default async function () {
 				width: 150,
 				cellRenderer: params => {
 					const { rowData } = params;
-					return h("xTag", { type: rowData.isProxy ? "success" : "info" }, [rowData.isProxy ? "是" : "否"]);
+
+					if (rowData.isProxy) {
+						const vDom_yes = h("xTag", { type: "success" }, ["是"]);
+						const vDom_witchEnv = h("xTag", { class: "ml" }, [vm.cptEnvObject[rowData.witchEnv]?.name || "--"]);
+						return h("div", [vDom_yes, vDom_witchEnv]);
+					} else {
+						return h("xTag", { type: "info" }, ["否"]);
+					}
 				}
 			};
 			const isUseBackup = {
 				prop: "isUseBackup",
 				label: i18n("启用备份数据"),
-				width: 100,
+				width: 160,
 				cellRenderer: params => {
 					const { rowData } = params;
 
@@ -110,7 +117,7 @@ export default async function () {
 				data: [],
 				configsTable: defTable({
 					onQuery() {
-						filterListForm();
+						vm.filterList();
 					},
 					data: {
 						set: new Set(),
@@ -144,11 +151,90 @@ export default async function () {
 				}),
 				form: defItems({
 					path: {
-						label: "接口路径",
+						label: "名称或者路径",
 						value: "",
 						clearable: true,
-						onEnter: () => {
-							this.filterList();
+						onEnter() {
+							vm.filterList();
+						}
+					},
+					catid: {
+						label: "分类",
+						value: [],
+						clearable: true,
+						itemType: "xItemSelect",
+						multiple: true,
+						options() {
+							return _.map(vm.inject_project.allCategory, row => {
+								return {
+									value: row._id,
+									label: row.name
+								};
+							});
+						},
+						onEmitValue() {
+							vm.filterList();
+						}
+					},
+					method: {
+						label: "方法",
+						value: "",
+						clearable: true,
+						itemType: "xItemSelect",
+						multiple: true,
+						options: _opts.yapi.httpMethod,
+						onEmitValue() {
+							vm.filterList();
+						}
+					},
+					tag: {
+						label: "Tags",
+						value: [],
+						clearable: true,
+						itemType: "xItemSelect",
+						multiple: true,
+						options() {
+							return _.map(vm.inject_project.allTags, label => {
+								return {
+									value: label,
+									label
+								};
+							});
+						},
+						onEmitValue() {
+							vm.filterList();
+						}
+					},
+					isUseBackup: {
+						label: "备份数据",
+						value: [],
+						clearable: true,
+						itemType: "xItemSelect",
+						multiple: true,
+						options: _.map(["是", "否", "无备份数据"], label => ({ label, value: label })),
+						onEmitValue() {
+							vm.filterList();
+						}
+					},
+					witchEnv: {
+						label: "转发环境",
+						value: [],
+						clearable: true,
+						itemType: "xItemSelect",
+						multiple: true,
+						options() {
+							return _.concat(
+								[{ label: "未设置", value: "unset" }],
+								_.map(vm.APP.cptProject.env, row => {
+									return {
+										value: row._id,
+										label: row.name
+									};
+								})
+							);
+						},
+						onEmitValue() {
+							vm.filterList();
 						}
 					}
 				})
@@ -157,6 +243,16 @@ export default async function () {
 		computed: {
 			cptInterfaceType() {
 				return this.$route.query.interfaceType;
+			},
+			cptEnvObject() {
+				return _.reduce(
+					this.APP.cptProject.env,
+					(target, e) => {
+						target[e._id] = e;
+						return target;
+					},
+					{}
+				);
 			}
 		},
 		watch: {
@@ -170,7 +266,8 @@ export default async function () {
 		methods: {
 			resetFilter() {
 				_.$setValToForm(this.form, {
-					path: ""
+					path: "",
+					catid: []
 				});
 				this.$nextTick(() => {
 					this.filterList();
@@ -180,11 +277,10 @@ export default async function () {
 				let configsTableDataList = (() => {
 					const filterForm = _.$pickValueFromConfigs(this.form);
 					let _allInterface = _.cloneDeep(this.inject_project.allInterface);
-
 					let paramKeys = Object.keys(filterForm);
 					let prop;
 					while ((prop = paramKeys.pop())) {
-						const search = _.trim(filterForm[prop]);
+						let search = filterForm[prop];
 						if (_.$isInput(search)) {
 							_allInterface = _.filter(_allInterface, i => {
 								if (prop == "status") {
@@ -219,11 +315,11 @@ export default async function () {
 									}
 									return search.includes(i.witchEnv);
 								} else {
-									return new RegExp(search, "i").test(i[prop]);
+									search = _.trim(search);
+									return new RegExp(search, "i").test(i[prop]) || new RegExp(search, "i").test(i.title);
 								}
 							});
 						}
-						prop = paramKeys.pop();
 					}
 					return _allInterface;
 				})();

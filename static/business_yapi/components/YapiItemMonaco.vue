@@ -1,10 +1,5 @@
 <template>
-	<div>
-		<xSelect placeholder="转发环境">
-			<xOption v-for="item in cptOptions" :key="item.value" :label="item.label" :value="item.value" />
-		</xSelect>
-		<div class="YapiItemMonaco mt" ref="refMonacoContainer" />
-	</div>
+	<div class="YapiItemMonaco mt" ref="refMonacoContainer" />
 </template>
 
 <script lang="ts">
@@ -40,20 +35,6 @@ export default async function () {
 				const newCode = this.raw$editor.getValue();
 				if (newCode !== this.mixin_value) {
 					this.mixin_value = newCode;
-				}
-			}
-		},
-		computed: {
-			cptOptions() {
-				try {
-					return _.map(JSON.parse(this.mixin_value), row => {
-						return {
-							label: `${row.name} ${row.domain}`,
-							value: row._id + row.name
-						};
-					});
-				} catch (error) {
-					return [];
 				}
 			}
 		}

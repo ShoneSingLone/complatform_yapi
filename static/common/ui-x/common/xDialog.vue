@@ -54,10 +54,6 @@ export default async function () {
 	padding: var(--xDialog-padding);
 	display: flex;
 	flex-flow: column nowrap;
-
-	.xCard {
-		// overflow: auto;
-	}
 }
 
 .xDialog-footer {

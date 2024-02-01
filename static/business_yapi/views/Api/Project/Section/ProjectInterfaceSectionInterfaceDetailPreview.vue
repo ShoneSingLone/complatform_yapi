@@ -24,7 +24,8 @@ export default async function () {
 
 				/* @ts-ignore */
 				const { protocol, hostname, port } = location;
-				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${this.APP.cptProject._id}${this.APP.cptProject?.basepath}${path}`;
+				const apiURL = String(`${this.APP.cptProject?.basepath}${path}`).replace(/\/\//g, "/");
+				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${this.APP.cptProject._id}${apiURL}`;
 
 				return [
 					{ label: i18n("接口名称"), value: title || "--" },

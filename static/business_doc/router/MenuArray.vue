@@ -120,7 +120,8 @@ export default async function () {
 				{ icon: "icon_report", label: i18n("dropdown"), href: "/component/navigation/dropdown" },
 				{ icon: "_icon_breadcrumb", label: `${i18n("Breadcrumb")} ${i18n("面包屑")}`, href: "/component/navigation/breadcrumb" },
 				{ icon: "_icon_affix", label: `${i18n("Affix")} ${i18n("固钉")}`, href: "/other/affix" },
-				{ icon: "_icon_affix", label: `${i18n("Alert")} ${i18n("警告")}`, href: "/other/alert" }
+				{ icon: "_icon_affix", label: `${i18n("Alert")} ${i18n("警告")}`, href: "/other/alert" },
+				{ icon: "_icon_affix", label: `${i18n("xExcalidraw")} ${i18n("白板")}`, href: "/component/data/excalidraw" },
 			]
 		},
 		{

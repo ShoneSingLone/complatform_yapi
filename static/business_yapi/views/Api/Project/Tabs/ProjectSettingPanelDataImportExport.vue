@@ -50,6 +50,7 @@ export default async function () {
 						value: "normal",
 						label: "数据覆盖模式",
 						itemType: "xItemRadioGroup",
+						minWidth: 100,
 						tips() {
 							return h("div", [
 								h("div", {}, [h("xTag", { class: "mr" }, ["普通模式"]), h("span", {}, ["不导入已存在的接口"])]),
@@ -83,12 +84,12 @@ export default async function () {
 									return xBtn;
 								} else {
 									const xItemProps = {
-										emitVM(xItemVM) {
-											vm._xItemVM = xItemVM;
-										},
 										class: "ml",
 										configs: vm.form.swaggerURL,
-										style: "--xItem-wrapper-width: 600px;"
+										style: "--xItem-wrapper-width: 600px;",
+										onSetup({ xItem }) {
+											vm._importByVm = xItem;
+										}
 									};
 									return h("div", { class: "flex middle" }, [h("xItem", xItemProps), xBtn]);
 								}
@@ -126,7 +127,7 @@ export default async function () {
 							}
 						} else {
 							if (!vm.cptParams.swaggerURL) {
-								vm._xItemVM.errorTips = "导入之前需要填写URL";
+								vm._importByVm.errorTips = "导入之前需要填写URL";
 								return;
 							}
 							res = await _api.yapi.getSwaggerDataByUrl({

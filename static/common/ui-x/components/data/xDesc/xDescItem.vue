@@ -88,7 +88,7 @@ export default async function () {
 				}
 
 				if (_.isFunction(this.item?.readonlyAs)) {
-					content = this.item.readonlyAs.call(this);
+					content = this.item.readonlyAs.call(this.item, { xDescItem: this });
 				}
 				return content || "--";
 			}

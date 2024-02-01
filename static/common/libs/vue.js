@@ -12112,18 +12112,36 @@
 	Vue.getFirstComponentChild = getFirstComponentChild;
 	Vue.resolveScopedSlots = resolveScopedSlots;
 	Vue.prototype.$dev = (...args) => console.log.apply(console, args);
-	Vue.prototype.$attr = function name(prop) {
-		let current = this;
-		let attrs = current.$attrs;
-		while (attrs) {
+	/* xItem 的itemType 子组件用于获取 在 xItem上的attrs属性【响应的】 */
+	Vue.prototype.$xItemAttr = function name(prop) {
+		try {
+			let current = this;
+			let attrs = current.$attrs;
+
 			if (hasOwn(attrs, prop)) {
 				return attrs[prop];
-			} else {
-				current = current.$parent;
-				attrs = current?.$attrs;
 			}
+			current = current.$parent;
+			while (current) {
+				if (current?.componentName === "xItem") {
+					attrs = current?.$attrs;
+					break;
+				} else {
+					current = current.$parent;
+				}
+			}
+			if (hasOwn(attrs, prop)) {
+				return attrs[prop];
+			}
+		} catch (error) {
+			console.error(error);
 		}
 		return false;
+	};
+
+	Vue.prototype.$xItemWatch = function (...args) {
+		/* 通过其他参数决定会不会触发watch，级联操作  */
+		this.$watch.apply(this, args);
 	};
 	Vue.prototype.dispatch = dispatch;
 	Vue.prototype.broadcast = broadcast;
