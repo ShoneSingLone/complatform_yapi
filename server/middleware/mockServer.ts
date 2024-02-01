@@ -320,7 +320,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 		/* 使用mock设定 */
 		/* basepath 有前缀，去掉前缀，方便匹配链接 */
-		const REAL_URL_PATH = path.substr(project.basepath.length);
+		const REAL_URL_PATH = path.replace(project.basepath, "");
 		/*直接通过url获取接口信息*/
 		interfaceArray = await orm.interface.getByPath(
 			project._id,
