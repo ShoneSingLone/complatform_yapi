@@ -1,33 +1,54 @@
-<script>
+<script lang="ts">
 export default async function () {
 	return [
+		"components/xExcalidraw/xExcalidraw",
 		/* *************** */
+		"components/other/xAlert/xAlert",
+		"components/TableCell/TableCell",
+		"components/TableCell/TableCellItem",
+		/*  */
+		"components/base/xBtn/xBtnWithConfirm",
 		"components/base/xBtn/xBtn",
 		"components/base/xBtn/xBtnArray",
 		"components/base/xBtn/xBtnGroup",
+		"components/base/xBtn/xColActionAndMore",
 		/*  */
+		"components/data/xMenuTree/xMenuTree",
 		"components/navigation/xTabs/xTabs",
 		"components/navigation/xTabs/xTabPane",
 		"components/data/xTag/xTag",
+		"components/data/xDesc/xDesc",
+		"components/data/xDesc/xDescItem",
 		"components/data/xTableVir/xTableVir",
+		"components/data/xVirtualList/xFixedSizeList",
+		"components/data/xTree/xTree",
+		"components/data/xTree/xTreeNode",
+		"components/data/xTree/xNodeContent",
 		"components/form/xInput/xInput",
 		"components/form/xSelect/xSelect",
 		"components/form/xInputNumber/xInputNumber",
 		"components/form/xCheckbox/xCheckbox",
 		"components/other/xCard/xCard",
 		"components/other/xBlock/xBlock",
+		"components/other/xAffix/xAffix",
 		/*  */
 		"components/form/xSelect/xSelect",
 		"components/form/xSelect/xOption",
 		"components/form/xSelect/xOptionGroup",
 		"components/form/xSelect/xSelectDropdown",
 		/*  */
+		"components/navigation/xBreadcrumb/xBreadcrumb",
+		"components/navigation/xBreadcrumb/xBreadcrumbItem",
 		"components/navigation/xDropdown/xDropdown",
 		"components/navigation/xDropdown/xDropdownItem",
 		"components/navigation/xDropdown/xDropdownMenu",
 		/*  */
 		"components/other/xScrollbar/xScrollbar",
 		/* *************** */
+		"components/layout/page/xPageTitle",
+		"components/layout/page/xPageContent",
+		"components/layout/page/xPageFooter",
+		/* ********************** */
 		"common/xMd",
 		"common/xItemWrapper",
 		"common/xAutoResizer",
@@ -50,6 +71,7 @@ export default async function () {
 		"common/xInfoCardItem",
 		"common/xInquire",
 		"common/xItem",
+		"common/xItemCheckBox",
 		"common/xItemCheckboxGroup",
 		"common/xItemDatetime",
 		"common/xItemInput",
@@ -58,10 +80,9 @@ export default async function () {
 		"common/xItemRadioGroup",
 		"common/xItemSelect",
 		"common/xItemSwitch",
+		"common/xItemSlider",
 		"common/xMenuTreeItem",
 		"common/xOprWithMore",
-		"common/xPageContent",
-		"common/xPageTitle",
 		"common/xPagination",
 		"common/xRender",
 		"common/xSearchList",

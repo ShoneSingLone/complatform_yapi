@@ -1,72 +1,152 @@
-<script>
+<script lang="ts">
 export default async function () {
-	if (!Vue._yapi_api) {
+	if (!window._api.yapi) {
 		(function () {
-			_.$ajax.requestInjector = function (options) {
-				const _url = new URL(String(options.url).replace("#", ""), location.origin);
-				_.each(_.$lStorage.x_token, (v, k) => {
-					_url.searchParams.set(k, v);
-				});
-				const { href } = _url;
-				options.url = href;
-				return options;
+			_.$ajax.requestInjector = function (req) {
+				req.url = Vue._yapi_utils.appendToken(req.url);
+				return req;
+			};
+			_.$ajax.responseInjector = function (response) {
+				if (response.errcode == 40011) {
+					/* 登录过期 */
+					_.$msgError("登录过期，请重新登录");
+					_.$yapiRouter.push("/login");
+				} else if (response.errcode === 10001) {
+					_.$message.error("登录已失效，请重新登录");
+					_.$router.push("/login");
+				}
+
+				if (response.errcode !== 0) {
+				}
+
+				return response;
 			};
 
-			Vue._yapi_api = {
+			window._api.yapi = {
+				getSwaggerDataByUrl(data) {
+					return _.$ajax.post("/api/project/swagger_url", {
+						data
+					});
+				},
+				apiInterfaceListMenu(project_id) {
+					return _.$ajax.get("/api/interface/list_menu", {
+						data: { project_id }
+					});
+				},
+				interface_get_by_id(data) {
+					return _.$ajax.get("/api/interface/get", {
+						data
+					});
+				},
+				interface_up(data) {
+					return _.$ajax.post("/api/interface/up", {
+						data
+					});
+				},
+				interface_upsert(data) {
+					return _.$ajax.post("/api/interface/upsert", {
+						data
+					});
+				},
+				interface_add(data) {
+					return _.$ajax.post("/api/interface/add", {
+						data
+					});
+				},
+				interfaceAddCat(data) {
+					return _.$ajax.post("/api/interface/add_cat", {
+						data
+					});
+				},
+				interfaceUpCat(data) {
+					return _.$ajax.post("/api/interface/up_cat", {
+						data
+					});
+				},
+				/* log */
+				getLogList({ typeid, type, page, limit }) {
+					return _.$ajax.get("/api/log/list", {
+						data: { typeid: Number(typeid), type, page, limit }
+					});
+				},
+				log_update(data) {
+					return _.$ajax.post("/api/log/list_by_update", {
+						data
+					});
+				},
 				/* project */
 				getProjectByGroupId(group_id) {
-					return handleRequest(async () => {
-						return _.$ajax.get("/api/project/list", {
-							data: { group_id }
-						});
+					return _.$ajax.get("/api/project/list", {
+						data: { group_id }
+					});
+				},
+				getProjectById(id) {
+					return _.$ajax.get("/api/project/get", {
+						data: { id }
+					});
+				},
+				copyProject(data) {
+					return _.$ajax.post("/api/project/copy", {
+						data
+					});
+				},
+				project_update(data) {
+					return _.$ajax.post("/api/project/up", {
+						data
+					});
+				},
+				project_add(formData) {
+					return _.$ajax.post("/api/project/add", {
+						data: formData
+					});
+				},
+				project_del(data) {
+					return _.$ajax.post("/api/project/del", {
+						data
+					});
+				},
+				projectAddFollow(data) {
+					return _.$ajax.post("/api/follow/add", {
+						data
+					});
+				},
+				projectDelFollow(projectid) {
+					return _.$ajax.post("/api/follow/del", {
+						data: { projectid }
 					});
 				},
 				groupDelMember(data) {
-					return handleRequest(async () => {
-						return _.$ajax.post("/api/group/del_member", {
-							data
-						});
+					return _.$ajax.post("/api/group/del_member", {
+						data
 					});
 				},
 				groupDeleteGroup(data) {
-					return handleRequest(async () => {
-						return _.$ajax.post("/api/group/del", {
-							data
-						});
+					return _.$ajax.post("/api/group/del", {
+						data
 					});
 				},
 				groupAddMember(data) {
-					return handleRequest(async () => {
-						return _.$ajax.post("/api/group/add_member", {
-							data
-						});
+					return _.$ajax.post("/api/group/add_member", {
+						data
 					});
 				},
 				groupChangeMemberRole(data) {
-					return handleRequest(async () => {
-						return _.$ajax.post("/api/group/change_member_role", {
-							data
-						});
+					return _.$ajax.post("/api/group/change_member_role", {
+						data
 					});
 				},
 				groupAddGroup(data) {
-					return handleRequest(async () => {
-						return _.$ajax.post("/api/group/add", {
-							data
-						});
+					return _.$ajax.post("/api/group/add", {
+						data
 					});
 				},
 				groupUpdateGroup(data) {
-					return handleRequest(async () => {
-						return _.$ajax.post("/api/group/up", {
-							data
-						});
+					return _.$ajax.post("/api/group/up", {
+						data
 					});
 				},
 				groupMine() {
-					return handleRequest(async () => {
-						return _.$ajax.get("/api/group/mine");
-					});
+					return _.$ajax.get("/api/group/mine");
 				},
 				groupGetMyGroupBy(groupId) {
 					let id;
@@ -75,84 +155,66 @@ export default async function () {
 					} catch (error) {
 						return;
 					}
-					return handleRequest(async () => {
-						return _.$ajax.get("/api/group/get", {
-							data: {
-								id
-							}
-						});
+
+					return _.$ajax.get("/api/group/get", {
+						data: {
+							id
+						}
 					});
 				},
 				groupGetMemberListBy(groupId) {
-					return handleRequest(async () => {
-						return _.$ajax.get("/api/group/get_member_list", {
-							data: {
-								id: Number(groupId)
-							}
-						});
+					return _.$ajax.get("/api/group/get_member_list", {
+						data: {
+							id: Number(groupId)
+						}
 					});
 				},
 				/* user */
-				async getUserSearch(data) {
-					return handleRequest(async () => {
-						return _.$ajax.get(`/api/user/search`, { data });
+				async uploadAvatar(data) {
+					return _.$ajax.post(`/api/user/upload_avatar`, {
+						data
 					});
 				},
-				async getUserStatus() {
-					return handleRequest(async () => {
-						return _.$ajax.get(`/api/user/status`);
+				async userById(id) {
+					return _.$ajax.get(`/api/user/find`, {
+						data: {
+							id: Number(id)
+						}
 					});
 				},
-				async postUserLogin(data) {
-					return handleRequest(async () => {
-						return _.$ajax.post(`/api/user/login`, {
-							data
-						});
+				async userSearch(data) {
+					return _.$ajax.get(`/api/user/search`, { data });
+				},
+				/**
+				 * 获取用户状态
+				 */
+				async userStatus() {
+					return _.$ajax.get(`/api/user/status`);
+				},
+				async userLogin(data) {
+					return _.$ajax.post(`/api/user/login`, {
+						data
 					});
 				},
-				async postUserLogout() {
-					return handleRequest(async () => {
-						return _.$ajax.post(`/api/user/logout`);
-					});
+				async userLogout() {
+					return _.$ajax.post(`/api/user/logout`);
 				},
 				async postNewVarifyCode(email) {
-					return handleRequest(async () => {
-						return _.$ajax.post(`/api/user/NewVarifyCode`, {
-							data: {
-								email
-							}
-						});
+					return _.$ajax.post(`/api/user/NewVarifyCode`, {
+						data: {
+							email
+						}
 					});
 				},
-				async postUserReg(data) {
-					return handleRequest(async () => {
-						return _.$ajax.post(`/api/user/reg`, {
-							data
-						});
+				async userReg(data) {
+					return _.$ajax.post(`/api/user/reg`, {
+						data
 					});
 				}
 			};
-
-			async function handleRequest(request) {
-				let response = { error: true };
-				try {
-					_.$loading(true);
-					response = await request();
-					if (response.errcode == 40011) {
-						/* 登录过期 */
-						_.$msgError("登录过期，请重新登录");
-						_.$yapiRouter.push("/login");
-					}
-				} catch (error) {
-					_.$msgError(error);
-				} finally {
-					_.$loading();
-					return response;
-				}
-			}
 		})();
 	}
 
-	return Vue._yapi_api;
+	return window._api.yapi;
 }
 </script>

@@ -269,18 +269,18 @@ function mockValidator(interfaceData, ctx) {
 
 const middlewareMockServer = () => async (ctx, next) => {
 	ctx.callme.push("middlewareMockServer");
-	let path = ctx.path;
+	let ctx_path = ctx.path;
 	let header = ctx.request.header;
 	/*** 如果不是/Mock/链接，不做代理 */
-	if (path.indexOf("/mock/") !== 0) {
+	if (ctx_path.indexOf("/mock/") !== 0) {
 		if (next) await next();
 		return true;
 	}
 	console.log(`🚀useMockServer: ${ctx.path}`);
-	let paths = path.split("/");
+	let paths = ctx_path.split("/");
 	let projectId = paths[2];
 	paths.splice(0, 3);
-	path = "/" + paths.join("/");
+	ctx_path = "/" + paths.join("/");
 
 	ctx.set("Access-Control-Allow-Origin", header.origin);
 	ctx.set("Access-Control-Allow-Credentials", true);
@@ -320,7 +320,13 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 		/* 使用mock设定 */
 		/* basepath 有前缀，去掉前缀，方便匹配链接 */
-		const REAL_URL_PATH = path.replace(project.basepath, "");
+		const REAL_URL_PATH = (function () {
+			let _path = ctx_path;
+			if (project.basepath !== "/") {
+				_path = ctx_path.replace(project.basepath, "");
+			}
+			return String(_path).replace(/\/\//g, "/");
+		})();
 		/*直接通过url获取接口信息*/
 		interfaceArray = await orm.interface.getByPath(
 			project._id,
@@ -381,9 +387,8 @@ const middlewareMockServer = () => async (ctx, next) => {
 			interfaceArray = [await orm.interface.get(findInterface._id)];
 		} else if (interfaceArray.length > 1) {
 			return (ctx.body = xU.$response(null, 405, "存在多个api，请检查数据库"));
-		} else {
-			interfaceData = interfaceArray[0];
 		}
+		interfaceData = interfaceArray[0];
 
 		// 必填字段是否填写好
 		if (project.strice) {
@@ -397,7 +402,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			}
 		}
 
-		if (interfaceData.isProxy || ctx.headers["yapi-run-test"]) {
+		if (interfaceData?.isProxy || ctx.headers["yapi-run-test"]) {
 			const env = _.find(project.env, i => {
 				try {
 					const id = ObjectId(i._id).toString();

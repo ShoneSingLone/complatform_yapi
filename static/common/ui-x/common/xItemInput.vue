@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 export default async function () {
 	const { mixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 	return defineComponent({
@@ -14,7 +14,6 @@ export default async function () {
 		},
 		render(h) {
 			const vm = this;
-
 			let tag = "xInput";
 			if (this.isNumber) {
 				tag = "xInputNumber";
@@ -26,8 +25,8 @@ export default async function () {
 				autocomplete: "on",
 				type: vm.$attrs.type || vm.configs?.type || "text"
 			};
-			if (_.isFunction(Vue._useXui?.globalConfigs?.xItemInput?.defaultProps)) {
-				attrs = Vue._useXui.globalConfigs.xItemInput.defaultProps(this, attrs);
+			if (_.isFunction(_useXui?.globalConfigs?.xItemInput?.defaultProps)) {
+				attrs = _useXui.globalConfigs.xItemInput.defaultProps(this, attrs);
 			}
 
 			if (vm.configs?.type === "textarea") {

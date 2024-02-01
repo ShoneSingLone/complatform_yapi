@@ -105,7 +105,7 @@
 		</transition>
 	</div>
 </template>
-<script>
+<script lang="ts">
 export default async function () {
 	const [{ useFocus }, { addResizeListener, removeResizeListener }, Clickoutside, NavigationMixin] = await Promise.all([
 		_.$importVue("/common/utils/hooks.vue"),
@@ -217,11 +217,15 @@ export default async function () {
 					return true;
 				}
 			},
+			selectOptions: Array,
 			automaticDropdown: Boolean,
 			size: String,
 			disabled: Boolean,
 			clearable: Boolean,
-			filterable: Boolean,
+			filterable: {
+				type: Boolean,
+				default: true
+			},
 			allowCreate: Boolean,
 			loading: Boolean,
 			popperClass: String,

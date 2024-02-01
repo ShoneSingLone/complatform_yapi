@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 export default async function () {
 	/* 定制颜色基本上就是 text hover，focus active disabled */
 	const { useProps } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
@@ -27,6 +27,10 @@ export default async function () {
 				type: Boolean,
 				default: true
 			},
+			confirm: {
+				type: [Object, Boolean],
+				default: false
+			},
 			loading: Boolean,
 			disabled: Boolean,
 			plain: Boolean,
@@ -48,6 +52,15 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptConfirm() {
+				if (this.confirm) {
+					return this.confirm;
+				}
+				if (this.configs?.confirm) {
+					return this.configs.confirm;
+				}
+				return false;
+			},
 			cptIcon() {
 				if (this.icon) {
 					return this.icon;
@@ -98,7 +111,7 @@ export default async function () {
 			},
 			cptLabel() {
 				if (_.isFunction(this.configs?.label)) {
-					return this.configs.label();
+					return this.configs.label.call(this.configs, { xBtn: this });
 				}
 				if (_.isString(this.configs?.label)) {
 					return this.configs.label;
@@ -181,36 +194,46 @@ export default async function () {
 			if (this.cptIsHide) {
 				return null;
 			}
-			//
-			return h(
-				"button",
-				{
-					directives: [
-						vm.cptUseRipple,
-						{
-							name: "xtips",
-							value: {
-								placement: "top",
-								content: vm.cptDisabledTips
-							}
-						}
-					],
-					onClick() {
-						vm.handleClick();
+
+			if (vm.cptConfirm) {
+				return h("xBtnWithConfirm", {
+					...vm.cptConfirm,
+					configs: {
+						..._.omit(vm.configs, ["confirm"]),
+						preset: vm.preset
+					}
+				});
+			}
+
+			if (vm.configs)
+				//
+				return h(
+					"button",
+					{
+						attrs: {
+							title: vm.cptDisabledTips
+						},
+						directives: [
+							vm.cptUseRipple,
+							/* 合并props里面的指令 */
+							...(vm.$vnode.data.directives || [])
+						],
+						onClick() {
+							vm.handleClick();
+						},
+						on: vm.$listeners,
+						disabled: vm.buttonDisabled || vm.cptLoading,
+						autofocus: vm.autofocus,
+						type: vm.type,
+						class: vm.cptClassName
 					},
-					on: vm.$listeners,
-					disabled: vm.buttonDisabled || vm.cptLoading,
-					autofocus: vm.autofocus,
-					type: vm.type,
-					class: vm.cptClassName
-				},
-				[
-					h("i", { vIf: vm.cptLoading, class: "el-icon-loading" }),
-					h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: vm.cptIcon }),
-					/* vNode的变动不会触发render重新执行 */
-					vm.cptChildren || this.$slots.default
-				]
-			);
+					[
+						h("i", { vIf: vm.cptLoading, class: "el-icon-loading mr4" }),
+						h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon, "mr4"] }),
+						/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
+						this.$slots.default || vm.cptChildren
+					]
+				);
 		}
 	});
 }
@@ -218,6 +241,10 @@ export default async function () {
 
 <style lang="less">
 .el-button {
+	&.xItem-wrapper {
+		width: unset;
+		margin-bottom: 0;
+	}
 	/* default */
 	--el-button-text-color: var(--el-text-color-regular);
 	--el-button-border-color: var(--el-border-color);
@@ -225,11 +252,11 @@ export default async function () {
 	/* hover;focus */
 	--el-button-hover-text-color: var(--ui-primary);
 	--el-button-hover-border-color: var(--ui-primary);
-	--el-button-hover-bg-color: var(--el-color-primary-light-9);
+	--el-button-hover-bg-color: var(--ui-primary-light-9);
 	/* active */
 	--el-button-active-text-color: var(--ui-primary-active);
 	--el-button-active-border-color: var(--ui-primary-active);
-	--el-button-active-bg-color: var(--el-color-primary-light-9);
+	--el-button-active-bg-color: var(--ui-primary-light-9);
 	/* disabled */
 	--el-button-disabled-text-color: var(--el-disabled-text-color);
 	--el-button-disabled-border-color: var(--el-border-color-light);
@@ -246,8 +273,8 @@ export default async function () {
 		--el-button-active-border-color: var(--ui-primary-active);
 		--el-button-active-bg-color: var(--ui-primary-active);
 		--el-button-disabled-text-color: var(--el-color-white);
-		--el-button-disabled-border-color: var(--el-color-primary-light-5);
-		--el-button-disabled-bg-color: var(--el-color-primary-light-5);
+		--el-button-disabled-border-color: var(--ui-primary-light-5);
+		--el-button-disabled-bg-color: var(--ui-primary-light-5);
 	}
 
 	color: var(--el-button-text-color);
@@ -262,6 +289,9 @@ export default async function () {
 		border-color: var(--el-button-hover-border-color);
 		background-color: var(--el-button-hover-bg-color);
 		transform: scale(1.01);
+		.xIcon {
+			color: var(--el-button-hover-text-color);
+		}
 	}
 
 	&:active {

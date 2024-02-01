@@ -4,7 +4,7 @@
 			<xRender :render="btn.label" :payload="configs" />
 		</xBtn>
 		<xDropdown v-if="isShowMoreBtn" trigger="click" @visible-change="handleVisibleChange">
-			<xBtn type="text">
+			<xBtn preset="text">
 				{{ i18n("更多") }}
 			</xBtn>
 			<xDropdownMenu slot="dropdown" ref="ElDropdownMenu">
@@ -18,7 +18,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 export default async function () {
 	/* 有更多选项的 按钮组 */
 	const DID_NOT_SET_COL = "DID_NOT_SET_COL";

@@ -17,7 +17,7 @@
 		</el-row>
 	</div>
 </template>
-<script>
+<script lang="ts">
 export default async function () {
 	return defineComponent({
 		data() {
@@ -49,16 +49,6 @@ export default async function () {
 	.image {
 		width: 100%;
 		display: block;
-	}
-
-	.clearfix:before,
-	.clearfix:after {
-		display: table;
-		content: "";
-	}
-
-	.clearfix:after {
-		clear: both;
 	}
 }
 </style>

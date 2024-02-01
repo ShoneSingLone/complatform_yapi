@@ -1,6 +1,6 @@
 <template>
 	<div class="xItem-ip-part">
-		<table class="page_table">
+		<table>
 			<thead>
 				<tr>
 					<th>
@@ -31,7 +31,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 export default async function () {
 	const { mixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 	const RULES = await _.$importVue("/common/utils/rules.vue");
@@ -72,21 +72,4 @@ export default async function () {
 }
 </script>
 
-<style lang="less">
-.xItem-ip-part {
-	.page_table {
-		th {
-			width: 220px;
-		}
-
-		th,
-		td {
-			padding: 4px;
-		}
-
-		td {
-			vertical-align: baseline;
-		}
-	}
-}
-</style>
+<style lang="less"></style>

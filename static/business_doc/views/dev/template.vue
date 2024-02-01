@@ -4,10 +4,12 @@
 			<template #first>first</template>
 			<template #params="props">params:{{ props.title }}</template>
 		</xDev>
+		<xExcalidraw />
+
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 export default async function () {
 	return {
 		data() {
