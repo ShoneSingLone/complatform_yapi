@@ -44,7 +44,6 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						let id = ctx.request.body.id;
 						let params = ctx.payload;
 
 						params = xU.ensureParamsType(params, {
@@ -56,7 +55,7 @@ module.exports = {
 							after_script: "string",
 							project_mock_script: "string"
 						});
-						let { basepath, name, group_id } = params;
+						let { basepath, name, group_id, id, requestCode } = params;
 
 						if (!id) {
 							return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
@@ -89,7 +88,7 @@ module.exports = {
 							up_time: xU.time()
 						};
 
-						data = Object.assign({}, data, params);
+						data = Object.assign({}, projectData, data, params);
 
 						let result = await orm.project.up(id, data);
 						let username = this.getUsername();
@@ -174,32 +173,6 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
 					}
 
-					const requestCode = function ({
-						title,
-						projectId,
-						interfaceId,
-						path,
-						method,
-						xU
-					}) {
-						return `\`\`\`js
-/**
-*  ${title}
-*  ${window.location.href}
-*  http://10.143.133.216:3001/project/${projectId}/interface/api/${interfaceId}
-*/
-async ${xU.camelCase(path)}({params,data}) {
-return await request({
-method: "${method}",
-url: \`${path}\`,
-params:params||{},
-data:data||{}
-});
-}
-\`\`\`
-`;
-					};
-
 					let data = {
 						name: name,
 						desc: desc,
@@ -215,7 +188,7 @@ data:data||{}
 						up_time: xU.time(),
 						is_json5: false,
 						env: [{ name: "local", domain: "http://127.0.0.1" }],
-						requestCode: requestCode.toString()
+						requestCode: ""
 					};
 					const modelProject = orm.project;
 					let result = await modelProject.save(data);
