@@ -319,6 +319,16 @@ module.exports = {
 					let auth = await this.checkAuth(group_id, "group", "view");
 					let result = await orm.project.list(group_id);
 					let follow = await orm.follow.list(uid);
+					/** 函数首先检查是否为私有群组，
+					 * 如果不是，则遍历结果数组中的每个项目。
+					 * 对于每个项目，它会检查是否属于私有项目并且用户是否有权限访问。
+					 * 如果项目是私有的并且用户没有权限访问，则会检查用户是否重复加入了该项目。
+					 * 如果用户重复加入了该项目，则继续处理下一个项目。
+					 * 如果用户没有重复加入该项目，则在 follow 数组中查找是否存在与该项目相同的项目id。
+					 * 如果存在相同的项目id，则将该项目标记为已收藏，并将其放在项目列表的开头。
+					 * 如果不存在相同的项目id，则将该项目标记为未收藏，并将其放在项目列表的末尾。
+					 * 最后，如果群组是私有的，则执行特定的逻辑
+					 */
 					if (isPrivateGroup === false) {
 						for (let index = 0, item, r = 1; index < result.length; index++) {
 							item = result[index].toObject();
