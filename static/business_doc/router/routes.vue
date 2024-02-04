@@ -25,7 +25,11 @@ export default async function () {
 		}),
 		/* 聚合类 */
 		_.$newRoute("/x-component", ComponentPageRouterView, {
-			children: [_.$newRoute("/x-component/x-item", "@/views/xComponent/xItemDemo.vue"), _.$newRoute("/x-component/x-form", "@/views/xComponent/xForm.vue")]
+			children: [
+				_.$newRoute("/x-component/x-item", "@/views/xComponent/xItemDemo.vue"),
+				_.$newRoute("/x-component/x-item-checkbox-group", "@/views/xComponent/DemoxItemCheckboxGroup.vue"),
+				_.$newRoute("/x-component/x-item-check", "@/views/xComponent/DemoxItemCheck/DemoxItemCheck.vue"),
+			 _.$newRoute("/x-component/x-form", "@/views/xComponent/xForm.vue")]
 		}),
 		/* base */
 		_.$newRoute("/base", ComponentPageRouterView, {

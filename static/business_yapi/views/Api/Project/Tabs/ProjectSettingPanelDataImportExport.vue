@@ -121,9 +121,8 @@ export default async function () {
 									type: vm.cptParams.curImportType,
 									json
 								});
-								debugger;
 							} catch (error) {
-								console.error(error);
+								_.$msgError(error);
 							}
 						} else {
 							if (!vm.cptParams.swaggerURL) {

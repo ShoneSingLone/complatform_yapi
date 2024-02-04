@@ -2,16 +2,19 @@
 	<div class="page-view flex1" v-if="isShow" id="ProjectSetting">
 		<xPageContent>
 			<xTabs v-model="cptProjectSettingTab">
-				<xTabPane label="项目配置" name="1"> <ProjectSettingPanelCommon /> </xTabPane>
-				<xTabPane label="环境配置" name="2"> RegForm </xTabPane>
-				<xTabPane label="请求配置" name="3"> RegForm </xTabPane>
-				<xTabPane label="token配置" name="4"> RegForm </xTabPane>
-				<xTabPane label="全局mock脚本" name="5"> RegForm </xTabPane>
-				<xTabPane label="Swagger自动同步" name="6"> RegForm </xTabPane>
-				<xTabPane label="数据导入导出" name="7">
-					<ProjectSettingPanelDataImportExport />
-				</xTabPane>
+				<xTabPane label="项目配置" name="1"></xTabPane>
+				<xTabPane label="环境配置" name="2"> </xTabPane>
+				<xTabPane label="请求配置" name="3"> </xTabPane>
+				<xTabPane label="token配置" name="4"> </xTabPane>
+				<xTabPane label="全局mock脚本" name="5"> </xTabPane>
+				<xTabPane label="Swagger自动同步" name="6"> </xTabPane>
+				<xTabPane label="数据导入导出" name="7"> </xTabPane>
 			</xTabs>
+			<div>
+				<ProjectSettingPanelCommon v-if="cptProjectSettingTab === '1'" />
+				<ProjectSettingPanelReqFrontendCode v-if="cptProjectSettingTab === '3'" />
+				<ProjectSettingPanelDataImportExport v-if="cptProjectSettingTab === '7'" />
+			</div>
 		</xPageContent>
 	</div>
 </template>
@@ -25,6 +28,7 @@ export default async function () {
 		inject: ["APP", "inject_project"],
 		components: {
 			ProjectSettingPanelCommon: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue"),
+			ProjectSettingPanelReqFrontendCode: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelReqFrontendCode.vue"),
 			ProjectSettingPanelDataImportExport: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelDataImportExport.vue")
 		},
 		setup() {
@@ -46,18 +50,4 @@ export default async function () {
 }
 </script>
 
-<style scoped lang="scss">
-#ProjectSetting {
-	.el-tabs {
-		height: 100%;
-		display: flex;
-		flex-flow: column nowrap;
-		> .el-tabs__content {
-			flex: 1;
-			.el-tab-pane{
-				height: 100%;
-			}
-		}
-	}
-}
-</style>
+<style scoped lang="scss"></style>

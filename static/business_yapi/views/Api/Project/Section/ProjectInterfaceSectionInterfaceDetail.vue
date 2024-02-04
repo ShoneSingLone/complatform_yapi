@@ -1,9 +1,11 @@
 <template>
 	<div class="page-view flex1" id="ProjectSetting">
 		<xTabs v-model="cptProjectInterfaceTab">
-			<xTabPane label="预览" name="1"> <ProjectInterfaceSectionInterfaceDetailPreview /> </xTabPane>
-			<xTabPane label="编辑" name="2" ><ProjectInterfaceSectionInterfaceDetailEditor v-if="detailInfo" :detailInfo="detailInfo" /> </xTabPane>
+			<xTabPane label="预览" name="1"> </xTabPane>
+			<xTabPane label="编辑" name="2"> </xTabPane>
 		</xTabs>
+		<ProjectInterfaceSectionInterfaceDetailPreview v-if="cptProjectInterfaceTab === '1'" />
+		<ProjectInterfaceSectionInterfaceDetailEditor v-if="cptProjectInterfaceTab === '2' && detailInfo" :detailInfo="detailInfo" />
 	</div>
 </template>
 
@@ -23,7 +25,7 @@ export default async function () {
 			ProjectInterfaceSectionInterfaceDetailEditor: () => _.$importVue("@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetailEditor.vue")
 		},
 		setup() {
-			const cptProjectInterfaceTab = useTabName({ vm: this, propName: "project_interface_tab", defaultName: "2" });
+			const cptProjectInterfaceTab = useTabName({ vm: this, propName: "project_interface_tab", defaultName: "1" });
 			return {
 				cptProjectInterfaceTab
 			};
@@ -58,18 +60,4 @@ export default async function () {
 }
 </script>
 
-<style scoped lang="scss">
-#ProjectSetting {
-	.el-tabs {
-		height: 100%;
-		display: flex;
-		flex-flow: column nowrap;
-		> .el-tabs__content {
-			flex: 1;
-			.el-tab-pane {
-				height: 100%;
-			}
-		}
-	}
-}
-</style>
+<style scoped lang="scss"></style>

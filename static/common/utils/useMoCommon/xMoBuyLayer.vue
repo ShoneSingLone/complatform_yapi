@@ -21,7 +21,8 @@
 <template>
 	<div class="xMoBuyLayer-wrapper flex center middle">
 		<div class="xMoBuyLayer-price-item flex middle">
-			<slot name="left">
+			<slot name="left"> </slot>
+			<slot>
 				<span class="xMoBuyLayer-label mr">{{ i18n("配置费用") }}: </span>
 				<span class="xMoBuyLayer-price-elmt flex middle">
 					<span class="xMoBuyLayer-price-num mr"> $1.00 USD </span>

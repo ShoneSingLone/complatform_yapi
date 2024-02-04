@@ -1,6 +1,7 @@
 <script lang="ts">
 export default async function () {
 	return [
+		"common/xItem/xItemCheck/xItemCheck",
 		"components/xExcalidraw/xExcalidraw",
 		/* *************** */
 		"components/other/xAlert/xAlert",

@@ -93,12 +93,10 @@ export default async function () {
 				cellRenderer: params => {
 					const { rowData } = params;
 
-					const tag = (() => {
-						const isUseBackup = rowData.res_body_type === "backup" && !rowData.isProxy;
-						return h("xTag", { type: isUseBackup ? "success" : "info" }, ["是"]);
-					})();
+					const isUseBackup = h("xTag", { type: "success", vIf: rowData.res_body_type === "backup" }, ["是"]);
+					const hasBackupData = h("xTag", { type: "warning", class: "ml8", vIf: !rowData.isSetBackupData }, ["无备份数据"]);
 
-					return [tag, !rowData.isSetBackupData && h("xTag", { type: "warning", class: "ml8" }, ["无备份数据"])];
+					return [isUseBackup, hasBackupData];
 				}
 			};
 

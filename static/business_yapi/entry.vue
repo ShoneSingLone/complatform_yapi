@@ -33,6 +33,7 @@ export default async function () {
 	/*anxin应用用到的组件*/
 	_.each(
 		{
+			YapiApiRequestBodyPreviewer: "@/components/YapiApiRequestBodyPreviewer.vue",
 			YapiItemMonaco: "@/components/YapiItemMonaco.vue",
 			YapiItemProxyEnv: "@/components/YapiItemProxyEnv.vue",
 			YapiItemAvatar: "@/components/YapiItemAvatar.vue",

@@ -8,7 +8,7 @@ const isDev = !!localStorage.isDev;
 	 * 名字随机
 	 * @param e
 	 */
-	/* @typescriptDeclare (e:number):string */
+	/* @typescriptDeclare (e:number)=>string */
 	_.$ramdomStr = function (e) {
 		e = e || 26;
 		var t = "abcdefhijkmnprstwxyz0123456789";
@@ -66,7 +66,7 @@ const isDev = !!localStorage.isDev;
 	 * 读取文件为文本
 	 * @param {*} file
 	 */
-	/* @typescriptDeclare (obj:Object)=>Promise<string> */
+	/* @typescriptDeclare (obj:object)=>Promise<string> */
 	_.$readFileAsText = async function (file) {
 		return new Promise((resolve, reject) => {
 			var reader = new FileReader();
@@ -83,7 +83,7 @@ const isDev = !!localStorage.isDev;
 	 * @param {*} dataString
 	 * @param {*} filename
 	 */
-	/* @typescriptDeclare (obj:Object, filename:string)=>Promise<void> */
+	/* @typescriptDeclare (obj:object, filename:string)=>Promise<void> */
 	_.$downloadTextAsBlob = function (dataString, filename) {
 		return new Promise(resolve => {
 			var eleLink = document.createElement("a");
@@ -102,7 +102,7 @@ const isDev = !!localStorage.isDev;
 	/**
 	 * 获取对象的值
 	 */
-	/*@typescriptDeclare (obj:Object,key:string)=>string */
+	/*@typescriptDeclare (obj:object,key:string)=>string */
 	_.$handleSetFormValue = (obj, key) => {
 		return obj[`${key}`] || "";
 	};
@@ -229,7 +229,7 @@ const isDev = !!localStorage.isDev;
 		}
 
 		/* ((((((((((((((((((((((coltypes))))))))))))))))))))))  */
-		window.defTable.colMultiple = ({ by, getConfigs }) => {
+		window.defTable.colMultiple = ({ by, getConfigs, disabled }) => {
 			const { h } = Vue;
 			const checkbox = {
 				prop: "COL_MULTIPLE",
@@ -267,9 +267,22 @@ const isDev = !!localStorage.isDev;
 						[checkBoxVnode]
 					);
 				},
-				cellRenderer: ({ rowData }) => {
+				cellRenderer: params => {
+					const { rowData } = params;
 					const tableConfigs = getConfigs();
 					const isChecked = tableConfigs.data.set.has(rowData[by]);
+					let disabledTips = "";
+					let isDisabled = (() => {
+						if (_.isFunction(disabled)) {
+							return disabled(params);
+						}
+						return false;
+					})();
+
+					if (_.isString(isDisabled)) {
+						disabledTips = isDisabled;
+						isDisabled = !!isDisabled;
+					}
 					return h(
 						"div",
 						{
@@ -278,6 +291,10 @@ const isDev = !!localStorage.isDev;
 						[
 							h("elCheckbox", {
 								value: isChecked,
+								disabled: isDisabled,
+								attrs: {
+									title: disabledTips
+								},
 								onChange(value) {
 									const old = Array.from(tableConfigs.data.set);
 
@@ -309,7 +326,7 @@ const isDev = !!localStorage.isDev;
 				headerCellRenderer(_props) {
 					return null;
 				},
-				cellRenderer: (params) => {
+				cellRenderer: params => {
 					const { rowData } = params;
 					const tableConfigs = getConfigs();
 					const isChecked = tableConfigs.data.set.has(rowData[by]);
@@ -326,7 +343,6 @@ const isDev = !!localStorage.isDev;
 						isDisabled = !!isDisabled;
 					}
 
-
 					return h(
 						"div",
 						{
@@ -337,7 +353,7 @@ const isDev = !!localStorage.isDev;
 								value: isChecked,
 								disabled: isDisabled,
 								attrs: {
-									title: disabledTips,
+									title: disabledTips
 								},
 								onChange(value) {
 									const old = Array.from(tableConfigs.data.set);
@@ -685,16 +701,14 @@ const isDev = !!localStorage.isDev;
 
 	/**
 	 * value to label
-	 * @param {*} value
-	 * @param {*} options
-	 * @returns
 	 */
-	_.$val2L = (value, options) => {
+	/* @typescriptDeclare (value:any, options:any, defaultValue?: any)=>string */
+	_.$val2L = (value, options, defaultValue = "") => {
 		const item = _.find(options, item => String(item.value) === String(value));
 		if (item) {
 			return item.label;
 		} else {
-			return "";
+			return defaultValue;
 		}
 	};
 
@@ -703,7 +717,7 @@ const isDev = !!localStorage.isDev;
 	 * @param {string} name
 	 * @returns string
 	 */
-
+	/* @typescriptDeclare (name:string)=>string */
 	_.$randomName = name => {
 		return name + parseInt((new Date().getTime() % 61439) + 4096).toString(16);
 	};
@@ -713,7 +727,7 @@ const isDev = !!localStorage.isDev;
 	 * @param {any} val
 	 * @returns boolean
 	 */
-
+	/* @typescriptDeclare (val:any)=>boolean */
 	_.$is200 = function is200(val) {
 		return String(val) === "200";
 	};
@@ -723,6 +737,7 @@ const isDev = !!localStorage.isDev;
 	 * @param {string[]} keys
 	 * @returns
 	 */
+	/* @typescriptDeclare (obj:object, keys:string[])=>boolean */
 	_.$isEveryInput = function (obj, keys = []) {
 		if (Object.keys(obj).length > 0) {
 			if (_.$isArrayFill(keys)) {

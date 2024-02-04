@@ -5,7 +5,7 @@
 				<xOption v-for="item in cptOptions" :key="item.value" :label="item.label" :value="item.value" />
 			</xSelect>
 			<xMd :md="mdTips" />
-			<xItem :configs="form.editor" @save="btnOk.onClick" style="height: 500px;"/>
+			<xItem :configs="form.editor" @save="btnOk.onClick" style="height: 500px" />
 		</xForm>
 		<template #footer>
 			<xBtn :configs="btnOk" />
@@ -55,7 +55,7 @@ export default async function ({}) {
 						label: "",
 						type: "textarea",
 						itemType: "YapiItemMonaco",
-						value: JSON.stringify(this.APP.cptProject.env, null, 2)
+						value: JSON.stringify(this.APP.cptProject.env || "", null, 2)
 					}
 				})
 			};

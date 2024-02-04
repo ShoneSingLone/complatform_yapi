@@ -108,6 +108,12 @@ export default async function () {
 				}
 				return optionsProperty || vm._calOptionsArray;
 			});
+			let cpt_queryData = computed(() => {
+				if (_.isFunction(props.configs?.queryData)) {
+					props.configs.queryData = props.configs?.queryData?.();
+					return props.configs.queryData;
+				}
+			});
 
 			let cptDisabled = computed(() => {
 				if (privateState.isDisabled === "disabled") {
@@ -164,6 +170,7 @@ export default async function () {
 				privateState,
 				cptDisabled,
 				cpt_options,
+				cpt_queryData,
 				cptPlaceholder
 			};
 		},
@@ -193,11 +200,13 @@ export default async function () {
 					style: this.p_style,
 					props: {
 						...this.p_props,
-						options: this.cpt_options
+						options: this.cpt_options,
+						queryData: this.cpt_queryData
 					},
 					attrs: {
 						...this.p_props,
-						options: this.cpt_options
+						options: this.cpt_options,
+						queryData: this.cpt_queryData
 					}
 				};
 			},

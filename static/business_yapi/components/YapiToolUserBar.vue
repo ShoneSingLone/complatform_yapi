@@ -8,6 +8,12 @@
 				<xDropdownItem>
 					<span class="flex middle" @click="showUserProfileDialog">
 						<xIcon icon="_user" />
+						<span class="ml4">个人文档</span>
+					</span>
+				</xDropdownItem>
+				<xDropdownItem>
+					<span class="flex middle" @click="showUserProfileDialog">
+						<xIcon icon="_user" />
 						<span class="ml4">个人中心</span>
 					</span>
 				</xDropdownItem>

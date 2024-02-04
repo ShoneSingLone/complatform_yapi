@@ -66,7 +66,7 @@ export default async function () {
 						try {
 							this.APP.updateGroupProjectList();
 						} catch (error) {
-							console.error(error);
+							_.$msgError(error);
 						}
 					}
 				}

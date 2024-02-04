@@ -99,7 +99,7 @@ export default async function () {
 							this.configsTable.pagination.current = 1;
 							this.updateGroupLog();
 						} catch (error) {
-							console.error(error);
+							_.$msgError(error);
 						}
 					}
 				}

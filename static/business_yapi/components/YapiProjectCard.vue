@@ -115,7 +115,7 @@ export default async function () {
 					};
 					await _api.yapi.projectAddFollow(param);
 				} catch (error) {
-					console.error(error);
+					_.$msgError(error);
 				} finally {
 					this.$emit("change");
 				}
@@ -125,7 +125,7 @@ export default async function () {
 					const id = this.projectData._id;
 					await _api.yapi.projectDelFollow(id);
 				} catch (error) {
-					console.error(error);
+					_.$msgError(error);
 				} finally {
 					this.$emit("change");
 				}

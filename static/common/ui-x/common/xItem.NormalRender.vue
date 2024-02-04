@@ -8,11 +8,13 @@ export default async function () {
 			disabled: vm.cptDisabled,
 			attrs: {
 				...vm.cpt_bindProps.attrs,
-				disabled: vm.cptDisabled
+				disabled: vm.cptDisabled,
+				queryData: vm.cpt_queryData
 			},
 			props: {
 				...vm.cpt_bindProps.props,
-				disabled: vm.cptDisabled
+				disabled: vm.cptDisabled,
+				queryData: vm.cpt_queryData
 			},
 			configs: {
 				...vm.configs,

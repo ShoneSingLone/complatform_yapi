@@ -55,6 +55,8 @@ export default async function () {
 			children: [
 				{ href: "/x-component/x-form", icon: "icon_report", label: i18n("xForm") },
 				{ href: "/x-component/x-item", icon: "icon_report", label: i18n("xItem") },
+				{ href: "/x-component/x-item-checkbox-group", icon: "icon_report", label: i18n("xItemCheckboxGroup") },
+				{ href: "/x-component/x-item-check", icon: "icon_report", label: i18n("xItemCheck") },
 				{
 					icon: "icon_report",
 					label: i18n("xItemWrapper"),

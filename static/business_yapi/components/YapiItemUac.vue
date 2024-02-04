@@ -19,7 +19,7 @@ export default async function () {
 					const { data } = await _api.yapi.userSearch(params);
 					this.optionArray = data;
 				} catch (error) {
-					console.error(error);
+					_.$msgError(error);
 				} finally {
 					this.isFetching = false;
 				}

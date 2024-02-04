@@ -133,7 +133,7 @@ export default async function () {
 						this.APP.groupMemberList[index].role = role;
 					}
 				} catch (error) {
-					console.error(error);
+					_.$msgError(error);
 				} finally {
 					_.$loading(false);
 				}
@@ -158,7 +158,7 @@ export default async function () {
 						try {
 							this.APP.updateGroupMemberList();
 						} catch (error) {
-							console.error(error);
+							_.$msgError(error);
 						}
 					}
 				}

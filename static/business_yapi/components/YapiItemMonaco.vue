@@ -5,6 +5,7 @@
 <script lang="ts">
 export default async function () {
 	const { mixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
+	const theme = ["vs", "vs-dark", "hc-black", "hc-light"];
 	return defineComponent({
 		mixins: [mixins],
 		inject: ["APP", "xItem"],
@@ -18,7 +19,9 @@ export default async function () {
 				const { monaco } = window;
 				vm.raw$editor = monaco.editor.create(container, {
 					value: vm.mixin_value || "",
-					language: vm.configs?.language || "json"
+					language: vm.configs?.language || "json",
+					readOnly: vm.configs?.readOnly || false,
+					theme: vm.configs?.theme || theme[1]
 				});
 				vm.raw$editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function () {
 					vm.raw$editor.getAction("editor.action.formatDocument").run();
