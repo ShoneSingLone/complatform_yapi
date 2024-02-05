@@ -78,11 +78,11 @@ export default async function ({ domainData, originData, dataSync }) {
 			}
 		},
 		methods: {
-			async ensureAllCategoryExist(cats) {
+			async ensureAllCategoryExist({ cats, apis }) {
 				try {
 					const vm = this;
-					let catsObj = {};
-					if (_.isArray(cats)) {
+					let catsObj = { ...vm.inject_project.allCategory };
+					if (_.$isArrayFill(cats)) {
 						try {
 							for (const cat of cats) {
 								const findCat = _.find(vm.inject_project.allCategory, c => c.name === cat.name);
@@ -106,6 +106,7 @@ export default async function ({ domainData, originData, dataSync }) {
 						} catch (error) {
 							console.error("Error adding or finding cats:", error);
 						}
+					} else {
 					}
 					await vm.inject_project.getInterfaceList();
 					return catsObj;
@@ -118,7 +119,7 @@ export default async function ({ domainData, originData, dataSync }) {
 				_.$loading(true);
 				try {
 					const vm = this;
-					const cats = await this.ensureAllCategoryExist(originData.cats);
+					const cats = await this.ensureAllCategoryExist(originData /* cats,apis */);
 					let { basePath } = originData;
 					vm.hasDone = 0;
 					vm.successNum = 0;
@@ -140,12 +141,18 @@ export default async function ({ domainData, originData, dataSync }) {
 								project_id: projectId
 							});
 							const category = cats[interfaceInfo.catname];
+							const undefinedCategory = _.find(cats, { title: "公共分类" });
+							(function () {
+								if (interfaceInfo.catname) {
+									if (category?._id) {
+										interfaceInfo.catid = category._id;
+										return;
+									}
+								}
+								interfaceInfo.catname = undefinedCategory.name;
+								interfaceInfo.catid = undefinedCategory._id;
+							})();
 
-							if (interfaceInfo.catname && category?._id) {
-								interfaceInfo.catid = category._id;
-							} else {
-								throw new Error("接口分类不存在" + interfaceInfo.catname);
-							}
 							interfaceInfo.token = token;
 							/* 只新增 */
 							if (dataSync === "normal") {

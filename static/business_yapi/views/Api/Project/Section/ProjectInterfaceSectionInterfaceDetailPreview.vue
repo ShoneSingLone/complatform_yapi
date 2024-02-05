@@ -72,9 +72,8 @@ export default async function () {
 			},
 			cptCode() {
 				try {
-					const fn = new Function("params", `return (${this.APP.cptProject.requestCode})(params)`);
+					const fn = new Function("params", `return (${this.cptRequestCode})(params)`);
 					const { title, _id, up_time, path, tag, isProxy, witchEnv, method } = this.cptInfo;
-
 					return fn({
 						title,
 						path,
@@ -86,6 +85,13 @@ export default async function () {
 					});
 				} catch (error) {
 					return error.message;
+				}
+			},
+			cptRequestCode() {
+				if (this.APP.cptProject.requestCode) {
+					return this.APP.cptProject.requestCode;
+				} else {
+					return Vue._yapi_utils.RequestCode.toString();
 				}
 			},
 			cptInfo() {
