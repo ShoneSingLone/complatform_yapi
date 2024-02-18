@@ -35,7 +35,7 @@ async function ifTheResponseIsSuccessfulACopyIsRequired({
 			res = ctx.body;
 		}
 
-		if (String(res.code) === "0") {
+		if (xU.isPlainObject(res)) {
 			data.resBackupJson = JSON.stringify(res);
 			await modelInterface.up(interfaceData._id, data);
 		} else {
