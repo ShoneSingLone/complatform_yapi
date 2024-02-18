@@ -7,7 +7,14 @@
 			</div>
 			<xItem :configs="form.editor" />
 			<div class="padding">
-				<xBlock header="响应详情" class="flex vertical" :bodyClass="{ 'overflow-auto flex flex1': true }" style="height: 500px">
+				<xBlock class="flex vertical" :bodyClass="{ 'overflow-auto flex flex1': true }" style="height: 500px">
+					<template #header>
+						<div class="flex">
+							<span>响应详情</span>
+							<xGap f />
+							<xBtn :configs="btnSaveAsBackupData" />
+						</div>
+					</template>
 					<xMd :md="cptCode" />
 				</xBlock>
 			</div>
@@ -24,7 +31,7 @@ export default async function ({ mockHref, reqMethod, interfaceId, projectId }) 
 	/* 必要，混入"$closeWindow", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
-		inject: ["APP", "inject_project"],
+		inject: ["APP", "inject_project", "inject_interface_section_interface_detail"],
 		props: useDialogProps(),
 		data() {
 			return {
@@ -80,6 +87,20 @@ ${response}
 					}
 				};
 			},
+			btnSaveAsBackupData() {
+				const vm = this;
+				vm.response = "";
+				return {
+					label: i18n("保存响应为备份数据"),
+					preset: "blue",
+					disabled() {
+						return !vm.response;
+					},
+					onClick() {
+						vm.saveAsBackupData();
+					}
+				};
+			},
 			btnOk() {
 				const vm = this;
 				return {
@@ -101,6 +122,23 @@ ${response}
 			}
 		},
 		methods: {
+			async saveAsBackupData() {
+				try {
+					const { data } = await _api.yapi.interface_up({
+						id: interfaceId,
+						resBackupJson: JSON.stringify(this.response.data, null, 2)
+					});
+					if (data) {
+						this.inject_project.getInterfaceList();
+						this.inject_interface_section_interface_detail.updateInterface();
+					}
+
+					this.APP.updateGroupProjectList();
+					_.$msgSuccess("更新成功");
+				} catch (error) {
+					_.$msgError(error);
+				}
+			},
 			async saveUseCase() {
 				try {
 					const id = this.currentUseCase?._id;
