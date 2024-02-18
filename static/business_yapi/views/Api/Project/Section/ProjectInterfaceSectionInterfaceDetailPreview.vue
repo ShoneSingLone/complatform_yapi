@@ -21,11 +21,13 @@
 			</xCard>
 		</xCard>
 		<xGap t />
-		<!-- <xCard header="源数据">
-			<xForm col="1" style="--xdesc-item-width: 100px">
-				<xItem :configs="form.source" />
-			</xForm>
-		</xCard> -->
+		<!-- 
+<xCard header="源数据">
+	<xForm col="1" style="--xdesc-item-width: 100px">
+		<xItem :configs="form.source" />
+	</xForm>
+</xCard> 
+-->
 	</div>
 </template>
 <script lang="ts">
@@ -74,6 +76,11 @@ export default async function () {
 				try {
 					const fn = new Function("params", `return (${this.cptRequestCode})(params)`);
 					const { title, _id, up_time, path, tag, isProxy, witchEnv, method } = this.cptInfo;
+
+					if (!path) {
+						return "";
+					}
+
 					return fn({
 						title,
 						path,
@@ -98,6 +105,7 @@ export default async function () {
 				return this.inject_interface_section_interface_detail.detailInfo || {};
 			},
 			cptDescItems() {
+				const vm = this;
 				const { title, uid, up_time, path, tag, isProxy, witchEnv, method } = this.cptInfo;
 				console.log("🚀 ~ cptDescItems ~  title, uid, up_time, path, tag, isProxy, witchEnv :", title, uid, up_time, path, tag, isProxy, witchEnv);
 
@@ -120,7 +128,22 @@ export default async function () {
 								if (method === "GET") {
 									return h("div", { class: "mt" }, [h("xTag", { class: "mr" }, ["mock地址"]), h("a", { attrs: { href: mockHref, target: "_blank" } }, [mockHref])]);
 								}
-								return h("div", { class: "mt" }, [h("xTag", { class: "mr" }, ["mock地址"]), h("span", [mockHref])]);
+
+								const btnProps = {
+									class: "ml",
+									configs: {
+										preset: "blue",
+										label: "测试",
+										onClick() {
+											return vm.runInterefaceTestDialog({
+												mockHref,
+												reqMethod: method
+											});
+										}
+									}
+								};
+
+								return h("div", { class: "mt" }, [h("xTag", { class: "mr" }, ["mock地址"]), h("span", [mockHref]), h("xBtn", btnProps)]);
 							})();
 							return h("div", [h("div", [h("xTag", { class: "mr" }, [method]), h("span", [path])]), vDomMockHref]);
 						}
@@ -181,6 +204,21 @@ export default async function () {
 					}
 				},
 				immediate: true
+			}
+		},
+		methods: {
+			async runInterefaceTestDialog({ mockHref, reqMethod }) {
+				const DialogTypeVueSFC = await _.$importVue("@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetailPreview.TestInterface.dialog.vue", {
+					parent: this,
+					mockHref,
+					reqMethod,
+					interfaceId: this.cptInfo._id,
+					projectId: this.APP.cptProject._id
+				});
+				_.$openWindow(i18n("测试"), DialogTypeVueSFC, {
+					maxmin: true,
+					fullscreen: true
+				});
 			}
 		}
 	});

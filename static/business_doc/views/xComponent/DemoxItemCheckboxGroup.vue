@@ -1,8 +1,8 @@
 <style lang="less"></style>
 <template>
-	<xForm >
+	<xForm>
 		<xItem :configs="form.xItemCheckboxGroup" />
-	</xForm >
+	</xForm>
 </template>
 <script lang="ts">
 export default async function () {
@@ -13,8 +13,8 @@ export default async function () {
 					xItemCheckboxGroup: {
 						value: "",
 						label: "xItemCheckboxGroup",
-                        itemType: "xItemCheckboxGroup",
-                        minWidth:90,
+						itemType: "xItemCheckboxGroup",
+						minWidth: 90,
 						options: [...new Array(20)].map((i, ii) => {
 							return {
 								label: ii,

@@ -43,7 +43,7 @@ export default async function () {
 					classObject["bg-is-gray"] = true;
 				}
 
-				return _.merge(classObject, this.bodyClass);
+				return _.merge(classObject);
 			},
 			vDomHeader() {
 				if (this.$scopedSlots.header) {

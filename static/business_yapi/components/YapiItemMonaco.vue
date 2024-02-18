@@ -20,6 +20,7 @@ export default async function () {
 				vm.raw$editor = monaco.editor.create(container, {
 					value: vm.mixin_value || "",
 					language: vm.configs?.language || "json",
+					automaticLayout: true, //自动布局
 					readOnly: vm.configs?.readOnly || false,
 					theme: vm.configs?.theme || theme[1]
 				});
@@ -36,9 +37,16 @@ export default async function () {
 		methods: {
 			syncData() {
 				const newCode = this.raw$editor.getValue();
-				if (newCode !== this.mixin_value) {
+				if (this.mixin_value && !newCode) {
+					this.raw$editor.setValue(this.mixin_value);
+				} else if (newCode !== this.mixin_value) {
 					this.mixin_value = newCode;
 				}
+			}
+		},
+		watch: {
+			value() {
+				this.syncData();
 			}
 		}
 	});

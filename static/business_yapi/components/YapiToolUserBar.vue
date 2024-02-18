@@ -6,10 +6,10 @@
 			</div>
 			<xDropdownMenu slot="dropdown">
 				<xDropdownItem>
-					<span class="flex middle" @click="showUserProfileDialog">
-						<xIcon icon="_user" />
+					<a class="flex middle" :href="privateNoteHref" target="_blank">
+						<xIcon icon="_icon_project_wiki" />
 						<span class="ml4">个人文档</span>
-					</span>
+					</a>
 				</xDropdownItem>
 				<xDropdownItem>
 					<span class="flex middle" @click="showUserProfileDialog">
@@ -33,6 +33,9 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP"],
 		computed: {
+			privateNoteHref() {
+				return _.$aHashLink("/note", { private: this.APP.user._id });
+			},
 			cptAvatar() {
 				return {
 					itemType: "YapiItemAvatar",

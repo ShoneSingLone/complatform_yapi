@@ -29,7 +29,8 @@ export default async function () {
 				_.$newRoute("/x-component/x-item", "@/views/xComponent/xItemDemo.vue"),
 				_.$newRoute("/x-component/x-item-checkbox-group", "@/views/xComponent/DemoxItemCheckboxGroup.vue"),
 				_.$newRoute("/x-component/x-item-check", "@/views/xComponent/DemoxItemCheck/DemoxItemCheck.vue"),
-			 _.$newRoute("/x-component/x-form", "@/views/xComponent/xForm.vue")]
+				_.$newRoute("/x-component/x-form", "@/views/xComponent/xForm.vue")
+			]
 		}),
 		/* base */
 		_.$newRoute("/base", ComponentPageRouterView, {
@@ -55,7 +56,7 @@ export default async function () {
 						_.$newRoute("/component/data/tree", "@/views/component/data/tree/DemoTree.vue"),
 						_.$newRoute("/component/data/descriptions", "@/views/component/data/descriptions/DemoDescriptions.vue"),
 						_.$newRoute("/component/data/virtualized-table", "@/views/component/data/virtualizedTable/virtualizedTable.vue"),
-						_.$newRoute("/component/data/excalidraw", "@/views/component/data/xExcalidraw/DemoExcalidraw.vue"),
+						_.$newRoute("/component/data/excalidraw", "@/views/component/data/xExcalidraw/DemoExcalidraw.vue")
 					]
 				}),
 				/* Navigation */

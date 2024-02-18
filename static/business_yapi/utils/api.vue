@@ -23,6 +23,24 @@ export default async function () {
 			};
 
 			window._api.yapi = {
+				/**
+				 *  wiki左侧的菜单
+				 *  http://192.168.0.107:3002/static/business_yapi/yapi.html#/api/project?projectId=319&groupId=431&projectTabName=%E6%8E%A5%E5%8F%A3&interfaceType=interface&interfaceId=591&project_interface_tab=1&project_setting_tab=3/#/api/project?projectId=319&groupId=431&interfaceType=interface&interfaceId=591&project_interface_tab=1&project_setting_tab=3&projectTabName=接口
+				 */
+				wikiMenu(data) {
+					return _.$ajax.get("/api/wiki/menu", {
+						data
+					});
+				},
+				/**
+				 *  文档 list
+				 *  http://192.168.0.107:3002/static/business_yapi/yapi.html#/api/project?projectId=319&groupId=431&projectTabName=%E6%8E%A5%E5%8F%A3&interfaceType=interface&interfaceId=589&project_interface_tab=1&project_setting_tab=3/#/api/project?projectId=319&groupId=431&interfaceType=interface&interfaceId=589&project_interface_tab=1&project_setting_tab=3&projectTabName=接口
+				 */
+				wikiList(data) {
+					return _.$ajax.get("/api/wiki/list", {
+						data
+					});
+				},
 				getSwaggerDataByUrl(data) {
 					return _.$ajax.post("/api/project/swagger_url", {
 						data
@@ -61,6 +79,18 @@ export default async function () {
 				interfaceUpCat(data) {
 					return _.$ajax.post("/api/interface/up_cat", {
 						data
+					});
+				},
+				interface_usecase_upsert(data) {
+					return _.$ajax.post("/api/usecase/upsert", {
+						data
+					});
+				},
+				interface_usecase_get_all(interfaceId) {
+					return _.$ajax.get("/api/usecase/get_all", {
+						data: {
+							id: interfaceId
+						}
 					});
 				},
 				/* log */

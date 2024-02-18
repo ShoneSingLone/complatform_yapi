@@ -2,8 +2,10 @@
 export default async function () {
 	if (!Vue._yapi_utils) {
 		Vue._yapi_utils = {
-			RequestCode: function RequestCode({ title, projectId, groupId, interfaceId, path, method, camelCase }) {
-				return `\`\`\`js
+			RequestCode: function RequestCode({ basepath, title, projectId, groupId, interfaceId, path, method, camelCase }) {
+				basepath = basepath || "";
+				return `
+\`\`\`js
 /**
 *  ${title}
 *  ${window.location.href}/#/api/project?projectId=${projectId}&groupId=${groupId}&interfaceType=interface&interfaceId=${interfaceId}&project_interface_tab=1&project_setting_tab=3&projectTabName=接口
@@ -11,7 +13,7 @@ export default async function () {
 async ${camelCase(path)}({params,data}) {
 	return await request({
 		method: "${method}",
-		url: \`${path}\`,
+		url: "${basepath}${path}",
 		params:params||{},
 		data:data||{}
 	});
