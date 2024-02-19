@@ -1,11 +1,11 @@
 <template>
-	<xDialog id="ProjectSettingConfirmMergeInterfaceDialog">
+	<xDialog id="project-interface-section-interface-detail-preview-test-interface-dialog">
 		<xForm col="2">
 			<div span="full">
 				<xBtn :configs="btnRun" />
 				<xBtn :configs="btnSave" />
 			</div>
-			<xItem :configs="form.editor" />
+			<xItem :configs="form.editor" style="min-height: 516px;"/>
 			<div class="padding">
 				<xBlock class="flex vertical" :bodyClass="{ 'overflow-auto flex flex1': true }" style="height: 500px">
 					<template #header>
@@ -202,7 +202,8 @@ ${response}
 }
 </script>
 <style lang="less">
-#ProjectSettingConfirmMergeInterfaceDialog {
+#project-interface-section-interface-detail-preview-test-interface-dialog {
+	min-width: 1024px;
 	height: 100%;
 	.el-card__body {
 		min-height: 100px;

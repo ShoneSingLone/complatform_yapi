@@ -102,7 +102,7 @@ export default async function ({}) {
 </script>
 <style lang="less">
 #YapiItemProxyEnvManager {
-	width: 1024px;
+	min-width: 1024px;
 	.el-card__body {
 		min-height: 100px;
 	}
