@@ -23,31 +23,24 @@ export default async function ({}) {
 		data() {
 			return {
 				mdTips: `
+- 新增时，不需要填写\`_id\`；保存之后会带出来
+- \`cookie\` 也在\`header\`中,value为cookie的值
+
 > 环境变量数据结构如下：
 \`\`\`js
 [
         {
 			"name" : "local",
-            "domain" : "http://127.0.0.1",
+			"domain" : "http://127.0.0.1",
             "header" : [
-                {
-                    "name" : "x-auth-token",
-                    "value" : "???????"
-                },
-				// cookie 也在header中,value为cookie的值
-                {
-                    "name" : "Cookie",
-                    "value" : "key=val;key2=val2"
-                }
+                { "name" : "x-auth-token", "value" : "*******" },
+                { "name" : "Cookie", "value" : "key=val;key2=val2" }
             ],
             "global" : [
-                {
-                    "varName" : "token",
-                    "value" : "######"
-                }
+                { "name" : "token", "value" : "######" }
             ]
         }
-    ]
+]
 \`\`\`
 `,
 				form: defItems({

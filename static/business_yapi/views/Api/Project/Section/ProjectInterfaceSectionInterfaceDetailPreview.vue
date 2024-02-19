@@ -132,10 +132,6 @@ ${resBackupJson}
 						span: "full",
 						readonlyAs: () => {
 							const vDomMockHref = (() => {
-								if (method === "GET") {
-									return h("div", { class: "mt" }, [h("xTag", { class: "mr" }, ["mock地址"]), h("a", { attrs: { href: mockHref, target: "_blank" } }, [mockHref])]);
-								}
-
 								const btnProps = {
 									class: "ml",
 									configs: {
@@ -149,7 +145,6 @@ ${resBackupJson}
 										}
 									}
 								};
-
 								return h("div", { class: "mt" }, [h("xTag", { class: "mr" }, ["mock地址"]), h("span", [mockHref]), h("xBtn", btnProps)]);
 							})();
 							return h("div", [h("div", [h("xTag", { class: "mr" }, [method]), h("span", [path])]), vDomMockHref]);

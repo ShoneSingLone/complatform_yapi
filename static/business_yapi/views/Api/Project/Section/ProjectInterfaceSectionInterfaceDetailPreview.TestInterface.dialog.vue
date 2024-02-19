@@ -177,16 +177,24 @@ ${response}
 				}
 			},
 			async run() {
+				let response = "pending";
+				this.response = response;
 				await _.$appendScript("/common/libs/axios.js", "axios");
 				let fnRun;
 				try {
 					fnRun = new Function(`${this.form.editor.value}
 	return run();
 `);
-					this.response = await fnRun();
+					response = await fnRun();
 				} catch (error) {
 					console.error(error);
 					_.$msgError(error);
+				} finally {
+					if (response === "pending") {
+						this.response = "";
+					} else {
+						this.response = response;
+					}
 				}
 			}
 		}
