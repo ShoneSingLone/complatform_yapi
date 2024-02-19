@@ -72,6 +72,13 @@ export default async function () {
 					);
 				}
 			},
+			cptBackupData() {
+				const { resBackupJson } = this.cptInfo;
+				return `\`\`\`json
+${resBackupJson}
+\`\`\`
+`;
+			},
 			cptCode() {
 				try {
 					const fn = new Function("params", `return (${this.cptRequestCode})(params)`);
@@ -151,7 +158,7 @@ export default async function () {
 					{
 						label: i18n("code"),
 						value: path || "--",
-						span: "2",
+						span: "full",
 						readonlyAs: () => {
 							return h("xMd", {
 								id: "cptCode",
@@ -169,7 +176,16 @@ export default async function () {
 						}
 					},
 					{
+						label: i18n("备份response"),
+						value: path || "--",
+						span: "full",
+						readonlyAs: () => {
+							return h("xMd", { md: this.cptBackupData });
+						}
+					},
+					{
 						label: i18n("Tag"),
+						span: "full",
 						value: tag || "--",
 						readonlyAs: () => _.map(tag, i => h("xTag", { class: "mr" }, [i]))
 					},

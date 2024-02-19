@@ -72,7 +72,7 @@ ${response}
 				return {
 					label: i18n("运行"),
 					onClick() {
-						vm.run();
+						return vm.run();
 					}
 				};
 			},
@@ -91,7 +91,7 @@ ${response}
 				const vm = this;
 				vm.response = "";
 				return {
-					label: i18n("保存响应为备份数据"),
+					label: i18n("将 response data 保存为备份数据"),
 					preset: "blue",
 					disabled() {
 						return !vm.response;
@@ -163,6 +163,13 @@ ${response}
 						if (data.length > 0) {
 							this.form.editor.value = data[0].usecaseCode;
 							this.currentUseCase = data[0];
+						} else {
+							this.form.editor.value = `async function run() {
+	return await axios({
+			method: "${_.lowerCase(reqMethod)}",
+			url: "${mockHref}"
+		});
+}`;
 						}
 					}
 				} catch (error) {
