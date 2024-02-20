@@ -9,9 +9,10 @@ class ModelInterfaceCase extends ModelBase {
 
 	getSchema() {
 		return {
-			casename: { type: String, required: true },
-			uid: { type: Number, required: true },
-			col_id: { type: Number, required: true },
+			casename: { type: String /*  required: true */ },
+			uid: { type: Number /* required: true */ },
+			usecaseCode: { type: String, default: "function run(){}" },
+			col_id: { type: Number /*  required: true */ },
 			index: { type: Number, default: 0 },
 			project_id: { type: Number, required: true },
 			interface_id: { type: Number, required: true },
@@ -69,6 +70,13 @@ class ModelInterfaceCase extends ModelBase {
 		return this.model
 			.findOne({
 				_id: id
+			})
+			.exec();
+	}
+	getAll(interface_id) {
+		return this.model
+			.find({
+				interface_id
 			})
 			.exec();
 	}

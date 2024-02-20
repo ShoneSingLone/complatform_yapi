@@ -9,17 +9,11 @@
 		<xBlock header="基本信息">
 			<xForm col="3" style="--xdesc-item-width: 140px">
 				<xItem :configs="form.title" v-model="formData.title" span="full" />
-				<!-- <xItem :configs="form.uid" v-model="formData.uid" /> -->
-				<!-- <xItem :configs="form.status" v-model="formData.status" /> -->
-				<!-- <xItem :configs="form.updatetime" v-model="formData.updatetime" /> -->
 				<xItem :configs="form.path" v-model="formData.path" span="full" />
-				<!-- <xItem :configs="form.tag" v-model="formData.tag" span="full" /> -->
 				<xItem :configs="form.isProxy" v-model="formData.isProxy" />
 				<xItem :configs="form.witchEnv" v-model="formData.witchEnv" />
-				<div />
 				<xItem :configs="form.res_body_type" v-model="formData.res_body_type" span="full" />
 				<xItem :configs="form.resBackupJson" v-model="formData.resBackupJson" span="full" />
-				<!-- <xItem :configs="xItemInterface" :value="JSON.stringify(formData)" span="full" /> -->
 			</xForm>
 		</xBlock>
 		<xGap t />
@@ -43,7 +37,7 @@ export default async function () {
 			return {
 				isShow: true,
 				formData: {
-					...this.detailInfo
+					
 				},
 				xItemInterface: {
 					label: "接口信息",

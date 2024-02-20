@@ -32,25 +32,7 @@ export default async function () {
 			"APP.cptProject.requestCode": {
 				immediate: true,
 				handler() {
-					const requestCode = function RequestCode({ title, projectId, groupId, interfaceId, path, method, camelCase }) {
-						return `\`\`\`js
-/**
-*  ${title}
-*  ${window.location.href}/#/api/project?projectId=${projectId}&groupId=${groupId}&interfaceType=interface&interfaceId=${interfaceId}&project_interface_tab=1&project_setting_tab=3&projectTabName=接口
-*/
-async ${camelCase(path)}({params,data}) {
-	return await request({
-		method: "${method}",
-		url: \`${path}\`,
-		params:params||{},
-		data:data||{}
-	});
-}
-\`\`\`
-`;
-					};
-
-					const code = this.APP.cptProject.requestCode || requestCode.toString();
+					const code = this.APP.cptProject.requestCode || _yapi_utils.RequestCode.toString();
 					this.form.editor.value = code;
 				}
 			}

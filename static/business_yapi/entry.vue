@@ -33,6 +33,7 @@ export default async function () {
 	/*anxin应用用到的组件*/
 	_.each(
 		{
+			TuiEditor: "@/components/TuiEditor/TuiEditor.vue",
 			YapiApiRequestBodyPreviewer: "@/components/YapiApiRequestBodyPreviewer.vue",
 			YapiItemMonaco: "@/components/YapiItemMonaco.vue",
 			YapiItemProxyEnv: "@/components/YapiItemProxyEnv.vue",
@@ -146,6 +147,10 @@ export default async function () {
 					if (userInfo?._id) {
 						this._setUser(userInfo);
 						/* TODO: 跳转到首页 或者note应用*/
+						if (this.$route.path === "/note") {
+							// await this.initNoteView()
+							return;
+						}
 						await this.ifUrlNoGroupIdGetAndAddIdToUrl();
 						if (this.cptProjectId) {
 							await this.updateGroupProjectList();
@@ -162,6 +167,9 @@ export default async function () {
 						$("body").removeClass("x-loading");
 					}, 1000);
 				}
+			},
+			async initNoteView() {
+				debugger;
 			},
 			initMobileModel() {
 				if (this.isMobile) {
