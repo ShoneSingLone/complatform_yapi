@@ -96,7 +96,8 @@ const getWikiMenu = {
 				queryConditions.belong_id = belong_id;
 			}
 
-			const { order } = (await orm.WikiOrder.detail(queryConditions)) || {};
+			const { order } =
+				(await orm.WikiOrder.detail(queryConditions)) || {};
 			ctx.body = xU.$response({
 				list: await orm.wiki.menu({ belong_type, belong_id }),
 				orderArray: order || []
@@ -128,7 +129,7 @@ const getWikiList = {
 	summary: "文档 list",
 	async handler(ctx) {
 		try {
-			ctx.body = xU.$response({ list: await orm.wiki.list() });
+			ctx.body = xU.$response({ list: await orm.wiki.menu() });
 		} catch (e) {
 			xU.applog.error(e.message);
 		}
