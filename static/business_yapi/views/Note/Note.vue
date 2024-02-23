@@ -12,8 +12,9 @@ export default async function () {
 			NoteAside: () => _.$importVue("@/views/Note/NoteAside.vue"),
 			NoteSection: () => _.$importVue("@/views/Note/NoteSection.vue")
 		},
-		mounted() {
-			this.updateWikiMenuList({ belong_to: "all" });
+		async mounted() {
+			await this.updateWikiMenuList();
+			await this.updateCurrentWiki();
 		},
 		provide() {
 			const inject_note = this;
@@ -22,6 +23,18 @@ export default async function () {
 			};
 		},
 		data() {
+			const vm = this;
+			vm.updateCurrentWiki = _.debounce(async function updateCurrentWiki(callback = false) {
+				if (!_.$isInput(vm.$route.query.wiki)) {
+					return;
+				}
+				const res = await _api.yapi.wikiDetail({ _id: vm.$route.query.wiki });
+				if (!res.errcode) {
+					vm.currentWiki = res.data;
+					callback && callback();
+				}
+			}, 300);
+
 			return {
 				treeData: [],
 				currentWiki: {}
@@ -29,7 +42,6 @@ export default async function () {
 		},
 		methods: {
 			setCurrentWiki(data) {
-				debugger;
 				this.$router.push({
 					path: this.$route.path,
 					query: {
@@ -38,15 +50,8 @@ export default async function () {
 					}
 				});
 			},
-			async openGroupUpsertDialog(groupInfo) {
-				const isModify = !!groupInfo;
-				const upsert = await _.$importVue("@/views/Api/Group/Group.Upsert.vue", {
-					parent: this,
-					groupInfo
-				});
-				_.$openWindow(isModify ? i18n("修改分组信息") : i18n("添加分组"), upsert);
-			},
-			async updateWikiMenuList(payload) {
+			async updateWikiMenuList() {
+				let payload = { belong_to: "all" };
 				const { data } = await _api.yapi.wikiMenu(payload);
 				const { list, orderArray } = data;
 				this.treeData = this.buildTree(list, orderArray);
@@ -97,6 +102,19 @@ export default async function () {
 					return item;
 				});
 			}
+		},
+		computed: {
+			cptCurrentWiki() {
+				return {
+					...this.currentWiki,
+					md: this.currentWiki.markdown || ""
+				};
+			}
+		},
+		watch: {
+			"$route.query.wiki"() {
+				this.updateCurrentWiki();
+			}
 		}
 	});
 }
@@ -105,6 +123,7 @@ export default async function () {
 <style lang="less">
 #ViewNote {
 	height: 100%;
+	width: 100%;
 	display: flex;
 	flex-flow: row nowrap;
 }

@@ -12,6 +12,7 @@ export default async function (options = {}) {
 		Promise.all(
 			_.map(
 				[
+					"/common/ui-x/components/data/xImg/xImg.install.vue",
 					"/common/ui-x/components/other/xNotification/xNotification.install.vue",
 					"/common/ui-x/directive/xtips/xtips.vue",
 					"/common/ui-x/directive/ripple.vue",

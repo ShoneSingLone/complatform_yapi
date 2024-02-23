@@ -10,7 +10,7 @@
 			<div class="group-operate flex start middle mb10 left-tree box-shadow">
 				<xItem :configs="configsSearch" class="flex1" />
 				<xGap l="10" />
-				<div class="pointer" v-xtips="{ content: '添加分组', placement: 'right', style: '--min-width:unset;' }">
+				<div class="pointer" v-xtips="{ content: '新增', placement: 'right', style: '--min-width:unset;' }" @click="addNewWiki">
 					<!-- 添加分组 -->
 					<xIcon icon="_add" class="icon-opreation_click" />
 				</div>
@@ -52,6 +52,10 @@ export default async function () {
 			};
 		},
 		methods: {
+			async addNewWiki() {
+				
+				
+			},
 			/* 菜单 */
 			nodeRender({ node, data }) {
 				const vm = this;
@@ -68,7 +72,6 @@ export default async function () {
 							{
 								staticClass: "node-name",
 								onClick() {
-									debugger;
 									vm.inject_note.setCurrentWiki(data);
 								}
 							},

@@ -14279,7 +14279,7 @@ body {
 
 	&.el-button--mini,
 	&.el-button--small {
-		line-height: 13px;
+		line-height: 12px;
 		font-size: 12px;
 		border-radius: var(--border-radius--small);
 	}

@@ -51,6 +51,7 @@ export default async function () {
 				_.$newRoute("/component/data", ComponentRouterView, {
 					children: [
 						_.$newRoute("/component/data/icon", "@/views/component/data/icon/icon.vue"),
+						_.$newRoute("/component/data/image", "@/views/component/data/image/image.vue"),
 						_.$newRoute("/component/data/card", "@/views/component/data/card/card.vue"),
 						_.$newRoute("/component/data/tag", "@/views/component/data/tag/tag.vue"),
 						_.$newRoute("/component/data/tree", "@/views/component/data/tree/DemoTree.vue"),

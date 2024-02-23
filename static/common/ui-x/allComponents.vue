@@ -17,6 +17,7 @@ export default async function () {
 		"components/data/xMenuTree/xMenuTree",
 		"components/navigation/xTabs/xTabs",
 		"components/navigation/xTabs/xTabPane",
+		"components/data/xImg/xImg",
 		"components/data/xTag/xTag",
 		"components/data/xDesc/xDesc",
 		"components/data/xDesc/xDescItem",

@@ -1,14 +1,19 @@
-<style lang="less"></style>
+<style lang="less">
+#NoteSection {
+	width: 1px;
+}
+</style>
 <template>
-	<section class="page-view flex1">
+	<section class="page-view flex1" id="NoteSection">
 		<xPageContent>
 			<div class="flex mb10 middle" style="height: 48px">
-				<xItem :configs="form.isReadonly" />
-				<xRender :render="vDomTitle" />
-				<xGap f="1" />
+				<xRender :render="vDomTitle" class="flex1"/>
+				<xGap l />
 				<xBtn :configs="btnSave" />
+				<xBtn :configs="btnCancel" />
 			</div>
-			<TuiEditor v-model="wikiContent" :isReadonly="form.isReadonly.value" />
+			<!--      <div class="flex1-overflow-auto" style="width: 50vw;">{{ inject_note.cptCurrentWiki }}</div>-->
+			<TuiEditor :value="inject_note.cptCurrentWiki" :asRender="!isShowEditor" @change="onMarkdownChange" />
 		</xPageContent>
 	</section>
 </template>
@@ -17,58 +22,96 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP", "inject_note"],
 		data() {
+			const vm = this;
 			return {
+				markdown: "",
 				title: "",
+				editingWikiTitle: "",
+				isShowEditor: false,
 				form: defItems({
-					titleConfigs: { placeholder: "文档名称" },
-					isReadonly: {
-						value: true,
-						itemType: "xItemSwitch",
-						options: [
-							{
-								label: "预览",
-								value: true
-							}
-						]
+					titleConfigs: {
+						placeholder: "文档名称",
+						onEmitValue({ val }) {
+							vm.editingWikiTitle = val;
+						}
 					}
 				})
 			};
 		},
 		computed: {
-			wikiContent: {
-				get() {
-					return {
-						md: this.inject_note.currentWiki.markdown || ""
-					};
-				},
-				set(modelValue, oldModelValue) {
-					this.inject_note.currentWiki.markdown = modelValue.md;
-				}
-			},
 			btnSave() {
 				const vm = this;
 				return {
-					label: "修改",
+					label: vm.isShowEditor ? "保存" : "修改",
 					preset: "blue",
-					isShow() {
-						return !vm.form.isReadonly.value;
+					async onClick() {
+						if (vm.isShowEditor) {
+							await vm.save();
+						} else {
+							vm.editingWikiTitle = vm.inject_note.cptCurrentWiki?.title || "";
+						}
+						vm.isShowEditor = !vm.isShowEditor;
+					}
+				};
+			},
+			btnCancel() {
+				const vm = this;
+				return {
+					label: "取消",
+					isHide() {
+						return !vm.isShowEditor;
 					},
-					onClick: vm.save
+					onClick() {
+						vm.isShowEditor = false;
+					}
 				};
 			}
 		},
 		methods: {
+			onMarkdownChange({ md }) {
+				this.markdown = md;
+			},
+			async save() {
+				const vm = this;
+				try {
+					_.$loading(true);
+					const params = _.merge(
+						{},
+						vm.inject_note.currentWiki,
+						{
+							markdown: vm.markdown
+						},
+						{ title: vm.editingWikiTitle }
+					);
+					await _api.yapi.wikiUpsertOne(params);
+					vm.inject_note.currentWiki = {};
+					await vm.inject_note.updateWikiMenuList();
+					await vm.inject_note.updateCurrentWiki();
+					_.$msgSuccess("保存成功");
+				} catch (error) {
+					console.error(error);
+				} finally {
+					_.$loading();
+				}
+			},
 			vDomTitle() {
-				if (this.form.isReadonly.value) {
-					return h("span", { class: "ml", style: "font-weight:700;font-size:18px;" }, [this.inject_note.currentWiki.title]);
+				const vm = this;
+				if (vm.isShowEditor) {
+					const itemProps = {
+						style: "flex1",
+						configs: vm.form.titleConfigs,
+						value: vm.editingWikiTitle || ""
+					};
+					return h("xItem", itemProps);
 				} else {
-					return h("xItem", {
-						configs: this.form.titleConfigs,
-						value: this.inject_note.currentWiki.title,
-						onEmitValue({ val }) {
-							this.title = val;
-						}
-					});
+					return h(
+						"span",
+						{
+							class: "ml",
+							style: "font-weight:700;font-size:18px;"
+						},
+						[vm.inject_note.cptCurrentWiki.title]
+					);
 				}
 			}
 		}

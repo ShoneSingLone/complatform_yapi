@@ -5,7 +5,7 @@
 				<xBtn :configs="btnRun" />
 				<xBtn :configs="btnSave" />
 			</div>
-			<xItem :configs="form.editor" style="min-height: 516px;"/>
+			<xItem :configs="form.editor" style="min-height: 516px" />
 			<div class="padding">
 				<xBlock class="flex vertical" :bodyClass="{ 'overflow-auto flex flex1': true }" style="height: 500px">
 					<template #header>

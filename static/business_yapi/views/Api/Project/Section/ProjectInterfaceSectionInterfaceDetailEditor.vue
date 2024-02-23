@@ -36,9 +36,7 @@ export default async function () {
 			const vm = this;
 			return {
 				isShow: true,
-				formData: {
-					
-				},
+				formData: {},
 				xItemInterface: {
 					label: "接口信息",
 					itemType: "YapiItemMonaco"

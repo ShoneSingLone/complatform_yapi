@@ -5,6 +5,10 @@
 		</span>
 		<YapiBreadcrumbNavigation />
 		<xGap f />
+		<a class="flex middle" :href="publicNoteHref" target="_blank">
+			<xIcon icon="_wikidoc" />
+		</a>
+		<xGap f />
 		<YapiToolUserBar />
 	</header>
 </template>
@@ -43,6 +47,9 @@ export default async function () {
 			};
 		},
 		computed: {
+			publicNoteHref() {
+				return _.$aHashLink("/note", {});
+			},
 			icon() {
 				if (["/api/group", "/wiki", "/xI"].includes(this.$route.path)) {
 					return "_yapi_logo";

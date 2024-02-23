@@ -1688,12 +1688,10 @@ table.ProseMirror-selectednode,
 </style>
 <script lang="ts">
 export default async function () {
-	const toastui = await _.$appendScript("https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js", "TuiEditor");
-
-	const { PreprocessHTML } = await _.$importVue("@/components/TuiEditor/TuiEditor.vue");
-	debugger;
+	const { Editor: TuiEditor } = await _.$appendScript("/common/libs/toastui-editor-all.js", "toastui");
+	const { PreprocessHTML, leftArrow, rightArrow } = await _.$importVue("@/components/TuiEditor/MkitTheme.vue");
 	return defineComponent({
-		props: ["value", "isReadonly"],
+		props: ["value", "asRender"],
 		model: {
 			prop: "value",
 			emit: "change"
@@ -1703,6 +1701,8 @@ export default async function () {
 				html: "",
 				visible: false,
 				imgSrc: "",
+				imgList: [],
+				imgIndex: 0,
 				isLoading: true,
 				id: _.$genId("TuiEditor"),
 				raw$md: "",
@@ -1711,8 +1711,8 @@ export default async function () {
 		},
 		computed: {
 			readonly() {
-				if (_.isBoolean(this.isReadonly)) {
-					return this.isReadonly;
+				if (_.isBoolean(this.asRender)) {
+					return this.asRender;
 				} else {
 					if (this.$attrs.readonly) {
 						return true;
@@ -1737,13 +1737,13 @@ export default async function () {
 			/* 初始化完成后再调用一次渲染 */
 			vmTuiEditorDone: {
 				async handler() {
-					this.setMd(this.modelValue.md);
+					this.setMd(this.value.md);
 				}
 			},
-			"modelValue.md": {
+			"value.md": {
 				immediate: true,
 				async handler(mdString) {
-					this.setMd(mdString);
+					this.setMd(mdString || "");
 				}
 			}
 		},
@@ -1781,6 +1781,9 @@ export default async function () {
 					}
 					let html = this.vmTuiEditor.getHTML();
 					this.html = new PreprocessHTML(html).html;
+					setTimeout(() => {
+						$(this.$refs.viewer).html(this.html);
+					}, 64);
 				} catch (error) {
 					console.error(error);
 				} finally {
@@ -1788,53 +1791,19 @@ export default async function () {
 				}
 			},
 			/*  */
-			setVisible(visible: any) {
-				this.visible = visible;
-			},
-			destoryListener() {
-				if (this.$previewer) {
-					this.$previewer.off("click");
-					this.$previewer = null;
-				}
-			},
-			showImg(index: number) {
+			showImg(index) {
 				const $md = $(this.$refs.viewer);
 				const imgList = $md.find("img");
-				const img = imgList[index];
-				if (img) {
-					this.$rawImgIndex = index;
-					this.imgSrc = img.src;
-					this.setVisible(true);
-					this.ifHasMulImageAddArrow(imgList);
-				}
+				_.$previewImgs({
+					urlList: _.map(imgList, img => img.src),
+					index
+				});
 			},
-			ifHasMulImageAddArrow(imgList) {
-				if (imgList.length > 1) {
-					this.$rawImgList = imgList;
-					setTimeout(() => {
-						this.destoryListener();
-						this.$previewer = $(".ant-image-preview-body");
-						this.$previewer.on("click", "[class^=ant-image-preview-switch-]", this.handleClickPreviewSwitch);
-						this.$previewer.append(leftArrow);
-						this.$previewer.append(rightArrow);
-					}, 500);
-				}
-			},
-			handleClickPreviewSwitch({ currentTarget }) {
-				const { length } = this.$rawImgList;
-				if ($(currentTarget).hasClass("right")) {
-					this.$rawImgIndex = (this.$rawImgIndex + 1) % length;
-				} else {
-					this.$rawImgIndex = (this.$rawImgIndex - 1 + length) % length;
-				}
-				const imgSrc = $(this.$rawImgList[this.$rawImgIndex]).attr("src");
-				$(".ant-image-preview-img").attr("src", imgSrc);
-			},
-			handleClick(event: { target: any }) {
+			handleClick(event) {
 				const { target } = event;
-				const $ele = $(target).parents(".ant-image[data-ant-image-index]");
+				const $ele = $(target).parents(".el-image[data-el-image-index]");
 				if ($ele && $ele.length) {
-					this.showImg(Number($ele.attr("data-ant-image-index")));
+					this.showImg(Number($ele.attr("data-el-image-index")));
 				}
 			},
 			/*  */
@@ -1842,8 +1811,8 @@ export default async function () {
 				const vm = this;
 				$(this.raw$selector).show().addClass("flash infinite");
 				const mdString = vm.vmTuiEditor.getMarkdown();
-				if (vm.modelValue.md !== mdString) {
-					vm.$emit("update:modelValue", {
+				if (vm.value.md !== mdString) {
+					vm.$emit("change", {
 						md: mdString,
 						html: vm.vmTuiEditor.getHTML()
 					});
@@ -1855,12 +1824,41 @@ export default async function () {
 			async init() {
 				let vm = this;
 				vm.setLoading(true);
-				await _.ensureValueDone(() => vm.$refs.container);
+				await _.$ensure(() => vm.$refs.container);
+				const customHTMLRenderer = {
+					image: (node, context) => {
+						const { title, destination, firstChild } = node;
+						const { literal } = firstChild || {};
+						const { skipChildren } = context;
+						skipChildren();
+						const src = (() => {
+							const [_, id] = String(destination).match(/^_id:(\d+)/) || [];
+							if (id) {
+								return `${window._URL_PREFIX || ""}/api/resource/get?id=${id}`;
+							} else {
+								return destination;
+							}
+						})();
+						return {
+							type: "openTag",
+							tagName: "img",
+							selfClose: true,
+							attributes: {
+								title,
+								alt: literal,
+								src
+							}
+						};
+					}
+				};
+
 				try {
 					(() => {
 						vm.vmTuiEditor = new TuiEditor({
+							customHTMLRenderer,
 							el: vm.$refs.container,
-							initialEditType: "wysiwyg",
+							initialEditType: "markdown",
+							// initialEditType: "wysiwyg",
 							previewStyle: "vertical",
 							initialValue: "",
 							height: "300px",
@@ -1869,24 +1867,42 @@ export default async function () {
 								change: _ => {
 									vm.emitModelValueDebounce && vm.emitModelValueDebounce();
 								},
-								addImageBlobHook: (blob, callback) => {
-									debugger;
-									vm.setLoading(true);
+								addImageBlobHook: async (blob, callback) => {
+									const { name, size, type } = blob;
+									/* base64 字符串 */
 									var reader = new FileReader();
-									reader.onload = function (_a) {
-										var target2 = _a.target;
-										vm.setLoading();
-										return callback(target2.result);
+									reader.onload = async function (_a) {
+										var { result: basecode } = _a.target;
+										/* 上传服务器，返回id */
+										/* todo process loading  */
+										const { data } = await _api.yapi.saveImgByBase64({
+											basecode,
+											useFor: "wiki",
+											name,
+											size,
+											type
+										});
+										return callback(`_id:${data._id}`);
 									};
 									reader.readAsDataURL(blob);
 								}
+								/* addImageBlobHook: (blob, callback) => {
+                   vm.setLoading(true);
+                   var reader = new FileReader();
+                   reader.onload = function (_a) {
+                     var target2 = _a.target;
+                     vm.setLoading();
+                     return callback(target2.result);
+                   };
+                   reader.readAsDataURL(blob);
+                 }*/
 							}
 						});
 						/* vmTuiEditor初始化 */
 						vm.vmTuiEditorDone = true;
 						vm.emitModelValueDebounce = _.debounce(vm.emitModelValue, 1000);
-						vm.setHtmlDebounce = _.debounce(vm.setHtml, 1600);
-						const className = `sync_${vm._.uid}`;
+						vm.setHtmlDebounce = _.debounce(vm.setHtml, 100);
+						const className = `sync_${vm._uid}`;
 						vm.raw$selector = `.${className}`;
 						vm.vmTuiEditor.insertToolbarItem(
 							{ groupIndex: 4, itemIndex: 2 },
@@ -1906,9 +1922,31 @@ export default async function () {
 				}
 
 				(() => {
-					vm.setMdDebounce = _.debounce(vm.setMd, 1000);
+					vm.setMdDebounce = _.debounce(vm.setMd, 100);
 				})();
 			}
+		},
+		render() {
+			const vm = this;
+			return h("div", { class: "flex1-overflow-auto" }, [
+				/*viewer html*/
+				h("div", {
+					ref: "viewer",
+					onClick: vm.handleClick,
+					class: {
+						"toastui-editor-contents flex1 border-radius box-shadow padding20": true,
+						"display-none": !vm.readonly
+					},
+					style: "position:relative;height:100%;width:100%;z-index:1;padding:var(--app-padding);"
+				}),
+				/*tuiEdior*/
+				h("div", {
+					id: vm._uid,
+					ref: "container",
+					class: { flex1: true, "display-none": vm.readonly },
+					style: "height:100%;width:100%;z-index:1;"
+				})
+			]);
 		}
 	});
 }

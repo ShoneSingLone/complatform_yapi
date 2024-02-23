@@ -132,7 +132,7 @@ export default async function () {
 	}
 
 	.el-card__header + .el-card__body {
-		padding-top: 0;
+		// padding-top: 0;
 	}
 }
 

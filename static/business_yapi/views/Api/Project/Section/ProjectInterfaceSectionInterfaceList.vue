@@ -26,7 +26,7 @@
 			</template>
 		</xTablebar>
 
-		<div class="flex1 mt">
+		<div class="flex1-overflow-auto mt">
 			<xTableVir :columns="inject_project_interface_section.configsTable.columns" :data="inject_project_interface_section.configsTable.data.list" fixed />
 		</div>
 	</div>

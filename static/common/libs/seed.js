@@ -326,13 +326,13 @@
 	 * @returns
 	 */
 	/* @typescriptDeclare (url:string,globalName:string)=>any */
-	async function $appendScript(url, globalName = "") {
+	async function $appendScript(url, globalName = "", _SCRIPT_USE_SRC = false) {
 		const id = camelCase(url);
 		let $script = $$id(id);
 		if (!$script) {
 			$script = document.createElement("script");
 			$script.id = id;
-			if (window._SCRIPT_USE_SRC) {
+			if (_SCRIPT_USE_SRC) {
 				await new Promise(resolve => {
 					$script.src = $resolvePath(url);
 					$script.onload = function (event) {

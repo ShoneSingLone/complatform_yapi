@@ -23,6 +23,21 @@ export default async function () {
 			};
 
 			window._api.yapi = {
+				wikiUpsertOne(data) {
+					return _.$ajax.post("/api/wiki/upsertOne", {
+						data
+					});
+				},
+				saveImgByBase64(data) {
+					return _.$ajax.post("/api/resource/base64img", {
+						data
+					});
+				},
+				wikiDetail(data) {
+					return _.$ajax.get("/api/wiki/detail", {
+						data
+					});
+				},
 				/**
 				 *  wiki左侧的菜单
 				 *  http://192.168.0.107:3002/static/business_yapi/yapi.html#/api/project?projectId=319&groupId=431&projectTabName=%E6%8E%A5%E5%8F%A3&interfaceType=interface&interfaceId=591&project_interface_tab=1&project_setting_tab=3/#/api/project?projectId=319&groupId=431&interfaceType=interface&interfaceId=591&project_interface_tab=1&project_setting_tab=3&projectTabName=接口

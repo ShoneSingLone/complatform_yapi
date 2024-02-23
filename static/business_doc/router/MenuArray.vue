@@ -89,6 +89,11 @@ export default async function () {
 				},
 
 				{
+					icon: "_icon_image",
+					label: i18n("image") + i18n("图片"),
+					href: "/component/data/image"
+				},
+				{
 					icon: "icon_report",
 					label: i18n("icon"),
 					href: "/component/data/icon"

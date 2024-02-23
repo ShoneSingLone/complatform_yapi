@@ -29,7 +29,6 @@ export default async function () {
 						onEmitValue({ val }) {
 							_.$lStorage.email = val;
 						},
-						onKeypress(e) {},
 						rules: [_rules.required("", ["blur"]), _rules.email()],
 						$vSlots: {
 							prefix() {
@@ -48,6 +47,9 @@ export default async function () {
 						placeholder: () => i18n("密码"),
 						onEmitValue({ val }) {
 							_.$lStorage.password = val;
+						},
+						onEnter(e) {
+							vm.login();
 						},
 						rules: [_rules.required(i18n("请输入密码"), ["blur"])],
 						$vSlots: {

@@ -162,9 +162,14 @@ ${resBackupJson}
 								nativeOn: {
 									click: async () => {
 										try {
-											await navigator.clipboard.writeText($("#cptCode").text());
+											/* https://www.cnblogs.com/hellxz/p/15192573.html */
+											await _.$copyToClipboard($("#cptCode").text());
 											_.$msgSuccess("复制成功");
-										} catch (err) {}
+										} catch (error) {
+											console.error(error);
+											debugger;
+											_.$msgError("复制失败");
+										}
 									}
 								}
 							});
@@ -207,6 +212,9 @@ ${resBackupJson}
 						const source = _.cloneDeep(val);
 						this.sourceReqHeaders = source.req_headers || [];
 						try {
+							if (!source?.req_body_other) {
+								return;
+							}
 							this.sourceReqBodyOther = JSON.parse(source.req_body_other);
 							this.form.source.value = JSON.stringify(source, null, 2);
 						} catch (error) {
