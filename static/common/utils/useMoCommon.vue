@@ -2,6 +2,20 @@
 export default async function ({ APP_WEB_PATH }) {
 	(function () {
 		$("html").addClass("mo-common");
+		_.$single.doc.on(
+			"click",
+			".modules-service-list-service-list-drawer-service-content-service-nav-item",
+			_.debounce(async function (event) {
+				const a = await _MoCfContext.getRegions();
+				debugger;
+				if (_MoCfContext.regionsData.selectRegionId !== a.selectRegionId) {
+					debugger;
+				}
+			}, 1000)
+		);
+		// setTimeout(() => {
+		// 	$("#mo-cf-modules-region .modules-region-cf-header-region").css("display", "");
+		// }, 1000 * 2);
 		window.appWebPath = APP_WEB_PATH;
 		const moLang = new URLSearchParams(location.search).get("locale");
 		const i18nMap = {
@@ -128,41 +142,53 @@ export default async function ({ APP_WEB_PATH }) {
 		callbackFn && callbackFn(isSubPage);
 	}, 600);
 
-	_MoCfContext.queryPrice = async function (params, buyLayerConfigs) {
-		let atomCost = false;
+	_MoCfContext.getOneHourBeginEndTime = function () {
+		const currentTime = dayjs();
+		return {
+			begin_time: _.$dateFormat(currentTime.valueOf(), 2),
+			end_time: _.$dateFormat(currentTime.add(1, "hour").valueOf(), 2)
+		};
+	};
+
+	_MoCfContext.queryPrice = async function (params) {
+		const priceInfo = {
+			value: "",
+			singleValue: "",
+			measureUnit: "",
+			currency: "",
+			symbol: ""
+		};
 		try {
-			const { data, response } = await _MoCfContext._api.priceRate(params);
-			if (response?.data?.length > 0) {
-				const data = response.data;
-				if (!data || data.length === 0) {
-					return;
-				}
-				//EVS采用原子计价
-				atomCost = _.find(data, function (item) {
-					return item.type === "atom";
-				});
-				//计价未开启时，默认总价0.00
-				if (!isNaN(parseFloat(atomCost && atomCost.price))) {
-					buyLayerConfigs.costs[0] = buyLayerConfigs.costs[0] || {};
-					buyLayerConfigs.costs[0].value = parseFloat(atomCost.price).toFixed(2);
-					buyLayerConfigs.costs[0].singleValue = parseFloat(atomCost.price).toFixed(2);
-					buyLayerConfigs.costs[0].measureUnit = _$t("小时").label;
-					buyLayerConfigs.costs[0].currency = atomCost.currency;
-					buyLayerConfigs.costUnit = atomCost.symbol || "";
-					_$configLocale(atomCost.symbol, data[0].currency);
-				} else {
-					buyLayerConfigs.costs[0].value = "0.00";
-					buyLayerConfigs.costs[0].singleValue = "0.00";
-					buyLayerConfigs.costs[0].measureUnit = _$t("小时").label;
-					buyLayerConfigs.costUnit = "";
-				}
+			const res = await _MoCfContext._api.priceRate(params);
+			/*
+begin_time, : ""
+currency, : "CNY"
+end_time, : "20240223183659"
+price, : "0.0"
+symbol, : "¥"
+type, : "spec"
+*/
+
+			//EVS采用原子计价
+			const atomCost = _.find(res, r => r.type === "atom");
+
+			//计价未开启时，默认总价0.00
+			if (!isNaN(parseFloat(atomCost && atomCost.price))) {
+				priceInfo.value = parseFloat(atomCost.price).toFixed(2);
+				priceInfo.singleValue = parseFloat(atomCost.price).toFixed(2);
+				priceInfo.measureUnit = i18n("小时");
+				priceInfo.currency = atomCost.currency;
+				priceInfo.symbol = atomCost.symbol || "";
 			} else {
-				_$layer.confirmError(response?.data?.msg);
+				priceInfo.value = "0.00";
+				priceInfo.singleValue = "0.00";
+				priceInfo.measureUnit = i18n("小时");
+				priceInfo.symbol = "";
 			}
 		} catch (e) {
 			console.error(e);
 		} finally {
-			return atomCost;
+			return priceInfo;
 		}
 	};
 
@@ -325,7 +351,7 @@ export default async function ({ APP_WEB_PATH }) {
 	window._URL_PREFIX = APP_WEB_PATH;
 	_MoCfContext._api = {
 		async priceRate(data) {
-			return _.$ajax.get("/goku/rest/price/v3.0/rate", {
+			return _.$ajax.post("/goku/rest/price/v3.0/rate", {
 				data
 			});
 		},

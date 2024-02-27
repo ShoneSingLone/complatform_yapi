@@ -104,6 +104,19 @@ export default async function () {
 			}
 		},
 		computed: {
+			cptBelongType() {
+				const { private: self, group, project } = this.$route.query;
+				if (self) return "private";
+				if (group) return "group";
+				if (project) return "project";
+				return "all";
+			},
+			cptBelongId() {
+				if (this.cptBelongType !== "all") {
+					return this.$route.query[this.cptBelongType];
+				}
+				return 0;
+			},
 			cptCurrentWiki() {
 				return {
 					...this.currentWiki,

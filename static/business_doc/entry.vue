@@ -1,21 +1,5 @@
 <script lang="ts">
 export default async function () {
-	(() => {
-		_.$msgSuccess = msg => {
-			return _.$notify.success({
-				title: "提示",
-				message: msg
-			});
-		};
-
-		_.$msgError = msg => {
-			return _.$notify.error({
-				title: "错误",
-				message: msg
-			});
-		};
-	})();
-
 	await Promise.all([
 		_.$importVue("/common/ui-x/useXui.vue"),
 		_.$importVue("/common/ui-element/useElementUI.vue", {

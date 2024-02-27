@@ -1,26 +1,5 @@
 <script lang="ts">
 export default async function () {
-	(() => {
-		_.$msgSuccess = msg => {
-			console.log("🚀$msgSuccess:", msg);
-			return _.$notify.success({
-				title: "提示",
-				message: msg
-			});
-		};
-
-		_.$msgError = msg => {
-			console.log("🚀$msgError:", msg);
-			if (msg?.message) {
-				msg = msg.message;
-			}
-			return _.$notify.error({
-				title: "错误",
-				message: msg
-			});
-		};
-	})();
-
 	await Promise.all([
 		_.$importVue("/common/ui-x/useXui.vue"),
 		_.$importVue("/common/ui-element/useElementUI.vue", {
@@ -66,13 +45,16 @@ export default async function () {
 	]);
 
 	const router = new VueRouter({ routes });
+
 	const LOADING_STATUS = 0;
 	const GUEST_STATUS = 1;
 	const MEMBER_STATUS = 2;
 	/*  */
 	_.$yapiRouter = router;
 
-	return new Vue({
+	// router.beforeEach(function (to, from) {});
+
+	var rootApp = new Vue({
 		el: "#app",
 		router,
 		components: {
@@ -89,6 +71,43 @@ export default async function () {
 			this.refreshUserInfo();
 		},
 		data() {
+			const vm = this;
+
+			vm.refreshUserInfo = _.$asyncDebounce(
+				vm,
+				async function refreshUserInfo() {
+					try {
+						if (!vm.user.isLogin) {
+							const { data: userInfo } = await _api.yapi.userStatus();
+							vm._setUser(userInfo);
+						}
+
+						if (vm.user.isLogin) {
+							/* TODO: 跳转到首页 或者note应用*/
+							if (vm.$route.path === "/note") {
+								return;
+							}
+							await vm.ifUrlNoGroupIdGetAndAddIdToUrl();
+							if (vm.cptProjectId) {
+								await vm.updateGroupProjectList();
+							}
+							if (vm.$route.path === "/login") {
+								vm.$router.push("/api/group");
+							}
+						}
+						return true;
+					} catch (error) {
+						/* 未登录，跳转登录界面 */
+						vm.$router.push("/login");
+					} finally {
+						setTimeout(() => {
+							$("body").removeClass("x-loading");
+						}, 1000);
+					}
+				},
+				1000
+			);
+
 			return {
 				isMobile: /Mobile/gi.test(window.navigator.userAgent),
 				useMobileView: true,
@@ -140,36 +159,6 @@ export default async function () {
 						...query
 					}
 				});
-			},
-			async refreshUserInfo() {
-				try {
-					const { data: userInfo } = await _api.yapi.userStatus();
-					if (userInfo?._id) {
-						this._setUser(userInfo);
-						/* TODO: 跳转到首页 或者note应用*/
-						if (this.$route.path === "/note") {
-							// await this.initNoteView()
-							return;
-						}
-						await this.ifUrlNoGroupIdGetAndAddIdToUrl();
-						if (this.cptProjectId) {
-							await this.updateGroupProjectList();
-						}
-						if (this.$route.path === "/login") {
-							this.$router.push("/api/group");
-						}
-					}
-				} catch (error) {
-					/* 未登录，跳转登录界面 */
-					this.$router.push("/login");
-				} finally {
-					setTimeout(() => {
-						$("body").removeClass("x-loading");
-					}, 1000);
-				}
-			},
-			async initNoteView() {
-				debugger;
 			},
 			initMobileModel() {
 				if (this.isMobile) {
@@ -278,6 +267,14 @@ export default async function () {
 			}
 		},
 		watch: {
+			"$route.path": {
+				immediate: true,
+				handler() {
+					this.refreshUserInfo().then(res => {
+						console.log("🚀 ~ this.refreshUserInfo ~ res:", res);
+					});
+				}
+			},
 			groupList: {
 				immediate: true,
 				handler(groupList) {
@@ -290,5 +287,7 @@ export default async function () {
 			}
 		}
 	});
+
+	return rootApp;
 }
 </script>

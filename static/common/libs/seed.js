@@ -259,7 +259,7 @@
 					}
 				}
 			}
-		} catch (error) { }
+		} catch (error) {}
 
 		if (/^@/.test(url)) {
 			/* 业务代码 */

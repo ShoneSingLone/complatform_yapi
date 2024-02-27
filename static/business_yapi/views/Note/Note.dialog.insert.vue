@@ -1,191 +1,97 @@
+<style lang="less"></style>
 <template>
-	<xDialog id="ProjectSettingConfirmMergeInterfaceDialog">
-		<xAlert title="不保留旧数据，完全使用新数据。数据同步后，可能会造成原本的修改数据丢失" type="warning" />
-		<div class="postman-dataImport-modal flex1">
-			<div class="postman-dataImport-modal-content">
-				<div :key="index" class="postman-dataImport-show-diff" v-for="(item, index) in domainData">
-					<span class="logcontent" v-html="item.content" />
-				</div>
-			</div>
-			<div class="padding">
-				{{ cptTaskNotice }}
-			</div>
-		</div>
+	<xDialog>
+		<xForm ref="form" col="1">
+			<xItem :configs="form.title" span="full" />
+		</xForm>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn :configs="btnCancel">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ domainData, originData, dataSync }) {
-	const token = "";
-	/* 必要，混入"$closeWindow", "$layerMax", "$layerMin", "$layerRestore" */
+export default async function ({ parentDocId, belong_type, belong_id }) {
+	/* 必要，混入"$closeWindow", "layerMax", "layerMin", "layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
-		inject: ["APP", "inject_project"],
+		inject: ["APP", "inject_note"],
 		props: useDialogProps(),
 		data() {
 			return {
-				domainData,
-				successNum: 0,
-				existNum: 0,
-				hasDone: 0,
-				apis: originData.apis,
-				apisTotal: originData.apis.length
+				form: {
+					title: {
+						value: "",
+						label: i18n("标题"),
+						placeholder: i18n("文档名称"),
+						rules: [_rules.required()]
+					}
+				}
 			};
 		},
 		computed: {
-			cptTaskNotice() {
-				if (this.hasDone === this.apisTotal) {
-					let exist = this.existNum ? "，其中" + this.existNum + "个接口已存在" : "";
-					return `数据已全部导入，共执行任务 ${this.hasDone} 个${exist}`;
-				}
-				if (this.hasDone) {
-					return `正在导入，已执行任务 ${this.hasDone} 个，共 ${this.apisTotal} 个`;
-				}
-				return `需要导入的接口共 ${this.apisTotal} 个`;
+			pid() {
+				return parentDocId || 0;
+			},
+			belong_type() {
+				return this.propOptions.belong_type || "all";
+			},
+			cptFormData() {
+				return _.$pickValueFromConfigs(this.form);
 			},
 			btnOk() {
 				const vm = this;
-				const label = (function () {
-					if (dataSync === "normal") {
-						return "只导入新增接口";
-					}
-					if (dataSync === "good") {
-						return "智能合并";
-					}
-					return "全部覆盖";
-				})();
 				return {
-					label,
-					disabled() {
-						return !_.$isArrayFill(vm.apis);
-					},
-					async onClick() {
-						return vm.handleAddInterface();
-					}
-				};
-			},
-			btnCancel() {
-				return {
-					label: i18n("取消"),
+					label: i18n("确定"),
 					preset: "blue",
 					onClick: async () => {
-						this.$closeWindow();
+						const [atLeastOne] = await _.$validateForm(this.$el);
+						if (atLeastOne) {
+							return;
+						}
+						_.$loading(true);
+						try {
+							const params = {
+								title: this.form.title.value,
+								type: Vue._yapi_var.ARTICLE,
+								p_id: this.pid,
+								belong_type,
+								belong_id
+							};
+							const res = await _api.yapi.wikiUpsertOne(params);
+							if (!res.errcode) {
+								await this.inject_note.updateWikiMenuList();
+								await this.inject_note.setCurrentWiki(res.data.msg);
+								this.$closeWindow();
+							}
+						} catch (error) {
+							_.$msgError("修改失败");
+						} finally {
+							_.$loading(false);
+						}
 					}
 				};
 			}
 		},
 		methods: {
-			async ensureAllCategoryExist({ cats, apis }) {
-				try {
-					const vm = this;
-					let catsObj = { ...vm.inject_project.allCategory };
-					if (_.$isArrayFill(cats)) {
-						try {
-							for (const cat of cats) {
-								const findCat = _.find(vm.inject_project.allCategory, c => c.name === cat.name);
-								if (findCat) {
-									catsObj[cat.name] = findCat;
-									/* TODO:是否需要更新desc */
-								} else {
-									const params = {
-										project_id: vm.APP.cptProjectId,
-										name: cat.name,
-										desc: cat.desc
-									};
-									const res = await _api.yapi.interfaceAddCat(params);
-									if (res?.errcode === 0) {
-										cat.id = res._id;
-									} else {
-										throw new Error(res.message);
-									}
-								}
-							}
-						} catch (error) {
-							console.error("Error adding or finding cats:", error);
-						}
-					} else {
-					}
-					await vm.inject_project.getInterfaceList();
-					return catsObj;
-				} catch (error) {
-					_.$msgError(error);
-					return false;
-				}
-			},
-			async handleAddInterface() {
+			async update(id) {
 				_.$loading(true);
 				try {
-					const vm = this;
-					const cats = await this.ensureAllCategoryExist(originData /* cats,apis */);
-					let { basePath } = originData;
-					vm.hasDone = 0;
-					vm.successNum = 0;
-					const projectId = vm.APP.cptProjectId;
+					const params = {
+						id
+					};
 
-					/* 如果有公用前缀 */
-					if (basePath) {
-						await _api.yapi.project_update({
-							id: projectId,
-							basepath: basePath
-							/* token */
-						});
+					if (this.cptFormData.isProxy) {
+						params.isProxy = true;
+						params.witchEnv = this.cptFormData.witchEnv;
+					} else {
+						params.isProxy = false;
+						params.res_body_type = this.cptFormData.res_body_type;
 					}
 
-					let api;
-					while ((api = vm.apis.pop())) {
-						try {
-							let interfaceInfo = Object.assign(api, {
-								project_id: projectId
-							});
-							const category = cats[interfaceInfo.catname];
-							const undefinedCategory = _.find(cats, { title: "公共分类" });
-							(function () {
-								if (interfaceInfo.catname) {
-									if (category?._id) {
-										interfaceInfo.catid = category._id;
-										return;
-									}
-								}
-								interfaceInfo.catname = undefinedCategory.name;
-								interfaceInfo.catid = undefinedCategory._id;
-							})();
-
-							interfaceInfo.token = token;
-							/* 只新增 */
-							if (dataSync === "normal") {
-								// normal
-								let res = await _api.yapi.interface_add(interfaceInfo);
-								if (res.errcode) {
-									if (res.errcode === 40022) {
-										vm.existNum++;
-									} else {
-										_.$msgError(res);
-									}
-								} else {
-									vm.successNum++;
-								}
-							} else {
-								/* 覆盖、智能合并 */
-								// merge good
-								interfaceInfo.dataSync = dataSync;
-								let res = await _api.yapi.interface_upsert(interfaceInfo);
-								if (res.errcode) {
-									_.$msgError(res);
-								} else {
-									vm.successNum++;
-								}
-							}
-						} catch (error) {
-							_.$msgError(error.message);
-						} finally {
-							vm.hasDone++;
-						}
-					}
+					return await _api.yapi.interface_up(params);
 				} catch (error) {
-					_.$msgError(error);
+					_.$msgError("修改失败");
 				} finally {
 					_.$loading(false);
 				}
@@ -194,11 +100,3 @@ export default async function ({ domainData, originData, dataSync }) {
 	});
 }
 </script>
-<style lang="less">
-#ProjectSettingConfirmMergeInterfaceDialog {
-	height: 100%;
-	.el-card__body {
-		min-height: 100px;
-	}
-}
-</style>

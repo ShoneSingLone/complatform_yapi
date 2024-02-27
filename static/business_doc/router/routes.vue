@@ -57,6 +57,7 @@ export default async function () {
 						_.$newRoute("/component/data/tree", "@/views/component/data/tree/DemoTree.vue"),
 						_.$newRoute("/component/data/descriptions", "@/views/component/data/descriptions/DemoDescriptions.vue"),
 						_.$newRoute("/component/data/virtualized-table", "@/views/component/data/virtualizedTable/virtualizedTable.vue"),
+						_.$newRoute("/component/data/pagination", "@/views/component/data/pagination/pagination.vue"),
 						_.$newRoute("/component/data/excalidraw", "@/views/component/data/xExcalidraw/DemoExcalidraw.vue")
 					]
 				}),

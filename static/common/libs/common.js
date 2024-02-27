@@ -5,7 +5,6 @@ const isDev = !!localStorage.isDev;
 		console.log("common.js");
 	}
 
-
 	/**
 	 * requestAnimationFrame Throttle
 	 */
@@ -20,8 +19,6 @@ const isDev = !!localStorage.isDev;
 			});
 		};
 	};
-
-
 
 	/**
 	 * 复制到剪贴板
@@ -47,7 +44,7 @@ const isDev = !!localStorage.isDev;
 			textArea.select();
 			return new Promise((res, rej) => {
 				// 执行复制命令并移除文本框
-				document.execCommand('copy') ? res() : rej();
+				document.execCommand("copy") ? res() : rej();
 				textArea.remove();
 			});
 		}
@@ -737,7 +734,9 @@ const isDev = !!localStorage.isDev;
 		date = date || Date.now();
 		if (type === 1) {
 			format = "YYYY-MM-DD";
-			return dayjs(date).format("YYYY-MM-DD");
+		}
+		if (type === 2) {
+			format = "YYYYMMDDHHmmss";
 		}
 
 		if (!type) {
@@ -843,6 +842,7 @@ const isDev = !!localStorage.isDev;
 		fn.queue = [];
 		fn.timmer = null;
 		return function (...args) {
+			console.log('_.$asyncDebounce 🚀:', fn.name, Date.now());
 			const vm = this;
 			fn.bindFn = fn.bind(vm);
 			if (fn.timmer) {
@@ -968,16 +968,6 @@ const isDev = !!localStorage.isDev;
 		return _.$confirm(options);
 	};
 
-	/*  */
-	/*  */
-	_.$msgInfo = title => {
-		return ELEMENT.Message({
-			message: title,
-			type: "info",
-			duration: 0
-		});
-	};
-
 	/**
 	 * notify 弹窗，成功提示，可复写
 	 * @param {*} title
@@ -985,62 +975,72 @@ const isDev = !!localStorage.isDev;
 	 * @returns
 	 */
 	/* @typescriptDeclare (title:string,options?:any)=>Promise<any> */
-	_.$msgSuccess = title => {
-		return new Promise(resolve => {
-			layer.msg(
-				title,
-				{
-					time: 2000,
-					icon: 1
-				},
-				resolve
-			);
+	_.$msgSuccess = msg => {
+		return _.$notify.success({
+			title: i18n("提示"),
+			message: msg
 		});
 	};
-	/**
-	 * notify 弹窗，错误提示，可复写
-	 * @param {*} title
-	 * @param {*} options
-	 * @returns
-	 */
-	/* @typescriptDeclare (title:string,options?:any)=>Promise<any> */
-	_.$msgError = (title, options) =>
-		new Promise(resolve => {
-			if (!title) {
-				resolve();
-				return;
-			}
-			/*如果返回的是一個對象，且对象status为200，则不提示*/
-			if (_.isPlainObject(title)) {
-				if (title.status === 200) {
+
+	(function () {
+		/**
+		 * notify 弹窗，错误提示，可复写
+		 * @param {*} title
+		 * @param {*} options
+		 * @returns
+		 */
+		/* @typescriptDeclare (title:string,options?:any)=>Promise<any> */
+		_.$msgError = (title, options) =>
+			new Promise(resolve => {
+				if (!title) {
+					resolve();
 					return;
 				}
-			}
-			if (title?.error) {
-				title = String(title.error);
-			}
-			if (title?.message) {
-				title = String(title.message);
-			}
 
-			if (!_.isString(title)) {
-				try {
-					title = JSON.stringify(title);
-				} catch (e) {
-					console.error(e);
+				if (title?.error) {
+					title = String(title.error);
+				}
+				if (title?.message) {
+					title = String(title.message);
+				}
+
+				console.error(title);
+				layer.msg(
+					title,
+					{
+						time: 1000 * 5,
+						icon: 2,
+						...options
+					},
+					resolve
+				);
+			});
+
+		_.$msgError = msg => {
+			if (!msg) {
+				return;
+			}
+			console.log("🚀$msgError:", msg);
+			/*如果返回的是一個對象，且对象status为200，则不提示*/
+			if (_.isPlainObject(msg)) {
+				if (msg.status === 200) {
+					return;
+				}
+				if (msg?.responseJSON?.detailArgs) {
+					msg = msg?.responseJSON?.detailArgs;
+				} else if (msg?.responseText) {
+					msg = msg.responseText;
+				} else if (msg?.message) {
+					msg = msg.message;
 				}
 			}
-			console.error(title);
-			layer.msg(
-				title,
-				{
-					time: 1000 * 5,
-					icon: 2,
-					...options
-				},
-				resolve
-			);
-		});
+
+			return _.$notify.error({
+				title: i18n("错误"),
+				message: msg
+			});
+		};
+	})();
 	/*  */
 	(function () {
 		const DIALOG_CACHE = {};

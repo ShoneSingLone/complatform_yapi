@@ -51,6 +51,10 @@ export default async function () {
 		display: flex;
 		align-items: baseline;
 
+		&:first-child {
+			margin-top: var(--ui-one);
+		}
+
 		& + .xFormItem {
 			margin-top: var(--ui-one);
 		}

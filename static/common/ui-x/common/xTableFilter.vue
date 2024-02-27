@@ -1,14 +1,14 @@
 <template>
-	<el-dropdown trigger="click" :hide-on-click="false">
+	<xDropdown trigger="click" :hide-on-click="false">
 		<div class="loader-wrapper">
 			<xIcon icon="icon_table_filter" style="width: 24px; height: 24px; color: var(--ui-base-color-5)" class="pointer ml4" />
 		</div>
-		<el-dropdown-menu slot="dropdown">
-			<el-dropdown-item v-for="item in cptColumnsForShow" :key="item.label">
+		<xDropdownMenu slot="dropdown">
+			<xDropdownItem v-for="item in cptColumnsForShow" :key="item.label">
 				<el-checkbox :value="isShow(item)" @change="$event => setIsShow(item, $event)">{{ item.label }}</el-checkbox>
-			</el-dropdown-item>
-		</el-dropdown-menu>
-	</el-dropdown>
+			</xDropdownItem>
+		</xDropdownMenu>
+	</xDropdown>
 </template>
 
 <script lang="ts">

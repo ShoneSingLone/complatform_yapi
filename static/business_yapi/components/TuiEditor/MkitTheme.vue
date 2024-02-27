@@ -62,8 +62,8 @@ export default async function () {
 
 	return {
 		PreprocessHTML,
-    leftArrow,
-    rightArrow
+		leftArrow,
+		rightArrow
 	};
 }
 </script>

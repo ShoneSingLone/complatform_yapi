@@ -7,7 +7,7 @@
 	<section class="page-view flex1" id="NoteSection">
 		<xPageContent>
 			<div class="flex mb10 middle" style="height: 48px">
-				<xRender :render="vDomTitle" class="flex1"/>
+				<xRender :render="vDomTitle" class="flex1" />
 				<xGap l />
 				<xBtn :configs="btnSave" />
 				<xBtn :configs="btnCancel" />

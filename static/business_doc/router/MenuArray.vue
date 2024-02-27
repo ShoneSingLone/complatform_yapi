@@ -118,11 +118,8 @@ export default async function () {
 					label: i18n("virtualized-tree"),
 					href: "/component/data/tree"
 				},
-				{
-					icon: "icon_report",
-					label: i18n("virtualized-table"),
-					href: "/component/data/virtualized-table"
-				},
+				{ icon: "icon_report", label: i18n("virtualized-table"), href: "/component/data/virtualized-table" },
+				{ icon: "icon_report", label: `${i18n("Pagination")} ${i18n("分页")}`, href: "/component/data/pagination" },
 				{ icon: "icon_report", label: i18n("tabs"), href: "/component/navigation/tabs" },
 				{ icon: "icon_report", label: i18n("dropdown"), href: "/component/navigation/dropdown" },
 				{ icon: "_icon_breadcrumb", label: `${i18n("Breadcrumb")} ${i18n("面包屑")}`, href: "/component/navigation/breadcrumb" },
