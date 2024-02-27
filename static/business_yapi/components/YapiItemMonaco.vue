@@ -56,6 +56,6 @@ export default async function () {
 <style lang="less">
 .YapiItemMonaco {
 	width: 100%;
-	height: 800px;
+	height: var(--YapiItemMonaco-height, 800px);
 }
 </style>

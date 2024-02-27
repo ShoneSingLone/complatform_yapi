@@ -842,7 +842,7 @@ const isDev = !!localStorage.isDev;
 		fn.queue = [];
 		fn.timmer = null;
 		return function (...args) {
-			console.log('_.$asyncDebounce 🚀:', fn.name, Date.now());
+			console.log("_.$asyncDebounce 🚀:", fn.name, Date.now());
 			const vm = this;
 			fn.bindFn = fn.bind(vm);
 			if (fn.timmer) {
@@ -1893,11 +1893,7 @@ const isDev = !!localStorage.isDev;
 		const i18n = function (key, payload) {
 			/!*使用 {变量名} 赋值*!/;
 			_.templateSettings.interpolate = /{([\s\S]+?)}/g;
-			let temp = window.i18n.options[key];
-			/* 可能是嵌套对象的形式 */
-			if (!temp) {
-				temp = _.$val(window.i18n.options, key);
-			}
+			let temp = _.$val(window.i18n.options, key);
 			return _.template(temp)(payload) || key;
 		};
 		/* 国际化 */

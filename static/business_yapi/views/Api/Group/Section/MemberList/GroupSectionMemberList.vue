@@ -138,8 +138,8 @@ export default async function () {
 					_.$loading(false);
 				}
 			},
-			avatarSrc(id) {
-				return Vue._yapi_utils.appendToken(`${window._URL_PREFIX}/api/user/avatar?uid=${id}`);
+			cptAvatarUrl(id) {
+				return Vue._yapi_utils.appendToken(`${window._URL_PREFIX_4_DEV}/api/user/avatar?uid=${id}`);
 			}
 		},
 		computed: {

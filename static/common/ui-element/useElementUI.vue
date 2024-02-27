@@ -8,7 +8,7 @@ export default async function (options) {
 			"zh-CN": ELEMENT.lang.zhCN,
 			"en-US": ELEMENT.lang.en
 		};
-		ELEMENT.locale(LOCALE_MAP[I18N_LANGUAGE]);
+		ELEMENT.locale(LOCALE_MAP[window.I18N_LANGUAGE]);
 
 		Vue.prototype.$ELEMENT = options;
 	}

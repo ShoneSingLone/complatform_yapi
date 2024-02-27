@@ -1834,7 +1834,7 @@ export default async function () {
 						const src = (() => {
 							const [_, id] = String(destination).match(/^_id:(\d+)/) || [];
 							if (id) {
-								return `${window._URL_PREFIX || ""}/api/resource/get?id=${id}`;
+								return `${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${id}`;
 							} else {
 								return destination;
 							}

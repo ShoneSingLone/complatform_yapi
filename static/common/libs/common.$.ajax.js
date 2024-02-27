@@ -83,8 +83,9 @@
 			});
 		}
 
-		const urlWrapper = url => `${window._URL_PREFIX || ""}${url}`;
-
+		const urlWrapper = url => {
+			return `${window._URL_PREFIX_4_DEV || ""}${url}`;
+		};
 		const $ajax = {
 			post: (url, options = {}) => {
 				return new Promise((resolve, reject) => {

@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function ({ APP_WEB_PATH }) {
+export default async function ({ _URL_PREFIX_MO }) {
 	(function () {
 		$("html").addClass("mo-common");
 		_.$single.doc.on(
@@ -7,17 +7,16 @@ export default async function ({ APP_WEB_PATH }) {
 			".modules-service-list-service-list-drawer-service-content-service-nav-item",
 			_.debounce(async function (event) {
 				const a = await _MoCfContext.getRegions();
-				debugger;
 				if (_MoCfContext.regionsData.selectRegionId !== a.selectRegionId) {
-					debugger;
 				}
 			}, 1000)
 		);
 		// setTimeout(() => {
 		// 	$("#mo-cf-modules-region .modules-region-cf-header-region").css("display", "");
 		// }, 1000 * 2);
-		window.appWebPath = APP_WEB_PATH;
-		const moLang = new URLSearchParams(location.search).get("locale");
+		window.appWebPath = _URL_PREFIX_MO;
+		const moLang = new URLSearchParams(location.search).get("locale") || $("html").lang || "zh-CN";
+		window.I18N_LANGUAGE = moLang;
 		const i18nMap = {
 			"zh-cn": "zh-CN",
 			"en-us": "en-US"
@@ -286,7 +285,6 @@ type, : "spec"
 			moBuyLayerConfigs.isShowBtn = false;
 		}
 		if (!response?.purchases?.[0]) {
-			debugger;
 			return;
 		}
 		return new Promise(async (resolve, reject) => {
@@ -348,7 +346,8 @@ type, : "spec"
 		});
 	};
 
-	window._URL_PREFIX = APP_WEB_PATH;
+	window._URL_PREFIX_4_DEV = `${window._URL_PREFIX_4_DEV || ""}${_URL_PREFIX_MO}`;
+
 	_MoCfContext._api = {
 		async priceRate(data) {
 			return _.$ajax.post("/goku/rest/price/v3.0/rate", {

@@ -123,9 +123,24 @@ ${resBackupJson}
 
 				return [
 					{ label: i18n("接口名称"), value: title || "--" },
-					{ label: i18n("维护人"), value: uid || "--" },
+					{
+						label: i18n("维护人"),
+						value: uid || "--",
+						readonlyAs: () => {
+							const user = _.find(vm.APP.allUser, user => {
+								return user.uid === uid;
+							});
+							return h("xTag", { class: "mr" }, [user?.username || uid]);
+						}
+					},
 					{ label: i18n("状态"), value: status || "--" },
-					{ label: i18n("更新时间"), value: up_time || "--" },
+					{
+						label: i18n("更新时间"),
+						value: up_time || "--",
+						readonlyAs: () => {
+							return _.$dateFormat(up_time);
+						}
+					},
 					{
 						label: i18n("接口"),
 						value: path || "--",

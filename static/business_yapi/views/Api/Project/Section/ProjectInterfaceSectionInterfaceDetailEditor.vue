@@ -13,7 +13,7 @@
 				<xItem :configs="form.isProxy" v-model="formData.isProxy" />
 				<xItem :configs="form.witchEnv" v-model="formData.witchEnv" />
 				<xItem :configs="form.res_body_type" v-model="formData.res_body_type" span="full" />
-				<xItem :configs="form.resBackupJson" v-model="formData.resBackupJson" span="full" />
+				<xItem :configs="form.resBackupJson" v-model="formData.resBackupJson" span="full" style="--YapiItemMonaco-height: 300px" />
 			</xForm>
 		</xBlock>
 		<xGap t />
@@ -97,7 +97,7 @@ export default async function () {
 							{ label: "raw", value: "raw" }
 						]
 					},
-					resBackupJson: { label: i18n("备份数据"), type: "textarea" }
+					resBackupJson: { label: i18n("备份数据"), itemType: "YapiItemMonaco" }
 				})
 			};
 		},
