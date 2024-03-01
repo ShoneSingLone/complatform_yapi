@@ -11,7 +11,7 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
@@ -121,7 +121,7 @@ export default async function ({ onOk }) {
 						const { data } = await _api.yapi.project_add({ name, basepath, group_id, group_name, project_type, desc });
 						_.$msgSuccess(`添加成功`);
 						onOk();
-						vm.$closeWindow();
+						vm.closeModal();
 					}
 				};
 			}

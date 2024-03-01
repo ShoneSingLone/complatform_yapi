@@ -20,7 +20,7 @@
 <script lang="ts">
 export default async function ({ domainData, originData, dataSync }) {
 	const token = "";
-	/* 必要，混入"$closeWindow", "$layerMax", "$layerMin", "$layerRestore" */
+	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
 		inject: ["APP", "inject_project"],
@@ -72,7 +72,7 @@ export default async function ({ domainData, originData, dataSync }) {
 					label: i18n("取消"),
 					preset: "blue",
 					onClick: async () => {
-						this.$closeWindow();
+						this.closeModal();
 					}
 				};
 			}

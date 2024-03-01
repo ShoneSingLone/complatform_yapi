@@ -49,5 +49,9 @@ declare global {
 				pass: string;
 			};
 		};
+		baiduTranslate: {
+			appId: string;
+			appKey: string;
+		};
 	};
 }

@@ -119,7 +119,9 @@
 		window.SRC_ROOT_PATH = srcRoot || "";
 		window.APP_NAME = appName || "";
 		window.APP_ENTRY_NAME = appEntryName || "entry";
-		window.APP_VERSION = appVersion || "";
+		/* empty */
+		window.APP_VERSION = "" || appVersion || "";
+		/* empty */
 		window.I18N_LANGUAGE = localStorage["X-Language"] || $$tags("html")[0].lang || "zh-CN";
 	})();
 
@@ -259,7 +261,7 @@
 					}
 				}
 			}
-		} catch (error) {}
+		} catch (error) { }
 
 		if (/^@/.test(url)) {
 			/* 业务代码 */
@@ -454,7 +456,7 @@
 		_.$loadText = _$loadText;
 
 		/* dep jQuery */
-		await Promise.all([$appendStyle("/common/libs/layer/theme/default/layer.css"), $appendScript("/common/libs/layer/layer.js"), $appendScript("/common/libs/common.js")]);
+		await Promise.all([$appendScript("/common/libs/common.js")]);
 		await $appendScript("/common/libs/common.$.ajax.js");
 		/*  */
 		if (isDev) {

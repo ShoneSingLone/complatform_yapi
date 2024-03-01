@@ -62,7 +62,7 @@ export default async function () {
 					parent: this,
 					selected: Array.from(this.inject_project_interface_section.configsTable.data.set)
 				});
-				const vm = _.$openWindow(i18n("切换代理"), DialogTypeVueSFC, {
+				const vm = _.$openWindow_deprecated(i18n("切换代理"), DialogTypeVueSFC, {
 					maxmin: true,
 					fullscreen: false
 				});

@@ -1716,10 +1716,16 @@ export default async function () {
 		render: {
 			/* linkrender.linkrender.linkrender */
 			OptionsToLabel(value, options) {
-				const item = _.find(options, item => {
-					return _.$isSame(item.value, value);
-				});
-				return h("div", {}, [item?.label]);
+				let item = { label: value, type: "" };
+				item =
+					_.find(options, item => {
+						return _.$isSame(item.value, value);
+					}) || item;
+
+				if (item.type) {
+					return h("xTag", { type: item.type }, [item.label]);
+				}
+				return h("div", {}, [item.label]);
 			},
 			Ellipsis(content) {
 				return h("div", { staticClass: "ellipsis", attrs: { title: content } }, [content]);

@@ -29,7 +29,7 @@ export default async function () {
 		},
 		computed: {
 			tagSize() {
-				return this.size || (this.$ELEMENT || {}).size;
+				return this.size || (this.$xUiConfigs || {}).size;
 			}
 		},
 		render(h) {

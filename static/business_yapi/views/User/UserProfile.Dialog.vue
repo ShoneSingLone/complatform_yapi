@@ -7,7 +7,7 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
@@ -85,7 +85,7 @@ export default async function ({ onOk, userId, canModifyAvatar }) {
 					label: i18n("确定"),
 					preset: "blue",
 					async onClick() {
-						vm.$closeWindow();
+						vm.closeModal();
 					}
 				};
 			}

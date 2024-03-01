@@ -57,7 +57,7 @@ export default async function () {
 													vm.APP.updateGroupMemberList();
 												}
 											});
-											_.$openWindow(i18n("个人中心"), Component);
+											_.$openWindow_deprecated(i18n("个人中心"), Component);
 										}
 									},
 									[rowData.username]
@@ -118,7 +118,7 @@ export default async function () {
 						vm.APP.updateGroupMemberList();
 					}
 				});
-				_.$openWindow(i18n("添加成员"), addMember);
+				_.$openWindow_deprecated(i18n("添加成员"), addMember);
 			},
 			async changeMemberRole({ role, uid, index }) {
 				const groupId = this.APP.cptCurrentGroup._id;

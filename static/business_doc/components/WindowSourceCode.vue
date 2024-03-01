@@ -3,7 +3,7 @@
 		<p>{{ componentPath }}</p>
 		<xMd :md="md" />
 		<template #footer>
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>

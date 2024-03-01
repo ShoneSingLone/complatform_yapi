@@ -14,7 +14,7 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
@@ -244,7 +244,7 @@ export default async function ({ row, onAdd, COL_环境区域, COL_云服务类�
 					async onClick() {
 						const [atLestOne] = await _.$validateForm(vm.$el);
 						if (atLestOne) return;
-						vm.$closeWindow();
+						vm.closeModal();
 						onAdd(_.merge(row, vm.cptFormData, vm.labels));
 					}
 				};

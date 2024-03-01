@@ -28,7 +28,7 @@ export default async function () {
 					parent: this,
 					groupInfo
 				});
-				_.$openWindow(isModify ? i18n("修改分组信息") : i18n("添加分组"), upsert);
+				_.$openWindow_deprecated(isModify ? i18n("修改分组信息") : i18n("添加分组"), upsert);
 			}
 		}
 	});

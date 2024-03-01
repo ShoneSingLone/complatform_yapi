@@ -2712,7 +2712,7 @@
 				staticClass: "el-skeleton__item el-skeleton__p el-skeleton__paragraph"
 			})
 		]);
-		node = h("span", { style: "display:inline-block;width:var(--ui-one);height:var(--ui-one);" }, []);
+		// node = h("span", { style: "display:inline-block;width:var(--ui-one);height:var(--ui-one);" }, []);
 		node.asyncFactory = factory;
 		node.asyncMeta = {
 			data: data,

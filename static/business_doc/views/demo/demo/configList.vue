@@ -62,7 +62,7 @@ export default async function () {
 					row,
 					isUpdate
 				});
-				_.$openWindow(isUpdate ? i18n("修改") : i18n("新增"), DialogTypeVueSFC);
+				_.$openWindow_deprecated(isUpdate ? i18n("修改") : i18n("新增"), DialogTypeVueSFC);
 			}
 		},
 		watch: {},

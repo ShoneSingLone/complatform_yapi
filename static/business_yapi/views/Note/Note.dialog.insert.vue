@@ -6,13 +6,13 @@
 		</xForm>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
 <script lang="ts">
 export default async function ({ parentDocId, belong_type, belong_id }) {
-	/* 必要，混入"$closeWindow", "layerMax", "layerMin", "layerRestore" */
+	/* 必要，混入"closeModal", "layerMax", "layerMin", "layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
 		inject: ["APP", "inject_note"],
@@ -62,7 +62,7 @@ export default async function ({ parentDocId, belong_type, belong_id }) {
 							if (!res.errcode) {
 								await this.inject_note.updateWikiMenuList();
 								await this.inject_note.setCurrentWiki(res.data.msg);
-								this.$closeWindow();
+								this.closeModal();
 							}
 						} catch (error) {
 							_.$msgError("修改失败");

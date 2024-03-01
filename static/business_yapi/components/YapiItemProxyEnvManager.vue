@@ -15,7 +15,7 @@
 </template>
 <script lang="ts">
 export default async function ({}) {
-	/* 必要，混入"$closeWindow", "$layerMax", "$layerMin", "$layerRestore" */
+	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
 		inject: ["APP"],
@@ -91,7 +91,7 @@ export default async function ({}) {
 				return {
 					label: i18n("取消"),
 					onClick: async () => {
-						this.$closeWindow();
+						this.closeModal();
 					}
 				};
 			}

@@ -60,7 +60,7 @@ export default async function () {
 					belong_type: this.inject_note.cptBelongType,
 					belong_id: this.inject_note.cptBelongId
 				});
-				_.$openWindow(i18n("添加文档"), addMember);
+				_.$openWindow_deprecated(i18n("添加文档"), addMember);
 			},
 			/* 菜单 */
 			nodeRender({ node, data }) {

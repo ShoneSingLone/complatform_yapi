@@ -41,12 +41,13 @@ export default async function () {
 
 <style lang="less">
 .xForm {
+	--xItem-wrapper-width: 100%;
 	//outline: 1px solid red;
 	width: 100%;
 	height: 100%;
 	display: grid;
 	grid-template-columns: var(--xForm-col);
-
+	
 	.xFormItem {
 		display: flex;
 		align-items: baseline;
@@ -60,7 +61,7 @@ export default async function () {
 		}
 
 		> div {
-			width: 100%;
+			width: var(--xItem-wrapper-width);
 		}
 	}
 

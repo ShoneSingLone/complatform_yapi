@@ -128,7 +128,7 @@ export default async function () {
 			},
 
 			checkboxSize() {
-				const temCheckboxSize = this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
+				const temCheckboxSize = this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
 				return this.isGroup ? this._checkboxGroup.checkboxGroupSize || temCheckboxSize : temCheckboxSize;
 			}
 		},

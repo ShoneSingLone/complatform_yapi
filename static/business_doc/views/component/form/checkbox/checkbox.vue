@@ -2,6 +2,12 @@
 	<DocContentOfDemo class="demo-input">
 		<xMd :md="mdTips" />
 		<DemoAndCode title="基础用法" path="@/views/component/form/checkbox/JiChuYongFa.vue" unfold />
+		<DemoAndCode title="禁用状态" path="@/views/component/form/checkbox/JinYongZhuangTai.vue" unfold />
+		<DemoAndCode title="多选框组" path="@/views/component/form/checkbox/DuoXuanKuangZu.vue" unfold />
+		<DemoAndCode title="多选indeterminate 状态框组" path="@/views/component/form/checkbox/IndeterminateZhuangTai.vue" unfold />
+		<DemoAndCode title="可选项目数量的限制" path="@/views/component/form/checkbox/KeXuanXiangMuShuLiangDeXianZhi.vue" unfold />
+		<DemoAndCode title="按钮样式的多选组合" path="@/views/component/form/checkbox/AnNiuYangShiDeDuoXuanZuHe.vue" unfold />
+		<DemoAndCode title="带有边框" path="@/views/component/form/checkbox/DaiYouBianKuang.vue" unfold />
 	</DocContentOfDemo>
 </template>
 
@@ -10,7 +16,9 @@ export default async function () {
 	return {
 		data() {
 			return {
-				mdTips: "通过鼠标或键盘输入字符\n>Input 为受控组件，它**总会显示 Vue 绑定值**。\n\n 通常情况下，应当处理 `input` 事件，并更新组件的绑定值（或使用`v-model`）。否则，输入框内显示的值将不会改变。\n 不支持 `v-model` 修饰符。"
+				mdTips: `## Checkbox 多选框
+一组备选项中进行多选
+`
 			};
 		}
 	};

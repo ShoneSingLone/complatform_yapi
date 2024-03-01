@@ -55,7 +55,7 @@ export default async function () {
 					code: this.BussinessComponentSourceCode,
 					componentPath: this.path
 				});
-				_.$openWindow(i18n("SourceCode"), WindowImageModify);
+				_.$openWindow_deprecated(i18n("SourceCode"), WindowImageModify);
 			}
 		},
 		render() {

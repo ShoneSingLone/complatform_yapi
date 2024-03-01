@@ -8,7 +8,7 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
@@ -62,7 +62,7 @@ export default async function ({ onOk, projectData }) {
 						const { name } = vm.cptFormData;
 						await vm.copyProject(name);
 						onOk();
-						vm.$closeWindow();
+						vm.closeModal();
 					}
 				};
 			}

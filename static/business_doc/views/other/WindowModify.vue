@@ -1,6 +1,51 @@
 <template>
-	<xDialog>
+	<xDialog style="min-width: 600px">
 		<!-- '--xItem-label-width': "144px" -->
+		<xCard class="mt10">
+			<xForm ref="form">
+				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
+			</xForm>
+		</xCard>
+		<xCard class="mt10">
+			<xForm ref="form">
+				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
+			</xForm>
+		</xCard>
+		<xCard class="mt10">
+			<xForm ref="form">
+				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
+			</xForm>
+		</xCard>
+		<xCard class="mt10">
+			<xForm ref="form">
+				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
+			</xForm>
+		</xCard>
+		<xCard class="mt10">
+			<xForm ref="form">
+				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
+			</xForm>
+		</xCard>
+		<xCard class="mt10">
+			<xForm ref="form">
+				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
+			</xForm>
+		</xCard>
+		<xCard class="mt10">
+			<xForm ref="form">
+				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
+			</xForm>
+		</xCard>
+		<xCard class="mt10">
+			<xForm ref="form">
+				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
+			</xForm>
+		</xCard>
+		<xCard class="mt10">
+			<xForm ref="form">
+				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
+			</xForm>
+		</xCard>
 		<xCard class="mt10">
 			<xForm ref="form">
 				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" span="full" />
@@ -8,22 +53,22 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
 
 <script lang="ts">
-export default async function () {
+export default async function (payload) {
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
-
 	return defineComponent({
 		inject: ["APP"],
 		props: useDialogProps(),
 		data() {
+			const vm = this;
 			return {
 				form: {
-					name: { value: "", label: i18n("名称") }
+					name: { value: "", label: i18n("名asdfasf称") }
 				}
 			};
 		},
@@ -49,7 +94,7 @@ export default async function () {
 		},
 		methods: {
 			async onClickOk() {
-				this.$closeWindow();
+				this.closeModal();
 			}
 		}
 	});

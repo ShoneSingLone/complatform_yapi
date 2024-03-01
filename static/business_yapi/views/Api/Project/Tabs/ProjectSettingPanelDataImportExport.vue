@@ -168,7 +168,7 @@ export default async function () {
 						allCategory: this.inject_project.allCategory,
 						dataSync: this.cptParams.dataSync
 					});
-					_.$openWindow(i18n("确认数据同步"), DialogTypeVueSFC);
+					_.$openWindow_deprecated(i18n("确认数据同步"), DialogTypeVueSFC);
 				}
 			}
 		}

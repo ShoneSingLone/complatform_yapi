@@ -2204,7 +2204,7 @@ export default async function () {
 				if (_.isFunction(dataGetter)) {
 					return dataGetter({ columns: columns2, column, columnIndex, rowData, rowIndex });
 				} else {
-					return get(rowData, prop || "", null);
+					return get(rowData, prop || "", "--");
 				}
 			})();
 
@@ -2889,7 +2889,7 @@ export default async function () {
 				$vSlots: {
 					default: ({ width, height }) => {
 						const xTableVirProps = {
-							staticClass: ["xDataGrid_table", vm.$ELEMENT.size].join(" "),
+							staticClass: ["xDataGrid_table", vm.$xUiConfigs.size].join(" "),
 							attrs: { "data-table": vm._uid },
 							width,
 							height: this.getHeight(height),
@@ -2904,7 +2904,6 @@ export default async function () {
 
 						/* 拖动列宽 */
 						const vDomLine = h("div", { staticClass: "xDataGrid_mask-line" }, []);
-
 						return [h(xTableVir, xTableVirProps), h("div", divProps, [vDomLine])];
 					}
 				}

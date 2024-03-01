@@ -174,7 +174,7 @@ export default async function () {
 						const DialogTypeVueSFC = await _.$importVue("@/components/YapiItemProxyEnvManager.vue", {
 							parent: this
 						});
-						const vm = _.$openWindow(i18n("管理转发环境"), DialogTypeVueSFC, {
+						const vm = _.$openWindow_deprecated(i18n("管理转发环境"), DialogTypeVueSFC, {
 							maxmin: true,
 							fullscreen: false
 						});

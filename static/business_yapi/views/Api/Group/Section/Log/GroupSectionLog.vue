@@ -59,7 +59,7 @@ export default async function () {
 						vm.APP.updateGroupMemberList();
 					}
 				});
-				_.$openWindow(i18n("Api 改动日志"), addMember, {
+				_.$openWindow_deprecated(i18n("Api 改动日志"), addMember, {
 					maxmin: true,
 					fullscreen: false
 				});

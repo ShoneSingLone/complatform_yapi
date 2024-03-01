@@ -15,7 +15,7 @@ export default async function () {
 		methods: {
 			async openDialog() {
 				const WindowImageModify = await _.$importVue("@/views/use/ViewOpenWindow/WindowModify.vue", { parent: this });
-				_.$openWindow(i18n("modifyImageInfo"), WindowImageModify);
+				_.$openWindow_deprecated(i18n("modifyImageInfo"), WindowImageModify);
 			}
 		}
 	};

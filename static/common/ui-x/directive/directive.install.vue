@@ -1,13 +1,46 @@
 <script lang="ts">
 export default async function () {
-	if (!_.$notify) {
+	const [PopupManager] = await _.$importVue(["/common/libs/VuePopper/popupManager.vue"]);
+
+	(function () {
+		let instance;
+		_.$previewImgs = async function (options) {
+			const ImageViewer = await _.$importVue("/common/ui-x/directive/xImg/ImageViewer.vue");
+
+			if (options.currentUrl) {
+				options.index = _.findIndex(options.urlList, i => i === options.currentUrl) || 0;
+			}
+			const ViewerConstructor = Vue.extend(ImageViewer);
+			instance = new ViewerConstructor({
+				data: options
+			});
+			instance.$mount();
+			document.body.appendChild(instance.$el);
+			instance.viewerZIndex = PopupManager.nextZIndex();
+			return instance;
+		};
+	})();
+
+	(function () {
+		_.$openModal = async function (options) {
+			const xModal = await _.$importVue("/common/ui-x/directive/xModal/xModal.vue", { options });
+			xModal.parent = options.parent || Vue.forceUpdate.getVM();
+			let instance = new Vue(xModal);
+			instance.$mount();
+			document.body.appendChild(instance.$el);
+			instance.viewerZIndex = PopupManager.nextZIndex();
+			return instance;
+		};
+	})();
+
+	(function () {
 		let instance;
 		let instances = [];
 		let seed = 1;
 
 		const getCurrentNotifyComponent = componentName => {
 			if (!componentName) {
-				return _.$importVue("/common/ui-x/components/other/xNotification/xNotification.vue");
+				return _.$importVue("/common/ui-x/directive/xNotification/xNotification.vue");
 			}
 			/* TODO:可以作为prop传递 在 xNotification 内部用vIf添加新的样式*/
 		};
@@ -95,7 +128,7 @@ export default async function () {
 				instances[i].close();
 			}
 		};
-	}
+	})();
 }
 </script>
 <style lang="less"></style>

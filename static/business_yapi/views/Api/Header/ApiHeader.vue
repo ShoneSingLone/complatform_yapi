@@ -4,7 +4,12 @@
 			<xIcon :icon="icon" :style="logoStyle" />
 		</span>
 		<YapiBreadcrumbNavigation />
+
 		<xGap f />
+		<a class="flex middle" :href="i18nHref" target="_blank">
+			<xIcon icon="_icon_i18n" />
+		</a>
+		<xGap r="4" />
 		<a class="flex middle" :href="publicNoteHref" target="_blank">
 			<xIcon icon="_wikidoc" />
 		</a>
@@ -47,6 +52,9 @@ export default async function () {
 			};
 		},
 		computed: {
+			i18nHref() {
+				return _.$aHashLink("/i18n", {});
+			},
 			publicNoteHref() {
 				return _.$aHashLink("/note", {});
 			},

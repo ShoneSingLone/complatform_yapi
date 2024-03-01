@@ -1,19 +1,19 @@
 <script lang="ts">
 export default async function ({ _URL_PREFIX_MO }) {
+	let regionChanged = false;
 	(function () {
 		$("html").addClass("mo-common");
 		_.$single.doc.on(
 			"click",
 			".modules-service-list-service-list-drawer-service-content-service-nav-item",
 			_.debounce(async function (event) {
-				const a = await _MoCfContext.getRegions();
-				if (_MoCfContext.regionsData.selectRegionId !== a.selectRegionId) {
+				if (regionChanged) {
+					window.location.reload();
 				}
-			}, 1000)
+			}, 100)
 		);
-		// setTimeout(() => {
-		// 	$("#mo-cf-modules-region .modules-region-cf-header-region").css("display", "");
-		// }, 1000 * 2);
+		/* 显示region selector */
+		// setTimeout(() => { $("#mo-cf-modules-region .modules-region-cf-header-region").css("display", ""); }, 1000 * 2);
 		window.appWebPath = _URL_PREFIX_MO;
 		const moLang = new URLSearchParams(location.search).get("locale") || $("html").lang || "zh-CN";
 		window.I18N_LANGUAGE = moLang;
@@ -93,6 +93,7 @@ export default async function ({ _URL_PREFIX_MO }) {
 		});
 
 		_MoCfContext.getLinks$()._subscribe(e => {
+			regionChanged = true;
 			trigger("getLinks", e);
 		});
 
@@ -203,7 +204,7 @@ type, : "spec"
 						resolve(serviceId);
 					}
 				});
-				_.$openWindow(i18n("选择服务"), DialogTypeVueSFC, {
+				_.$openWindow_deprecated(i18n("选择服务"), DialogTypeVueSFC, {
 					cancel() {
 						setTimeout(() => {
 							reject("");
@@ -264,11 +265,14 @@ type, : "spec"
 	};
 
 	_MoCfContext.AjaxRequestInjector = function (reqConfigs) {
-		const [region, locale, agencyId] = _.$urlSearch(["region", "locale", "agencyId"]);
+		let [region, locale, agencyId] = _.$urlSearch(["region", "locale", "agencyId"]);
+		region = encodeURIComponent(region);
 		reqConfigs.headers["x-requested-with"] = "XMLHttpRequest";
 		reqConfigs.headers["x-request-from"] = "Framework";
 		reqConfigs.headers["cftk"] = _MoCfContext.userInfo.cftk;
 		reqConfigs.headers["X-Language"] = locale;
+		// reqConfigs.headers["region"] = _MoCfContext.regionsData.selectRegionId;
+		reqConfigs.headers["Region"] = _MoCfContext.regionsData.selectRegionId;
 		reqConfigs.headers["ProjectName"] = region;
 		reqConfigs.headers["AgencyId"] = (() => {
 			return reqConfigs.headers.AgencyId || agencyId;
@@ -288,12 +292,11 @@ type, : "spec"
 			return;
 		}
 		return new Promise(async (resolve, reject) => {
-			let content = options.content || "";
-			const title = i18n("跳转");
-			const WindowConfirm = await _.$importVue("/common/ui-x/msg/WindowConfirm.vue", {
-				parent: Vue.forceUpdate.getVM(),
+			const vm = await _.$openModal({
+				title: i18n("跳转"),
+				url: "/common/ui-x/msg/WindowConfirm.vue",
 				content: () => {
-					return h("div", { style: `width:420px;height:220px;`, staticClass: "flex middle center" }, [
+					return h("div", { style: `height:220px;`, staticClass: "flex middle center" }, [
 						h("div", { staticClass: "flex middle center vertical" }, [
 							h("i", {
 								staticClass: "el-message__icon el-icon-success",
@@ -332,7 +335,7 @@ type, : "spec"
 										label: i18n("返回列表"),
 										onClick() {
 											goBack();
-											vm.$closeWindow();
+											vm.closeModal();
 										}
 									}
 								})
@@ -341,7 +344,7 @@ type, : "spec"
 					};
 				}
 			});
-			const vm = await _.$openWindow(title, WindowConfirm, { offset: "200px" });
+
 			resolve(vm);
 		});
 	};

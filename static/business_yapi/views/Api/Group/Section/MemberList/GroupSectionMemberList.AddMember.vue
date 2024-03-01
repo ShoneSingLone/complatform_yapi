@@ -8,7 +8,7 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
@@ -75,7 +75,7 @@ export default async function ({ onOk }) {
 						_.$msgSuccess(`新增 ${addLength} 人， ${existLength} 人已存在`);
 						// 添加成功后重新获取分组成员列表
 						await onOk();
-						vm.$closeWindow();
+						vm.closeModal();
 					}
 				};
 			}

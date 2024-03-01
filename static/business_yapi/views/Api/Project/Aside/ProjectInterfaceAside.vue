@@ -157,7 +157,7 @@ export default async function () {
 					allCategory: this.inject_project.allCategory,
 					getInterfaceList: this.inject_project.getInterfaceList
 				});
-				_.$openWindow(categoryInfo ? "修改分类" : "添加分类", DialogTypeVueSFC);
+				_.$openWindow_deprecated(categoryInfo ? "修改分类" : "添加分类", DialogTypeVueSFC);
 			},
 			async openInterfaceDialog(categoryInfo) {
 				const DialogTypeVueSFC = await _.$importVue("@/components/YapiDialogUpsertInterface.vue", {
@@ -166,7 +166,7 @@ export default async function () {
 					categoryInfo,
 					getInterfaceList: this.inject_project.getInterfaceList
 				});
-				_.$openWindow("添加接口", DialogTypeVueSFC);
+				_.$openWindow_deprecated("添加接口", DialogTypeVueSFC);
 			}
 		},
 		watch: {

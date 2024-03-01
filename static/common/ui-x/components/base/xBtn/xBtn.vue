@@ -88,7 +88,7 @@ export default async function () {
 				if (this.configs?.size) {
 					return this.configs.size;
 				}
-				return this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
+				return this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
 			},
 			buttonDisabled() {
 				if (this.$options.propsData.hasOwnProperty("disabled") ? this.disabled : (this.elForm || {}).disabled) {

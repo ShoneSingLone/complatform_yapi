@@ -38,7 +38,7 @@ export default async function ({ onOk, onCancel, content, renderFooter }) {
 				return {
 					label,
 					async onClick() {
-						vm.$closeWindow();
+						vm.closeModal();
 						onOk();
 					}
 				};
@@ -51,7 +51,7 @@ export default async function ({ onOk, onCancel, content, renderFooter }) {
 					/* 因为是弹出确认框，引导用户取消 */
 					preset: "blue",
 					async onClick() {
-						vm.$closeWindow();
+						vm.closeModal();
 						onCancel();
 					}
 				};

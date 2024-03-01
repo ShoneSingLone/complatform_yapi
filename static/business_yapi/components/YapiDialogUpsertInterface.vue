@@ -10,13 +10,13 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
 <script lang="ts">
 export default async function ({ categoryInfo, project_id, getInterfaceList }) {
-	/* 必要，混入"$closeWindow", "$layerMax", "$layerMin", "$layerRestore" */
+	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
 		inject: ["APP", "inject_project"],
@@ -98,7 +98,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList }) {
 					});
 					debugger;
 					await getInterfaceList();
-					this.$closeWindow();
+					this.closeModal();
 					_.$msgSuccess("添加接口成功");
 				} catch (error) {
 					_.$msgError(error?.message || "添加接口失败");

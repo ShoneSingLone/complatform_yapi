@@ -9,8 +9,10 @@ class ModelI18n extends ModelBase {
 	getSchema() {
 		return {
 			key: { type: String, unique: true },
-			isRectified: { type: Boolean, default: false },
+			zhCn: { type: String },
+			enUs: { type: String },
 			desc: { type: String },
+			isRectified: { type: Boolean, default: false },
 			valueArray: { type: String }
 		};
 	}
@@ -28,7 +30,7 @@ class ModelI18n extends ModelBase {
 		return this.model
 			.find({})
 			.sort({ key: -1 })
-			.select("_id key desc isRectified")
+			.select("_id key zhCn enUs desc valueArray isRectified")
 			.exec();
 	}
 	keyValue(condition = {}) {

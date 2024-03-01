@@ -184,7 +184,7 @@ export default async function () {
 				return _.merge({}, this.textareaCalcStyle, { resize: this.resize });
 			},
 			inputSize() {
-				return this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
+				return this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
 			},
 			inputDisabled() {
 				return this.disabled || (this.elForm || {}).disabled;

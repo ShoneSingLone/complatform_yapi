@@ -7,14 +7,14 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
 <script lang="ts">
 export default async function ({ row, callBack }) {
 	const isUpdate = !!row;
-	/* 必要，混入"$closeWindow", "$layerMax", "$layerMin", "$layerRestore" */
+	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
 		inject: ["APP"],
@@ -59,7 +59,7 @@ export default async function ({ row, callBack }) {
 			},
 			async upsertOne() {
 				callBack && callBack(this.cptFormData);
-				this.$closeWindow();
+				this.closeModal();
 			}
 		}
 	});

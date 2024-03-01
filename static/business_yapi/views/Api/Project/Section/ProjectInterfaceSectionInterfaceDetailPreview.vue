@@ -249,7 +249,7 @@ ${resBackupJson}
 					interfaceId: this.cptInfo._id,
 					projectId: this.APP.cptProject._id
 				});
-				_.$openWindow(i18n("测试"), DialogTypeVueSFC, {
+				_.$openWindow_deprecated(i18n("测试"), DialogTypeVueSFC, {
 					maxmin: true,
 					fullscreen: true
 				});

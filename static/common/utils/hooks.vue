@@ -37,7 +37,7 @@ export default async function hooks() {
 				});
 			},
 			useDialogProps() {
-				return ["$closeWindow", "$layerMax", "$layerMin", "$layerRestore"];
+				return ["closeModal", "$layerMax", "$layerMin", "$layerRestore"];
 			},
 			useFocus(vm, refName) {
 				return {

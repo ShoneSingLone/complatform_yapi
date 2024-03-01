@@ -17,7 +17,6 @@ export default async function () {
 		"components/data/xMenuTree/xMenuTree",
 		"components/navigation/xTabs/xTabs",
 		"components/navigation/xTabs/xTabPane",
-		"components/data/xImg/xImg",
 		"components/data/xTag/xTag",
 		"components/data/xDesc/xDesc",
 		"components/data/xDesc/xDescItem",
@@ -31,6 +30,8 @@ export default async function () {
 		"components/form/xSelect/xSelect",
 		"components/form/xInputNumber/xInputNumber",
 		"components/form/xCheckbox/xCheckbox",
+		"components/form/xCheckbox/xCheckboxButton",
+		"components/form/xCheckbox/xCheckboxGroup",
 		"components/other/xCard/xCard",
 		"components/other/xBlock/xBlock",
 		"components/other/xAffix/xAffix",
@@ -51,6 +52,8 @@ export default async function () {
 		"components/layout/page/xPageTitle",
 		"components/layout/page/xPageContent",
 		"components/layout/page/xPageFooter",
+		/* *************************** */
+		"directive/xImg/xImg",
 		/* ********************** */
 		"common/xMd",
 		"common/xItemWrapper",

@@ -28,7 +28,7 @@
 <script lang="ts">
 export default async function ({ mockHref, reqMethod, interfaceId, projectId }) {
 	const token = "";
-	/* 必要，混入"$closeWindow", "$layerMax", "$layerMin", "$layerRestore" */
+	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
 		inject: ["APP", "inject_project", "inject_interface_section_interface_detail"],
@@ -106,7 +106,7 @@ ${response}
 				return {
 					label: i18n("确定"),
 					async onClick() {
-						vm.$closeWindow();
+						vm.closeModal();
 					}
 				};
 			},
@@ -116,7 +116,7 @@ ${response}
 					label: i18n("取消"),
 					preset: "blue",
 					async onClick() {
-						vm.$closeWindow();
+						vm.closeModal();
 					}
 				};
 			}

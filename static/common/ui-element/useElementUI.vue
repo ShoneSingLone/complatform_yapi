@@ -11,6 +11,7 @@ export default async function (options) {
 		ELEMENT.locale(LOCALE_MAP[window.I18N_LANGUAGE]);
 
 		Vue.prototype.$ELEMENT = options;
+		Vue.prototype.$xUiConfigs = options;
 	}
 	return window.ELEMENT;
 }

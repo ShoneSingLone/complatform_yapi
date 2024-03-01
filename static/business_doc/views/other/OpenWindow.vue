@@ -1,6 +1,11 @@
 <template>
 	<div>
-		<xBtn @click="openDialog" preset="blue">OpenDialog</xBtn>
+		<div class="mt">
+			<xBtn @click="openDialog" preset="blue">OpenDialog</xBtn>
+		</div>
+		<div class="mt">
+			<xBtn @click="openModal" preset="blue">openModal</xBtn>
+		</div>
 	</div>
 </template>
 
@@ -11,7 +16,14 @@ export default async function () {
 		methods: {
 			async openDialog() {
 				const WindowImageModify = await _.$importVue("@/views/other/WindowModify.vue", { parent: this });
-				_.$openWindow(i18n("OpenWindow"), WindowImageModify);
+				_.$openWindow_deprecated(i18n("OpenWindow"), WindowImageModify);
+			},
+			async openModal() {
+				_.$openModal({
+					title: i18n("OpenWindow"),
+					url: "@/views/other/WindowModify.vue",
+					payload: {}
+				});
 			}
 		}
 	};

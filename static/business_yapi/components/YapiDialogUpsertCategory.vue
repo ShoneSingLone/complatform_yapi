@@ -8,14 +8,14 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="$closeWindow">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
 <script lang="ts">
 export default async function ({ categoryInfo, project_id, getInterfaceList, allCategory }) {
 	const isUpdate = !!categoryInfo;
-	/* 必要，混入"$closeWindow", "$layerMax", "$layerMin", "$layerRestore" */
+	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
 		inject: ["APP"],
@@ -98,7 +98,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList, all
 						});
 					}
 					await getInterfaceList();
-					this.$closeWindow();
+					this.closeModal();
 					_.$msgSuccess(isUpdate ? "修改分类成功" : "添加分类成功");
 				} catch (error) {
 					if (error.message) {

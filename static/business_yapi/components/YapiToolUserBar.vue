@@ -56,7 +56,7 @@ export default async function () {
 						vm.APP.updateGroupMemberList();
 					}
 				});
-				_.$openWindow(i18n("个人中心"), Component);
+				_.$openWindow_deprecated(i18n("个人中心"), Component);
 			}
 		}
 	});

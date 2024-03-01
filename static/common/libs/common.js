@@ -71,40 +71,39 @@ const isDev = !!localStorage.isDev;
 	_.$openFileSelector = function () {
 		let lock = false;
 		return new Promise((resolve, reject) => {
-			// create input file
-			const el = document.createElement("input");
-			el.style.display = "none";
-			el.setAttribute("type", "file");
-			document.body.appendChild(el);
+			try {
 
-			el.addEventListener(
-				"change",
-				() => {
+				// create input file
+				let el = document.createElement("input");
+				el.style.display = "none";
+				el.setAttribute("type", "file");
+				document.body.appendChild(el);
+
+				let $el = $(el);
+
+				$el.one("change.openFileSelector", function handleOk() {
 					lock = true;
 					resolve(el.files);
-					// remove dom
-					document.body.removeChild(el);
-				},
-				{ once: true }
-			);
+					$el.remove();
+					$el = null;
+					el = null;
+				});
 
-			// file blur
-			window.addEventListener(
-				"focus",
-				() => {
-					setTimeout(() => {
-						if (!lock && el) {
-							reject(new Error("onblur"));
-							// remove dom
-							document.body.removeChild(el);
-						}
-					}, 300);
-				},
-				{ once: true }
-			);
+				const handleCancel = _.debounce(() => {
+					if (!lock && el) {
+						reject(new Error("onblur"));
+						$el.remove();
+						$el = null;
+						el = null;
+					}
+				}, 1000 * 1);
+				_.$single.win.one("focus.openFileSelector", handleCancel);
 
-			// open file select box
-			el.click();
+				el.click();
+
+			} catch (error) {
+				console.error(error);
+			}
 		});
 	};
 
@@ -899,7 +898,6 @@ const isDev = !!localStorage.isDev;
 		if (isLoading) {
 			/* 已经有loading */
 			if (!_.$loading.count) {
-				// _.$loading.index = layer.load(1);
 				$("body").addClass("x-loading");
 			}
 			_.$loading.count++;
@@ -919,19 +917,10 @@ const isDev = !!localStorage.isDev;
 				} else {
 					clearTimeout(timmer);
 				}
-				// layer.close(_.$loading.index);
 			}, 400);
 			_.$loading.count = 0;
 		}
 	}
-
-	const loadingTimeout = _.debounce(function loadingTimeout() {
-		if (!!_.$loading.count) {
-			layer.close(_.$loading.index);
-			_.$loading.count = 0;
-			_.$msgError(i18n("超时"));
-		}
-	}, 1000 * 3);
 
 	/**
 	 * 确认信息
@@ -958,7 +947,7 @@ const isDev = !!localStorage.isDev;
 				content,
 				isDelete
 			});
-			_.$openWindow(title, WindowConfirm, { offset: "200px" });
+			_.$openWindow_deprecated(title, WindowConfirm, { offset: "200px" });
 		});
 	};
 
@@ -990,32 +979,6 @@ const isDev = !!localStorage.isDev;
 		 * @returns
 		 */
 		/* @typescriptDeclare (title:string,options?:any)=>Promise<any> */
-		_.$msgError = (title, options) =>
-			new Promise(resolve => {
-				if (!title) {
-					resolve();
-					return;
-				}
-
-				if (title?.error) {
-					title = String(title.error);
-				}
-				if (title?.message) {
-					title = String(title.message);
-				}
-
-				console.error(title);
-				layer.msg(
-					title,
-					{
-						time: 1000 * 5,
-						icon: 2,
-						...options
-					},
-					resolve
-				);
-			});
-
 		_.$msgError = msg => {
 			if (!msg) {
 				return;
@@ -1043,142 +1006,22 @@ const isDev = !!localStorage.isDev;
 	})();
 	/*  */
 	(function () {
-		const DIALOG_CACHE = {};
-
-		$(window).on(
-			"resize.dialogResetLayout",
-			_.debounce(function () {
-				_.each(DIALOG_CACHE, dialogResetLayout => {
-					dialogResetLayout();
-				});
-			}, 300)
-		);
-
-		function $privateSetWindowVmDefaultMethods({ WindowVueCtor, indexPanel, options, layero }) {
-			WindowVueCtor.propsData = WindowVueCtor.propsData || {};
-			/* 点击$closeWindow 和 X 都会触发关闭 */
-			WindowVueCtor.propsData.$closeWindow = () => {
-				var close = options.cancel && options.cancel(indexPanel, layero);
-				close === false || layer.close(indexPanel);
-			};
-			WindowVueCtor.propsData.$layerMax = () => layer.full(indexPanel);
-			WindowVueCtor.propsData.$layerMin = () => layer.min(indexPanel);
-			WindowVueCtor.propsData.$layerRestore = () => layer.restore(indexPanel);
-			return new Vue(WindowVueCtor);
-		}
-
-		_.$privateLayerSuccessThenMountVueComponent = function (WindowVueCtor, indexPanel, vm, layero, options, id, DIALOG_CACHE, layerVM) {
-			if (WindowVueCtor.parent) {
-				if (!WindowVueCtor.parent._isVue) {
-					console.error(new Error("_.$importVue 的 parent 必须是Vue的实例，当前传入的不是"));
-					alert(e);
-				}
-			}
-
-			// WindowVueCtor.el = `#${id}`;
-			vm = $privateSetWindowVmDefaultMethods({ WindowVueCtor, indexPanel, options, layero });
-			/* 在window内可以直接调用 */
-			vm.$bus = _.merge({ layero, indexPanel }, WindowVueCtor?.bus || {});
-
-			vm.layero = layero;
-			vm.indexPanel = indexPanel;
-
-			options.beforeMount && options.beforeMount(vm);
-			vm.$mount(`#${id}`);
-			options.mounted && options.mounted(vm);
-
-			/* resize之后调用offset重新布局 */
-			if (options.fullscreen) {
-				/* 全屏 */
-				DIALOG_CACHE[indexPanel] = () => layer.full(indexPanel);
-				DIALOG_CACHE[indexPanel]();
-			}
-			/* resize之后调用offset重新布局 */
-			layerVM.offset();
-			setTimeout(() => {
-				layerVM.offset();
-				(function () {
-					vm.$resizeObserver = new ResizeObserver(entries => {
-						// const entry = _.first(entries);
-						//
-						layerVM.offset();
-					});
-					vm.$resizeObserver.observe(vm.$el);
-				})();
-			}, 64);
-			return vm;
-		};
-
 		/**
+		 * @deprecated 推荐使用_.$openModal 
 		 * @param {*} title：{stirng}dialog标题
 		 * @param {*} WindowVueCtor:Vue组件,通常用_.$importVue引入
 		 * @param {*} options:{layer的参数，但是一般用不到，有需要可以自己看源码}
 		 * @returns Vue组件实例
 		 * hooks vm.onWindowClose事件
-		 * @example const vm = await _.$openWindow(...)
+		 * @example const vm = await _.$openWindow_deprecated(...)
 		 * vm.onWindowClose = callBackFunction
 		 */
 		/* @typescriptDeclare (title:string, WindowVueCtor:Vue, options?:object)=>void */
-		_.$openWindow = async (title, WindowVueCtor, options = {}) => {
-			if (!WindowVueCtor) {
-				throw new Error("openWindow WindowVueCtor is null ");
-			}
-			/* 保留，取消layer自己的btns */
-			options.btn = options.btn || null;
-			return new Promise(resolve => {
-				const id = `layer-open-${Date.now()}`;
-				let $container = $(`<div/>`, {
-					id
-				});
-				$container.appendTo($("body"));
-				let vm;
-
-				layer.open(
-					_.merge(
-						{
-							type: 1,
-							title: [title],
-							area: ["", ""],
-							content: $container,
-							// offset: ['600px','600px'],
-							btn: [i18n("confirm"), i18n("cancel")],
-							afterAppendBody({ layerVM }) {
-								// const $ele = $(`#layui-layer${layer.index}`);
-								// layerVM.layero.addClass("opacity0");
-							},
-							success(layero, indexPanel, layerVM) {
-								vm = _.$privateLayerSuccessThenMountVueComponent(WindowVueCtor, indexPanel, vm, layero, options, id, DIALOG_CACHE, layerVM);
-								resolve(vm);
-							},
-							yes(indexPanel, layero) {
-								if (_.isFunction(options._yes)) {
-									options._yes(indexPanel, layero, {
-										vm
-									});
-								} else {
-									layer.close(indexPanel);
-								}
-							},
-							cancel: options.cancel || _.$doNoting,
-							end(indexPanel) {
-								const $layerPanel = $(vm.$el).parents(".layui-layer.layui-layer-page.layer-anim-close");
-								$layerPanel.remove();
-								vm.$resizeObserver.disconnect();
-								vm.$resizeObserver = null;
-								delete DIALOG_CACHE[indexPanel];
-								vm.$destroy();
-								$container.remove();
-								$container = null;
-								if (vm.onWindowClose) {
-									const onWindowClose = vm.onWindowClose;
-									onWindowClose();
-								}
-								vm = null;
-							}
-						},
-						options
-					)
-				);
+		_.$openWindow_deprecated = async (title, WindowVueCtor, options = {}) => {
+			return _.$openModal({
+				title: title,
+				_VueCtor: WindowVueCtor,
+				...options
 			});
 		};
 	})();
@@ -1268,8 +1111,9 @@ const isDev = !!localStorage.isDev;
 	 */
 	/* @typescriptDeclare (key:string[])=>string[] */
 	_.$urlSearch = keys => {
-		const search = new URLSearchParams(location.search);
-		return _.map(keys, key => search[key]);
+		const searchParams = new URLSearchParams(location.search);
+		const res = _.map(keys, key => searchParams.get(key));
+		return res;
 	};
 	/*  */
 	_.$location = {
@@ -1570,7 +1414,7 @@ const isDev = !!localStorage.isDev;
 	 * @param {*} tableConfigs
 	 * @param {*} param1 如果不是特意保留，每次会清空已选
 	 */
-	/* @typescriptDeclare (configs:object, payload:{list:any[]; total?:number, selected?:string[], set?:Set<string>}) => void */
+	/* @typescriptDeclare (tableConfigs: any, { list, total:number, selected, set: Set }: any)=>void */
 	_.$setTableData = function (tableConfigs, { list, total = 0, selected = [], set = new Set() }) {
 		if (tableConfigs.data) {
 			tableConfigs.data.selected = selected;

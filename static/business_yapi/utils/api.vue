@@ -23,6 +23,21 @@ export default async function () {
 			};
 
 			window._api.yapi = {
+				i18nTranslate(data) {
+					return _.$ajax.post("/api/i18n/translate", {
+						data
+					});
+				},
+				i18nUpsertOne(data) {
+					return _.$ajax.post("/api/i18n/upsert_one", {
+						data
+					});
+				},
+				i18nGetList(data) {
+					return _.$ajax.post("/api/i18n/get_list", {
+						data
+					});
+				},
 				wikiUpsertOne(data) {
 					return _.$ajax.post("/api/wiki/upsertOne", {
 						data

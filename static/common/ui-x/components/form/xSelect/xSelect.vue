@@ -182,7 +182,7 @@ export default async function () {
 			},
 
 			selectSize() {
-				return this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
+				return this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
 			},
 
 			selectDisabled() {

@@ -102,7 +102,7 @@ export default async function () {
 						vm.$emit("change");
 					}
 				});
-				_.$openWindow(`复制项目${this.projectData.name}`, addMember);
+				_.$openWindow_deprecated(`复制项目${this.projectData.name}`, addMember);
 			},
 			follow: _.debounce(async function () {
 				try {

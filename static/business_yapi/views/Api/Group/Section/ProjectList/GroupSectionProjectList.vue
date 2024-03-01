@@ -55,7 +55,7 @@ export default async function () {
 						vm.APP.updateGroupProjectList();
 					}
 				});
-				_.$openWindow(i18n("添加项目"), addMember);
+				_.$openWindow_deprecated(i18n("添加项目"), addMember);
 			}
 		},
 		watch: {

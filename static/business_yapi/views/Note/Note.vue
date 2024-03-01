@@ -13,6 +13,7 @@ export default async function () {
 			NoteSection: () => _.$importVue("@/views/Note/NoteSection.vue")
 		},
 		async mounted() {
+			document.title = "Y-API-文档";
 			await this.updateWikiMenuList();
 			await this.updateCurrentWiki();
 		},

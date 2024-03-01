@@ -60,7 +60,7 @@ export default async function () {
 					parent: this,
 					row
 				});
-				_.$openWindow(i18n("modifyImageInfo"), DialogTypeVueSFC);
+				_.$openWindow_deprecated(i18n("modifyImageInfo"), DialogTypeVueSFC);
 			}
 		},
 		watch: {},

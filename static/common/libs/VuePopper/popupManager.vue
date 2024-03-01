@@ -157,7 +157,7 @@ export default async function () {
 			configurable: true,
 			get() {
 				if (!hasInitZIndex) {
-					zIndex = zIndex || (Vue.prototype.$ELEMENT || {}).zIndex || 2000;
+					zIndex = zIndex || (Vue.prototype.$xUiConfigs || {}).zIndex || 2000;
 					hasInitZIndex = true;
 				}
 				return zIndex;
