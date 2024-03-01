@@ -56,6 +56,26 @@ module.exports = {
 				}
 			}
 		},
+		"/i18n/get": {
+			post: {
+				/* 不需要token */
+				auth: true,
+				summary: "获取动态列表",
+				description: "",
+				request: {
+					body: {
+						key: {
+							type: "string",
+							description: "i18n的key，支持：el.select.placeholder形式"
+						}
+					}
+				},
+				async handler(ctx) {
+					const result = await orm.I18n.detailByKey(ctx.payload.key);
+					ctx.body = xU.$response(result);
+				}
+			}
+		},
 		"/i18n/upsert_one": {
 			post: {
 				summary: "存储i18n数据",
