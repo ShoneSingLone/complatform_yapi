@@ -57,10 +57,9 @@ export default async function ({ refreshTableData, rowData }) {
 										preset: "blue",
 										async onClick() {
 											try {
-												const { trans_result } = await vm.inject_i18n.translate({
+												const { dst } = await vm.inject_i18n.translate({
 													query: vm.cptFormData.zhCn
 												});
-												const [{ dst }] = trans_result;
 												vm.form.enUs.value = dst;
 											} catch (error) {
 												_.$msgError(error);

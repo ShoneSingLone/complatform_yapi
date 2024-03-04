@@ -674,13 +674,20 @@ const isDev = !!localStorage.isDev;
 		},
 		get(_localStorage, prop) {
 			const objString = _localStorage[prop];
-			try {
-				return JSON.parse(objString);
-			} catch (error) {
-				if (objString === "undefined") {
-					return false;
+			const normal = () => {
+				if (_.$isInput(objString)) {
+					return objString;
 				}
-				return objString || false;
+				return objString;
+			};
+
+			try {
+				if (/^[{|\[]/.test(objString)) {
+					return JSON.parse(objString);
+				}
+				return normal();
+			} catch (error) {
+				return normal();
 			}
 		}
 	});

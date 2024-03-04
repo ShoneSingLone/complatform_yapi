@@ -26,7 +26,7 @@
 
 <script lang="ts">
 export default async function () {
-	function translateByBaidu({ params, query, from, to }) {
+	function translateByBaidu({ params, from, to }) {
 		return new Promise(resolve => {
 			$.ajax({
 				url: "https://api.fanyi.baidu.com/api/trans/vip/translate",
@@ -34,12 +34,12 @@ export default async function () {
 				dataType: "jsonp",
 				data: {
 					...params,
-					from: from,
-					to: to
+					from,
+					to
 				},
 				success: function (data) {
 					if (data.error_code) {
-						_.$msgError(query + data.error_msg);
+						_.$msgError(params.q + data.error_msg);
 					}
 					resolve(data);
 				}
@@ -77,13 +77,15 @@ export default async function () {
 					throw new Error("query is empty");
 				}
 				return new Promise(async (resolve, reject) => {
-					let res;
+					let res = { dst: "unset" };
 					try {
 						var from = "auto";
+
 						const { data: params, errcode } = await _api.yapi.i18nTranslate(payload);
 						if (!errcode) {
-							res = await translateByBaidu({ params, query, to, from });
-							resolve(res);
+							const { trans_result } = await translateByBaidu({ params, to, from });
+							const [_res] = trans_result;
+							resolve(_res);
 						} else if (errcode === 408) {
 							_.$msgError("需要配置百度翻译的appid和密钥");
 							_.$openModal({
@@ -100,6 +102,7 @@ export default async function () {
 									return true;
 								}
 							});
+							return;
 						}
 					} catch (error) {
 						reject(error);

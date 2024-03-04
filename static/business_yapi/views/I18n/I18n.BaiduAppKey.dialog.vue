@@ -23,9 +23,9 @@ export default async function ({ onResponse }) {
 				form: defItems({
 					appId: {
 						label: i18n("appId"),
-						value: _.$lStorage.appId || "",
+						value: _.$lStorage.translateAppId || "",
 						onEmitValue({ val }) {
-							_.$lStorage.appId = val;
+							_.$lStorage.translateAppId = val + "";
 						},
 						rules: [_rules.required()]
 					},
@@ -52,7 +52,7 @@ export default async function ({ onResponse }) {
 					async onClick() {
 						const [atLestOne] = await _.$validateForm(vm.$el);
 						if (atLestOne) return;
-						onResponse(vm.cptFormData);
+						await onResponse(vm.cptFormData);
 						vm.closeModal();
 					}
 				};

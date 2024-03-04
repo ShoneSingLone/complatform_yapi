@@ -104,8 +104,7 @@ Total：${listData.length}
 				let dataList = _.cloneDeep(listData);
 				while ((i18n = dataList.pop())) {
 					try {
-						const { trans_result } = await this.inject_i18n.translate({ query: i18n.zhCn });
-						const [{ dst }] = trans_result;
+						const { dst } = await this.inject_i18n.translate({ query: i18n.zhCn });
 						i18n.enUs = dst;
 						await _api.yapi.i18nUpsertOne({ i18n });
 						newRows.push(i18n);
