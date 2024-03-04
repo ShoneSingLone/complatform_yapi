@@ -11,7 +11,6 @@
 
 <script lang="ts">
 export default async function () {
-	await _.$ensure(() => window?.i18n?.options && Object.keys(window.i18n.options).length > 0);
 	return {
 		mounted() {
 			document.title = "Y-API-接口管理";

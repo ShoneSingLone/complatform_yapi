@@ -224,14 +224,20 @@ export default async function ({ options }) {
 		},
 		methods: {
 			deviceSupportInstall() {},
-			closeModal() {
-				this.dialogStyle = {
-					...this.dialogStyle,
-					opacity: 0
-				};
-				setTimeout(() => {
-					this.$destroy();
-				}, 300);
+			async closeModal() {
+				let isClose = true;
+				if (options.onCancel) {
+					isClose = await options.onCancel();
+				}
+				if (isClose) {
+					this.dialogStyle = {
+						...this.dialogStyle,
+						opacity: 0
+					};
+					setTimeout(() => {
+						this.$destroy();
+					}, 300);
+				}
 			}
 		},
 		computed: {

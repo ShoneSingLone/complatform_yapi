@@ -1,5 +1,5 @@
 <template>
-	<xDialog style="--xDialog-wrapper-width: 1024px">
+	<xDialog style="--xDialog-wrapper-width: 800px">
 		<xForm col="1">
 			<xItem :configs="form.key" />
 			<xItem :configs="form.zhCn" />
@@ -34,9 +34,16 @@ export default async function ({ refreshTableData, rowData }) {
 				uploaded: {},
 				form: defItems({
 					key: { label: i18n("prop"), value: "", rules: [_rules.required()] },
-					zhCn: { label: i18n("中文"), value: "", rules: [_rules.required()] },
+					zhCn: {
+						label: i18n("中文"),
+						type: "textarea",
+						value: "",
+						rules: [_rules.required()]
+					},
+
 					enUs: {
 						label: i18n("English"),
+						type: "textarea",
 						value: "",
 						disabled() {
 							return !_.$isInput(vm.cptFormData.zhCn);
@@ -50,7 +57,6 @@ export default async function ({ refreshTableData, rowData }) {
 										preset: "blue",
 										async onClick() {
 											try {
-												debugger;
 												const { trans_result } = await vm.inject_i18n.translate({
 													query: vm.cptFormData.zhCn
 												});

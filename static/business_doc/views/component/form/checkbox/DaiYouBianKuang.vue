@@ -2,23 +2,23 @@
 	<div>
 		<xMd :md="md" class="mb" />
 		<div>
-			<xCheckbox v-model="checked1" label="备选项1" border/>
-			<xCheckbox v-model="checked2" label="备选项2" border/>
+			<xCheckbox v-model="checked1" label="备选项1" border />
+			<xCheckbox v-model="checked2" label="备选项2" border />
 		</div>
 		<div style="margin-top: 20px">
-			<xCheckbox v-model="checked3" label="备选项1" border size="medium"/>
-			<xCheckbox v-model="checked4" label="备选项2" border size="medium"/>
+			<xCheckbox v-model="checked3" label="备选项1" border size="medium" />
+			<xCheckbox v-model="checked4" label="备选项2" border size="medium" />
 		</div>
 		<div style="margin-top: 20px">
 			<xCheckboxGroup v-model="checkboxGroup1" size="small">
-				<xCheckbox label="备选项1" border/>
-				<xCheckbox label="备选项2" border disabled/>
+				<xCheckbox label="备选项1" border />
+				<xCheckbox label="备选项2" border disabled />
 			</xCheckboxGroup>
 		</div>
 		<div style="margin-top: 20px">
 			<xCheckboxGroup v-model="checkboxGroup2" size="mini" disabled>
-				<xCheckbox label="备选项1" border/>
-				<xCheckbox label="备选项2" border/>
+				<xCheckbox label="备选项1" border />
+				<xCheckbox label="备选项2" border />
 			</xCheckboxGroup>
 		</div>
 	</div>

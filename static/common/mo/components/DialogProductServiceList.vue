@@ -101,7 +101,11 @@ export default async function ({ onSelect, onCancel, service_type, icon }) {
 					/* 云硬盘 */
 					evs: "mo_icon-ebs_center_console",
 					/* VPC */
-					vpc: "mo_icon-vpc_center_console",
+					vpc: "mo_icon-vpc",
+					//eip
+					eip: "mo_icon-eip",
+					//共享带宽
+					sbw: "mo_icon-sbw",
 					/* 快照 */
 					snapshot: "mo_icon-snapshot"
 				};

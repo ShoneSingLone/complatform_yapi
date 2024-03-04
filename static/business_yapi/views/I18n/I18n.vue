@@ -26,6 +26,26 @@
 
 <script lang="ts">
 export default async function () {
+	function translateByBaidu({ params, query, from, to }) {
+		return new Promise(resolve => {
+			$.ajax({
+				url: "https://api.fanyi.baidu.com/api/trans/vip/translate",
+				type: "get",
+				dataType: "jsonp",
+				data: {
+					...params,
+					from: from,
+					to: to
+				},
+				success: function (data) {
+					if (data.error_code) {
+						_.$msgError(query + data.error_msg);
+					}
+					resolve(data);
+				}
+			});
+		});
+	}
 	return {
 		inject: ["APP"],
 		provide() {
@@ -49,32 +69,40 @@ export default async function () {
 		},
 		methods: {
 			async translate(payload = {}) {
+				const vm = this;
 				await _.$sleep(600);
 				const to = payload.to || "en";
 				var query = payload.query;
 				if (!query) {
 					throw new Error("query is empty");
 				}
-				return new Promise(async resolve => {
-					var from = "auto";
-					const { data: params, errcode } = await _api.yapi.i18nTranslate({ query });
-					if (!errcode) {
-						$.ajax({
-							url: "https://api.fanyi.baidu.com/api/trans/vip/translate",
-							type: "get",
-							dataType: "jsonp",
-							data: {
-								...params,
-								from: from,
-								to: to
-							},
-							success: function (data) {
-								if (data.error_code) {
-									_.$msgError(query + data.error_msg);
+				return new Promise(async (resolve, reject) => {
+					let res;
+					try {
+						var from = "auto";
+						const { data: params, errcode } = await _api.yapi.i18nTranslate(payload);
+						if (!errcode) {
+							res = await translateByBaidu({ params, query, to, from });
+							resolve(res);
+						} else if (errcode === 408) {
+							_.$msgError("需要配置百度翻译的appid和密钥");
+							_.$openModal({
+								title: "添加百度翻译的appid和密钥",
+								url: "@/views/I18n/I18n.BaiduAppKey.dialog.vue",
+								async onResponse({ appId, appKey }) {
+									payload.appId = appId;
+									payload.appKey = appKey;
+									res = await vm.translate(payload);
+									resolve(res);
+								},
+								onCancel() {
+									reject();
+									return true;
 								}
-								resolve(data);
-							}
-						});
+							});
+						}
+					} catch (error) {
+						reject(error);
 					}
 				});
 			},

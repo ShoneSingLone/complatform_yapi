@@ -1,5 +1,7 @@
 <script lang="ts">
 export default async function ({ _URL_PREFIX_MO }) {
+	let [region, locale, agencyId] = _.$urlSearch(["region", "locale", "agencyId"]);
+
 	let regionChanged = false;
 	(function () {
 		$("html").addClass("mo-common");
@@ -15,17 +17,24 @@ export default async function ({ _URL_PREFIX_MO }) {
 		/* 显示region selector */
 		// setTimeout(() => { $("#mo-cf-modules-region .modules-region-cf-header-region").css("display", ""); }, 1000 * 2);
 		window.appWebPath = _URL_PREFIX_MO;
-		const moLang = new URLSearchParams(location.search).get("locale") || $("html").lang || "zh-CN";
-		window.I18N_LANGUAGE = moLang;
+		const moLang = locale || $("html").lang || "zh-CN";
 		const i18nMap = {
 			"zh-cn": "zh-CN",
 			"en-us": "en-US"
 		};
 		const xLanguage = i18nMap[moLang] || "en-US";
 		localStorage["X-Language"] = xLanguage;
+		window.I18N_LANGUAGE = xLanguage;
+
 		const domHtml = document.querySelector("html");
 		domHtml.dataset.lang = xLanguage;
 		domHtml.dataset.moLang = moLang;
+	})();
+
+	await (async function () {
+		const i18n = await _.$newI18n({ lang: I18N_LANGUAGE });
+		window.i18n = i18n;
+		Vue.prototype.i18n = i18n;
 	})();
 	/* mo console ui 基座 */
 	/* 需要以script src 的形式引入，才能获取 baseURI = "/static/framework/2.0" */
@@ -45,11 +54,11 @@ export default async function ({ _URL_PREFIX_MO }) {
 	);
 
 	/* 基础参数 */
-	const [userInfo, appConfigs, regionsData, locale] = await Promise.all([_MoCfContext.getUser(), _MoCfContext.getGlobalConfig(), _MoCfContext.getRegions(), _MoCfContext.getLocale()]);
+	const [userInfo, appConfigs, regionsData, moContextLocale] = await Promise.all([_MoCfContext.getUser(), _MoCfContext.getGlobalConfig(), _MoCfContext.getRegions(), _MoCfContext.getLocale()]);
 	_MoCfContext.userInfo = userInfo;
 	_MoCfContext.appConfigs = appConfigs;
 	_MoCfContext.regionsData = regionsData;
-	_MoCfContext.locale = locale;
+	_MoCfContext.locale = moContextLocale;
 
 	function trigger(type, event) {
 		console.log("🚀 ~ trigger ~ type, event:", type, event);

@@ -72,7 +72,6 @@ const isDev = !!localStorage.isDev;
 		let lock = false;
 		return new Promise((resolve, reject) => {
 			try {
-
 				// create input file
 				let el = document.createElement("input");
 				el.style.display = "none";
@@ -100,7 +99,6 @@ const isDev = !!localStorage.isDev;
 				_.$single.win.one("focus.openFileSelector", handleCancel);
 
 				el.click();
-
 			} catch (error) {
 				console.error(error);
 			}
@@ -1007,7 +1005,7 @@ const isDev = !!localStorage.isDev;
 	/*  */
 	(function () {
 		/**
-		 * @deprecated 推荐使用_.$openModal 
+		 * @deprecated 推荐使用_.$openModal
 		 * @param {*} title：{stirng}dialog标题
 		 * @param {*} WindowVueCtor:Vue组件,通常用_.$importVue引入
 		 * @param {*} options:{layer的参数，但是一般用不到，有需要可以自己看源码}
@@ -1727,25 +1725,42 @@ const isDev = !!localStorage.isDev;
 })();
 
 (async function () {
-	await (async function setI18n() {
+	await (async function setI18nFunction() {
+		/**
+		 * 创建i18n 函数，可同时存在不同语言options的i18n对象
+		 * @param {*} lang zh-CN,对应i18n文件夹下的文件 
+		 * @returns 
+		*/
+		/* @typescriptDeclare (options: { lang: "zh-CN" | "en-US" }) => Promise<any>; */
+		_.$newI18n = async function ({ lang }) {
+			/* @/i18n/zh-CN.js */
+			/* @/i18n/en-US.js */
+			let langOptionsString = await _.$loadText(`@/i18n/${lang}.js`);
+			langOptionsString = langOptionsString.replace("window.i18n.options = ", "");
+			const getLangOptionsFn = new Function(`return ${langOptionsString};`);
+			const langOptions = getLangOptionsFn();
+			const i18n = function (key, payload) {
+				/!*使用 {变量名} 赋值*!/;
+				_.templateSettings.interpolate = /{([\s\S]+?)}/g;
+				let temp = _.$val(langOptions, key);
+				return _.template(temp)(payload) || key;
+			};
+			i18n.langOptions = langOptions;
+
+			return i18n;
+		};
+
 		/**
 		 * 国际化
 		 * @param {*} key
 		 * @param {*} payload
 		 * @returns
 		 */
-		const i18n = function (key, payload) {
-			/!*使用 {变量名} 赋值*!/;
-			_.templateSettings.interpolate = /{([\s\S]+?)}/g;
-			let temp = _.$val(window.i18n.options, key);
-			return _.template(temp)(payload) || key;
-		};
-		/* 国际化 */
+		const i18n = await _.$newI18n({ lang: I18N_LANGUAGE });
 		window.i18n = i18n;
-		await _.$appendScript(`@/i18n/${I18N_LANGUAGE}.js`);
-
 		Vue.prototype.i18n = i18n;
 	})();
+
 	/* setup */
 	await (async function setVueConfigs() {
 		await _.$ensure(() => window.SRC_ROOT_PATH !== undefined);

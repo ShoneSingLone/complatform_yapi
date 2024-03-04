@@ -54,9 +54,6 @@ export default async function () {
 }
 .xDialog {
 	--xDialog-padding: var(--ui-one);
-	--xDialog-min-width: 600px;
-
-	min-width: var(--xDialog-min-width);
 
 	&.xDialog-wrapper {
 		display: flex;
@@ -81,7 +78,6 @@ export default async function () {
 }
 
 .xDialog-body {
-	min-width: var(--xDialog-min-width);
 	height: 1px;
 	flex: 1;
 	overflow: auto;

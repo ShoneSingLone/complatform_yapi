@@ -53,14 +53,14 @@ export default async function () {
 		},
 		methods: {
 			async addNewWiki(node) {
-				const vm = this;
-				const addMember = await _.$importVue("@/views/Note/Note.dialog.insert.vue", {
+				return _.$openModal({
+					title: i18n("添加文档"),
+					url: "@/views/Note/Note.dialog.insert.vue",
 					parent: this,
 					parentDocId: node?._id,
 					belong_type: this.inject_note.cptBelongType,
 					belong_id: this.inject_note.cptBelongId
 				});
-				_.$openWindow_deprecated(i18n("添加文档"), addMember);
 			},
 			/* 菜单 */
 			nodeRender({ node, data }) {

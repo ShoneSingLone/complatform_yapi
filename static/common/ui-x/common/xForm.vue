@@ -47,7 +47,7 @@ export default async function () {
 	height: 100%;
 	display: grid;
 	grid-template-columns: var(--xForm-col);
-	
+
 	.xFormItem {
 		display: flex;
 		align-items: baseline;

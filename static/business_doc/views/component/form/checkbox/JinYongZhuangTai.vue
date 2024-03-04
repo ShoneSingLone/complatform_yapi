@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<xMd :md="md" class="mb"/>
+		<xMd :md="md" class="mb" />
 		<xCheckbox v-model="checked1" disabled>备选项1</xCheckbox>
 		<xCheckbox v-model="checked2" disabled>备选项</xCheckbox>
 	</div>

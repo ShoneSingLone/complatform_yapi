@@ -1,7 +1,5 @@
 <script lang="ts">
-export default async function (options) {
-	
-}
+export default async function (options) {}
 </script>
 <style lang="less">
 @charset "UTF-8";
