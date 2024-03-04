@@ -33,11 +33,11 @@ module.exports = {
 				async handler(ctx) {
 					const { query, appId, appKey } = ctx.payload;
 					// var appid = "";
-					var _appid = appId || yapi_configs.baiduTranslate.appId;
+					var _appid = appId || yapi_configs?.baiduTranslate?.appId;
 					if (!_appid) {
 						return (ctx.body = xU.$response(null, 408, "缺少百度appId appKey"));
 					}
-					var key = appKey || yapi_configs.baiduTranslate.appKey;
+					var key = appKey || yapi_configs?.baiduTranslate?.appKey;
 					var salt = new Date().getTime();
 					var str1 = _appid + query + salt + key;
 					var sign = md5(str1);
