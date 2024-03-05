@@ -1,3 +1,270 @@
+
+<script lang="ts">
+export default async function () {
+	const { Editor: TuiEditor } = await _.$appendScript("/common/libs/toastui-editor-all.js", "toastui");
+	const { PreprocessHTML, leftArrow, rightArrow } = await _.$importVue("@/components/TuiEditor/MkitTheme.vue");
+	return defineComponent({
+		props: ["value", "asRender"],
+		model: {
+			prop: "value",
+			emit: "change"
+		},
+		data() {
+			return {
+				html: "",
+				visible: false,
+				imgSrc: "",
+				imgList: [],
+				imgIndex: 0,
+				isLoading: true,
+				id: _.$genId("TuiEditor"),
+				raw$md: "",
+				vmTuiEditorDone: false
+			};
+		},
+		computed: {
+			readonly() {
+				if (_.isBoolean(this.asRender)) {
+					return this.asRender;
+				} else {
+					if (this.$attrs.readonly) {
+						return true;
+					}
+				}
+				return false;
+			}
+		},
+		created() {
+			const vm = this;
+			vm.setLoadingFalse = _.debounce(function () {
+				vm.isLoading = false;
+			}, 1000);
+		},
+		mounted() {
+			this.init();
+		},
+		watch: {
+			readonly() {
+				this.setHtmlDebounce && this.setHtmlDebounce();
+			},
+			/* 初始化完成后再调用一次渲染 */
+			vmTuiEditorDone: {
+				async handler() {
+					this.setMd(this.value.md);
+				}
+			},
+			"value.md": {
+				immediate: true,
+				async handler(mdString) {
+					this.setMd(mdString || "");
+				}
+			}
+		},
+		methods: {
+			setLoading(isLoading) {
+				if (isLoading) {
+					this.isLoading = true;
+				} else if (this.setLoadingFalse) {
+					this.setLoadingFalse();
+				} else {
+					this.isLoading = false;
+				}
+			},
+			setMd(mdString) {
+				try {
+					if (!this.vmTuiEditor) {
+						throw new Error("return");
+					}
+					/* mdString可以为"",但是在editor初始化之后才有赋值的必要 */
+					if (!mdString && !this.vmTuiEditor) {
+						throw new Error("return");
+					}
+					const _mdString = this.vmTuiEditor.getMarkdown();
+					if (_mdString === mdString) {
+						throw new Error("return");
+					}
+					this.vmTuiEditor.setMarkdown(mdString);
+					this.setHtmlDebounce();
+				} catch (error) {}
+			},
+			setHtml() {
+				try {
+					if (!this.vmTuiEditor) {
+						return;
+					}
+					let html = this.vmTuiEditor.getHTML();
+					this.html = new PreprocessHTML(html).html;
+					setTimeout(() => {
+						$(this.$refs.viewer).html(this.html);
+					}, 64);
+				} catch (error) {
+					console.error(error);
+				} finally {
+					this.setLoading();
+				}
+			},
+			/*  */
+			showImg(index) {
+				const $md = $(this.$refs.viewer);
+				const imgList = $md.find("img");
+				_.$previewImgs({
+					urlList: _.map(imgList, img => img.src),
+					index
+				});
+			},
+			handleClick(event) {
+				const { target } = event;
+				const $ele = $(target).parents(".el-image[data-el-image-index]");
+				if ($ele && $ele.length) {
+					this.showImg(Number($ele.attr("data-el-image-index")));
+				}
+			},
+			/*  */
+			async emitModelValue() {
+				const vm = this;
+				$(this.raw$selector).show().addClass("flash infinite");
+				const mdString = vm.vmTuiEditor.getMarkdown();
+				if (vm.value.md !== mdString) {
+					vm.$emit("change", {
+						md: mdString,
+						html: vm.vmTuiEditor.getHTML()
+					});
+				}
+				vm.setLoading();
+				$(this.raw$selector).removeClass("flash infinite").hide();
+			},
+			//初始化方法
+			async init() {
+				let vm = this;
+				vm.setLoading(true);
+				await _.$ensure(() => vm.$refs.container);
+				const customHTMLRenderer = {
+					image: (node, context) => {
+						const { title, destination, firstChild } = node;
+						const { literal } = firstChild || {};
+						const { skipChildren } = context;
+						skipChildren();
+						const src = (() => {
+							const [_, id] = String(destination).match(/^_id:(\d+)/) || [];
+							if (id) {
+								return Vue._yapi_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${id}`);
+							} else {
+								return destination;
+							}
+						})();
+						return {
+							type: "openTag",
+							tagName: "img",
+							selfClose: true,
+							attributes: {
+								title,
+								alt: literal,
+								src
+							}
+						};
+					}
+				};
+
+				try {
+					(() => {
+						vm.vmTuiEditor = new TuiEditor({
+							customHTMLRenderer,
+							el: vm.$refs.container,
+							initialEditType: "markdown",
+							// initialEditType: "wysiwyg",
+							previewStyle: "vertical",
+							initialValue: "",
+							height: "300px",
+							hooks: {
+								/* EventEmitter.prototype.emit  */
+								change: _ => {
+									vm.emitModelValueDebounce && vm.emitModelValueDebounce();
+								},
+								addImageBlobHook: async (blob, callback) => {
+									const { name, size, type } = blob;
+									/* base64 字符串 */
+									var reader = new FileReader();
+									reader.onload = async function (_a) {
+										var { result: basecode } = _a.target;
+										/* 上传服务器，返回id */
+										/* todo process loading  */
+										const { data } = await _api.yapi.saveImgByBase64({
+											basecode,
+											useFor: "wiki",
+											name,
+											size,
+											type
+										});
+										return callback(`_id:${data._id}`);
+									};
+									reader.readAsDataURL(blob);
+								}
+								/* addImageBlobHook: (blob, callback) => {
+                   vm.setLoading(true);
+                   var reader = new FileReader();
+                   reader.onload = function (_a) {
+                     var target2 = _a.target;
+                     vm.setLoading();
+                     return callback(target2.result);
+                   };
+                   reader.readAsDataURL(blob);
+                 }*/
+							}
+						});
+						/* vmTuiEditor初始化 */
+						vm.vmTuiEditorDone = true;
+						vm.emitModelValueDebounce = _.debounce(vm.emitModelValue, 1000);
+						vm.setHtmlDebounce = _.debounce(vm.setHtml, 100);
+						const className = `sync_${vm._uid}`;
+						vm.raw$selector = `.${className}`;
+						vm.vmTuiEditor.insertToolbarItem(
+							{ groupIndex: 4, itemIndex: 2 },
+							{
+								name: "sync",
+								text: "Sync...",
+								id: "toastuiEditorToolbarIconsSync",
+								className: `toastui-editor-toolbar-icons animated ${className}`,
+								style: { backgroundImage: "none" }
+							}
+						);
+					})();
+				} catch (error) {
+					console.error(error);
+				} finally {
+					vm.setLoading();
+				}
+
+				(() => {
+					vm.setMdDebounce = _.debounce(vm.setMd, 100);
+				})();
+			}
+		},
+		render() {
+			const vm = this;
+			return h("div", { class: "flex1-overflow-auto" }, [
+				/*viewer html*/
+				h("div", {
+					ref: "viewer",
+					onClick: vm.handleClick,
+					class: {
+						"toastui-editor-contents flex1 border-radius box-shadow padding20": true,
+						"display-none": !vm.readonly
+					},
+					style: "position:relative;height:100%;width:100%;z-index:1;padding:var(--app-padding);"
+				}),
+				/*tuiEdior*/
+				h("div", {
+					id: vm._uid,
+					ref: "container",
+					class: { flex1: true, "display-none": vm.readonly },
+					style: "height:100%;width:100%;z-index:1;"
+				})
+			]);
+		}
+	});
+}
+</script>
+
 <style lang="less">
 .ProseMirror {
 	position: relative;
@@ -1686,268 +1953,3 @@ table.ProseMirror-selectednode,
 	}
 }
 </style>
-<script lang="ts">
-export default async function () {
-	const { Editor: TuiEditor } = await _.$appendScript("/common/libs/toastui-editor-all.js", "toastui");
-	const { PreprocessHTML, leftArrow, rightArrow } = await _.$importVue("@/components/TuiEditor/MkitTheme.vue");
-	return defineComponent({
-		props: ["value", "asRender"],
-		model: {
-			prop: "value",
-			emit: "change"
-		},
-		data() {
-			return {
-				html: "",
-				visible: false,
-				imgSrc: "",
-				imgList: [],
-				imgIndex: 0,
-				isLoading: true,
-				id: _.$genId("TuiEditor"),
-				raw$md: "",
-				vmTuiEditorDone: false
-			};
-		},
-		computed: {
-			readonly() {
-				if (_.isBoolean(this.asRender)) {
-					return this.asRender;
-				} else {
-					if (this.$attrs.readonly) {
-						return true;
-					}
-				}
-				return false;
-			}
-		},
-		created() {
-			const vm = this;
-			vm.setLoadingFalse = _.debounce(function () {
-				vm.isLoading = false;
-			}, 1000);
-		},
-		mounted() {
-			this.init();
-		},
-		watch: {
-			readonly() {
-				this.setHtmlDebounce && this.setHtmlDebounce();
-			},
-			/* 初始化完成后再调用一次渲染 */
-			vmTuiEditorDone: {
-				async handler() {
-					this.setMd(this.value.md);
-				}
-			},
-			"value.md": {
-				immediate: true,
-				async handler(mdString) {
-					this.setMd(mdString || "");
-				}
-			}
-		},
-		methods: {
-			setLoading(isLoading) {
-				if (isLoading) {
-					this.isLoading = true;
-				} else if (this.setLoadingFalse) {
-					this.setLoadingFalse();
-				} else {
-					this.isLoading = false;
-				}
-			},
-			setMd(mdString) {
-				try {
-					if (!this.vmTuiEditor) {
-						throw new Error("return");
-					}
-					/* mdString可以为"",但是在editor初始化之后才有赋值的必要 */
-					if (!mdString && !this.vmTuiEditor) {
-						throw new Error("return");
-					}
-					const _mdString = this.vmTuiEditor.getMarkdown();
-					if (_mdString === mdString) {
-						throw new Error("return");
-					}
-					this.vmTuiEditor.setMarkdown(mdString);
-					this.setHtmlDebounce();
-				} catch (error) {}
-			},
-			setHtml() {
-				try {
-					if (!this.vmTuiEditor) {
-						return;
-					}
-					let html = this.vmTuiEditor.getHTML();
-					this.html = new PreprocessHTML(html).html;
-					setTimeout(() => {
-						$(this.$refs.viewer).html(this.html);
-					}, 64);
-				} catch (error) {
-					console.error(error);
-				} finally {
-					this.setLoading();
-				}
-			},
-			/*  */
-			showImg(index) {
-				const $md = $(this.$refs.viewer);
-				const imgList = $md.find("img");
-				_.$previewImgs({
-					urlList: _.map(imgList, img => img.src),
-					index
-				});
-			},
-			handleClick(event) {
-				const { target } = event;
-				const $ele = $(target).parents(".el-image[data-el-image-index]");
-				if ($ele && $ele.length) {
-					this.showImg(Number($ele.attr("data-el-image-index")));
-				}
-			},
-			/*  */
-			async emitModelValue() {
-				const vm = this;
-				$(this.raw$selector).show().addClass("flash infinite");
-				const mdString = vm.vmTuiEditor.getMarkdown();
-				if (vm.value.md !== mdString) {
-					vm.$emit("change", {
-						md: mdString,
-						html: vm.vmTuiEditor.getHTML()
-					});
-				}
-				vm.setLoading();
-				$(this.raw$selector).removeClass("flash infinite").hide();
-			},
-			//初始化方法
-			async init() {
-				let vm = this;
-				vm.setLoading(true);
-				await _.$ensure(() => vm.$refs.container);
-				const customHTMLRenderer = {
-					image: (node, context) => {
-						const { title, destination, firstChild } = node;
-						const { literal } = firstChild || {};
-						const { skipChildren } = context;
-						skipChildren();
-						const src = (() => {
-							const [_, id] = String(destination).match(/^_id:(\d+)/) || [];
-							if (id) {
-								return `${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${id}`;
-							} else {
-								return destination;
-							}
-						})();
-						return {
-							type: "openTag",
-							tagName: "img",
-							selfClose: true,
-							attributes: {
-								title,
-								alt: literal,
-								src
-							}
-						};
-					}
-				};
-
-				try {
-					(() => {
-						vm.vmTuiEditor = new TuiEditor({
-							customHTMLRenderer,
-							el: vm.$refs.container,
-							initialEditType: "markdown",
-							// initialEditType: "wysiwyg",
-							previewStyle: "vertical",
-							initialValue: "",
-							height: "300px",
-							hooks: {
-								/* EventEmitter.prototype.emit  */
-								change: _ => {
-									vm.emitModelValueDebounce && vm.emitModelValueDebounce();
-								},
-								addImageBlobHook: async (blob, callback) => {
-									const { name, size, type } = blob;
-									/* base64 字符串 */
-									var reader = new FileReader();
-									reader.onload = async function (_a) {
-										var { result: basecode } = _a.target;
-										/* 上传服务器，返回id */
-										/* todo process loading  */
-										const { data } = await _api.yapi.saveImgByBase64({
-											basecode,
-											useFor: "wiki",
-											name,
-											size,
-											type
-										});
-										return callback(`_id:${data._id}`);
-									};
-									reader.readAsDataURL(blob);
-								}
-								/* addImageBlobHook: (blob, callback) => {
-                   vm.setLoading(true);
-                   var reader = new FileReader();
-                   reader.onload = function (_a) {
-                     var target2 = _a.target;
-                     vm.setLoading();
-                     return callback(target2.result);
-                   };
-                   reader.readAsDataURL(blob);
-                 }*/
-							}
-						});
-						/* vmTuiEditor初始化 */
-						vm.vmTuiEditorDone = true;
-						vm.emitModelValueDebounce = _.debounce(vm.emitModelValue, 1000);
-						vm.setHtmlDebounce = _.debounce(vm.setHtml, 100);
-						const className = `sync_${vm._uid}`;
-						vm.raw$selector = `.${className}`;
-						vm.vmTuiEditor.insertToolbarItem(
-							{ groupIndex: 4, itemIndex: 2 },
-							{
-								name: "sync",
-								text: "Sync...",
-								id: "toastuiEditorToolbarIconsSync",
-								className: `toastui-editor-toolbar-icons animated ${className}`,
-								style: { backgroundImage: "none" }
-							}
-						);
-					})();
-				} catch (error) {
-					console.error(error);
-				} finally {
-					vm.setLoading();
-				}
-
-				(() => {
-					vm.setMdDebounce = _.debounce(vm.setMd, 100);
-				})();
-			}
-		},
-		render() {
-			const vm = this;
-			return h("div", { class: "flex1-overflow-auto" }, [
-				/*viewer html*/
-				h("div", {
-					ref: "viewer",
-					onClick: vm.handleClick,
-					class: {
-						"toastui-editor-contents flex1 border-radius box-shadow padding20": true,
-						"display-none": !vm.readonly
-					},
-					style: "position:relative;height:100%;width:100%;z-index:1;padding:var(--app-padding);"
-				}),
-				/*tuiEdior*/
-				h("div", {
-					id: vm._uid,
-					ref: "container",
-					class: { flex1: true, "display-none": vm.readonly },
-					style: "height:100%;width:100%;z-index:1;"
-				})
-			]);
-		}
-	});
-}
-</script>
