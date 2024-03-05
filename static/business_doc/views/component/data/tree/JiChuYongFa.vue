@@ -2,6 +2,9 @@
 <template>
 	<div>
 		<xMd :md="md" />
+		<div>
+			<div>data.length: {{ data.length }}</div>
+		</div>
 		<xTree :data="data" :props="props" :height="208" />
 	</div>
 </template>
@@ -33,7 +36,6 @@ export default async function () {
 				children: "children"
 			};
 			const data = createData(4, 30, 40);
-
 			return {
 				props,
 				data,

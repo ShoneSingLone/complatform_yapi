@@ -14,8 +14,7 @@ export default async function () {
 				const { columns, columnsStyles, expandColumnKey, depth, rowData, rowIndex, style } = this.$vnode.data;
 
 				let ColumnCells = columns.map((column, columnIndex) => {
-					const expandable = _.isArray(rowData.children) && rowData.children.length > 0 && column.key === expandColumnKey;
-
+					const expandable = _.$isArrayFill(rowData.children);
 					const cellParams = {
 						column,
 						columns,
@@ -31,7 +30,7 @@ export default async function () {
 									rowIndex,
 									onExpand
 								}
-							: void 0
+							: false
 					};
 					return $vSlots.cell(cellParams);
 				});

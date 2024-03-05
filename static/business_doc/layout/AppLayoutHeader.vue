@@ -37,7 +37,7 @@ export default async function () {
 				},
 				language: {
 					label: i18n("语言"),
-					value: _.$lStorage._doc_app_theme || "默认",
+					value: _.$lStorage._doc_app_lang || "zh-CN",
 					itemType: "xItemSelect",
 					options: [
 						{

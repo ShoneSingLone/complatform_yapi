@@ -1,5 +1,5 @@
 <template>
-	<xTableVir :columns="columns" :data="data" :height="400" fixed style="outline: 1px solid salmon" />
+	<xTableVir :columns="columns" :data="data" :height="400" fixed />
 </template>
 <script lang="ts">
 export default async function () {

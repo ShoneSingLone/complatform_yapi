@@ -161,14 +161,15 @@ export default async function () {
 				});
 
 				if (resToMerge) {
-					const DialogTypeVueSFC = await _.$importVue("@/views/Api/Project/Tabs/ProjectSettingConfirmMergeInterface.dialog.vue", {
+					_.$openModal({
+						title: i18n("确认数据同步"),
+						url: "@/views/Api/Project/Tabs/ProjectSettingConfirmMergeInterface.dialog.vue",
 						parent: this,
 						domainData: resToMerge.data,
 						originData,
 						allCategory: this.inject_project.allCategory,
 						dataSync: this.cptParams.dataSync
 					});
-					_.$openWindow_deprecated(i18n("确认数据同步"), DialogTypeVueSFC);
 				}
 			}
 		}

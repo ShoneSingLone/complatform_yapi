@@ -76,7 +76,6 @@ export default async function () {
 		if (hasOwn(prop, "default")) epProp.default = defaultValue;
 		return epProp;
 	};
-	const mutable = val => val;
 
 	function fromPairs(pairs) {
 		var index = -1,
@@ -118,6 +117,7 @@ export default async function () {
 		}
 		return cls;
 	};
+
 	function renderThumbStyle({ move, size, bar }, layout2) {
 		const style = {};
 		const translate2 = `translate${bar.axis}(${move}px)`;
@@ -132,6 +132,7 @@ export default async function () {
 		}
 		return style;
 	}
+
 	/**
 	 * css 变量命名
 	 */
@@ -202,7 +203,7 @@ export default async function () {
 	var expandColumnKey = String;
 	var expandKeys = {
 		type: definePropType(Array),
-		default: () => mutable([])
+		default: () => []
 	};
 	var requiredNumber = {
 		type: Number,
@@ -256,7 +257,7 @@ export default async function () {
 		},
 		data: {
 			type: definePropType(Array),
-			default: () => mutable([])
+			default: () => []
 		},
 		direction,
 		height: {
@@ -630,12 +631,12 @@ export default async function () {
 			return eventHandlers2;
 		});
 		const onExpand = expanded => {
-			const { onRowExpand, rowData, rowIndex, rowKey: rowKey2 } = props;
+			const { onRowExpand, rowData, rowIndex, rowKey } = props;
 			onRowExpand?.({
 				expanded,
 				rowData,
 				rowIndex,
-				rowKey: rowKey2
+				rowKey
 			});
 		};
 		onMounted(() => {
@@ -1232,6 +1233,7 @@ export default async function () {
 		var value = arguments[0];
 		return _.isArray(value) ? value : [value];
 	}
+
 	const isClient = typeof window !== "undefined";
 	const rAF = fn => (isClient ? window.requestAnimationFrame(fn) : setTimeout(fn, 16));
 	const cAF = handle => (isClient ? window.cancelAnimationFrame(handle) : clearTimeout(handle));
@@ -1471,6 +1473,7 @@ export default async function () {
 			this.name = "ElementPlusError";
 		}
 	}
+
 	function throwError(scope, m) {
 		throw new ElementPlusError(`[${scope}] ${m}`);
 	}
@@ -1515,7 +1518,6 @@ export default async function () {
 		addUnit,
 		createGrid,
 		noop,
-		mutable,
 		ScrollbarDirKey,
 		renderThumbStyle,
 		/* **************** */
@@ -1592,6 +1594,7 @@ export default async function () {
 			const width = Vue.ref(0);
 			const x = Vue.ref(0);
 			const y = Vue.ref(0);
+
 			function update() {
 				const el = unrefElement(target);
 				if (!el) {
@@ -1617,6 +1620,7 @@ export default async function () {
 				x.value = rect.x;
 				y.value = rect.y;
 			}
+
 			useResizeObserver(target, update);
 			Vue.watch(
 				() => unrefElement(target),

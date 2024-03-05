@@ -2,13 +2,35 @@
 	<DocContentOfDemo>
 		<xMd :md="descString" />
 		<DemoAndCode title="基础用法" path="@/views/component/data/virtualizedTable/JiChuYongFa.vue" unfold />
-		<DemoAndCode title="自定义单元格渲染器" path="@/views/component/data/virtualizedTable/ZiDingYiDanYuanGeXuanRanQi.vue" unfold />
+		<DemoAndCode title="自定义单元格渲染器" path="@/views/component/data/virtualizedTable/ZiDingYiDanYuanGeXuanRanQi.vue" />
 		<DemoAndCode title="带有选择的表格" path="@/views/component/data/virtualizedTable/DaiYouXuanZeDeBiaoGe.vue" />
+		<DemoAndCode title="树形数据" path="@/views/component/data/virtualizedTable/ShuXingShuJu.vue" />
 	</DocContentOfDemo>
 </template>
 <script lang="ts">
 export default async function () {
+	const totalData = _.map(new Array(4000), (i, ii) => {
+		return {
+			id: ii,
+			name: `name${ii}`,
+			age: 18,
+			sex: "男",
+			phone: "13800000000",
+			address: "上海市普陀区金沙江路 1518 弄",
+			children: [
+				{
+					id: `sub_${ii + 1}`,
+					name: `name${ii + 1}`
+				}
+			]
+		};
+	});
 	return defineComponent({
+		provide() {
+			return {
+				totalData
+			};
+		},
 		data() {
 			return {
 				descString: `# Virtualized Table 虚拟化表格

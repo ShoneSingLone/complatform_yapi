@@ -45,7 +45,7 @@ export default async function () {
 
 	/* 分组信息 */
 	return defineComponent({
-		inject: ["APP", "inject_project", "inject_project"],
+		inject: ["APP", "inject_project"],
 		setup(props) {
 			const { stateStyle, resizeOptions } = useXmove(props);
 			return {
@@ -159,14 +159,15 @@ export default async function () {
 				});
 				_.$openWindow_deprecated(categoryInfo ? "修改分类" : "添加分类", DialogTypeVueSFC);
 			},
-			async openInterfaceDialog(categoryInfo) {
-				const DialogTypeVueSFC = await _.$importVue("@/components/YapiDialogUpsertInterface.vue", {
+			openInterfaceDialog(categoryInfo) {
+				return _.$openModal({
+					title: "添加接口",
+					url: "@/components/YapiDialogUpsertInterface.vue",
 					parent: this,
 					project_id: this.APP.cptProjectId,
 					categoryInfo,
 					getInterfaceList: this.inject_project.getInterfaceList
 				});
-				_.$openWindow_deprecated("添加接口", DialogTypeVueSFC);
 			}
 		},
 		watch: {

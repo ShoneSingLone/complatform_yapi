@@ -272,6 +272,23 @@ const isDev = !!localStorage.isDev;
 		}
 
 		/* ((((((((((((((((((((((coltypes))))))))))))))))))))))  */
+		window.defTable.colExpandArrow = (options = {}) => {
+			const { h } = Vue;
+			const normal = () => h("div");
+			let width = options.width || 24;
+			let fixed = options.fixed || "left";
+			let headerCellRenderer = options.headerCellRenderer || normal;
+			let cellRenderer = options.cellRenderer || normal;
+
+			return {
+				prop: "COL_EXPAND_ARROW",
+				label: i18n("COL_EXPAND_ARROW"),
+				width,
+				fixed,
+				headerCellRenderer,
+				cellRenderer
+			};
+		};
 		window.defTable.colMultiple = ({ by, getConfigs, disabled }) => {
 			const { h } = Vue;
 			const checkbox = {
@@ -1735,9 +1752,9 @@ const isDev = !!localStorage.isDev;
 	await (async function setI18nFunction() {
 		/**
 		 * 创建i18n 函数，可同时存在不同语言options的i18n对象
-		 * @param {*} lang zh-CN,对应i18n文件夹下的文件 
-		 * @returns 
-		*/
+		 * @param {*} lang zh-CN,对应i18n文件夹下的文件
+		 * @returns
+		 */
 		/* @typescriptDeclare (options: { lang: "zh-CN" | "en-US" }) => Promise<any>; */
 		_.$newI18n = async function ({ lang }) {
 			/* @/i18n/zh-CN.js */

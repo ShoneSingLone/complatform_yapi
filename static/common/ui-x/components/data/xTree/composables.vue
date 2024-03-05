@@ -53,6 +53,7 @@ export default async function () {
 			return ((_a2 = props.props) == null ? void 0 : _a2.label) || LABEL;
 		});
 		const flattenTree = computed(() => {
+			console.time("flattenTree");
 			const hiddenKeys = hiddenNodeKeySet.value;
 			const flattenNodes = [];
 			const nodes = (tree.value && tree.value.treeNodes) || [];
@@ -79,6 +80,7 @@ export default async function () {
 				}
 			}
 			traverse();
+			console.timeEnd("flattenTree");
 			return flattenNodes;
 		});
 		const isNotEmpty = computed(() => {

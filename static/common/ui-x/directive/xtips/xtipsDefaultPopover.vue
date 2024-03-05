@@ -10,9 +10,9 @@
 			:id="tooltipId"
 			:aria-hidden="disabled || !showPopper ? 'true' : 'false'">
 			<div class="el-popover__title" v-if="title" v-text="title"></div>
-			<slot>
+			<div ref="refRender">
 				<xRender :render="content" />
-			</slot>
+			</div>
 		</div>
 	</transition>
 </template>
@@ -39,8 +39,32 @@ export default async function () {
 				this.$parent.onPopoverChange[this.refId](val);
 			}
 		},
+		setup(props) {
+			const { useResizeObserver } = _useXui;
+
+			let resizerStopper;
+			this.popperJsUpdate = _.debounce(() => {
+				if (this.popperJS) {
+					this.popperJS.update();
+					if (!this.opacity) {
+						setTimeout(() => {
+							this.opacity = 1;
+						}, 32);
+					}
+				}
+			}, 100);
+			onMounted(() => {
+				resizerStopper = useResizeObserver(this.$refs.refRender, ([entry]) => {
+					this.popperJsUpdate();
+				}).stop;
+			});
+			onBeforeUnmount(() => {
+				resizerStopper?.();
+			});
+		},
 		data() {
 			return {
+				opacity: 0,
 				options: {},
 				showPopper: false,
 				currentPlacement: ""
@@ -72,7 +96,10 @@ export default async function () {
 				return this.options.popperClass || "";
 			},
 			cptStyle() {
-				return this.options.style || {};
+				return {
+					...(this.options.style || {}),
+					opacity: this.opacity
+				};
 			},
 			arrowOffset() {
 				return this.options.arrowOffset || 0;
@@ -196,7 +223,6 @@ export default async function () {
 				this.popperJS._popper.style.zIndex = PopupManager.nextZIndex();
 				this.popperElm.addEventListener("click", stop);
 			},
-
 			updatePopper() {
 				const popperJS = this.popperJS;
 				if (popperJS) {

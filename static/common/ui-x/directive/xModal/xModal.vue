@@ -47,7 +47,7 @@
 		> .xDialog.xDialog-wrapper {
 			--xDialog-wrapper-width: unset;
 			min-width: unset;
-			width: var(--xDialog-wrapper-width);
+			width: var(--xDialog-wrapper-width, 600px);
 		}
 	}
 }
