@@ -1,20 +1,15 @@
-<style lang="less"></style>
-<template>
-	<div :class="cptTreeRootClass" role="tree">
-		<xFixedSizeList
-			v-if="isNotEmpty"
-			:class-name="ns.b('virtual-list')"
-			:data="flattenTree"
-			:total="flattenTree.length"
-			:height="height"
-			:item-size="treeNodeSize"
-			:perf-mode="perfMode"
-			:defaultRender="defaultRender" />
-		<div v-else :class="ns.e('empty-block')">
-			<span :class="ns.e('empty-text')">{{ emptyText ? emptyText : i18n("el.tree.emptyText") }}</span>
-		</div>
-	</div>
-</template>
+<style lang="less">
+.xTree {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	.el-vl__window {
+		--ui-thumb-hover: transparent;
+	}
+}
+</style>
 <script lang="ts">
 export default async function () {
 	const { useTree, itemSize, iconPropType } = await _.$importVue("/common/ui-x/components/data/xTree/composables.vue");
@@ -211,6 +206,47 @@ export default async function () {
 
 				return h("xTreeNode", props);
 			}
+		},
+		render() {
+			const vm = this;
+			/* @ts-ignore */
+			return h("xAutoResizer", {
+				staticClass: "xTree",
+				attrs: { "data-tree-resizer-id": vm._uid },
+				$vSlots: {
+					default: ({ width, height }) => {
+						const { ns, isNotEmpty, flattenTree, treeNodeSize, perfMode, defaultRender } = vm;
+						if (isNotEmpty && height) {
+							const listProps = {
+								class: [ns.b("virtual-list"), "position-relative"],
+								data: flattenTree,
+								total: flattenTree.length,
+								height: height,
+								itemSize: treeNodeSize,
+								perfMode: perfMode,
+								defaultRender: defaultRender
+							};
+							return h("xFixedSizeList", listProps);
+						} else {
+							return h(
+								"div",
+								{
+									class: ns.e("empty-block")
+								},
+								[
+									h(
+										"span",
+										{
+											class: ns.e("empty-text")
+										},
+										vm.emptyText ? vm.emptyText : vm.i18n("el.tree.emptyText")
+									)
+								]
+							);
+						}
+					}
+				}
+			});
 		}
 	});
 }

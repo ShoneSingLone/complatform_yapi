@@ -5,7 +5,9 @@
 		<div>
 			<div>data.length: {{ data.length }}</div>
 		</div>
-		<xTree :data="data" :props="props" :height="208" />
+		<div style="height: 100px">
+			<xTree :data="data" :props="props" />
+		</div>
 	</div>
 </template>
 <script lang="ts">
@@ -35,7 +37,9 @@ export default async function () {
 				label: "label",
 				children: "children"
 			};
+			let time = Date.now();
 			const data = createData(4, 30, 40);
+			_.$msgSuccess(`渲染耗时：${Date.now() - time}ms`);
 			return {
 				props,
 				data,

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 export default async function () {
 	const { Editor: TuiEditor } = await _.$appendScript("/common/libs/toastui-editor-all.js", "toastui");

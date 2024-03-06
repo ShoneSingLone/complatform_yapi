@@ -94,7 +94,7 @@ export default async function () {
 	const definePropType = val => val;
 	const defaultNamespace = "el";
 	const namespaceContextKey = Symbol("namespaceContextKey");
-	const useGetDerivedNamespace = namespaceOverrides => {
+	const useGetDerivedNamespace = (namespaceOverrides = "") => {
 		const derivedNamespace = namespaceOverrides || inject(namespaceContextKey, ref(defaultNamespace));
 		const namespace = computed(() => {
 			return unref(derivedNamespace) || defaultNamespace;
@@ -660,8 +660,8 @@ export default async function () {
 		getColumnPosition,
 		getColumnStartIndexForOffset,
 		getColumnStopIndexForStartIndex,
-		getEstimatedTotalHeight: getEstimatedTotalHeight2,
-		getEstimatedTotalWidth: getEstimatedTotalWidth2,
+		getEstimatedTotalHeight,
+		getEstimatedTotalWidth,
 		getColumnOffset,
 		getRowOffset,
 		getRowPosition,
@@ -724,8 +724,8 @@ export default async function () {
 					const cacheForward = !isScrolling || yAxisScrollDir === FORWARD ? Math.max(1, rowCache) : 1;
 					return [Math.max(0, startIndex - cacheBackward), Math.max(0, Math.min(totalRow - 1, stopIndex + cacheForward)), startIndex, stopIndex];
 				});
-				const estimatedTotalHeight = computed(() => getEstimatedTotalHeight2(props, unref(cache2)));
-				const estimatedTotalWidth = computed(() => getEstimatedTotalWidth2(props, unref(cache2)));
+				const estimatedTotalHeight = computed(() => getEstimatedTotalHeight(props, unref(cache2)));
+				const estimatedTotalWidth = computed(() => getEstimatedTotalWidth(props, unref(cache2)));
 				const windowStyle = computed(() => [
 					{
 						position: "relative",
@@ -861,8 +861,8 @@ export default async function () {
 					rowIndex = Math.max(0, Math.min(rowIndex, props.totalRow - 1));
 					const scrollBarWidth2 = getScrollBarWidth(ns.namespace.value);
 					const _cache = unref(cache2);
-					const estimatedHeight = getEstimatedTotalHeight2(props, _cache);
-					const estimatedWidth = getEstimatedTotalWidth2(props, _cache);
+					const estimatedHeight = getEstimatedTotalHeight(props, _cache);
+					const estimatedWidth = getEstimatedTotalWidth(props, _cache);
 					scrollTo({
 						scrollLeft: getColumnOffset(props, columnIdx, alignment, _states.scrollLeft, _cache, estimatedWidth > props.width ? scrollBarWidth2 : 0),
 						scrollTop: getRowOffset(props, rowIndex, alignment, _states.scrollTop, _cache, estimatedHeight > props.height ? scrollBarWidth2 : 0)

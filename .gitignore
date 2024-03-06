@@ -57,3 +57,4 @@ server/uploads/RESOURCE_ASSETS
 yapi.installed
 static/dist
 server/app.js
+push.bat

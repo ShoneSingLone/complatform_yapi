@@ -49,7 +49,13 @@ export default async function () {
 							value: "en-US"
 						}
 					],
-					onEmitValue({ val }) {}
+					onEmitValue({ val }) {
+						_.$lStorage._doc_app_lang = val;
+						if (localStorage["X-Language"] !== val) {
+							localStorage["X-Language"] = _.$lStorage._doc_app_lang;
+							location.reload();
+						}
+					}
 				}
 			};
 		}

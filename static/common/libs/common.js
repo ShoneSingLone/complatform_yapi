@@ -903,9 +903,13 @@ const isDev = !!localStorage.isDev;
 		}
 		return () => null;
 	};
+
+	console.table = genConsole("table");
 	console.log = genConsole("log");
 	console.warn = genConsole("warn");
 	console.info = genConsole("info");
+	console.time = genConsole("time");
+	console.timeEnd = genConsole("timeEnd");
 
 	/**
 	 * 全局loading单例
