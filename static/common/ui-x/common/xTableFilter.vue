@@ -5,7 +5,7 @@
 		</div>
 		<xDropdownMenu slot="dropdown">
 			<xDropdownItem v-for="item in cptColumnsForShow" :key="item.label">
-				<el-checkbox :value="isShow(item)" @change="$event => setIsShow(item, $event)">{{ item.label }}</el-checkbox>
+				<xCheckbox :value="isShow(item)" @change="$event => setIsShow(item, $event)">{{ item.label }}</xCheckbox>
 			</xDropdownItem>
 		</xDropdownMenu>
 	</xDropdown>

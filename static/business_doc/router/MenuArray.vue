@@ -54,9 +54,15 @@ export default async function () {
 			label: i18n("聚合类"),
 			children: [
 				{ href: "/x-component/x-form", icon: "icon_report", label: i18n("xForm") },
-				{ href: "/x-component/x-item", icon: "icon_report", label: i18n("xItem") },
-				{ href: "/x-component/x-item-checkbox-group", icon: "icon_report", label: i18n("xItemCheckboxGroup") },
-				{ href: "/x-component/x-item-check", icon: "icon_report", label: i18n("xItemCheck") },
+				{
+					href: "/x-component/x-item",
+					icon: "icon_report",
+					label: i18n("xItem"),
+					children: [
+						{ icon: "icon_report", label: i18n("xItemCheck"), href: "/x-component/x-item-check" },
+						{ icon: "icon_report", label: i18n("xItemCheckboxGroup"), href: "/x-component/x-item-checkbox-group" }
+					]
+				},
 				{
 					icon: "icon_report",
 					label: i18n("xItemWrapper"),
@@ -68,59 +74,21 @@ export default async function () {
 			icon: "_icon_components",
 			label: i18n("组件"),
 			children: [
-				{
-					href: "/base/button",
-					icon: "icon_report",
-					label: i18n("button")
-				},
-
-				{ href: "/component/form/input", icon: "icon_report", label: i18n("input") },
-				{ href: "/component/form/input-number", icon: "icon_report", label: i18n("inputNumber") },
-				{ href: "/component/form/checkbox", icon: "icon_report", label: i18n("checkbox") },
-				{
-					href: "/component/form/select",
-					icon: "icon_report",
-					label: i18n("select")
-				},
-				{
-					href: "/component/form/ip-address",
-					icon: "icon_report",
-					label: i18n("ip-address")
-				},
-
-				{
-					icon: "_icon_image",
-					label: i18n("image") + i18n("图片"),
-					href: "/component/data/image"
-				},
-				{
-					icon: "icon_report",
-					label: i18n("icon"),
-					href: "/component/data/icon"
-				},
-				{
-					icon: "icon_report",
-					label: i18n("card"),
-					href: "/component/data/card"
-				},
-				{
-					icon: "icon_report",
-					label: `${i18n("Descriptions")} ${i18n("描述列表")}`,
-					href: "/component/data/descriptions"
-				},
-				{
-					icon: "icon_report",
-					label: `${i18n("Tag")} ${i18n("标签")}`,
-					href: "/component/data/tag"
-				},
-				{
-					icon: "icon_report",
-					label: i18n("virtualized-tree"),
-					href: "/component/data/tree"
-				},
-				{ icon: "icon_report", label: i18n("virtualized-table"), href: "/component/data/virtualized-table" },
+				{ icon: "icon_report", label: i18n("button"), href: "/base/button" },
+				{ icon: "icon_report", label: i18n("input"), href: "/component/form/input" },
+				{ icon: "icon_report", label: i18n("inputNumber"), href: "/component/form/input-number" },
+				{ icon: "icon_report", label: i18n("checkbox"), href: "/component/form/checkbox" },
+				{ icon: "icon_report", label: i18n("select"), href: "/component/form/select" },
+				{ icon: "icon_report", label: i18n("ip-address"), href: "/component/form/ip-address" },
+				{ icon: "_icon_image", label: i18n("image") + i18n("图片"), href: "/component/data/image" },
+				{ icon: "icon_report", label: i18n("icon"), href: "/component/data/icon" },
+				{ icon: "icon_report", label: `${i18n("Card")} ${i18n("卡片")}`, href: "/component/data/card" },
+				{ icon: "icon_report", label: `${i18n("Descriptions")} ${i18n("描述列表")}`, href: "/component/data/descriptions" },
+				{ icon: "icon_report", label: `${i18n("Tag")} ${i18n("标签")}`, href: "/component/data/tag" },
+				{ icon: "_icon_xTree", label: `${i18n("Tree")} ${i18n("树形控件")}`, href: "/component/data/tree" },
+				{ icon: "icon_report", label: `${i18n("Table")} ${i18n("列表")}`, href: "/component/data/virtualized-table" },
 				{ icon: "icon_report", label: `${i18n("Pagination")} ${i18n("分页")}`, href: "/component/data/pagination" },
-				{ icon: "icon_report", label: i18n("tabs"), href: "/component/navigation/tabs" },
+				{ icon: "icon_report", label: i18n("Tabs"), href: "/component/navigation/tabs" },
 				{ icon: "icon_report", label: i18n("dropdown"), href: "/component/navigation/dropdown" },
 				{ icon: "_icon_breadcrumb", label: `${i18n("Breadcrumb")} ${i18n("面包屑")}`, href: "/component/navigation/breadcrumb" },
 				{ icon: "_icon_affix", label: `${i18n("Affix")} ${i18n("固钉")}`, href: "/other/affix" },

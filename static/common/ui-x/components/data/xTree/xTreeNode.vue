@@ -25,15 +25,14 @@
 				@click.stop="handleExpandIconClick">
 				<xRender :render="icon" />
 			</div>
-			<el-checkbox v-if="showCheckbox" :model-value="checked" :indeterminate="indeterminate" :disabled="disabled" @change="handleCheckChange" @click.stop />
-			{{ expanded }}
+			<xCheckbox v-if="showCheckbox" :value="checked" :indeterminate="indeterminate" :disabled="disabled" @change="handleCheckChange" @click.stop />
 			<xNodeContent :node="node" />
 		</div>
 	</div>
 </template>
 <script lang="ts">
 export default async function () {
-	const { itemSize, NODE_CONTEXTMENU } = await _.$importVue("/common/ui-x/components/data/xTree/composables.vue");
+	const { itemSize, ON_NODE_CONTEXTMENU } = await _.$importVue("/common/ui-x/components/data/xTree/composables.vue");
 
 	return defineComponent({
 		name: "xTreeNode",
@@ -101,7 +100,7 @@ export default async function () {
 					event.stopPropagation();
 					event.preventDefault();
 				}
-				injectRootTree?.ctx.emit(NODE_CONTEXTMENU, event, props.node?.data, props.node);
+				injectRootTree?.ctx.emit(ON_NODE_CONTEXTMENU, event, props.node?.data, props.node);
 			};
 			return {
 				ns,

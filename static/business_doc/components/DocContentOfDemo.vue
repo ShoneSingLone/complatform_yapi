@@ -57,14 +57,30 @@ overflow:auto;`
 			setTimeout(() => {
 				this.isLoading = false;
 			}, 1000);
+
+			this.$watch(
+				() => {
+					return [this.$route.query?.scrollTo, this.contents];
+				},
+				_.debounce(([itemName]) => {
+					try {
+						itemName = decodeURI(itemName);
+						const item = _.find(this.contents, i => _.trim(i[0]) === itemName);
+						item[1].scrollIntoView({ behavior: "smooth", block: "center" });
+					} catch (error) {}
+				}, 300),
+				{ immediate: true }
+			);
 		},
 		methods: {
 			scrollTo(item) {
-				setTimeout(() => {
-					try {
-						item[1].scrollIntoView({ behavior: "smooth", block: "center" });
-					} catch (error) {}
-				}, 200);
+				this.$router.push({
+					path: this.$route.path,
+					query: {
+						...this.$route.query,
+						scrollTo: encodeURI(_.trim(item[0]))
+					}
+				});
 			}
 		}
 	});

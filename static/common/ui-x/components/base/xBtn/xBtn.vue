@@ -160,6 +160,7 @@ export default async function () {
 			getDirectives() {
 				let directives = [];
 				if (this.ripple) {
+					/* ripple 水波纹 */
 					directives.push({
 						name: "ripple",
 						value: {
@@ -168,6 +169,7 @@ export default async function () {
 					});
 				}
 				if (this.cptDisabledTips) {
+					/* disabled提示 */
 					directives.push({ name: "xtips", value: { content: this.cptDisabledTips, trigger: "hover", placement: "top", style: "--min-width:unset;" } });
 				}
 

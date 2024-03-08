@@ -3,7 +3,7 @@
 	<div>
 		<xMd :md="md" />
 		<xCard style="height: 500px; width: 500px">
-			<xTree :data="data" :props="props" />
+			<xTree :data="data" :props="props" show-checkbox />
 		</xCard>
 	</div>
 </template>
@@ -12,9 +12,17 @@ export default async function () {
 	return defineComponent({
 		inject: ["inject_tree"],
 		setup() {
-			let time = Date.now();
 			const data = this.inject_tree.createData(4, 30, 40);
-			_.$msgSuccess(`渲染耗时：${Date.now() - time}ms`);
+			const setDisabled = data => {
+				data.disabled = true;
+				if (data.children) {
+					_.each(data.children, setDisabled);
+				}
+			};
+			setDisabled(data[1]);
+			setDisabled(data[3]);
+			setDisabled(data[5]);
+			setDisabled(data[6]);
 			return {
 				props: {
 					value: "id",
@@ -22,7 +30,9 @@ export default async function () {
 					children: "children"
 				},
 				data,
-				md: `基础的树形结构展示`
+				md: `节点的复选框可以设置为禁用。
+在示例中，属性在 defaultProps 中声明了 disabled，一些节点被设置为 disabled：true。 相应的复选框已禁用，不能点击。
+				`
 			};
 		},
 		data() {

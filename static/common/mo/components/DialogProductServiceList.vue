@@ -1,6 +1,6 @@
 <template>
-	<xDialog id="DialogProductServiceList">
-		<div class="flex vertical pt pr pl" style="width: 900px; min-height: 400px">
+	<xDialog id="DialogProductServiceList" style="--xDialog-wrapper-width: 900px">
+		<div class="flex vertical pt pr pl" style="min-height: 400px">
 			<div class="headForWin flex">
 				<xGap f />
 				<xItem :configs="form.name" />

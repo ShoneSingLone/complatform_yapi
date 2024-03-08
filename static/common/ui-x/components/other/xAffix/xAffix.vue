@@ -5,7 +5,7 @@
 </style>
 <template>
 	<div ref="root" :class="ns.b()" :style="rootStyle">
-		<div :class="{ [ns.m('fixed')]: fixed }" :style="affixStyle">
+		<div :class="{ [ns.m('fixed')]: fixed }" :style="affixStyle" ref="refContent">
 			<slot />
 		</div>
 	</div>
@@ -13,8 +13,9 @@
 <script lang="ts">
 export default async function () {
 	const COMPONENT_NAME = "xAffix";
+	const { buildProps, useResizeObserver, useNamespace, useWindowSize, useElementBounding, addUnit, throwError, getScrollContainer, useEventListener } = _useXui;
 	return defineComponent({
-		props: _useXui.buildProps({
+		props: buildProps({
 			zIndex: {
 				type: [Number, String],
 				default: 1
@@ -35,28 +36,68 @@ export default async function () {
 		}),
 		setup(props, { expose, emit }) {
 			const vm = this;
-			const ns = _useXui.useNamespace("affix");
+			const ns = useNamespace("affix");
 			const target = shallowRef();
 			const root = shallowRef();
+			const contentRect = reactive({
+				width: 0,
+				height: 0
+			});
+
+			const updateContent = () => {
+				try {
+					const { children } = this.$refs.refContent;
+					const rect = _.reduce(
+						children,
+						(target, childDom) => {
+							target.width += childDom.offsetWidth;
+							target.height += childDom.offsetHeight;
+							return target;
+						},
+						{
+							width: 0,
+							height: 0
+						}
+					);
+					contentRect.width = rect.width;
+					contentRect.height = rect.height;
+				} catch (error) {}
+			};
+
 			const scrollContainer = shallowRef();
-			const { height: windowHeight } = _useXui.useWindowSize();
+			const { height: windowHeight, width: windowWidth } = useWindowSize();
 			const { height: rootHeight, width: rootWidth, top: rootTop, bottom: rootBottom, update: updateRoot } = _useXui.useElementBounding(root, { windowScroll: false });
-			const targetRect = _useXui.useElementBounding(target);
+
+			const targetRect = useElementBounding(target);
 			const fixed = ref(false);
 			const scrollTop = ref(0);
 			const transform = ref(0);
 			const rootStyle = computed(() => {
-				return {
-					height: fixed.value ? `${rootHeight.value}px` : "",
-					width: fixed.value ? `${rootWidth.value}px` : ""
-				};
+				/* window resize 时触发 */
+				windowWidth.value;
+				windowHeight.value;
+				contentRect.height;
+				contentRect.width;
+				if (fixed.value) {
+					let height = contentRect.height < rootHeight.value ? contentRect.height : rootHeight.value;
+					let width = contentRect.width > rootWidth.value ? contentRect.width : rootWidth.value;
+					return {
+						height: `${height}px`,
+						width: `${width}px`
+					};
+				} else {
+					return {
+						height: "",
+						width: ""
+					};
+				}
 			});
 			const affixStyle = computed(() => {
 				if (!fixed.value) return {};
-				const offset = props.offset ? _useXui.addUnit(props.offset) : 0;
+				const offset = props.offset ? addUnit(props.offset) : 0;
 				return {
-					height: `${rootHeight.value}px`,
-					width: `${rootWidth.value}px`,
+					// height: `${rootHeight.value}px`,
+					// width: `${rootWidth.value}px`,
 					top: props.position === "top" ? offset : "",
 					bottom: props.position === "bottom" ? offset : "",
 					transform: transform.value ? `translateY(${transform.value}px)` : "",
@@ -85,6 +126,7 @@ export default async function () {
 			};
 			const handleScroll = () => {
 				updateRoot();
+				updateContent();
 				emit("scroll", {
 					scrollTop: scrollTop.value,
 					fixed: fixed.value
@@ -95,14 +137,15 @@ export default async function () {
 				var _a2;
 				if (props.target) {
 					target.value = (_a2 = document.querySelector(props.target)) != null ? _a2 : void 0;
-					if (!target.value) _useXui.throwError(COMPONENT_NAME, `Target is not existed: ${props.target}`);
+					if (!target.value) throwError(COMPONENT_NAME, `Target is not existed: ${props.target}`);
 				} else {
 					target.value = document.documentElement;
 				}
-				scrollContainer.value = _useXui.getScrollContainer(root.value, true);
+				scrollContainer.value = getScrollContainer(root.value, true);
 				updateRoot();
+				updateContent();
 			});
-			_useXui.useEventListener(scrollContainer, "scroll", handleScroll);
+			useEventListener(scrollContainer, "scroll", handleScroll);
 			watchEffect(update);
 			expose({ update, updateRoot });
 			return {

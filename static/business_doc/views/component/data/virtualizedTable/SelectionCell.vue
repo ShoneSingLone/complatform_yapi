@@ -2,7 +2,7 @@
 export default async function () {
 	return defineComponent({
 		render(h) {
-			return h("ElCheckbox", this.$vnode.data);
+			return h("xCheckbox", this.$vnode.data);
 		}
 	});
 }

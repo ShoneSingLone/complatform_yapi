@@ -1,11 +1,9 @@
 <style lang="less"></style>
 <template>
 	<xForm>
-		<div span="full">
-			<xMd :md="md" />
-		</div>
-		<xItem :configs="form.xItemCheck_Group" />
-		<xItem :configs="form.xItemCheck_default" />
+		<div span="full"><xMd :md="md" /></div>
+		<xItem :configs="form.blockCheck_Group" />
+		<xItem :configs="form.blockCheck_default" />
 	</xForm>
 </template>
 <script lang="ts">
@@ -14,11 +12,12 @@ export default async function () {
 		data() {
 			return {
 				form: defItems({
-					xItemCheck_Group: {
+					blockCheck_Group: {
 						value: [1, 3, 5],
 						isGroup: true,
 						label: "Group",
 						itemType: "xItemCheck",
+						xItemCheckUse: "blockCheck",
 						options: [...new Array(20)].map((i, ii) => {
 							return {
 								label: `text_${ii}`,
@@ -26,11 +25,12 @@ export default async function () {
 							};
 						})
 					},
-					xItemCheck_default: {
+					blockCheck_default: {
 						value: true,
 						label: "default",
 						itemType: "xItemCheck",
-						options: ["如果不是group，options的元素可以是字符串，代表label。value为布尔值"]
+						xItemCheckUse: "blockCheck",
+						options: ["字符串"]
 					}
 				})
 			};
@@ -40,14 +40,13 @@ export default async function () {
 				return `
 \`\`\`json
 	{
-		"form.xItemCheck_Group.value":[${this.form.xItemCheck_Group.value}],
-		"form.xItemCheck_default.value":${this.form.xItemCheck_default.value},
+		"form.blockCheck_Group.value":[${this.form.blockCheck_Group.value}],
+		"form.blockCheck_default.value":${this.form.blockCheck_default.value},
 	}
 \`\`\`
-isGroup: true,//是否为分组
-- 为true时，value为数组
-- 为false时，value为单个值
-- 默认为false
+xItemCheckUse:
+- "blockCheck":选择器类型
+- 默认为blockCheck
 				`;
 			}
 		}

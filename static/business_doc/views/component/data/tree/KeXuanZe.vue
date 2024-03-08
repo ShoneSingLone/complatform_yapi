@@ -3,7 +3,7 @@
 	<div>
 		<xMd :md="md" />
 		<xCard style="height: 500px; width: 500px">
-			<xTree :data="data" :props="props" />
+			<xTree :data="data" :props="props" show-checkbox />
 		</xCard>
 	</div>
 </template>
@@ -12,9 +12,7 @@ export default async function () {
 	return defineComponent({
 		inject: ["inject_tree"],
 		setup() {
-			let time = Date.now();
 			const data = this.inject_tree.createData(4, 30, 40);
-			_.$msgSuccess(`渲染耗时：${Date.now() - time}ms`);
 			return {
 				props: {
 					value: "id",
@@ -22,7 +20,7 @@ export default async function () {
 					children: "children"
 				},
 				data,
-				md: `基础的树形结构展示`
+				md: `适用于需要选择层级时使用。`
 			};
 		},
 		data() {

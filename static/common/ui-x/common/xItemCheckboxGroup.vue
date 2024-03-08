@@ -1,16 +1,16 @@
 <template>
-	<el-checkbox-group v-model="mixin_value" v-bind="$attrs" v-on="mixin_listeners">
+	<xCheckboxGroup v-model="mixin_value" v-bind="$attrs" v-on="mixin_listeners">
 		<template v-if="isButton">
-			<el-checkbox-button v-for="option in selectOptions" :label="option.label" :key="option.value">
+			<xCheckboxButton v-for="option in selectOptions" :label="option.label" :key="option.value">
 				{{ option.label }}
-			</el-checkbox-button>
+			</xCheckboxButton>
 		</template>
 		<template v-else>
-			<el-checkbox v-for="option in selectOptions" :label="option.value" :key="option.label">
+			<xCheckbox v-for="option in selectOptions" :label="option.value" :key="option.label">
 				{{ option.label }}
-			</el-checkbox>
+			</xCheckbox>
 		</template>
-	</el-checkbox-group>
+	</xCheckboxGroup>
 </template>
 
 <script lang="ts">
@@ -25,7 +25,7 @@ export default async function () {
 					return this.options || this.configs?.options || [];
 				},
 				isButton() {
-					return this.configs?.button || false;
+					return this.configs?.isButton || false;
 				}
 			},
 			data() {

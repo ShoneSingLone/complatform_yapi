@@ -1,7 +1,6 @@
 <script lang="ts">
 export default async function () {
 	return [
-		"common/xItem/xItemCheck/xItemCheck",
 		"components/xExcalidraw/xExcalidraw",
 		/* *************** */
 		"components/other/xAlert/xAlert",
@@ -77,7 +76,7 @@ export default async function () {
 		"common/xInfoCardItem",
 		"common/xInquire",
 		"common/xItem",
-		"common/xItemCheckBox",
+		"common/xItem/xItemCheck/xItemCheck",
 		"common/xItemCheckboxGroup",
 		"common/xItemDatetime",
 		"common/xItemInput",

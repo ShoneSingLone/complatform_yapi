@@ -20,7 +20,7 @@ export default async function () {
 				if (injectRootTree.$attrs.contentRender) {
 					return injectRootTree.$attrs.contentRender({ node, data });
 				} else {
-					return h("span", { class: ns.be("node", "label") }, [node ? node.label : null]);
+					return h("span", { class: ns.be("node", "label") }, [node?.label]);
 				}
 			};
 		}

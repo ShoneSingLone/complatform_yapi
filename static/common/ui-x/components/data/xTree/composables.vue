@@ -8,12 +8,12 @@ export default async function () {
 	const NODE_EXPAND = "node-expand";
 	const NODE_COLLAPSE = "node-collapse";
 	const CURRENT_CHANGE = "current-change";
-	const NODE_CHECK = "check";
-	const NODE_CHECK_CHANGE = "check-change";
-	const NODE_CONTEXTMENU = "node-contextmenu";
+	const ON_CHECK = "check";
+	const ON_CHECK_CHANGE = "check-change";
+	const ON_NODE_CONTEXTMENU = "node-contextmenu";
 
-	function useTree(props, emit) {
-		const expandedKeyArray = ref(props.defaultExpandedKeys || []);
+	function useTree(props, emit, injectRootTree) {
+		const expandedKeySet = ref(new Set(props.expandedKeys));
 		const currentKey = ref();
 		const tree = shallowRef();
 		watch(
@@ -34,7 +34,11 @@ export default async function () {
 				immediate: true
 			}
 		);
-		const { isIndeterminate, isChecked, toggleCheckbox, getCheckedKeys, getCheckedNodes, getHalfCheckedKeys, getHalfCheckedNodes, setChecked, setCheckedKeys } = useCheck(props, tree);
+		const { isIndeterminate, isChecked, toggleCheckbox, getCheckedKeys, getCheckedNodes, getHalfCheckedKeys, getHalfCheckedNodes, setChecked, setCheckedKeys, checkedKeysSet } = useCheck(
+			props,
+			tree,
+			injectRootTree
+		);
 		const { doFilter, hiddenNodeKeySet, isForceHiddenExpandIcon } = useFilter(props, tree);
 		const valueKey = computed(() => {
 			var _a2;
@@ -53,7 +57,9 @@ export default async function () {
 			return ((_a2 = props.props) == null ? void 0 : _a2.label) || LABEL;
 		});
 		const flattenTree = computed(() => {
-			console.time("flattenTree");
+			/* vue2 未处理  Set 响应，用于触发computed 更新*/
+			injectRootTree.countExpand;
+			const expandedKeys = expandedKeySet.value;
 			const hiddenKeys = hiddenNodeKeySet.value;
 			const flattenNodes = [];
 			const nodes = (tree.value && tree.value.treeNodes) || [];
@@ -68,7 +74,7 @@ export default async function () {
 					if (!hiddenKeys.has(node.key)) {
 						flattenNodes.push(node);
 					}
-					if (expandedKeyArray.value.includes(node.key)) {
+					if (expandedKeys.has(node.key)) {
 						const children = node.children;
 						if (children) {
 							const length = children.length;
@@ -80,7 +86,6 @@ export default async function () {
 				}
 			}
 			traverse();
-			console.timeEnd("flattenTree");
 			return flattenNodes;
 		});
 		const isNotEmpty = computed(() => {
@@ -96,6 +101,7 @@ export default async function () {
 				for (const rawNode of nodes) {
 					const value = getKey(rawNode);
 					const node = {
+						label: "",
 						level,
 						key: value,
 						data: rawNode
@@ -131,7 +137,7 @@ export default async function () {
 		function filter(query) {
 			const keys2 = doFilter(query);
 			if (keys2) {
-				expandedKeyArray.value = Array.from(keys2);
+				expandedKeySet.value = keys2;
 			}
 		}
 		function getChildren(node) {
@@ -150,14 +156,16 @@ export default async function () {
 			return node[labelKey.value];
 		}
 		function toggleExpand(node) {
-			if (expandedKeyArray.value.includes(node.key)) {
+			const expandedKeys = expandedKeySet.value;
+			if (expandedKeys.has(node.key)) {
 				collapseNode(node);
 			} else {
 				expandNode(node);
 			}
+			injectRootTree.updateByToggleExpand();
 		}
-		function setExpandedKeys(newExpandedKeyArray) {
-			expandedKeyArray.value = newExpandedKeyArray;
+		function setExpandedKeys(keys2) {
+			expandedKeySet.value = new Set(keys2);
 		}
 		function handleNodeClick(node, e) {
 			emit(NODE_CLICK, node.data, node, e);
@@ -179,24 +187,25 @@ export default async function () {
 			toggleCheckbox(node, checked);
 		}
 		function expandNode(node) {
+			const keySet = expandedKeySet.value;
 			if (tree.value && props.accordion) {
 				const { treeNodeMap } = tree.value;
-				expandedKeyArray.value.forEach(key => {
+				keySet.forEach(key => {
 					const treeNode = treeNodeMap.get(key);
-					if (node && node.level === (treeNode == null ? void 0 : treeNode.level)) {
-						_.remove(expandedKeyArray.value, i => i === key);
+					if (node && node.level === treeNode?.level) {
+						keySet.delete(key);
 					}
 				});
 			}
-			expandedKeyArray.value.push(node.key);
+			keySet.add(node.key);
 			emit(NODE_EXPAND, node.data, node);
 		}
 		function collapseNode(node) {
-			_.remove(expandedKeyArray.value, i => i === node.key);
+			expandedKeySet.value.delete(node.key);
 			emit(NODE_COLLAPSE, node.data, node);
 		}
 		function isExpanded(node) {
-			return expandedKeyArray.value.includes(node.key);
+			return expandedKeySet.value.has(node.key);
 		}
 		function isDisabled(node) {
 			return !!node.disabled;
@@ -249,25 +258,25 @@ export default async function () {
 			getHalfCheckedNodes,
 			setChecked,
 			setCheckedKeys,
+			checkedKeysSet,
 			filter,
 			setData,
 			getNode,
 			expandNode,
 			collapseNode,
 			setExpandedKeys,
-			expandedKeySet: expandedKeyArray
+			expandedKeySet
 		};
 	}
 
-	function useCheck(props, tree) {
-		const checkedKeys = ref(/* @__PURE__ */ new Set());
-		const indeterminateKeys = ref(/* @__PURE__ */ new Set());
-		const { emit } = getCurrentInstance();
+	function useCheck(props, tree, injectRootTree) {
+		const checkedKeysSet = ref(new Set());
+		const indeterminateKeys = ref(new Set());
 		watch(
-			[() => tree.value, () => props.defaultCheckedKeys],
+			[() => tree.value, () => props.checkedKeys],
 			() => {
 				return nextTick(() => {
-					_setCheckedKeys(props.defaultCheckedKeys);
+					_setCheckedKeys(props.checkedKeys);
 				});
 			},
 			{
@@ -279,8 +288,8 @@ export default async function () {
 				return;
 			}
 			const { levelTreeNodeMap, maxLevel } = tree.value;
-			const checkedKeySet = checkedKeys.value;
-			const indeterminateKeySet = /* @__PURE__ */ new Set();
+			const checkedKeySet = checkedKeysSet.value;
+			const indeterminateKeySet = new Set();
 			for (let level = maxLevel - 1; level >= 1; --level) {
 				const nodes = levelTreeNodeMap.get(level);
 				if (!nodes) continue;
@@ -314,13 +323,14 @@ export default async function () {
 				});
 			}
 			indeterminateKeys.value = indeterminateKeySet;
+			injectRootTree.updateByCheckedChange();
 		};
-		const isChecked = node => checkedKeys.value.has(node.key);
+		const isChecked = node => checkedKeysSet.value.has(node.key);
 		const isIndeterminate = node => indeterminateKeys.value.has(node.key);
 		const toggleCheckbox = (node, isChecked2, nodeClick = true) => {
-			const checkedKeySet = checkedKeys.value;
+			const checkedKeySet = checkedKeysSet.value;
 			const toggle = (node2, checked) => {
-				checkedKeySet[checked ? SetOperationEnum.ADD : SetOperationEnum.DELETE](node2.key);
+				checkedKeySet[checked ? "add" : "delete"](node2.key);
 				const children = node2.children;
 				if (!props.checkStrictly && children) {
 					children.forEach(childNode => {
@@ -339,13 +349,13 @@ export default async function () {
 		const afterNodeCheck = (node, checked) => {
 			const { checkedNodes, checkedKeys: checkedKeys2 } = getChecked();
 			const { halfCheckedNodes, halfCheckedKeys } = getHalfChecked();
-			emit(NODE_CHECK, node.data, {
+			injectRootTree.$emit(ON_CHECK, node.data, {
 				checkedKeys: checkedKeys2,
 				checkedNodes,
 				halfCheckedKeys,
 				halfCheckedNodes
 			});
-			emit(NODE_CHECK_CHANGE, node.data, checked);
+			injectRootTree.$emit(ON_CHECK_CHANGE, node.data, checked);
 		};
 		function getCheckedKeys(leafOnly = false) {
 			return getChecked(leafOnly).checkedKeys;
@@ -364,7 +374,7 @@ export default async function () {
 			const keys2 = [];
 			if ((tree == null ? void 0 : tree.value) && props.showCheckbox) {
 				const { treeNodeMap } = tree.value;
-				checkedKeys.value.forEach(key => {
+				checkedKeysSet.value.forEach(key => {
 					const node = treeNodeMap.get(key);
 					if (node && (!leafOnly || (leafOnly && node.isLeaf))) {
 						keys2.push(key);
@@ -396,7 +406,7 @@ export default async function () {
 			};
 		}
 		function setCheckedKeys(keys2) {
-			checkedKeys.value.clear();
+			checkedKeysSet.value.clear();
 			indeterminateKeys.value.clear();
 			_setCheckedKeys(keys2);
 		}
@@ -431,7 +441,8 @@ export default async function () {
 			getHalfCheckedKeys,
 			getHalfCheckedNodes,
 			setChecked,
-			setCheckedKeys
+			setCheckedKeys,
+			checkedKeysSet
 		};
 	}
 
@@ -511,7 +522,7 @@ export default async function () {
 			default: 26
 		},
 		iconPropType: [String, Object, Function],
-		NODE_CONTEXTMENU
+		ON_NODE_CONTEXTMENU
 	};
 }
 </script>

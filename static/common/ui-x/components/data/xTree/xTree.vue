@@ -5,6 +5,7 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
+
 	.el-vl__window {
 		--ui-thumb-hover: transparent;
 	}
@@ -44,7 +45,7 @@ export default async function () {
 				type: Boolean,
 				default: false
 			},
-			defaultCheckedKeys: {
+			checkedKeys: {
 				type: Array,
 				default: () => []
 			},
@@ -52,7 +53,7 @@ export default async function () {
 				type: Boolean,
 				default: false
 			},
-			defaultExpandedKeys: {
+			expandedKeys: {
 				type: Array,
 				default: () => []
 			},
@@ -89,8 +90,13 @@ export default async function () {
 		}),
 		setup(props, { emit, expose, listeners, slots }) {
 			const treeNodeSize = computed(() => props.itemSize);
+			/* @ts-ignore */
+			this.updateByToggleExpand = _.debounce(() => this.countExpand++, 64);
+			/* @ts-ignore */
+			this.updateByCheckedChange = _.debounce(() => this.countChecked++, 64);
 
 			const {
+				/* 计算属性，实时现实的的数据 */
 				flattenTree,
 				isNotEmpty,
 				toggleExpand,
@@ -119,8 +125,9 @@ export default async function () {
 				expandNode,
 				collapseNode,
 				setExpandedKeys,
-				expandedKeySet
-			} = useTree(props, emit);
+				expandedKeySet,
+				checkedKeysSet
+			} = useTree(props, emit, this);
 
 			return {
 				ns: _useXui.useNamespace("tree"),
@@ -154,7 +161,8 @@ export default async function () {
 				expandNode,
 				collapseNode,
 				setExpandedKeys,
-				expandedKeySet
+				expandedKeySet,
+				checkedKeysSet
 			};
 		},
 		provide() {
@@ -163,22 +171,20 @@ export default async function () {
 			};
 		},
 		data() {
-			return {};
+			return {
+				countExpand: 0,
+				countChecked: 0
+			};
 		},
 		watch: {
-			expandedKeySet() {
-				for (const entry of this.expandedKeySet) {
-					console.log(entry);
-					// Expected output: Array [42, 42]
-					// Expected output: Array ["forty two", "forty two"]
-				}
+			countExpand() {
+				this.$emit("update:expandedKeys", Array.from(this.expandedKeySet));
+			},
+			countChecked() {
+				this.$emit("update:checkedKeys", Array.from(this.checkedKeysSet));
 			}
 		},
-		computed: {
-			cptTreeRootClass() {
-				return [this.ns.b(), { [this.ns.m("highlight-current")]: this.highlightCurrent }];
-			}
-		},
+		computed: {},
 		methods: {
 			defaultRender({ data, index, style }) {
 				const props = {
@@ -200,6 +206,7 @@ export default async function () {
 					current: this.isCurrent(data[index]),
 					hiddenExpandIcon: this.isForceHiddenExpandIcon(data[index]),
 					onClick: this.handleNodeClick,
+					/* 点击折叠三角 */
 					onToggle: this.toggleExpand,
 					onCheck: this.handleNodeCheck
 				};
