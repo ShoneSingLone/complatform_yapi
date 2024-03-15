@@ -110,7 +110,7 @@
 	(function loadBaseInfo() {
 		const srcRootDom = $$id("src-root");
 		const { src } = srcRootDom;
-		const srcRoot = src.replace("/common/libs/seed.js", "");
+		const [srcRoot] = src.split("/common/libs/seed");
 
 		const { appName, appEntryName, appVersion } = srcRootDom.dataset;
 		if (!appName) {
@@ -261,7 +261,7 @@
 					}
 				}
 			}
-		} catch (error) {}
+		} catch (error) { }
 
 		if (/^@/.test(url)) {
 			/* 业务代码 */
@@ -455,6 +455,13 @@
 		_.$idb = $idb;
 		_.$resolvePath = $resolvePath;
 		_.$loadText = _$loadText;
+
+		(async function () {
+			if (new URLSearchParams(location.search).get("useVconsole")) {
+				const VConsole = await _.$appendScript("/common/libs/vconsole.min.js", "VConsole");
+				window._vConsole = new VConsole();
+			}
+		})();
 
 		/* dep jQuery */
 		await Promise.all([$appendScript("/common/libs/common.js")]);

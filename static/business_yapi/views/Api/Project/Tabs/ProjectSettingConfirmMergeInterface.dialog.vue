@@ -97,7 +97,7 @@ export default async function ({ domainData, originData, dataSync }) {
 									};
 									const res = await _api.yapi.interfaceAddCat(params);
 									if (res?.errcode === 0) {
-										cat.id = res._id;
+										cat.id = res.data._id;
 									} else {
 										throw new Error(res.message);
 									}
@@ -106,7 +106,6 @@ export default async function ({ domainData, originData, dataSync }) {
 						} catch (error) {
 							console.error("Error adding or finding cats:", error);
 						}
-					} else {
 					}
 					await vm.inject_project.getInterfaceList();
 					return catsObj;
@@ -116,10 +115,10 @@ export default async function ({ domainData, originData, dataSync }) {
 				}
 			},
 			async handleAddInterface() {
+				const vm = this;
 				_.$loading(true);
 				try {
-					const vm = this;
-					const cats = await this.ensureAllCategoryExist(originData /* cats,apis */);
+					await vm.ensureAllCategoryExist(originData /* cats,apis */);
 					let { basePath } = originData;
 					vm.hasDone = 0;
 					vm.successNum = 0;
@@ -140,17 +139,18 @@ export default async function ({ domainData, originData, dataSync }) {
 							let interfaceInfo = Object.assign(api, {
 								project_id: projectId
 							});
-							const category = cats[interfaceInfo.catname];
-							const undefinedCategory = _.find(cats, { title: "公共分类" });
+							const category = _.find(vm.inject_project.allCategory, { name: interfaceInfo.catname });
+							const undefinedCategory = _.find(vm.inject_project.allCategory, { title: "公共分类" });
 							(function () {
 								if (interfaceInfo.catname) {
 									if (category?._id) {
 										interfaceInfo.catid = category._id;
 										return;
 									}
+								} else {
+									interfaceInfo.catname = undefinedCategory.name;
+									interfaceInfo.catid = undefinedCategory._id;
 								}
-								interfaceInfo.catname = undefinedCategory.name;
-								interfaceInfo.catid = undefinedCategory._id;
 							})();
 
 							interfaceInfo.token = token;
@@ -187,6 +187,7 @@ export default async function ({ domainData, originData, dataSync }) {
 				} catch (error) {
 					_.$msgError(error);
 				} finally {
+					await vm.inject_project.getInterfaceList();
 					_.$loading(false);
 				}
 			}

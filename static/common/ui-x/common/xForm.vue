@@ -14,7 +14,7 @@ export default async function () {
 						ref: "xForm",
 						class: "xForm",
 						style: {
-							"--xForm-col": ` repeat(${cpt_col.value}, 1fr)`
+							"--xForm-col": `repeat(${cpt_col.value}, 1fr)`
 						},
 						attrs,
 						props

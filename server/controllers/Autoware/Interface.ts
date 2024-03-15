@@ -852,8 +852,8 @@ module.exports = {
 		},
 		"/interface/add": {
 			post: {
-				summary: "添加项目分组",
-				description: "添加项目分组",
+				summary: "添加项目接口",
+				description: "添加项目接口",
 				request: interfaceUpsertRequest,
 				handler: hander_interface_add
 			}
@@ -881,38 +881,7 @@ module.exports = {
 						}
 					}
 				},
-				async handler(ctx) {
-					try {
-						let { payload } = ctx;
-						let username = this.getUsername();
-						let cate = await orm.interfaceCategory.get(payload.catid);
-						let auth = await this.checkAuth(cate.project_id, "project", "edit");
-
-						if (!auth) {
-							return (ctx.body = xU.$response(null, 400, "没有权限"));
-						}
-
-						let result = await orm.interfaceCategory.up(payload.catid, {
-							name: payload.name,
-							desc: payload.desc,
-							up_time: xU.time()
-						});
-
-						xU.saveLog({
-							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${
-								cate.project_id
-							}/interface/api/cat_${payload.catid}">${cate.name}</a>`,
-							type: "project",
-							uid: this.getUid(),
-							username: username,
-							typeid: cate.project_id
-						});
-
-						ctx.body = xU.$response(result);
-					} catch (e) {
-						ctx.body = xU.$response(null, 400, e.message);
-					}
-				}
+				handler: hander_interface_up_cat
 			}
 		},
 		"/interface/add_cat": {
@@ -938,67 +907,97 @@ module.exports = {
 						}
 					}
 				},
-				async handler(ctx) {
-					try {
-						let params = ctx.request.body;
-						params = xU.ensureParamsType(params, {
-							name: "string",
-							project_id: "number",
-							desc: "string"
-						});
-
-						if (!params.project_id) {
-							return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
-						}
-						if (!this.$tokenAuth) {
-							let auth = await this.checkAuth(
-								params.project_id,
-								"project",
-								"edit"
-							);
-							if (!auth) {
-								return (ctx.body = xU.$response(null, 400, "没有权限"));
-							}
-						}
-
-						if (!params.name) {
-							return (ctx.body = xU.$response(null, 400, "名称不能为空"));
-						}
-
-						const res = await orm.interfaceCategory.search({
-							project_id: params.project_id,
-							name: params.name
-						});
-						if (res?.length) {
-							return (ctx.body = xU.$response(null, 400, "名称已存在"));
-						}
-
-						let result = await orm.interfaceCategory.save({
-							name: params.name,
-							project_id: params.project_id,
-							desc: params.desc,
-							uid: this.getUid(),
-							add_time: xU.time(),
-							up_time: xU.time()
-						});
-
-						let username = this.getUsername();
-						xU.saveLog({
-							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了分类  <a href="/project/${
-								params.project_id
-							}/interface/api/cat_${result._id}">${params.name}</a>`,
-							type: "project",
-							uid: this.getUid(),
-							username: username,
-							typeid: params.project_id
-						});
-
-						ctx.body = xU.$response(result);
-					} catch (e) {
-						ctx.body = xU.$response(null, 402, e.message);
-					}
-				}
+				handler: handler_interface_add_cat
 			}
 		}
 	}
 };
+
+async function hander_interface_up_cat(ctx) {
+	try {
+		let { payload } = ctx;
+		let username = this.getUsername();
+		let cate = await orm.interfaceCategory.get(payload.catid);
+		let auth = await this.checkAuth(cate.project_id, "project", "edit");
+
+		if (!auth) {
+			return (ctx.body = xU.$response(null, 400, "没有权限"));
+		}
+
+		let result = await orm.interfaceCategory.up(payload.catid, {
+			name: payload.name,
+			desc: payload.desc,
+			up_time: xU.time()
+		});
+
+		xU.saveLog({
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${
+				cate.project_id
+			}/interface/api/cat_${payload.catid}">${cate.name}</a>`,
+			type: "project",
+			uid: this.getUid(),
+			username: username,
+			typeid: cate.project_id
+		});
+
+		ctx.body = xU.$response(result);
+	} catch (e) {
+		ctx.body = xU.$response(null, 400, e.message);
+	}
+}
+
+async function handler_interface_add_cat(ctx) {
+	try {
+		let params = ctx.request.body;
+		params = xU.ensureParamsType(params, {
+			name: "string",
+			project_id: "number",
+			desc: "string"
+		});
+
+		if (!params.project_id) {
+			return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
+		}
+		if (!this.$tokenAuth) {
+			let auth = await this.checkAuth(params.project_id, "project", "edit");
+			if (!auth) {
+				return (ctx.body = xU.$response(null, 400, "没有权限"));
+			}
+		}
+
+		if (!params.name) {
+			return (ctx.body = xU.$response(null, 400, "名称不能为空"));
+		}
+
+		const res = await orm.interfaceCategory.search({
+			project_id: params.project_id,
+			name: params.name
+		});
+		if (res?.length) {
+			return (ctx.body = xU.$response(null, 400, "名称已存在"));
+		}
+
+		let result = await orm.interfaceCategory.save({
+			name: params.name,
+			project_id: params.project_id,
+			desc: params.desc,
+			uid: this.getUid(),
+			add_time: xU.time(),
+			up_time: xU.time()
+		});
+
+		let username = this.getUsername();
+		xU.saveLog({
+			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了分类  <a href="/project/${
+				params.project_id
+			}/interface/api/cat_${result._id}">${params.name}</a>`,
+			type: "project",
+			uid: this.getUid(),
+			username: username,
+			typeid: params.project_id
+		});
+		ctx.body = xU.$response(result);
+	} catch (e) {
+		ctx.body = xU.$response(null, 402, e.message);
+	}
+}
