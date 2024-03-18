@@ -38,6 +38,11 @@ export default async function () {
 						data
 					});
 				},
+				wikiResetMenuOrder(data) {
+					return _.$ajax.post("/api/wiki/reset_menu_order", {
+						data
+					});
+				},
 				wikiUpsertOne(data) {
 					return _.$ajax.post("/api/wiki/upsertOne", {
 						data

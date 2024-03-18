@@ -38,7 +38,8 @@ export default async function () {
 
 			return {
 				treeData: [],
-				currentWiki: {}
+				currentWiki: {},
+				belongType: "all"
 			};
 		},
 		methods: {
@@ -52,7 +53,7 @@ export default async function () {
 				});
 			},
 			async updateWikiMenuList() {
-				let payload = { belong_to: "all" };
+				let payload = { belong_type: "all" };
 				const { data } = await _api.yapi.wikiMenu(payload);
 				const { list, orderArray } = data;
 				this.treeData = this.buildTree(list, orderArray);

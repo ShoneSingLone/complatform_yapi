@@ -36,11 +36,15 @@ export default async function () {
 		},
 		methods: {
 			syncData() {
-				const newCode = this.raw$editor.getValue();
-				if (this.mixin_value && !newCode) {
-					this.raw$editor.setValue(this.mixin_value);
-				} else if (newCode !== this.mixin_value) {
-					this.mixin_value = newCode;
+				try {
+					const newCode = this.raw$editor.getValue();
+					if (this.mixin_value && !newCode) {
+						this.raw$editor.setValue(this.mixin_value);
+					} else if (newCode !== this.mixin_value) {
+						this.mixin_value = newCode;
+					}
+				} catch (error) {
+					console.error(error);
 				}
 			}
 		},

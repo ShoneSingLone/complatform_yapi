@@ -1,6 +1,6 @@
 <style lang="less"></style>
 <template>
-	<xDialog>
+	<xDialog style="--xDialog-wrapper-width: 400px; --xItem-label-width: 34px">
 		<xForm ref="form" col="1">
 			<xItem :configs="form.title" span="full" />
 		</xForm>

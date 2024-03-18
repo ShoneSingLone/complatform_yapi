@@ -15,10 +15,10 @@ export default async function () {
 			const injectRootTree = vm.injectRootTree;
 			const ns = _useXui.useNamespace("tree");
 			return () => {
-				const node = vm.node;
+				const { node } = vm;
 				const { data } = node;
 				if (injectRootTree.$attrs.contentRender) {
-					return injectRootTree.$attrs.contentRender({ node, data });
+					return injectRootTree.$attrs.contentRender({ node, data, injectRootTree });
 				} else {
 					return h("span", { class: ns.be("node", "label") }, [node?.label]);
 				}

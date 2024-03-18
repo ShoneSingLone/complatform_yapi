@@ -17,6 +17,9 @@ export default async function () {
 
 	return defineComponent({
 		props: _useXui.buildProps({
+			dragAndDrop: {
+				type: Function
+			},
 			data: {
 				type: Array,
 				default: () => []
@@ -67,7 +70,7 @@ export default async function () {
 			},
 			expandOnClickNode: {
 				type: Boolean,
-				default: true
+				default: false
 			},
 			checkOnClickNode: {
 				type: Boolean,
@@ -172,6 +175,8 @@ export default async function () {
 		},
 		data() {
 			return {
+				drag: -1,
+				drop: -1,
 				countExpand: 0,
 				countChecked: 0
 			};

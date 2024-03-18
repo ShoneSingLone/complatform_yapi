@@ -1,11 +1,12 @@
 <template>
 	<DocContentOfDemo>
-		<DemoAndCode title="基础用法" path="@/views/component/data/tree/JiChuYongFa.vue" unfold />
+		<DemoAndCode title="基础用法" path="@/views/component/data/tree/JiChuYongFa.vue" />
 		<DemoAndCode title="可选择" path="@/views/component/data/tree/KeXuanZe.vue" />
 		<DemoAndCode title="禁用复选框" path="@/views/component/data/tree/JinYongFuXuanKuang.vue" />
 		<DemoAndCode title="默认扩展和默认选中" path="@/views/component/data/tree/MoRenKuoZhanHeMoRenXuanZhong.vue" />
 		<DemoAndCode title="自定义节点内容" path="@/views/component/data/tree/ZiDingYiJieDianNeiRong.vue" />
 		<DemoAndCode title="节点过滤" path="@/views/component/data/tree/JieDianGuoLv.vue" />
+		<DemoAndCode title="可拖拽节点" path="@/views/component/data/tree/KeTuoZhuaiJieDian.vue" unfold />
 		<xMd :md="apiString" />
 	</DocContentOfDemo>
 </template>
