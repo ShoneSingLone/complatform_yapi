@@ -5831,10 +5831,13 @@ export default async function () {
 
 <style lang="less">
 .markdown-wrapper {
+	overflow: auto;
+
 	pre {
-		margin: var(--ui-one);
+		margin: 0;
+
 		> code {
-			max-width: 800px;
+			display: flex;
 			padding: var(--ui-one);
 			border-radius: var(--border-radius);
 			box-shadow: var(--el-box-shadow);
@@ -5849,6 +5852,7 @@ export default async function () {
 		margin: 0;
 	}
 	code {
+		overflow: auto;
 		padding: 4px;
 		background-color: #fdf6ec;
 		border-color: #faecd8;
@@ -5888,7 +5892,6 @@ export default async function () {
 		display: table;
 		border-collapse: collapse;
 		margin: var(--ui-one);
-		overflow-x: auto;
 		tr {
 			border-top: 1px solid var(--ui-dividing-line, #f2f2f3);
 		}
@@ -5963,7 +5966,6 @@ export default async function () {
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #2b2b2b;
 		color: #f8f8f2;
 		padding: 0.5em;
@@ -6065,7 +6067,6 @@ export default async function () {
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #fefefe;
 		color: #545454;
 		padding: var(--ui-one);
@@ -6126,7 +6127,6 @@ export default async function () {
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #333;
 		color: white;
@@ -6283,7 +6283,6 @@ Based on Jesse Leite's Atom syntax theme 'An Old Hope' – https://github.com/Je
 	/* Millenium Falcon */
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #1c1d21;
 		color: #c0c5ce;
 		padding: 0.5em;
@@ -6308,7 +6307,6 @@ Author: Pedro Oliveira <kanytu@gmail . com>
 		color: #a9b7c6;
 		background: #282b2e;
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 	}
 
@@ -6376,7 +6374,6 @@ Arduino® Light Theme - Stefania Mellai <s.mellai@arduino.cc>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #ffffff;
 	}
@@ -6465,7 +6462,6 @@ Author: pumbur <pumbur@pumbur.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #222;
 	}
@@ -6542,7 +6538,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: white;
 		color: black;
@@ -6652,7 +6647,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #19171c;
 		color: #8b8792;
 		padding: 0.5em;
@@ -6740,7 +6734,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #efecf4;
 		color: #585260;
 		padding: 0.5em;
@@ -6812,7 +6805,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #20201d;
 		color: #a6a28c;
 		padding: 0.5em;
@@ -6884,7 +6876,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #fefbec;
 		color: #6e6b5e;
 		padding: 0.5em;
@@ -6971,7 +6962,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #22221b;
 		color: #929181;
 		padding: 0.5em;
@@ -7058,7 +7048,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #f4f3ec;
 		color: #5f5e4e;
 		padding: 0.5em;
@@ -7130,7 +7119,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #1b1918;
 		color: #a8a19f;
 		padding: 0.5em;
@@ -7202,7 +7190,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #f1efee;
 		color: #68615e;
 		padding: 0.5em;
@@ -7274,7 +7261,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #1b181b;
 		color: #ab9bab;
 		padding: 0.5em;
@@ -7346,7 +7332,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #f7f3f7;
 		color: #695d69;
 		padding: 0.5em;
@@ -7418,7 +7403,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #161b1d;
 		color: #7ea2b4;
 		padding: 0.5em;
@@ -7490,7 +7474,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #ebf8ff;
 		color: #516d7b;
 		padding: 0.5em;
@@ -7577,7 +7560,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #1b1818;
 		color: #8a8585;
 		padding: 0.5em;
@@ -7664,7 +7646,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #f4ecec;
 		color: #585050;
 		padding: 0.5em;
@@ -7751,7 +7732,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #171c19;
 		color: #87928a;
 		padding: 0.5em;
@@ -7838,7 +7818,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #ecf4ee;
 		color: #526057;
 		padding: 0.5em;
@@ -7910,7 +7889,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #131513;
 		color: #8ca68c;
 		padding: 0.5em;
@@ -7982,7 +7960,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #f4fbf4;
 		color: #5e6e5e;
 		padding: 0.5em;
@@ -8054,7 +8031,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #202746;
 		color: #979db4;
 		padding: 0.5em;
@@ -8126,7 +8102,6 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #f5f7ff;
 		color: #5e6687;
 		padding: 0.5em;
@@ -8151,7 +8126,6 @@ Original One Dark Syntax theme from https://github.com/atom/one-dark-syntax
 */
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #abb2bf;
 		background: #282c34;
@@ -8286,7 +8260,6 @@ hue-6-2: #e6c07b
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #abb2bf;
 		background: #282c34;
@@ -8385,7 +8358,6 @@ hue-6-2: #c18401
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #383a42;
 		background: #fafafa;
@@ -8470,7 +8442,6 @@ Brown Paper style from goldblog.com.ua (c) Zaripov Yura <yur4ik7@ukr.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #b7a68e url(/common/assets/highlightstyles/brown-papersq.png);
 	}
@@ -8537,7 +8508,6 @@ Brown Paper style from goldblog.com.ua (c) Zaripov Yura <yur4ik7@ukr.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #222;
 		color: #fff;
@@ -8602,7 +8572,6 @@ Ported by Fabrício Tavares de Oliveira
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #fff;
 	}
@@ -8672,7 +8641,6 @@ Darcula color scheme from the JetBrains family of IDEs
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #2b2b2b;
 		color: #bababa;
@@ -8748,7 +8716,6 @@ Dark style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Or
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #444;
 	}
@@ -8814,7 +8781,6 @@ Original highlight.js style (c) Ivan Sagalaev <maniac@softwaremaniacs.org>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #f0f0f0;
 	}
@@ -8909,7 +8875,6 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #000;
 		background: #f8f8ff;
@@ -9021,7 +8986,6 @@ http://zenorocha.mit-license.org
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #282a36;
 	}
@@ -9090,7 +9054,6 @@ FAR Style (c) MajestiC <majestic2k@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #000080;
 	}
@@ -9166,7 +9129,6 @@ Date: 2013-04-02
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #eee;
 		color: black;
@@ -9259,7 +9221,6 @@ Date: 2013-04-02
 		background: white;
 		padding: 0.5em;
 		color: #333333;
-		overflow-x: auto;
 	}
 
 	.hljs-comment,
@@ -9338,7 +9299,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #333;
 		background: #f8f8f8;
@@ -9440,7 +9400,6 @@ GML Theme - Meseta <meseta@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #222222;
 		color: #c0c0c0;
@@ -9521,7 +9480,6 @@ Google Code style (c) Aahan Krish <geekpanth3r@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: white;
 		color: black;
@@ -9613,7 +9571,6 @@ Gradient Dark (c) Samia Ali <samiaab1990@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: rgb(80, 31, 122);
 		background: linear-gradient(166deg, rgba(80, 31, 122, 1) 0%, rgba(40, 32, 179, 1) 80%);
@@ -9716,7 +9673,6 @@ Gradient Light (c) Samia Ali <samiaab1990@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: rgb(255, 253, 141);
 		background: linear-gradient(142deg, rgba(255, 253, 141, 1) 0%, rgba(252, 183, 255, 1) 35%, rgba(144, 236, 255, 1) 100%);
@@ -9819,7 +9775,6 @@ grayscale style (c) MY Sun <simonmysun@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #333;
 		background: #fff;
@@ -9924,7 +9879,6 @@ Gruvbox style (dark) (c) Pavel Pertsev (original style at https://github.com/mor
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #282828;
 	}
@@ -10035,7 +9989,6 @@ Gruvbox style (light) (c) Pavel Pertsev (original style at https://github.com/mo
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #fbf1c7;
 	}
@@ -10209,7 +10162,6 @@ Gruvbox style (light) (c) Pavel Pertsev (original style at https://github.com/mo
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #322931;
 		color: #b9b5b8;
 		padding: 0.5em;
@@ -10234,7 +10186,6 @@ vim-hybrid theme by w0ng (https://github.com/w0ng/vim-hybrid)
 	/*background color*/
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #1d1f21;
 	}
@@ -10338,7 +10289,6 @@ Intellij Idea-like styling (c) Vasily Polovnyov <vast@whiteants.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #000;
 		background: #fff;
@@ -10436,7 +10386,6 @@ Intellij Idea-like styling (c) Vasily Polovnyov <vast@whiteants.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #000;
 		color: #f8f8f8;
@@ -10514,7 +10463,6 @@ ISBL Editor style dark color scheme (c) Dmitriy Tarasov <dimatar@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #404040;
 		color: #f0f0f0;
@@ -10627,7 +10575,6 @@ ISBL Editor style light color schemec (c) Dmitriy Tarasov <dimatar@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: white;
 		color: black;
@@ -10792,7 +10739,6 @@ ISBL Editor style light color schemec (c) Dmitriy Tarasov <dimatar@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #221a0f;
 		color: #d3af86;
 		padding: 0.5em;
@@ -10869,7 +10815,6 @@ ISBL Editor style light color schemec (c) Dmitriy Tarasov <dimatar@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #fbebd4;
 		color: #84613d;
 		padding: 0.5em;
@@ -10893,7 +10838,6 @@ Lightfair style (c) Tristian Kelly <tristian.kelly560@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #fff;
 	}
@@ -11047,7 +10991,6 @@ Lightfair style (c) Tristian Kelly <tristian.kelly560@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #303030;
 		color: #c5c8c6;
 		padding: 0.5em;
@@ -11074,7 +11017,6 @@ Music: Aphex Twin / Xtal
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background-color: #f4f4f4;
 		color: black;
@@ -11141,7 +11083,6 @@ Music: Aphex Twin / Xtal
 */
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #eaeef3;
 		color: #00193a;
@@ -11203,7 +11144,6 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #23241f;
 	}
@@ -11287,7 +11227,6 @@ Monokai style - ported by Luigi Maselli - http://grigio.org
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #272822;
 		color: #ddd;
@@ -11386,7 +11325,6 @@ SOFTWARE.
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #011627;
 		color: #d6deeb;
@@ -11577,7 +11515,6 @@ SOFTWARE.
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #333;
 		color: #fff;
@@ -11686,7 +11623,6 @@ SOFTWARE.
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #fff;
 		color: #000;
@@ -11799,7 +11735,6 @@ SOFTWARE.
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #2e3440;
 	}
@@ -12104,7 +12039,6 @@ SOFTWARE.
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #282b2e;
 	}
@@ -12249,7 +12183,6 @@ SOFTWARE.
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #2b303b;
 		color: #c0c5ce;
 		padding: 0.5em;
@@ -12324,7 +12257,6 @@ SOFTWARE.
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #2f1e2e;
 		color: #a39e9b;
 		padding: 0.5em;
@@ -12399,7 +12331,6 @@ SOFTWARE.
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #e7e9db;
 		color: #4f424c;
 		padding: 0.5em;
@@ -12425,7 +12356,6 @@ Based on Solarized Style from http://ethanschoonover.com/solarized
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #dccf8f;
 		background: url(/common/assets/highlightstyles/pojoaque.jpg) repeat scroll left top #181914;
@@ -12526,7 +12456,6 @@ NOTE_2:	Color names provided in comments were derived using "Name that Color" on
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #ffffdf;
 		/* Half and Half (approx.) */
@@ -12624,7 +12553,6 @@ Qt Creator dark color scheme
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #000000;
 	}
@@ -12708,7 +12636,6 @@ Qt Creator light color scheme
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #ffffff;
 	}
@@ -12792,7 +12719,6 @@ Railscasts-like style (c) Visoft, Inc. (Damien White)
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #232323;
 		color: #e6e1dc;
@@ -12900,7 +12826,6 @@ Style with support for rainbow parens
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #474949;
 		color: #d1d9e1;
@@ -12987,7 +12912,6 @@ Style with support for rainbow parens
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #f0f0f0;
 	}
@@ -13095,7 +13019,6 @@ School Book style from goldblog.com.ua (c) Zaripov Yura <yur4ik7@ukr.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 15px 0.5em 0.5em 30px;
 		font-size: 11px;
 		line-height: 16px;
@@ -13169,7 +13092,6 @@ School Book style from goldblog.com.ua (c) Zaripov Yura <yur4ik7@ukr.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		/* Custom font is optional */
 		/* font-family: 'Operator Mono', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', 'monospace';  */
 		padding: 0.5em;
@@ -13266,7 +13188,6 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #002b36;
 		color: #839496;
@@ -13353,7 +13274,6 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #fdf6e3;
 		color: #657b83;
@@ -13441,7 +13361,6 @@ Date: 2020-04-06
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #1c1b19;
 		color: #fce8c3;
@@ -13522,7 +13441,6 @@ Date: 2020-04-06
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #ffffff;
 		background: #1c1b1b;
@@ -13603,7 +13521,6 @@ Date: 2020-04-06
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		color: #2f3337;
 		background: #f6f6f6;
@@ -13683,7 +13600,6 @@ Sunburst-like style (c) Vasily Polovnyov <vast@whiteants.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #000;
 		color: #f8f8f8;
@@ -13842,7 +13758,6 @@ Sunburst-like style (c) Vasily Polovnyov <vast@whiteants.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #002451;
 		color: white;
 		padding: 0.5em;
@@ -13919,7 +13834,6 @@ Sunburst-like style (c) Vasily Polovnyov <vast@whiteants.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: black;
 		color: #eaeaea;
 		padding: 0.5em;
@@ -13996,7 +13910,6 @@ Sunburst-like style (c) Vasily Polovnyov <vast@whiteants.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #2d2d2d;
 		color: #cccccc;
 		padding: 0.5em;
@@ -14074,7 +13987,6 @@ Sunburst-like style (c) Vasily Polovnyov <vast@whiteants.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: #1d1f21;
 		color: #c5c8c6;
 		padding: 0.5em;
@@ -14149,7 +14061,6 @@ Sunburst-like style (c) Vasily Polovnyov <vast@whiteants.net>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		background: white;
 		color: #4d4d4c;
 		padding: 0.5em;
@@ -14172,7 +14083,6 @@ Visual Studio-like style based on original C# coloring by Jason Diamond <jason@d
 */
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: white;
 		color: black;
@@ -14242,7 +14152,6 @@ Visual Studio-like style based on original C# coloring by Jason Diamond <jason@d
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #1e1e1e;
 		color: #dcdcdc;
@@ -14362,7 +14271,6 @@ XCode style (c) Angel Garcia <angelgarcia.mail@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #fff;
 		color: black;
@@ -14469,7 +14377,6 @@ XCode style (c) Angel Garcia <angelgarcia.mail@gmail.com>
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		color: #eaeaea;
 		background: #000;
 		padding: 0.5em;
@@ -14563,7 +14470,6 @@ based on dark.css by Ivan Sagalaev
 
 	.hljs {
 		display: block;
-		overflow-x: auto;
 		padding: 0.5em;
 		background: #3f3f3f;
 		color: #dcdcdc;

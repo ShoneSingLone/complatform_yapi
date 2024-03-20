@@ -96,7 +96,9 @@ export default async function ({ categoryInfo, project_id, getInterfaceList }) {
 						path,
 						method: apiMethod
 					});
-					debugger;
+					if (res.errcode) {
+						throw new Error(res.message);
+					}
 					await getInterfaceList();
 					this.closeModal();
 					_.$msgSuccess("添加接口成功");

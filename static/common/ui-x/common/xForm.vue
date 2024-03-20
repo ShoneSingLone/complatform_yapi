@@ -69,6 +69,7 @@ export default async function () {
 
 	each(@listFlex, {
 		.grid-column@{value} {
+			overflow: auto;
 			grid-column: span @value;
 		}
 	});

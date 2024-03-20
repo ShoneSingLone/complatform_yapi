@@ -1,10 +1,10 @@
 <template>
 	<div :class="['markdown-wrapper', itemConfits.value]">
-		<div ref="refSlot" class="markdown-wrapper_description mt10 display-none">
+		<div ref="refSlot" class="markdown-wrapper_description display-none">
 			<slot> </slot>
 		</div>
 		<!-- <xItem :configs="itemConfits" /> -->
-		<div class="markdown-wrapper_description mt10" v-html="html"></div>
+		<div class="markdown-wrapper_description" v-html="html"></div>
 	</div>
 </template>
 

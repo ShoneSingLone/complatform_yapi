@@ -18,6 +18,8 @@
 
 	.xDescItem-content {
 		word-break: break-all;
+		width: 1px;
+		overflow: auto;
 	}
 }
 </style>
