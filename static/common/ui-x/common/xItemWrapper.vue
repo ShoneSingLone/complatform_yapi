@@ -110,7 +110,7 @@ export default async function () {
 								"span",
 								{
 									vIf: vm.tips,
-									staticClass: "xItem_info-msg mt4"
+									staticClass: "xItem-msg mt4"
 								},
 								[vm.tips]
 							)

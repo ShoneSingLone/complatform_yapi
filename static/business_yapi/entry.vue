@@ -294,3 +294,9 @@ export default async function () {
 	return rootApp;
 }
 </script>
+
+<style lang="less">
+:root {
+	// --xItem-wrapper-width: 240px;
+}
+</style>

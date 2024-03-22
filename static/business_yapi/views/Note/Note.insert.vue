@@ -1,22 +1,20 @@
 <style lang="less"></style>
 <template>
-	<xDialog style="--xDialog-wrapper-width: 400px; --xItem-label-width: 34px">
+	<xDialog style="--xItem-label-width: 38px; width: 400px">
 		<xForm ref="form" col="1">
 			<xItem :configs="form.title" span="full" />
 		</xForm>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
+			<xBtn :configs="btnCancel" />
 		</template>
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ parentDocId, belong_type, belong_id }) {
-	/* 必要，混入"closeModal", "layerMax", "layerMin", "layerRestore" */
-	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
+export default async function () {
 	return defineComponent({
 		inject: ["APP", "inject_note"],
-		props: useDialogProps(),
+		props: ["parentDocId", "belong_type", "belong_id", "hide"],
 		data() {
 			return {
 				form: {
@@ -31,10 +29,10 @@ export default async function ({ parentDocId, belong_type, belong_id }) {
 		},
 		computed: {
 			pid() {
-				return parentDocId || 0;
+				return this.parentDocId || 0;
 			},
 			belong_type() {
-				return this.propOptions.belong_type || "all";
+				return this.belong_type || "all";
 			},
 			cptFormData() {
 				return _.$pickValueFromConfigs(this.form);
@@ -55,20 +53,29 @@ export default async function ({ parentDocId, belong_type, belong_id }) {
 								title: this.form.title.value,
 								type: Vue._yapi_var.ARTICLE,
 								p_id: this.pid,
-								belong_type,
-								belong_id
+								belong_type: vm.belong_type,
+								belong_id: vm.belong_id
 							};
 							const res = await _api.yapi.wikiUpsertOne(params);
 							if (!res.errcode) {
 								await this.inject_note.updateWikiMenuList();
 								await this.inject_note.setCurrentWiki(res.data.msg);
-								this.closeModal();
+								this.hide();
 							}
 						} catch (error) {
 							_.$msgError("修改失败");
 						} finally {
 							_.$loading(false);
 						}
+					}
+				};
+			},
+			btnCancel() {
+				const vm = this;
+				return {
+					label: i18n("取消"),
+					async onClick() {
+						vm.hide?.();
 					}
 				};
 			}

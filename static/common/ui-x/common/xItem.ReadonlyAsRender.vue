@@ -16,7 +16,7 @@ export default async function () {
 				h(
 					"div",
 					{
-						staticClass: "xItem-wrapper_layout"
+						staticClass: "xItem-label-contorller"
 					},
 					[
 						/* label */

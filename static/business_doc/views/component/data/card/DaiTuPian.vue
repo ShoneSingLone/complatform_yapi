@@ -9,7 +9,7 @@
 						<span>好吃的汉堡</span>
 						<div class="bottom clearfix">
 							<time class="time">{{ currentDate }}</time>
-							<xBtn type="text" class="button">操作按钮</xBtn>
+							<xBtn>操作按钮</xBtn>
 						</div>
 					</div>
 				</xCard>

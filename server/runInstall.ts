@@ -5,11 +5,8 @@
 	const fs = require("fs-extra");
 	const ModelUser = require("server/models/user");
 
-	let TARGET_PREFIX = path.join(
-		xU.var.APP_ROOT_SERVER_DIR,
-		xU.var.UPLOADS,
-		xU.var.RESOURCE_ASSETS
-	);
+	let TARGET_PREFIX = path.join(xU.var.APP_ROOT_SERVER_DIR, xU.var.UPLOADS, xU.var.RESOURCE_ASSETS);
+	
 	function install() {
 		const fileExistURL = path.join(xU.var.APP_ROOT_DIR, "..", "yapi.installed");
 		let isExist = xU.fileExist(fileExistURL);

@@ -37,7 +37,7 @@ export default async function () {
 | check-strictly        | whether checked state of a node not affects its father and child nodes when \`show-checkbox\` is \`true\`                                        | boolean               | false   |
 | checked-keys  		| array of keys of initially checked nodes                                                                                                     | array                 | —       |
 | current-node-key      | key of initially selected node                                                                                                               | string / number       | —       |
-| filter-method         | this function will be executed on each node when use filter method. if return \`false\`, tree node will be hidden.                             | Function(value, data) | —       |
+| filterHandler         | this function will be executed on each node when use filter method. if return \`false\`, tree node will be hidden.                             | Function(value, data) | —       |
 | indent                | horizontal indentation of nodes in adjacent levels in pixels                                                                                 | number                | 16      |
 | icon                  | custom tree node icon                                                                                                                        | \`string \| Component\` | -       |
 | item-size ^(2.2.33)   | custom tree node height                                                                                                                      | number                | 26      |

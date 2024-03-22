@@ -16,7 +16,7 @@ export default async function () {
 				h(
 					"div",
 					{
-						staticClass: "xItem-wrapper_layout"
+						staticClass: "xItem-label-contorller"
 					},
 					[
 						/* label */
@@ -84,7 +84,7 @@ export default async function () {
 					]
 				),
 				/* 信息提示 */
-				h("div", { vIf: vm.calMsg(), staticClass: "xItem_info-msg", style: { overflow: "hidden", margin: `8px 0 16px ${vm.width + 16}px` } }, [vm.calMsg()])
+				h("div", { vIf: vm.calMsg(), staticClass: "xItem-msg", style: { overflow: "hidden", margin: `8px 0 16px ${vm.width + 16}px` } }, [vm.calMsg()])
 			]
 		);
 	};

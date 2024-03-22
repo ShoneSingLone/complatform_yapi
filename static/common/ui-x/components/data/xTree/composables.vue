@@ -450,7 +450,7 @@ export default async function () {
 		const hiddenNodeKeySet = ref(/* @__PURE__ */ new Set([]));
 		const hiddenExpandIconKeySet = ref(/* @__PURE__ */ new Set([]));
 		const filterable = computed(() => {
-			return _.isFunction(props.filterMethod);
+			return _.isFunction(props.filterHandler);
 		});
 		function doFilter(query) {
 			var _a2;
@@ -462,7 +462,7 @@ export default async function () {
 			const hiddenKeys = hiddenNodeKeySet.value;
 			const family = [];
 			const nodes = ((_a2 = tree.value) == null ? void 0 : _a2.treeNodes) || [];
-			const filter = props.filterMethod;
+			const filter = props.filterHandler;
 			hiddenKeys.clear();
 			function traverse(nodes2) {
 				nodes2.forEach(node => {

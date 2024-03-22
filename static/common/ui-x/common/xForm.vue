@@ -41,27 +41,20 @@ export default async function () {
 
 <style lang="less">
 .xForm {
-	--xItem-wrapper-width: 100%;
-	//outline: 1px solid red;
 	width: 100%;
 	height: 100%;
 	display: grid;
 	grid-template-columns: var(--xForm-col);
 
-	.xFormItem {
+	> .xFormItem {
 		display: flex;
 		align-items: baseline;
+		margin-top: var(--ui-one);
+		margin-right: var(--ui-one);
 
-		&:first-child {
-			margin-top: var(--ui-one);
-		}
-
-		& + .xFormItem {
-			margin-top: var(--ui-one);
-		}
-
-		> div {
-			width: var(--xItem-wrapper-width);
+		> .item-wrapper,
+		> .xDescItem {
+			width: 100%;
 		}
 	}
 
@@ -69,7 +62,6 @@ export default async function () {
 
 	each(@listFlex, {
 		.grid-column@{value} {
-			overflow: auto;
 			grid-column: span @value;
 		}
 	});

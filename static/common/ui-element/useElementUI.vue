@@ -12977,7 +12977,7 @@ body {
 }
 
 .el-input--small .el-input__inner {
-	height: calc(var(--ui-height));
+	height: var(--ui-height);
 	line-height: var(--ui-height);
 }
 
@@ -13015,13 +13015,12 @@ body {
 .el-input-group__prepend {
 	background-color: #f5f7fa;
 	color: var(--el-text-color-secondary);
-	vertical-align: middle;
-	display: table-cell;
+	display: flex;
+	align-items: center;
 	position: relative;
 	border: 1px solid #dcdfe6;
 	border-radius: var(--border-radius);
 	padding: 0 20px;
-	width: 1px;
 	white-space: nowrap;
 }
 

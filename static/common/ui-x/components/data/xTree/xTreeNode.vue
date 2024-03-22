@@ -171,7 +171,8 @@ export default async function () {
 				vm.$emit("check", props.node, value);
 			};
 			const handleContextMenu = event => {
-				if (injectRootTree?.vnode?.props?.["onNodeContextmenu"]) {
+				const handlerName = _.camelCase(ON_NODE_CONTEXTMENU);
+				if (injectRootTree.$listeners[handlerName]) {
 					event.stopPropagation();
 					event.preventDefault();
 				}

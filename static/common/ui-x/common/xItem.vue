@@ -161,11 +161,11 @@ export default async function () {
 			onBeforeUnmount(() => {
 				delete Vue._X_ITEM_VM_S[this.cpt_id];
 			});
-			const { height, width, sizer } = useAutoResize(props);
+			const { height, width: labelWidth, sizer } = useAutoResize(props);
 
 			return {
 				height,
-				width,
+				labelWidth,
 				refItemLabel: sizer,
 				privateState,
 				cptDisabled,
@@ -175,6 +175,12 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptStyle() {
+				const vm = this;
+				return {
+					"--xItem-msg-padding-left": `${vm.labelWidth + 16}px`
+				};
+			},
 			p_value: {
 				get() {
 					const isValueUndefined = this.value === undefined;
@@ -288,7 +294,7 @@ export default async function () {
 			calMsg() {
 				/* msg之前一直是计算属性，但是msg可用作为render函数，里面的组件可能是懒加载，懒加载完成后触发update，由于计算属性的缓存机制无法更新，所以改用方法tips */
 				if (_.isString(this.configs?.msg) && this.configs?.msg) {
-					return h("div", [this.configs.msg]);
+					return h("div", { staticClass: "xItem-msg-content" }, [this.configs.msg]);
 				}
 				if (_.isFunction(this.configs?.msg)) {
 					return this.configs.msg.call(this.configs, { xItem: this });
@@ -472,32 +478,107 @@ export default async function () {
 
 <style lang="less">
 .xItem-wrapper {
-	--xItem-layout-justify-content: center;
-	--xItem-layout-align-items: center;
-	--xItem-controller-width: 1px;
-	--xItem-controller-flex: 1;
-
-	width: var(--xItem-wrapper-width);
-	&.w-100 {
-		width: 100%;
-	}
 	overflow: hidden;
-	.xItem_controller.el-form-item {
-		margin-bottom: unset;
-	}
+	width: var(--xItem-wrapper-width, 100%);
 
-	.xItem_info-msg {
-		max-width: 90%;
-		overflow: auto;
-	}
-
-	.xItem-wrapper_layout {
+	.xItem-label-contorller {
 		display: flex;
-		justify-content: var(--xItem-layout-justify-content);
-		align-items: var(--xItem-layout-align-items);
+		flex-flow: var(--xItem-flex-flow, row nowrap);
+		justify-content: var(--xItem-layout-justify-content, center);
+		align-items: var(--xItem-layout-align-items, center);
 		flex: 1;
+		width: var(--xItem-controller-width, 1px);
+
+		.xItem_label {
+			width: var(--xItem-label-width, 120px);
+			display: flex;
+			flex-flow: row nowrap;
+			justify-content: var(--xItem-label-position, flex-end);
+			align-items: flex-end;
+			margin: var(--xItem-label-margin, 0 16px 0 0);
+		}
+
+		.xItem_controller {
+			> [class^="el-"] {
+				width: 100%;
+			}
+
+			&.el-form-item {
+				margin-bottom: unset;
+			}
+
+			width: var(--xItem-controller-width, 1px);
+			flex: var(--xItem-controller-flex, 1);
+			display: flex;
+			flex-flow: column nowrap;
+			overflow: hidden !important;
+			&.center {
+				align-self: center;
+			}
+
+			.show-error {
+				[class$="__inner"],
+				.el-textarea__inner,
+				.el-input__inner,
+				> input {
+					border: 1px solid var(--ui-danger);
+				}
+			}
+		}
+	}
+
+	.xItem-msg {
+		max-width: 100%;
+		overflow: var(--xItem-info-msg-overflow, hidden);
+		color: var(--el-text-color-secondary);
+		padding-left: var(--xItem-msg-padding-left);
+		.xItem-msg-content {
+			margin-top: 8px;
+		}
 	}
 }
+
+/* 加在父元素上也可以 */
+.xItem-pos {
+	&.top {
+		--xItem-label-position: flex-start;
+		--xItem-label-margin: var(--ui-one) 0;
+		--xItem-controller-width: 100%;
+		--xItem-flex-flow: column nowrap;
+		--xItem-layout-align-items: flex-start;
+
+		&.right {
+			// --xItem-layout-align-items: flex-end;
+			.xItem_label {
+				align-self: end;
+				justify-content: flex-end;
+			}
+		}
+
+		&.center {
+			--xItem-label-margin: var(--ui-one);
+			--xItem-label-position: center;
+			--xItem-controller-width: 100%;
+			--xItem-layout-align-items: flex-start;
+			--xItem-flex-flow: column nowrap;
+			--xItem-label-wrappr-align-self: center;
+
+			.xItem_label {
+				align-self: center;
+			}
+		}
+		.xItem-msg {
+			padding-left: 0;
+		}
+	}
+
+	&.left {
+		--xItem-controller-width: 100%;
+		--xItem-label-position: flex-start;
+		--Xitem-label-text-align: left;
+	}
+}
+
 .xItem-wrapper + .xItem-wrapper {
 	margin-top: 24px;
 }
@@ -508,41 +589,8 @@ export default async function () {
 	}
 }
 
-.xItem_label {
-	width: var(--xItem-label-width);
-	text-align: right;
-	margin-right: 16px;
-	justify-content: var(--xItem-label-position);
-}
-
 .xItem_label-required {
 	color: var(--ui-danger);
-}
-
-.xItem_controller {
-	width: var(--xItem-controller-width);
-	flex: var(--xItem-controller-flex);
-	display: flex;
-	flex-flow: column nowrap;
-	overflow: hidden !important;
-	&.center {
-		align-self: center;
-	}
-
-	.show-error {
-		[class$="__inner"],
-		.el-textarea__inner,
-		.el-input__inner,
-		> input {
-			border: 1px solid var(--ui-danger);
-		}
-	}
-}
-
-.xItem_controller {
-	> [class^="el-"] {
-		width: 100%;
-	}
 }
 
 .xItem_error-msg {

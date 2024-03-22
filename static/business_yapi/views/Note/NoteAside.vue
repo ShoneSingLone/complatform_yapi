@@ -5,6 +5,13 @@
 		height: 1px;
 		overflow: auto;
 		position: relative;
+		.is-current {
+			.el-tree-node__content {
+				color: var(--ui-primary);
+				background: #ecf5ff;
+				border-color: #b3d8ff;
+			}
+		}
 	}
 }
 </style>
@@ -15,13 +22,20 @@
 			<div class="group-operate flex start middle mb10 left-tree box-shadow">
 				<xItem :configs="configsSearch" class="flex1" />
 				<xGap l="10" />
-				<div class="pointer" v-xtips="{ content: '新增', placement: 'right', style: '--min-width:unset;', trigger: 'hover' }" @click="addNewWiki">
-					<!-- 添加分组 -->
-					<xIcon icon="_add" class="icon-opreation_click" />
-				</div>
+				<xIcon icon="currentLocation" class="icon-opreation_click pointer" />
+				<!-- 添加分组 -->
+				<xIcon icon="_add" class="icon-opreation_click pointer ml10" v-xtips="manual" @click="addNewWiki()" />
 			</div>
 			<div class="flex1 wiki-tree-wrapper" ref="refTreeScroll">
-				<xTree :data="inject_note.treeData" :contentRender="nodeRender" :props="treeProps" :filter-method="treeFilterMethod" ref="refTree" :dragAndDrop="handleDragAndDrop" />
+				<xTree
+					ref="refTree"
+					:contentRender="treeContentRender"
+					:data="inject_note.treeData"
+					:expandedKeys.sync="inject_note.expandedKeys"
+					:props="treeProps"
+					:filterHandler="treeFilterMethod"
+					:dragAndDrop="handleDragAndDrop"
+					@node-contextmenu="onNodeContextmenu" />
 			</div>
 		</div>
 		<div class="resize_bar" icon="scroll" v-xmove="resizeOptions" />
@@ -30,6 +44,8 @@
 <script lang="ts">
 export default async function () {
 	const { useXmove } = await _.$importVue("@/utils/hooks.vue");
+
+	const NoteXTipsInsert = await _.$importVue("@/views/Note/Note.insert.vue");
 
 	const getTreeOrder = (treeData, orderArray = []) => {
 		treeData = _.cloneDeep(treeData);
@@ -59,6 +75,16 @@ export default async function () {
 				}
 			};
 		},
+		watch: {
+			"inject_note.currentWiki": {
+				handler(wiki) {
+					if (wiki?._id) {
+						this.$refs.refTree?.setCurrentKey?.(wiki._id);
+					}
+				},
+				immediate: true
+			}
+		},
 		data() {
 			const vm = this;
 			const onQueryChanged = _.debounce(query => {
@@ -74,10 +100,28 @@ export default async function () {
 					},
 					clearable: true
 				}),
-				groupListForShow: []
+				groupListForShow: [],
+				manual: {
+					payload: {},
+					content() {
+						return h(NoteXTipsInsert, {
+							...vm.manual.payload,
+							hide() {
+								vm.manual.visible = false;
+							}
+						});
+					},
+					trigger: "manual",
+					visible: false,
+					placement: "right-start"
+				}
 			};
 		},
 		methods: {
+			scrollToLocation() {},
+			onNodeContextmenu(event, data, node) {
+				debugger;
+			},
 			async handleDragAndDrop({ drag, drop, type: dropType }) {
 				const { inject_note } = this;
 				const dragItem = { ...drag.data };
@@ -131,24 +175,23 @@ export default async function () {
 			treeFilterMethod(query, node) {
 				return new RegExp(query, "i").test(node.title);
 			},
-			async addNewWiki(node) {
-				return _.$openModal({
-					title: i18n("添加文档"),
-					url: "@/views/Note/Note.dialog.insert.vue",
+			async addNewWiki(node = {}) {
+				this.manual.payload = {
 					parent: this,
 					parentDocId: node?._id,
 					belong_type: this.inject_note.cptBelongType,
 					belong_id: this.inject_note.cptBelongId
-				});
+				};
+				this.manual.visible = true;
 			},
 			/* 菜单 */
-			nodeRender({ node, data, injectRootTree }) {
+			treeContentRender({ node, data, injectRootTree }) {
 				const vm = this;
 
 				const vNodeTitleLabel = h(
 					"div",
 					{
-						staticClass: "node-name pointer",
+						staticClass: "node-name pointer flex1",
 						onClick() {
 							vm.inject_note.setCurrentWiki(data);
 						}
@@ -176,7 +219,7 @@ export default async function () {
 							"data-wiki-id": data._id
 						}
 					},
-					[vNodeTitleLabel, vNodeGap, vNodeIconAddSubwiki]
+					[vNodeTitleLabel, vNodeIconAddSubwiki]
 				);
 			}
 		}

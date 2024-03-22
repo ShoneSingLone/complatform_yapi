@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const { customCookies } = require("server/utils/customCookies");
+
+const IMAGE_BUFFER_CACHE = {};
 async function makeNewUserPrivateGroup(uid) {
 	var groupInst = orm.group;
 	await groupInst.save({
@@ -485,14 +487,19 @@ module.exports = {
 						let dataBuffer, type;
 
 						if (!data || !data.basecode) {
-							dataBuffer = xU.fs.readFileSync(
-								xU.path.join(
-									xU.var.APP_ROOT_DIR,
-									usedBy
-										? "static/image/favicon.png"
-										: "static/image/avatar.png"
-								)
-							);
+							let imagePath = "static/image/setting.png";
+							if (!usedBy) {
+								imagePath = "static/image/avatar.png";
+							}
+
+							dataBuffer = (function () {
+								if (!IMAGE_BUFFER_CACHE[imagePath]) {
+									IMAGE_BUFFER_CACHE[imagePath] = xU.fs.readFileSync(
+										xU.path.join(xU.var.APP_ROOT_DIR, imagePath)
+									);
+								}
+								return IMAGE_BUFFER_CACHE[imagePath];
+							})();
 							type = "image/png";
 						} else {
 							type = data.type;

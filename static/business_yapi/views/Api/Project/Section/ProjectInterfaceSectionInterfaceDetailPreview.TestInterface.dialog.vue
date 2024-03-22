@@ -10,7 +10,7 @@
 				<div>
 					<xBtn :configs="btnSaveAsBackupData" />
 				</div>
-				<xGap b="8"/>
+				<xGap b="8" />
 				<xMd :md="cptCode" style="height: 460px" />
 			</div>
 		</xForm>

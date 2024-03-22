@@ -2,9 +2,9 @@
 	<div class="card-JiChuYongFa">
 		<xMd :md="mdTitle" />
 		<xCard class="box-card">
-			<div slot="header" class="clearfix">
-				<span>卡片名称</span>
-				<xBtn style="float: right; padding: 3px 0" type="text">操作按钮</xBtn>
+			<div slot="header" class="flex middle">
+				<span class="flex1">卡片名称</span>
+				<xBtn type="text">操作按钮</xBtn>
 			</div>
 			<div v-for="o in 4" :key="o" class="text item">
 				{{ "列表内容 " + o }}

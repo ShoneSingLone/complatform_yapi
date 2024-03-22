@@ -83,7 +83,7 @@ export default async function () {
 				type: Boolean,
 				default: false
 			},
-			filterMethod: {
+			filterHandler: {
 				type: Function
 			},
 			perfMode: {

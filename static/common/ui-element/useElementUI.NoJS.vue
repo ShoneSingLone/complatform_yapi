@@ -13006,7 +13006,6 @@ body {
 	border: 1px solid #dcdfe6;
 	border-radius: var(--border-radius);
 	padding: 0 20px;
-	width: 1px;
 	white-space: nowrap;
 }
 

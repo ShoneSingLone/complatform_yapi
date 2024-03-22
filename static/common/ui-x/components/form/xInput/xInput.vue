@@ -1,26 +1,11 @@
 <template>
-	<div
-		:class="[
-			'xInput',
-			type === 'textarea' ? 'el-textarea' : 'el-input',
-			inputSize ? 'el-input--' + inputSize : '',
-			{
-				'is-disabled': inputDisabled,
-				'is-exceed': inputExceed,
-				'el-input-group': $scopedSlots.prepend || $scopedSlots.append,
-				'el-input-group--append': $scopedSlots.append,
-				'el-input-group--prepend': $scopedSlots.prepend,
-				'el-input--prefix': $scopedSlots.prefix || prefixIcon,
-				'el-input--suffix': $scopedSlots.suffix || suffixIcon || clearable || showPassword
-			}
-		]"
-		@mouseenter="hovering = true"
-		@mouseleave="hovering = false">
+	<div :class="cptInputClass" @mouseenter="hovering = true" @mouseleave="hovering = false">
 		<template v-if="type !== 'textarea'">
 			<!-- 前置元素 -->
-			<div class="el-input-group__prepend el-input-group__prepend-sub" v-if="$scopedSlots.prepend">
+			<div class="x-iniput__prepend el-input-group__prepend el-input-group__prepend-sub" v-if="$scopedSlots.prepend">
 				<slot name="prepend"></slot>
 			</div>
+			<!-- <xRender :render="prependRender" /> -->
 			<input
 				:tabindex="tabindex"
 				v-if="type !== 'textarea'"
@@ -61,7 +46,7 @@
 				<i class="el-input__icon" v-if="validateState" :class="['el-input__validateIcon', validateIcon]"> </i>
 			</span>
 			<!-- 后置元素 -->
-			<div class="el-input-group__append" v-if="$scopedSlots.append">
+			<div class="x-iniput__append el-input-group__append" v-if="$scopedSlots.append">
 				<slot name="append"></slot>
 			</div>
 		</template>
@@ -164,6 +149,23 @@ export default async function () {
 		},
 
 		computed: {
+			cptInputClass() {
+				const { type, inputSize, inputDisabled, inputExceed, $scopedSlots, prefixIcon, suffixIcon, clearable, showPassword } = this;
+				return [
+					"xInput",
+					type === "textarea" ? "el-textarea" : "el-input",
+					inputSize ? "el-input--" + inputSize : "",
+					{
+						"is-disabled": inputDisabled,
+						"is-exceed": inputExceed,
+						"el-input-group": $scopedSlots.prepend || $scopedSlots.append,
+						"el-input-group--append": $scopedSlots.append,
+						"el-input-group--prepend": $scopedSlots.prepend,
+						"el-input--prefix": $scopedSlots.prefix || prefixIcon,
+						"el-input--suffix": $scopedSlots.suffix || suffixIcon || clearable || showPassword
+					}
+				];
+			},
 			_elFormItemSize() {
 				return (this.elFormItem || {}).elFormItemSize;
 			},
@@ -243,6 +245,23 @@ export default async function () {
 		},
 
 		methods: {
+			prependRender() {
+				if (this.$scopedSlots?.prepend) {
+					const [vNode] = this.$scopedSlots.prepend();
+					if (vNode.text) {
+						return h(
+							"div",
+							{
+								staticClass: "el-input-group__prepend el-input-group__prepend-sub"
+							},
+							[vNode]
+						);
+					} else {
+						return h("div", { staticClass: "x-iniput__prepend" }, [vNode]);
+					}
+				}
+				return null;
+			},
 			focus() {
 				this.getInput().focus();
 			},
@@ -414,6 +433,19 @@ export default async function () {
 			> .xItem-wrapper {
 				width: var(--xItem-prepend-width);
 			}
+		}
+	}
+}
+
+.xInput {
+	display: flex;
+
+	.x-iniput__append,
+	.x-iniput__prepend {
+		height: 32px;
+		line-height: 32px;
+		> * {
+			margin: 0 -20px;
 		}
 	}
 }

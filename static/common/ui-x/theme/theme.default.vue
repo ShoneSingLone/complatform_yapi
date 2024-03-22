@@ -246,11 +246,8 @@
 	--normal-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 	/* xUI */
 	/* xItem */
-	--xItem-wrapper-width: 200px;
-	--xItem-label-width: 120px;
-	--xItem-label-position: flex-end;
+	--xItem-controller-width: 100%;
 	--xItem-error-bg: var(--el-bg-color);
-
 	/* xAlert */
 }
 

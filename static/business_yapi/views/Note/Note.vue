@@ -1,7 +1,8 @@
 <template>
 	<section id="ViewNote">
-		<NoteAside />
-		<NoteSection />
+		<!-- {{ expandedKeys }} -->
+		<NoteAside v-show="!isShowEditor" />
+		<NoteSection :style="noteSectionStyle" />
 	</section>
 </template>
 <script lang="ts">
@@ -26,20 +27,37 @@ export default async function () {
 		data() {
 			const vm = this;
 			vm.updateCurrentWiki = _.debounce(async function updateCurrentWiki(callback = false) {
-				if (!_.$isInput(vm.$route.query.wiki)) {
-					return;
-				}
-				const res = await _api.yapi.wikiDetail({ _id: vm.$route.query.wiki });
-				if (!res.errcode) {
-					vm.currentWiki = res.data;
-					callback && callback();
+				_.$loading(true);
+				vm.noteSectionStyle = {
+					opacity: 0.1
+				};
+				try {
+					if (!_.$isInput(vm.$route.query.wiki)) {
+						return;
+					}
+					const res = await _api.yapi.wikiDetail({ _id: vm.$route.query.wiki });
+					if (!res.errcode) {
+						vm.currentWiki = res.data;
+						callback && callback();
+					}
+				} catch (error) {
+				} finally {
+					_.$loading(false);
+					setTimeout(() => {
+						vm.noteSectionStyle = {
+							opacity: 1
+						};
+					}, 300);
 				}
 			}, 300);
 
 			return {
 				treeData: [],
 				currentWiki: {},
-				belongType: "all"
+				belongType: "all" || "private" || "project",
+				expandedKeys: [],
+				isShowEditor: false,
+				noteSectionStyle: {}
 			};
 		},
 		methods: {
@@ -53,10 +71,17 @@ export default async function () {
 				});
 			},
 			async updateWikiMenuList() {
-				let payload = { belong_type: "all" };
-				const { data } = await _api.yapi.wikiMenu(payload);
-				const { list, orderArray } = data;
-				this.treeData = this.buildTree(list, orderArray);
+				_.$loading(true);
+				try {
+					let payload = { belong_type: "all" };
+					const { data } = await _api.yapi.wikiMenu(payload);
+					const { list, orderArray } = data;
+					this.treeData = this.buildTree(list, orderArray);
+				} catch (error) {
+					console.error(error);
+				} finally {
+					_.$loading(false);
+				}
 			},
 			buildTree(dataArray, orderArray) {
 				console.time("buildTree");

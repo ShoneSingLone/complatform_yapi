@@ -56,3 +56,9 @@ export default async function () {
 	});
 }
 </script>
+
+<style lang="less">
+:root {
+	--xItem-wrapper-width: 240px;
+}
+</style>
