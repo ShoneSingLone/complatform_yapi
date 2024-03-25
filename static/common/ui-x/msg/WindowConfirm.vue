@@ -1,5 +1,5 @@
 <template>
-	<xDialog id="WindowConfirm">
+	<xDialog id="WindowConfirm" :style="cptStyle">
 		<xRender :render="content" />
 		<template #footer>
 			<xRender :render="renderFooter" v-if="renderFooter" />
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-export default async function ({ onOk, onCancel, content, renderFooter }) {
+export default async function ({ onOk, onCancel, content, renderFooter, style }) {
 	const isUpdate = false;
 	/*  */
 	const RULES = await _.$importVue("/common/utils/rules.vue");
@@ -26,6 +26,13 @@ export default async function ({ onOk, onCancel, content, renderFooter }) {
 			};
 		},
 		computed: {
+			cptStyle() {
+				if (style) {
+					return style;
+				} else {
+					return { "--xDialog-wrapper-width": "300px" };
+				}
+			},
 			renderFooter() {
 				if (renderFooter) {
 					return renderFooter(this);

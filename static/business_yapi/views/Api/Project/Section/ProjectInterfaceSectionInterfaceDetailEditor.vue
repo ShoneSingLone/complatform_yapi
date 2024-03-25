@@ -7,7 +7,7 @@
 <template>
 	<div v-if="isShow" id="ProjectInterfaceSectionInterfaceDetailEditor" class="flex1">
 		<xBlock header="基本信息">
-			<xForm col="3" style="--xdesc-item-width: 140px">
+			<xForm col="3" style="--xItem-label-width: 140px">
 				<xItem :configs="form.title" v-model="formData.title" span="full" />
 				<xItem :configs="form.path" v-model="formData.path" span="full" />
 				<xItem :configs="form.isProxy" v-model="formData.isProxy" />

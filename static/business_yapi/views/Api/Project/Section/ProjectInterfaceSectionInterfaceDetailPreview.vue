@@ -2,20 +2,20 @@
 <template>
 	<div class="flex1-overflow-auto">
 		<xCard header="基本信息">
-			<xForm col="3" style="--xdesc-item-width: 100px">
-				<xDescItem v-for="(item, index) in cptDescItems" :key="index" :item="item" :span="item.span || 1" />
+			<xForm col="3" style="--xItem-label-width: 100px">
+				<xItemDesc v-for="(item, index) in cptDescItems" :key="index" :item="item" :span="item.span || 1" />
 			</xForm>
 		</xCard>
 		<xGap t />
 		<xCard header="请求">
 			<xCard header="ReqHeaders">
-				<xForm col="1" style="--xdesc-item-width: 100px">
+				<xForm col="1" style="--xItem-label-width: 100px">
 					<YapiApiRequestBodyPreviewer :item="cptHeadersParams" />
 				</xForm>
 			</xCard>
 			<xGap t />
 			<xCard header="ReqBody">
-				<xForm col="1" style="--xdesc-item-width: 100px">
+				<xForm col="1" style="--xItem-label-width: 100px">
 					<YapiApiRequestBodyPreviewer :item="sourceReqBodyOther" />
 				</xForm>
 			</xCard>
@@ -23,7 +23,7 @@
 		<xGap t />
 		<!-- 
 <xCard header="源数据">
-	<xForm col="1" style="--xdesc-item-width: 100px">
+	<xForm col="1" style="--xItem-label-width: 100px">
 		<xItem :configs="form.source" />
 	</xForm>
 </xCard> 
@@ -126,7 +126,7 @@ ${resBackupJson}
 					{
 						label: i18n("维护人"),
 						value: uid || "--",
-						readonlyAs: () => {
+						xItemRender: () => {
 							const user = _.find(vm.APP.allUser, user => {
 								return user.uid === uid;
 							});
@@ -137,7 +137,7 @@ ${resBackupJson}
 					{
 						label: i18n("更新时间"),
 						value: up_time || "--",
-						readonlyAs: () => {
+						xItemRender: () => {
 							return _.$dateFormat(up_time);
 						}
 					},
@@ -145,7 +145,7 @@ ${resBackupJson}
 						label: i18n("接口"),
 						value: path || "--",
 						span: "full",
-						readonlyAs: () => {
+						xItemRender: () => {
 							const vDomMockHref = (() => {
 								const btnProps = {
 									class: "ml",
@@ -169,7 +169,7 @@ ${resBackupJson}
 						label: i18n("code"),
 						value: path || "--",
 						span: "full",
-						readonlyAs: () => {
+						xItemRender: () => {
 							return h("xMd", {
 								id: "cptCode",
 								md: this.cptCode,
@@ -194,7 +194,7 @@ ${resBackupJson}
 						label: i18n("备份response"),
 						value: path || "--",
 						span: "full",
-						readonlyAs: () => {
+						xItemRender: () => {
 							return h("xMd", { md: this.cptBackupData });
 						}
 					},
@@ -202,13 +202,13 @@ ${resBackupJson}
 						label: i18n("Tag"),
 						span: "full",
 						value: tag || "--",
-						readonlyAs: () => _.map(tag, i => h("xTag", { class: "mr" }, [i]))
+						xItemRender: () => _.map(tag, i => h("xTag", { class: "mr" }, [i]))
 					},
 					{
 						label: i18n("是否开启转发"),
 						value: isProxy || "--",
 						span: "full",
-						readonlyAs: () => {
+						xItemRender: () => {
 							if (isProxy) {
 								const env = _.find(this.APP.cptProject.env, { _id: witchEnv });
 								return h("div", [h("xTag", { class: "mr" }, [env.name]), h("span", [env.domain])]);

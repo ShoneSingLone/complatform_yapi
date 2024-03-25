@@ -64,7 +64,7 @@ const isDev = !!localStorage.isDev;
 		return n;
 	};
 	/**
-	 * 打开选择器
+	 * 打开文件选择器
 	 * @returns
 	 */
 	/* @typescriptDeclare ()=>Promise<void> */
@@ -968,6 +968,7 @@ const isDev = !!localStorage.isDev;
 			}
 
 			const WindowConfirm = await _.$importVue("/common/ui-x/msg/WindowConfirm.vue", {
+				style: options.style,
 				onOk: resolve,
 				onCancel: reject,
 				content,

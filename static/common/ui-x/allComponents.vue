@@ -18,7 +18,7 @@ export default async function () {
 		"components/navigation/xTabs/xTabPane",
 		"components/data/xTag/xTag",
 		"components/data/xDesc/xDesc",
-		"components/data/xDesc/xDescItem",
+		"components/data/xDesc/xItemDesc",
 		"components/data/xTableVir/xTableVir",
 		"components/data/xVirtualList/xFixedSizeList",
 		"components/data/xPagination/xPagination",

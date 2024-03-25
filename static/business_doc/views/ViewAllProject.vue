@@ -1,9 +1,9 @@
 <template>
 	<div class="page-view">
-		<xPageTitle title="所有项目" tips="源码static_vue2文件夹下所有非common文件夹，及其子目录的html文件"><xItem :configs="search" /> </xPageTitle>
+		<xPageTitle title="所有项目" tips="源码static_vue2文件夹下所有非common文件夹，及其子目录的html文件"><xItem :configs="search" style="--xItem-wrapper-width: 200px" /> </xPageTitle>
 		<xPageContent>
 			<xForm col="3">
-				<xCard :header="projectName" v-for="(projectEntryPageNameArray, projectName) in displayProjectArray" :key="projectName" class="margin">
+				<xCard :header="projectName" v-for="(projectEntryPageNameArray, projectName) in displayProjectArray" :key="projectName" class="margin width100">
 					<xTag class="mr" v-for="entryPage in projectEntryPageNameArray" :key="entryPage">
 						<a :href="genALinkHref(projectName, entryPage)" target="_blank">{{ entryPage }}</a>
 					</xTag>

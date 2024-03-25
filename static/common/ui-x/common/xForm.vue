@@ -52,9 +52,9 @@ export default async function () {
 		margin-top: var(--ui-one);
 		margin-right: var(--ui-one);
 
-		> .item-wrapper,
-		> .xDescItem {
-			width: 100%;
+		> .xItem-wrapper,
+		> .xItemDesc-wrapper {
+			--xItem-wrapper-width: 100%;
 		}
 	}
 

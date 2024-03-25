@@ -1,6 +1,8 @@
 <template>
 	<DocContentOfDemo class="icon-demo">
+		<xMd :md="md" />
 		<DemoAndCode title="基础用法" path="@/views/component/data/descriptions/JiChuYongFa.vue" unfold />
+		<DemoAndCode title="Style1" path="@/views/component/data/descriptions/Style1.vue" unfold />
 		<xMd :md="mdDoc" />
 	</DocContentOfDemo>
 </template>
@@ -8,15 +10,57 @@
 <script lang="ts">
 export default async function () {
 	return {
+		provide() {
+			return {
+				DemoDescriptions: this
+			};
+		},
 		data() {
 			return {
+				md: `
+\`\`\`js
+
+items: [
+	// value: "直接显示字符串"
+	{ label: "Username", value: "kooriookami" },
+	{ label: "Telephone", value: "18100000000" },
+	{ label: "Place", value: "Suzhou" },
+	{
+		label: "Remarks",
+		// xItemRender:"可以返回vNode"
+		xItemRender() {
+				return h("xTag", { size: "small" }, ["School"]);
+			}
+		},
+		{
+			label: "Address",
+			value: "No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu Province",
+			span: "2"
+		}
+],
+\`\`\`
+`,
+				items: [
+					{ label: "Username", value: "kooriookami" },
+					{ label: "Telephone", value: "18100000000" },
+					{ label: "Place", value: "Suzhou" },
+					{
+						label: "Remarks",
+						xItemRender() {
+							return h("xTag", { size: "small" }, ["School"]);
+						}
+					},
+					{
+						label: "Address",
+						value: "No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu Province",
+						span: "2"
+					}
+				],
 				mdDoc: `### Attributes
 | 参数      | 说明    | 类型      | 可选值       | 默认值   |
 |---------- |-------- |---------- |-------------  |-------- |
-| header | 设置 header，也可以通过 \`slot#header\` 传入 DOM | string| — | — |
-| body-class | 设置 body 的class| object| — | { "el-card__body": true } |
-| body-style | 设置 body 的style| object| — | { padding: '20px' } |
-| shadow | 设置阴影显示时机 | string | always / hover / never | always |`
+|---------- |-------- |---------- |-------------  |-------- |
+`
 			};
 		}
 	};

@@ -479,7 +479,7 @@ export default async function () {
 <style lang="less">
 .xItem-wrapper {
 	overflow: hidden;
-	width: var(--xItem-wrapper-width, 100%);
+	width: var(--xItem-wrapper-width, 320px);
 
 	.xItem-label-contorller {
 		display: flex;

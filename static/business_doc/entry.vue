@@ -59,6 +59,6 @@ export default async function () {
 
 <style lang="less">
 :root {
-	--xItem-wrapper-width: 240px;
+	// --xItem-wrapper-width: 240px;
 }
 </style>
