@@ -2,7 +2,7 @@
 	<section id="ViewNote">
 		<!-- {{ expandedKeys }} -->
 		<NoteAside v-show="!isShowEditor" />
-		<NoteSection :style="noteSectionStyle" />
+		<NoteSection />
 	</section>
 </template>
 <script lang="ts">
@@ -28,9 +28,7 @@ export default async function () {
 			const vm = this;
 			vm.updateCurrentWiki = _.debounce(async function updateCurrentWiki(callback = false) {
 				_.$loading(true);
-				vm.noteSectionStyle = {
-					opacity: 0.1
-				};
+				$(".flash-when").addClass("loading");
 				try {
 					if (!_.$isInput(vm.$route.query.wiki)) {
 						return;
@@ -44,9 +42,7 @@ export default async function () {
 				} finally {
 					_.$loading(false);
 					setTimeout(() => {
-						vm.noteSectionStyle = {
-							opacity: 1
-						};
+						$(".flash-when").removeClass("loading");
 					}, 300);
 				}
 			}, 300);
@@ -56,8 +52,7 @@ export default async function () {
 				currentWiki: {},
 				belongType: "all" || "private" || "project",
 				expandedKeys: [],
-				isShowEditor: false,
-				noteSectionStyle: {}
+				isShowEditor: false
 			};
 		},
 		methods: {
@@ -105,6 +100,7 @@ export default async function () {
 						parent.children.push(item);
 					}
 				});
+				window.allWiki = this.allWiki;
 
 				let tree = _.filter(this.allWiki, item => item.p_id === 0);
 				if (_.$isArrayFill(orderArray)) {

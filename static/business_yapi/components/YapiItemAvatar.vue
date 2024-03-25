@@ -109,14 +109,12 @@ export default async function () {
 
 <style lang="less">
 .xItem-wrapper[data-form-item-type="YapiItemAvatar"] {
-	--xitem-avatar-width: 32px;
-	--xitem-avatar-height: 32px;
-	width: var(--xitem-avatar-width);
-	height: var(--xitem-avatar-height);
+	// width: var(--xitem-avatar-width, 32px);
+	// height: var(--xitem-avatar-height, 32px);
 	span.el-avatar {
 		display: inline-block;
-		width: var(--xitem-avatar-width);
-		height: var(--xitem-avatar-height);
+		width: var(--xitem-avatar-width, 32px);
+		height: var(--xitem-avatar-height, 32px);
 	}
 }
 </style>

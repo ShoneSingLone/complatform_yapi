@@ -3,11 +3,14 @@
 	<div>
 		<xForm col="2">
 			<xItem :configs="form.editor" @save="btnOk.onClick" style="height: 500px" />
-			<div class="padding">
+			<div class="padding" style="position: absolute">
 				<xMd :md="cptCode" />
 			</div>
 		</xForm>
-		<xBtn :configs="btnOk" />
+		<div class="flex middle">
+			<xGap f />
+			<xBtn :configs="btnOk" />
+		</div>
 	</div>
 </template>
 <script lang="ts">

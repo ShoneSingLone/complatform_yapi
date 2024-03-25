@@ -5,7 +5,7 @@
 </style>
 
 <template>
-	<section id="ProjectInterfaceSection" class="page-view flex1">
+	<section id="ProjectInterfaceSection" class="page-view flex1 flash-when">
 		<xPageContent>
 			<ProjectInterfaceSectionInterfaceDetail v-if="cptInterfaceType === 'interface'" />
 			<ProjectInterfaceSectionInterfaceList v-else />

@@ -413,6 +413,7 @@ a[disabled] {
 }
 
 .flex1-overflow-auto {
+	position: relative;
 	flex: 1;
 	height: 1px;
 	overflow: auto;

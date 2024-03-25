@@ -42,8 +42,19 @@ export default async function () {
 		},
 		methods: {
 			async updateInterface() {
-				let { data: detailInfo } = await _api.yapi.interface_get_by_id({ id: this.APP.cptInterfaceId });
-				this.detailInfo = detailInfo;
+				_.$loading(true);
+				$(".flash-when").addClass("loading");
+				try {
+					let { data: detailInfo } = await _api.yapi.interface_get_by_id({ id: this.APP.cptInterfaceId });
+					this.detailInfo = detailInfo;
+				} catch (error) {
+					_.$msgError(error);
+				} finally {
+					_.$loading(false);
+					setTimeout(() => {
+						$(".flash-when").removeClass("loading");
+					}, 300);
+				}
 			}
 		},
 		watch: {

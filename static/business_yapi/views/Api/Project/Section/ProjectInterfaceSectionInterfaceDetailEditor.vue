@@ -17,7 +17,10 @@
 			</xForm>
 		</xBlock>
 		<xGap t />
-		<xBtn :configs="btnUpdate" />
+		<div class="flex middle">
+			<xGap f />
+			<xBtn :configs="btnUpdate" />
+		</div>
 	</div>
 </template>
 <script lang="ts">

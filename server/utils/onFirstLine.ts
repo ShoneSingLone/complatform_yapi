@@ -1,6 +1,3 @@
-const path = require("path");
-const { Module } = require("module");
-
 /*
 {
 
@@ -32,6 +29,8 @@ const { Module } = require("module");
  */
 
 module.exports = async function () {
+	const path = require("path");
+	const { Module } = require("module");
 	/* ********************************************************************************  */
 	/* require 如果没有用相对路径，就优先从node_modules里面找，找不到就从NODE_PATH 开始找 */
 	const NODE_PATH = path.resolve(__dirname, "../..");
@@ -45,7 +44,6 @@ module.exports = async function () {
 	 */
 	require.extensions[".ts"] = require.extensions[".js"];
 	/* ********************************************************************************  */
-
 	global.yapi_configs = require("../../../yapi_configs.js");
 	/*上面的代码运行之后，server就可以直接访问到*/
 	require("server/utils/xU");

@@ -22,7 +22,10 @@
 				</div>
 			</xForm>
 		</xBlock>
-		<div class="flex center middle mt"><xBtn :configs="btnSave" /></div>
+		<div class="flex middle mt">
+			<xGap f />
+			<xBtn :configs="btnSave" />
+		</div>
 	</div>
 </template>
 

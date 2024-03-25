@@ -30,10 +30,8 @@
 					<xIcon icon="currentLocation" class="icon-opreation_click" />
 				</div>
 			</div>
-			<div class="flex1" style="height: 1px; overflow: auto" ref="refTreeScroll">
-				<elTree :data="inject_project.cptAsideTreeData" node-key="href" default-expand-all :expand-on-click-node="false">
-					<xRender :render="nodeRender" :payload="payload" slot-scope="payload" />
-				</elTree>
+			<div class="flex1-overflow-auto" ref="refTreeScroll">
+				<xTree ref="refTree" :contentRender="treeContentRender" :data="inject_project.cptAsideTreeData" :props="treeProps" :filterHandler="treeFilterMethod" />
 			</div>
 		</div>
 		<div class="resize_bar" icon="scroll" v-xmove="resizeOptions" />
@@ -50,19 +48,30 @@ export default async function () {
 			const { stateStyle, resizeOptions } = useXmove(props);
 			return {
 				stateStyle,
-				resizeOptions
+				resizeOptions,
+				treeProps: {
+					value: "_id",
+					label: "title",
+					children: "children"
+				},
+				treeFilterMethod(query, node) {
+					return new RegExp(query, "i").test(node.title);
+				}
 			};
 		},
 		data() {
 			const vm = this;
+			const onQueryChanged = _.debounce(query => {
+				vm.$refs.refTree.filter(query);
+			}, 1000);
+
 			return {
 				configsSearch: defItem({
 					isSearch: false,
 					value: "",
 					placeholder: "搜索分组",
-					onEmitValue({ val }) {
-						console.log(val);
-						// vm.searchGroup();
+					onEmitValue({ val: query }) {
+						onQueryChanged(query);
 					},
 					clearable: true
 				})
@@ -74,16 +83,6 @@ export default async function () {
 			}
 		},
 		methods: {
-			setCurrentInterfaceMenuHightlight() {
-				setTimeout(() => {
-					$(".treeitem-is-active").removeClass("treeitem-is-active");
-					setTimeout(() => {
-						let item = $(".asideTreeItem.is-current");
-						item = item.parent().parent();
-						item.addClass("treeitem-is-active");
-					}, 64);
-				}, 64);
-			},
 			selectInterface({ menuType, _id }) {
 				this.APP.routerUpsertQuery({ interfaceId: _id, interfaceType: menuType });
 			},
@@ -98,7 +97,7 @@ export default async function () {
 				}
 			},
 			/* 菜单 */
-			nodeRender({ node, data: menuInfo }) {
+			treeContentRender({ node, data: menuInfo }) {
 				const vm = this;
 				const { title, _id, categoryId, menuType } = menuInfo;
 				const isCurrent = _.$isSame(_id, this.cptInterfaceId);
@@ -175,7 +174,6 @@ export default async function () {
 				immediate: true,
 				handler(interfaceId) {
 					if (interfaceId) {
-						this.setCurrentInterfaceMenuHightlight();
 					}
 				}
 			}

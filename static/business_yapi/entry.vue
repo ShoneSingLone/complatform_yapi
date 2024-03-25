@@ -299,4 +299,15 @@ export default async function () {
 :root {
 	// --xItem-wrapper-width: 240px;
 }
+
+.flash-when {
+	transition:
+		opacity,
+		transform 0.3s ease-in-out;
+
+	&.loading {
+		opacity: 0.3;
+		transform: scale(0.99);
+	}
+}
 </style>

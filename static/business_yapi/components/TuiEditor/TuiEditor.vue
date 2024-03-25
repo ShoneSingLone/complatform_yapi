@@ -1,7 +1,7 @@
 <script lang="ts">
 export default async function () {
 	const { Editor: TuiEditor } = await _.$appendScript("/common/libs/toastui-editor-all.js", "toastui");
-	const { PreprocessHTML, leftArrow, rightArrow } = await _.$importVue("@/components/TuiEditor/MkitTheme.vue");
+	const { PreprocessHTML } = await _.$importVue("@/components/TuiEditor/MkitTheme.vue");
 	return defineComponent({
 		props: ["value", "asRender"],
 		model: {
@@ -94,7 +94,7 @@ export default async function () {
 					let html = this.vmTuiEditor.getHTML();
 					this.html = new PreprocessHTML(html).html;
 					setTimeout(() => {
-						$(this.$refs.viewer).html(this.html);
+						$(this.$refs.refViewer).html(this.html);
 					}, 64);
 				} catch (error) {
 					console.error(error);
@@ -104,7 +104,7 @@ export default async function () {
 			},
 			/*  */
 			showImg(index) {
-				const $md = $(this.$refs.viewer);
+				const $md = $(this.$refs.refViewer);
 				const imgList = $md.find("img");
 				_.$previewImgs({
 					urlList: _.map(imgList, img => img.src),
@@ -113,9 +113,9 @@ export default async function () {
 			},
 			handleClick(event) {
 				const { target } = event;
-				const $ele = $(target).parents(".el-image[data-el-image-index]");
+				const $ele = $(target).parents(".x-mkit-wrapper[data-x-mkit-wrapper-index]");
 				if ($ele && $ele.length) {
-					this.showImg(Number($ele.attr("data-el-image-index")));
+					this.showImg(Number($ele.attr("data-x-mkit-wrapper-index")));
 				}
 			},
 			/*  */
@@ -241,7 +241,6 @@ export default async function () {
 		render() {
 			const vm = this;
 			const viewerProps = {
-				ref: "viewer",
 				onClick: vm.handleClick,
 				class: { "toastui-editor-contents flex1 border-radius box-shadow": true, "display-none": !vm.readonly },
 				style: "position:relative;height:100%;width:100%;z-index:1;padding:var(--note-normal-padding,var(--ui-one));"
@@ -249,7 +248,7 @@ export default async function () {
 
 			return h("div", { class: "flex1-overflow-auto" }, [
 				/*viewer html*/
-				h("div", viewerProps),
+				h("div", viewerProps, [h("div", { ref: "refViewer", staticClass: "toastui-viewer-contents" })]),
 				/*tuiEdior*/
 				h("div", {
 					id: vm._uid,
@@ -1478,13 +1477,25 @@ table.ProseMirror-selectednode,
 }
 
 .toastui-editor-contents {
-	margin: 0;
+	// display:flex;
+	// flex-flow:column nowrap;
+	margin: 0 auto;
 	padding: 0;
 	font-size: 13px;
 	font-family: var(--font-family);
 	border: 1px solid #dadde6;
 	border-radius: var(--border-radius);
 	z-index: 20;
+	// div,
+	// p{
+	// max-width:1024px;
+	// margin:0 auto;
+
+	// }
+	.toastui-viewer-contents {
+		max-width: 1024px;
+		// margin:0 auto;
+	}
 }
 
 .toastui-editor-contents *:not(table) {

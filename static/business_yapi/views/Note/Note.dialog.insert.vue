@@ -1,4 +1,11 @@
-<style lang="less"></style>
+<style lang="less">
+.YapiNoteAddTips {
+	padding: 0;
+	.xDialog-body {
+		padding-top: 0;
+	}
+}
+</style>
 <template>
 	<xDialog style="--xItem-label-width: 38px; width: 400px">
 		<xForm ref="form" col="1">
@@ -11,10 +18,12 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function () {
+export default async function ({ parentDocId, belong_type, belong_id, hide }) {
+	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
+
 	return defineComponent({
 		inject: ["APP", "inject_note"],
-		props: ["parentDocId", "belong_type", "belong_id", "hide"],
+		props: useDialogProps(),
 		data() {
 			return {
 				form: {
@@ -29,10 +38,7 @@ export default async function () {
 		},
 		computed: {
 			pid() {
-				return this.parentDocId || 0;
-			},
-			belong_type() {
-				return this.belong_type || "all";
+				return parentDocId || 0;
 			},
 			cptFormData() {
 				return _.$pickValueFromConfigs(this.form);
@@ -43,27 +49,27 @@ export default async function () {
 					label: i18n("确定"),
 					preset: "blue",
 					onClick: async () => {
-						const [atLeastOne] = await _.$validateForm(this.$el);
+						const [atLeastOne] = await _.$validateForm(vm.$el);
 						if (atLeastOne) {
 							return;
 						}
 						_.$loading(true);
 						try {
 							const params = {
-								title: this.form.title.value,
+								title: vm.form.title.value,
 								type: Vue._yapi_var.ARTICLE,
-								p_id: this.pid,
-								belong_type: vm.belong_type,
-								belong_id: vm.belong_id
+								p_id: vm.pid,
+								belong_type: belong_type || "all",
+								belong_id: belong_id
 							};
 							const res = await _api.yapi.wikiUpsertOne(params);
 							if (!res.errcode) {
-								await this.inject_note.updateWikiMenuList();
-								await this.inject_note.setCurrentWiki(res.data.msg);
-								this.hide();
+								await vm.inject_note.updateWikiMenuList();
+								await vm.inject_note.setCurrentWiki(res.data.msg);
+								vm.closeModal();
 							}
 						} catch (error) {
-							_.$msgError("修改失败");
+							_.$msgError(error);
 						} finally {
 							_.$loading(false);
 						}
@@ -75,7 +81,7 @@ export default async function () {
 				return {
 					label: i18n("取消"),
 					async onClick() {
-						vm.hide?.();
+						vm.closeModal();
 					}
 				};
 			}

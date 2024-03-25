@@ -8,7 +8,7 @@ const Mock = require("mockjs");
 const sandboxFn = require("./sandbox");
 const ejs = require("easy-json-schema");
 const jsf = require("json-schema-faker");
-const { schemaValidator } = require("../../common/utils");
+
 const http = require("http");
 const path = require("path");
 const fs = require("fs-extra");
@@ -120,7 +120,7 @@ const applog = {
 /**
  * @type {object} any
  */
-global.xU = new Proxy(
+const xU = new Proxy(
 	{
 		_,
 		fs,
@@ -909,6 +909,7 @@ function convertString(variable) {
 }
 
 async function runCaseScript(params, colId, interfaceId) {
+	const { schemaValidator } = require("server/common/utils");
 	const colInst = orm.interfaceCol;
 	let colData = await colInst.get(colId);
 	const logs = [];
@@ -1076,6 +1077,11 @@ exports.handleBasepath = function (basepath) {
 	return basepath;
 };
 
+exports.TARGET_PREFIX = xU.path.join(
+	xU.var.APP_ROOT_SERVER_DIR,
+	xU.var.UPLOADS,
+	xU.var.RESOURCE_ASSETS
+);
 exports.applog = applog;
 exports.mail = mail;
 exports.$orm = $orm;
@@ -1118,3 +1124,5 @@ exports.$hashCode = function $hashCode(Salt) {
 	const hash = CryptoJS.SHA256(Salt + Date.now());
 	return hash.toString(CryptoJS.enc.Hex);
 };
+
+global.xU = xU;

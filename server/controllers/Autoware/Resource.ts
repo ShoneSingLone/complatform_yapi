@@ -4,13 +4,9 @@ const path = require("path");
 const { ModelResource } = require("server/models/Resource");
 const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
+const { TARGET_PREFIX } = xU;
 
-let TARGET_PREFIX = path.join(
-	xU.var.APP_ROOT_SERVER_DIR,
-	xU.var.UPLOADS,
-	xU.var.RESOURCE_ASSETS
-);
-
+let DEFAULT_NOT_FOUND_IMG;
 function returnBase64Body(basecode) {
 	if (basecode.indexOf("base64") > -1) {
 		return new Buffer(basecode.split("base64")[1], "base64");
@@ -168,35 +164,72 @@ module.exports = {
 							ctx.query.id
 						);
 						var type;
-						/* base64 存储 */
 						if (targetResource?.basecode) {
-							type = targetResource.type;
-							ctx.set("Content-type", type);
-							ctx.body = returnBase64Body(targetResource.basecode);
-							return;
+							/* 返回base64形式存储的文件 */
+							return returnFileByBase64(targetResource);
 						}
 
-						/* 文件形式存储，需要path路径 */
 						if (targetResource) {
 							let targetPath = path.resolve(
 								`${TARGET_PREFIX}${targetResource.path}`
 							);
+							/* 如果存在path路径 */
 							const isExist = xU.fileExist(targetPath);
 							if (isExist) {
-								xU.applog.info("targetPath", targetPath);
-								ctx.status = 200;
-								ctx.set("Content-Type", mime.lookup(targetResource.path));
-								ctx.body = xU.fs.createReadStream(targetPath);
-							} else {
-								const targetResource = await orm.Resource.getResourceByName(
-									"SYSTEM_404"
-								);
-								ctx.set("Content-type", "image/png");
-								ctx.body = returnBase64Body(targetResource.basecode);
+								/* 返回文件形式存储的文件 */
+								return returnFileByPath(targetPath, targetResource);
 							}
 						}
+
+						/* 没找到 */
+						return returnDefautNotFoundImage();
 					} catch (e) {
 						xU.applog.error(e.message);
+					}
+
+					function returnFileByBase64(targetResource) {
+						type = targetResource.type;
+						ctx.set("Content-type", type);
+						ctx.body = returnBase64Body(targetResource.basecode);
+						return;
+					}
+
+					function returnFileByPath(targetPath, targetResource) {
+						xU.applog.info("targetPath", targetPath);
+						ctx.status = 200;
+						ctx.set("Content-Type", mime.lookup(targetResource.path));
+						ctx.body = xU.fs.createReadStream(targetPath);
+					}
+
+					async function returnDefautNotFoundImage() {
+						if (!DEFAULT_NOT_FOUND_IMG) {
+							DEFAULT_NOT_FOUND_IMG = await orm.Resource.getResourceByName(
+								"SYSTEM_404"
+							);
+						}
+
+						if (!DEFAULT_NOT_FOUND_IMG) {
+							var bitmap = fs.readFileSync(
+								path.resolve("server/assets/404.svg")
+							);
+							const basecode = new Buffer(bitmap).toString("base64");
+
+							await orm.Resource.save({
+								name: `SYSTEM_404`,
+								useFor: "all",
+								type: mime.lookup(`server/assets/404.svg`),
+								path: `server/assets/404.svg`,
+								basecode: basecode,
+								add_time: Date.now()
+							});
+
+							DEFAULT_NOT_FOUND_IMG = await orm.Resource.getResourceByName(
+								"SYSTEM_404"
+							);
+						}
+
+						ctx.set("Content-type", DEFAULT_NOT_FOUND_IMG.type);
+						ctx.body = returnBase64Body(DEFAULT_NOT_FOUND_IMG.basecode);
 					}
 				}
 			}

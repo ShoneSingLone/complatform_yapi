@@ -5,8 +5,6 @@
 	const fs = require("fs-extra");
 	const ModelUser = require("server/models/user");
 
-	let TARGET_PREFIX = path.join(xU.var.APP_ROOT_SERVER_DIR, xU.var.UPLOADS, xU.var.RESOURCE_ASSETS);
-	
 	function install() {
 		const fileExistURL = path.join(xU.var.APP_ROOT_DIR, "..", "yapi.installed");
 		let isExist = xU.fileExist(fileExistURL);
@@ -34,21 +32,6 @@
 			add_time: xU.time(),
 			up_time: xU.time()
 		});
-
-		(function () {
-			let resourceInst = orm.resource;
-			var bitmap = fs.readFileSync(
-				path.resolve(__dirname, "./uploads/RESOURCE_ASSETS/common/404.png")
-			);
-			resourceInst.save({
-				name: `SYSTEM_404`,
-				useFor: "all",
-				type: "image/png",
-				path: `${TARGET_PREFIX}/common/404.webp`,
-				basecode: new Buffer(bitmap).toString("base64"),
-				add_time: Date.now()
-			});
-		})();
 
 		(function () {
 			let storageCol = mongoose.connection.db.collection("storage");

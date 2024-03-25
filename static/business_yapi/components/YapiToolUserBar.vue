@@ -40,7 +40,6 @@ export default async function () {
 				return {
 					itemType: "YapiItemAvatar",
 					value: this.APP.user._id,
-					style: "width:100px",
 					disabled: true
 				};
 			}

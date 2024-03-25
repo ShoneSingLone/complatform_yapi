@@ -1,17 +1,14 @@
+const path = require("path");
 const fs = require("fs");
 
-(async function () {
-	await require("./onFirstLine")();
+async function main() {
+	/* 将以前的资源文件，转换成base64 */
+	await require("./onFirstLine.ts")();
+	const { TARGET_PREFIX } = xU;
+
 	const { ModelResource } = require("../models/Resource");
-	const path = require("path");
 
 	let resourceInst = xU.$orm(ModelResource);
-
-	let TARGET_PREFIX = xU.path.join(
-		xU.var.APP_ROOT_SERVER_DIR,
-		xU.var.UPLOADS,
-		xU.var.RESOURCE_ASSETS
-	);
 
 	const res = await resourceInst.findAll();
 	await Promise.all(
@@ -36,4 +33,6 @@ const fs = require("fs");
 	);
 
 	throw new Error("nothing just exit");
-})();
+}
+
+main();
