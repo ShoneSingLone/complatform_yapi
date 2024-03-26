@@ -23,6 +23,11 @@ export default async function () {
 			};
 
 			window._api.yapi = {
+				resourceLs(data) {
+					return _.$ajax.post("/api/resource/ls", {
+						data
+					});
+				},
 				i18nTranslate(data) {
 					return _.$ajax.post("/api/i18n/translate", {
 						data

@@ -13,6 +13,10 @@
 		<a class="flex middle" :href="publicNoteHref" target="_blank">
 			<xIcon icon="_wikidoc" />
 		</a>
+		<xGap r="4" />
+		<a class="flex middle" :href="privateExploreHref" target="_blank">
+			<xIcon icon="_wikidoc" />
+		</a>
 		<xGap f />
 		<YapiToolUserBar />
 	</header>
@@ -49,6 +53,9 @@ export default async function () {
 			},
 			publicNoteHref() {
 				return _.$aHashLink("/note", {});
+			},
+			privateExploreHref() {
+				return _.$aHashLink("/explore", {});
 			},
 			icon() {
 				if (["/api/group", "/wiki", "/xI"].includes(this.$route.path)) {

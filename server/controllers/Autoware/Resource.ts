@@ -244,23 +244,65 @@ module.exports = {
 					body: {
 						path: {
 							description: "文件夹路径",
-							type: "string"
+							type: "array",
+							items: "strig"
 						}
 					}
 				},
 				async handler(ctx) {
 					try {
 						if (this.$user?.role === "admin") {
-							const { path: dirpath } = ctx.payload;
-							if (dirpath === "/") {
+							let { path: pathArray } = ctx.payload;
+							pathArray = xU.isArray(pathArray) ? pathArray : [];
+
+							if (pathArray[0] === "/") {
 								throw new Error("auth");
 							}
-							let targetPath = path.resolve(
+							let targetPath = path.resolve.apply(path, [
 								yapi_configs.RESOURCE_ASSETS_REMOTE,
-								dirpath || ""
+								...pathArray
+							]);
+							let dirlsArray = await fs.promises.readdir(targetPath);
+
+							let dirOrFileArray = await Promise.all(
+								xU.map(dirlsArray, async dirname => {
+									const absolutePath = path.resolve(targetPath, dirname);
+
+									let stat;
+									try {
+										stat = await fs.promises.stat(absolutePath);
+									} catch (error) {}
+
+									if (!stat) {
+										return;
+									}
+
+									if (stat.isDirectory()) {
+										return {
+											type: "directory",
+											path: [...pathArray, dirname],
+											name: dirname
+										};
+									}
+									if (stat.isFile()) {
+										const type = getType(absolutePath);
+										if (isAudioType(type)) {
+											// const audio = await getAudioRecord({ filePath: absolutePath, id: dirpath, size: stat.size, type });
+											return {
+												type: "audio",
+												path: [...pathArray, dirname],
+												name: dirname
+											};
+										}
+									}
+
+									return null;
+								})
 							);
-							const dirlsArray = await fs.promises.readdir(targetPath);
-							ctx.body = xU.$response(dirlsArray);
+
+							ctx.body = xU.$response(
+								xU.filter(dirOrFileArray, item => item?.type)
+							);
 						} else {
 							throw new Error("auth");
 						}
@@ -356,8 +398,8 @@ module.exports = {
 				description: "媒体文件流",
 				request: {
 					query: {
-						id: {
-							description: "资源id",
+						uri: {
+							description: "资源uri",
 							required: true,
 							type: "string"
 						}
@@ -365,18 +407,31 @@ module.exports = {
 				},
 				async handler(ctx) {
 					const { headers, payload } = ctx;
-					const { id: dirpath } = payload;
-					let resourcePath = path.resolve(
+					const { uri: pathArrayString } = payload;
+					let pathArray = [];
+					try {
+						pathArray = JSON.parse(decodeURIComponent(pathArrayString));
+					} catch (error) {
+						ctx.body = xU.$response(
+							{
+								msg: "not found"
+							},
+							404,
+							"Not Found"
+						);
+					}
+
+					let resourcePath = path.resolve.apply(path, [
 						yapi_configs.RESOURCE_ASSETS_REMOTE,
-						dirpath || ""
-					);
+						...pathArray
+					]);
 					const stat = await fs.promises.stat(resourcePath);
 					if (stat.isFile()) {
 						const type = getType(resourcePath);
 						if (isAudioType(type)) {
 							const record = await getAudioRecord({
 								filePath: resourcePath,
-								id: dirpath,
+								id: pathArrayString,
 								size: stat.size,
 								type
 							});

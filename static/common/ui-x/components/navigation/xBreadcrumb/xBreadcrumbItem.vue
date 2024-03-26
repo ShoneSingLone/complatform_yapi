@@ -1,5 +1,5 @@
 <template>
-	<span class="el-breadcrumb__item">
+	<span class="el-breadcrumb__item" v-on="$listeners">
 		<span :class="['el-breadcrumb__inner', to ? 'is-link' : '']" ref="link" role="link">
 			<slot></slot>
 		</span>
