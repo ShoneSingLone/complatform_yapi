@@ -209,15 +209,17 @@ module.exports = {
 						}
 
 						if (!DEFAULT_NOT_FOUND_IMG) {
-							var bitmap = fs.readFileSync(
-								path.resolve("server/assets/404.svg")
+							const bitmapPath = path.resolve(
+								__dirname,
+								"../../assets/404.svg"
 							);
+							var bitmap = fs.readFileSync(bitmapPath);
 							const basecode = new Buffer(bitmap).toString("base64");
 
 							await orm.Resource.save({
 								name: `SYSTEM_404`,
 								useFor: "all",
-								type: mime.lookup(`server/assets/404.svg`),
+								type: mime.lookup(bitmapPath),
 								path: `server/assets/404.svg`,
 								basecode: basecode,
 								add_time: Date.now()
