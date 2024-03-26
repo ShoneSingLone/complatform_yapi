@@ -12,7 +12,7 @@ class ModelWiki extends ModelBase {
 				enum: ["private", "group", "project", "all"],
 				default: "private"
 			},
-			belong_id: { type: Number },
+			belong_id: { type: String },
 			del_tag: { type: Number, default: 0 },
 			type: String,
 			title: String,
@@ -33,6 +33,10 @@ class ModelWiki extends ModelBase {
 		return m.save();
 	}
 
+	/* 
+	db.getCollection("wiki_doc").updateMany({belong_type:"all"},{$set:{belong_id:"BELONG_ALL"}})
+	db.getCollection("wiki_doc").find({belong_type:"all"})
+	*/
 	/* find  find  find  find  find  find  find  find  find  find  find  */
 	/**
 	 *

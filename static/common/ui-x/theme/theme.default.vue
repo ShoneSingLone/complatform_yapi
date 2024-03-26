@@ -324,10 +324,11 @@ each(@list, {
 .loopGapFn(25);
 .loopGapFn(32);
 
-.margin {
+.x-margin {
 	margin: var(--ui-one);
 }
-.padding {
+
+.x-padding {
 	padding: var(--ui-one);
 }
 

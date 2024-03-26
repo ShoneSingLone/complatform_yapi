@@ -72,7 +72,7 @@ export default async function () {
 			};
 			const vm = this;
 			return h("xBlock", {
-				staticClass: "padding margin16",
+				staticClass: "x-padding margin16",
 				style: vm.styleContainer,
 				$vSlots: {
 					default() {

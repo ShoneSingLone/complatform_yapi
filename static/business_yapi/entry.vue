@@ -249,7 +249,7 @@ export default async function () {
 			cptGroupId: {
 				get() {
 					const { path, query } = this.$route;
-					
+
 					if (!query.groupId && path === '/api/group"') {
 						this.updateGroupList();
 					}

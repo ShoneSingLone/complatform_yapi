@@ -92,15 +92,15 @@ const getWikiMenu = {
 			if (belong_type === xU.var.PRIVATE) {
 				belong_id = this.$uid;
 			}
-			if (belong_id) {
+
+			if (belong_id && belong_id !== "BELONG_ALL") {
 				queryConditions.belong_id = belong_id;
 			}
 
-			const { order } =
-				(await orm.WikiOrder.detail(queryConditions)) || {};
+			const { order } = (await orm.WikiOrder.detail(queryConditions)) || {};
 			ctx.body = xU.$response({
 				list: await orm.wiki.menu({ belong_type, belong_id }),
-				orderArray: order || []
+				orderArray: order || [5]
 			});
 		} catch (e) {
 			xU.applog.error(e.message);

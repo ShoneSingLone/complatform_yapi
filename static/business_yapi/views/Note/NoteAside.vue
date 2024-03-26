@@ -184,7 +184,7 @@ export default async function () {
 			},
 			async addNewWiki(payload) {
 				const { node } = payload || {};
-				
+
 				return _.$openModal({
 					parent: this,
 					title: "新增",

@@ -3,7 +3,7 @@
 	<div>
 		<xForm col="2">
 			<xItem :configs="form.editor" @save="btnOk.onClick" style="height: 500px" />
-			<div class="padding" style="position: absolute">
+			<div class="x-padding" style="position: absolute">
 				<xMd :md="cptCode" />
 			</div>
 		</xForm>

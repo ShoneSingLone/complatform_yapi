@@ -86,7 +86,7 @@ export default async function () {
 
 					(() => {
 						const wikiId = this.$route.query.wiki;
-						
+
 						if (wikiId) {
 							const wiki = this.allWiki[wikiId];
 							if (wiki) {
@@ -177,7 +177,7 @@ export default async function () {
 					private: privateId,
 					project: projectId,
 					group: groupId,
-					all: 0
+					all: "BELONG_ALL"
 				};
 				return variable_map[this.cptBelongType];
 			},

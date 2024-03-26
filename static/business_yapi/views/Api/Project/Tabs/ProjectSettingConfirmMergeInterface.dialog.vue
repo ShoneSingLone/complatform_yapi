@@ -7,7 +7,7 @@
 					<span class="logcontent" v-html="item.content" />
 				</div>
 			</div>
-			<div class="padding">
+			<div class="x-padding">
 				{{ cptTaskNotice }}
 			</div>
 		</div>

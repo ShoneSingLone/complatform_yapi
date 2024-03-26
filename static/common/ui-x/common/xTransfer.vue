@@ -3,7 +3,7 @@
 		<div class="flex xTransfer center" v-if="slotSearchForm" :is="slotSearchForm" ref="slotSearchForm" :vm="vm"></div>
 		<div class="flex">
 			<xSearchList class="flex1" :items="originItems" v-model="originValue" :title="originTitle" :on-query="queryOrigin" ref="origin" :slotSearchForm="slotSearchFormOrigin" />
-			<div class="flex vertical middle center padding">
+			<div class="flex vertical middle center x-padding">
 				<xBtn :configs="btnLeft" />
 				<xBtn :configs="btnRight" />
 			</div>

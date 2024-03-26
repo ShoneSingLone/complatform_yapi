@@ -1,6 +1,6 @@
 <template>
 	<div id="AppLayoutLeft" :style="leftStyle" :class="{ close: !isOpen }">
-		<div class="padding">
+		<div class="x-padding">
 			<xInput v-model="filterText" placeholder="Search" clearable />
 		</div>
 		<aside

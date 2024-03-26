@@ -1,7 +1,7 @@
 <template>
 	<div class="YapiProjectCard card-container">
 		<div class="project-card-wrapper">
-			<div class="el-card__body padding">
+			<div class="el-card__body x-padding">
 				<xRender :render="logo" />
 			</div>
 			<xRender :render="title" />

@@ -6,7 +6,7 @@
 				<xBtn :configs="btnSave" />
 			</div>
 			<xItem :configs="form.editor" style="height: 516px" />
-			<div class="flex vertical padding">
+			<div class="flex vertical x-padding">
 				<div>
 					<xBtn :configs="btnSaveAsBackupData" />
 				</div>

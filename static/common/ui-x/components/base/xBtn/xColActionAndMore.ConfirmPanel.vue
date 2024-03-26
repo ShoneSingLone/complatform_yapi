@@ -1,6 +1,6 @@
 <template>
 	<div v-clickoutside="handleClose">
-		<p class="padding">
+		<p class="x-padding">
 			<xRender :render="tips" />
 		</p>
 		<div class="flex center middle">

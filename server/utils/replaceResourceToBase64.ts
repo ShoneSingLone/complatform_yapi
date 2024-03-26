@@ -8,14 +8,14 @@ async function main() {
 
 	const { ModelResource } = require("../models/Resource");
 
-	let resourceInst = xU.$orm(ModelResource);
+	let resourceInst = orm.Resource;
 
 	const res = await resourceInst.findAll();
 	await Promise.all(
 		Object.entries(res).map(async ([key, targetResource]) => {
 			try {
 				if (!targetResource.basecode) {
-					let targetPath = xU.path.resolve(
+					let targetPath = path.resolve(
 						`${TARGET_PREFIX}${targetResource.path}`
 					);
 					const isExist = xU.fileExist(targetPath);
