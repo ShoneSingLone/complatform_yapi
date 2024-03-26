@@ -8,7 +8,7 @@
 	padding: 10px 15px;
 	// border-bottom: 1px solid #eee;
 	&:hover {
-		background-color: #eee;
+		background-color: var(--xItemDesc-hover-bg, transparent);
 	}
 	&:last-child {
 		border-bottom: none;
@@ -25,8 +25,9 @@
 }
 </style>
 <template>
-	<div class="xItemDesc-wrapper flex middle" v-if="cptIsShow">
-		<div class="xItemDesc-wrapper_label mr">
+	<div class="xItemDesc-wrapper flex middle" v-if="cptIsEmpty"></div>
+	<div class="xItemDesc-wrapper flex middle" v-else-if="cptIsShow">
+		<div class="xItemDesc-wrapper_label">
 			<xRender :render="cptLabel" />
 		</div>
 		<div class="xItemDesc-wrapper_content flex1">
@@ -59,6 +60,9 @@ export default async function () {
 					return !this.item.isHide;
 				}
 				return true;
+			},
+			cptIsEmpty() {
+				return !!this.item.isEmpty;
 			},
 			cptLabel() {
 				let label = this.item.label;

@@ -1,6 +1,6 @@
 <template>
 	<header class="AppLayoutHeader flex middle">
-		<span class="flex middle YapiLogo">
+		<span class="flex middle YapiLogo pointer" @click="goToGroup">
 			<xIcon :icon="icon" :style="logoStyle" />
 		</span>
 		<YapiBreadcrumbNavigation />
@@ -26,14 +26,6 @@ export default async function () {
 		components: {
 			YapiToolUserBar: () => _.$importVue("@/components/YapiToolUserBar.vue"),
 			YapiBreadcrumbNavigation: () => _.$importVue("@/components/YapiBreadcrumbNavigation.vue")
-		},
-		methods: {
-			handleCommand(value) {
-				if (localStorage["X-Language"] !== value) {
-					localStorage["X-Language"] = value;
-					window.location.reload();
-				}
-			}
 		},
 		data() {
 			return {
@@ -74,6 +66,12 @@ export default async function () {
 			}
 		},
 		methods: {
+			handleCommand(value) {
+				if (localStorage["X-Language"] !== value) {
+					localStorage["X-Language"] = value;
+					window.location.reload();
+				}
+			},
 			goToGroup() {
 				this.$router.push("/api/group");
 			}

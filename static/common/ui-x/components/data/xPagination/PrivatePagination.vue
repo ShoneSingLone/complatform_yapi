@@ -50,15 +50,9 @@ export default async function () {
 			const layout = this.layout;
 			if (!layout) return null;
 			if (this.hideOnSinglePage && (!this.internalPageCount || this.internalPageCount === 1)) return null;
-			let template = h("div", {
-				class: [
-					"el-pagination",
-					{
-						"is-background": this.background,
-						"el-pagination--small": this.small
-					}
-				]
-			});
+
+			let template = h("div", { class: ["el-pagination flex middle center", { "is-background": this.background, "el-pagination--small": this.small }] });
+
 			const TEMPLATE_MAP = {
 				prev: h("prev", {}),
 				jumper: h("jumper", {}),
@@ -226,7 +220,7 @@ export default async function () {
 					return h(
 						"span",
 						{
-							class: "el-pagination__jump"
+							class: "el-pagination__jump flex middle center"
 						},
 						[
 							i18n("el.pagination.goto"),

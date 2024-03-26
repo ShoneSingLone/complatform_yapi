@@ -487,7 +487,7 @@ export default async function () {
 		justify-content: var(--xItem-layout-justify-content, center);
 		align-items: var(--xItem-layout-align-items, center);
 		flex: 1;
-		width: var(--xItem-controller-width, 1px);
+		width: var(--xItem-controller-width, unset);
 
 		.xItem_label {
 			width: var(--xItem-label-width, 120px);
@@ -507,7 +507,7 @@ export default async function () {
 				margin-bottom: unset;
 			}
 
-			width: var(--xItem-controller-width, 1px);
+			width: var(--xItem-controller-width, unset);
 			flex: var(--xItem-controller-flex, 1);
 			display: flex;
 			flex-flow: column nowrap;

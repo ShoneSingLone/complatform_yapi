@@ -3,6 +3,7 @@
 		<xMd :md="md" />
 		<DemoAndCode title="基础用法" path="@/views/component/data/descriptions/JiChuYongFa.vue" unfold />
 		<DemoAndCode title="Style1" path="@/views/component/data/descriptions/Style1.vue" unfold />
+		<DemoAndCode title="Style2" path="@/views/component/data/descriptions/Style2.vue" unfold />
 		<xMd :md="mdDoc" />
 	</DocContentOfDemo>
 </template>
@@ -59,7 +60,11 @@ items: [
 				mdDoc: `### Attributes
 | 参数      | 说明    | 类型      | 可选值       | 默认值   |
 |---------- |-------- |---------- |-------------  |-------- |
-|---------- |-------- |---------- |-------------  |-------- |
+|--xItemDesc-hover-bg |-------- |---------- |-------------  |-------- |
+|isEmpty |-------- |---------- |-------------  |-------- |
+|label |-------- |---------- |-------------  |-------- |
+|value |-------- |---------- |-------------  |-------- |
+|xItemRender |-------- |---------- |-------------  |-------- |
 `
 			};
 		}

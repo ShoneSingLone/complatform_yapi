@@ -246,8 +246,15 @@ export default async function () {
 			}
 		},
 		computed: {
-			cptGroupId() {
-				return this.$route.query.groupId;
+			cptGroupId: {
+				get() {
+					const { path, query } = this.$route;
+					
+					if (!query.groupId && path === '/api/group"') {
+						this.updateGroupList();
+					}
+					return this.$route.query.groupId;
+				}
 			},
 			cptCurrentGroup() {
 				if (this.cptGroupId && this.groupList.length) {

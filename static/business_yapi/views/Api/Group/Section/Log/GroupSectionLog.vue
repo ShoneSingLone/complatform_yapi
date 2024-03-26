@@ -65,17 +65,23 @@ export default async function () {
 				});
 			},
 			async updateGroupLog() {
-				const { page, size } = this.configsTable.pagination;
-				const {
-					data: { list, total }
-				} = await _api.yapi.getLogList({
-					typeid: this.APP.cptGroupId,
-					type: "group",
-					page: page,
-					limit: size
-				});
-				this.logList = list;
-				_.$setPagination(this.configsTable, { page, size, total });
+				_.$loading(true);
+				try {
+					const { page, size } = this.configsTable.pagination;
+					const {
+						data: { list, total }
+					} = await _api.yapi.getLogList({
+						typeid: this.APP.cptGroupId,
+						type: "group",
+						page: page,
+						limit: size
+					});
+					this.logList = list;
+					_.$setPagination(this.configsTable, { page, size, total });
+				} catch (error) {
+				} finally {
+					_.$loading(false);
+				}
 			},
 			getTime(time) {
 				return _.$dateFormat(time);

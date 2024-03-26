@@ -12,7 +12,7 @@
 		<xItem span="full" :configs="configsForm.password" autocomplete="current-password" />
 		<!-- 确认密码 -->
 		<xItem span="full" :configs="configsForm.confirm" autocomplete="current-password" />
-		<div class="item-wrapper" span="full">
+		<div class="width100" span="full">
 			<xBtn :configs="configsSubmit" />
 		</div>
 	</xForm>

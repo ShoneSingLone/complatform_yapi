@@ -35,7 +35,7 @@
 				<xGap l="10" />
 				<xIcon icon="currentLocation" class="icon-opreation_click pointer" />
 				<!-- 添加分组 -->
-				<xIcon icon="_add" class="icon-opreation_click pointer ml10" @click="addNewWiki({ manual })" />
+				<xIcon icon="_add" class="icon-opreation_click pointer ml10" @click="addNewWiki()" />
 			</div>
 			<div class="flex1-overflow-auto wiki-tree-wrapper" ref="refTreeScroll">
 				<xTree
@@ -163,7 +163,7 @@ export default async function () {
 					await _api.yapi.wikiUpsertOne(dragItem);
 					await _api.yapi.wikiResetMenuOrder({
 						order: menuOrderArray,
-						belong_type: inject_note.belongType,
+						belong_type: inject_note.cptBelongType,
 						belong_id: (() => {
 							// const { group_id, project_id } = cptRouter.value.query;
 							// const s_map = {
@@ -182,12 +182,14 @@ export default async function () {
 			treeFilterMethod(query, node) {
 				return new RegExp(query, "i").test(node.title);
 			},
-			async addNewWiki({ node }) {
+			async addNewWiki(payload) {
+				const { node } = payload || {};
+				
 				return _.$openModal({
+					parent: this,
 					title: "新增",
 					url: "@/views/Note/Note.dialog.insert.vue",
-					parent: this,
-					parentDocId: node?._id,
+					parentDocId: node?._id || "",
 					belong_type: this.inject_note.cptBelongType,
 					belong_id: this.inject_note.cptBelongId
 				});

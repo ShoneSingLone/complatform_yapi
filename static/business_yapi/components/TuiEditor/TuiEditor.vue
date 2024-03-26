@@ -1585,60 +1585,63 @@ table.ProseMirror-selectednode,
 	color: #999;
 }
 
-.toastui-editor-contents blockquote {
-	margin: 14px 0;
-	border-left: 4px solid #e5e5e5;
-	padding: 0 16px;
-	color: #999;
-}
+.toastui-editor-contents {
+	padding: var(--ui-one);
+	blockquote {
+		margin: 14px 0;
+		border-left: 4px solid #e5e5e5;
+		padding: 0 16px;
+		color: #999;
 
-.toastui-editor-contents blockquote p,
-.toastui-editor-contents blockquote ul,
-.toastui-editor-contents blockquote ol {
-	color: #999;
-}
+		p,
+		ul,
+		ol {
+			color: #999;
+		}
+	}
 
-.toastui-editor-contents blockquote > :first-child {
-	margin-top: 0;
-}
+	> :first-child {
+		margin-top: 0;
+	}
 
-.toastui-editor-contents blockquote > :last-child {
-	margin-bottom: 0;
-}
+	blockquote > :last-child {
+		margin-bottom: 0;
+	}
 
-.toastui-editor-contents pre,
-.toastui-editor-contents code {
-	font-family: var(--font-family);
-	border: 0;
-	border-radius: 0;
-}
+	pre,
+	code {
+		font-family: var(--font-family);
+		border: 0;
+		border-radius: 0;
+	}
 
-.toastui-editor-contents pre {
-	margin: 2px 0 8px;
-	padding: 18px;
-	background-color: #f4f7f8;
-}
+	pre {
+		margin: 2px 0 8px;
+		padding: 18px;
+		background-color: #f4f7f8;
 
-.toastui-editor-contents code {
-	color: #c1798b;
-	background-color: #f9f2f4;
-	padding: 2px 3px;
-	letter-spacing: -0.3px;
-	border-radius: 2px;
-}
+		code {
+			padding: 0;
+			color: inherit;
+			white-space: pre-wrap;
+			background-color: transparent;
+		}
+	}
 
-.toastui-editor-contents pre code {
-	padding: 0;
-	color: inherit;
-	white-space: pre-wrap;
-	background-color: transparent;
-}
+	code {
+		color: #c1798b;
+		background-color: #f9f2f4;
+		padding: 2px 3px;
+		letter-spacing: -0.3px;
+		border-radius: 2px;
+	}
 
-.toastui-editor-contents img {
-	margin: 4px 0 10px;
-	box-sizing: border-box;
-	vertical-align: top;
-	max-width: 100%;
+	img {
+		margin: 4px 0 10px;
+		box-sizing: border-box;
+		vertical-align: top;
+		max-width: 30%;
+	}
 }
 
 .toastui-editor-contents table {
@@ -1916,9 +1919,11 @@ table.ProseMirror-selectednode,
 		h1 {
 			min-height: 28px;
 		}
+
 		h2 {
 			min-height: 23px;
 		}
+
 		blockquote {
 			min-height: 20px;
 		}

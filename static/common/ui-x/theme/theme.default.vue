@@ -246,7 +246,6 @@
 	--normal-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 	/* xUI */
 	/* xItem */
-	--xItem-controller-width: 100%;
 	--xItem-error-bg: var(--el-bg-color);
 	/* xAlert */
 }

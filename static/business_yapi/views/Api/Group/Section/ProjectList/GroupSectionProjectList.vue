@@ -49,13 +49,14 @@ export default async function () {
 		methods: {
 			async openGroupProjectDialog() {
 				const vm = this;
-				const addMember = await _.$importVue("@/views/Api/Group/Section/ProjectList/GroupSectionProjectListAddProject.vue", {
-					parent: this,
+				return _.$openModal({
+					title: i18n("添加项目"),
+					url: "@/views/Api/Group/Section/ProjectList/GroupSectionProjectListAddProject.vue",
+					parent: vm,
 					onOk() {
 						vm.APP.updateGroupProjectList();
 					}
 				});
-				_.$openWindow_deprecated(i18n("添加项目"), addMember);
 			}
 		},
 		watch: {

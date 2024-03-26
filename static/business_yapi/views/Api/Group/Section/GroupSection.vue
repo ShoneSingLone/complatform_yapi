@@ -18,6 +18,7 @@
 			<GroupSectionProjectList />
 			<GroupSectionMemberList />
 			<GroupSectionLog />
+			<GroupSectionWiki />
 		</xPageContent>
 	</section>
 </template>
@@ -35,7 +36,8 @@ export default async function () {
 		components: {
 			GroupSectionProjectList: () => _.$importVue("@/views/Api/Group/Section/ProjectList/GroupSectionProjectList.vue"),
 			GroupSectionMemberList: () => _.$importVue("@/views/Api/Group/Section/MemberList/GroupSectionMemberList.vue"),
-			GroupSectionLog: () => _.$importVue("@/views/Api/Group/Section/Log/GroupSectionLog.vue")
+			GroupSectionLog: () => _.$importVue("@/views/Api/Group/Section/Log/GroupSectionLog.vue"),
+			GroupSectionWiki: () => _.$importVue("@/views/Api/Group/Section/Wiki/GroupSectionWiki.vue")
 		},
 		provide() {
 			const GroupSection = this;
