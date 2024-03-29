@@ -105,7 +105,7 @@ function storageCreator(id) {
 }
 
 const applog = {
-	info(msg) {
+	info(...msg) {
 		log(msg, "info");
 	},
 	error(msg, payload) {
@@ -425,13 +425,16 @@ function $response(data, errcode, message) {
 
 function log(msg, type = "info") {
 	let errorThrowAt = ``;
-	if (!msg) {
+	if (!msg?.length) {
 		return;
 	}
 
 	if (typeof msg === "object") {
-		if (msg instanceof Error) msg = msg.message;
-		else msg = JSON.stringify(msg);
+		if (msg instanceof Error) {
+			msg = msg.message;
+		} else {
+			msg = JSON.stringify(msg);
+		}
 	}
 
 	try {
@@ -457,7 +460,7 @@ function log(msg, type = "info") {
 	);
 	const errorContent = `===\n【${dayjs(date).format(
 		"YYYY-MM-DD HH:mm:ss"
-	)}-${date}】：【${type}】：【${msg}】${errorThrowAt}\n===`;
+	)}-${date}】：【${type}】：${msg} ${errorThrowAt}\n===`;
 
 	fs.writeFileSync(logfile, errorContent, {
 		flag: "a"

@@ -8,7 +8,7 @@ const middlewareCORS = () => {
 		origin: ctx => {
 			if (yapi_configs?.cors?.allow) {
 				const url = String(
-					ctx.headers.origin || ctx.headers.referer
+					ctx.headers.origin || ctx.headers.referer || ctx.host
 				).toLowerCase();
 
 				if (
@@ -21,7 +21,7 @@ const middlewareCORS = () => {
 					ctx.url = ctx.url.replace(/^\/0/, "");
 					return url;
 				} else {
-					console.log(chalk.blue.bgRed.bold(`cors fail: `), url, ctx.url);
+					console.log(chalk.blue.bgRed.bold(`not in cors.allow: `), ctx.href);
 					return false;
 				}
 			} else {

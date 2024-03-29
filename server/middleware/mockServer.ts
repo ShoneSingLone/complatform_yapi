@@ -489,7 +489,10 @@ const middlewareMockServer = () => async (ctx, next) => {
 				/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
 				/* isUseBackup */
 				if (interfaceData.res_body_type === "backup") {
-					responseByMock = JSON.parse(interfaceData.resBackupJson);
+					const getJsonFn = new Function(
+						`return ${interfaceData.resBackupJson}`
+					);
+					responseByMock = getJsonFn.call(null);
 					A_TIPS = `使用备份的JSON数据`;
 				} else if (_.isPlainObject(context.mockJson)) {
 					responseByMock = context.mockJson;
@@ -497,13 +500,13 @@ const middlewareMockServer = () => async (ctx, next) => {
 			} catch (error) {
 				msg = error.message;
 			}
-			ctx.body = {
-				A_NOTICE: {
-					A_TIPS,
-					msg
-				},
-				...responseByMock
+
+			/* 使用备份的JSON数据 */
+			responseByMock.A_NOTICE = {
+				A_TIPS,
+				msg
 			};
+			ctx.body = responseByMock;
 			return;
 		} catch (e) {
 			xU.applog.error(e);

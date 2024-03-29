@@ -12,7 +12,7 @@ const middlewareWhenDev = () => async (ctx, next) => {
 	  JSON.stringify(ctx?.request?.body || {}, null, 2),
 	); */
 
-		xU.applog.info(ctx.path, ctx.ips.join(","));
+		xU.applog.info(ctx.path, ctx.ip, ctx.ips.join(","));
 		const start = Date.now();
 		await next();
 		const yapiTips = {
