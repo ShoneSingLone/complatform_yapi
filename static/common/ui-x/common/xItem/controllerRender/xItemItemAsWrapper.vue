@@ -2,6 +2,7 @@
 export default async function () {
 	return function render() {
 		const vm = this;
+		/* 使用slots，不需要传递controller参数 */
 		return h(
 			"div",
 			{
@@ -10,7 +11,8 @@ export default async function () {
 				attrs: {
 					"data-form-item-type": vm.itemType,
 					"data-form-item-id": vm.cpt_id
-				}
+				},
+				style: vm.cptStyle
 			},
 			[
 				h(
@@ -63,8 +65,11 @@ export default async function () {
 									"el-form-item is-error": !!vm.errorTips
 								}
 							},
+							/* 使用slots */
 							vm.$slots.default
+							/* 使用slots */
 						),
+						/* 因为使用slots 所以这里不渲染 */
 						/* 校验错误提示 */
 						h(
 							"elTooltip",
@@ -84,7 +89,7 @@ export default async function () {
 					]
 				),
 				/* 信息提示 */
-				h("div", { vIf: vm.calMsg(), staticClass: "xItem-msg", style: { overflow: "hidden", margin: `8px 0 16px ${vm.width + 16}px` } }, [vm.calMsg()])
+				h("div", { vIf: vm.calMsg(), staticClass: "xItem-msg" }, [vm.calMsg()])
 			]
 		);
 	};

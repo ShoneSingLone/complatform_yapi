@@ -1,5 +1,5 @@
 <template>
-	<div class="page-view">
+	<div class="x-page-view">
 		<xPageContent>
 			<p>{{ formData }}</p>
 			<xItem :configs="form.xItemSelect" />

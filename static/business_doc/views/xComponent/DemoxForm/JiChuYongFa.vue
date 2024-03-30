@@ -1,11 +1,10 @@
 <template>
 	<div>
 		<xForm>
-			<xItem :configs="xItemInput" />
+			<div span="full">trigger eventName:{{ tipsString }}</div>
+			<xItem :configs="xItemInput" @change="tipsString = 'event change'" />
 			<xItem :configs="xItemSelect" />
-			<xItem :configs="xItemInput3" />
-			<xItem :configs="xItemInput3" />
-			<xItem :configs="xItemInput3" />
+			<xItem :configs="xItemCheck" />
 			<xItem :configs="xItemInput3" />
 		</xForm>
 		<xBtn :configs="xBtnConfigs" />
@@ -28,20 +27,34 @@ export default async function () {
 		},
 		data() {
 			const vm = this;
+			const msg =
+				"asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfas\ndfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfapn\nsdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf";
+
 			return {
-				xItemInputValue: "",
+				tipsString: "",
 				xItemInput: {
 					value: "",
 					label: "xItemInput",
 					tips: "asdfasdf",
-					msg: "asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfas\ndfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfapn\nsdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf",
+					msg,
 					onFocus() {
-						vm.xItemInputValue = "onFocus";
+						vm.tipsString = "onFocus";
 					},
 					onBlur() {
-						vm.xItemInputValue = "onBlur";
+						vm.tipsString = "onBlur";
 					},
-					rules: [_rules.required()]
+					onEnter() {
+						vm.tipsString = "onEnter";
+					},
+					onEmitValue() {
+						// vm.tipsString = "change";
+					},
+					rules: [_rules.required()],
+					itemSlots: {
+						afterController() {
+							return h("span", { class: "ml8" }, ["台"]);
+						}
+					}
 				},
 				xItemSelect: {
 					value: "",
@@ -58,11 +71,24 @@ export default async function () {
 						}
 					],
 					onFocus() {
-						vm.xItemInputValue = "onFocus";
+						vm.tipsString = "onFocus";
 					},
 					onBlur() {
-						vm.xItemInputValue = "onBlur";
+						vm.tipsString = "onBlur";
 					}
+				},
+				xItemCheck: {
+					value: "",
+					label: "xItemCheck",
+					itemType: "xItemCheck",
+					options: ["item"],
+					rules: [
+						{
+							async validator({ val }) {
+								return "但凡校验，铁定报错！" + val;
+							}
+						}
+					]
 				},
 				xItemSelectSub: {
 					value: "",
@@ -78,26 +104,25 @@ export default async function () {
 						}
 					],
 					onFocus() {
-						vm.xItemInputValue = "onFocus";
+						vm.tipsString = "onFocus";
 					},
 					onBlur() {
-						vm.xItemInputValue = "onBlur";
+						vm.tipsString = "onBlur";
 					}
 				},
 				xItemInput3: {
 					value: "",
-					label: "label3",
-					msg: "提示",
+					msg: "没有label",
 					$vSlots: {
 						prepend() {
 							return h("xItem", { configs: vm.xItemSelectSub, style: `--xItem-wrapper-width:80px` });
 						}
 					},
 					onFocus() {
-						vm.xItemInputValue = "onFocus";
+						vm.tipsString = "onFocus";
 					},
 					onBlur() {
-						vm.xItemInputValue = "onBlur";
+						vm.tipsString = "onBlur";
 					},
 					rules: [_rules.required()]
 				}

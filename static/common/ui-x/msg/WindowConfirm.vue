@@ -12,12 +12,8 @@
 </template>
 
 <script lang="ts">
-export default async function ({ onOk, onCancel, content, renderFooter, style }) {
-	const isUpdate = false;
-	/*  */
-	const RULES = await _.$importVue("/common/utils/rules.vue");
+export default async function ({ resolve, reject, content, renderFooter, style }) {
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
-
 	return defineComponent({
 		props: useDialogProps(),
 		data() {
@@ -46,20 +42,19 @@ export default async function ({ onOk, onCancel, content, renderFooter, style })
 					label,
 					async onClick() {
 						vm.closeModal();
-						onOk();
+						resolve();
 					}
 				};
 			},
 			btnCancel() {
 				const vm = this;
-				let label = i18n("取消");
 				return {
-					label,
+					label: i18n("取消"),
 					/* 因为是弹出确认框，引导用户取消 */
 					preset: "blue",
 					async onClick() {
 						vm.closeModal();
-						onCancel();
+						reject();
 					}
 				};
 			}

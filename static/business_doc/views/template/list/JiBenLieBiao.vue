@@ -1,5 +1,5 @@
 <template>
-	<div class="page-view">
+	<div class="x-page-view">
 		<xPageTitle title="标题使用i18n的key" />
 		<xPageContent>
 			<xTablebar :configs="configsTable">

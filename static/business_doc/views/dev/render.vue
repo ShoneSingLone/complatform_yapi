@@ -28,7 +28,7 @@ export default async function () {
 				return h(
 					"div",
 					{
-						staticClass: "page-view view-icon"
+						staticClass: "x-page-view view-icon"
 					},
 					[
 						h("xInput", {

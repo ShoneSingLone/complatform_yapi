@@ -18,7 +18,7 @@ export default async function () {
 	xTableRow disabled
 	xTableCol disabled
 	*/
-	/* configs {
+	/* cptConfigs {
   label:string
   disabled:boolean||function
   isHide:boolean||function
@@ -62,26 +62,45 @@ export default async function () {
 			const privateState = reactive({
 				isDisabled: ""
 			});
-			if (!vm.configs) {
-				if (this.$slots.default) {
-					vm.configs = {
-						THIS_CONFIGS_ONLY_FOR_LABEL: true,
-						label: this.label
-					};
-					if (this.rules) {
-						vm.configs.rules = this.rules;
+
+			const cptConfigs = computed({
+				get() {
+					if (vm.configs) {
+						return vm.configs;
+					} else if (vm.CONFIGS_ONLY_AS_WRAPPER) {
+						return vm.CONFIGS_ONLY_AS_WRAPPER;
+					} else if (this.$slots.default) {
+						vm.CONFIGS_ONLY_AS_WRAPPER = new Proxy(
+							{
+								THIS_CONFIGS_ONLY_FOR_LABEL: true,
+								label: this.label
+							},
+							{
+								get(obj, prop) {
+									return obj[prop];
+								},
+								set(obj, prop, value) {
+									obj[prop] = value;
+									return true;
+								}
+							}
+						);
+
+						if (this.rules) {
+							vm.CONFIGS_ONLY_AS_WRAPPER.rules = this.rules;
+						}
+						return vm.CONFIGS_ONLY_AS_WRAPPER;
+					} else {
+						alert("xItem configs ether not set or not a function");
+						return {};
 					}
-				} else {
-					alert("xItem的configs为必填项");
-					vm.configs = {
-						label: "xItem的configs为必填项",
-						value: "当前xItem缺失必要configs",
-						rules: [RULES.required()]
-					};
+				},
+				set(val) {
+					vm.CONFIGS_ONLY_AS_WRAPPER = val;
 				}
-			}
-			vm.configs = reactive(vm.configs);
-			// this.configs = reactive(this.configs);
+			});
+
+			// cptConfigs.value = reactive(cptConfigs.value);
 			Vue._X_ITEM_VM_S = Vue._X_ITEM_VM_S || {};
 
 			/* options\disabled\readOnly\做统一处理，其他的使用透传 */
@@ -89,10 +108,10 @@ export default async function () {
 			/* options()计算后的数组，有find等数组的方法 */
 			vm._calOptionsArray = [];
 			let cpt_options = computed(() => {
-				const optionsProperty = _.find(props.configs, (val, prop) => prop === "options");
-				if (_.isFunction(optionsProperty) || props.configs?.options?._is_function) {
-					props.configs.options._is_function = true;
-					props.configs.options = new Proxy(props.configs.options, {
+				const optionsProperty = _.find(cptConfigs.value, (val, prop) => prop === "options");
+				if (_.isFunction(optionsProperty) || cptConfigs.value?.options?._is_function) {
+					cptConfigs.value.options._is_function = true;
+					cptConfigs.value.options = new Proxy(cptConfigs.value.options, {
 						get(obj, prop) {
 							try {
 								return vm._calOptionsArray[prop];
@@ -101,7 +120,7 @@ export default async function () {
 							}
 						}
 					});
-					vm._calOptionsArray = props.configs.options({
+					vm._calOptionsArray = cptConfigs.value.options({
 						xItem: this
 					});
 					return vm._calOptionsArray;
@@ -109,9 +128,9 @@ export default async function () {
 				return optionsProperty || vm._calOptionsArray;
 			});
 			let cpt_queryData = computed(() => {
-				if (_.isFunction(props.configs?.queryData)) {
-					props.configs.queryData = props.configs?.queryData?.();
-					return props.configs.queryData;
+				if (_.isFunction(cptConfigs.value?.queryData)) {
+					cptConfigs.value.queryData = cptConfigs.value?.queryData?.();
+					return cptConfigs.value.queryData;
 				}
 			});
 
@@ -122,29 +141,29 @@ export default async function () {
 				if (this.disabled) {
 					return true;
 				}
-				if (_.isFunction(vm.configs?.disabled)) {
-					return vm.configs.disabled.call(vm.configs, { xItem: vm, val: vm.p_value });
+				if (_.isFunction(vm.cptConfigs?.disabled)) {
+					return vm.cptConfigs.disabled.call(vm.cptConfigs, { xItem: vm, val: vm.p_value });
 				} else {
-					return !!vm.configs?.disabled;
+					return !!vm.cptConfigs?.disabled;
 				}
 			});
 
 			onMounted(() => {
 				Vue._X_ITEM_VM_S[this.cpt_id] = this;
-				if (this.configs?.once) {
-					this.configs.once.call(this.configs, { xItem: this });
+				if (cptConfigs.value?.once) {
+					cptConfigs.value.once.call(cptConfigs.value, { xItem: this });
 				}
-				if (this.configs.style) {
-					this.$watch("configs.style", this.setStyle);
+				if (cptConfigs.value.style) {
+					this.$watch("cptConfigs.style", this.setStyle);
 				}
-				if (this.configs.attrs) {
-					this.$watch("configs.attrs", this.setAttrs);
+				if (cptConfigs.value.attrs) {
+					this.$watch("cptConfigs.attrs", this.setAttrs);
 				}
-				if (this.configs.multiple) {
-					this.$watch("configs.multiple", this.setAttrs);
+				if (cptConfigs.value.multiple) {
+					this.$watch("cptConfigs.multiple", this.setAttrs);
 				}
-				if (this.configs.value !== undefined) {
-					this.$watch("configs.value", this.emitValueChange);
+				if (cptConfigs.value.value !== undefined) {
+					this.$watch("cptConfigs.value", this.emitValueChange);
 				}
 				if (this.value !== undefined) {
 					this.$watch("value", this.emitValueChange, { deep: true });
@@ -171,7 +190,8 @@ export default async function () {
 				cptDisabled,
 				cpt_options,
 				cpt_queryData,
-				cptPlaceholder
+				cptPlaceholder,
+				cptConfigs
 			};
 		},
 		computed: {
@@ -184,15 +204,19 @@ export default async function () {
 			p_value: {
 				get() {
 					const isValueUndefined = this.value === undefined;
-					const isModelValueUndefined = this.configs?.value === undefined;
+					const isModelValueUndefined = this.cptConfigs?.value === undefined;
 					return (() => {
 						if (!isValueUndefined) {
 							return this.value;
 						}
 						if (!isModelValueUndefined) {
-							return this.configs.value;
+							return this.cptConfigs.value;
 						}
-						console.error("eigther v-model or configs has value property");
+
+						if (this.cptConfigs.THIS_CONFIGS_ONLY_FOR_LABEL) {
+							return "";
+						}
+						console.error("eigther v-model or cptConfigs has value property");
 					})();
 				},
 				set(val) {
@@ -227,18 +251,18 @@ export default async function () {
 				return `x_form_id_${this._uid}`;
 			},
 			cpt_label() {
-				return this.label || this.configs?.label;
+				return this.label || this.cptConfigs?.label;
 			},
 			cpt_isRequired() {
 				try {
-					return _.some(this.configs.rules, rule => rule.name === "required");
+					return _.some(this.cptConfigs.rules, rule => rule.name === "required");
 				} catch (error) {}
 				return false;
 			},
 			cpt_rulesByTrigger() {
 				return (
 					_.reduce(
-						this.configs?.rules,
+						this.cptConfigs?.rules,
 						(rulesByTrigger, rule) => {
 							_.each(rule.trigger, triggerName => {
 								rulesByTrigger[triggerName] = rulesByTrigger[triggerName] || [];
@@ -252,16 +276,16 @@ export default async function () {
 			},
 			cpt_isHide() {
 				const vm = this;
-				if (_.isBoolean(vm.configs?.isHide)) {
-					return vm.configs.isHide;
+				if (_.isBoolean(vm.cptConfigs?.isHide)) {
+					return vm.cptConfigs.isHide;
 				}
-				if (_.isFunction(vm.configs?.isHide)) {
-					return vm.configs.isHide();
+				if (_.isFunction(vm.cptConfigs?.isHide)) {
+					return vm.cptConfigs.isHide();
 				}
 				return false;
 			},
 			itemType() {
-				return this.configs.itemType || "xItemInput";
+				return this.cptConfigs.itemType || "xItemInput";
 			}
 		},
 		data() {
@@ -283,25 +307,25 @@ export default async function () {
 		},
 		methods: {
 			calTips() {
-				if (_.isString(this.configs.tips)) {
-					return this.configs.tips;
+				if (_.isString(this.cptConfigs.tips)) {
+					return this.cptConfigs.tips;
 				}
-				if (_.isFunction(this.configs?.tips)) {
-					return this.configs.tips.call(this.configs, { xItem: this });
+				if (_.isFunction(this.cptConfigs?.tips)) {
+					return this.cptConfigs.tips.call(this.cptConfigs, { xItem: this });
 				}
-				return this.configs.tips || "";
+				return this.cptConfigs.tips || "";
 			},
 			calMsg() {
 				/* msg之前一直是计算属性，但是msg可用作为render函数，里面的组件可能是懒加载，懒加载完成后触发update，由于计算属性的缓存机制无法更新，所以改用方法tips */
-				if (_.isString(this.configs?.msg) && this.configs?.msg) {
-					return h("div", { staticClass: "xItem-msg-content" }, [this.configs.msg]);
+				if (_.isString(this.cptConfigs?.msg) && this.cptConfigs?.msg) {
+					return h("div", { staticClass: "xItem-msg-content" }, [this.cptConfigs.msg]);
 				}
-				if (_.isFunction(this.configs?.msg)) {
-					return this.configs.msg.call(this.configs, { xItem: this });
+				if (_.isFunction(this.cptConfigs?.msg)) {
+					return this.cptConfigs.msg.call(this.cptConfigs, { xItem: this });
 				}
 
-				if (this.configs?.msg?.TYPE_IS_VNODE) {
-					return this.configs.msg;
+				if (this.cptConfigs?.msg?.TYPE_IS_VNODE) {
+					return this.cptConfigs.msg;
 				}
 				return null;
 			},
@@ -314,9 +338,9 @@ export default async function () {
 				}
 				_xItem_lazyLoadRender[renderName] = "";
 				const item = {
-					ItemAsWrapper: () => _.$importVue("/common/ui-x/common/xItem.ItemAsWrapper.vue"),
-					NormalRender: () => _.$importVue("/common/ui-x/common/xItem.NormalRender.vue"),
-					ReadonlyAsRender: () => _.$importVue("/common/ui-x/common/xItem.ReadonlyAsRender.vue")
+					ItemAsWrapper: () => _.$importVue("/common/ui-x/common/xItem/controllerRender/xItemItemAsWrapper.vue"),
+					NormalRender: () => _.$importVue("/common/ui-x/common/xItem/controllerRender/xItemNormalRender.vue"),
+					ReadonlyAsRender: () => _.$importVue("/common/ui-x/common/xItem/controllerRender/xItemReadonlyAsRender.vue")
 				};
 				const getter = item[renderName];
 				const render = await getter();
@@ -326,10 +350,10 @@ export default async function () {
 			},
 			triggerOnEmitValue(val) {
 				try {
-					if (this.configs?.onEmitValue) {
-						this.configs.onEmitValue.call(this.configs, {
+					if (this.cptConfigs?.onEmitValue) {
+						this.cptConfigs.onEmitValue.call(this.cptConfigs, {
 							val,
-							...(this?.configs?.payload || {}),
+							...(this?.cptConfigs?.payload || {}),
 							xItem: this
 						});
 					}
@@ -338,6 +362,7 @@ export default async function () {
 				}
 			},
 			emitValueChange(val) {
+				console.log("🚀 ~ emitValueChange ~ emitValueChange:", val);
 				// set=>emit=>prop=>render
 				const isRended = this.p_value === val;
 				// prop=>render=>emit
@@ -347,8 +372,8 @@ export default async function () {
 				} else {
 					this.emitValueChange.val = val;
 					/* 设置了configs.value，未设置model ；二者只能取其一*/
-					if (this.configs?.value !== undefined && this.value === undefined) {
-						this.configs.value = val;
+					if (this.cptConfigs?.value !== undefined && this.value === undefined) {
+						this.cptConfigs.value = val;
 					}
 					this.$emit("change", val);
 					this.triggerOnEmitValue(val);
@@ -366,9 +391,9 @@ export default async function () {
 			},
 			reset() {},
 			async validate(payload) {
-				if (this.configs.rules && this.configs.rules.length > 0) {
-					for await (const rule of this.configs.rules) {
-						const msg = await rule.validator.call(this.configs, {
+				if (this.cptConfigs.rules && this.cptConfigs.rules.length > 0) {
+					for await (const rule of this.cptConfigs.rules) {
+						const msg = await rule.validator.call(this.cptConfigs, {
 							val: this.p_value,
 							xItem: this,
 							payload
@@ -389,26 +414,26 @@ export default async function () {
 						{
 							width: "100%"
 						},
-						this.configs.style
+						this.cptConfigs.style
 					);
 				})();
 			},
 			setProps() {
 				const vm = this;
 				const _props = {
-					...(vm.configs.props || {}),
+					...(vm.cptConfigs.props || {}),
 					...(vm.p_attrs || {}),
-					configs: vm.configs
+					cptConfigs: vm.cptConfigs
 				};
 				this.p_props = _props;
 			},
 			setAttrs() {
 				const vm = this;
-				const clearable = vm.configs.clearable === undefined ? false : vm.configs.clearable;
+				const clearable = vm.cptConfigs.clearable === undefined ? false : vm.cptConfigs.clearable;
 				this.p_attrs = {
-					...(vm.configs.attrs || {}),
+					...(vm.cptConfigs.attrs || {}),
 					clearable,
-					multiple: !!vm.configs?.multiple,
+					multiple: !!vm.cptConfigs?.multiple,
 					placeholder: vm.cptPlaceholder
 				};
 				this.setProps();
@@ -418,7 +443,7 @@ export default async function () {
 				const vm = this;
 				const handleListener = (listeners, eventName) => {
 					listeners[eventName] = function (value, $event) {
-						const on = vm.configs.on;
+						const on = vm.cptConfigs.on;
 						const rule = vm.cpt_rulesByTrigger[eventName];
 						if (rule) {
 							vm.debounceValidate();
@@ -440,6 +465,7 @@ export default async function () {
 			}
 		},
 		render() {
+			if (!this.cptConfigs) debugger;
 			/* 只读模式 */
 			if (this.readOnlyAs) {
 				if (_xItem_lazyLoadRender.ReadonlyAsRender) {
@@ -450,7 +476,7 @@ export default async function () {
 			}
 
 			/* 与表单一致，只为了统一样式 */
-			if (this.configs?.THIS_CONFIGS_ONLY_FOR_LABEL) {
+			if (this.cptConfigs?.THIS_CONFIGS_ONLY_FOR_LABEL) {
 				if (_xItem_lazyLoadRender.ItemAsWrapper) {
 					return _xItem_lazyLoadRender.ItemAsWrapper.call(this);
 				} else {
@@ -480,6 +506,7 @@ export default async function () {
 .xItem-wrapper {
 	overflow: hidden;
 	width: var(--xItem-wrapper-width, 320px);
+	min-width: 1px;
 
 	.xItem-label-contorller {
 		display: flex;
@@ -499,6 +526,13 @@ export default async function () {
 		}
 
 		.xItem_controller {
+			width: var(--xItem-controller-width, unset);
+			flex: var(--xItem-controller-flex, 1);
+			display: flex;
+			flex-flow: row nowrap;
+			align-items: center;
+			overflow: hidden !important;
+
 			> [class^="el-"] {
 				width: 100%;
 			}
@@ -507,11 +541,6 @@ export default async function () {
 				margin-bottom: unset;
 			}
 
-			width: var(--xItem-controller-width, unset);
-			flex: var(--xItem-controller-flex, 1);
-			display: flex;
-			flex-flow: column nowrap;
-			overflow: hidden !important;
 			&.center {
 				align-self: center;
 			}
@@ -580,7 +609,7 @@ export default async function () {
 }
 
 .xItem-wrapper + .xItem-wrapper {
-	margin-top: 24px;
+	// margin-top: 24px;
 }
 
 .horizontal {

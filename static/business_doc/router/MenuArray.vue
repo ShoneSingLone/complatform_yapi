@@ -62,11 +62,6 @@ export default async function () {
 						{ icon: "icon_report", label: i18n("xItemCheck"), href: "/x-component/x-item-check" },
 						{ icon: "icon_report", label: i18n("xItemCheckboxGroup"), href: "/x-component/x-item-checkbox-group" }
 					]
-				},
-				{
-					icon: "icon_report",
-					label: i18n("xItemWrapper"),
-					href: "/other/x-form-item-wrapper"
 				}
 			]
 		},
@@ -78,6 +73,7 @@ export default async function () {
 				{ icon: "icon_report", label: i18n("input"), href: "/component/form/input" },
 				{ icon: "icon_report", label: i18n("inputNumber"), href: "/component/form/input-number" },
 				{ icon: "icon_report", label: i18n("checkbox"), href: "/component/form/checkbox" },
+				{ icon: "icon_report", label: i18n("switch"), href: "/component/form/switch" },
 				{ icon: "icon_report", label: i18n("select"), href: "/component/form/select" },
 				{ icon: "icon_report", label: i18n("ip-address"), href: "/component/form/ip-address" },
 				{ icon: "_icon_image", label: i18n("image") + i18n("图片"), href: "/component/data/image" },

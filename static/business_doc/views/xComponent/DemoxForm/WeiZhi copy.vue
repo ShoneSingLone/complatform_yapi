@@ -13,15 +13,15 @@
 		</xForm>
 		<xMd> ## 在父级元素上添加样式类可以作用于子元素 </xMd>
 		<xMd> ### xItem-pos left 水平居左</xMd>
-		<div class="xItem-pos left">
+		<xForm class="xItem-pos left">
 			<xItem :configs="xItemTopLeft" />
 			<xItem :configs="xItemTopLeft" />
-		</div>
+		</xForm>
 		<xMd> ### xItem-pos top right 垂直居右</xMd>
-		<div class="xItem-pos top right">
+		<xForm class="xItem-pos top right">
 			<xItem :configs="xItemTopRight" />
 			<xItem :configs="xItemTopRight" />
-		</div>
+		</xForm>
 		<xMd> ## 其他的可以自行扩展（添加足够的用例）</xMd>
 	</div>
 </template>

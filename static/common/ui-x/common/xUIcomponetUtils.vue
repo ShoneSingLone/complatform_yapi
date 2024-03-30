@@ -1479,245 +1479,251 @@ export default async function () {
 	}
 
 	/*****************************************/
-	window._useXui = {
-		virtualizedListProps,
-		useGetDerivedNamespace,
-		globalConfigs: {},
-		resolveUnref,
-		identity,
-		tryOnScopeDispose,
-		tryOnMounted,
-		unrefElement,
-		useEventListener,
-		useSupported,
-		autoResizerProps,
-		tableV2HeaderRowProps,
-		useResizeObserver,
-		useAutoResize,
-		useTableRow,
-		isEqual,
-		areInputsEqual,
-		memoizeOne,
-		getScrollDir,
-		isRTL,
-		rAF,
-		cAF,
-		isClient,
-		castArray,
-		sumReducer,
-		sum,
-		tryCall,
-		enforceUnit,
-		componentToSlot,
-		TableV2InjectionKey,
-		useTableGrid,
-		useGridWheel,
-		useCache,
-		useNamespace,
-		isStringNumber,
-		addUnit,
-		createGrid,
-		noop,
-		ScrollbarDirKey,
-		renderThumbStyle,
-		/* **************** */
-		definePropType,
-		buildProp,
-		buildProps,
-		columns,
-		virtualizedScrollbarProps,
-		virtualizedGridProps,
-		tableV2HeaderProps,
-		tableV2GridProps,
-		tableV2Props,
-		/* ************** */
-		ITEM_RENDER_EVT,
-		SCROLLBAR_MIN_SIZE,
-		DEFAULT_DYNAMIC_LIST_ITEM_SIZE,
-		SCROLL_EVT,
-		FORWARD,
-		BACKWARD,
-		AUTO_ALIGNMENT,
-		SMART_ALIGNMENT,
-		START_ALIGNMENT,
-		CENTERED_ALIGNMENT,
-		END_ALIGNMENT,
-		HORIZONTAL,
-		VERTICAL,
-		BAR_MAP,
-		RTL,
-		RTL_OFFSET_NAG,
-		RTL_OFFSET_POS_ASC,
-		RTL_OFFSET_POS_DESC,
-		getStyle(element, styleName) {
-			var _a2;
-			if (!isClient || !element || !styleName) return "";
-			let key = Vue.camelize(styleName);
-			if (key === "float") key = "cssFloat";
-			try {
-				const style = element.style[key];
-				if (style) return style;
-				const computed = (_a2 = document.defaultView) == null ? void 0 : _a2.getComputedStyle(element, "");
-				return computed ? computed[key] : "";
-			} catch (e) {
-				return element.style[key];
-			}
-		},
-		isScroll(el, isVertical) {
-			if (!isClient) return false;
-			const key = {
-				undefined: "overflow",
-				true: "overflow-y",
-				false: "overflow-x"
-			}[String(isVertical)];
-			const overflow = _useXui.getStyle(el, key);
-			return ["scroll", "auto", "overlay"].some(s => overflow.includes(s));
-		},
-		getScrollContainer(el, isVertical) {
-			if (!isClient) return;
-			let parent = el;
-			while (parent) {
-				if ([window, document, document.documentElement].includes(parent)) return window;
-				if (_useXui.isScroll(parent, isVertical)) return parent;
-				parent = parent.parentNode;
-			}
-			return parent;
-		},
-		throwError,
-		useElementBounding(target, options = {}) {
-			const { reset = true, windowResize = true, windowScroll = true, immediate = true } = options;
-			const height = Vue.ref(0);
-			const bottom = Vue.ref(0);
-			const left = Vue.ref(0);
-			const right = Vue.ref(0);
-			const top = Vue.ref(0);
-			const width = Vue.ref(0);
-			const x = Vue.ref(0);
-			const y = Vue.ref(0);
-
-			function update() {
-				const el = unrefElement(target);
-				if (!el) {
-					if (reset) {
-						height.value = 0;
-						bottom.value = 0;
-						left.value = 0;
-						right.value = 0;
-						top.value = 0;
-						width.value = 0;
-						x.value = 0;
-						y.value = 0;
-					}
-					return;
+	(function () {
+		window._useXui = {
+			virtualizedListProps,
+			useGetDerivedNamespace,
+			globalConfigs: {},
+			resolveUnref,
+			identity,
+			tryOnScopeDispose,
+			tryOnMounted,
+			unrefElement,
+			useEventListener,
+			useSupported,
+			autoResizerProps,
+			tableV2HeaderRowProps,
+			useResizeObserver,
+			useAutoResize,
+			useTableRow,
+			isEqual,
+			areInputsEqual,
+			memoizeOne,
+			getScrollDir,
+			isRTL,
+			rAF,
+			cAF,
+			isClient,
+			castArray,
+			sumReducer,
+			sum,
+			tryCall,
+			enforceUnit,
+			componentToSlot,
+			TableV2InjectionKey,
+			useTableGrid,
+			useGridWheel,
+			useCache,
+			useNamespace,
+			isStringNumber,
+			addUnit,
+			createGrid,
+			noop,
+			ScrollbarDirKey,
+			renderThumbStyle,
+			/* **************** */
+			definePropType,
+			buildProp,
+			buildProps,
+			columns,
+			virtualizedScrollbarProps,
+			virtualizedGridProps,
+			tableV2HeaderProps,
+			tableV2GridProps,
+			tableV2Props,
+			/* ************** */
+			ITEM_RENDER_EVT,
+			SCROLLBAR_MIN_SIZE,
+			DEFAULT_DYNAMIC_LIST_ITEM_SIZE,
+			SCROLL_EVT,
+			FORWARD,
+			BACKWARD,
+			AUTO_ALIGNMENT,
+			SMART_ALIGNMENT,
+			START_ALIGNMENT,
+			CENTERED_ALIGNMENT,
+			END_ALIGNMENT,
+			HORIZONTAL,
+			VERTICAL,
+			BAR_MAP,
+			RTL,
+			RTL_OFFSET_NAG,
+			RTL_OFFSET_POS_ASC,
+			RTL_OFFSET_POS_DESC,
+			getStyle(element, styleName) {
+				var _a2;
+				if (!isClient || !element || !styleName) return "";
+				let key = Vue.camelize(styleName);
+				if (key === "float") key = "cssFloat";
+				try {
+					const style = element.style[key];
+					if (style) return style;
+					const computed = (_a2 = document.defaultView) == null ? void 0 : _a2.getComputedStyle(element, "");
+					return computed ? computed[key] : "";
+				} catch (e) {
+					return element.style[key];
 				}
-				const rect = el.getBoundingClientRect();
-				height.value = rect.height;
-				bottom.value = rect.bottom;
-				left.value = rect.left;
-				right.value = rect.right;
-				top.value = rect.top;
-				width.value = rect.width;
-				x.value = rect.x;
-				y.value = rect.y;
-			}
-
-			useResizeObserver(target, update);
-			Vue.watch(
-				() => unrefElement(target),
-				ele => !ele && update()
-			);
-			if (windowScroll) useEventListener("scroll", update, { capture: true, passive: true });
-			if (windowResize) useEventListener("resize", update, { passive: true });
-			tryOnMounted(() => {
-				if (immediate) update();
-			});
-			return {
-				height,
-				bottom,
-				left,
-				right,
-				top,
-				width,
-				x,
-				y,
-				update
-			};
-		},
-		useWindowSize(options = {}) {
-			const { initialWidth = Infinity, initialHeight = Infinity, listenOrientation = true, includeScrollbar = true } = options;
-			const width = Vue.ref(initialWidth);
-			const height = Vue.ref(initialHeight);
-			const update = () => {
-				if (defaultWindow) {
-					if (includeScrollbar) {
-						width.value = defaultWindow.innerWidth;
-						height.value = defaultWindow.innerHeight;
-					} else {
-						width.value = defaultWindow.document.documentElement.clientWidth;
-						height.value = defaultWindow.document.documentElement.clientHeight;
-					}
+			},
+			isScroll(el, isVertical) {
+				if (!isClient) return false;
+				const key = {
+					undefined: "overflow",
+					true: "overflow-y",
+					false: "overflow-x"
+				}[String(isVertical)];
+				const overflow = _useXui.getStyle(el, key);
+				return ["scroll", "auto", "overlay"].some(s => overflow.includes(s));
+			},
+			getScrollContainer(el, isVertical) {
+				if (!isClient) return;
+				let parent = el;
+				while (parent) {
+					if ([window, document, document.documentElement].includes(parent)) return window;
+					if (_useXui.isScroll(parent, isVertical)) return parent;
+					parent = parent.parentNode;
 				}
-			};
-			update();
-			tryOnMounted(update);
-			useEventListener("resize", update, { passive: true });
-			if (listenOrientation) useEventListener("orientationchange", update, { passive: true });
-			return { width, height };
-		},
-		normalizeComponent(scriptExports, render, staticRenderFns, functionalTemplate, injectStyles, scopeId, moduleIdentifier, shadowMode) {
-			var options = typeof scriptExports === "function" ? scriptExports.options : scriptExports;
-			if (render) {
-				options.render = render;
-				options.staticRenderFns = staticRenderFns;
-				options._compiled = true;
-			}
-			if (functionalTemplate) {
-				options.functional = true;
-			}
-			if (scopeId) {
-				options._scopeId = "data-v-" + scopeId;
-			}
-			var hook;
-			if (moduleIdentifier) {
-				hook = function (context) {
-					context = context || (this.$vnode && this.$vnode.ssrContext) || (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext);
-					if (!context && typeof __VUE_SSR_CONTEXT__ !== "undefined") {
-						context = __VUE_SSR_CONTEXT__;
+				return parent;
+			},
+			throwError,
+			useElementBounding(target, options = {}) {
+				const { reset = true, windowResize = true, windowScroll = true, immediate = true } = options;
+				const height = Vue.ref(0);
+				const bottom = Vue.ref(0);
+				const left = Vue.ref(0);
+				const right = Vue.ref(0);
+				const top = Vue.ref(0);
+				const width = Vue.ref(0);
+				const x = Vue.ref(0);
+				const y = Vue.ref(0);
+
+				function update() {
+					const el = unrefElement(target);
+					if (!el) {
+						if (reset) {
+							height.value = 0;
+							bottom.value = 0;
+							left.value = 0;
+							right.value = 0;
+							top.value = 0;
+							width.value = 0;
+							x.value = 0;
+							y.value = 0;
+						}
+						return;
 					}
-					if (injectStyles) {
-						injectStyles.call(this, context);
-					}
-					if (context && context._registeredComponents) {
-						context._registeredComponents.add(moduleIdentifier);
+					const rect = el.getBoundingClientRect();
+					height.value = rect.height;
+					bottom.value = rect.bottom;
+					left.value = rect.left;
+					right.value = rect.right;
+					top.value = rect.top;
+					width.value = rect.width;
+					x.value = rect.x;
+					y.value = rect.y;
+				}
+
+				useResizeObserver(target, update);
+				Vue.watch(
+					() => unrefElement(target),
+					ele => !ele && update()
+				);
+				if (windowScroll) useEventListener("scroll", update, { capture: true, passive: true });
+				if (windowResize) useEventListener("resize", update, { passive: true });
+				tryOnMounted(() => {
+					if (immediate) update();
+				});
+				return {
+					height,
+					bottom,
+					left,
+					right,
+					top,
+					width,
+					x,
+					y,
+					update
+				};
+			},
+			useWindowSize(options = {}) {
+				const { initialWidth = Infinity, initialHeight = Infinity, listenOrientation = true, includeScrollbar = true } = options;
+				const width = Vue.ref(initialWidth);
+				const height = Vue.ref(initialHeight);
+				const update = () => {
+					if (defaultWindow) {
+						if (includeScrollbar) {
+							width.value = defaultWindow.innerWidth;
+							height.value = defaultWindow.innerHeight;
+						} else {
+							width.value = defaultWindow.document.documentElement.clientWidth;
+							height.value = defaultWindow.document.documentElement.clientHeight;
+						}
 					}
 				};
-				options._ssrRegister = hook;
-			} else if (injectStyles) {
-				hook = shadowMode
-					? function () {
-							injectStyles.call(this, (options.functional ? this.parent : this).$root.$options.shadowRoot);
-						}
-					: injectStyles;
-			}
-			if (hook) {
-				if (options.functional) {
-					options._injectStyles = hook;
-					var originalRender = options.render;
-					options.render = function renderWithStyleInjection(h, context) {
-						hook.call(context);
-						return originalRender(h, context);
-					};
-				} else {
-					var existing = options.beforeCreate;
-					options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+				update();
+				tryOnMounted(update);
+				useEventListener("resize", update, { passive: true });
+				if (listenOrientation) useEventListener("orientationchange", update, { passive: true });
+				return { width, height };
+			},
+			normalizeComponent(scriptExports, render, staticRenderFns, functionalTemplate, injectStyles, scopeId, moduleIdentifier, shadowMode) {
+				var options = typeof scriptExports === "function" ? scriptExports.options : scriptExports;
+				if (render) {
+					options.render = render;
+					options.staticRenderFns = staticRenderFns;
+					options._compiled = true;
 				}
+				if (functionalTemplate) {
+					options.functional = true;
+				}
+				if (scopeId) {
+					options._scopeId = "data-v-" + scopeId;
+				}
+				var hook;
+				if (moduleIdentifier) {
+					hook = function (context) {
+						context = context || (this.$vnode && this.$vnode.ssrContext) || (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext);
+						if (!context && typeof __VUE_SSR_CONTEXT__ !== "undefined") {
+							context = __VUE_SSR_CONTEXT__;
+						}
+						if (injectStyles) {
+							injectStyles.call(this, context);
+						}
+						if (context && context._registeredComponents) {
+							context._registeredComponents.add(moduleIdentifier);
+						}
+					};
+					options._ssrRegister = hook;
+				} else if (injectStyles) {
+					hook = shadowMode
+						? function () {
+								injectStyles.call(this, (options.functional ? this.parent : this).$root.$options.shadowRoot);
+							}
+						: injectStyles;
+				}
+				if (hook) {
+					if (options.functional) {
+						options._injectStyles = hook;
+						var originalRender = options.render;
+						options.render = function renderWithStyleInjection(h, context) {
+							hook.call(context);
+							return originalRender(h, context);
+						};
+					} else {
+						var existing = options.beforeCreate;
+						options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+					}
+				}
+				return {
+					exports: scriptExports,
+					options
+				};
 			}
-			return {
-				exports: scriptExports,
-				options
-			};
-		},
-		render: {
+		};
+	})();
+	/*****************************************/
+
+	(function () {
+		window._vnodeFns = {
 			/* linkrender.linkrender.linkrender */
 			OptionsToLabel(value, options) {
 				let item = { label: value, type: "" };
@@ -1737,6 +1743,15 @@ export default async function () {
 			ActionAndMore(props) {
 				return h("xColActionAndMore", props);
 			},
+			TipsDelete(tipsString) {
+				return h("div", [
+					h("span", {
+						staticClass: "el-icon-warning",
+						style: "color:var(--ti-base-color-error-3)"
+					}),
+					h("span", { staticClass: "ml4" }, [tipsString])
+				]);
+			},
 			Link(props) {
 				return h(
 					"a",
@@ -1748,7 +1763,7 @@ export default async function () {
 					[props.label]
 				);
 			}
-		}
-	};
+		};
+	})();
 }
 </script>

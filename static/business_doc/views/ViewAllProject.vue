@@ -1,5 +1,5 @@
 <template>
-	<div class="page-view">
+	<div class="x-page-view">
 		<xPageTitle title="所有项目" tips="源码static_vue2文件夹下所有非common文件夹，及其子目录的html文件"><xItem :configs="search" style="--xItem-wrapper-width: 200px" /> </xPageTitle>
 		<xPageContent>
 			<xForm col="3">

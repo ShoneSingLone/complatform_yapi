@@ -6,6 +6,10 @@
 		flex-flow: column nowrap;
 		flex: 1;
 		width: 1px;
+
+		.markdown-wrapper {
+			margin-bottom: var(--ui-one);
+		}
 	}
 }
 </style>

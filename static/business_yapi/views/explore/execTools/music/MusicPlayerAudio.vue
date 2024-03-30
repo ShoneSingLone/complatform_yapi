@@ -1,33 +1,48 @@
+<style lang="less"></style>
 <template>
 	<div class="flex1 flex middle" id="MusicPlayerAudio">
-		<span>{{ formatDuring(stateMusic.currentTime) }}</span>
-		<xGap l="8" />
-		<elSlider class="flex1" :min="0" :max="stateMusic.duration" v-model="stateMusic.currentTime" :tooltip-visible="false" @change="changSongProgress" />
-		<xGap l="8" />
-		<span>{{ formatDuring(stateMusic.duration) }}</span>
+		<span>{{ formatDuring(stateMusicPlayer.currentTime) }}</span>
+		<xGap l />
+		<elSlider class="flex1" :min="0" :max="stateMusicPlayer.duration" v-model="stateMusicPlayer.currentTime" :tooltip-visible="false" @change="changSongProgress" />
+		<xGap l />
+		<span>{{ formatDuring(stateMusicPlayer.duration) }}</span>
 	</div>
 </template>
+<script lang="ts">
+export default async function () {
+	function formatDuring(during) {
+		const s = Math.floor(during) % 60;
+		during = Math.floor(during / 60);
+		const i = during % 60;
 
-<script>
-import { Actions_Music, stateMusic } from "@/state/music";
-import { formatDuring } from "@/music/utils";
+		let ii = i < 10 ? `0${i}` : i;
+		let ss = s < 10 ? `0${s}` : s;
 
-export default {
-	setup() {
-		return {
-			stateMusic,
-			formatDuring
-		};
-	},
-	methods: {
-		changSongProgress(val) {
-			Actions_Music.setCurrentTime(val);
-		}
+		ii = _.isNaN(ii) ? "00" : ii;
+		ss = _.isNaN(ss) ? "00" : ss;
+		return ii + ":" + ss;
 	}
-};
-</script>
 
-<style lang="less">
-#MusicPlayerAudio {
+	return defineComponent({
+		inject: ["inject_explore"],
+		setup() {
+			return {
+				formatDuring
+			};
+		},
+		computed: {
+			stateMusicPlayer() {
+				return this.inject_explore.stateMusicPlayer;
+			},
+			methodsMusicPlayer() {
+				return this.inject_explore.methodsMusicPlayer;
+			}
+		},
+		methods: {
+			changSongProgress(val) {
+				this.methodsMusicPlayer.setCurrentTime(val);
+			}
+		}
+	});
 }
-</style>
+</script>

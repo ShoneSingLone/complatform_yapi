@@ -11302,7 +11302,7 @@
 				if (remainingSheets === 0) {
 					endTime = new Date();
 					totalMilliseconds = endTime - startTime;
-					_.$log("Less has finished and no sheets were loaded.");
+					console.log("Less has finished and no sheets were loaded.");
 					resolve({
 						startTime: startTime,
 						endTime: endTime,

@@ -47,7 +47,8 @@ export default async function () {
 			return {
 				searchKey: "",
 				currMenu: {},
-				isLoading: false
+				isLoading: false,
+				darkMode: false
 			};
 		},
 		render(h) {

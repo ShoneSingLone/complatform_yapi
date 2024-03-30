@@ -1,7 +1,7 @@
 <template>
 	<div id="app" v-xloading="APP.isLoading">
 		<AppHeader />
-		<main class="AppLayoutMain">
+		<main class="x-app-layout-main">
 			<AppLeft class="AppLayoutLeft" />
 			<div class="AppLayoutContent">
 				<RouterView />
@@ -13,17 +13,17 @@
 
 <script lang="ts">
 export default async function () {
-	return {
+	return defineComponent({
+		inject: ["APP"],
 		components: {
 			AppHeader: () => _.$importVue("@/layout/AppLayoutHeader.vue"),
 			AppLeft: () => _.$importVue("@/layout/AppLayoutLeft.vue")
 		},
-		inject: ["APP"],
 		computed: {
 			isShowLoading() {
 				return;
 			}
 		}
-	};
+	});
 }
 </script>

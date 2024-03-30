@@ -115,13 +115,36 @@ export default async function () {
 					}
 				});
 
+				const cptLabel = computed(() => {
+					if (_.isFunction(vm.configs?.label)) {
+						return vm.configs.label.call(vm.configs, { xBtn: vm });
+					}
+					if (_.isString(vm.configs?.label)) {
+						return vm.configs.label;
+					}
+					return "";
+				});
+
+				const cptChildren = computed(() => {
+					if (_.isFunction(vm.$vSlots?.default)) {
+						return h("span", vm.$vSlots.default());
+					}
+					if (vm.$vSlots?.TYPE_IS_VNODE) {
+						return vm.$vSlots;
+					}
+					return cptLabel.value;
+				});
+
 				return {
 					cptIsHide,
 					cptIsLoading,
 					cptPlaceholder,
-					cptDisabled
+					cptDisabled,
+					cptLabel,
+					cptChildren
 				};
 			},
+
 			useCellArgs({ vm, itemType, cellConfigs }) {
 				const innerComponentConfigs = reactive({
 					...cellConfigs,

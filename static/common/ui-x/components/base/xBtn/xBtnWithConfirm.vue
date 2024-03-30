@@ -13,7 +13,7 @@ export default async function () {
 				default: () => ({})
 			},
 			tips: {
-				type: String,
+				type: [String, Function, Object],
 				default: ""
 			},
 			onOk: {

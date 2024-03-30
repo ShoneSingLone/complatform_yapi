@@ -2,7 +2,7 @@
 export default async function () {
 	const ComponentPageRouterView = {
 		render(h) {
-			return h("div", { class: "page-view Demo-view" }, [h("xPageContent", [h("router-view")])]);
+			return h("div", { class: "x-page-view Demo-view" }, [h("xPageContent", [h("router-view")])]);
 		}
 	};
 	const ComponentRouterView = {
@@ -26,10 +26,10 @@ export default async function () {
 		/* 聚合类 */
 		_.$newRoute("/x-component", ComponentPageRouterView, {
 			children: [
-				_.$newRoute("/x-component/x-item", "@/views/xComponent/xItemDemo.vue"),
+				_.$newRoute("/x-component/x-item", "@/views/xComponent/DemoxItem/DemoxItem.vue"),
 				_.$newRoute("/x-component/x-item-check", "@/views/xComponent/DemoxItemCheck/DemoxItemCheck.vue"),
 				_.$newRoute("/x-component/x-item-checkbox-group", "@/views/xComponent/DemoxItemCheckboxGroup.vue"),
-				_.$newRoute("/x-component/x-form", "@/views/xComponent/xForm/xForm.vue")
+				_.$newRoute("/x-component/x-form", "@/views/xComponent/DemoxForm/xForm.vue")
 			]
 		}),
 		/* base */
@@ -44,6 +44,7 @@ export default async function () {
 						_.$newRoute("/component/form/input", "@/views/component/form/input/input.vue"),
 						_.$newRoute("/component/form/input-number", "@/views/component/form/inputNumber/inputNumber.vue"),
 						_.$newRoute("/component/form/checkbox", "@/views/component/form/checkbox/checkbox.vue"),
+						_.$newRoute("/component/form/switch", "@/views/component/form/switch/switch.vue"),
 						_.$newRoute("/component/form/select", "@/views/component/form/select/select.vue"),
 						_.$newRoute("/component/form/ip-address", "@/views/component/form/ipAddress/ipAddress.vue")
 					]
@@ -80,9 +81,7 @@ export default async function () {
 				_.$newRoute("/other/layer", "@/views/other/layer/layer.vue"),
 				_.$newRoute("/other/move", "@/views/other/move/move.vue"),
 				_.$newRoute("/other/popover", "@/views/other/popover/popover.vue"),
-				_.$newRoute("/other/open_window", "@/views/other/OpenWindow.vue"),
-				_.$newRoute("/other/x-form-item-wrapper", "@/views/other/xItemWrapper/xItemWrapper.vue"),
-				_.$newRoute("/other/card", "@/views/other/xItemWrapper/xItemWrapper.vue")
+				_.$newRoute("/other/open_window", "@/views/other/dialog/dialog.vue")
 			]
 		}),
 		_.$newRoute("/dev", ComponentPageRouterView, {

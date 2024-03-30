@@ -15944,7 +15944,8 @@ body {
 }
 
 .el-skeleton {
-	width: 100%;
+	width: 1px;
+	display: flex;
 }
 
 .el-skeleton__first-line,

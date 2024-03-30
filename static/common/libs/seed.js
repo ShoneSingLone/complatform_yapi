@@ -107,22 +107,33 @@
 		};
 	})();
 
+	/* 默认的loading样式 */
+	let LOADING_IMAGE_NAME = "x-loading";
+	/* 默认的loading样式 */
 	(function loadBaseInfo() {
 		const srcRootDom = $$id("src-root");
 		const { src } = srcRootDom;
 		const [srcRoot] = src.split("/common/libs/seed");
 
-		const { appName, appEntryName, appVersion } = srcRootDom.dataset;
+		const { appName, appEntryName, appVersion, loadingImg } = srcRootDom.dataset;
 		if (!appName) {
 			alert("miss APP_NAME");
 		}
+
+		LOADING_IMAGE_NAME = loadingImg || "x-loading";
 		window.SRC_ROOT_PATH = srcRoot || "";
 		window.APP_NAME = appName || "";
 		window.APP_ENTRY_NAME = appEntryName || "entry";
 		/* empty */
 		window.APP_VERSION = "" || appVersion || "";
 		/* empty */
-		window.I18N_LANGUAGE = localStorage["X-Language"] || $$tags("html")[0].lang || "zh-CN";
+		let I18N_LANGUAGE = localStorage["X-Language"] || $$tags("html")[0].lang || "zh-CN";
+		if (!["zh-CN", "en-US"].includes(I18N_LANGUAGE)) {
+			console.error(`I18N_LANGUAGE is not valid ${I18N_LANGUAGE}`);
+			I18N_LANGUAGE = "zh-CN";
+		}
+		localStorage["X-Language"] = I18N_LANGUAGE;
+		window.I18N_LANGUAGE = I18N_LANGUAGE;
 	})();
 
 	function ajax(url) {
@@ -239,14 +250,15 @@
 	 */
 	/* @typescriptDeclare (url: string)=>string */
 	function $resolvePath(url) {
+		let lodash = window._;
 		let resolvedURL = $resolvePath.cache[url];
 		if (resolvedURL) {
 			return resolvedURL;
 		}
 		resolvedURL = url;
 		try {
-			if (_?.THIS_FILE_URL) {
-				let parentURL = last(_.THIS_FILE_URL);
+			if (lodash?.THIS_FILE_URL) {
+				let parentURL = last(lodash.THIS_FILE_URL);
 				const parentResolvedURL = $resolvePath.cache[parentURL];
 				if (parentResolvedURL) {
 					parentURL = parentResolvedURL.split("/");
@@ -261,7 +273,9 @@
 					}
 				}
 			}
-		} catch (error) {}
+		} catch (error) {
+			console.error(error);
+		}
 
 		if (/^@/.test(url)) {
 			/* 业务代码 */
@@ -407,9 +421,20 @@
 			$resolveCssAssetsPath(`
 		html, body, #app { height: 100%; width: 100%; }
 
+		@keyframes spin {
+			from {
+				transform: rotate(0deg);
+			}
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		.spin {animation: spin 2s linear infinite;}
+
 		.x-loading { min-height: 48px; position: relative; // filter: blur(1px); overflow: hidden; pointer-events: none; }
 		
-		.x-loading::before { pointer-events: none; content: " "; display: block; top: 0; bottom: 0; right: 0; left: 0; position: absolute; background: url(/common/assets/svg/x-loading.svg) center no-repeat; z-index: 9999999999; }
+		.x-loading::before { animation: spin 2s linear infinite;pointer-events: none; content: " "; display: block; top: 0; bottom: 0; right: 0; left: 0; position: absolute; background: url(/common/assets/svg/${LOADING_IMAGE_NAME}.svg) center/32px no-repeat; z-index: 9999999999; }
 		`)
 		);
 	})();

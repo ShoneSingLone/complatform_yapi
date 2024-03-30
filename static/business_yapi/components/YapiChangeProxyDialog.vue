@@ -63,14 +63,14 @@ export default async function ({ selected, callBack }) {
 				return {
 					label: i18n("确定"),
 					preset: "blue",
-					onClick: async () => {
+					async onClick() {
 						let id;
 						while ((id = selected.pop())) {
-							await this.update(id);
+							await vm.update(id);
 						}
 
-						this.inject_project.getInterfaceList();
-						this.closeModal();
+						vm.inject_project.getInterfaceList();
+						vm.closeModal();
 					}
 				};
 			}

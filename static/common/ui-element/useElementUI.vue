@@ -14331,7 +14331,7 @@ body {
 }
 
 .el-button + .el-button {
-	margin-left: 4px;
+	margin-left: 8px;
 }
 
 .el-button:focus,
@@ -15959,14 +15959,18 @@ body {
 }
 
 .el-skeleton {
-	width: 100%;
+	// width: 1px;
+	display: flex;
+	opacity: 0.5;
 }
 
 .el-skeleton__first-line,
 .el-skeleton__paragraph {
 	height: 16px;
-	margin-top: 16px;
 	background: #f2f2f2;
+	& + .el-skeleton__paragraph {
+		margin-top: 16px;
+	}
 }
 
 .el-skeleton.is-animated .el-skeleton__item {

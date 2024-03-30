@@ -5,7 +5,7 @@
 </style>
 
 <template>
-	<section id="ProjectInterfaceSection" class="page-view flex1 flash-when">
+	<section id="ProjectInterfaceSection" class="x-page-view flex1 flash-when">
 		<xPageContent>
 			<ProjectInterfaceSectionInterfaceDetail v-if="cptInterfaceType === 'interface'" />
 			<ProjectInterfaceSectionInterfaceList v-else />
@@ -40,7 +40,7 @@ export default async function () {
 				prop: "title",
 				label: i18n("接口名称"),
 				cellRenderer({ rowData }) {
-					return _useXui.render.Link({
+					return _vnodeFns.Link({
 						label: rowData.title,
 						title: rowData.title,
 						style: "text-align:left;",

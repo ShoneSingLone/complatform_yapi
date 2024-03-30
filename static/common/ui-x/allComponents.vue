@@ -54,6 +54,7 @@ export default async function () {
 		/* *************************** */
 		"directive/xImg/xImg",
 		/* ********************** */
+		"common/xAppLayoutHeaderOcOprs",
 		"common/xMd",
 		"common/xItemWrapper",
 		"common/xAutoResizer",
@@ -75,7 +76,7 @@ export default async function () {
 		"common/xInfoCard",
 		"common/xInfoCardItem",
 		"common/xInquire",
-		"common/xItem",
+		"common/xItem/xItem",
 		"common/xItem/xItemCheck/xItemCheck",
 		"common/xItemCheckboxGroup",
 		"common/xItemDatetime",
