@@ -3,7 +3,7 @@
 	<div class="flex1 flex middle" id="MusicPlayerAudio">
 		<span>{{ formatDuring(stateMusicPlayer.currentTime) }}</span>
 		<xGap l />
-		<elSlider class="flex1" :min="0" :max="stateMusicPlayer.duration" v-model="stateMusicPlayer.currentTime" :tooltip-visible="false" @change="changSongProgress" />
+		<elSlider class="flex1" :min="0" :max="stateMusicPlayer.duration" v-model="stateMusicPlayer.currentTime" :tooltip-visible="false" :format-tooltip="formatTooltip" @change="changSongProgress" />
 		<xGap l />
 		<span>{{ formatDuring(stateMusicPlayer.duration) }}</span>
 	</div>
@@ -39,6 +39,9 @@ export default async function () {
 			}
 		},
 		methods: {
+			formatTooltip(val) {
+				return formatDuring(val);
+			},
 			changSongProgress(val) {
 				this.methodsMusicPlayer.setCurrentTime(val);
 			}

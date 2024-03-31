@@ -14,9 +14,6 @@
 export default async function () {
 	return defineComponent({
 		inject: ["inject_explore"],
-		setup() {
-			return {};
-		},
 		computed: {
 			stateMusicPlayer() {
 				return this.inject_explore.stateMusicPlayer;
@@ -51,9 +48,6 @@ export default async function () {
 					onClick: this.methodsMusicPlayer.playNextSong
 				};
 			},
-			iconSound() {
-				return this.isMute ? "soundMute" : "sound";
-			},
 			playOrPause() {
 				const vm = this;
 				return {
@@ -62,11 +56,6 @@ export default async function () {
 						vm.methodsMusicPlayer.togglePlayOrPause();
 					}
 				};
-			}
-		},
-		methods: {
-			toggleVolumeMute() {
-				this.isMute = !this.isMute;
 			}
 		}
 	});

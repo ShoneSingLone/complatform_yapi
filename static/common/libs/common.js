@@ -682,7 +682,7 @@ const isDev = !!localStorage.isDev;
 
 	_.$lStorage = new Proxy(localStorage, {
 		set(_localStorage, prop, value) {
-			if (_.isPlainObject(value)) {
+			if (_.isPlainObject(value) || _.isArray(value)) {
 				_localStorage[prop] = JSON.stringify(value);
 			} else {
 				_localStorage[prop] = value;

@@ -144,7 +144,7 @@ export default async function () {
 				if (_.isFunction(this.configs?.label)) {
 					return this.configs.label.call(this.configs, { xBtn: this });
 				}
-				if (_.isString(this.configs?.label)) {
+				if (_.isString(this.configs?.label) || this.configs?.label?.TYPE_IS_VNODE) {
 					return this.configs.label;
 				}
 				return "";
