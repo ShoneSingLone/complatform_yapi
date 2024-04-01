@@ -2,7 +2,7 @@
 .heightAuto {
 	height: auto !important;
 }
-.page-view {
+.x-page-view {
 	display: flex;
 	flex-flow: column nowrap;
 	height: 100%;

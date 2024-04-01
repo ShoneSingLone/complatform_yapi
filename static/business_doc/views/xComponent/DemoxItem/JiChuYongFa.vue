@@ -6,16 +6,10 @@
 			<xItem :configs="form.xItemSelect" />
 			<xItem :configs="form.xItemAny" />
 			<div>{{ viewMsg }}</div>
-			<xItemWrapper label="输入的信息" :rules="rules" span="full">
-				<template #controller>
-					<xBlock>
-						{{ form.xItemAny.value }}
-					</xBlock>
-					<xBlock>
-						{{ form.xItemAny }}
-					</xBlock>
-				</template>
-			</xItemWrapper>
+			<xItem label="输入的信息" :rules="rules" span="full">
+				{{ form.xItemAny.value }}
+				{{ form.xItemAny }}
+			</xItem>
 		</xForm>
 		<xBtn :configs="btnSubmit" />
 	</div>
@@ -36,6 +30,7 @@ export default async function () {
 				}
 			];
 			return {
+				rules: [],
 				form: defItems({
 					xItemAny: {
 						value: "",

@@ -682,7 +682,7 @@ const isDev = !!localStorage.isDev;
 
 	_.$lStorage = new Proxy(localStorage, {
 		set(_localStorage, prop, value) {
-			if (_.isPlainObject(value)) {
+			if (_.isPlainObject(value) || _.isArray(value)) {
 				_localStorage[prop] = JSON.stringify(value);
 			} else {
 				_localStorage[prop] = value;
@@ -919,27 +919,27 @@ const isDev = !!localStorage.isDev;
 	 * TODO: 超时关闭并提示
 	 */
 	/* @typescriptDeclare  (isLoading?:boolean)=>void*/
-	_.$loading = function loading(isLoading = false) {
+	_.$loading = function loading(isLoading = false, selector = "body") {
 		_.$loading.count = _.$loading.count || 0;
 		if (isLoading) {
 			/* 已经有loading */
 			if (!_.$loading.count) {
-				$("body").addClass("x-loading");
+				$(selector).addClass("x-loading");
 			}
 			_.$loading.count++;
 			// loadingTimeout();
 		} else {
-			closeLoading();
+			closeLoading(selector);
 		}
 	};
 
-	function closeLoading() {
+	function closeLoading(selector) {
 		_.$loading.count--;
 		if (_.$loading.count < 1) {
 			/* 延迟取消 */
 			var timmer = setTimeout(() => {
 				if (_.$loading.count < 1) {
-					$("body").removeClass("x-loading");
+					$(selector).removeClass("x-loading");
 				} else {
 					clearTimeout(timmer);
 				}
@@ -959,25 +959,32 @@ const isDev = !!localStorage.isDev;
 			const isDelete = !!options.isDelete;
 			let title = options.title || i18n("info");
 			let content = options.content || "";
-
 			if (isDelete) {
-				title = `<div class="flex middle start warning-color">
-				<svg class="icon" style="width: 1em;height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5387"><path d="M950.065894 189.657494h-209.662838V114.013358A114.663104 114.663104 0 0 0 625.945135 0h-227.821534a114.663104 114.663104 0 0 0-114.457921 114.013358v75.644136h-208.602725A38.88218 38.88218 0 0 0 36.522746 228.060914a38.129842 38.129842 0 0 0 38.540209 38.403419h56.664707v606.281593a151.596046 151.596046 0 0 0 151.869624 151.288271h456.80577a151.596046 151.596046 0 0 0 151.869624-151.288271V265.335827h56.664707a38.847983 38.847983 0 0 0 38.540209-38.369223 36.283195 36.283195 0 0 0-37.411702-37.30911zM360.746097 112.850655a38.88218 38.88218 0 0 1 38.540208-38.40342h227.821534A38.88218 38.88218 0 0 1 665.648047 112.850655v75.644135H360.746097z m456.737376 758.69837a75.780924 75.780924 0 0 1-75.917713 75.644136H284.794186a75.780924 75.780924 0 0 1-75.95191-75.644136V265.267433h608.709591zM398.123601 416.589901a38.847983 38.847983 0 0 0-38.540208 38.369223v303.705049a38.88218 38.88218 0 0 0 38.540208 38.40342 38.129842 38.129842 0 0 0 38.540209-38.40342v-303.705049a38.129842 38.129842 0 0 0-38.540209-38.369223z m228.95004 0a38.847983 38.847983 0 0 0-38.540208 38.369223v303.705049a38.88218 38.88218 0 0 0 38.540208 38.40342 38.129842 38.129842 0 0 0 38.540209-38.40342v-303.705049a39.634518 39.634518 0 0 0-38.574406-38.369223z" p-id="5388"></path></svg>
-				<span class="ml4">${title}</span>
-				</div>`;
+				title = function () {
+					const { h } = Vue;
+					return h("div", { staticClass: "flex middle start warning-color" }, [
+						h("i", { icon: "delete", staticClass: "el-alert__icon el-icon-warning", staticStyle: "color:var(--xAlert-error-light-color)" }),
+						h("span", { staticClass: "ml4" }, [i18n("删除")])
+					]);
+				};
 			}
-
-			const WindowConfirm = await _.$importVue("/common/ui-x/msg/WindowConfirm.vue", {
+			return _.$openModal({
+				title,
+				url: "/common/ui-x/msg/WindowConfirm.vue",
 				style: options.style,
-				onOk: resolve,
-				onCancel: reject,
+				resolve,
+				reject,
 				content,
 				isDelete
 			});
-			_.$openWindow_deprecated(title, WindowConfirm, { offset: "200px" });
 		});
 	};
 
+	/**
+	 * 删除前的弹窗提示
+	 * @param {*} options
+	 * @returns
+	 */
 	_.$delConfirm = (options = {}) => {
 		options.title = options.title || i18n("delete");
 		options.isDelete = true;
@@ -1210,8 +1217,9 @@ const isDev = !!localStorage.isDev;
 		 */
 
 		_.$GenComponentOptions = async function ({ resolvedURL, scritpSourceCode, templateSourceCode, payload }) {
-			payload = payload || {};
 			try {
+				payload = payload || {};
+				scritpSourceCode = scritpSourceCode || "";
 				scritpSourceCode = scritpSourceCode.replace("export default", "");
 				const isShowTemplate = templateSourceCode && isDev;
 				const innerCode = [
@@ -1225,7 +1233,7 @@ const isDev = !!localStorage.isDev;
 				try {
 					scfObjAsyncFn = new Function("payload", `with ({..._,...Vue}){${innerCode};}`);
 				} catch (e) {
-					console.error(innerCode);
+					console.log(innerCode);
 					throw e;
 				}
 				const fnPayload = new Proxy(payload, {

@@ -40,6 +40,7 @@ export default async function () {
 		},
 		setup() {
 			const { cptIsHide, cptIsLoading, cptDisabled } = useProps(this);
+
 			return {
 				cptIsHide,
 				cptIsLoading,
@@ -99,15 +100,6 @@ export default async function () {
 				}
 				return "";
 			},
-			cptLabel() {
-				if (_.isFunction(this.configs?.label)) {
-					return this.configs.label.call(this.configs, { xBtn: this });
-				}
-				if (_.isString(this.configs?.label)) {
-					return this.configs.label;
-				}
-				return "";
-			},
 			cptLoading() {
 				if (this.privateLoading) {
 					return true;
@@ -145,18 +137,27 @@ export default async function () {
 			},
 			cptCircle() {
 				return this.circle || this.configs.circle;
+			}
+		},
+		methods: {
+			calLabel() {
+				if (_.isFunction(this.configs?.label)) {
+					return this.configs.label.call(this.configs, { xBtn: this });
+				}
+				if (_.isString(this.configs?.label) || this.configs?.label?.TYPE_IS_VNODE) {
+					return this.configs.label;
+				}
+				return "";
 			},
-			cptChildren() {
+			calChildren() {
 				if (_.isFunction(this.$vSlots?.default)) {
 					return h("span", this.$vSlots.default());
 				}
 				if (this.$vSlots?.TYPE_IS_VNODE) {
 					return this.$vSlots;
 				}
-				return this.cptLabel;
-			}
-		},
-		methods: {
+				return this.calLabel();
+			},
 			getDirectives() {
 				let directives = [];
 				if (this.ripple) {
@@ -235,7 +236,7 @@ export default async function () {
 						h("i", { vIf: vm.cptLoading, class: "el-icon-loading mr4" }),
 						h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon, "mr4"] }),
 						/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
-						this.$slots.default || vm.cptChildren
+						this.$slots.default || vm.calChildren()
 					]
 				);
 		}

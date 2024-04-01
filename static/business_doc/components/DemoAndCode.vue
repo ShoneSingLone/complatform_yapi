@@ -50,12 +50,13 @@ export default async function () {
 				this.rerun();
 			},
 			async showSourceCodeDialog() {
-				const WindowImageModify = await _.$importVue("@/components/WindowSourceCode.vue", {
+				_.$openModal({
+					title: i18n("SourceCode"),
+					url: "@/components/WindowSourceCode.vue",
 					parent: this,
 					code: this.BussinessComponentSourceCode,
 					componentPath: this.path
 				});
-				_.$openWindow_deprecated(i18n("SourceCode"), WindowImageModify);
 			}
 		},
 		render() {

@@ -146,7 +146,7 @@ export default async function ({ _URL_PREFIX_MO }) {
 	}
 
 	_MoCfContext.checkAsidebarStatus = _.debounce(function (callbackFn) {
-		const subPage = $(`.page-view[hide-sidebar]`);
+		const subPage = $(`.x-page-view[hide-sidebar]`);
 		const isSubPage = subPage.length > 0;
 		callbackFn && callbackFn(isSubPage);
 	}, 600);

@@ -62,10 +62,10 @@
 <script lang="ts">
 export default async function () {
 	const { mixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
-	/* configs isGroup 为是否多选 */
+	/* cptConfigs isGroup 为是否多选 */
 	return {
 		mixins: [mixins],
-		props: ["value", "configs", "options"],
+		props: ["value", "cptConfigs", "options"],
 		data() {
 			return {
 				col: 4
@@ -81,7 +81,7 @@ export default async function () {
 					}
 				},
 				set(newSetOrVal) {
-					if (this.configs.isGroup) {
+					if (this.cptConfigs.isGroup) {
 						this.mixin_value = Array.from(newSetOrVal);
 					} else {
 						this.mixin_value = !!newSetOrVal.size;
@@ -100,10 +100,10 @@ export default async function () {
 				return false;
 			},
 			minWidth() {
-				return this.configs?.minWidth || 80;
+				return this.cptConfigs?.minWidth || 80;
 			},
 			selectOptions() {
-				return this.options || this.configs?.options || [];
+				return this.options || this.cptConfigs?.options || [];
 			},
 			cptGroupProps() {
 				return merge_hFnProps([
@@ -118,10 +118,10 @@ export default async function () {
 				]);
 			},
 			cptRenderOption() {
-				return this.configs?.renderOption;
+				return this.cptConfigs?.renderOption;
 			},
 			cptItemRederer() {
-				if (this.configs?.xItemCheckUse === "blockCheck") {
+				if (this.cptConfigs?.xItemCheckUse === "blockCheck") {
 					return this.itemUseBlockCheck;
 				}
 				return this.itemUseDefault;
@@ -130,8 +130,7 @@ export default async function () {
 				return _.map(this.selectOptions, this.cptItemRederer);
 			},
 			cptDefaultItem() {
-				let item = _.first(this.configs.options);
-
+				let item = _.first(this.cptConfigs?.options);
 				if (!_.isPlainObject(item)) {
 					item = {
 						value: item,
@@ -168,7 +167,7 @@ export default async function () {
 				const vm = this;
 				let { value, label } = item || vm.cptDefaultItem;
 				if (vm.cptRenderOption) {
-					label = vm.cptRenderOption.call(vm.configs, item);
+					label = vm.cptRenderOption.call(vm.cptConfigs, item);
 				}
 				return h(
 					"xBtn",
@@ -178,7 +177,7 @@ export default async function () {
 						disabled: this.cptDisabled,
 						class: {
 							"xItemCheck-item-wrapper flex middle itemUse-BlockCheck": true,
-							"is-group-item": this.configs.isGroup
+							"is-group-item": this.cptConfigs.isGroup
 						},
 						preset: this.cptPrivateSet.has(value) ? "xItemCheck-selected" : "",
 						nativeOn: {
@@ -245,7 +244,7 @@ export default async function () {
 			}
 		},
 		render() {
-			if (this.configs?.isGroup) {
+			if (this.cptConfigs?.isGroup) {
 				/* 多选 value 为数组，元素为配置的value */
 				return this.rendererGroupItems();
 			} else {

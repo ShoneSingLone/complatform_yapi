@@ -8,8 +8,9 @@
 	padding-bottom: 0;
 	color: var(--el-text-color-primary);
 	.title-text {
-		// text-shadow: 1px 1px 1px var(--el-color-black);
 		// text-shadow: 0.4px 1px 2px #a5a5a5;
+		// text-shadow: 1px 1px 1px var(--el-color-black);
+		// text-shadow: 0.4px 1px 2px var(--el-color-black);
 	}
 
 	&.back {

@@ -98,7 +98,7 @@ export default async function ({ options }) {
 			const { height: refDialogRectHeight, width: refDialogRectWidth, sizer: refDialog } = useAutoResize(props);
 			const { height: refContentHeight, width: refContentWidth, sizer: refContent } = useAutoResize(props);
 
-			const setDialogOffset = _.debounce(() => {
+			const setDialogOffset = _.throttle(() => {
 				try {
 					let left = (_.$single.win.width() - refDialogRectWidth.value) / 2;
 					if (left < 0) {
@@ -119,7 +119,7 @@ export default async function ({ options }) {
 				} catch (error) {
 					return {};
 				}
-			}, 100);
+			}, 32);
 
 			watch(
 				() => {

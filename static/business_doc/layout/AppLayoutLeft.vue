@@ -5,10 +5,10 @@
 		</div>
 		<aside
 			:class="{
-				'sidebar-menu-wrapper flex vertical center': true,
+				'x-sidebar-menu-wrapper flex vertical center': true,
 				hide: !isOpen
 			}">
-			<div class="sidebar-menu">
+			<div class="x-sidebar-menu">
 				<!-- <xMenuTree :data="menuList" :render="defaultRender" /> -->
 				<xMenuTreeItem
 					v-for="menu in cptMenuArray"

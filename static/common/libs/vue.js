@@ -2707,8 +2707,8 @@
 
 	function createAsyncPlaceholder(factory, data, context, children, tag) {
 		/* 占位 */
-		var node = h("div", { staticClass: "el-skeleton is-animated " + tag }, [
-			h("div", {
+		var node = h("span", { staticClass: "el-skeleton is-animated " + tag, attrs: { "data-skeleton-id": context._uid } }, [
+			h("span", {
 				staticClass: "el-skeleton__item el-skeleton__p el-skeleton__paragraph"
 			})
 		]);
@@ -12072,6 +12072,20 @@
 		}).call(this, componentName, eventName, payload);
 	}
 
+	function _GetVM(uid, children) {
+		children = children || saveVm4ForceUpdate.VM_HOLDER?.$children;
+		for (const child of children) {
+			if (child._uid == uid) {
+				return child;
+			} else {
+				const item = _GetVM(uid, child.$children);
+				if (item) {
+					return item;
+				}
+			}
+		}
+	}
+
 	function saveVm4ForceUpdate(vm) {
 		if (!saveVm4ForceUpdate.VM_HOLDER) {
 			saveVm4ForceUpdate.VM_HOLDER = vm.$root;
@@ -12096,6 +12110,7 @@
 	Vue.forceUpdate = _.debounce(forceUpdate, 600);
 	Vue.forceUpdate.getVM = () => saveVm4ForceUpdate.VM_HOLDER;
 	Vue.isESModule = isESModule;
+	Vue._GetVM = _GetVM;
 	Vue.effect = effect;
 	Vue.camelize = camelize;
 	Vue.compile = compileToFunctions;

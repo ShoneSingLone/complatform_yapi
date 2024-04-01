@@ -1,5 +1,5 @@
 <template>
-	<div class="page-view flex1" id="ProjectSetting">
+	<div class="x-page-view flex1" id="ProjectSetting">
 		<xTabs v-model="cptProjectInterfaceTab">
 			<xTabPane label="预览" name="1"> </xTabPane>
 			<xTabPane label="编辑" name="2"> </xTabPane>

@@ -1,8 +1,8 @@
 <template>
 	<div v-clickoutside="handleClose">
-		<p class="x-padding">
+		<div class="x-confirm-panel-content">
 			<xRender :render="tips" />
-		</p>
+		</div>
 		<div class="flex center middle">
 			<xBtn size="mini" @click="onOk">{{ i18n("确定") }}</xBtn>
 			<xBtn preset="primary" size="mini" type="text" @click="onCancel">{{ i18n("取消") }}</xBtn>
@@ -32,4 +32,9 @@ export default async function () {
 	});
 }
 </script>
-<style lang="less"></style>
+<style lang="less">
+.x-confirm-panel-content {
+	width: var(--x-confirm-panel-content, 200px);
+	padding-bottom: var(--ui-half);
+}
+</style>

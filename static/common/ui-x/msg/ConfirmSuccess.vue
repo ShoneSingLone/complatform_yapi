@@ -1,9 +1,9 @@
 <template>
 	<xDialog>
 		<xCard class="mt10" :header="i18n('xxxxxxxx')">
-			<form ref="form" :style="labelStyle">
+			<xForm col="1" ref="form" :style="labelStyle">
 				<xItem :configs="configs" v-for="(configs, prop) in form" :key="prop" />
-			</form>
+			</xForm>
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />

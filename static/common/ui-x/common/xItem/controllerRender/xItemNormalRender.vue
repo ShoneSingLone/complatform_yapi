@@ -2,9 +2,11 @@
 export default async function () {
 	return function render() {
 		const vm = this;
+		const CONFIGS = this.cptConfigs;
+
 		const xItem_controllerProps = {
-			...vm.configs,
-			readonly: vm.configs.readonly,
+			...CONFIGS,
+			readonly: CONFIGS.readonly,
 			disabled: vm.cptDisabled,
 			attrs: {
 				...vm.cpt_bindProps.attrs,
@@ -17,7 +19,7 @@ export default async function () {
 				queryData: vm.cpt_queryData
 			},
 			configs: {
-				...vm.configs,
+				...CONFIGS,
 				disabled: vm.cptDisabled,
 				options: vm.cpt_options
 			},
@@ -90,14 +92,17 @@ export default async function () {
 									"el-form-item is-error": !!vm.errorTips
 								}
 							},
-							[h(vm.itemType, xItem_controllerProps)]
+							[
+								h(vm.itemType, xItem_controllerProps),
+								/* afterController插槽 */
+								h("xRender", {
+									vIf: CONFIGS?.itemSlots?.afterController,
+									render: CONFIGS?.itemSlots?.afterController,
+									payload: { xItem: vm }
+								})
+							]
 						),
-						/* afterController插槽 */
-						h("xRender", {
-							vIf: vm.configs?.itemSlots?.afterController,
-							render: vm.configs?.itemSlots?.afterController,
-							payload: { xItem: vm }
-						}),
+
 						/* 校验错误提示 */
 						h(
 							"elTooltip",

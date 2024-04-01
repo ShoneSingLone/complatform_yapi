@@ -1,5 +1,5 @@
 <template>
-	<div class="page-view view-icon">
+	<div class="x-page-view view-icon">
 		<xPageContent>
 			<div>
 				<xBtn @click="openDialog" preset="blue">OpenDialog</xBtn>

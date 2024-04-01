@@ -1,5 +1,5 @@
 <template>
-	<div class="YapiProjectCard card-container">
+	<div class="YapiProjectCard card-container el-card">
 		<div class="project-card-wrapper">
 			<div class="el-card__body x-padding">
 				<xRender :render="logo" />
@@ -57,7 +57,7 @@ export default async function () {
 					height: "100px",
 					"background-image": `url(${this.cptAvatarUrl})`,
 					"background-position": "center center",
-					"background-size": "contain",
+					"background-size": "50% 50%",
 					"background-repeat": "no-repeat"
 				};
 			},
@@ -89,7 +89,7 @@ export default async function () {
 				);
 			},
 			title() {
-				return h("div", { class: "ui-title" }, [this.projectData.name || this.projectData.projectname]);
+				return h("div", { staticClass: "ui-title flex middle center" }, [this.projectData.name || this.projectData.projectname]);
 			}
 		},
 		methods: {
@@ -136,6 +136,9 @@ export default async function () {
 </script>
 <style lang="less">
 .YapiProjectCard {
+	& + .YapiProjectCard {
+		margin-left: var(--ui-one);
+	}
 	&.card-container {
 		position: relative;
 		user-select: none;

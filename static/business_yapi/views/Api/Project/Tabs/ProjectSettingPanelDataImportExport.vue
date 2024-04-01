@@ -1,10 +1,10 @@
 <template>
-	<div class="page-view flex1 height100 flex">
+	<div class="x-page-view flex1 height100 flex">
 		<xBlock header="数据导入" class="flex1">
 			<xForm col="1">
 				<xItem :configs="form.curImportType" />
 				<xItem :configs="form.dataSync" />
-				<xItem :configs="form.importBy" span="full" style="--xItem-controller-flex: unset; --xItem-controller-width: 250px; --xItem-layout-justify-content: flex-start" />
+				<xItem :configs="form.importBy" span="full" style="--xItem-controller-flex: unset; --xItem-controller-width: 100%; --xItem-layout-justify-content: flex-start" />
 			</xForm>
 		</xBlock>
 		<xBlock header="数据导出" class="flex1">
@@ -81,7 +81,7 @@ export default async function () {
 								const xBtn = h("xBtn", xBtnProps);
 
 								if (vm.cptIsImportFile) {
-									return xBtn;
+									return h("div", [xBtn]);
 								} else {
 									const xItemProps = {
 										class: "ml",

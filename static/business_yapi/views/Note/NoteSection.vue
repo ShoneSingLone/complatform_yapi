@@ -4,7 +4,7 @@
 }
 </style>
 <template>
-	<section class="page-view flex1 flash-when" id="NoteSection">
+	<section class="x-page-view flex1 flash-when" id="NoteSection">
 		<xPageContent>
 			<div class="flex mb10 middle" style="height: 48px">
 				<xRender :render="vDomTitle" class="flex1" />

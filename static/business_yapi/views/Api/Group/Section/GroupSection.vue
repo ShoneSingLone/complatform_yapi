@@ -1,5 +1,5 @@
 <template>
-	<section id="GroupSection" class="page-view">
+	<section id="GroupSection" class="x-page-view">
 		<xPageContent>
 			<xBlock class="mb group-desc-wrapper">
 				<el-collapse>

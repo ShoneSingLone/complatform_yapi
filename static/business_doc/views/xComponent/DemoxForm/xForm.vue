@@ -1,8 +1,8 @@
 <template>
 	<DocContentOfDemo class="DemoAffix">
 		<xMd :md="md" />
-		<DemoAndCode title="基础用法" path="@/views/xComponent/xForm/JiChuYongFa.vue" unfold />
-		<DemoAndCode title="位置" path="@/views/xComponent/xForm/WeiZhi.vue" unfold />
+		<DemoAndCode title="基础用法" path="@/views/xComponent/DemoxForm/JiChuYongFa.vue" unfold />
+		<DemoAndCode title="位置" path="@/views/xComponent/DemoxForm/WeiZhi.vue" unfold />
 	</DocContentOfDemo>
 </template>
 

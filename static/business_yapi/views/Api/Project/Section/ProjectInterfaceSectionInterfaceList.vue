@@ -58,13 +58,11 @@ export default async function () {
 		},
 		methods: {
 			async changeProxy() {
-				const DialogTypeVueSFC = await _.$importVue("@/components/YapiChangeProxyDialog.vue", {
+				_.$openModal({
+					title: i18n("切换代理"),
+					url: "@/components/YapiChangeProxyDialog.vue",
 					parent: this,
 					selected: Array.from(this.inject_project_interface_section.configsTable.data.set)
-				});
-				const vm = _.$openWindow_deprecated(i18n("切换代理"), DialogTypeVueSFC, {
-					maxmin: true,
-					fullscreen: false
 				});
 			}
 		}
