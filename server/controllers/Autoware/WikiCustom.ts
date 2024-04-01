@@ -126,7 +126,7 @@ const getWikiDetail = {
 
 			if (wiki) {
 				const isReturnWiki = await (async () => {
-					const WIKI_HANDLER_MAP = {					/**
+					/**
 					 * 定义一个处理不同访问权限的 Wiki 的处理器映射。
 					 * 不同的处理器根据 belong_id 来确定当前资源的访问权限，
 					 * 并基于当前用户的 uid（currentUid）来判断该用户是否有访问权限。
@@ -135,7 +135,7 @@ const getWikiDetail = {
 						/**
 						 * 判断私有资源是否可访问。
 						 * 主要用于判断当前用户 UID 是否与资源所属的 UID 相同。
-						 * 
+						 *
 						 * @returns {Promise<boolean>} 返回一个承诺（Promise），解析为一个布尔值，
 						 * 如果当前用户是资源的所有者，则返回 true，否则返回 false。
 						 */
@@ -145,7 +145,7 @@ const getWikiDetail = {
 						/**
 						 * 判断项目资源是否可访问。
 						 * 通过查询项目成员列表，检查当前用户是否在项目成员之中。
-						 * 
+						 *
 						 * @returns {Promise<boolean>} 返回一个承诺（Promise），解析为一个布尔值，
 						 * 如果当前用户是项目成员，则返回 true，否则返回 false。
 						 */
@@ -159,7 +159,7 @@ const getWikiDetail = {
 						/**
 						 * 判断群组资源是否可访问。
 						 * 通过查询群组成员列表，检查当前用户是否在群组成员之中。
-						 * 
+						 *
 						 * @returns {Promise<boolean>} 返回一个承诺（Promise），解析为一个布尔值，
 						 * 如果当前用户是群组成员，则返回 true，否则返回 false。
 						 */
@@ -173,13 +173,13 @@ const getWikiDetail = {
 						/**
 						 * 所有资源均可以访问。
 						 * 该处理器不进行任何访问控制，直接返回 true。
-						 * 
+						 *
 						 * @returns {Promise<boolean>} 返回一个承诺（Promise），解析为 true。
 						 */
 						async all() {
 							return true;
 						}
-					};};
+					};
 
 					const handler = WIKI_HANDLER_MAP[belong_type] || (() => null);
 
