@@ -118,7 +118,80 @@ const getWikiDetail = {
 	async handler(ctx) {
 		try {
 			const { _id } = ctx.payload;
-			ctx.body = xU.$response(await orm.wiki.detail(_id));
+
+			const wiki = await orm.wiki.detail(_id);
+
+			const { belong_type, belong_id } = wiki;
+			const currentUid = this.$uid;
+
+			if (wiki) {
+				const isReturnWiki = await (async () => {
+					const WIKI_HANDLER_MAP = {					/**
+					 * 定义一个处理不同访问权限的 Wiki 的处理器映射。
+					 * 不同的处理器根据 belong_id 来确定当前资源的访问权限，
+					 * 并基于当前用户的 uid（currentUid）来判断该用户是否有访问权限。
+					 */
+					const WIKI_HANDLER_MAP = {
+						/**
+						 * 判断私有资源是否可访问。
+						 * 主要用于判断当前用户 UID 是否与资源所属的 UID 相同。
+						 * 
+						 * @returns {Promise<boolean>} 返回一个承诺（Promise），解析为一个布尔值，
+						 * 如果当前用户是资源的所有者，则返回 true，否则返回 false。
+						 */
+						async private() {
+							return xU.isSame(currentUid, belong_id);
+						},
+						/**
+						 * 判断项目资源是否可访问。
+						 * 通过查询项目成员列表，检查当前用户是否在项目成员之中。
+						 * 
+						 * @returns {Promise<boolean>} 返回一个承诺（Promise），解析为一个布尔值，
+						 * 如果当前用户是项目成员，则返回 true，否则返回 false。
+						 */
+						async project() {
+							const project = await orm.project.get(belong_id);
+							const member = xU._.find(project.members, member =>
+								xU.isSame(currentUid, member.uid)
+							);
+							return !!member;
+						},
+						/**
+						 * 判断群组资源是否可访问。
+						 * 通过查询群组成员列表，检查当前用户是否在群组成员之中。
+						 * 
+						 * @returns {Promise<boolean>} 返回一个承诺（Promise），解析为一个布尔值，
+						 * 如果当前用户是群组成员，则返回 true，否则返回 false。
+						 */
+						async group() {
+							const group = await orm.group.get(belong_id);
+							const member = xU._.find(group.members, member =>
+								xU.isSame(currentUid, member.uid)
+							);
+							return !!member;
+						},
+						/**
+						 * 所有资源均可以访问。
+						 * 该处理器不进行任何访问控制，直接返回 true。
+						 * 
+						 * @returns {Promise<boolean>} 返回一个承诺（Promise），解析为 true。
+						 */
+						async all() {
+							return true;
+						}
+					};};
+
+					const handler = WIKI_HANDLER_MAP[belong_type] || (() => null);
+
+					return handler();
+				})();
+
+				if (!!isReturnWiki) {
+					ctx.body = xU.$response(wiki);
+					return;
+				}
+			}
+			return (ctx.body = xU.$response(null, 401, "无权访问该文档"));
 		} catch (e) {
 			xU.applog.error(e.message);
 		}
