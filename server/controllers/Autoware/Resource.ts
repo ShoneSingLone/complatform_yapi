@@ -6,6 +6,8 @@ const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
 const { TARGET_PREFIX } = xU;
 
+let types = {};
+
 let DEFAULT_NOT_FOUND_IMG;
 function returnBase64Body(basecode) {
 	if (basecode.indexOf("base64") > -1) {
@@ -494,6 +496,15 @@ async function asyncResolvePathFileOrDir(
 				name: fileOrDirPath
 			};
 		}
+		if (isVedioType(type)) {
+			return {
+				type: "vedio",
+				path: [...relativePathArray, fileOrDirPath],
+				name: fileOrDirPath
+			};
+		}
+		types[type] = type;
+		console.log("🚀 ~ type:", JSON.stringify(types, null, 2));
 	}
 
 	return null; // 如果不是目录也不是音频文件，则返回null
@@ -501,6 +512,12 @@ async function asyncResolvePathFileOrDir(
 
 function isAudioType(type) {
 	return ["audio/mpeg", "audio/x-flac", "audio/mp4"].includes(type);
+}
+function isVedioType(type) {
+	return ["video/mp4"].includes(type);
+}
+function isImageType(type) {
+	return ["video/mp4"].includes(type);
 }
 
 async function getAudioRecord({ filePath, id, size, type }) {
