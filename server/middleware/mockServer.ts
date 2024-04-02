@@ -231,6 +231,8 @@ function mockValidator(interfaceData, ctx) {
 
 const middlewareMockServer = () => async (ctx, next) => {
 	ctx.callme.push("middlewareMockServer");
+	xU.applog.info(ctx.path, ctx.callme);
+
 	let ctx_path = ctx.path;
 	let header = ctx.request.header;
 	/*** 如果不是/Mock/链接，不做代理 */

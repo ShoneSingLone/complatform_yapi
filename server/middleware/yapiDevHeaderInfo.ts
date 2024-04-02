@@ -1,7 +1,8 @@
 const _ = require("lodash");
 
 const middlewareWhenDev = () => async (ctx, next) => {
-	ctx.callme = ["middlewareWhenDev"];
+	ctx.callme = ctx.callme || ["middlewareWhenDev"];
+	xU.applog.info(ctx.path, ctx.callme);
 	try {
 		/* console.log(
 	  '\nctx.path',
@@ -12,7 +13,6 @@ const middlewareWhenDev = () => async (ctx, next) => {
 	  JSON.stringify(ctx?.request?.body || {}, null, 2),
 	); */
 
-		xU.applog.info(ctx.path, ctx.ip, ctx.ips.join(","));
 		const start = Date.now();
 		await next();
 		const yapiTips = {
@@ -34,8 +34,11 @@ const middlewareWhenDev = () => async (ctx, next) => {
 			);
 		}
 
+		const duration = Date.now() - start;
+		xU.applog.info(ctx.path, ctx.ip, ctx.ips.join(","), `${duration}ms`);
+
 		_.each(
-			flattenDeep(yapiTips, { "response-time": `${Date.now() - start}ms` }),
+			flattenDeep(yapiTips, { "response-time": `${duration}ms` }),
 			(value, key) => {
 				ctx.set(key, value);
 			}

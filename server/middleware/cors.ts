@@ -6,16 +6,20 @@ const middlewareCORS = () => {
 	return cors({
 		credentials: true,
 		origin: ctx => {
+			ctx.callme.push("middlewareCORS");
+			xU.applog.info(ctx.path, ctx.callme);
+
 			if (yapi_configs?.cors?.allow) {
 				const url = String(
 					ctx.headers.origin || ctx.headers.referer || ctx.host
 				).toLowerCase();
 
-				if (
-					_.some(yapi_configs.cors.allow, allow => {
-						return ~url.indexOf(String(allow).toLowerCase());
-					})
-				) {
+				const inCorsWhiteList = _.some(
+					yapi_configs.cors.allow,
+					allow => ~url.indexOf(String(allow).toLowerCase())
+				);
+
+				if (inCorsWhiteList) {
 					/* 允许在header中携带额外的字段 */
 					// ctx.set("Access-Control-Expose-Headers", "x_token");
 					ctx.url = ctx.url.replace(/^\/0/, "");

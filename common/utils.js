@@ -1,4 +1,4 @@
-const iconv = require('iconv-lite');
+const iconv = require("iconv-lite");
 const fs = require("fs");
 const Mock = require("mockjs");
 const filter = require("./power-string").filter;
@@ -296,7 +296,6 @@ exports.schemaValidator = function (schema, params) {
 		};
 	}
 };
-
 
 exports.iconv = iconv;
 exports.fs = fs;

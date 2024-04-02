@@ -17,14 +17,14 @@ async function main() {
 	/*
 	!!!!!!!!!!!!!!!必先调用!!!!!!!!!!!!!!!
 	 */
-	
+
 	/* base */
 	await require("server/plugin");
 	await require("server/utils/notice");
+	await require("server/middleware/parseParams")(app);
 	/* middleware */
 	await require("server/middleware/yapiDevHeaderInfo")(app);
-	await require("server/middleware/cors")(app);
-	await require("server/middleware/parseParams")(app);
+	// await require("server/middleware/cors")(app);
 	await require("server/middleware/mockServer")(app);
 	/* plugin */
 	await require("server/plugins/usePlugin")(app);

@@ -50,6 +50,8 @@ function appAddRoutes(app, routes) {
 	});
 
 	app.use(async (ctx, next) => {
+		ctx.callme.push("plugin-AutowareRoutes");
+		xU.applog.info(ctx.path, ctx.callme);
 		const isDone = await (async () => {
 			/* AOP */
 			const route = getRoute(ctx.path, ctx.method);
@@ -65,6 +67,10 @@ function appAddRoutes(app, routes) {
 							ctx.params || {},
 							ctx.query || {},
 							ctx.request.body || {}
+						);
+						xU.applog.info(
+							ctx.path,
+							xU.omit(vm.ctx.payload, ["_yapi_token", "_yapi_uid"])
 						);
 						/* TODO: 参数校验 根据route的schema校验 */
 						/* let validResult = xU.validateParams(inst.schemaMap[action], ctx.params); */
