@@ -16,7 +16,9 @@
 				</xBreadcrumbItem>
 			</xBreadcrumb>
 		</div>
-		<xInput v-model.lazy="searchKey" placeholder="搜索" class="x-padding" clearable />
+		<div class="x-padding">
+			<xInput v-model.lazy="searchKey" placeholder="搜索" clearable />
+		</div>
 		<div class="flex1 overflow-auto el-card">
 			<div v-for="(item, index) in cptResource" :key="index" class="mt">
 				<xBtn v-if="item.type === 'audio'" @click="playAudio(item)" :preset="item.name === stateMusicPlayer.songId ? 'blue' : ''">{{ item.name }}</xBtn>

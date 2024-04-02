@@ -28,7 +28,7 @@ export default async function () {
 									rowData,
 									rowIndex,
 									onExpand
-							  }
+								}
 							: false
 					};
 					return $vSlots.cell(cellParams);

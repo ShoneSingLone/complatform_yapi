@@ -48,7 +48,7 @@ export default async function () {
 					configurable: true,
 					writable: true,
 					value
-			  })
+				})
 			: (obj[key] = value);
 	var __spreadValues = (a, b) => {
 		for (var prop in b || (b = {})) if (hasOwnProperty.call(b, prop)) __defNormalProp(a, prop, b[prop]);
@@ -717,15 +717,14 @@ export default async function () {
 
 	function _sfc_render236(_ctx, _cache, $props, $setup, $data, $options) {
 		var _hoisted_1236 = {
-					viewBox: "0 0 1024 1024",
-					xmlns: "http://www.w3.org/2000/svg"
+				viewBox: "0 0 1024 1024",
+				xmlns: "http://www.w3.org/2000/svg"
 			},
 			_hoisted_2236 = /* @__PURE__ */ h(
 				"path",
 				{
-						fill: "currentColor",
-						d: "M576 96v709.568L333.312 562.816A32 32 0 1 0 288 608l297.408 297.344A32 32 0 0 0 640 882.688V96a32 32 0 0 0-64 0z"
-					
+					fill: "currentColor",
+					d: "M576 96v709.568L333.312 562.816A32 32 0 1 0 288 608l297.408 297.344A32 32 0 0 0 640 882.688V96a32 32 0 0 0-64 0z"
 				},
 				null,
 				-1
@@ -1029,7 +1028,7 @@ export default async function () {
 				: {
 						flexGrow: column.flexGrow || 0,
 						flexShrink: column.flexShrink || 1
-				  })
+					})
 		};
 		if (!fixed) {
 			flex.flexShrink = 1;
@@ -1590,7 +1589,7 @@ export default async function () {
 							}
 						},
 						[props.column?.label]
-				  );
+					);
 		}
 	};
 
@@ -2840,7 +2839,9 @@ export default async function () {
 }
 
 .el-table-v2__sort-icon {
-	transition: opacity, display var(--el-transition-duration);
+	transition:
+		opacity,
+		display var(--el-transition-duration);
 	opacity: 0.6;
 	display: none;
 }
