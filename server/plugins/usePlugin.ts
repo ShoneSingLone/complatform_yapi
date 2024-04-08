@@ -11,8 +11,7 @@ module.exports = async app => {
 	await useBoundlessVue(app);
 	return Promise.resolve();
 
-	/*
-	let dirs = await fs.promises.readdir(xU.path.resolve(__dirname));
+	/*let dirs = await fs.promises.readdir(xU.path.resolve(__dirname));
 	await Promise.all(
 		dirs.map(async dirname => {
 			const [pluginDirname, pluginName] =
@@ -27,6 +26,5 @@ module.exports = async app => {
 			}
 			return Promise.resolve();
 		})
-	);
- */
+	);*/
 };

@@ -21,18 +21,25 @@ async function main() {
 	/* base */
 	await require("server/plugin");
 	await require("server/utils/notice");
+	/* 静态资源 */
+	await require("server/assets")(app);
 	await require("server/middleware/parseParams")(app);
 	/* middleware */
 	await require("server/middleware/yapiDevHeaderInfo")(app);
-	// await require("server/middleware/cors")(app);
+	/* 跨域 */
+	await require("server/middleware/cors")(app);
+	/* 转发代理 */
 	await require("server/middleware/mockServer")(app);
-	/* plugin */
-	await require("server/plugins/usePlugin")(app);
 
-	await require("server/assets")(app);
+	/* plugin */
+	/* - 路由 autoware */
+	/* - boundless vue project */
+	await require("server/plugins/usePlugin")(app);
+	/* 原来yapi的路由 TODO: 移除*/
 	await require("server/router")(app);
-	/*  */
-	// await require("server/middleware/historyMode")(app);
+
+	/* 启动 */
+	/* await require("server/middleware/historyMode")(app); */
 	await require("server/utils/appListen")(app);
 }
 

@@ -1872,7 +1872,7 @@ export default async function () {
 			const Cell = CellComponent(cellProps);
 			const kls = [ns.e("row-cell"), column.class, column.align === Alignment.CENTER && ns.is("align-center"), column.align === Alignment.RIGHT && ns.is("align-right")];
 			/*vir table 树形数据*/
-			/* 如果有xRowChildren就可以展开 */
+			/* 如果有children就可以展开 */
 			const expandable = _.$isArrayFill(rowData.children);
 			const iconStyle = `margin-inline-start: ${depth * indentSize}px;`;
 			const isShowIcon = column.prop === "COL_EXPAND_ARROW";

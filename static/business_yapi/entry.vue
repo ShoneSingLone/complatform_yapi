@@ -266,7 +266,7 @@ export default async function () {
 				return this.$route.query.projectId;
 			},
 			cptProject() {
-				if (this.cptProjectId && this.groupProjectList.length) {
+				if (this.cptProjectId && this.groupProjectList?.length) {
 					const projectItem = _.find(this.groupProjectList, { _id: Number(this.cptProjectId) });
 					return projectItem;
 				}
