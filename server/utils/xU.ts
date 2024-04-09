@@ -816,6 +816,9 @@ function createAction(
 				}
 			}
 			if (inst.$auth === true) {
+				if (!inst[action]?.call) {
+					debugger;
+				}
 				await inst[action].call(inst, ctx);
 			} else {
 				if (ws === true) {
@@ -827,6 +830,7 @@ function createAction(
 		} catch (err) {
 			ctx.body = xU.$response(null, 40012, err.message);
 			xU.applog.error(err);
+			console.error(err);
 		}
 	});
 }
