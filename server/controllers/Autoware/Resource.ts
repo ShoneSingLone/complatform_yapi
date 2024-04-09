@@ -481,62 +481,62 @@ module.exports = {
 						);
 					}
 
-					let resourcePath = path.resolve.apply(path, [
-						yapi_configs.RESOURCE_ASSETS_REMOTE,
-						...pathArray
-					]);
-					const stat = await fs.promises.stat(resourcePath);
-					if (stat.isFile()) {
-						const type = getType(resourcePath);
-						if (isAudioType(type)) {
-							const record = await getAudioRecord({
-								filePath: resourcePath,
-								id: pathArrayString,
-								size: stat.size,
-								type
-							});
-							const total = record.size;
-							try {
-								if (headers.range) {
-									const range = headers.range;
-									const parts = range.replace(/bytes=/, "").split("-");
-									const partialstart = parseInt(parts[0], 10);
-									const partialend = parseInt(parts[1], 10);
+					try {
+						let resourcePath = path.resolve.apply(path, [
+							yapi_configs.RESOURCE_ASSETS_REMOTE,
+							...pathArray
+						]);
 
-									let start = partialstart;
-									const end = partialend ? partialend : total - 1;
-									const chunksize = end - start + 1;
+						// 检查文件是否存在
+						await fs.promises.access(resourcePath, fs.constants.R_OK);
 
-									ctx.status = 206;
-									ctx.set({
-										"Content-Range": "bytes " + start + "-" + end + "/" + total,
-										"Accept-Ranges": "bytes",
-										"Content-Length": chunksize,
-										"Content-Type": record.type || "audio/mp3"
-									});
-									ctx.body = fs.createReadStream(resourcePath, { start, end });
+						// 设置响应头，包括Content-Type和Content-Length（可选）
+						const contentType = getType(resourcePath);
+						ctx.set("Content-Type", contentType);
+
+						const total = await new Promise((resolve, reject) => {
+							// 获取文件大小（可选，用于Content-Length头）
+							fs.stat(resourcePath, (err, stats) => {
+								if (err) {
+									reject(err);
 								} else {
-									ctx.set({
-										"Content-Type": record.type || "audio/mp3",
-										"Accept-Ranges": "bytes",
-										"Content-Length": total
-									});
-									ctx.body = fs.createReadStream(resourcePath);
+									resolve(stats.size);
 								}
-							} catch (error) {
-								ctx.body = xU.$response(null, 400, error);
-							}
+							});
+						});
+						// 返回文件流
 
-							return;
+						if (headers.range) {
+							const range = headers.range;
+							const parts = range.replace(/bytes=/, "").split("-");
+							const partialstart = parseInt(parts[0], 10);
+							const partialend = parseInt(parts[1], 10);
+
+							let start = partialstart;
+							const end = partialend ? partialend : total - 1;
+							const chunksize = end - start + 1;
+
+							ctx.status = 206;
+							ctx.set({
+								"Content-Range": "bytes " + start + "-" + end + "/" + total,
+								"Accept-Ranges": "bytes",
+								"Content-Length": chunksize,
+								"Content-Type": contentType
+							});
+							ctx.body = fs.createReadStream(resourcePath, { start, end });
+						} else {
+							ctx.set({
+								"Content-Type": contentType,
+								"Accept-Ranges": "bytes",
+								"Content-Length": total
+							});
+							ctx.body = fs.createReadStream(resourcePath);
 						}
+					} catch (error) {
+						ctx.body = xU.$response(null, 400, error);
 					}
-					ctx.body = xU.$response(
-						{
-							msg: "not found"
-						},
-						404,
-						"Not Found"
-					);
+
+					return;
 				}
 			}
 		}
@@ -601,8 +601,8 @@ async function asyncResolvePathFileOrDir(
 function isAudioType(type) {
 	return ["audio/mpeg", "audio/x-flac", "audio/mp4"].includes(type);
 }
-function isVideoType(type) {}
-function isImageType(type) {
+function isImageType(type) {}
+function isVideoType(type) {
 	return ["video/mp4"].includes(type);
 }
 

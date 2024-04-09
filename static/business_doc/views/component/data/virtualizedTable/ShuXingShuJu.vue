@@ -14,7 +14,7 @@ export default async function () {
 		data() {
 			const vm = this;
 			return {
-				md: `虚拟表也可以在树状结构中呈现数据。 点击箭头图标，你可以展开或折叠树节点。\n\n如果有\`children\`就可以展开`,
+				md: `虚拟表也可以在树状结构中呈现数据。 点击箭头图标，你可以展开或折叠树节点。\n\n如果有\`children\`就可以展开\n\n\`rowKey\`默认为id，展开根据id字段`,
 				selected: {},
 				configsTable: defTable({
 					onQuery() {

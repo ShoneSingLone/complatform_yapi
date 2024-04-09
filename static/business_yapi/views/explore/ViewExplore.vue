@@ -20,8 +20,8 @@
 			<xInput v-model.lazy="searchKey" placeholder="搜索" clearable />
 		</div>
 		<div class="flex1 overflow-auto el-card">
-			<div v-for="(item, index) in cptResource" :key="index" class="mt">
-				<xBtn v-if="item.type === 'audio'" @click="playAudio(item)" :preset="item.name === stateMusicPlayer.songId ? 'blue' : ''">{{ item.name }}</xBtn>
+			<div v-for="(item, index) in cptResource" :key="index" class="mt pl pr">
+				<xBtn v-if="isShow(item)" @click="playMedia(item)" :preset="item.name === stateMusicPlayer.songId ? 'blue' : ''" class="width100">{{ item.name }}-{{ item.type }}</xBtn>
 				<xBtn v-else @click="getResource(item)" preset="text">
 					<div class="flex">
 						<xGap l /><span> {{ item.name }}</span>
@@ -152,6 +152,27 @@ export default async function () {
 				}
 			}
 
+			function playMedia(record) {
+				if (record.type === "audio") {
+					playAudio(record);
+				}
+				if (record.type === "video") {
+					playVideo(record);
+				}
+			}
+
+			async function playVideo(record) {
+				const { path, name } = record;
+				let uri = encodeURIComponent(JSON.stringify(path));
+
+
+				_.$openModal({
+					title: "video player",
+					url: "@/views/explore/execTools/video/VideoPlayer.dialog.vue",
+					uri
+				});
+			}
+
 			async function playAudio(record) {
 				const { path, name } = record;
 				stopSong();
@@ -172,7 +193,7 @@ export default async function () {
 				}
 				let uri = encodeURIComponent(JSON.stringify(path));
 				stateMusicPlayer.songId = name;
-				stateMusicPlayer.audio.src = Vue._yapi_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/remote_music_file?uri=${uri}`);
+				stateMusicPlayer.audio.src = Vue._yapi_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?uri=${uri}`);
 				await canPlay();
 				stateMusicPlayer.audio.play();
 				stateMusicPlayer.isPlaying = true;
@@ -230,6 +251,7 @@ export default async function () {
 			return {
 				LOOP_TYPE_NAME_ARRAY,
 				playAudio,
+				playMedia,
 				/*  */
 				stateMusicPlayer,
 				methodsMusicPlayer: {
@@ -280,6 +302,10 @@ export default async function () {
 			this.getResource();
 		},
 		methods: {
+			isShow(item) {
+				console.log("🚀 ~ isShow ~ item.type:", item.type);
+				return ["audio", "video"].includes(item.type);
+			},
 			back(index) {
 				if (index === -1) {
 					this.getResource({ path: [] });

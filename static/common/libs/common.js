@@ -1233,7 +1233,7 @@ const isDev = !!localStorage.isDev;
 				try {
 					scfObjAsyncFn = new Function("payload", `with ({..._,...Vue}){${innerCode};}`);
 				} catch (e) {
-					console.log(innerCode);
+					console.error(innerCode);
 					throw e;
 				}
 				const fnPayload = new Proxy(payload, {

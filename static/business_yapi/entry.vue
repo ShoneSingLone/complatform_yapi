@@ -80,11 +80,12 @@ export default async function () {
 						if (!vm.user.isLogin) {
 							const { data: userInfo } = await _api.yapi.userStatus();
 							vm._setUser(userInfo);
-							const { data: allUser } = await _api.yapi.userSearch({});
-							vm.allUser = allUser;
 						}
 
 						if (vm.user.isLogin) {
+							const { data: allUser } = await _api.yapi.userSearch({});
+							vm.allUser = allUser;
+
 							/* TODO: 跳转到首页 或者note应用*/
 							if (vm.$route.path === "/note") {
 								return;

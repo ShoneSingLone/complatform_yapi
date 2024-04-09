@@ -233,10 +233,12 @@ export default async function () {
 						class: vm.cptClassName
 					},
 					[
-						h("i", { vIf: vm.cptLoading, class: "el-icon-loading mr4" }),
-						h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon, "mr4"] }),
-						/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
-						this.$slots.default || vm.calChildren()
+						h("span", { staticClass: "flex" }, [
+							h("i", { vIf: vm.cptLoading, class: "el-icon-loading mr4" }),
+							h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon, "mr4"] }),
+							/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
+							this.$slots.default || vm.calChildren()
+						])
 					]
 				);
 		}

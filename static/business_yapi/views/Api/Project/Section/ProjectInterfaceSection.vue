@@ -1,6 +1,9 @@
 <style lang="less">
 #ProjectInterfaceSection {
 	width: 1px;
+	.highlight-path {
+		color: #03a9f4;
+	}
 }
 </style>
 
@@ -61,7 +64,35 @@ export default async function () {
 
 			const path = {
 				prop: "path",
-				label: i18n("接口路径")
+				width: 300,
+				label: i18n("接口路径"),
+				cellRenderer: params => {
+					const { rowData } = params;
+					const { value: search } = vm.form.path;
+
+					if (search) {
+						const other = String(rowData.path).split(search);
+						if (other.length > 1) {
+							const childrenVnod = [];
+							_.each(other, (content, index) => {
+								childrenVnod.push(content);
+								if (index !== other.length - 1) {
+									childrenVnod.push(
+										h(
+											"span",
+											{
+												staticClass: `highlight-path`
+											},
+											[search]
+										)
+									);
+								}
+							});
+							return h("div", childrenVnod);
+						}
+					}
+					return rowData.path;
+				}
 			};
 
 			const status = {

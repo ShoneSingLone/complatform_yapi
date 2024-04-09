@@ -4906,11 +4906,12 @@ body {
 }
 
 .el-breadcrumb__item {
-	float: left;
-}
-
-.el-breadcrumb__inner {
-	color: #606266;
+	display: flex;
+	flex-flow: row nowrap;
+	.el-breadcrumb__inner {
+		color: #606266;
+		white-space: var(--breadcrumb__inner-white-space, nowrap);
+	}
 }
 
 .el-breadcrumb__inner a,

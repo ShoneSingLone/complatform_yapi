@@ -5,6 +5,9 @@ export default async function () {
 		window._api.doc = {
 			allProject() {
 				return _.$ajax.get("/boundless-api/project/all");
+			},
+			projectsUpsert(data) {
+				return _.$ajax.post("/boundless-api/project/update_info", { data });
 			}
 		};
 	}

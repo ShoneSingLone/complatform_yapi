@@ -362,7 +362,6 @@ export default async function () {
 				}
 			},
 			emitValueChange(val) {
-				console.log("🚀 ~ emitValueChange ~ emitValueChange:", val);
 				// set=>emit=>prop=>render
 				const isRended = this.p_value === val;
 				// prop=>render=>emit
