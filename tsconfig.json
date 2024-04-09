@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+  },
+  "include": [
+    "./**/*"
+  ],
+  "vueCompilerOptions": {
+    "target": 2.7
+  }
+}

@@ -39,7 +39,6 @@ runtime/
 /dev/
 .tags
 .tags1
-tsconfig.json
 client/plugin-module.js
 /iconfont
 server/middleware/test.axios.js
