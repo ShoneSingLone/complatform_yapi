@@ -18,7 +18,7 @@ export default async function () {
 				/* xModal */
 				type: Object,
 				default: () => {
-					return {};
+					return { dialogClass: {} };
 				}
 			}
 		},
@@ -28,32 +28,51 @@ export default async function () {
 			const { height, width, sizer: refDialog } = useAutoResize(props);
 			const { height: windowHeight, width: windowWidth } = _useXui.useWindowSize();
 
+			let origin = { height: 0, width: 0 };
+
 			const cptRootStyle = computed(() => {
-				if (inject_modal.dialogClass?.fullscreen) {
-					return {
-						// flex: "1",
-						// height: "100%",
-						// width: "100%"
-					};
-				}
+				const rootStyle = () => {
+					let _height,
+						_width,
+						_style = {};
 
-				let _height,
-					_width,
-					_style = {};
-				if (height.value && height.value > windowHeight.value) {
-					_height = windowHeight.value;
-				}
-				if (width.value && width.value > windowWidth.value) {
-					_width = windowWidth.value;
-				}
+					if (origin.height && height.value > origin.height) {
+						_height = origin.height;
+						origin.height = 0;
+						inject_modal.dialogClass.fullscreen = false;
+					} else if (height.value > windowHeight.value) {
+						origin.height = height.value;
+						inject_modal.dialogClass.fullscreen = true;
+					}
 
-				if (_height) {
-					_style.height = _height + "px";
+					if (origin.width && width.value > origin.width) {
+						_width = origin.width;
+						origin.width = 0;
+						inject_modal.dialogClass.fullscreen = false;
+					} else if (width.value > windowWidth.value) {
+						origin.width = width.value;
+						inject_modal.dialogClass.fullscreen = true;
+					}
+
+					if (_height) {
+						_style.height = _height + "px";
+					}
+					if (_width) {
+						_style.width = _width + "px";
+					}
+					return _style;
+				};
+
+				if (inject_modal.dialogClass.fullscreen) {
+					/* 如果没有显示全屏的icon，resize之后要判断是否还原 */
+					if (inject_modal.isShowFullScreen) {
+						return {};
+					} else {
+						return rootStyle();
+					}
+				} else {
+					return rootStyle();
 				}
-				if (_width) {
-					_style.width = _width + "px";
-				}
-				return _style;
 			});
 
 			return { refDialog, cptRootStyle };

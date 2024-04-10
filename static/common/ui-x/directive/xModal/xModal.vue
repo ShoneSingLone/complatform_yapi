@@ -191,6 +191,12 @@ export default async function ({ options, modalConfigs }) {
 			});
 
 			return {
+				toggleFullScreen() {
+					vm.dialogClass.fullscreen = !vm.dialogClass.fullscreen;
+					if (!vm.dialogClass.fullscreen) {
+						vm.setDialogOffset();
+					}
+				},
 				setPosition,
 				setDialogOffset,
 				/*  */
@@ -239,12 +245,6 @@ export default async function ({ options, modalConfigs }) {
 							left,
 							top
 						});
-					}
-				},
-				toggleFullScreen() {
-					this.dialogClass.fullscreen = !this.dialogClass.fullscreen;
-					if (!this.dialogClass.fullscreen) {
-						this.setDialogOffset();
 					}
 				}
 			};
@@ -302,6 +302,14 @@ export default async function ({ options, modalConfigs }) {
 					"--xModal-zIndex": this.viewerZIndex
 				};
 			}
+		},
+		watch: {
+			"dialogClass.fullscreen"() {/* 
+				this.dialogStyle.opacity = 0;
+				setTimeout(() => {
+					this.dialogStyle.opacity = 1;
+				}, 300);
+			 */}
 		}
 	});
 }

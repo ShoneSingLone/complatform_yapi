@@ -165,16 +165,11 @@ export default async function () {
 				const { path, name } = record;
 				let uri = encodeURIComponent(JSON.stringify(path));
 
-				return _.$openModal(
-					{
-						title: "video player",
-						url: "@/views/explore/execTools/video/VideoPlayer.dialog.vue",
-						uri
-					},
-					{
-						fullscreen: true
-					}
-				);
+				return _.$openModal({
+					title: "video player",
+					url: "@/views/explore/execTools/video/VideoPlayer.dialog.vue",
+					uri
+				});
 			}
 
 			async function playAudio(record) {
