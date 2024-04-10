@@ -1,7 +1,7 @@
 module.exports = {
 	definitions: {},
 	tag: {
-		description: "日志记录"
+		description: "我关注的项目"
 	},
 	paths: {
 		/* 获取关注项目列表 */

@@ -3,7 +3,7 @@
 		<div class="GroupSectionProjectList-header flex middle mt">
 			<div>
 				<span>共</span>
-				<span> {{ APP.groupProjectList.length }} </span>
+				<span> {{ APP.groupProjectList?.length }} </span>
 				<span>个项目</span>
 			</div>
 			<xGap f />
@@ -14,7 +14,7 @@
 		<div>
 			<GroupSectionProjectListPrivate />
 			<GroupSectionProjectListNormal />
-			<YapiPlaceholderView v-if="!APP.groupProjectList.length" view="GroupSectionProjectList" />
+			<YapiPlaceholderView v-if="!APP.groupProjectList?.length" view="GroupSectionProjectList" />
 		</div>
 	</div>
 </template>

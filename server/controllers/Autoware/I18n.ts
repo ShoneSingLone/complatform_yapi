@@ -3,7 +3,7 @@ const md5 = require("md5");
 module.exports = {
 	definitions: {},
 	tag: {
-		description: "日志记录"
+		description: "国际化翻译相关"
 	},
 	paths: {
 		/* 获取动态列表 */

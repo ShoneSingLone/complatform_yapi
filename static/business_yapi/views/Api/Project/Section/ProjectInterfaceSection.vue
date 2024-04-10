@@ -193,6 +193,21 @@ export default async function () {
 						clearable: true,
 						itemType: "xItemSelect",
 						multiple: true,
+						once() {
+							vm.$watch(
+								() => [vm.$route.query.interfaceType, vm.$route.query.interfaceId],
+								([interfaceType, interfaceId]) => {
+									if (interfaceType === "category") {
+										this.value = [Number(interfaceId)];
+									} else {
+										this.value = [];
+									}
+								},
+								{
+									immediate: true
+								}
+							);
+						},
 						options() {
 							return _.map(vm.inject_project.allCategory, row => {
 								return {

@@ -195,8 +195,15 @@ export default async function () {
 		},
 		methods: {
 			async loadAllProject() {
-				const { data: projects } = await _api.doc.allProject();
-				this.projects = projects;
+				_.$loading(true);
+				try {
+					const { data: projects } = await _api.doc.allProject();
+					this.projects = projects;
+				} catch (error) {
+					console.error(error);
+				} finally {
+					_.$loading(false);
+				}
 			},
 			filterProject: _.debounce(function (params) {
 				const projectByFilter = [];
