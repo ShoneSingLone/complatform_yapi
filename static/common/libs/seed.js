@@ -1,4 +1,5 @@
 (async function useIdbKeyVal() {
+	const isDev = !!localStorage.isDev;
 	var camelizeRE = /\/|\.|_|-(\w)/g;
 	/**
 	 * document.getElementById

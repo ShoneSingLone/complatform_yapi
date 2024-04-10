@@ -1,6 +1,6 @@
-const isDev = !!localStorage.isDev;
-
 (function () {
+	const isDev = !!localStorage.isDev;
+
 	if (isDev) {
 		console.log("common.js");
 	}
@@ -893,13 +893,13 @@ const isDev = !!localStorage.isDev;
 	/* @typescriptDeclare (val:any[])=>boolean */
 	_.$isArrayFill = val => _.isArray(val) && val.length > 0;
 
+	const windowConsole = window.console;
 	/**
 	 * 开发模式下才会在console打印日志
 	 */
 	const genConsole = type => {
-		const mustShowLog = localStorage.mustShowLog;
-		if (isDev || mustShowLog) {
-			return console[type].bind(console);
+		if (isDev || localStorage.mustShowLog) {
+			return windowConsole[type].bind(windowConsole);
 		}
 		return () => null;
 	};
