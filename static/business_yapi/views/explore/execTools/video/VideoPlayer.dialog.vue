@@ -1,6 +1,6 @@
 <template>
-	<xDialog style="--xDialog-wrapper-width: 1024px">
-		<video :src="videoSrc" controls="true" />
+	<xDialog>
+		<video :src="videoSrc" controls="true" style="max-width: 600px; width: 100%; margin: auto" />
 	</xDialog>
 </template>
 <script lang="ts">

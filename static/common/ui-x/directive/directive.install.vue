@@ -23,7 +23,7 @@ export default async function () {
 
 	(function () {
 		_.$openModal = async function (options, modalConfigs) {
-			const xModal = await _.$importVue("/common/ui-x/directive/xModal/xModal.vue", { options });
+			const xModal = await _.$importVue("/common/ui-x/directive/xModal/xModal.vue", { options, modalConfigs });
 			xModal.parent = options.parent || Vue.forceUpdate.getVM();
 			let instance = new Vue(xModal);
 			instance.$mount();
