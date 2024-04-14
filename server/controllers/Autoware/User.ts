@@ -60,10 +60,10 @@ module.exports = {
 
 					let result = await userInst.findByEmail(email);
 
-					const saltPwd = xU.$saltIt(password, result.passsalt);
 					if (!result) {
 						return (ctx.body = xU.$response(null, 404, "该用户不存在"));
 					}
+					const saltPwd = xU.$saltIt(password, result.passsalt);
 					if (saltPwd === result.password) {
 						this.$user = result;
 						const { _id: uid, passsalt } = result;
