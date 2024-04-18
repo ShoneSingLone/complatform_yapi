@@ -3883,6 +3883,15 @@
 	 * 2 vIf 可以用
 	 */
 	function h(type, props, children) {
+		if (!children) {
+			if (props?.children) {
+				if (_.isArray(props.children)) {
+					children = props.children;
+				} else {
+					children = [props.children];
+				}
+			}
+		}
 		if (!currentInstance) {
 			warnMsgVm("globally imported h() can only be invoked when there is an active " + "component instance, e.g. synchronously in a component's render or setup function.");
 		}

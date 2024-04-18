@@ -220,7 +220,7 @@ export default async function () {
 			if (vm.configs)
 				//
 				return h(
-					"button",
+					vm.type || "button",
 					{
 						directives: vm.getDirectives({}),
 						onClick() {

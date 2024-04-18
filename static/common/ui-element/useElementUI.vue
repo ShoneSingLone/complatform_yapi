@@ -6088,6 +6088,7 @@ body {
 	margin: 6px 0 0;
 	color: #606266;
 	text-align: justify;
+	word-break: break-all;
 }
 
 .el-notification__content p {

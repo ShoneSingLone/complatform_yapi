@@ -81,6 +81,7 @@ export default async function () {
 				_.$newRoute("/other/layer", "@/views/other/layer/layer.vue"),
 				_.$newRoute("/other/move", "@/views/other/move/move.vue"),
 				_.$newRoute("/other/popover", "@/views/other/popover/popover.vue"),
+				_.$newRoute("/other/tooltip", "@/views/other/tooltip/tooltip.vue"),
 				_.$newRoute("/other/open_window", "@/views/other/dialog/dialog.vue")
 			]
 		}),

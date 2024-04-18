@@ -62,7 +62,9 @@ export default async function () {
 		data() {
 			const vm = this;
 			const onQueryChanged = _.debounce(query => {
-				vm.$refs.refTree.filter(query);
+				if (vm.$refs.refTree?.filter) {
+					vm.$refs.refTree.filter(query);
+				}
 			}, 1000);
 
 			return {

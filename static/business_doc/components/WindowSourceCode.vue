@@ -1,5 +1,5 @@
 <template>
-	<xDialog>
+	<xDialog style="--xDialog-wrapper-width: 70vw">
 		<p @click="copy" ref="refCode" class="pointer">{{ componentPath }}</p>
 		<xMd :md="md" />
 		<template #footer>
@@ -36,9 +36,13 @@ export default async function ({ code, componentPath }) {
  ${code.templateSourceCode}
 \`\`\`
 
+<br/>
+
 \`\`\`javascript
 ${code.scritpSourceCode}
 \`\`\`
+
+<br/>
 
 \`\`\`less
 ${code.styleSourceCode}

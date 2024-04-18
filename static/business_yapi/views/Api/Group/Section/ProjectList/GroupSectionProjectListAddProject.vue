@@ -3,6 +3,7 @@
 		<xCard>
 			<xForm col="1">
 				<xItem :configs="form.group_id" />
+				{{ form.name }}
 				<xItem :configs="form.name" />
 				<xItem :configs="form.basepath" />
 				<xItem :configs="form.desc" />
@@ -22,6 +23,7 @@ export default async function ({ onOk }) {
 	const { DEV, OWNER, ADMIN, PRIVATE, PUBLIC } = Vue._yapi_var;
 
 	function useProjectForm(vm) {
+		debugger;
 		const group_id = defItem({
 			itemType: "xItemSelect",
 			value: "",
@@ -36,7 +38,14 @@ export default async function ({ onOk }) {
 			}),
 			rules: [_rules.required("请选择项目所属的分组")]
 		});
-		const name = defItem({ placeholder: "请输入项目名称", value: "", label: i18n("项目名称"), rules: [_rules.required()] });
+		const name = defItem({
+			_where: "GroupSectionProjectListAddProject",
+			placeholder: "请输入项目名称",
+			value: "",
+			label: i18n("项目名称"),
+			rules: [_rules.required()]
+		});
+
 		const basepath = defItem({ placeholder: "接口基本路径，默认是/", value: "", label: i18n("基本路径"), tips: "接口基本路径，默认是/" });
 		const desc = defItem({ placeholder: "描述", type: "textarea", value: "", label: i18n("描述"), rules: [_rules.required()], showCount: true, maxlength: 144 });
 		const project_type = defItem({
@@ -84,6 +93,7 @@ export default async function ({ onOk }) {
 		inject: ["APP"],
 		props: useDialogProps(),
 		mounted() {
+			debugger;
 			this.init();
 		},
 		data() {
@@ -131,6 +141,7 @@ export default async function ({ onOk }) {
 				this.fillFormData();
 			},
 			async fillFormData() {
+				debugger;
 				_.$fillBackData({
 					form: this.form,
 					data: {

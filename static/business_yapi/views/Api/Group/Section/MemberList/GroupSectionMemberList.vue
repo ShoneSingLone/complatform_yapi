@@ -39,7 +39,7 @@ export default async function () {
 								h("xItem", {
 									staticClass: "mr4 ml4",
 									configs: {
-										value: rowData.uid,
+										value: rowData.uid || "",
 										itemType: "YapiItemAvatar",
 										disabled: true
 									}

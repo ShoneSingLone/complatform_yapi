@@ -121,26 +121,28 @@
 		});
 	};
 
-	/**
-	 * 下载文本为文件
-	 * @param {*} dataString
-	 * @param {*} filename
-	 */
-	/* @typescriptDeclare (obj:object, filename:string)=>Promise<void> */
-	_.$downloadTextAsBlob = function (dataString, filename) {
-		return new Promise(resolve => {
-			var eleLink = document.createElement("a");
-			eleLink.download = filename;
-			eleLink.style.display = "none";
-			var blob = new Blob([dataString], { type: "text/plain;charset=utf-8" });
-			eleLink.href = URL.createObjectURL(blob);
-			document.body.appendChild(eleLink);
-			eleLink.click();
-			document.body.removeChild(eleLink);
+	(function handle_download_upload() {
+		/**
+		 * 下载文本为文件
+		 * @param {*} dataString
+		 * @param {*} filename
+		 */
+		/* @typescriptDeclare (obj:object, filename:string)=>Promise<void> */
+		_.$downloadTextAsBlob = function (dataString, filename) {
+			return new Promise(resolve => {
+				var eleLink = document.createElement("a");
+				eleLink.download = filename;
+				eleLink.style.display = "none";
+				var blob = new Blob([dataString], { type: "text/plain;charset=utf-8" });
+				eleLink.href = URL.createObjectURL(blob);
+				document.body.appendChild(eleLink);
+				eleLink.click();
+				document.body.removeChild(eleLink);
 
-			resolve();
-		});
-	};
+				resolve();
+			});
+		};
+	})();
 
 	/**
 	 * 获取对象的值
@@ -289,7 +291,7 @@
 				cellRenderer
 			};
 		};
-		window.defTable.colMultiple = ({ by, getConfigs, disabled }) => {
+		window.defTable.colMultiple = ({ by, getConfigs, disabled, isHide }) => {
 			const { h } = Vue;
 			const checkbox = {
 				prop: "COL_MULTIPLE",
@@ -328,6 +330,17 @@
 					);
 				},
 				cellRenderer: params => {
+					let cptIsHide = (() => {
+						if (_.isFunction(isHide)) {
+							return isHide(params);
+						}
+						return false;
+					})();
+
+					if (cptIsHide) {
+						return null;
+					}
+
 					const { rowData } = params;
 					const tableConfigs = getConfigs();
 					const isChecked = tableConfigs.data.set.has(rowData[by]);
@@ -931,6 +944,23 @@
 		} else {
 			closeLoading(selector);
 		}
+
+		try {
+			throw new Error();
+		} catch (error) {
+			try {
+				const msg = error.stack
+					.split("\n")
+					.map(row => {
+						const res = /at (.[^\(\[]*) \(/.exec(row);
+						if (res && res[1]) {
+							return res[1];
+						}
+					})
+					.filter(row => !!row);
+				console.log(isLoading ? "open x-loading" : "close x-loading", msg.join("\n=>"));
+			} catch (error) { }
+		}
 	};
 
 	function closeLoading(selector) {
@@ -1030,7 +1060,21 @@
 				} else if (msg?.message) {
 					msg = msg.message;
 				}
+			} else {
+				try {
+					const _msg = JSON.parse(_msg);
+					if (_msg?.responseJSON?.detailArgs) {
+						msg = _msg?.responseJSON?.detailArgs;
+					} else if (_msg?.responseText) {
+						msg = _msg.responseText;
+					} else if (_msg?.message) {
+						msg = _msg.message;
+					}
+				} catch (error) {
+
+				}
 			}
+
 
 			return _.$notify.error({
 				title: i18n("错误"),
@@ -1060,48 +1104,50 @@
 		};
 	})();
 
-	const logEnsure = _.debounce(function () {
-		console.log("🚀:", "$ensure", _.$ensure.collection);
-	}, 1000);
+	(() => {
+		const logEnsure = _.debounce(function () {
+			console.log("🚀:", "$ensure", _.$ensure.collection);
+		}, 1000);
 
-	/**
-	 *
-	 * @param {*} fnGetValue 执行此函数，直到返回真值
-	 * @param {*} duration 默认为0即不断尝试；若给定时间，未在给定时间内完成，则失败
-	 * @returns
-	 */
-	/* @typescriptDeclare (fnGetValue:()=>Promise<any>, duration:number) =>Promise<any> */
-	_.$ensure = async (fnGetValue, duration = 0) => {
-		var fnString = fnGetValue.toString();
-		_.$ensure.collection.add(fnString);
-		logEnsure();
-		return new Promise(async (resolve, reject) => {
-			var timer;
-			if (duration) {
-				timer = setTimeout(() => {
-					reject(new Error("enSure fail"));
-				}, duration);
-			}
-			let exeFnGetValue = async function () {
-				const value = await fnGetValue();
-				if (value) {
-					exeFnGetValue = null;
-					if (timer) {
-						clearTimeout(timer);
-					}
-					resolve(value);
-					_.$ensure.collection.delete(fnString);
-					logEnsure();
-					return;
-				} else {
-					setTimeout(exeFnGetValue, 64);
+		/**
+		 *
+		 * @param {*} fnGetValue 执行此函数，直到返回真值
+		 * @param {*} duration 默认为0即不断尝试；若给定时间，未在给定时间内完成，则失败
+		 * @returns
+		 */
+		/* @typescriptDeclare (fnGetValue:()=>Promise<any>, duration?:number) =>Promise<any> */
+		_.$ensure = async (fnGetValue, duration = 0) => {
+			var fnString = fnGetValue.toString();
+			_.$ensure.collection.add(fnString);
+			logEnsure();
+			return new Promise(async (resolve, reject) => {
+				var timer;
+				if (duration) {
+					timer = setTimeout(() => {
+						reject(new Error("enSure fail"));
+					}, duration);
 				}
-			};
-			exeFnGetValue.count = 1;
-			exeFnGetValue();
-		});
-	};
-	_.$ensure.collection = new Set();
+				let exeFnGetValue = async function () {
+					const value = await fnGetValue();
+					if (!!value) {
+						exeFnGetValue = null;
+						if (timer) {
+							clearTimeout(timer);
+						}
+						resolve(value);
+						_.$ensure.collection.delete(fnString);
+						logEnsure();
+						return;
+					} else {
+						setTimeout(exeFnGetValue, 64);
+					}
+				};
+				exeFnGetValue.count = 1;
+				exeFnGetValue();
+			});
+		};
+		_.$ensure.collection = new Set();
+	})();
 
 	/**
 	 * @deprecated _.$appendScript可以缓存，不用每次都重新加载

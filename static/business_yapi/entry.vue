@@ -1,14 +1,5 @@
 <script lang="ts">
 export default async function () {
-	await Promise.all([
-		_.$importVue("/common/ui-x/useXui.vue"),
-		_.$importVue("/common/ui-element/useElementUI.vue", {
-			size: "small",
-			I18N_LANGUAGE: window.I18N_LANGUAGE
-		})
-	]);
-
-	await _.$importVue("@/yapi.defaul.style.vue");
 	/*anxin应用用到的组件*/
 	_.each(
 		{
@@ -24,28 +15,38 @@ export default async function () {
 		(componentURL, name) => Vue.component(name, () => _.$importVue(componentURL))
 	);
 
-	/* app entry  */
-	const [VueRouter, routes] = await _.$importVue([
-		"/common/libs/VueRouter.vue",
-		"@/router/routes.vue",
-		/*常量*/
-		"@/utils/var.vue",
-		/*接口*/
-		"@/utils/api.vue",
-		"@/utils/opts.vue",
-		/*校验规则*/
-		"/common/utils/rules.vue",
-		/*枚举选项*/
-		"@/utils/utils.vue"
-		/*工具函数*/
-		// "@/utils/helper.vue",
-		/*复用组件*/
-		// "@/utils/reuse.vue"
-		/*通用下拉项*/
+	const [, [VueRouter, routes]] = await Promise.all([
+		Promise.all([
+			_.$importVue("/common/ui-x/useXui.vue"),
+			_.$importVue("/common/ui-element/useElementUI.vue", {
+				size: "small",
+				I18N_LANGUAGE: window.I18N_LANGUAGE
+			})
+		]),
+		_.$importVue([
+			"/common/libs/VueRouter.vue",
+			"@/router/routes.vue",
+			/*常量*/
+			"@/utils/var.vue",
+			/*接口*/
+			"@/utils/api.vue",
+			/*校验规则*/
+			"/common/utils/rules.vue",
+			/*枚举选项*/
+			"@/utils/utils.vue",
+			/*工具函数*/
+			// "@/utils/helper.vue",
+			/*复用组件*/
+			// "@/utils/reuse.vue"
+			/*通用下拉项*/
+			"@/utils/opts.vue",
+			/* 项目独有样式 */
+			"@/yapi.defaul.style.vue"
+		])
 	]);
 
+	/* app entry  */
 	const router = new VueRouter({ routes });
-
 	const LOADING_STATUS = 0;
 	const GUEST_STATUS = 1;
 	const MEMBER_STATUS = 2;

@@ -51,6 +51,7 @@ export default async function () {
 					}
 				} catch (error) {
 					console.error(error);
+					_.$msgError(error);
 				} finally {
 					_.$loading(false);
 					setTimeout(() => {

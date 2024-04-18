@@ -26,6 +26,7 @@ export default async function (options = {}) {
 			)
 		)
 	]);
+
 	if (_.isFunction(options.bootstrap)) {
 		await options.bootstrap(window._useXui);
 	}
@@ -34,7 +35,7 @@ export default async function (options = {}) {
 		const ALL_COMPONENTS = await _.$importVue("/common/ui-x/allComponents.vue");
 		const loadComponentByImportVue = async componentpath => {
 			const componentName = _.last(componentpath.split("/"));
-			if (["xDropdownMenu", "xDropdown", "xBtn"].includes(componentName)) {
+			if (["xDropdownMenu", "xDropdown", "xBtn", "xTooltip"].includes(componentName)) {
 				/* xBtn 多个地方用到，但是异步加载会有bug:骨架屏不刷新 */
 				const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
 				Vue.component(componentName, component);

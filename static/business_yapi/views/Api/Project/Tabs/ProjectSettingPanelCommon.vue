@@ -31,11 +31,10 @@
 
 <script lang="ts">
 export default async function () {
-	const { useTabName } = await _.$importVue("/common/utils/hooks.vue");
-	const { useProjectForm } = await _.$importVue("@/views/Api/Group/Section/ProjectList/GroupSectionProjectListAddProject.vue");
+	const [{ useTabName }, { useProjectForm }] = await _.$importVue(["/common/utils/hooks.vue", "@/views/Api/Group/Section/ProjectList/GroupSectionProjectListAddProject.vue"]);
 
 	return {
-		name: "CtyunecsEvsList",
+		name: "ProjectSettingPanelCommonVue",
 		inject: ["APP", "inject_project"],
 		components: {},
 		setup() {
@@ -48,10 +47,12 @@ export default async function () {
 			const vm = this;
 			const { group_id, name, basepath, desc, project_type } = useProjectForm(vm);
 			const p = vm.APP.cptProject;
+			group_id.value = vm.APP.cptGroupId;
+			debugger;
 			return {
 				form: defItems({
 					img: {
-						value: p._id,
+						value: p._id || "",
 						usedBy: "project",
 						itemType: "YapiItemAvatar",
 						label: i18n("头像")
@@ -174,13 +175,14 @@ export default async function () {
 				return {
 					label: i18n("管理转发环境"),
 					onClick: async () => {
-						const DialogTypeVueSFC = await _.$importVue("@/components/YapiItemProxyEnvManager.vue", {
-							parent: this
-						});
-						const vm = _.$openWindow_deprecated(i18n("管理转发环境"), DialogTypeVueSFC, {
-							maxmin: true,
-							fullscreen: false
-						});
+						_.$openModal(
+							{
+								title: i18n("管理转发环境"),
+								url: "@/components/YapiItemProxyEnvManager.vue",
+								parent: this
+							},
+							{ fullscreen: true }
+						);
 					}
 				};
 			},

@@ -28,6 +28,18 @@
 <script lang="ts">
 export default async function () {
 	return defineComponent({
+		setup() {
+			function setContent(event, response) {
+				_.$notify.info({ message: response?.payload?.content });
+			}
+			onMounted(() => {
+				$(window).on("WS_MESSAGE", setContent);
+			});
+
+			onBeforeUnmount(() => {
+				$(window).off("WS_MESSAGE", setContent);
+			});
+		},
 		async mounted() {
 			this.loadAllProject();
 			const tutorial = await _.$loadText("@/doc/reuseElementUI.md");
@@ -53,8 +65,47 @@ export default async function () {
 				oprBtnArray: [
 					{
 						label: i18n("添加新项目"),
-						preset: "blue",
-						async onClick() {}
+						async onClick() {
+							_.$openModal({
+								title: i18n("添加新项目"),
+								usedProject: "",
+								url: "@/views/ViewAllProject.upsert.dialog.vue",
+								projectsDB: vm.projects,
+								onSuccess() {
+									vm.loadAllProject();
+								}
+							});
+						}
+					},
+					{
+						label: i18n("格式化"),
+						disabled() {
+							return !vm.configsTable.data.set.size;
+						},
+						async onClick() {
+							return _api.doc.cmd({
+								action: "cmd",
+								cmd: "format",
+								args: _.filter(vm.configsTable.data.list, i => {
+									return vm.configsTable.data.set.has(i.id);
+								})
+							});
+						}
+					},
+					{
+						label: i18n("生成定义文件"),
+						disabled() {
+							return !vm.configsTable.data.set.size;
+						},
+						async onClick() {
+							return _api.doc.cmd({
+								action: "cmd",
+								cmd: "dst",
+								args: _.filter(vm.configsTable.data.list, i => {
+									return vm.configsTable.data.set.has(i.id);
+								})
+							});
+						}
 					}
 				],
 				configsTable: defTable({
@@ -75,7 +126,18 @@ export default async function () {
 					},
 					rowKey: "id",
 					columns: [
-						defTable.colExpandArrow({ width: 60 }),
+						defTable.colMultiple({
+							getConfigs() {
+								return vm.configsTable;
+							},
+							by: "id",
+							isHide({ rowData }) {
+								return !!rowData.parent;
+							}
+						}),
+						defTable.colExpandArrow({
+							width: 60
+						}),
 						{
 							label: i18n("项目名"),
 							prop: "name",
@@ -105,7 +167,7 @@ export default async function () {
 								const save = async () => {
 									try {
 										rowData.desc = vm.thisRowValue;
-										await _api.doc.projectsUpsert(vm.projects);
+										await _api.doc.projectsUpsert({ update: vm.projects });
 										close();
 									} catch (error) {
 										console.error(error);
@@ -166,9 +228,18 @@ export default async function () {
 										children: [
 											{
 												label: i18n("添加入口"),
-												confirm: {
-													tips: `${i18n("确认删除")} ${rowData.id} ？`,
-													onOk() {}
+												onClick() {
+													return;
+												}
+											},
+											{
+												label: i18n("open in vscode"),
+												onClick() {
+													return _api.doc.cmd({
+														action: "cmd",
+														cmd: "openVscode",
+														args: rowData
+													});
 												}
 											}
 										]

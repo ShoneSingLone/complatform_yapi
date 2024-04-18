@@ -50,6 +50,11 @@ export default async function () {
 				return {
 					label: vm.inject_note.isShowEditor ? "保存" : "修改",
 					preset: "blue",
+					disabled() {
+						if (!vm.inject_note.cptCurrentWiki._id) {
+							return "当前无可编辑文档";
+						}
+					},
 					async onClick() {
 						if (vm.inject_note.isShowEditor) {
 							await vm.save();

@@ -14,7 +14,7 @@
 		</a>
 		<xGap r="4" />
 		<a class="flex middle" :href="privateExploreHref" target="_blank">
-			<xIcon icon="_wikidoc" />
+			<xIcon icon="_hamburger" />
 		</a>
 		<xGap f />
 		<YapiToolUserBar />

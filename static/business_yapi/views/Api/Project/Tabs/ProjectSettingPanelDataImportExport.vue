@@ -19,7 +19,7 @@
 export default async function () {
 	const { useTabName } = await _.$importVue("/common/utils/hooks.vue");
 	return {
-		name: "CtyunecsEvsList",
+		name: "ProjectSettingPanelDataImportExportVue",
 		inject: ["APP", "inject_project"],
 		data() {
 			const vm = this;

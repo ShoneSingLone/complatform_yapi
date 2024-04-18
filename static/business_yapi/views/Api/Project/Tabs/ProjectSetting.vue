@@ -24,7 +24,7 @@ export default async function () {
 	const { useTabName } = await _.$importVue("/common/utils/hooks.vue");
 
 	return {
-		name: "CtyunecsEvsList",
+		name: "ProjectSettingVue",
 		inject: ["APP", "inject_project"],
 		components: {
 			ProjectSettingPanelCommon: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue"),

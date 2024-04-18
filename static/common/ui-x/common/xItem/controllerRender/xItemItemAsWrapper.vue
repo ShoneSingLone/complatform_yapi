@@ -40,7 +40,7 @@ export default async function () {
 								),
 								h("span", { staticClass: "xItem_label-text" }, [vm.cpt_label]),
 								h(
-									"elTooltip",
+									"xTooltip",
 									{
 										vIf: vm.calTips(),
 										// effect: "dark",
@@ -72,7 +72,7 @@ export default async function () {
 						/* 因为使用slots 所以这里不渲染 */
 						/* 校验错误提示 */
 						h(
-							"elTooltip",
+							"xTooltip",
 							{
 								vIf: vm.errorTips,
 								effect: "dark",

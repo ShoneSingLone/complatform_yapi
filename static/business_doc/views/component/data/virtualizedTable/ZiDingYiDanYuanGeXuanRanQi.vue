@@ -18,7 +18,7 @@ export default async function () {
 					fixed: "left",
 					cellRenderer: ({ cellData: date }) =>
 						h(
-							"ElTooltip",
+							"xTooltip",
 							{
 								content: _.$dateFormat(date),
 								placement: "top"

@@ -2,27 +2,27 @@
 	<div class="ctyun-ip">
 		<div class="cloud-ip-contaienr ctyun-ip__contaienr cloud-flex-ip-v4">
 			<div class="el-tooltip cloud-ip-input ctyun-ip__center ctyun-ip__input el-input el-input--small cloud-ip-v4__content">
-				<el-input v-model="ipObj.one" maxlength="3" />
+				<xInput v-model="ipObj.one" maxlength="3" />
 			</div>
 		</div>
 		<div class="cloud-ip-contaienr ctyun-ip__contaienr cloud-flex-ip-v4">
 			<div class="el-tooltip cloud-ip-input ctyun-ip__center ctyun-ip__input el-input el-input--small cloud-ip-v4__content">
-				<el-input v-model="ipObj.two" maxlength="3" />
+				<xInput v-model="ipObj.two" maxlength="3" />
 			</div>
 		</div>
 		<div class="cloud-ip-contaienr ctyun-ip__contaienr cloud-flex-ip-v4">
 			<div class="el-tooltip cloud-ip-input ctyun-ip__center ctyun-ip__input el-input el-input--small cloud-ip-v4__content">
-				<el-input v-model="ipObj.three" maxlength="3" />
+				<xInput v-model="ipObj.three" maxlength="3" />
 			</div>
 		</div>
 		<div class="cloud-ip-contaienr ctyun-ip__contaienr cloud-flex-ip-v4">
 			<div class="el-tooltip cloud-ip-input ctyun-ip__center ctyun-ip__input el-input el-input--small cloud-ip-v4__content">
-				<el-input v-model="ipObj.four" maxlength="3" />
+				<xInput v-model="ipObj.four" maxlength="3" />
 			</div>
 		</div>
-		<el-select class="ctyun-ip__mask is-select" v-model="ipObj.port" v-if="portOption.length > 0">
-			<el-option v-for="item of portOption" :key="item.value" :label="item.label" :value="item.value" />
-		</el-select>
+		<xSelect class="ctyun-ip__mask is-select" v-model="ipObj.port" v-if="portOption.length > 0">
+			<xOption v-for="item of portOption" :key="item.value" :label="item.label" :value="item.value" />
+		</xSelect>
 	</div>
 </template>
 

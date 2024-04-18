@@ -114,6 +114,7 @@ export default async function ({ options, modalConfigs }) {
 		});
 	}
 	return defineComponent({
+		name: "xModal",
 		provide() {
 			return {
 				inject_modal: this
@@ -304,12 +305,14 @@ export default async function ({ options, modalConfigs }) {
 			}
 		},
 		watch: {
-			"dialogClass.fullscreen"() {/* 
+			"dialogClass.fullscreen"() {
+				/* 
 				this.dialogStyle.opacity = 0;
 				setTimeout(() => {
 					this.dialogStyle.opacity = 1;
 				}, 300);
-			 */}
+			 */
+			}
 		}
 	});
 }

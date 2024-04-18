@@ -5,7 +5,7 @@
 		</div>
 		<div class="flex center middle">
 			<xBtn size="mini" @click="onOk">{{ i18n("确定") }}</xBtn>
-			<xBtn preset="primary" size="mini" type="text" @click="onCancel">{{ i18n("取消") }}</xBtn>
+			<xBtn preset="primary" size="mini" @click="onCancel">{{ i18n("取消") }}</xBtn>
 		</div>
 	</div>
 </template>

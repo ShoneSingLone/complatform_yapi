@@ -8,6 +8,10 @@ export default async function () {
 			},
 			projectsUpsert(data) {
 				return _.$ajax.post("/boundless-api/project/update_info", { data });
+			},
+			cmd(data) {
+				window.APP_WS.emit("self", data);
+				// return _.$ajax.post("/boundless-api/project/command", { data });
 			}
 		};
 	}

@@ -465,6 +465,7 @@ export default async function () {
 		},
 		render() {
 			if (!this.cptConfigs) debugger;
+
 			/* 只读模式 */
 			if (this.readOnlyAs) {
 				if (_xItem_lazyLoadRender.ReadonlyAsRender) {

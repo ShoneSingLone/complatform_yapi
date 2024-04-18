@@ -241,18 +241,21 @@ ${resBackupJson}
 			}
 		},
 		methods: {
-			async runInterefaceTestDialog({ mockHref, reqMethod }) {
-				const DialogTypeVueSFC = await _.$importVue("@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetailPreview.TestInterface.dialog.vue", {
-					parent: this,
-					mockHref,
-					reqMethod,
-					interfaceId: this.cptInfo._id,
-					projectId: this.APP.cptProject._id
-				});
-				_.$openWindow_deprecated(i18n("测试"), DialogTypeVueSFC, {
-					maxmin: true,
-					fullscreen: true
-				});
+			runInterefaceTestDialog({ mockHref, reqMethod }) {
+				return _.$openModal(
+					{
+						title: i18n("测试"),
+						url: "@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetailPreview.TestInterface.dialog.vue",
+						parent: this,
+						mockHref,
+						reqMethod,
+						interfaceId: this.cptInfo._id,
+						projectId: this.APP.cptProject._id
+					},
+					{
+						fullscreen: true
+					}
+				);
 			}
 		}
 	});

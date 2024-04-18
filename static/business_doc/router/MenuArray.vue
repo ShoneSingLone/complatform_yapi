@@ -45,6 +45,7 @@ export default async function () {
 				{ icon: "icon_report", label: i18n("layer"), href: "/other/layer" },
 				{ icon: "icon_report", label: i18n("move"), href: "/other/move" },
 				{ icon: "icon_report", label: i18n("Popover"), href: "/other/popover" },
+				{ icon: "icon_report", label: `${i18n("Tooltip")} ${i18n("文字提示")}`, href: "/other/tooltip" },
 				{ icon: "icon_report", label: i18n("dialog"), href: "/other/open_window" },
 				{ icon: "icon_report", label: `${i18n("Notification")} ${i18n("通知")}`, href: "/other/notification" }
 			]

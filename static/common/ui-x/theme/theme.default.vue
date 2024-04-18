@@ -554,16 +554,6 @@ svg.pointer {
 	color: #2bbc0f !important;
 }
 
-.box {
-	width: 50px;
-	text-align: center;
-	height: 16px;
-	line-height: 16px;
-	color: #fff;
-	margin: 0 auto;
-	font-size: 12px;
-}
-
 /* ------------------------ page ------------------------*/
 
 /* ------------------------ common entry ------------------------*/
@@ -775,6 +765,8 @@ body,
 		width: var(--left-aside-width);
 
 		&.hide {
+			.xIcon.icon_console,
+			.xIcon.icon_console + .title,
 			.log-title-wrapper,
 			.x-sidebar-menu {
 				display: none;

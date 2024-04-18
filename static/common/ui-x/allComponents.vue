@@ -1,6 +1,7 @@
 <script lang="ts">
 export default async function () {
 	return [
+		/* **************** */
 		"components/xExcalidraw/xExcalidraw",
 		/* *************** */
 		"components/other/xAlert/xAlert",
@@ -53,6 +54,7 @@ export default async function () {
 		"components/layout/page/xPageFooter",
 		/* *************************** */
 		"directive/xImg/xImg",
+		"directive/xTooltip/xTooltip",
 		/* ********************** */
 		"common/xAppLayoutHeaderOcOprs",
 		"common/xMd",
@@ -62,6 +64,7 @@ export default async function () {
 		"common/xCellDate",
 		"common/xCellEllipsis",
 		"common/xCellInput",
+		"common/xCellCheckbox",
 		"common/xCellOptions",
 		"common/xCellRate",
 		"common/xCellSelect",

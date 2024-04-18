@@ -38,7 +38,7 @@ export default async function () {
 								),
 								h("span", { staticClass: "xItem_label-text" }, [vm.cpt_label]),
 								h(
-									"elTooltip",
+									"xTooltip",
 									{
 										vIf: vm.calTips(),
 										// effect: "dark",

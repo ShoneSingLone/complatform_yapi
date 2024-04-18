@@ -5,9 +5,7 @@
 				<div v-if="isCOL(prop)" class="fixed-right table-header">
 					<xTableColSelected slotname="header" :configs="configs" :type="prop" />
 				</div>
-				<div v-else class="table-header">
-					{{ getLabelBy(prop) }}
-				</div>
+				<div v-else class="table-header">{{ getLabelBy(prop) }}</div>
 			</template>
 			<template #default="{ $index, column, row, store, _self }">
 				<div v-if="isCOL(prop)" class="fixed-right">

@@ -39,7 +39,7 @@ export default async function () {
 			cptAvatar() {
 				return {
 					itemType: "YapiItemAvatar",
-					value: this.APP.user._id,
+					value: this.APP.user._id || "",
 					disabled: true
 				};
 			}

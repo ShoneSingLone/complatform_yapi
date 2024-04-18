@@ -37,7 +37,8 @@ export default async function () {
 				staticClass: "xItem-wrapper flex vertical",
 				attrs: {
 					"data-form-item-type": vm.itemType,
-					"data-form-item-id": vm.cpt_id
+					"data-form-item-id": vm.cpt_id,
+					disabled: vm.cptDisabled
 				},
 				style: vm.cptStyle
 			},
@@ -67,7 +68,7 @@ export default async function () {
 								),
 								h("span", { staticClass: "xItem_label-text" }, [vm.cpt_label]),
 								h(
-									"elTooltip",
+									"xTooltip",
 									{
 										vIf: vm.calTips(),
 										// effect: "dark",
@@ -105,7 +106,7 @@ export default async function () {
 
 						/* 校验错误提示 */
 						h(
-							"elTooltip",
+							"xTooltip",
 							{
 								vIf: vm.errorTips,
 								effect: "dark",
