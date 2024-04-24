@@ -4,9 +4,14 @@ export default async function () {
 		/* **************** */
 		"components/xExcalidraw/xExcalidraw",
 		/* *************** */
+		"components/other/xCollapse/xCollapseItem",
+		"components/other/xCollapse/xCollapse",
 		"components/other/xAlert/xAlert",
 		"components/TableCell/TableCell",
 		"components/TableCell/TableCellItem",
+		/*  */
+		"components/base/layout/xRow",
+		"components/base/layout/xCol",
 		/*  */
 		"components/base/xBtn/xBtnWithConfirm",
 		"components/base/xBtn/xBtn",
@@ -28,7 +33,11 @@ export default async function () {
 		"components/data/xTree/xNodeContent",
 		"components/form/xInput/xInput",
 		"components/form/xSelect/xSelect",
+		"components/form/xSwitch/xSwitch",
 		"components/form/xInputNumber/xInputNumber",
+		"components/form/xRadio/xRadio",
+		"components/form/xRadio/xRadioButton",
+		"components/form/xRadio/xRadioGroup",
 		"components/form/xCheckbox/xCheckbox",
 		"components/form/xCheckbox/xCheckboxButton",
 		"components/form/xCheckbox/xCheckboxGroup",
@@ -41,6 +50,7 @@ export default async function () {
 		"components/form/xSelect/xOptionGroup",
 		"components/form/xSelect/xSelectDropdown",
 		/*  */
+		"components/navigation/xPageHeader/xPageHeader",
 		"components/navigation/xBreadcrumb/xBreadcrumb",
 		"components/navigation/xBreadcrumb/xBreadcrumbItem",
 		"components/navigation/xDropdown/xDropdown",

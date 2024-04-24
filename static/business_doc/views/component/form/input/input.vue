@@ -14,7 +14,7 @@
 		<DemoAndCode title="自定义模板" path="@/views/component/form/input/ZiDingYiMoBan.vue" unfold />
 		<DemoAndCode title="远程搜索" path="@/views/component/form/input/YuanChengSouSuo.vue" unfold />
 		<DemoAndCode title="输入长度限制" path="@/views/component/form/input/ShuRuChangDuXianZhi.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

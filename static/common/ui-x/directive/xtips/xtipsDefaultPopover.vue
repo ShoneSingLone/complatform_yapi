@@ -36,7 +36,9 @@ export default async function () {
 				}
 				val ? this.$emit("show") : this.$emit("hide");
 				val ? this.updatePopper() : this.destroyPopper();
-				this.$parent.onPopoverChange[this.refId](val);
+				if (this.$parent.onPopoverChange) {
+					this.$parent.onPopoverChange[this.refId](val);
+				}
 			}
 		},
 		setup(props) {
@@ -114,7 +116,17 @@ export default async function () {
 				return this.options.tabindex || 0;
 			},
 			$reference() {
-				return this.options.$reference;
+				if (this.options.$reference) {
+					return this.options.$reference;
+				}
+				if (this.$refs.wrapper && $(this.$refs.wrapper)) {
+					return $(this.$refs.wrapper);
+				}
+				if (this.$refs.refRender && $(this.$refs.refRender)) {
+					return $(this.$refs.refRender);
+				}
+
+				return {};
 			},
 			transformOrigin() {
 				return hasOwn(this.options, "transformOrigin") ? this.options.transformOrigin : true;
@@ -148,7 +160,8 @@ export default async function () {
 				);
 			}
 		},
-		mounted() {
+		async mounted() {
+			await _.$ensure(() => this.$reference.addClass);
 			// 可访问性
 			this.$reference
 				.addClass("el-popover__reference")

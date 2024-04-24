@@ -48,7 +48,7 @@ export default async function () {
 			const { group_id, name, basepath, desc, project_type } = useProjectForm(vm);
 			const p = vm.APP.cptProject;
 			group_id.value = vm.APP.cptGroupId;
-			debugger;
+
 			return {
 				form: defItems({
 					img: {

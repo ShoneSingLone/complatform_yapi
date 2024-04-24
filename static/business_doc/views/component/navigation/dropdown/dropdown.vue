@@ -7,7 +7,7 @@
 		<DemoAndCode title="菜单隐藏方式" path="@/views/component/navigation/dropdown/CaiDanYinCangFangShi.vue" unfold />
 		<DemoAndCode title="指令事件" path="@/views/component/navigation/dropdown/ZhiLingShiJian.vue" unfold />
 		<DemoAndCode title="不同尺寸" path="@/views/component/navigation/dropdown/BuTongChiCun.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

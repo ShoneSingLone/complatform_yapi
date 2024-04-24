@@ -23,7 +23,6 @@ export default async function ({ onOk }) {
 	const { DEV, OWNER, ADMIN, PRIVATE, PUBLIC } = Vue._yapi_var;
 
 	function useProjectForm(vm) {
-		debugger;
 		const group_id = defItem({
 			itemType: "xItemSelect",
 			value: "",
@@ -70,7 +69,7 @@ export default async function ({ onOk }) {
 			],
 			renderOption(item) {
 				return h(
-					"elTooltip",
+					"xTooltip",
 					{
 						content: item.content
 					},

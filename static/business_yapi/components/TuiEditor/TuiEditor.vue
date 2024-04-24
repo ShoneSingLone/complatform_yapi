@@ -1640,7 +1640,6 @@ table.ProseMirror-selectednode,
 		margin: 4px 0 10px;
 		box-sizing: border-box;
 		vertical-align: top;
-		max-width: 30%;
 	}
 }
 

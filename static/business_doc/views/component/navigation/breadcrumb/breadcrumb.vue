@@ -3,7 +3,7 @@
 		<xMd :md="'## Breadcrumb 面包屑\n\n显示当前页面的路径，快速返回之前的任意页面。'" />
 		<DemoAndCode title="基础用法" path="@/views/component/navigation/breadcrumb/JiChuYongFa.vue" unfold />
 		<DemoAndCode title="图标分隔符" path="@/views/component/navigation/breadcrumb/TuBiaoFenGeFu.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

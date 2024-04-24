@@ -8,7 +8,7 @@
 		<DemoAndCode title="小型分页" path="@/views/component/data/pagination/XiaoXingFenYe.vue" unfold />
 		<DemoAndCode title="附加功能" path="@/views/component/data/pagination/FuJiaGongNeng.vue" unfold />
 		<DemoAndCode title="当只有一页时隐藏分页" path="@/views/component/data/pagination/DangZhiYouYiYeShiYinCangFenYe.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

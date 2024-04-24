@@ -3,6 +3,8 @@ export default async function (options) {
 	if (!window.ELEMENT) {
 		await _.$appendScript("/common/ui-element/index.min.js");
 		await _.$appendScript(`/common/ui-element/i18n/${options.I18N_LANGUAGE}.js`);
+		/* 用于加载样式，实际使用中是懒加载，不用担心 */
+		await _.$importVue("/common/ui-x/directive/xMessage/xMessage.vue");
 
 		const LOCALE_MAP = {
 			"zh-CN": ELEMENT.lang.zhCN,
@@ -10491,138 +10493,6 @@ body {
 	}
 }
 
-.el-message {
-	min-width: 380px;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	border-width: 1px;
-	border-style: solid;
-	border-color: var(--el-border-color-lighter);
-	position: fixed;
-	left: 50%;
-	top: 20px;
-	-webkit-transform: translateX(-50%);
-	transform: translateX(-50%);
-	background-color: #edf2fc;
-	-webkit-transition:
-		opacity 0.3s,
-		top 0.4s,
-		-webkit-transform 0.4s;
-	transition:
-		opacity 0.3s,
-		top 0.4s,
-		-webkit-transform 0.4s;
-	transition:
-		opacity 0.3s,
-		transform 0.4s,
-		top 0.4s;
-	transition:
-		opacity 0.3s,
-		transform 0.4s,
-		top 0.4s,
-		-webkit-transform 0.4s;
-	padding: 15px 15px 15px 20px;
-	display: -webkit-box;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-align: center;
-	-ms-flex-align: center;
-	align-items: center;
-}
-
-.el-message.is-center {
-	-webkit-box-pack: center;
-	-ms-flex-pack: center;
-	justify-content: center;
-}
-
-.el-message.is-closable .el-message__content {
-	padding-right: 16px;
-}
-
-.el-message p {
-	margin: 0;
-}
-
-.el-message--info .el-message__content {
-	color: var(--el-text-color-secondary);
-}
-
-.el-message--success {
-	background-color: #f0f9eb;
-	border-color: #e1f3d8;
-}
-
-.el-message--success .el-message__content {
-	color: var(--el-color-success);
-}
-
-.el-message--warning {
-	background-color: #fdf6ec;
-	border-color: #faecd8;
-}
-
-.el-message--warning .el-message__content {
-	color: var(--el-color-warning);
-}
-
-.el-message--error {
-	background-color: #fef0f0;
-	border-color: #fde2e2;
-}
-
-.el-message--error .el-message__content {
-	color: var(--el-color-error);
-}
-
-.el-message__icon {
-	margin-right: 10px;
-}
-
-.el-message__content {
-	padding: 0;
-	font-size: 14px;
-	line-height: 1;
-}
-
-.el-message__closeBtn {
-	position: absolute;
-	top: 50%;
-	right: 15px;
-	-webkit-transform: translateY(-50%);
-	transform: translateY(-50%);
-	cursor: pointer;
-	color: var(--el-text-color-disabled);
-	font-size: 16px;
-}
-
-.el-message__closeBtn:hover {
-	color: var(--el-text-color-secondary);
-}
-
-.el-message .el-icon-success {
-	color: var(--el-color-success);
-}
-
-.el-message .el-icon-error {
-	color: var(--el-color-error);
-}
-
-.el-message .el-icon-info {
-	color: var(--el-text-color-secondary);
-}
-
-.el-message .el-icon-warning {
-	color: var(--el-color-warning);
-}
-
-.el-message-fade-enter,
-.el-message-fade-leave-active {
-	opacity: 0;
-	-webkit-transform: translate(-50%, -100%);
-	transform: translate(-50%, -100%);
-}
-
 .el-badge {
 	position: relative;
 	vertical-align: middle;
@@ -11748,7 +11618,7 @@ body {
 
 .el-tag.el-tag--success {
 	background-color: #f0f9eb;
-	border-color: #e1f3d8;
+	border-color: var(--el-color-success-light-8);
 	color: var(--el-color-success);
 }
 
@@ -11767,7 +11637,7 @@ body {
 
 .el-tag.el-tag--warning {
 	background-color: #fdf6ec;
-	border-color: #faecd8;
+	border-color: var(--el-color-warning-light-8);
 	color: var(--el-color-warning);
 }
 
@@ -11786,7 +11656,7 @@ body {
 
 .el-tag.el-tag--danger {
 	background-color: #fef0f0;
-	border-color: #fde2e2;
+	border-color: var(--el-color-error-light-8);
 	color: var(--el-color-error);
 }
 
@@ -14075,7 +13945,7 @@ body {
 	&.el-button--success.is-plain.is-disabled:hover {
 		color: #a4da89;
 		background-color: #f0f9eb;
-		border-color: #e1f3d8;
+		border-color: var(--el-color-success-light-8);
 	}
 
 	&.el-button--warning {
@@ -14137,7 +14007,7 @@ body {
 	&.el-button--warning.is-plain.is-disabled:hover {
 		color: #f0c78a;
 		background-color: #fdf6ec;
-		border-color: #faecd8;
+		border-color: var(--el-color-warning-light-8);
 	}
 
 	&.el-button--danger {
@@ -14199,7 +14069,7 @@ body {
 	&.el-button--danger.is-plain.is-disabled:hover {
 		color: #f9a7a7;
 		background-color: #fef0f0;
-		border-color: #fde2e2;
+		border-color: var(--el-color-error-light-8);
 	}
 
 	&.el-button--info {

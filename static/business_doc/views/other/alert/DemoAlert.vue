@@ -16,7 +16,7 @@
 		<DemoAndCode title="文字居中" path="@/views/other/alert/WenZiJuZhong.vue" unfold />
 		<DemoAndCode title="带有辅助性文字介绍" path="@/views/other/alert/DaiYouFuZhuXingWenZiJieShao.vue" unfold />
 		<DemoAndCode title="带有 icon 和辅助性文字介绍" path="@/views/other/alert/DaiYouIconHeFuZhuXingWenZiJieShao.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

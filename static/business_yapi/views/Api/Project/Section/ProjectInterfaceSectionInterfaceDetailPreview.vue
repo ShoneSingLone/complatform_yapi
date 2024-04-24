@@ -1,6 +1,7 @@
 <style lang="less"></style>
 <template>
 	<div class="flex1-overflow-auto">
+		<xBtn class="mb" @click="copyTo">复制到</xBtn>
 		<xCard header="基本信息">
 			<xForm col="3" style="--xItem-label-width: 100px">
 				<xItemDesc v-for="(item, index) in cptDescItems" :key="index" :item="item" :span="item.span || 1" />
@@ -241,6 +242,15 @@ ${resBackupJson}
 			}
 		},
 		methods: {
+			async copyTo() {
+				return _.$openModal({
+					title: i18n("复制接口"),
+					url: "@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceCopyTo.dialog.vue",
+					parent: this,
+					interfaceId: this.cptInfo._id,
+					projectId: this.APP.cptProject._id
+				});
+			},
 			runInterefaceTestDialog({ mockHref, reqMethod }) {
 				return _.$openModal(
 					{

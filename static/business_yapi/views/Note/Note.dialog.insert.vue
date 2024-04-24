@@ -8,7 +8,7 @@
 </style>
 <template>
 	<xDialog style="--xItem-label-width: 38px; width: 400px">
-		<xForm ref="form" col="1">
+		<xForm ref="form" col="1" class="no-gap">
 			<xItem :configs="form.title" span="full" />
 		</xForm>
 		<template #footer>

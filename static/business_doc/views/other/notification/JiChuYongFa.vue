@@ -23,7 +23,6 @@
 <script lang="ts">
 export default async function () {
 	return defineComponent({
-		beforeUnmount() {},
 		computed: {
 			btnSingle() {
 				const vm = this;

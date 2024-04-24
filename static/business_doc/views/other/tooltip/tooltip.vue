@@ -5,7 +5,7 @@
 		<DemoAndCode title="主题" path="@/views/other/tooltip/ZhuTi.vue" unfold />
 		<DemoAndCode title="更多 Content" path="@/views/other/tooltip/GengDuoContent.vue" unfold />
 		<DemoAndCode title="高级扩展" path="@/views/other/tooltip/GaoJiKuoZhan.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

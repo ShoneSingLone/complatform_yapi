@@ -5,7 +5,7 @@
 		<DemoAndCode title="icon未找到" path="@/views/component/data/icon/IconWeiZhaoDao.vue" unfold />
 		<DemoAndCode title="icon颜色" path="@/views/component/data/icon/YanSe.vue" unfold />
 		<DemoAndCode title="加载图片" path="@/views/component/data/icon/JiaZaiTuPian.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 		<DemoAndCode title="字体图标" path="@/views/component/data/icon/ZiTiTuBiao.vue" unfold />
 	</DocContentOfDemo>
 </template>

@@ -380,6 +380,8 @@ export default async function () {}
 	--xAlert-warning-light-border-color: var(--ti-base-color-warn-2);
 	--xAlert-warning-light-color: var(--ti-base-color-warn-3);
 
+	--xMessage-success-border-color: var(--xAlert-success-light-border-color);
+
 	.el-alert {
 		border: 1px solid transparent;
 		color: var(--xAlert-color);
@@ -447,6 +449,38 @@ export default async function () {}
 			.el-alert__closebtn {
 				color: var(--xAlert-error-light-color);
 			}
+		}
+	}
+
+	.el-message {
+		--xMessage-info-border-color: var(--xAlert-info-light-border-color);
+		--xMessage-success-border-color: var(--xAlert-success-light-border-color);
+		--xMessage-warning-border-color: var(--xAlert-warning-light-border-color);
+		--xMessage-error-border-color: var(--xAlert-error-light-border-color);
+
+		--xMessage-info-icon-color: var(--xAlert-info-light-color);
+		--xMessage-success-icon-color: var(--xAlert-success-light-color);
+		--xMessage-warning-icon-color: var(--xAlert-warning-light-color);
+		--xMessage-error-icon-color: var(--xAlert-error-light-color);
+
+		--xMessage-content-color: var(--xAlert-color);
+
+		/* icon */
+		/* info */
+		--el-text-color-secondary: var(--xMessage-info-icon-color);
+		/* success */
+		--el-color-success: var(--xMessage-success-icon-color);
+		/* warning */
+		--el-color-warning: var(--xMessage-warning-icon-color);
+		/* error */
+		--el-color-error: var(--xMessage-error-icon-color);
+
+		.el-message__content {
+			color: var(--xMessage-content-color);
+		}
+
+		.el-message__icon {
+			font-size: 16px;
 		}
 	}
 

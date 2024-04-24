@@ -49,7 +49,11 @@ overflow:auto;`
 				const contents = _.map($(vm.$el).find("[data-path]"), el => {
 					return [$(el).text(), el];
 				});
-				vm.contents = contents;
+
+				const api = _.map($(vm.$el).find("[data-role=api]"), el => {
+					return ["API", el];
+				});
+				vm.contents = contents.concat(api);
 			}, 200);
 			return {
 				isLoading: true,

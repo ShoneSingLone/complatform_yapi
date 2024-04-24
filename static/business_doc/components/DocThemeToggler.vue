@@ -1,6 +1,6 @@
 <style lang="less"></style>
 <template>
-	<el-switch v-model="APP.darkMode"></el-switch>
+	<xSwitch v-model="APP.darkMode" />
 </template>
 <script lang="ts">
 export default async function () {

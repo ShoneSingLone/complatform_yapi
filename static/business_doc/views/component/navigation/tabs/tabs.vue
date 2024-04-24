@@ -7,7 +7,7 @@
 		<DemoAndCode title="自定义标签页" path="@/views/component/navigation/tabs/ZiDingYiBiaoQianYe.vue" unfold />
 		<DemoAndCode title="动态增减标签页" path="@/views/component/navigation/tabs/DongTaiZengJianBiaoQianYe.vue" unfold />
 		<DemoAndCode title="自定义增加标签页触发器" path="@/views/component/navigation/tabs/ZiDingYiZengJiaBiaoQianYeChuFaQi.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

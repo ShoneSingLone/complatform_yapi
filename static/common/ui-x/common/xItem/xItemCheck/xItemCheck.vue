@@ -132,10 +132,17 @@ export default async function () {
 			cptDefaultItem() {
 				let item = _.first(this.cptConfigs?.options);
 				if (!_.isPlainObject(item)) {
-					item = {
-						value: item,
-						label: item
-					};
+					if (item) {
+						item = {
+							value: item,
+							label: item
+						};
+					} else {
+						item = {
+							value: "NO_LABEL",
+							label: ""
+						};
+					}
 				}
 				return item;
 			}

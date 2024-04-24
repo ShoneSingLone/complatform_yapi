@@ -103,11 +103,11 @@ export default async function () {
 								}
 							}
 						};
-						return h("el-checkbox", property);
+						return h("xCheckbox", property);
 					},
 					default: () => {
 						const disabled = vm.getDisableByDisabledBy();
-						return h("el-checkbox", {
+						return h("xCheckbox", {
 							props: {
 								width: 35,
 								value: vm.configs.data.selected.includes(this.row[vm.selectedBy]),
@@ -129,7 +129,7 @@ export default async function () {
 					default: () => {
 						const disabled = vm.getDisableByDisabledBy();
 						const value = vm.configs.data.selected[0] === this.row[vm.selectedBy];
-						return h("el-checkbox", {
+						return h("xCheckbox", {
 							props: {
 								width: 35,
 								value,

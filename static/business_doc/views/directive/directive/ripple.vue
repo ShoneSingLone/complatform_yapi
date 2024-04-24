@@ -4,7 +4,7 @@
 
 		<DemoAndCode title="基础用法" path="@/views/directive/directive/ripple/JiChuYongFa.vue" unfold />
 		<DemoAndCode title="自定义颜色" path="@/views/directive/directive/ripple/ZiDingYiYanSe.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

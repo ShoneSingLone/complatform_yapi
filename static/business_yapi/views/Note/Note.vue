@@ -1,7 +1,7 @@
 <template>
 	<section id="ViewNote" :class="cptNoteClass">
 		<AppHeader v-if="cptIsShowAppHeaderComponent" />
-		<div class="flex height100 flex1">
+		<div class="flex1-overflow-auto flex">
 			<NoteAside v-show="!isShowEditor" />
 			<NoteSection />
 		</div>
@@ -200,8 +200,8 @@ export default async function () {
 
 <style lang="less">
 #ViewNote {
-	height: 100%;
-	width: 100%;
+	height: 100vh;
+	width: 100vw;
 	display: flex;
 	flex-flow: row nowrap;
 	&.is-show-header {

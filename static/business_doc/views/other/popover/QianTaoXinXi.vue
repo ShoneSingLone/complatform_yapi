@@ -1,13 +1,7 @@
 <template>
 	<div class="card-JiChuYongFa">
 		<xMd :md="mdTitle" />
-		<xMd :md="'### 推荐使用v-xtips'" />
 		<xBtn v-xtips="manual">click 激活</xBtn>
-		<xMd :md="'#### 普通dom\n\n'" />
-		<elPopover placement="right" width="400" trigger="click">
-			<DemoTable />
-			<xBtn slot="reference">click 激活</xBtn>
-		</elPopover>
 	</div>
 </template>
 <script lang="ts">

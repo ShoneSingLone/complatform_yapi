@@ -12,7 +12,7 @@ export default async function () {
 					_.$msgError("登录过期，请重新登录");
 					_.$yapiRouter.push("/login");
 				} else if (response.errcode === 10001) {
-					_.$message.error("登录已失效，请重新登录");
+					_.$msg.error("登录已失效，请重新登录");
 					_.$router.push("/login");
 				}
 

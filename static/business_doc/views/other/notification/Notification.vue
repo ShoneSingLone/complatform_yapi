@@ -7,7 +7,7 @@
 		<DemoAndCode title="带有偏移" path="@/views/other/notification/DaiYouPianYi.vue" unfold />
 		<DemoAndCode title="使用 HTML 片段" path="@/views/other/notification/ShiYongHtmlPianDuan.vue" unfold />
 		<DemoAndCode title="隐藏关闭按钮" path="@/views/other/notification/YinCangGuanBiAnNiu.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 
 		<p>
 			/* const DialogTypeVueSFC = await _.$importVue("/common/utils/useMoCommon/MoMulDeleteConfirmTableDialog.vue", { parent: vm, tableConfigs: defTable({ data: { list:

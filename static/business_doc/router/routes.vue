@@ -32,17 +32,17 @@ export default async function () {
 				_.$newRoute("/x-component/x-form", "@/views/xComponent/DemoxForm/xForm.vue")
 			]
 		}),
-		/* base */
-		_.$newRoute("/base", ComponentPageRouterView, {
-			children: [_.$newRoute("/base/button", "@/views/base/button/button.vue")]
-		}),
 		/* 组件 */
 		_.$newRoute("/component", ComponentPageRouterView, {
 			children: [
+				_.$newRoute("/component/base", ComponentRouterView, {
+					children: [_.$newRoute("/component/base/button", "@/views/base/button/button.vue"), _.$newRoute("/component/base/layout", "@/views/component/base/layout/layout.vue")]
+				}),
 				_.$newRoute("/component/form", ComponentRouterView, {
 					children: [
 						_.$newRoute("/component/form/input", "@/views/component/form/input/input.vue"),
 						_.$newRoute("/component/form/input-number", "@/views/component/form/inputNumber/inputNumber.vue"),
+						_.$newRoute("/component/form/radio", "@/views/component/form/radio/radio.vue"),
 						_.$newRoute("/component/form/checkbox", "@/views/component/form/checkbox/checkbox.vue"),
 						_.$newRoute("/component/form/switch", "@/views/component/form/switch/switch.vue"),
 						_.$newRoute("/component/form/select", "@/views/component/form/select/select.vue"),
@@ -67,7 +67,8 @@ export default async function () {
 					children: [
 						_.$newRoute("/component/navigation/tabs", "@/views/component/navigation/tabs/tabs.vue"),
 						_.$newRoute("/component/navigation/dropdown", "@/views/component/navigation/dropdown/dropdown.vue"),
-						_.$newRoute("/component/navigation/breadcrumb", "@/views/component/navigation/breadcrumb/breadcrumb.vue")
+						_.$newRoute("/component/navigation/breadcrumb", "@/views/component/navigation/breadcrumb/breadcrumb.vue"),
+						_.$newRoute("/component/navigation/pageheader", "@/views/component/navigation/pageheader/pageheader.vue")
 					]
 				})
 			]
@@ -76,8 +77,10 @@ export default async function () {
 		_.$newRoute("/other", ComponentPageRouterView, {
 			children: [
 				_.$newRoute("/other/affix", "@/views/other/affix/DemoAffix.vue"),
+				_.$newRoute("/other/message", "@/views/other/message/DemoMessage.vue"),
 				_.$newRoute("/other/notification", "@/views/other/notification/Notification.vue"),
 				_.$newRoute("/other/alert", "@/views/other/alert/DemoAlert.vue"),
+				_.$newRoute("/other/collapse", "@/views/other/collapse/DemoCollapse.vue"),
 				_.$newRoute("/other/layer", "@/views/other/layer/layer.vue"),
 				_.$newRoute("/other/move", "@/views/other/move/move.vue"),
 				_.$newRoute("/other/popover", "@/views/other/popover/popover.vue"),

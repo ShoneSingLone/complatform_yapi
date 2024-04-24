@@ -1,17 +1,17 @@
 <template>
 	<div class="card-JianDanKaPian">
 		<xMd :md="mdTitle" />
-		<el-row :gutter="12">
-			<el-col :span="8">
+		<xRow :gutter="12">
+			<xCol :span="8">
 				<xCard shadow="always"> 总是显示 </xCard>
-			</el-col>
-			<el-col :span="8">
+			</xCol>
+			<xCol :span="8">
 				<xCard shadow="hover"> 鼠标悬浮时显示 </xCard>
-			</el-col>
-			<el-col :span="8">
+			</xCol>
+			<xCol :span="8">
 				<xCard shadow="never"> 从不显示 </xCard>
-			</el-col>
-		</el-row>
+			</xCol>
+		</xRow>
 	</div>
 </template>
 <script lang="ts">

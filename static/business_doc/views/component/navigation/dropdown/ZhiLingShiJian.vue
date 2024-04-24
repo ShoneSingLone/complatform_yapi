@@ -18,7 +18,7 @@ export default async function () {
 	return defineComponent({
 		methods: {
 			handleCommand(command) {
-				this.$message("click on item " + command);
+				_.$msg("click on item " + command);
 			}
 		},
 		data() {

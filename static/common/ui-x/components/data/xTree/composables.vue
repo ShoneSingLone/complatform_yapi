@@ -162,6 +162,7 @@ export default async function () {
 			} else {
 				expandNode(node);
 			}
+			debugger;
 			injectRootTree.updateByToggleExpand();
 		}
 		function setExpandedKeys(keys2) {

@@ -11,7 +11,7 @@
 		<DemoAndCode title="可搜索" path="@/views/component/form/select/KeSouSuo.vue" unfold />
 		<DemoAndCode title="远程搜索" path="@/views/component/form/select/YuanChengSouSuo.vue" unfold />
 		<DemoAndCode title="创建条目" path="@/views/component/form/select/ChuangJianTiaoMu.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

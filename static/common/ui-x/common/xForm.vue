@@ -46,6 +46,11 @@ export default async function () {
 	display: grid;
 	grid-template-columns: var(--xForm-col);
 
+	&.no-gap {
+		> .xFormItem {
+			margin-right: 0;
+		}
+	}
 	> .xFormItem {
 		display: flex;
 		align-items: baseline;

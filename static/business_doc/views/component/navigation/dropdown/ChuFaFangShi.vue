@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<xMd :md="md" />
-		<el-row class="block-col-2">
-			<el-col :span="12">
+		<xRow class="block-col-2">
+			<xCol :span="12">
 				<span class="demonstration">hover 激活</span>
 				<xDropdown>
 					<span class="xDropdown-link"> 下拉菜单<i class="el-icon-arrow-down el-icon--right"></i> </span>
@@ -14,8 +14,8 @@
 						<xDropdownItem icon="el-icon-circle-check">蚵仔煎</xDropdownItem>
 					</xDropdownMenu>
 				</xDropdown>
-			</el-col>
-			<el-col :span="12">
+			</xCol>
+			<xCol :span="12">
 				<span class="demonstration">click 激活</span>
 				<xDropdown trigger="click">
 					<span class="xDropdown-link"> 下拉菜单<i class="el-icon-arrow-down el-icon--right"></i> </span>
@@ -27,8 +27,8 @@
 						<xDropdownItem icon="el-icon-circle-check">蚵仔煎</xDropdownItem>
 					</xDropdownMenu>
 				</xDropdown>
-			</el-col>
-		</el-row>
+			</xCol>
+		</xRow>
 	</div>
 </template>
 <script lang="ts">

@@ -46,8 +46,9 @@ export default async function () {
 				{ icon: "icon_report", label: i18n("move"), href: "/other/move" },
 				{ icon: "icon_report", label: i18n("Popover"), href: "/other/popover" },
 				{ icon: "icon_report", label: `${i18n("Tooltip")} ${i18n("文字提示")}`, href: "/other/tooltip" },
-				{ icon: "icon_report", label: i18n("dialog"), href: "/other/open_window" },
-				{ icon: "icon_report", label: `${i18n("Notification")} ${i18n("通知")}`, href: "/other/notification" }
+				{ icon: "_icon_dialog", label: `${i18n("Dialog")} ${i18n("弹窗")}`, href: "/other/open_window" },
+				{ icon: "_icon_notification", label: `${i18n("Notification")} ${i18n("通知")}`, href: "/other/notification" },
+				{ icon: "_icon_msg", label: `${i18n("Message")} ${i18n("消息")}`, href: "/other/message" }
 			]
 		},
 		{
@@ -70,12 +71,14 @@ export default async function () {
 			icon: "_icon_components",
 			label: i18n("组件"),
 			children: [
-				{ icon: "icon_report", label: i18n("button"), href: "/base/button" },
+				{ icon: "icon_report", label: `${i18n("Layout")} ${i18n("布局")}`, href: "/component/base/layout" },
+				{ icon: "icon_report", label: i18n("button"), href: "/component/base/button" },
 				{ icon: "icon_report", label: i18n("input"), href: "/component/form/input" },
 				{ icon: "icon_report", label: i18n("inputNumber"), href: "/component/form/input-number" },
 				{ icon: "icon_report", label: i18n("checkbox"), href: "/component/form/checkbox" },
-				{ icon: "icon_report", label: i18n("switch"), href: "/component/form/switch" },
-				{ icon: "icon_report", label: i18n("select"), href: "/component/form/select" },
+				{ icon: "icon_report", label: i18n("radio"), href: "/component/form/radio" },
+				{ icon: "_icon_switch", label: i18n("switch"), href: "/component/form/switch" },
+				{ icon: "_icon_selector", label: i18n("select"), href: "/component/form/select" },
 				{ icon: "icon_report", label: i18n("ip-address"), href: "/component/form/ip-address" },
 				{ icon: "_icon_image", label: i18n("image") + i18n("图片"), href: "/component/data/image" },
 				{ icon: "icon_report", label: i18n("icon"), href: "/component/data/icon" },
@@ -88,8 +91,10 @@ export default async function () {
 				{ icon: "icon_report", label: i18n("Tabs"), href: "/component/navigation/tabs" },
 				{ icon: "icon_report", label: i18n("dropdown"), href: "/component/navigation/dropdown" },
 				{ icon: "_icon_breadcrumb", label: `${i18n("Breadcrumb")} ${i18n("面包屑")}`, href: "/component/navigation/breadcrumb" },
+				{ icon: "_icon_breadcrumb", label: `${i18n("PageHeader")} ${i18n("页头")}`, href: "/component/navigation/pageheader" },
 				{ icon: "_icon_affix", label: `${i18n("Affix")} ${i18n("固钉")}`, href: "/other/affix" },
 				{ icon: "_icon_affix", label: `${i18n("Alert")} ${i18n("警告")}`, href: "/other/alert" },
+				{ icon: "_icon_collapse", label: `${i18n("Collapse")} ${i18n("折叠面板")}`, href: "/other/collapse" },
 				{ icon: "_icon_affix", label: `${i18n("xExcalidraw")} ${i18n("白板")}`, href: "/component/data/excalidraw" }
 			]
 		},

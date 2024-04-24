@@ -959,7 +959,7 @@
 					})
 					.filter(row => !!row);
 				console.log(isLoading ? "open x-loading" : "close x-loading", msg.join("\n=>"));
-			} catch (error) { }
+			} catch (error) {}
 		}
 	};
 
@@ -1070,11 +1070,8 @@
 					} else if (_msg?.message) {
 						msg = _msg.message;
 					}
-				} catch (error) {
-
-				}
+				} catch (error) {}
 			}
-
 
 			return _.$notify.error({
 				title: i18n("错误"),

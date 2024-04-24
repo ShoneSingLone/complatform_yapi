@@ -3,7 +3,7 @@
 		<section class="mb mt el-card x-padding flex1 log-wrapper beautiful-scroll">
 			<el-timeline>
 				<el-timeline-item center :timestamp="getTime(logItem.add_time)" placement="top" v-for="(logItem, index) in logList" :key="index">
-					<el-card>
+					<xCard>
 						<template #header>
 							<div class="logtype flex middle">
 								<span class="logHead">{{ getTitle(logItem.type) }}</span>
@@ -12,7 +12,7 @@
 							</div>
 						</template>
 						<span class="logcontent" v-html="logItem.content" />
-					</el-card>
+					</xCard>
 				</el-timeline-item>
 			</el-timeline>
 		</section>

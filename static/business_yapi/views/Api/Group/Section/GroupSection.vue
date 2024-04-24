@@ -2,16 +2,16 @@
 	<section id="GroupSection" class="x-page-view">
 		<xPageContent>
 			<xBlock class="mb group-desc-wrapper">
-				<el-collapse>
-					<el-collapse-item>
+				<xCollapse>
+					<xCollapseItem>
 						<template #title>
 							<span class="group-name">
 								{{ cptGroupName }}
 							</span>
 						</template>
 						<xMd :md="cptGroupDesc" />
-					</el-collapse-item>
-				</el-collapse>
+					</xCollapseItem>
+				</xCollapse>
 				<xBtn :configs="btnEditGroup" class="edit-group-desc ml" />
 			</xBlock>
 			<xRender :render="renderSwitchBtnGroup" />

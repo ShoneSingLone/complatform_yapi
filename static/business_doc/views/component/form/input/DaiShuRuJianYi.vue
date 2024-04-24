@@ -1,16 +1,16 @@
 <template>
 	<div>
 		<xMd :md="md" />
-		<el-row class="demo-autocomplete">
-			<el-col :span="12">
+		<xRow class="demo-autocomplete">
+			<xCol :span="12">
 				<div class="sub-title">激活即列出输入建议</div>
 				<el-autocomplete class="inline-input" v-model="state1" :fetch-suggestions="querySearch" placeholder="请输入内容" @select="handleSelect"></el-autocomplete>
-			</el-col>
-			<el-col :span="12">
+			</xCol>
+			<xCol :span="12">
 				<div class="sub-title">输入后匹配输入建议</div>
 				<el-autocomplete class="inline-input" v-model="state2" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect"></el-autocomplete>
-			</el-col>
-		</el-row>
+			</xCol>
+		</xRow>
 	</div>
 </template>
 <script lang="ts">

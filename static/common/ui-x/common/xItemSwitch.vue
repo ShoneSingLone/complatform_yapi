@@ -1,6 +1,6 @@
 <template>
 	<div class="flex">
-		<el-switch v-model="mixin_value" v-bind="$attrs" v-on="mixin_listeners"> </el-switch>
+		<xSwitch v-model="mixin_value" v-bind="$attrs" v-on="mixin_listeners"> </xSwitch>
 		<xGap f />
 	</div>
 </template>

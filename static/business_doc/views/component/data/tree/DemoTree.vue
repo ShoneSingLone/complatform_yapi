@@ -7,7 +7,7 @@
 		<DemoAndCode title="自定义节点内容" path="@/views/component/data/tree/ZiDingYiJieDianNeiRong.vue" />
 		<DemoAndCode title="节点过滤" path="@/views/component/data/tree/JieDianGuoLv.vue" />
 		<DemoAndCode title="可拖拽节点" path="@/views/component/data/tree/KeTuoZhuaiJieDian.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 

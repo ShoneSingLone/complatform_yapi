@@ -3,7 +3,7 @@
 		<xMd :md="mdTitle" />
 		<xMd :md="md1" />
 
-		<div v-xtips="'如果是字符串，默认为`content`'" class="el-button el-button--default el-button--small">DIV hover</div>
+		<div v-xtips="tipsString" class="el-button el-button--default el-button--small">DIV hover</div>
 		<div v-xtips="{ content: '' }" class="el-button el-button--default el-button--small">DIV hover 如果content是假值，不会有tips</div>
 
 		<xMd :md="'#### 普通dom\n\n'" />
@@ -18,25 +18,16 @@
 		<xBtn v-xtips="{ title: '标题', content: 'click 激活', width: 200, trigger: 'click', placement: 'left' }">click 激活</xBtn>
 		<xBtn v-xtips="{ title: '标题', content: 'focus 激活', width: 200, trigger: 'focus', placement: 'right' }">focus 激活</xBtn>
 		{{ visible_label }}<xBtn v-xtips="manual" @click="toggle">手动激活 {{ visible_label }}</xBtn>
-
-		<xMd :md="'#### 声明式用法'" />
-
-		<elPopover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
-			<xBtn slot="reference">hover 激活</xBtn>
-		</elPopover>
-		<elPopover placement="bottom" title="标题" width="200" trigger="click" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
-			<xBtn slot="reference">click 激活</xBtn>
-		</elPopover>
-		<elPopover ref="popover" placement="right" title="标题" width="200" trigger="focus" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。"> </elPopover>
-		<xBtn v-popover:popover>focus 激活</xBtn>
-		<elPopover placement="bottom" title="标题" width="200" trigger="manual" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。" v-model="visible">
-			<xBtn slot="reference" @click="visible = !visible">手动激活</xBtn>
-		</elPopover>
 	</div>
 </template>
 <script lang="ts">
 export default async function () {
 	return defineComponent({
+		mounted() {
+			this.timer = setInterval(() => {
+				this.tipsString = "如果是字符串，默认为`content`" + String(Date.now()).substring(10);
+			}, 1000);
+		},
 		beforeUnmount() {
 			clearInterval(this.timer);
 		},
@@ -57,6 +48,7 @@ export default async function () {
 		},
 		data() {
 			return {
+				tipsString: "如果是字符串，默认为`content`",
 				count: 0,
 				visible: false,
 				mdTitle:
@@ -69,7 +61,7 @@ export default async function () {
 					placement: "top",
 					visible: false
 				},
-				md1: "### 推荐使用v-xtips\n\n>如果是字符串默认为`content`\n\n>如果是对象，但`content`是假值，则不会有tips"
+				md1: ">如果是字符串默认为`content`\n\n>如果是对象，但`content`是假值，则不会有tips"
 			};
 		}
 	});

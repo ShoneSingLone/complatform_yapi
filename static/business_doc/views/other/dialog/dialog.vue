@@ -2,7 +2,7 @@
 	<DocContentOfDemo class="dropdown-demo">
 		<xMd :md="md" />
 		<DemoAndCode title="基础用法" path="@/views/other/dialog/JiChuYongFa.vue" unfold />
-		<xMd :md="apiString" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 
