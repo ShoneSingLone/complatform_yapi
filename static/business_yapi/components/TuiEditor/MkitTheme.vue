@@ -3,6 +3,7 @@
 	width: 100%;
 	.x-mkit-img {
 		min-width: 100px;
+		max-width: 90%;
 		border: 1px solid var(--el-border-color-lighter);
 		background-color: #fff;
 		color: var(--el-text-color-primary);

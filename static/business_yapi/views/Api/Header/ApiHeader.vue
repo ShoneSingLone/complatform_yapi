@@ -13,6 +13,10 @@
 			<xIcon icon="_wikidoc" />
 		</a>
 		<xGap r="4" />
+		<a class="flex middle" :href="publicRtcHref" target="_blank">
+			<xIcon icon="_webrtc" />
+		</a>
+		<xGap r="4" />
 		<a class="flex middle" :href="privateExploreHref" target="_blank">
 			<xIcon icon="_hamburger" />
 		</a>
@@ -39,6 +43,9 @@ export default async function () {
 			},
 			publicNoteHref() {
 				return _.$aHashLink("/note", {});
+			},
+			publicRtcHref() {
+				return _.$aHashLink("/rtc", {});
 			},
 			privateExploreHref() {
 				return _.$aHashLink("/explore", {});

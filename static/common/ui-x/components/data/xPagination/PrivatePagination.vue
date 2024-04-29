@@ -242,14 +242,15 @@ export default async function () {
 			},
 			Total: {
 				render(h) {
-					return typeof this.$parent.total === "number"
-						? h("span", {
-								class: "el-pagination__total",
-								children: i18n("el.pagination.total", {
-									total: this.$parent.total
-								})
+					if (_.isNumber(this.$parent.total)) {
+						return h("span", {
+							class: "el-pagination__total",
+							children: i18n("el.pagination.total", {
+								total: this.$parent.total
 							})
-						: "";
+						});
+					}
+					return null;
 				}
 			},
 			Pager: () => _.$importVue("/common/ui-x/components/data/xPagination/Pager.vue")

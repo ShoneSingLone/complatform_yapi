@@ -1,6 +1,6 @@
 <style lang="less"></style>
 <template>
-	<div class="el-switch" :class="{ 'is-disabled': switchDisabled, 'is-checked': checked }" role="switch" :aria-checked="checked" :aria-disabled="switchDisabled" @click.prevent="switchValue">
+	<div class="el-switch xSwitch" :class="{ 'is-disabled': switchDisabled, 'is-checked': checked }" role="switch" :aria-checked="checked" :aria-disabled="switchDisabled" @click.prevent="switchValue">
 		<input
 			class="el-switch__input"
 			type="checkbox"

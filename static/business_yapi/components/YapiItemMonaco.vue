@@ -1,5 +1,5 @@
 <template>
-	<div class="YapiItemMonaco mt" ref="refMonacoContainer" />
+	<div class="YapiItemMonaco mt x-loading" ref="refMonacoContainer" />
 </template>
 
 <script lang="ts">
@@ -31,6 +31,8 @@ export default async function () {
 				vm.$nextTick(() => {
 					vm.raw$editor.getAction("editor.action.formatDocument").run();
 					vm.raw$editor.onDidChangeModelContent(vm.syncData);
+
+					$(vm.$refs.refMonacoContainer).removeClass("x-loading");
 				});
 			});
 		},

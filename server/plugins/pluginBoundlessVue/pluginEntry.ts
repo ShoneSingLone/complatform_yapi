@@ -51,6 +51,6 @@ async function loadHtmlEntry({ ctx, app, fileURI }) {
 	const indexHtmlString = await fs.promises.readFile(docPath, "utf-8");
 	const $ = cheerio.load(indexHtmlString);
 	$("#src-root").attr("data-app-version", app._version);
-	$("#src-root").attr("src", "/common/libs/seed.js");
+	$("#src-root").attr("src", "./common/libs/seed.js");
 	return $;
 }

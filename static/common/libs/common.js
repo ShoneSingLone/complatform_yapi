@@ -926,13 +926,29 @@
 
 	/**
 	 * 全局loading单例
-	 * true 为loaidng false关闭
-	 * 注意，一定要保证成对出现，不然一直loading
-	 * @param {any} isLoading
-	 * TODO: 超时关闭并提示
+	 * - 注意，一定要保证成对出现，不然一直loading
+	 * @param {boolean} isLoading true 为loaidng false关闭
+	 * @param {string} selector 目标选择器，不指定就默认为body
+	 *
+	 * @TODO: 超时关闭并提示
 	 */
-	/* @typescriptDeclare  (isLoading?:boolean)=>void*/
+	/* @typescriptDeclare  (isLoading?:boolean,selector?:string)=>void*/
 	_.$loading = function loading(isLoading = false, selector = "body") {
+		function closeLoading(selector) {
+			_.$loading.count--;
+			if (_.$loading.count < 1) {
+				/* 延迟取消 */
+				var timmer = setTimeout(() => {
+					if (_.$loading.count < 1) {
+						$(selector).removeClass("x-loading");
+					} else {
+						clearTimeout(timmer);
+					}
+				}, 400);
+				_.$loading.count = 0;
+			}
+		}
+
 		_.$loading.count = _.$loading.count || 0;
 		if (isLoading) {
 			/* 已经有loading */
@@ -962,21 +978,6 @@
 			} catch (error) {}
 		}
 	};
-
-	function closeLoading(selector) {
-		_.$loading.count--;
-		if (_.$loading.count < 1) {
-			/* 延迟取消 */
-			var timmer = setTimeout(() => {
-				if (_.$loading.count < 1) {
-					$(selector).removeClass("x-loading");
-				} else {
-					clearTimeout(timmer);
-				}
-			}, 400);
-			_.$loading.count = 0;
-		}
-	}
 
 	/**
 	 * 确认信息
@@ -1112,7 +1113,7 @@
 		 * @param {*} duration 默认为0即不断尝试；若给定时间，未在给定时间内完成，则失败
 		 * @returns
 		 */
-		/* @typescriptDeclare (fnGetValue:()=>Promise<any>, duration?:number) =>Promise<any> */
+		/* @typescriptDeclare (fnGetValue:(()=>Promise<any>)|(()=>any), duration?:number) =>Promise<any> */
 		_.$ensure = async (fnGetValue, duration = 0) => {
 			var fnString = fnGetValue.toString();
 			_.$ensure.collection.add(fnString);

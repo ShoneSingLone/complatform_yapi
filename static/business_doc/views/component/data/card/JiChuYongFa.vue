@@ -4,7 +4,7 @@
 		<xCard class="box-card">
 			<div slot="header" class="flex middle">
 				<span class="flex1">卡片名称</span>
-				<xBtn type="text">操作按钮</xBtn>
+				<xBtn preset="text">操作按钮</xBtn>
 			</div>
 			<div v-for="o in 4" :key="o" class="text item">
 				{{ "列表内容 " + o }}

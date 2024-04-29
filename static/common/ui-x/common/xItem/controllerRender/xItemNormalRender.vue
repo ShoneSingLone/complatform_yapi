@@ -29,7 +29,6 @@ export default async function () {
 				vm.p_value = val;
 			}
 		};
-
 		return h(
 			"div",
 			{

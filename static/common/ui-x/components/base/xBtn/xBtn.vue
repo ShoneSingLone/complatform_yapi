@@ -20,8 +20,14 @@ export default async function () {
 				default: ""
 			},
 			type: {
-				type: String,
-				default: "button"
+				default() {
+					return "button";
+				},
+				validator(value, props) {
+					// The value must match one of these strings
+					return ["button", "a"].includes(value);
+				},
+				type: String
 			},
 			ripple: {
 				type: Boolean,

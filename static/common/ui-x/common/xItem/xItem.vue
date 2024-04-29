@@ -50,7 +50,6 @@ export default async function () {
 			function forceUpdate() {
 				vm.$forceUpdate();
 			}
-
 			_.$single.win.on("X_ITEM_RENDER_UPDATE", forceUpdate);
 			onBeforeUnmount(() => {
 				_.$single.win.off("X_ITEM_RENDER_UPDATE", forceUpdate);

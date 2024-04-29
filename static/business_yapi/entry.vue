@@ -104,12 +104,10 @@ export default async function () {
 						/* 未登录，跳转登录界面 */
 						vm.$router.push("/login");
 					} finally {
-						setTimeout(() => {
-							$("body").removeClass("x-loading");
-						}, 1000);
+						$("body").removeClass("x-loading");
 					}
 				},
-				1000
+				10
 			);
 
 			return {
