@@ -20,10 +20,10 @@ export default async function ({ code, componentPath }) {
 				try {
 					/* https://www.cnblogs.com/hellxz/p/15192573.html */
 					await _.$copyToClipboard($(this.$refs.refCode).text());
-					_.$msgSuccess("复制成功");
+					_.$msg.success("复制成功");
 				} catch (error) {
 					console.error(error);
-					_.$msgError("复制失败");
+					_.$msg.error("复制失败");
 				}
 			}
 		},

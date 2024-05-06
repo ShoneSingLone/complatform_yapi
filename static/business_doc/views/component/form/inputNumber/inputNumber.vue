@@ -8,7 +8,7 @@
 		<DemoAndCode title="精度" path="@/views/component/form/inputNumber/JingDu.vue" />
 		<DemoAndCode title="尺寸" path="@/views/component/form/inputNumber/ChiCun.vue" />
 		<DemoAndCode title="按钮位置" path="@/views/component/form/inputNumber/AnNiuWeiZhi.vue" />
-		<xMd :md="mdDoc" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 
@@ -17,7 +17,7 @@ export default async function () {
 	return {
 		data() {
 			return {
-				mdDoc: `### Attributes
+				apiString: `### Attributes
 | 参数              | 说明                     | 类型    | 可选值       | 默认值    |
 |-------------------|--------------------------|---------|--------------|-----------|
 | value / v-model   | 绑定值                   | number  | —            | 0         |

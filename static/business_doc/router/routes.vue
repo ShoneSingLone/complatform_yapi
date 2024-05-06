@@ -52,6 +52,7 @@ export default async function () {
 				_.$newRoute("/component/data", ComponentRouterView, {
 					children: [
 						_.$newRoute("/component/data/icon", "@/views/component/data/icon/icon.vue"),
+						_.$newRoute("/component/data/avatar", "@/views/component/data/avatar/DemoAvatar.vue"),
 						_.$newRoute("/component/data/image", "@/views/component/data/image/image.vue"),
 						_.$newRoute("/component/data/card", "@/views/component/data/card/card.vue"),
 						_.$newRoute("/component/data/tag", "@/views/component/data/tag/tag.vue"),
@@ -85,6 +86,7 @@ export default async function () {
 				_.$newRoute("/other/move", "@/views/other/move/move.vue"),
 				_.$newRoute("/other/popover", "@/views/other/popover/popover.vue"),
 				_.$newRoute("/other/tooltip", "@/views/other/tooltip/tooltip.vue"),
+				_.$newRoute("/other/timeline", "@/views/other/timeline/DemoTimeline.vue"),
 				_.$newRoute("/other/open_window", "@/views/other/dialog/dialog.vue")
 			]
 		}),

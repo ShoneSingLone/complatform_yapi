@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<xMd :md="md" />
-		<el-autocomplete v-model="state" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect"></el-autocomplete>
+		<xAutocomplete v-model="state" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect"></xAutocomplete>
 	</div>
 </template>
 <script lang="ts">

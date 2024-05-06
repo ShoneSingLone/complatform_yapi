@@ -1,4 +1,120 @@
-<style lang="less"></style>
+<style lang="less">
+.el-message {
+	min-width: 380px;
+	box-sizing: border-box;
+	border-width: 1px;
+	border-style: solid;
+	border-color: var(--el-border-color-lighter);
+	position: fixed;
+	left: 50%;
+	top: 20px;
+	transform: translateX(-50%);
+	background-color: #edf2fc;
+	transition:
+		opacity 0.3s,
+		transform 0.4s,
+		top 0.4s;
+	padding: 15px 15px 15px 20px;
+	display: flex;
+	align-items: center;
+
+	p {
+		margin: 0;
+	}
+
+	&.is-closable {
+		.el-message__content {
+			padding-right: 16px;
+		}
+	}
+
+	&.is-center {
+		justify-content: center;
+	}
+
+	&.el-message--info {
+		background-color: var(--xAlert-info-light-bg-color);
+		border-color: var(--xMessage-info-border-color, var(--el-color-info-light-8));
+		.el-message__content {
+			color: var(--xAlert-info-light-color);
+		}
+	}
+
+	&.el-message--success {
+		background-color: var(--xAlert-success-light-bg-color);
+		border-color: var(--xMessage-success-border-color, var(--el-color-success-light-8));
+		.el-message__content {
+			color: var(--xAlert-success-light-color);
+		}
+	}
+
+	&.el-message--warning {
+		background-color: var(--xAlert-warning-light-bg-color);
+		border-color: var(--xMessage-warning-border-color, var(--el-color-warning-light-8));
+		.el-message__content {
+			color: var(--xAlert-warning-light-color);
+		}
+	}
+
+	&.el-message--error {
+		background-color: var(--xAlert-error-light-bg-color);
+		border-color: var(--xMessage-error-border-color, var(--el-color-error-light-8));
+
+		.el-message__content {
+			color: var(--xAlert-error-light-color);
+		}
+	}
+
+	.el-message__icon {
+		margin-right: 10px;
+	}
+
+	.el-message__content {
+		padding: 0;
+		font-size: 14px;
+		line-height: 1;
+	}
+
+	.el-message__closeBtn {
+		position: absolute;
+		top: 50%;
+		right: 15px;
+		transform: translateY(-50%);
+		cursor: pointer;
+		color: var(--xAlert-close-btn-color);
+		font-size: 16px;
+
+		&:hover {
+			color: var(--el-text-color-secondary);
+		}
+	}
+
+	.el-icon- {
+		&success {
+			color: var(--el-color-success);
+		}
+
+		&error {
+			color: var(--el-color-error);
+		}
+
+		&info {
+			color: var(--el-text-color-secondary);
+		}
+
+		&warning {
+			color: var(--el-color-warning);
+		}
+	}
+
+	.el-message-fade-enter,
+	.el-message-fade-leave-active {
+		opacity: 0;
+		-webkit-transform: translate(-50%, -100%);
+		transform: translate(-50%, -100%);
+	}
+}
+</style>
 <template>
 	<transition name="el-message-fade" @after-leave="handleAfterLeave">
 		<div :class="cptClass" :style="positionStyle" v-show="visible" @mouseenter="clearTimer" @mouseleave="startTimer" role="alert">

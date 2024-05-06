@@ -320,7 +320,7 @@
 							}
 						}
 					};
-					const checkBoxVnode = h("elCheckbox", checkBoxProps);
+					const checkBoxVnode = h("xCheckbox", checkBoxProps);
 					return h(
 						"div",
 						{
@@ -362,7 +362,7 @@
 							class: "flex center width100"
 						},
 						[
-							h("elCheckbox", {
+							h("xCheckbox", {
 								value: isChecked,
 								disabled: isDisabled,
 								attrs: {
@@ -422,7 +422,7 @@
 							class: "flex center width100"
 						},
 						[
-							h("elCheckbox", {
+							h("xCheckbox", {
 								value: isChecked,
 								disabled: isDisabled,
 								attrs: {

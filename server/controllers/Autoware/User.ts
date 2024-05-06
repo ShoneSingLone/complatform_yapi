@@ -127,7 +127,19 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						ctx.body = xU.$response(this.$user);
+						const response = xU.pick(this.$user, [
+							"study",
+							"type",
+							"_id",
+							"username",
+							"email",
+							"role",
+							"add_time",
+							"up_time",
+							"__v"
+						]);
+						/* 只暴露必要的信息 */
+						ctx.body = xU.$response(response);
 					} catch (e) {
 						xU.applog.error(e.message);
 						ctx.body = xU.$response(null, 402, e.message);
@@ -165,22 +177,23 @@ module.exports = {
 
 					async function sendNewVarifyCode() {
 						const code = xU.$hashCode(yapi_configs.passsalt + email);
+
 						await verifyCodeInst.upsertOne({
 							email,
 							code,
 							expires: xU.expireDay(1)
 						});
+
 						xU.sendMail({
 							subject: "验证码",
 							to: email,
 							contents: `<h3>亲爱的用户：</h3>
-							<p>您好，感谢使用YApi可视化接口平台</p>
-							<p>验证码为：</p>
-							<h1 style="color:#34ff34;background-color:black;padding:16px;">
-								${code}
-							</h1>
-							<p>请在24小时内填写，如非本人操作，请忽略此邮件。</p>`
+<p>您好，感谢使用YApi可视化接口平台</p>
+<p>验证码为：</p>
+<h1 style="color:#34ff34;background-color:black;padding:16px;"> ${code} </h1>
+<p>请在24小时内填写，如非本人操作，请忽略此邮件。</p>`
 						});
+
 						ctx.body = xU.$response({ msg: "验证码已发送，请检查邮箱" });
 					}
 

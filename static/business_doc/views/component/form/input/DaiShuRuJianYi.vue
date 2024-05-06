@@ -4,11 +4,11 @@
 		<xRow class="demo-autocomplete">
 			<xCol :span="12">
 				<div class="sub-title">激活即列出输入建议</div>
-				<el-autocomplete class="inline-input" v-model="state1" :fetch-suggestions="querySearch" placeholder="请输入内容" @select="handleSelect"></el-autocomplete>
+				<xAutocomplete class="inline-input" v-model="state1" :fetch-suggestions="querySearch" placeholder="请输入内容" @select="handleSelect"></xAutocomplete>
 			</xCol>
 			<xCol :span="12">
 				<div class="sub-title">输入后匹配输入建议</div>
-				<el-autocomplete class="inline-input" v-model="state2" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect"></el-autocomplete>
+				<xAutocomplete class="inline-input" v-model="state2" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect"></xAutocomplete>
 			</xCol>
 		</xRow>
 	</div>

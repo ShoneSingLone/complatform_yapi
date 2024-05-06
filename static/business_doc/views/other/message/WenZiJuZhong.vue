@@ -1,7 +1,7 @@
 <template>
 	<div class="message-JiChuYongFa">
 		<xMd :md="md" />
-		<el-button :plain="true" @click="openCenter">文字居中</el-button>
+		<xBtn :plain="true" @click="openCenter">文字居中</xBtn>
 	</div>
 </template>
 <script lang="ts">

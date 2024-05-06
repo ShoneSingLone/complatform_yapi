@@ -5,19 +5,19 @@
 		</span>
 		<YapiBreadcrumbNavigation />
 		<xGap f />
-		<a class="flex middle" :href="i18nHref" target="_blank">
+		<a class="flex middle" :href="i18nHref" target="_blank" v-xtips="{ content: '国际化', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_icon_i18n" />
 		</a>
 		<xGap r="4" />
-		<a class="flex middle" :href="publicNoteHref" target="_blank">
+		<a class="flex middle" :href="publicNoteHref" target="_blank" v-xtips="{ content: '文档', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_wikidoc" />
 		</a>
 		<xGap r="4" />
-		<a class="flex middle" :href="publicRtcHref" target="_blank">
+		<a class="flex middle" :href="publicRtcHref" target="_blank" v-xtips="{ content: 'webrtc', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_webrtc" />
 		</a>
 		<xGap r="4" />
-		<a class="flex middle" :href="privateExploreHref" target="_blank">
+		<a class="flex middle" :href="privateExploreHref" target="_blank" v-xtips="{ content: '资源访问', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_hamburger" />
 		</a>
 		<xGap f />

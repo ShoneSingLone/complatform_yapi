@@ -1,7 +1,7 @@
 <script lang="ts">
 export default async function (options = {}) {
 	Vue.prototype.$xUiConfigs = _.merge({
-		size: options.size || "",
+		size: options.size || "small",
 		zIndex: options.zIndex || 2e3
 	});
 	/* @ts-ignore */
@@ -38,11 +38,13 @@ export default async function (options = {}) {
 			if (["xDropdownMenu", "xDropdown", "xBtn", "xTooltip"].includes(componentName)) {
 				/* xBtn 多个地方用到，但是异步加载会有bug:骨架屏不刷新 */
 				const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
+				setComponentName(component, componentName);
 				Vue.component(componentName, component);
 			} else {
 				/* 懒加载组件 */
 				Vue.component(componentName, async () => {
 					const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
+					setComponentName(component, componentName);
 					if (/^xCell/.test(componentName)) {
 						/**
 						 * props: ["row", "configs"], row,index,configs,prop 包含当前行、列、下标、配置信息
@@ -56,6 +58,15 @@ export default async function (options = {}) {
 		};
 
 		_.each(ALL_COMPONENTS, loadComponentByImportVue);
+
+		function setComponentName(component, componentName) {
+			if (!component.componentName) {
+				component.componentName = componentName;
+			}
+			if (!component.name) {
+				component.name = componentName;
+			}
+		}
 	})();
 
 	function setDataTipsShowWhenHover() {

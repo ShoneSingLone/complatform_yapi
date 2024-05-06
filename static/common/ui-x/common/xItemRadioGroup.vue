@@ -38,7 +38,9 @@ export default async function () {
 						}
 					}
 				]);
-			},
+			}
+		},
+		methods: {
 			vDomItems() {
 				const vm = this;
 				/*el-radio-button*/
@@ -52,7 +54,7 @@ export default async function () {
 
 					return h("div", {}, [
 						h(
-							tag,
+							"xRadio",
 							{
 								label: value,
 								key: value,
@@ -71,9 +73,7 @@ export default async function () {
 						)
 					]);
 				});
-			}
-		},
-		methods: {
+			},
 			getCol(width, col) {
 				if (col === 1) {
 					return 1;
@@ -119,7 +119,7 @@ export default async function () {
 									style: this.cptFormStyle,
 									col: this.col
 								},
-								this.vDomItems
+								this.vDomItems()
 							);
 						}
 					}

@@ -1,6 +1,6 @@
 <template>
 	<div class="avatar-uploader flex middle" v-bind="$attrs">
-		<elAvatar :src="cptAvatarUrl" @click.native="handleClick" />
+		<xAvatar :src="cptAvatarUrl" @click.native="handleClick" />
 		<input type="file" accept="image/*" ref="uploader" style="display: none" @change="handleChange" />
 	</div>
 </template>

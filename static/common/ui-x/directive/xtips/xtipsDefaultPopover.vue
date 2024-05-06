@@ -187,7 +187,6 @@ export default async function () {
 				_.$single.doc.on("click", this.handleDocumentClick);
 			} else if (this.trigger === "hover") {
 				this.$reference.on("mouseenter", this.handleMouseEnter).on("mouseleave", this.handleMouseLeave);
-
 				this.$popper.on("mouseenter", this.handleMouseEnter).on("mouseleave", this.handleMouseLeave);
 			} else if (this.trigger === "focus") {
 				if (this.tabindex < 0) {
@@ -336,6 +335,7 @@ export default async function () {
 				}
 			},
 			handleMouseLeave() {
+				console.log("handleMouseLeave");
 				clearTimeout(this._timer);
 				if (this.closeDelay) {
 					this._timer = setTimeout(() => {

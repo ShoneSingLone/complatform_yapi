@@ -1,8 +1,8 @@
 <template>
 	<div v-if="isShow" class="GroupSectionLog">
 		<section class="mb mt el-card x-padding flex1 log-wrapper beautiful-scroll">
-			<el-timeline>
-				<el-timeline-item center :timestamp="getTime(logItem.add_time)" placement="top" v-for="(logItem, index) in logList" :key="index">
+			<xTimeline>
+				<xTimelineItem center :timestamp="getTime(logItem.add_time)" placement="top" v-for="(logItem, index) in logList" :key="index">
 					<xCard>
 						<template #header>
 							<div class="logtype flex middle">
@@ -13,8 +13,8 @@
 						</template>
 						<span class="logcontent" v-html="logItem.content" />
 					</xCard>
-				</el-timeline-item>
-			</el-timeline>
+				</xTimelineItem>
+			</xTimeline>
 		</section>
 		<div class="flex end">
 			<xPagination :configs="configsTable" />

@@ -1,7 +1,7 @@
 <template>
 	<div class="message-JiChuYongFa">
 		<xMd :md="md" />
-		<el-button :plain="true" @click="openHTML">使用 HTML 片段</el-button>
+		<xBtn :plain="true" @click="openHTML">使用 HTML 片段</xBtn>
 	</div>
 </template>
 <script lang="ts">

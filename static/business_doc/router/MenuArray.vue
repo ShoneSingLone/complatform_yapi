@@ -81,6 +81,7 @@ export default async function () {
 				{ icon: "_icon_selector", label: i18n("select"), href: "/component/form/select" },
 				{ icon: "icon_report", label: i18n("ip-address"), href: "/component/form/ip-address" },
 				{ icon: "_icon_image", label: i18n("image") + i18n("图片"), href: "/component/data/image" },
+				{ icon: "_icon_avatar", label: i18n("Avatar") + i18n("头像"), href: "/component/data/avatar" },
 				{ icon: "icon_report", label: i18n("icon"), href: "/component/data/icon" },
 				{ icon: "icon_report", label: `${i18n("Card")} ${i18n("卡片")}`, href: "/component/data/card" },
 				{ icon: "icon_report", label: `${i18n("Descriptions")} ${i18n("描述列表")}`, href: "/component/data/descriptions" },
@@ -95,6 +96,7 @@ export default async function () {
 				{ icon: "_icon_affix", label: `${i18n("Affix")} ${i18n("固钉")}`, href: "/other/affix" },
 				{ icon: "_icon_affix", label: `${i18n("Alert")} ${i18n("警告")}`, href: "/other/alert" },
 				{ icon: "_icon_collapse", label: `${i18n("Collapse")} ${i18n("折叠面板")}`, href: "/other/collapse" },
+				{ icon: "_icon_timeline", label: `${i18n("Timeline")} ${i18n("时间线")}`, href: "/other/timeline" },
 				{ icon: "_icon_affix", label: `${i18n("xExcalidraw")} ${i18n("白板")}`, href: "/component/data/excalidraw" }
 			]
 		},

@@ -92,7 +92,6 @@ export default async function ({ onOk }) {
 		inject: ["APP"],
 		props: useDialogProps(),
 		mounted() {
-			debugger;
 			this.init();
 		},
 		data() {

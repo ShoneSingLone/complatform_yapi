@@ -3,8 +3,6 @@ export default async function (options) {
 	if (!window.ELEMENT) {
 		await _.$appendScript("/common/ui-element/index.min.js");
 		await _.$appendScript(`/common/ui-element/i18n/${options.I18N_LANGUAGE}.js`);
-		/* 用于加载样式，实际使用中是懒加载，不用担心 */
-		await _.$importVue("/common/ui-x/directive/xMessage/xMessage.vue");
 
 		const LOCALE_MAP = {
 			"zh-CN": ELEMENT.lang.zhCN,
