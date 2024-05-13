@@ -1791,12 +1791,13 @@
 		}
 		return false;
 	};
-	_.$intToBin = int =>
-		(int >>> 0)
+	_.$intToBin = int => {
+		return (int >>> 0)
 			.toString(2)
 			.padStart(32, 0)
 			.match(/.{1,8}/g)
 			.join(".");
+	};
 
 	_.$calculateCidrRange = cidr => {
 		const [range, bits = 32] = cidr.split("/");

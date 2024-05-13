@@ -2,6 +2,8 @@
 export default async function () {
 	Vue.component("ComponentTableV2Header", () => _.$importVue("/common/ui-x/components/data/xTableVir/ComponentTableV2Header.vue"));
 	Vue.component("ComponentFixedSizeGrid", () => _.$importVue("/common/ui-x/components/data/xTableVir/ComponentFixedSizeGrid.vue"));
+	Vue.component("ComponentDynamicSizeGrid", () => _.$importVue("/common/ui-x/components/data/xTableVir/ComponentDynamicSizeGrid.vue"));
+
 	const { useTableGrid, TableV2InjectionKey, tableV2GridProps } = _useXui;
 
 	/* ScrollBar */
@@ -57,7 +59,7 @@ export default async function () {
 					onScroll
 				} = props;
 				const isDynamicRowEnabled = _.isNumber(estimatedRowHeight);
-				const Grid = isDynamicRowEnabled ? ElDynamicSizeGrid : "ComponentFixedSizeGrid";
+				const Grid = isDynamicRowEnabled ? "ComponentDynamicSizeGrid" : "ComponentFixedSizeGrid";
 				const _headerHeight = unref(headerHeight);
 				return h(
 					"div",

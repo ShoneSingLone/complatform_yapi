@@ -14,8 +14,7 @@ export default async function ({ _URL_PREFIX_MO }) {
 				}
 			}, 100)
 		);
-		/* 显示region selector */
-		// setTimeout(() => { $("#mo-cf-modules-region .modules-region-cf-header-region").css("display", ""); }, 1000 * 2);
+
 		window.appWebPath = _URL_PREFIX_MO;
 		const moLang = locale || $("html").lang || "zh-CN";
 		const i18nMap = {
@@ -40,7 +39,41 @@ export default async function ({ _URL_PREFIX_MO }) {
 	/* 需要以script src 的形式引入，才能获取 baseURI = "/static/framework/2.0" */
 	await _.$appendScript("/static/framework/2.0/mo.console.ui.js", "", true);
 	/* mo API */
-	window._MoCfContext = { ...window.getMoCfContext() };
+	const _MoCfContext = { ...window.getMoCfContext() };
+	window._MoCfContext = _MoCfContext;
+
+	(async () => {
+		/*  显示header导航栏region selector */
+		const $ModulesRegionCfHeaderRegion = await _.$ensure(() => {
+			if ($(".modules-region-cf-header-region").length) {
+				return $(".modules-region-cf-header-region");
+			} else {
+				return false;
+			}
+		});
+		/* 等待图标加载 */
+		await _.$sleep(1000);
+		$ModulesRegionCfHeaderRegion.css("display", "");
+		// 监听Region变化，刷新页面
+		var elementToObserve = $("#mo-cf-modules-region")[0];
+		var observerOptions = {
+			childList: true, // 观察目标子节点的变化，是否有添加或者删除
+			attributes: true, // 观察属性变动
+			subtree: true // 观察后代节点，默认为 false
+		};
+		var observer = new MutationObserver(mutationList => {
+			_.some(mutationList, mutation => {
+				if ("attributes" === mutation.type) {
+					if (mutation.attributeName === "class") {
+						if ($(mutation.target).hasClass("modules-region-region-list-cf-header-region-list-selected")) {
+							location.reload();
+						}
+					}
+				}
+			});
+		});
+		observer.observe(elementToObserve, observerOptions);
+	})();
 
 	/* mo common components */
 	_.each(
@@ -111,10 +144,12 @@ export default async function ({ _URL_PREFIX_MO }) {
 		});
 
 		_MoCfContext.getSelectedRegionId$()._subscribe(e => {
+			debugger;
 			trigger("getSelectedRegionId", e);
 		});
 
 		_MoCfContext.isChangeRegionReload$()._subscribe(e => {
+			debugger;
 			trigger("isChangeRegionReload", e);
 		});
 
@@ -135,6 +170,7 @@ export default async function ({ _URL_PREFIX_MO }) {
 		});
 
 		_MoCfContext.isRegionDisplay$()._subscribe(e => {
+			debugger;
 			trigger("isRegionDisplay", e);
 		});
 

@@ -11,12 +11,12 @@ export default async function () {
 			attrs: {
 				...vm.cpt_bindProps.attrs,
 				disabled: vm.cptDisabled,
-				queryData: vm.cpt_queryData
+				queryData: vm.cptDepdata
 			},
 			props: {
 				...vm.cpt_bindProps.props,
 				disabled: vm.cptDisabled,
-				queryData: vm.cpt_queryData
+				queryData: vm.cptDepdata
 			},
 			configs: {
 				...CONFIGS,
@@ -25,6 +25,12 @@ export default async function () {
 			},
 			value: vm.p_value,
 			on: vm.p_listeners,
+			/* 监听配置项变化 */
+			onConfigschange: configs => {
+				_.each(configs, (value, prop) => {
+					this.configs[prop] = value;
+				});
+			},
 			onChange: val => {
 				vm.p_value = val;
 			}

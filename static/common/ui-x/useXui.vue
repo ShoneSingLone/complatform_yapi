@@ -35,16 +35,19 @@ export default async function (options = {}) {
 		const ALL_COMPONENTS = await _.$importVue("/common/ui-x/allComponents.vue");
 		const loadComponentByImportVue = async componentpath => {
 			const componentName = _.last(componentpath.split("/"));
-			if (["xDropdownMenu", "xDropdown", "xBtn", "xTooltip"].includes(componentName)) {
+			if (["xDropdownMenu", "xDropdown", "xBtn", "xTooltip", "xPopover"].includes(componentName)) {
 				/* xBtn 多个地方用到，但是异步加载会有bug:骨架屏不刷新 */
 				const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
 				setComponentName(component, componentName);
+				/* @ts-ignore */
 				Vue.component(componentName, component);
 			} else {
 				/* 懒加载组件 */
+				/* @ts-ignore */
 				Vue.component(componentName, async () => {
 					const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
 					setComponentName(component, componentName);
+					/* @ts-ignore */
 					if (/^xCell/.test(componentName)) {
 						/**
 						 * props: ["row", "configs"], row,index,configs,prop 包含当前行、列、下标、配置信息

@@ -42,7 +42,7 @@ export default async function () {
 <style lang="less">
 .xForm {
 	width: 100%;
-	height: 100%;
+	// height: 100%;
 	display: grid;
 	grid-template-columns: var(--xForm-col);
 

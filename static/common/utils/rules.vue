@@ -412,34 +412,6 @@ export default async function () {
 					trigger: ["change", "input", "blur"]
 				};
 			},
-			/**
-			 * 天翼云evs名字正则
-			 * @param msg
-			 */
-			ctyunEvsName(msg = "") {
-				return {
-					name: "",
-					async validator({ val }) {
-						if (!/^[\u4e00-\u9fa5]{2,63}$/.test(val)) {
-							return "";
-						}
-						return msg;
-					},
-					trigger: ["change", "input", "blur"]
-				};
-			},
-			ctyunVpcName(msg = "") {
-				return {
-					name: "ctyunVpcName",
-					async validator({ val }) {
-						if (/^[a-zA-Z\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5-]*$/.test(val)) {
-							return "";
-						}
-						return msg;
-					},
-					trigger: ["change", "input", "blur"]
-				};
-			},
 			checkLength(msg = "", min = 1, max = 32) {
 				return {
 					name: "checkLength",

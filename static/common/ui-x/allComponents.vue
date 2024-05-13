@@ -32,11 +32,12 @@ export default async function () {
 		"components/data/xTree/xTreeNode",
 		"components/data/xTree/xNodeContent",
 		"components/form/xInput/xInput",
+		"components/form/xInputNumber/xInputNumber",
+		"components/form/xIpAddress/xIpAddress",
 		"components/form/xAutocomplete/xAutocomplete",
 		"components/form/xAutocomplete/xAutocompleteSuggestions",
 		"components/form/xSelect/xSelect",
 		"components/form/xSwitch/xSwitch",
-		"components/form/xInputNumber/xInputNumber",
 		"components/form/xRadio/xRadio",
 		"components/form/xRadio/xRadioButton",
 		"components/form/xRadio/xRadioGroup",
@@ -44,6 +45,7 @@ export default async function () {
 		"components/form/xCheckbox/xCheckboxButton",
 		"components/form/xCheckbox/xCheckboxGroup",
 		"components/other/xAvatar/xAvatar",
+		"components/other/xDivider/xDivider",
 		"components/other/xCard/xCard",
 		"components/other/xTimeline/xTimeline",
 		"components/other/xTimeline/xTimelineItem",
@@ -63,13 +65,14 @@ export default async function () {
 		"components/navigation/xDropdown/xDropdownMenu",
 		/*  */
 		"components/other/xScrollbar/xScrollbar",
-		/* *************** */
+		/* ********layout******* */
 		"components/layout/page/xPageTitle",
 		"components/layout/page/xPageContent",
 		"components/layout/page/xPageFooter",
-		/* *************************** */
+		/* *********directive********** */
 		"directive/xImg/xImg",
 		"directive/xTooltip/xTooltip",
+		"directive/xtips/xPopover",
 		/* ********************** */
 		"common/xAppLayoutHeaderOcOprs",
 		"common/xMd",
@@ -94,12 +97,16 @@ export default async function () {
 		"common/xInfoCard",
 		"common/xInfoCardItem",
 		"common/xInquire",
+		/* xItem */
 		"common/xItem/xItem",
+		"common/xItem/xItem/cidr/xItemCidr",
+		"common/xItem/xItem/cidr/xItemIpAddress",
 		"common/xItem/xItemCheck/xItemCheck",
+		/* xItemXXXXXXXX */
 		"common/xItemCheckboxGroup",
 		"common/xItemDatetime",
 		"common/xItemInput",
-		"common/xItemIpPart",
+		"common/xItemIpAddress",
 		"common/xItemNameUrl",
 		"common/xItemRadioGroup",
 		"common/xItemSelect",

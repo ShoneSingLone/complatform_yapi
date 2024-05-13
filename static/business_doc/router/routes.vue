@@ -29,7 +29,7 @@ export default async function () {
 				_.$newRoute("/x-component/x-item", "@/views/xComponent/DemoxItem/DemoxItem.vue"),
 				_.$newRoute("/x-component/x-item-check", "@/views/xComponent/DemoxItemCheck/DemoxItemCheck.vue"),
 				_.$newRoute("/x-component/x-item-checkbox-group", "@/views/xComponent/DemoxItemCheckboxGroup.vue"),
-				_.$newRoute("/x-component/x-form", "@/views/xComponent/DemoxForm/xForm.vue")
+				_.$newRoute("/x-component/x-form", "@/views/xComponent/DemoxForm/DemoxForm.vue")
 			]
 		}),
 		/* 组件 */
@@ -46,7 +46,7 @@ export default async function () {
 						_.$newRoute("/component/form/checkbox", "@/views/component/form/checkbox/checkbox.vue"),
 						_.$newRoute("/component/form/switch", "@/views/component/form/switch/switch.vue"),
 						_.$newRoute("/component/form/select", "@/views/component/form/select/select.vue"),
-						_.$newRoute("/component/form/ip-address", "@/views/component/form/ipAddress/ipAddress.vue")
+						_.$newRoute("/component/form/ip-address", "@/views/component/form/ipAddress/DemoIpAddress.vue")
 					]
 				}),
 				_.$newRoute("/component/data", ComponentRouterView, {
@@ -87,6 +87,7 @@ export default async function () {
 				_.$newRoute("/other/popover", "@/views/other/popover/popover.vue"),
 				_.$newRoute("/other/tooltip", "@/views/other/tooltip/tooltip.vue"),
 				_.$newRoute("/other/timeline", "@/views/other/timeline/DemoTimeline.vue"),
+				_.$newRoute("/other/divider", "@/views/other/divider/DemoDivider.vue"),
 				_.$newRoute("/other/open_window", "@/views/other/dialog/dialog.vue")
 			]
 		}),

@@ -126,7 +126,10 @@ export default async function () {
 				}
 				return optionsProperty || vm._calOptionsArray;
 			});
-			let cpt_queryData = computed(() => {
+
+			/*场景： 获取xItem 的 options 函数中，需要使用其他value，而且这个value是动态变化的 */
+			/* TODO: rename queryData => depdata */
+			let cptDepdata = computed(() => {
 				if (_.isFunction(cptConfigs.value?.queryData)) {
 					cptConfigs.value.queryData = cptConfigs.value?.queryData?.();
 					return cptConfigs.value.queryData;
@@ -188,7 +191,7 @@ export default async function () {
 				privateState,
 				cptDisabled,
 				cpt_options,
-				cpt_queryData,
+				cptDepdata,
 				cptPlaceholder,
 				cptConfigs
 			};
@@ -230,12 +233,12 @@ export default async function () {
 					props: {
 						...this.p_props,
 						options: this.cpt_options,
-						queryData: this.cpt_queryData
+						queryData: this.cptDepdata
 					},
 					attrs: {
 						...this.p_props,
 						options: this.cpt_options,
-						queryData: this.cpt_queryData
+						queryData: this.cptDepdata
 					}
 				};
 			},

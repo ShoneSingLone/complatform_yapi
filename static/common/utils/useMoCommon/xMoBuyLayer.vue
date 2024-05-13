@@ -23,7 +23,7 @@
 		<div class="xMoBuyLayer-price-item flex middle">
 			<slot name="left"> </slot>
 			<slot>
-				<span class="xMoBuyLayer-label mr">{{ i18n("配置费用") }}: </span>
+				<span class="xMoBuyLayer-label mr" v-if="!configs.isHideCost">{{ i18n("配置费用") }}: </span>
 				<span class="xMoBuyLayer-price-elmt flex middle">
 					<span class="xMoBuyLayer-price-num mr"> {{ cptPrice || "--" }} </span>
 					<span class="xMoBuyLayer-price-unit mr" v-if="cptPrice">/</span>
@@ -48,6 +48,7 @@ export default async function () {
 				type: Object,
 				default: () => ({
 					/*
+					isHideCost,
 					onOk,
 					onCancel
 				 */

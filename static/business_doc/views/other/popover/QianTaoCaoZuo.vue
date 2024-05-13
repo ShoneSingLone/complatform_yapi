@@ -1,7 +1,17 @@
 <template>
 	<div class="card-JiChuYongFa">
 		<xMd :md="mdTitle" />
+		<xMd :md="'### 推荐使用v-xtips'" />
 		<xBtn v-xtips="manual" @click="manual.visible = true">click 激活</xBtn>
+		<xMd :md="'#### 普通dom\n\n'" />
+		<xPopover placement="top" width="160" v-model="visible">
+			<p>这是一段内容这是一段内容确定删除吗？</p>
+			<div style="text-align: right; margin: 0">
+				<xBtn size="mini" type="text" @click="visible = false">取消</xBtn>
+				<xBtn preset="primary" size="mini" @click="visible = false">确定</xBtn>
+			</div>
+			<xBtn slot="reference">删除</xBtn>
+		</xPopover>
 	</div>
 </template>
 <script lang="ts">

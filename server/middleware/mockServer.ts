@@ -8,6 +8,43 @@ const Mock = require("mockjs");
 const { ObjectId } = require("mongodb");
 const { getResponseThroghProxy } = require("./requestProxy");
 
+/**
+ * @description 如果是成功的响应，需要备一个份
+ * @param {any} {
+ * 	ctx, modelInterface, interfaceData
+ * }
+ */
+async function ifTheResponseIsSuccessfulACopyIsRequired({
+	ctx,
+	modelInterface,
+	interfaceData
+}) {
+	if (interfaceData.resBackupJson) {
+		return;
+	}
+	if (ctx.status != 200 || ["text/html"].includes(ctx.type)) {
+		return;
+	}
+	const data = {};
+	try {
+		let res;
+		if (Object.prototype.toString.call(ctx.body) === `[object Uint8Array]`) {
+			res = JSON.parse(ctx.body.toString());
+		} else if (typeof ctx.body === "object") {
+			res = ctx.body;
+		}
+
+		if (xU.isPlainObject(res)) {
+			data.resBackupJson = JSON.stringify(res, null, 2);
+			await modelInterface.up(interfaceData._id, data);
+		} else {
+			console.error(res);
+		}
+	} catch (error) {
+		xU.applog.error(error);
+	}
+}
+
 async function handleProxy(ctx, { domain, projectId }) {
 	const targetURL = ctx.originalUrl.replace(`/mock/${projectId}`, "");
 	const headers = (() => {
@@ -380,6 +417,12 @@ const middlewareMockServer = () => async (ctx, next) => {
 				yapiRun: ctx.headers["yapi-run-test"]
 			});
 
+			ifTheResponseIsSuccessfulACopyIsRequired({
+				ctx,
+				modelInterface: orm.interface,
+				interfaceData
+			});
+
 			return;
 		}
 
@@ -547,7 +590,7 @@ function handleQueryInUrlPath(ctxQuery, interfaceArray_byQueryPath) {
 			if (ctxQuery[queryParmas.name] !== queryParmas.value) {
 				continue;
 			}
-			/* 这是个啥意思？ */
+			/*TODO: 这是个啥意思？ */
 			if (++j === curQuery.params.length) {
 				match = true;
 			}

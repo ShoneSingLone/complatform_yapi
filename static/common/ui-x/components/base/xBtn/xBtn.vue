@@ -175,10 +175,10 @@ export default async function () {
 						}
 					});
 				}
-				if (this.cptDisabledTips) {
-					/* disabled提示 */
-					directives.push({ name: "xtips", value: { content: this.cptDisabledTips, trigger: "hover", placement: "top", style: "--min-width:unset;" } });
-				}
+				// if (this.cptDisabledTips) {
+				// 	/* disabled提示 */
+				// 	directives.push({ name: "xtips", value: { content: this.cptDisabledTips, trigger: "hover", placement: "top", style: "--min-width:unset;" } });
+				// }
 
 				if (_.$isArrayFill(this.$vnode.data.directives)) {
 					directives.push(...this.$vnode.data.directives);
@@ -223,30 +223,33 @@ export default async function () {
 				});
 			}
 
-			if (vm.configs)
-				//
-				return h(
-					vm.type || "button",
-					{
-						directives: vm.getDirectives({}),
-						onClick() {
-							vm.handleClick();
-						},
-						on: vm.$listeners,
-						disabled: vm.buttonDisabled || vm.cptLoading,
-						autofocus: vm.autofocus,
-						type: vm.type,
-						class: vm.cptClassName
-					},
-					[
-						h("span", { staticClass: "flex" }, [
-							h("i", { vIf: vm.cptLoading, class: "el-icon-loading mr4" }),
-							h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon, "mr4"] }),
-							/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
-							this.$slots.default || vm.calChildren()
-						])
-					]
-				);
+			const buttonProps = {
+				directives: vm.getDirectives({}),
+				onClick() {
+					vm.handleClick();
+				},
+				on: vm.$listeners,
+				disabled: vm.buttonDisabled || vm.cptLoading,
+				autofocus: vm.autofocus,
+				type: vm.type,
+				class: vm.cptClassName
+			};
+			if (vm.configs) {
+				if (this.cptDisabledTips) {
+					buttonProps.attrs = {
+						title: this.cptDisabledTips
+					};
+				}
+
+				return h(vm.type || "button", buttonProps, [
+					h("span", { staticClass: "flex" }, [
+						h("i", { vIf: vm.cptLoading, class: "el-icon-loading mr4" }),
+						h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon, "mr4"] }),
+						/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
+						this.$slots.default || vm.calChildren()
+					])
+				]);
+			}
 		}
 	});
 }

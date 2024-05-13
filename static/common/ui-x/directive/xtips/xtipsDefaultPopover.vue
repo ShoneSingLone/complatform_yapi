@@ -18,8 +18,7 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const PopupManager = await _.$importVue("/common/libs/VuePopper/popupManager.vue");
-	const PopperJS = await _.$appendScript("/common/libs/VuePopper/popper.js", "Popper");
+	const [PopupManager, PopperJS] = await Promise.all([_.$importVue("/common/libs/VuePopper/popupManager.vue"), _.$appendScript("/common/libs/VuePopper/popper.js", "Popper")]);
 
 	return defineComponent({
 		name: "xPopover",

@@ -1,5 +1,6 @@
 <template>
 	<el-slider
+		class="xItemSlider"
 		v-model="mixin_value"
 		v-bind="$attrs"
 		:show-input-controls="showInputControls"
@@ -51,4 +52,16 @@ export default async function () {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.xItem_controller {
+	> .xItemSlider {
+		width: var(--xItem-slider-width, 100%);
+	}
+}
+.xItemSlider {
+	margin: 0 48px;
+	.el-slider__runway.show-input {
+		margin-bottom: 32px;
+	}
+}
+</style>

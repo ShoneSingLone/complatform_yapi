@@ -97,6 +97,7 @@ export default async function () {
 				{ icon: "_icon_affix", label: `${i18n("Alert")} ${i18n("警告")}`, href: "/other/alert" },
 				{ icon: "_icon_collapse", label: `${i18n("Collapse")} ${i18n("折叠面板")}`, href: "/other/collapse" },
 				{ icon: "_icon_timeline", label: `${i18n("Timeline")} ${i18n("时间线")}`, href: "/other/timeline" },
+				{ icon: "_icon_timeline", label: `${i18n("Divider")} ${i18n("分割线")}`, href: "/other/divider" },
 				{ icon: "_icon_affix", label: `${i18n("xExcalidraw")} ${i18n("白板")}`, href: "/component/data/excalidraw" }
 			]
 		},

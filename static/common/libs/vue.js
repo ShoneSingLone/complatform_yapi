@@ -12167,10 +12167,6 @@
 		return false;
 	};
 
-	Vue.prototype.$xItemWatch = function (...args) {
-		/* 通过其他参数决定会不会触发watch，级联操作  */
-		this.$watch.apply(this, args);
-	};
 	Vue.prototype.dispatch = dispatch;
 	Vue.prototype.broadcast = broadcast;
 	Vue.prototype.isDef = isDef;
