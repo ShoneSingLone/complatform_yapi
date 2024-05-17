@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const autoIncrement = require("mongoose-auto-increment");
 
-async function setYapiMongooseAsync() {
+async function setMongooseAsync() {
 	return new Promise((resolve, reject) => {
 		mongoose.Promise = global.Promise;
 		mongoose.set("useNewUrlParser", true);
@@ -63,4 +63,4 @@ async function setYapiMongooseAsync() {
 	});
 }
 
-module.exports = setYapiMongooseAsync;
+module.exports = setMongooseAsync;
