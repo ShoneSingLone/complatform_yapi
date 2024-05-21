@@ -169,7 +169,7 @@ export default async function () {
 			const vm = this;
 
 			vm.setTableDataList = _.debounce(function () {
-				const filterForm = _.$pickValueFromConfigs(vm.searchForm);
+				const filterForm = _.$pickFormValues(vm.searchForm);
 				let listForShow = _.cloneDeep(vm.tableDataList);
 				let paramKeys = Object.keys(filterForm);
 				let prop;
@@ -279,7 +279,7 @@ export default async function () {
 						defTable.colActions({
 							width: 80,
 							cellRenderer({ rowData }) {
-								return _vnodeFns.ActionAndMore({
+								return _jsxFns.ActionAndMore({
 									col: 3,
 									children: [
 										{

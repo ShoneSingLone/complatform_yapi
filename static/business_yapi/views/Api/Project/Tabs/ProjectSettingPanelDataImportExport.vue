@@ -142,7 +142,7 @@ export default async function () {
 				};
 			},
 			cptParams() {
-				return _.$pickValueFromConfigs(this.form);
+				return _.$pickFormValues(this.form);
 			}
 		},
 		methods: {

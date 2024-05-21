@@ -20,6 +20,7 @@ export default async function () {
 		"components/base/xBtn/xColActionAndMore",
 		/*  */
 		"components/data/xMenuTree/xMenuTree",
+		"components/navigation/xTabs/mobile/xMobileTabBar",
 		"components/navigation/xTabs/xTabs",
 		"components/navigation/xTabs/xTabPane",
 		"components/data/xTag/xTag",
@@ -72,6 +73,7 @@ export default async function () {
 		/* *********directive********** */
 		"directive/xImg/xImg",
 		"directive/xTooltip/xTooltip",
+		"directive/xDrawer/xDrawer",
 		"directive/xtips/xPopover",
 		/* ********************** */
 		"common/xAppLayoutHeaderOcOprs",
@@ -97,21 +99,7 @@ export default async function () {
 		"common/xInfoCard",
 		"common/xInfoCardItem",
 		"common/xInquire",
-		/* xItem */
-		"common/xItem/xItem",
-		"common/xItem/xItem/cidr/xItemCidr",
-		"common/xItem/xItem/cidr/xItemIpAddress",
-		"common/xItem/xItemCheck/xItemCheck",
-		/* xItemXXXXXXXX */
-		"common/xItemCheckboxGroup",
-		"common/xItemDatetime",
-		"common/xItemInput",
-		"common/xItemIpAddress",
-		"common/xItemNameUrl",
-		"common/xItemRadioGroup",
-		"common/xItemSelect",
-		"common/xItemSwitch",
-		"common/xItemSlider",
+		/* ********************************** */
 		"common/xMenuTreeItem",
 		"common/xOprWithMore",
 		"common/xRender",
@@ -124,7 +112,21 @@ export default async function () {
 		"common/xTableDiv",
 		"common/xTransfer",
 		"common/xGap",
-		"common/xDev"
+		"common/xDev",
+		/* xItem */
+		/* xItemXXXXXXXX */
+		"common/xItem/xItem",
+		"common/xItem/xItemCheck",
+		"common/xItem/xItemCheckboxGroup",
+		"common/xItem/xItemCidr",
+		"common/xItem/xItemDatetime",
+		"common/xItem/xItemInput",
+		"common/xItem/xItemIpAddress",
+		"common/xItem/xItemNameUrl",
+		"common/xItem/xItemRadioGroup",
+		"common/xItem/xItemSelect",
+		"common/xItem/xItemSlider",
+		"common/xItem/xItemSwitch"
 	];
 }
 </script>

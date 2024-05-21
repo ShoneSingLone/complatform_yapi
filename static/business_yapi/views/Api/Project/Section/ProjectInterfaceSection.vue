@@ -43,7 +43,7 @@ export default async function () {
 				prop: "title",
 				label: i18n("接口名称"),
 				cellRenderer({ rowData }) {
-					return _vnodeFns.Link({
+					return _jsxFns.Link({
 						label: rowData.title,
 						title: rowData.title,
 						style: "text-align:left;",
@@ -309,7 +309,7 @@ export default async function () {
 		},
 		methods: {
 			resetFilter() {
-				_.$setValToForm(this.form, {
+				_.$setFormValues(this.form, {
 					path: "",
 					catid: []
 				});
@@ -319,7 +319,7 @@ export default async function () {
 			},
 			filterList() {
 				let configsTableDataList = (() => {
-					const filterForm = _.$pickValueFromConfigs(this.form);
+					const filterForm = _.$pickFormValues(this.form);
 					let _allInterface = _.cloneDeep(this.inject_project.allInterface);
 					let paramKeys = Object.keys(filterForm);
 					let prop;

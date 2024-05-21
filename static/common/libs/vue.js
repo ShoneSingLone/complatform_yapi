@@ -5341,6 +5341,7 @@
 				throw error;
 			} else {
 				console.log(`[Vue warn]:`, vm);
+				console.log(`[Vue trace]:`, trace);
 				console.error(`[Vue warn]: ${vm?.$vnode?.FILE_URL || ""}\n${msg}`);
 			}
 		}

@@ -510,7 +510,7 @@ export default async function () {
 	width: var(--xItem-wrapper-width, 320px);
 	min-width: 1px;
 
-	.xItem-label-contorller {
+	.xItem-label-controller {
 		display: flex;
 		flex-flow: var(--xItem-flex-flow, row nowrap);
 		justify-content: var(--xItem-layout-justify-content, center);
@@ -564,7 +564,7 @@ export default async function () {
 		color: var(--el-text-color-secondary);
 		padding-left: var(--xItem-msg-padding-left);
 		.xItem-msg-content {
-			margin-top: 8px;
+			margin-top: 10px;
 		}
 	}
 }

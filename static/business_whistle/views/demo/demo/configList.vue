@@ -168,7 +168,7 @@ export default async function () {
 								{
 									label: i18n("删除"),
 									onClick({ row }) {
-										_.$delConfirm({
+										_.$confirm_important({
 											content: `${i18n("msgSureDelete")}${i18n("QOS规格")}${row.name}?`
 										}).then(async () => {
 											try {
@@ -258,7 +258,7 @@ export default async function () {
 		},
 		computed: {
 			searchParams() {
-				return _.$pickValueFromConfigs(this.formSearch);
+				return _.$pickFormValues(this.formSearch);
 			}
 		}
 	};

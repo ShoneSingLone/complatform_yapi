@@ -62,6 +62,7 @@ export default async function () {
 					label: i18n("xItem"),
 					children: [
 						{ icon: "icon_report", label: i18n("xItemCheck"), href: "/x-component/x-item-check" },
+						{ icon: "icon_report", label: i18n("xItemCidr"), href: "/x-component/x-item-cidr" },
 						{ icon: "icon_report", label: i18n("xItemCheckboxGroup"), href: "/x-component/x-item-checkbox-group" }
 					]
 				}
@@ -81,6 +82,7 @@ export default async function () {
 				{ icon: "_icon_selector", label: i18n("select"), href: "/component/form/select" },
 				{ icon: "icon_report", label: i18n("ip-address"), href: "/component/form/ip-address" },
 				{ icon: "_icon_image", label: i18n("image") + i18n("图片"), href: "/component/data/image" },
+				{ icon: "_icon_image", label: i18n("Drawer") + i18n("抽屉"), href: "/other/drawer" },
 				{ icon: "_icon_avatar", label: i18n("Avatar") + i18n("头像"), href: "/component/data/avatar" },
 				{ icon: "icon_report", label: i18n("icon"), href: "/component/data/icon" },
 				{ icon: "icon_report", label: `${i18n("Card")} ${i18n("卡片")}`, href: "/component/data/card" },

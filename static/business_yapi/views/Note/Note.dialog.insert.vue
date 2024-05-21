@@ -41,7 +41,7 @@ export default async function ({ parentDocId, belong_type, belong_id, hide }) {
 				return parentDocId || 0;
 			},
 			cptFormData() {
-				return _.$pickValueFromConfigs(this.form);
+				return _.$pickFormValues(this.form);
 			},
 			btnOk() {
 				const vm = this;

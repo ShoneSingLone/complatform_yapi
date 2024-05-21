@@ -151,3 +151,13 @@ export default async function ({ code }) {
 	};
 }
 </script>
+
+<style lang="less">
+.markdown-wrapper_description {
+	ul {
+		li {
+			margin-left: var(--ui-one);
+		}
+	}
+}
+</style>

@@ -38,7 +38,7 @@ export default async function () {
 						defTable.colActions({
 							width: 120,
 							cellRenderer({ rowData }) {
-								return _vnodeFns.ActionAndMore({
+								return _jsxFns.ActionAndMore({
 									col: 3,
 									children: [
 										/* { label: i18n("快速添加规则") }, { label: i18n("添加规则") }, */

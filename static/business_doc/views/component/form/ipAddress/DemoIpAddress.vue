@@ -2,6 +2,7 @@
 	<DocContentOfDemo class="demo-input">
 		<xMd :md="mdTips" />
 		<DemoAndCode title="基础用法" path="@/views/component/form/ipAddress/JiChuYongFa.vue" unfold />
+		<xIpAddress v-model="ipAddress" />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

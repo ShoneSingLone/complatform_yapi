@@ -1723,8 +1723,21 @@ export default async function () {
 	/*****************************************/
 
 	(function () {
-		window._vnodeFns = {
+		window._jsxFns = {
 			/* linkrender.linkrender.linkrender */
+			xTipsHover({ msg, placement }) {
+				placement = placement || "right-start";
+				return {
+					name: "xtips",
+					value: {
+						content() {
+							return h("span", {}, msg);
+						},
+						trigger: "hover",
+						placement
+					}
+				};
+			},
 			OptionsToLabel(value, options) {
 				let item = { label: value, type: "" };
 				item =

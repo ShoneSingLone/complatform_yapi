@@ -87,7 +87,6 @@ export default async function () {
 			},
 			async save() {
 				const vm = this;
-				debugger;
 				try {
 					_.$loading(true);
 					const params = _.merge(

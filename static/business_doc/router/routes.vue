@@ -28,6 +28,7 @@ export default async function () {
 			children: [
 				_.$newRoute("/x-component/x-item", "@/views/xComponent/DemoxItem/DemoxItem.vue"),
 				_.$newRoute("/x-component/x-item-check", "@/views/xComponent/DemoxItemCheck/DemoxItemCheck.vue"),
+				_.$newRoute("/x-component/x-item-cidr", "@/views/xComponent/DemoxItemCidr/DemoxItemCidr.vue"),
 				_.$newRoute("/x-component/x-item-checkbox-group", "@/views/xComponent/DemoxItemCheckboxGroup.vue"),
 				_.$newRoute("/x-component/x-form", "@/views/xComponent/DemoxForm/DemoxForm.vue")
 			]
@@ -88,7 +89,8 @@ export default async function () {
 				_.$newRoute("/other/tooltip", "@/views/other/tooltip/tooltip.vue"),
 				_.$newRoute("/other/timeline", "@/views/other/timeline/DemoTimeline.vue"),
 				_.$newRoute("/other/divider", "@/views/other/divider/DemoDivider.vue"),
-				_.$newRoute("/other/open_window", "@/views/other/dialog/dialog.vue")
+				_.$newRoute("/other/open_window", "@/views/other/dialog/dialog.vue"),
+				_.$newRoute("/other/drawer", "@/views/other/drawer/DemoDrawer.vue")
 			]
 		}),
 		_.$newRoute("/dev", ComponentPageRouterView, {

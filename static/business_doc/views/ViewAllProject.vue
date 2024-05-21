@@ -143,7 +143,7 @@ export default async function () {
 							prop: "name",
 							cellRenderer({ rowData }) {
 								if (rowData.parent) {
-									return _vnodeFns.Link({
+									return _jsxFns.Link({
 										label: rowData.name,
 										target: "_blank",
 										href: vm.genALinkHref(rowData.parent, rowData.name)
@@ -218,12 +218,12 @@ export default async function () {
 							width: 220,
 							cellRenderer({ rowData }) {
 								if (rowData.parent) {
-									return _vnodeFns.ActionAndMore({
+									return _jsxFns.ActionAndMore({
 										col: 3,
 										children: []
 									});
 								} else {
-									return _vnodeFns.ActionAndMore({
+									return _jsxFns.ActionAndMore({
 										col: 3,
 										children: [
 											{

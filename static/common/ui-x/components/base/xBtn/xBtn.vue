@@ -236,19 +236,35 @@ export default async function () {
 			};
 			if (vm.configs) {
 				if (this.cptDisabledTips) {
-					buttonProps.attrs = {
-						title: this.cptDisabledTips
-					};
+					// buttonProps.attrs = { title: this.cptDisabledTips };
+					return h(vm.type || "button", buttonProps, [
+						h(
+							"xPopover",
+							{
+								placement: "top-start",
+								trigger: "hover",
+								content: this.cptDisabledTips
+							},
+							[
+								h("span", { staticClass: "flex", slot: "reference" }, [
+									h("i", { vIf: vm.cptLoading, class: "el-icon-loading mr4" }),
+									h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon, "mr4"] }),
+									/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
+									this.$slots.default || vm.calChildren()
+								])
+							]
+						)
+					]);
+				} else {
+					return h(vm.type || "button", buttonProps, [
+						h("span", { staticClass: "flex" }, [
+							h("i", { vIf: vm.cptLoading, class: "el-icon-loading" }),
+							h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon] }),
+							/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
+							this.$slots.default || vm.calChildren()
+						])
+					]);
 				}
-
-				return h(vm.type || "button", buttonProps, [
-					h("span", { staticClass: "flex" }, [
-						h("i", { vIf: vm.cptLoading, class: "el-icon-loading mr4" }),
-						h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon, "mr4"] }),
-						/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
-						this.$slots.default || vm.calChildren()
-					])
-				]);
 			}
 		}
 	});

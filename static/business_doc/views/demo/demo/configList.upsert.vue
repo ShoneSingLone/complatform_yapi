@@ -234,7 +234,7 @@ export default async function ({ row, onAdd, COL_环境区域, COL_云服务类�
 				};
 			},
 			cptFormData() {
-				return _.$pickValueFromConfigs(this.form);
+				return _.$pickFormValues(this.form);
 			},
 			btnOk() {
 				const vm = this;

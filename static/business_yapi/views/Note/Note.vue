@@ -200,8 +200,8 @@ export default async function () {
 
 <style lang="less">
 #ViewNote {
-	height: 100vh;
-	width: 100vw;
+	height: 100%;
+	width: 100%;
 	display: flex;
 	flex-flow: row nowrap;
 	&.is-show-header {

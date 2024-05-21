@@ -120,7 +120,7 @@ export default async function ({ onSelect, onCancel, service_type, icon }) {
 				};
 			},
 			cptFormData() {
-				return _.$pickValueFromConfigs(this.form);
+				return _.$pickFormValues(this.form);
 			},
 			btnOk() {
 				const vm = this;

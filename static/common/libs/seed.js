@@ -416,30 +416,6 @@
 		$style.innerHTML = innerHtml;
 	}
 
-	(function () {
-		$appendStyle(
-			"xLoadingStyle",
-			$resolveCssAssetsPath(`
-		html, body, #app { height: 100%; width: 100%; }
-
-		@keyframes spin {
-			from {
-				transform: rotate(0deg);
-			}
-			to {
-				transform: rotate(360deg);
-			}
-		}
-
-		.spin {animation: spin 2s linear infinite;}
-
-		.x-loading { min-height: 48px; position: relative; // filter: blur(1px); overflow: hidden; pointer-events: none; }
-		
-		.x-loading::before { animation: spin 2s linear infinite;pointer-events: none; content: " "; display: block; top: 0; bottom: 0; right: 0; left: 0; position: absolute; background: url(/common/assets/svg/${LOADING_IMAGE_NAME}.svg) center/32px no-repeat; z-index: 9999999999; }
-		`)
-		);
-	})();
-
 	(async function bootstrap() {
 		await (async function clearAssetsCacheByAppVersion() {
 			if (APP_VERSION !== (await $idb.get("APP_VERSION"))) {
@@ -470,6 +446,29 @@
 
 				setRemBase();
 			}
+
+			/* 在计算rem之后添加样式，否则会有闪烁 */
+			$appendStyle(
+				"xLoadingStyle",
+				$resolveCssAssetsPath(`
+			html, body, #app { height: 100%; width: 100%; }
+	
+			@keyframes spin {
+				from {
+					transform: rotate(0deg);
+				}
+				to {
+					transform: rotate(360deg);
+				}
+			}
+	
+			.spin {animation: spin 2s linear infinite;}
+	
+			.x-loading { min-height: 48px; position: relative; // filter: blur(1px); overflow: hidden; pointer-events: none; }
+			
+			.x-loading::before { animation: spin 2s linear infinite;pointer-events: none; content: " "; display: block; top: 0; bottom: 0; right: 0; left: 0; position: absolute; background: url(/common/assets/svg/${LOADING_IMAGE_NAME}.svg) center/32px no-repeat; z-index: 9999999999; }
+			`)
+			);
 		})();
 
 		_.$$tags = $$tags;
@@ -512,6 +511,9 @@
 				const getLangOptionsFn = new Function(`return ${langOptionsString};`);
 				const langOptions = getLangOptionsFn();
 				const i18n = function (key, payload) {
+					if (key.length > 64) {
+						alert(`i18n key: 【${key}】 长度超过64，过长，建议重命名`);
+					}
 					/!*使用 {变量名} 赋值*!/;
 					_.templateSettings.interpolate = /{([\s\S]+?)}/g;
 					let temp = _.$val(langOptions, key);

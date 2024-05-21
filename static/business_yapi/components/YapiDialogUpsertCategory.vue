@@ -57,7 +57,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList, all
 				};
 			},
 			cptFormData() {
-				return _.$pickValueFromConfigs(this.form);
+				return _.$pickFormValues(this.form);
 			},
 			btnOk() {
 				const vm = this;
@@ -77,7 +77,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList, all
 		methods: {
 			init() {
 				if (isUpdate) {
-					_.$setValToForm(this.form, categoryInfo);
+					_.$setFormValues(this.form, categoryInfo);
 				}
 			},
 			async upsertOne() {

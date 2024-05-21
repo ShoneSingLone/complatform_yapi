@@ -34,7 +34,7 @@ export default async function ({ row, callBack }) {
 				};
 			},
 			cptFormData() {
-				return _.$pickValueFromConfigs(this.form);
+				return _.$pickFormValues(this.form);
 			},
 			btnOk() {
 				const vm = this;
@@ -54,7 +54,7 @@ export default async function ({ row, callBack }) {
 		methods: {
 			init() {
 				if (isUpdate) {
-					_.$setValToForm(this.form, row);
+					_.$setFormValues(this.form, row);
 				}
 			},
 			async upsertOne() {

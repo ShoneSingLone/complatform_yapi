@@ -194,6 +194,37 @@ export default async function ({ _URL_PREFIX_MO }) {
 			end_time: _.$dateFormat(currentTime.add(1, "hour").valueOf(), 2)
 		};
 	};
+	_MoCfContext.handleOrderError = function (response) {
+		/* 
+{
+"exceptionId": "mosub-00013",
+"exceptionType": "ROA_EXFRAME_EXCEPTION",
+"descArgs": [
+"申请服务失败。"
+],
+"reasonArgs": [
+"服务未上线。"
+],
+"detailArgs": [
+"VDC中上线的服务才可以申请，当VDC中没有某个服务或者服务未上线，不能申请。"
+],
+"adviceArgs": [
+"请检查指定VDC下的指定服务是否已经上线。"
+]
+}
+*/
+		try {
+			const { exceptionId, exceptionType, descArgs, reasonArgs, detailArgs, adviceArgs } = response.responseJSON;
+			_.$notify.error({
+				title: descArgs[0],
+				message: () => h("div", [...detailArgs.map(i => h("div", i)), ...adviceArgs.map(i => h("div", i))])
+			});
+		} catch (error) {
+			_.$msgError(error);
+		} finally {
+			console.error(response);
+		}
+	};
 
 	_MoCfContext.queryPrice = async function (params) {
 		const priceInfo = {

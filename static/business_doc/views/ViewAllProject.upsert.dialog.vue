@@ -76,7 +76,7 @@ export default async function ({ row, onSuccess, projectsDB }) {
 				if (!error) {
 					_.$loading(true);
 					try {
-						await _api.doc.projectsUpsert({ create: _.$pickValueFromConfigs(this.form) });
+						await _api.doc.projectsUpsert({ create: _.$pickFormValues(this.form) });
 						onSuccess();
 						this.closeModal();
 					} catch (error) {

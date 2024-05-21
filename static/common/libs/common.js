@@ -975,7 +975,7 @@
 					})
 					.filter(row => !!row);
 				console.log(isLoading ? "open x-loading" : "close x-loading", msg.join("\n=>"));
-			} catch (error) {}
+			} catch (error) { }
 		}
 	};
 
@@ -987,15 +987,21 @@
 	/* @typescriptDeclare (options?:any)=>Promise<any> */
 	_.$confirm = (options = {}) => {
 		return new Promise(async (resolve, reject) => {
+			if (_.isString(options)) {
+				options = {
+					content: options
+				};
+			}
 			const isDelete = !!options.isDelete;
 			let title = options.title || i18n("info");
 			let content = options.content || "";
 			if (isDelete) {
+				const _title = title || i18n("删除");
 				title = function () {
 					const { h } = Vue;
 					return h("div", { staticClass: "flex middle start warning-color" }, [
 						h("i", { icon: "delete", staticClass: "el-alert__icon el-icon-warning", staticStyle: "color:var(--xAlert-error-light-color)" }),
-						h("span", { staticClass: "ml4" }, [i18n("删除")])
+						h("span", { staticClass: "ml4" }, [_title])
 					]);
 				};
 			}
@@ -1016,8 +1022,8 @@
 	 * @param {*} options
 	 * @returns
 	 */
-	_.$delConfirm = (options = {}) => {
-		options.title = options.title || i18n("delete");
+	_.$confirm_important = (options = {}) => {
+		options.title = options.title || i18n("提示");
 		options.isDelete = true;
 		return _.$confirm(options);
 	};
@@ -1071,7 +1077,7 @@
 					} else if (_msg?.message) {
 						msg = _msg.message;
 					}
-				} catch (error) {}
+				} catch (error) { }
 			}
 
 			return _.$notify.error({
@@ -1667,117 +1673,162 @@
 			}
 		});
 	};
-
-	/**
-	 * 数据回填，
-	 * @param {*} form {object} xItem formconfigs
-	 * @param {*} data {object} 回填数据
-	 * @param {*} order {array} 有依赖关系（联动）回填顺序
-	 */
-	/* @typescriptDeclare ({form,data,order})=>Promise<void> */
-	_.$fillBackData = async function ({ form, data, order }) {
-		let target;
-		while ((target = order.shift())) {
-			/* 如果current是prop字符串,等待100毫秒 */
-			if (_.isString(target)) {
-				const prop = target;
-				form[prop].value = data[prop];
-				await _.$sleep(32);
-			}
-
-			if (_.isPlainObject(target)) {
-				const { prop, until } = target;
-				await until();
-				form[prop].value = data[prop];
-			}
-		}
-	};
-
-	/**
-	 * 适用于xItem不使用v-mode，form的configs带有value form.xxx.value, {xxx:"value"}
-	 * @param {any} form xItem 配置信息，config带有value属性
-	 * @param {any} values
-	 */
-	/* @typescriptDeclare (form:object,values:object)=>void */
-	_.$setValToForm = function setValToForm(form, values) {
-		_.each(values, (value, prop) => {
-			if (value !== undefined && _.isPlainObject(form[prop])) {
-				form[prop].value = value;
-			}
-		});
-	};
-
-	/**
-	 * 从 cofnigs 中获取value 返回 {xxx:value,...}形式的对象
-	 * @param {any} configs
-	 * @returns
-	 */
-	/* @typescriptDeclare (configs:object)=>object */
-	_.$pickValueFromConfigs = function (configs) {
-		return _.reduce(
-			configs,
-			(_params, configs, prop) => {
-				if (configs.value !== undefined) {
-					_params[prop] = configs.value;
+	((/* 处理表单相关 */) => {
+		/**
+		 * 数据回填，
+		 * @param {*} form {object} xItem formconfigs
+		 * @param {*} data {object} 回填数据
+		 * @param {*} order {array} 有依赖关系（联动）回填顺序
+		 */
+		/* @typescriptDeclare ({form,data,order})=>Promise<void> */
+		_.$fillBackData = async function ({ form, data, order }) {
+			let target;
+			while ((target = order.shift())) {
+				/* 如果current是prop字符串,等待100毫秒 */
+				if (_.isString(target)) {
+					const prop = target;
+					form[prop].value = data[prop];
+					await _.$sleep(32);
 				}
-				return _params;
-			},
-			{}
-		);
-	};
 
-	/**
-	 * 从数组中取第一个元素的value，如果数组为空则返回defaultValue
-	 * @param {*} options
-	 * @param {*} defaultValue
-	 * @returns
-	 */
-	_.$valFirstOrDefault = (options, defaultValue) => {
-		if (defaultValue === undefined) {
-			alert("_.$valFirstOrDefault miss defaultValue");
-		}
-		if (_.$isArrayFill(options)) {
-			return options[0].value;
-		}
-		return defaultValue;
-	};
+				if (_.isPlainObject(target)) {
+					const { prop, until } = target;
+					await until();
+					form[prop].value = data[prop];
+				}
+			}
+		};
 
-	/*  */
-	_.$firstIpFrom = ip => {
-		const arr = ip.split(".");
-		arr[3] = 0;
-		return arr.join(".");
-	};
+		/**
+		 * 适用于xItem不使用v-mode，form的configs带有value form.xxx.value, {xxx:"value"}
+		 * @param {any} xItemFormConfigs xItem 配置信息，config带有value属性
+		 * @param {any} values
+		 */
+		/* @typescriptDeclare (form:object,values:object)=>void */
+		_.$setFormValues = function (xItemFormConfigs, values) {
+			_.each(values, (value, prop) => {
+				/* 允许null，代表使用configs.value */
+				if (value !== undefined && _.isPlainObject(xItemFormConfigs[prop])) {
+					xItemFormConfigs[prop].value = value;
+				}
+			});
+		};
 
-	_.$getIpInRangeAndUseable = function (ipOld, cidr, used) {
-		const range = _.$calculateCidrRange(cidr);
-		const isIpOldInRange = _.$isIp4InCidr(ipOld)(cidr);
-		if (isIpOldInRange) {
-			return {
-				newValue: ipOld,
-				range
-			};
-		} else {
-			let newValue = (function () {
-				const [start, end] = range;
-				const startInt = _.$ip4ToInt(start);
-				const endInt = _.$ip4ToInt(end);
-
-				for (let ipInt = startInt + 1; ipInt <= endInt; ipInt++) {
-					const value = _.$intToIp4(ipInt);
-					if (!used.includes(value)) {
-						return value;
+		/**
+		 * 从 cofnigs 中获取value 返回 {xxx:value,...}形式的对象
+		 * @param {any} xItemFormConfigs
+		 * @returns
+		 */
+		/* @typescriptDeclare (configs:object)=>object */
+		_.$pickFormValues = function (xItemFormConfigs) {
+			return _.reduce(
+				xItemFormConfigs,
+				(_params, configs, prop) => {
+					if (configs.value !== undefined) {
+						_params[prop] = configs.value;
 					}
-				}
-				return ``;
-			})();
+					return _params;
+				},
+				{}
+			);
+		};
 
-			return {
-				newValue,
-				range
-			};
+
+		/**
+		 * 获取多个国际化label
+		 * @param {*} langArray 
+		 * @returns 
+		 */
+		_.$newI18nMany = async function (langArray = ["zh-CN", "en-US"]) {
+			const i18nArray = await Promise.all(_.map(langArray, lang => _.$newI18n({ lang })));
+			return (...args) => _.map(i18nArray, _i18n => _i18n.apply(_, args));
+		};
+
+		/**
+		 * 从xItemConfigs 获取value对应的options item
+		 * @param {*} xItemConfigs 
+		 * @returns 
+		 */
+		_.$getSelectedItemFrom = function (xItemConfigs) {
+			const { options, value } = xItemConfigs;
+			if (_.$isArrayFill(options) && _.$isInput(value)) {
+				const item = _.find(options, { value });
+				if (item) {
+					return item;
+				} else {
+					alert("xItemConfigs miss options or value");
+				}
+			} else {
+				alert("xItemConfigs miss options or value");
+			}
+		};
+
+		/**
+		 * 从数组中取第一个元素的value，如果数组为空则返回defaultValue
+		 * @param {*} options
+		 * @param {*} defaultValue
+		 * @returns
+		 */
+		_.$getFirstOrDefaultValue = function (options, defaultValue) {
+			if (defaultValue === undefined) {
+				alert("_.$getFirstOrDefaultValue miss defaultValue");
+			}
+			if (_.$isArrayFill(options)) {
+				return options[0].value;
+			}
+			return defaultValue;
+		};
+
+		/*  */
+		_.$getIpInRangeAndUseable = function (ipOld, cidr, used) {
+			const range = _.$calculateCidrRange(cidr);
+			const isIpOldInRange = _.$isIp4InCidr(ipOld)(cidr);
+			if (isIpOldInRange) {
+				return {
+					newValue: ipOld,
+					range
+				};
+			} else {
+				let newValue = (function () {
+					const [start, end] = range;
+					const startInt = _.$ip4ToInt(start);
+					const endInt = _.$ip4ToInt(end);
+
+					for (let ipInt = startInt + 1; ipInt <= endInt; ipInt++) {
+						const value = _.$intToIp4(ipInt);
+						if (!used.includes(value)) {
+							return value;
+						}
+					}
+					return ``;
+				})();
+
+				return {
+					newValue,
+					range
+				};
+			}
+		};
+	})();
+
+	(function () {
+		/* 将一个由点分隔的四个数字组成的字符串转换成一个整数 */
+		function D(e) {
+			var t, o, n;
+			if (!e) return 0;
+			if (4 !== (t = e.split(".")).length) return false;
+			for (o = 0, n = 0; n < 4; n++) o = 256 * o + parseInt(t[n], 10);
+			return o;
 		}
-	};
+		/* 将一个整数转换为由四个十进制数字组成的字符串 */
+		function L(e) {
+			var t = 0,
+				o = "",
+				n = 16777216;
+			for (t = 0; t < 4; t++) (o = 0 === t ? o : o + "."), (o += parseInt(e / n)), (e -= parseInt(e / n) * n), (n /= 256);
+			return o;
+		}
+	})();
 
 	_.$intToIp4 = int => [(int >>> 24) & 0xff, (int >>> 16) & 0xff, (int >>> 8) & 0xff, int & 0xff].join(".");
 	_.$ip4ToInt = ip => ip.split(".").reduce((int, oct) => (int << 8) + parseInt(oct, 10), 0) >>> 0;
@@ -1805,3 +1856,55 @@
 		return [_.$intToIp4(_.$ip4ToInt(range) & mask), _.$intToIp4(_.$ip4ToInt(range) | ~mask)];
 	};
 })();
+
+
+
+(function () {
+	class RequestCacheManager {
+		constructor() {
+			this.cache = {};
+		}
+
+		async cachedRequest(url, data, method = 'GET', cacheDuration = 10000) {
+			const key = JSON.stringify([url, data, method]);
+			let entry = this.cache[key];
+			const clearCacheEntry = () => {
+				if (entry?.clearTimer) clearTimeout(entry.clearTimer);
+				entry.clearTimer = setTimeout(() => {
+					delete this.cache[key];
+				}, cacheDuration);
+			};
+
+			if (entry && entry.response) {
+				clearCacheEntry();
+				return entry.response;
+			} else {
+				entry = this.cache[key] = { deep: [], status: 'pending' };
+				return new Promise((resolve, reject) => {
+					entry.deep.push({ resolve, reject });
+
+					if (entry.status === 'pending') {
+						const fetchData = async () => {
+							try {
+								const response = await _.$ajax[method.toLowerCase()](url, { data });
+								entry.response = response;
+								entry.status = 'resolved';
+								clearCacheEntry();
+								entry.deep.forEach(({ resolve }) => resolve(response));
+							} catch (error) {
+								entry.status = 'rejected';
+								entry.deep.forEach(({ reject }) => reject(error));
+								clearCacheEntry();
+							}
+						};
+					};
+
+					fetchData();
+				});
+			}
+		}
+	}
+
+
+
+});

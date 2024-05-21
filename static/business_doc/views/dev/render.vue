@@ -22,7 +22,7 @@ export default async function () {
 				}
 			});
 
-			const formData = computed(() => _.$pickValueFromConfigs(form));
+			const formData = computed(() => _.$pickFormValues(form));
 
 			return function (h) {
 				return h(

@@ -65,7 +65,7 @@ export default async function () {
 	/* cptConfigs isGroup 为是否多选 */
 	return {
 		mixins: [mixins],
-		props: ["value", "cptConfigs", "options"],
+		props: ["value", "cptConfigs", "options", "disabled"],
 		data() {
 			return {
 				col: 4
@@ -94,6 +94,9 @@ export default async function () {
 				};
 			},
 			cptDisabled() {
+				if (this.disabled) {
+					return true;
+				}
 				if (hasOwn(this.$attrs, "disabled")) {
 					return this.$attrs.disabled;
 				}
@@ -168,6 +171,12 @@ export default async function () {
 						this.setPrivateSet(item.value, isChecked);
 					}
 				};
+
+				if (this.disabled) {
+					checkboxProps.disabled = true;
+				}
+
+				/* @ts-ignore */
 				return h("xCheckbox", checkboxProps);
 			},
 			itemUseBlockCheck(item) {
