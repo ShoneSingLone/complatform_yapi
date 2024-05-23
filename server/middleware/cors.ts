@@ -14,7 +14,10 @@ const middlewareCORS = () => {
 					ctx.headers.origin || ctx.headers.referer || ctx.host
 				).toLowerCase();
 
-				const inCorsWhiteList = _.some(yapi_configs.cors.allow, allow => ~url.indexOf(String(allow).toLowerCase()));
+				const inCorsWhiteList = _.some(
+					yapi_configs.cors.allow,
+					allow => ~url.indexOf(String(allow).toLowerCase())
+				);
 
 				if (inCorsWhiteList) {
 					/* 允许在header中携带额外的字段 */
@@ -33,6 +36,6 @@ const middlewareCORS = () => {
 	});
 };
 
-module.exports = async function(app) {
+module.exports = async function (app) {
 	app.use(middlewareCORS());
 };

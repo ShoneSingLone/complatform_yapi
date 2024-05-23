@@ -4,7 +4,6 @@ const { _n } = require("@ventose/utils-node");
 const traverse = require("@babel/traverse").default;
 const BABEL_PARSER = require("@babel/parser");
 
-
 (async function () {
 	await require("../../server/utils/onFirstLine.ts")();
 	const _ = require("lodash");
@@ -47,15 +46,17 @@ const BABEL_PARSER = require("@babel/parser");
 				let subTypeArray = [];
 				traverse(ast, {
 					// Identifier(path) { console.log('找到变量', path.node.name); },
-					ClassDeclaration: (classPath) => {
+					ClassDeclaration: classPath => {
 						const { scope, parentPath, state, node } = classPath;
 						console.log("🚀 ~ ClassDeclaration:", node.id.name);
 						// 对找到的 ClassDeclaration 进行单独的遍历
-						traverse(classPath.node, {
-							ClassMethod(methodPath) {
-								let bodyDeclare = '()=>Promise<any>';
-								const { key, leadingComments } = methodPath.node;
-								subTypeArray.push(`
+						traverse(
+							classPath.node,
+							{
+								ClassMethod(methodPath) {
+									let bodyDeclare = "()=>Promise<any>";
+									const { key, leadingComments } = methodPath.node;
+									subTypeArray.push(`
 								${_.map(leadingComments, ({ value: comment }) => {
 									if (String(comment).includes("@typescriptDeclare")) {
 										bodyDeclare = comment.replace("@typescriptDeclare", "");
@@ -65,9 +66,13 @@ const BABEL_PARSER = require("@babel/parser");
 								}).join("\n")}
 								${key.name}:${bodyDeclare};
 								`);
-							}
-						}, scope, parentPath, state);
-					},
+								}
+							},
+							scope,
+							parentPath,
+							state
+						);
+					}
 				});
 				const subTypes = subTypeArray.join("\n");
 				return `${prop}:{ ${subTypes} };`;
@@ -83,6 +88,10 @@ const BABEL_PARSER = require("@babel/parser");
     ${types.join("\n\n")}
     `;
 
-	await fs.promises.writeFile(path.resolve(__dirname, "customType.ts"), content, "utf-8");
+	await fs.promises.writeFile(
+		path.resolve(__dirname, "customType.ts"),
+		content,
+		"utf-8"
+	);
 	throw new Error("🚀");
 })();

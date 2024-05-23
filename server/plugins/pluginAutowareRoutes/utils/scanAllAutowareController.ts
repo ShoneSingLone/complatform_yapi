@@ -6,7 +6,9 @@ const swaggerJSON = newSwaggerJSON(
 const routes = [];
 async function scanAllAutowareController(app) {
 	try {
-		const [_, files] = await _n.asyncAllDirAndFile([xU.path.resolve(xU.var.APP_ROOT_SERVER_DIR, "controllers/Autoware")]);
+		const [_, files] = await _n.asyncAllDirAndFile([
+			xU.path.resolve(xU.var.APP_ROOT_SERVER_DIR, "controllers/Autoware")
+		]);
 
 		const autoControllers = _n.reduce(
 			files.sort(),
