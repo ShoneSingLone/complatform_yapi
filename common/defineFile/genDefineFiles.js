@@ -20,7 +20,7 @@ const BABEL_PARSER = require("@babel/parser");
 			// 指定代码类型，可以是 'script' 或 'module'
 			sourceType: "script"
 		});
-		await fs.promises.writeFile("./ast.json", JSON.stringify(ast, null, 2));
+		// await fs.promises.writeFile("./ast.json", JSON.stringify(ast, null, 2));
 		traverse(ast, {
 			Identifier(path) {
 				if (("找到变量", path.node.name === "handleBasepath")) {
