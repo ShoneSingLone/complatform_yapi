@@ -21,7 +21,7 @@ export default async function () {
 				default: 0
 			},
 			popperClass: String,
-			content: String,
+			content: [String, Object],
 			visibleArrow: {
 				default: true
 			},

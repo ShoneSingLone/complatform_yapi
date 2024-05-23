@@ -1,6 +1,9 @@
 const Koa = require("koa");
 const KoaWS = require("koa-websocket");
-
+/**
+ * @description 启动服务
+ *
+ */
 async function main() {
 	const koaInstance = new Koa();
 	const app = KoaWS(koaInstance);

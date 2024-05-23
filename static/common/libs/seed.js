@@ -137,7 +137,7 @@
 		window.I18N_LANGUAGE = I18N_LANGUAGE;
 	})();
 
-	function ajax(url) {
+	function execXHR(url) {
 		return new Promise((resolve, reject) => {
 			var xhr = new XMLHttpRequest();
 
@@ -305,7 +305,7 @@
 				$loadText.pendding[key] = [{ resolve, reject }];
 				try {
 					const _url = $resolvePath(url);
-					const res = await ajax(_url);
+					const res = await execXHR(_url);
 					$loadText.pendding[key].forEach(({ resolve }) => resolve(res));
 				} catch (error) {
 					$loadText.pendding[key].forEach(({ reject }) => reject(error));

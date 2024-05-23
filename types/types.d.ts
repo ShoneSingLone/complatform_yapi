@@ -1,4 +1,4 @@
-import { t_orm, t_xU } from "./common/defineFile/customType";
+import { t_orm, t_xU } from "../common/defineFile/customType";
 
 declare global {
 	var orm: t_orm;

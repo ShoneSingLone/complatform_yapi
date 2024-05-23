@@ -2,6 +2,8 @@
 export default async function ({ _URL_PREFIX_MO }) {
 	let [region, locale, agencyId] = _.$urlSearch(["region", "locale", "agencyId"]);
 
+	window.i18nMany = await _.$newI18nMany();
+
 	let regionChanged = false;
 	(function () {
 		$("html").addClass("mo-common");
@@ -244,7 +246,6 @@ price, : "0.0"
 symbol, : "¥"
 type, : "spec"
 */
-
 			//EVS采用原子计价
 			const atomCost = _.find(res, r => r.type === "atom");
 
@@ -300,17 +301,30 @@ type, : "spec"
 			en_US: []
 		};
 		return displayArray.reduce((target, info) => {
-			target.zh_CN.push({
-				label: info.label[0],
-				value: info.value[0],
-				type: info.type
-			});
-			target.en_US.push({
-				label: info.label[1],
-				value: info.value[1],
-				type: info.type
-			});
-			return target;
+			try {
+				/* @ts-ignore */
+				if (_.isFunction(info.xItem.isHide)) {
+					/* @ts-ignore */
+					if (info.xItem.isHide()) {
+						return target;
+					}
+				}
+				/* @ts-ignore */
+				const valueArray = info.xItem.i18nMany();
+				target.zh_CN.push({
+					label: info.label[0],
+					value: valueArray[0],
+					type: info.type || "string"
+				});
+				target.en_US.push({
+					label: info.label[1],
+					value: valueArray[1],
+					type: info.type || "string"
+				});
+				return target;
+			} catch (error) {
+				console.error(error);
+			}
 		}, orderDisplay);
 	};
 	_MoCfContext.BuylayerConfigs = function (options) {

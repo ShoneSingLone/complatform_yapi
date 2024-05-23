@@ -91,6 +91,7 @@ export default async function () {
 						return vm.CONFIGS_ONLY_AS_WRAPPER;
 					} else {
 						alert("xItem configs ether not set or not a function");
+						debugger;
 						return {};
 					}
 				},

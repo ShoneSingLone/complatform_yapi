@@ -1,7 +1,6 @@
 const mime = require("mime-types");
 const fs = require("fs");
 const path = require("path");
-const { ModelResource } = require("server/models/Resource");
 const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
 const { TARGET_PREFIX } = xU;
@@ -537,6 +536,57 @@ module.exports = {
 					}
 
 					return;
+				}
+			}
+		},
+		"/resource/cloud_disk_file_list": {
+			get: {
+				summary: "网盘——根据file id获取资源",
+				description: "文件保存在服务器上",
+				request: {
+					query: {
+						file_id: {
+							required: true,
+							type: "int",
+							default: 0,
+							description: "目录id"
+						},
+						orderby: {
+							required: false,
+							type: "string",
+							default: "name",
+							enum: ["name", "add_time"],
+							description: "排序"
+						},
+						type: {
+							required: false,
+							type: "string",
+							description: "类型"
+						},
+						isdir: {
+							required: false,
+							type: "int",
+							default: 2,
+							enum: [0, 1, 2],
+							description: "是否为目录"
+						}
+					}
+				},
+				async handler(ctx) {
+					const { file_id, orderby, type, isdir } = ctx.payload;
+					const user_id = this.$uid;
+
+					let where = {
+						user_id,
+						file_id
+					};
+
+					if (type && type !== "all") {
+					}
+
+					if (isdir != 2) {
+						where.isdir = isdir;
+					}
 				}
 			}
 		}

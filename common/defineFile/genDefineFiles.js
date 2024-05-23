@@ -1,8 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const { _n } = require("@ventose/utils-node");
-var esprima = require("esprima-next");
-var { traverse, getCode } = require("esprima-ast-utils");
+const traverse = require("@babel/traverse").default;
+const BABEL_PARSER = require("@babel/parser");
+
 
 (async function () {
 	await require("../../server/utils/onFirstLine.ts")();
@@ -39,25 +40,37 @@ var { traverse, getCode } = require("esprima-ast-utils");
 				}
 
 				const doc = await fs.promises.readFile(fileName, "utf8");
-				var ast = await esprima.parseScript(doc, {
-					comment: false,
-					jsx: false,
-					loc: false,
-					range: false
+				var ast = await BABEL_PARSER.parse(doc, {
+					// 指定代码类型，可以是 'script' 或 'module'
+					sourceType: "script"
 				});
-
 				let subTypeArray = [];
-				traverse(ast, function (node) {
-					if (node.type === "ClassDeclaration") {
-						_.each(node.body.body, method => {
-							subTypeArray.push(`${method.key.name}:Function;`);
-						});
-					}
+				traverse(ast, {
+					// Identifier(path) { console.log('找到变量', path.node.name); },
+					ClassDeclaration: (classPath) => {
+						const { scope, parentPath, state, node } = classPath;
+						console.log("🚀 ~ ClassDeclaration:", node.id.name);
+						// 对找到的 ClassDeclaration 进行单独的遍历
+						traverse(classPath.node, {
+							ClassMethod(methodPath) {
+								let bodyDeclare = '()=>Promise<any>';
+								const { key, leadingComments } = methodPath.node;
+								subTypeArray.push(`
+								${_.map(leadingComments, ({ value: comment }) => {
+									if (String(comment).includes("@typescriptDeclare")) {
+										bodyDeclare = comment.replace("@typescriptDeclare", "");
+										return "";
+									}
+									return `/*${comment}\n*/`;
+								}).join("\n")}
+								${key.name}:${bodyDeclare};
+								`);
+							}
+						}, scope, parentPath, state);
+					},
 				});
 				const subTypes = subTypeArray.join("\n");
-				return `${prop}:{
-                ${subTypes}
-            };`;
+				return `${prop}:{ ${subTypes} };`;
 			})
 		);
 
@@ -70,6 +83,6 @@ var { traverse, getCode } = require("esprima-ast-utils");
     ${types.join("\n\n")}
     `;
 
-	await fs.promises.writeFile("./customType.ts", content, "utf-8");
+	await fs.promises.writeFile(path.resolve(__dirname, "customType.ts"), content, "utf-8");
 	throw new Error("🚀");
 })();

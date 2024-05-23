@@ -1,10 +1,16 @@
 const ModelBase = require("server/models/base");
 
 class ModelWikiOrder extends ModelBase {
+	/**
+	 * @description 获取表名
+	 *
+	 * @returns
+	 *
+	 * @memberOf ModelWikiOrder
+	 */
 	getName() {
 		return "wiki_order";
 	}
-
 	getSchema() {
 		return {
 			belong_type: {
@@ -16,6 +22,15 @@ class ModelWikiOrder extends ModelBase {
 			order: { type: Array }
 		};
 	}
+	/**
+	 * @description 保存
+	 *
+	 * @param {any} data
+	 * @returns
+	 *
+	 * @memberOf ModelWikiOrder
+	 */
+	/* @typescriptDeclare (data: any)=>Promise<any> */
 	save(data) {
 		let m = new this.model(data);
 		return m.save();
@@ -39,9 +54,11 @@ class ModelWikiOrder extends ModelBase {
 		}
 		return { msg };
 	}
+	/* @typescriptDeclare (_id: string)=>Promise<any> */
 	delete(_id) {
 		return this.up(_id, { del_tag: 1 });
 	}
+	/* @typescriptDeclare (_id: any, data: any)=>Promise<any> */
 	up(_id, data) {
 		return this.model.update({ _id }, data, { runValidators: true });
 	}

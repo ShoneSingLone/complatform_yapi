@@ -2,7 +2,9 @@
 	"name": "yapi-vendor",
 	"version": "1.10.2",
 	"description": "YAPI",
+	"types": "./types/types.d.ts",
 	"scripts": {
+		"d.ts": "node ./common/defineFile/genDefineFiles.js",
 		"start": "cross-env NODE_ENV=production node server/app.ts",
 		"lint": "prettier --write .",
 		"install-server": "node server/runInstall.ts",
@@ -53,7 +55,6 @@
 	"author": "",
 	"license": "Apache-2.0",
 	"dependencies": {
-		"@types/node": "^20.3.3",
 		"@ventose/utils-node": "^0.0.15",
 		"ajv": "^5.5.1",
 		"ajv-i18n": "^2.2.0",
@@ -73,12 +74,9 @@
 		"easy-json-schema": "0.0.2-beta",
 		"electron-cookies": "^1.1.0",
 		"eslint": "^3.19.0",
-		"esprima-ast-utils": "^0.0.7",
-		"esprima-next": "^5.8.4",
 		"fs-extra": "^3.0.1",
 		"generate-schema": "^2.6.0",
 		"ghooks": "^2.0.0",
-		"immer": "^1.1.1",
 		"js-base64": "^2.3.2",
 		"json-schema-faker": "0.5.0-rc16",
 		"json-schema-ref-parser": "4.0.0",
@@ -140,8 +138,12 @@
 		"babel": "inherit"
 	},
 	"devDependencies": {
+		"@babel/core": "^7.23.7",
+		"@babel/parser": "^7.23.6",
+		"@babel/preset-env": "^7.23.7",
+		"@babel/traverse": "^7.23.7",
+		"@types/node": "^20.3.3",
 		"@types/lodash": "^4.14.202",
-		"iconv-lite": "^0.6.3",
 		"typescript": "^5.3.3"
 	}
 }

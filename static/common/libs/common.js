@@ -800,8 +800,8 @@
 	 * @returns string
 	 */
 	/* @typescriptDeclare (name:string)=>string */
-	_.$randomName = name => {
-		return name + parseInt((new Date().getTime() % 61439) + 4096).toString(16);
+	_.$randomName = (name, length = 16) => {
+		return name + parseInt((new Date().getTime() % 61439) + 4096).toString(length);
 	};
 
 	/**
@@ -975,7 +975,7 @@
 					})
 					.filter(row => !!row);
 				console.log(isLoading ? "open x-loading" : "close x-loading", msg.join("\n=>"));
-			} catch (error) { }
+			} catch (error) {}
 		}
 	};
 
@@ -1077,7 +1077,7 @@
 					} else if (_msg?.message) {
 						msg = _msg.message;
 					}
-				} catch (error) { }
+				} catch (error) {}
 			}
 
 			return _.$notify.error({
@@ -1733,11 +1733,10 @@
 			);
 		};
 
-
 		/**
 		 * 获取多个国际化label
-		 * @param {*} langArray 
-		 * @returns 
+		 * @param {*} langArray
+		 * @returns
 		 */
 		_.$newI18nMany = async function (langArray = ["zh-CN", "en-US"]) {
 			const i18nArray = await Promise.all(_.map(langArray, lang => _.$newI18n({ lang })));
@@ -1746,8 +1745,8 @@
 
 		/**
 		 * 从xItemConfigs 获取value对应的options item
-		 * @param {*} xItemConfigs 
-		 * @returns 
+		 * @param {*} xItemConfigs
+		 * @returns
 		 */
 		_.$getSelectedItemFrom = function (xItemConfigs) {
 			const { options, value } = xItemConfigs;
@@ -1756,11 +1755,13 @@
 				if (item) {
 					return item;
 				} else {
-					alert("xItemConfigs miss options or value");
+					console.error("getSelectedItemFrom miss options or value");
 				}
 			} else {
-				alert("xItemConfigs miss options or value");
+				console.error("getSelectedItemFrom miss options or value");
 			}
+			debugger;
+			return { value: "", label: "", labelKey: "" };
 		};
 
 		/**
@@ -1857,15 +1858,13 @@
 	};
 })();
 
-
-
 (function () {
 	class RequestCacheManager {
 		constructor() {
 			this.cache = {};
 		}
 
-		async cachedRequest(url, data, method = 'GET', cacheDuration = 10000) {
+		async cachedRequest(url, data, method = "GET", cacheDuration = 10000) {
 			const key = JSON.stringify([url, data, method]);
 			let entry = this.cache[key];
 			const clearCacheEntry = () => {
@@ -1879,32 +1878,29 @@
 				clearCacheEntry();
 				return entry.response;
 			} else {
-				entry = this.cache[key] = { deep: [], status: 'pending' };
+				entry = this.cache[key] = { deep: [], status: "pending" };
 				return new Promise((resolve, reject) => {
 					entry.deep.push({ resolve, reject });
 
-					if (entry.status === 'pending') {
+					if (entry.status === "pending") {
 						const fetchData = async () => {
 							try {
 								const response = await _.$ajax[method.toLowerCase()](url, { data });
 								entry.response = response;
-								entry.status = 'resolved';
+								entry.status = "resolved";
 								clearCacheEntry();
 								entry.deep.forEach(({ resolve }) => resolve(response));
 							} catch (error) {
-								entry.status = 'rejected';
+								entry.status = "rejected";
 								entry.deep.forEach(({ reject }) => reject(error));
 								clearCacheEntry();
 							}
 						};
-					};
+					}
 
 					fetchData();
 				});
 			}
 		}
 	}
-
-
-
 });

@@ -33,21 +33,16 @@ class ModelWiki extends ModelBase {
 		return m.save();
 	}
 
-	/* 
-	db.getCollection("wiki_doc").updateMany({belong_type:"all"},{$set:{belong_id:"BELONG_ALL"}})
-	db.getCollection("wiki_doc").find({belong_type:"all"})
-	*/
-	/* find  find  find  find  find  find  find  find  find  find  find  */
 	/**
 	 *
-	 *     无 desc markdown
-	 * detail才单独加载
+	 * 带单，无markdown detail
 	 *
 	 * @param {any} [params={}]
 	 * @returns
 	 *
 	 * @memberOf ModelWiki
 	 */
+	/* @typescriptDeclare (parems:{belong_type?:string,belong_id?:string,select?:string})=>Promise<any> */
 	menu(params = {}) {
 		const select =
 			params.select ||
