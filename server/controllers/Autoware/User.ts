@@ -127,7 +127,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						const response = xU.pick(this.$user, [
+						const response = xU._.pick(this.$user, [
 							"study",
 							"type",
 							"_id",

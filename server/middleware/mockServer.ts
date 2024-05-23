@@ -3,7 +3,7 @@ const ModelInterface = require("server/models/interface");
 const mockExtra = require("../../common/mock-extra");
 const { schemaValidator } = require("../../common/utils");
 const { customCookies } = require("../utils/customCookies");
-const _ = require("lodash");
+
 const Mock = require("mockjs");
 const { ObjectId } = require("mongodb");
 const { getResponseThroghProxy } = require("./requestProxy");
@@ -95,7 +95,7 @@ async function handleProxy(ctx, { domain, projectId }) {
 		if (response) {
 			body = response.body;
 			// console.log("response.body", response.body.toString('utf-8'));
-			_.each(response.headers, (value, prop) => {
+			xU._.each(response.headers, (value, prop) => {
 				/* TODO: */
 				/* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
 				if (prop === "transfer-encoding") {
@@ -356,7 +356,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			let findInterface;
 			let weight = 0;
 			/* fixed: /{xxxId} ：简直是陋习*/
-			_.some(newData, item => {
+			xU._.some(newData, item => {
 				let m = matchApi(REAL_URL_PATH, item.path);
 				console.log(item.path);
 				if (m !== false) {
@@ -404,7 +404,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		}
 
 		if (interfaceData?.isProxy || ctx.headers["yapi-run-test"]) {
-			const env = _.find(project.env, i => {
+			const env = xU._.find(project.env, i => {
 				try {
 					const id = ObjectId(i._id).toString();
 					return id === interfaceData.witchEnv;
@@ -442,7 +442,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 					// 处理 format-data
 
 					if (
-						_.isString(ctx.request.header["content-type"]) &&
+						xU._.isString(ctx.request.header["content-type"]) &&
 						ctx.request.header["content-type"].indexOf("multipart/form-data") >
 							-1
 					) {
@@ -539,7 +539,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 					);
 					responseByMock = getJsonFn.call(null);
 					A_TIPS = `使用备份的JSON数据`;
-				} else if (_.isPlainObject(context.mockJson)) {
+				} else if (xU._.isPlainObject(context.mockJson)) {
 					responseByMock = context.mockJson;
 				}
 			} catch (error) {

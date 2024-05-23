@@ -14,7 +14,7 @@ const middlewareCORS = () => {
 					ctx.headers.origin || ctx.headers.referer || ctx.host
 				).toLowerCase();
 
-				const inCorsWhiteList = _.some(
+				const inCorsWhiteList = xU._.some(
 					yapi_configs.cors.allow,
 					allow => ~url.indexOf(String(allow).toLowerCase())
 				);

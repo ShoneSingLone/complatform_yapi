@@ -1,4 +1,3 @@
-const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const { parseToken } = require("../utils/token");
 const { customCookies } = require("../utils/customCookies");
@@ -241,7 +240,8 @@ class ControllerBase {
 					// 建立项目的人
 					return "owner";
 				}
-				let memberData = _.find(projectData.members, m => {
+
+				let memberData = xU._.find(projectData.members, m => {
 					if (m && m.uid === this.getUid()) {
 						return true;
 					}
@@ -268,7 +268,7 @@ class ControllerBase {
 					return "owner";
 				}
 
-				let groupMemberData = _.find(groupData.members, m => {
+				let groupMemberData = xU._.find(groupData.members, m => {
 					if (m.uid === this.getUid()) {
 						return true;
 					}

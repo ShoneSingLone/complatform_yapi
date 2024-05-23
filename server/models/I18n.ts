@@ -1,4 +1,3 @@
-const _ = require("lodash");
 const { diff } = require("jsondiffpatch");
 const ModelBase = require("server/models/base");
 
@@ -34,7 +33,7 @@ class ModelI18n extends ModelBase {
 			.exec();
 	}
 	keyValue(condition = {}) {
-		if (_.isArray(condition?.ids)) {
+		if (xU._.isArray(condition?.ids)) {
 			const ids = condition.ids;
 			delete condition.ids;
 			condition._id = {
@@ -65,7 +64,12 @@ class ModelI18n extends ModelBase {
 				if (existedRecord?._id) {
 					const diffRes = diff(
 						record,
-						_.pick(existedRecord, ["key", "isRectified", "desc", "valueArray"])
+						xU._.pick(existedRecord, [
+							"key",
+							"isRectified",
+							"desc",
+							"valueArray"
+						])
 					);
 					if (diffRes) {
 						different.push({ existedRecord, diffRes });

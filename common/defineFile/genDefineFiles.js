@@ -10,10 +10,46 @@ const BABEL_PARSER = require("@babel/parser");
 
 	const types = [];
 
-	(function () {
+	await (async function () {
 		/* xU */
-		const xU = require("../../server/utils/xU.ts");
-		const subTypes = _.map(xU, (fn, prop) => {
+		const doc = await fs.promises.readFile(
+			path.resolve(__dirname, "../../server/utils/xU.ts"),
+			"utf8"
+		);
+		var ast = await BABEL_PARSER.parse(doc, {
+			// 指定代码类型，可以是 'script' 或 'module'
+			sourceType: "script"
+		});
+		await fs.promises.writeFile("./ast.json", JSON.stringify(ast, null, 2));
+		traverse(ast, {
+			Identifier(path) {
+				if (("找到变量", path.node.name === "handleBasepath")) {
+					console.log("找到变量", path.node.name === "handleBasepath");
+				}
+			}
+			// NewExpression: NewExpressionPath => {
+			// 	const { scope, parentPath, state, node, parent } = NewExpressionPath;
+			// 	if (node?.callee?.name == "Proxy") {
+			// 		if (parent?.id?.name === 'xU') {
+			// 			debugger;
+			// 			console.log("🚀 ~  scope, parentPath, state, node :", scope, parentPath, state, node);
+			// 		}
+			// 	} else {
+			// 		console.log("parent?.left?.object?.name", parent?.left?.object?.name);
+			// 	}
+			// 	// console.log("🚀 ~ ClassDeclaration:", AssignmentExpressionPath);
+			// 	// 对找到的 ClassDeclaration 进行单独的遍历
+			// }
+			// AssignmentExpression: AssignmentExpressionPath => {
+			// 	const { scope, parentPath, state, node } = AssignmentExpressionPath;
+			// 	console.log("AssignmentExpressionPath.node.left.object.name", AssignmentExpressionPath?.node?.left?.object?.name || JSON.stringify(node, null, 2));
+			// 	// console.log("🚀 ~ ClassDeclaration:", AssignmentExpressionPath);
+			// 	// 对找到的 ClassDeclaration 进行单独的遍历
+			// }
+		});
+
+		const subTypes = _.map(Object.keys(xU), prop => {
+			const fn = xU[prop];
 			let type = typeof fn;
 			if (type === "function") {
 				type = `Function`;
@@ -22,8 +58,8 @@ const BABEL_PARSER = require("@babel/parser");
 		}).join("\n");
 
 		types.push(`export type t_xU = LoDashStatic & {
-            ${subTypes}
-        };`);
+		    ${subTypes}
+		};`);
 	})();
 
 	await (async function () {

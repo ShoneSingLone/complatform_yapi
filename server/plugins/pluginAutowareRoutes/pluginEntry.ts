@@ -5,13 +5,6 @@ const RouteMap = new Map();
 /* isHideInSwagger */
 /* auth */
 
-/* 便捷使用schema */
-xU.schema = schema => ({ $ref: `#/definitions/${schema}` });
-xU.swagger_id = desc => ({
-	description: desc,
-	type: "string"
-});
-
 function getRoute(url, method) {
 	const urlObj = RouteMap.get(url);
 	if (urlObj) {
@@ -64,15 +57,45 @@ function appAddRoutes(app, routes) {
 					await vm.init(ctx);
 					/* TODO: 权限控制  */
 					if (vm.$auth || auth) {
-						vm.ctx.payload = xU.merge(
+						/* TODO:数据校验 */
+						vm.ctx.payload = xU._.merge(
 							{},
 							ctx.params || {},
 							ctx.query || {},
 							ctx.request.body || {}
 						);
+
+						const { request } = route;
+						if (request) {
+							xU._.each(request, query => {
+								xU._.each(query, (fieldInfo, field) => {
+									const { default: defaultValue, required, type } = fieldInfo;
+									const fieldValue = ctx.payload[field];
+									if (required) {
+										if (!xU.isInput(fieldValue)) {
+											if (defaultValue) {
+												ctx.payload[field] = defaultValue;
+											} else {
+												ctx.body = xU.$response(null, 500, `${field} required`);
+											}
+										}
+									}
+
+									if (xU.isInput(fieldValue)) {
+										if (type === "number") {
+											ctx.payload[field] = Number(fieldValue);
+										} else if (type === "string") {
+											ctx.payload[field] = String(fieldValue);
+										} else if (type === "array") {
+										}
+									}
+								});
+							});
+						}
+
 						xU.applog.info(
 							ctx.path,
-							xU.omit(vm.ctx.payload, ["_yapi_token", "_yapi_uid"])
+							xU._.omit(vm.ctx.payload, ["_yapi_token", "_yapi_uid"])
 						);
 						/* TODO: 参数校验 根据route的schema校验 */
 						/* let validResult = xU.validateParams(inst.schemaMap[action], ctx.params); */

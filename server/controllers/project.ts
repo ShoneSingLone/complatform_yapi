@@ -1,6 +1,5 @@
 const ModelProject = require("server/models/project");
 
-const _ = require("lodash");
 const ControllerBase = require("./base");
 const { getToken } = require("../utils/token");
 const sha = require("sha.js");

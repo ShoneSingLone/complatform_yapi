@@ -5,7 +5,7 @@ const ModelInterfaceCase = require("server/models/interfaceCase");
 const ModelFollow = require("../models/follow");
 const ModelGroup = require("server/models/group");
 const ModelProject = require("server/models/project");
-const _ = require("lodash");
+
 const url = require("url");
 const ControllerBase = require("./base");
 const jsondiffpatch = require("jsondiffpatch");
@@ -187,7 +187,7 @@ class ControllerInterface extends ControllerBase {
 			) {
 				tags.forEach(tag => {
 					if (
-						!_.find(tagsInProject, item => {
+						!xU._.find(tagsInProject, item => {
 							return item.name === tag;
 						})
 					) {
@@ -638,7 +638,7 @@ class ControllerInterface extends ControllerBase {
 		let required = ctx.request.body.required;
 
 		let res = xU.schemaToJson(schema, {
-			alwaysFakeOptionals: _.isUndefined(required) ? true : required
+			alwaysFakeOptionals: xU._.isUndefined(required) ? true : required
 		});
 		// console.log('res',res)
 		return (ctx.body = res);

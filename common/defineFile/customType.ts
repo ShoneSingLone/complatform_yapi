@@ -1,6 +1,9 @@
 import { LoDashStatic } from "lodash";
 export type t_xU = LoDashStatic & {
-	handleBasepath: Function;
+	fs: object;
+	path: object;
+	MAP_ORM: object;
+	var: object;
 	TARGET_PREFIX: string;
 	applog: object;
 	mail: object;
@@ -39,7 +42,12 @@ export type t_xU = LoDashStatic & {
 	createWebAPIRequest: Function;
 	storageCreator: Function;
 	dayjs: Function;
+	handleBasepath: Function;
+	isInput: Function;
+	isSame: Function;
+	autowareController: Function;
 	$hashCode: Function;
+	DbConnection: object;
 };
 
 export type t_orm = {
@@ -185,7 +193,17 @@ export type t_orm = {
 
 		findAll: () => Promise<any>;
 
-		search: () => Promise<any>;
+		/**
+	 * @description
+	 *
+	 * @param {any} condition
+	 * @returns
+	 *
+	 * @memberOf ModelResource
+	 
+*/
+
+		search: (condition: object, orderBy: object) => Promise<any>;
 	};
 	project: {
 		getName: () => Promise<any>;

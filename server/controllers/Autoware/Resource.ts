@@ -130,7 +130,7 @@ module.exports = {
 						await xU.fs.promises.unlink(sourcePath);
 						const wikiInfo = {
 							name: file.name,
-							path: xU.last(String(targetPath).split(xU.var.RESOURCE_ASSETS)),
+							path: xU._.last(String(targetPath).split(xU.var.RESOURCE_ASSETS)),
 							type: file.type,
 							useFor: useFor,
 							size: file.size,
@@ -254,7 +254,7 @@ module.exports = {
 					try {
 						if (this.$user?.role === "admin") {
 							let { path: pathArray } = ctx.payload;
-							pathArray = xU.isArray(pathArray) ? pathArray : [];
+							pathArray = xU._.isArray(pathArray) ? pathArray : [];
 
 							if (pathArray[0] === "/") {
 								throw new Error("auth");
@@ -266,13 +266,13 @@ module.exports = {
 							let dirlsArray = await fs.promises.readdir(targetPath);
 
 							let dirOrFileArray = await Promise.all(
-								xU.map(dirlsArray, dirname =>
+								xU._.map(dirlsArray, dirname =>
 									asyncResolvePathFileOrDir(dirname, targetPath, pathArray)
 								)
 							);
 
 							ctx.body = xU.$response(
-								xU.filter(dirOrFileArray, item => item?.type)
+								xU._.filter(dirOrFileArray, item => item?.type)
 							);
 						} else {
 							throw new Error("auth");
@@ -547,7 +547,7 @@ module.exports = {
 					query: {
 						file_id: {
 							required: true,
-							type: "int",
+							type: "number",
 							default: 0,
 							description: "目录id"
 						},
@@ -565,7 +565,7 @@ module.exports = {
 						},
 						isdir: {
 							required: false,
-							type: "int",
+							type: "number",
 							default: 2,
 							enum: [0, 1, 2],
 							description: "是否为目录"
@@ -573,20 +573,35 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					const { file_id, orderby, type, isdir } = ctx.payload;
+					let { file_id, orderby, type, isdir } = ctx.payload;
+					isdir = isdir || 2;
 					const user_id = this.$uid;
 
-					let where = {
-						user_id,
-						file_id
-					};
+					const sort = {};
+					if (orderby) {
+						sort[orderby] = xU.var.DESC;
+					}
 
+					let condition = [{ user_id }, { file_id }];
+					/* 如果不是查全部,可以模糊查询 */
 					if (type && type !== "all") {
+						condition = [
+							{ user_id: new RegExp(user_id, "i") },
+							{ file_id: new RegExp(file_id, "i") }
+						];
 					}
 
 					if (isdir != 2) {
-						where.isdir = isdir;
+						condition.push({ isdir });
 					}
+
+					const res = await orm.Resource.search(
+						{
+							$and: condition
+						},
+						sort
+					);
+					ctx.body = xU.$response(res);
 				}
 			}
 		}

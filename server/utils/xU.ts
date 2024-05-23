@@ -1,8 +1,8 @@
+const _ = require("lodash");
 const CryptoJS = require("crypto-js");
 const dayjs = require("dayjs");
 const sha1 = require("sha1");
 const json5 = require("json5");
-const _ = require("lodash");
 const Ajv = require("ajv");
 const Mock = require("mockjs");
 const sandboxFn = require("./sandbox");
@@ -108,7 +108,7 @@ const applog = {
 	info(...msg) {
 		log(msg, "info");
 	},
-	error(msg, payload) {
+	error(msg, payload = "") {
 		console.log(payload);
 		log(msg, "error");
 	},
@@ -116,277 +116,6 @@ const applog = {
 		log(msg, "warn");
 	}
 };
-
-/**
- * @type {object} any
- */
-const xU = new Proxy(
-	{
-		_,
-		fs,
-		path,
-		MAP_ORM,
-		var: {
-			PRIVATE: "private",
-			ALL: "all",
-			GROUP: "group",
-			PROJECT: "project",
-			APP_ROOT_DIR,
-			APP_ROOT_SERVER_DIR,
-			UPLOADS: "uploads",
-			RESOURCE_ASSETS: "RESOURCE_ASSETS",
-			INDEX_FILE: "index.html",
-			PAGE_LIMIT: 10, // 默认每页展示10条数据
-			NAME_LIMIT: 100, // 限制名称的字符长度(中文算两个长度)
-			HTTP_METHOD: {
-				GET: {
-					request_body: false,
-					default_tab: "query"
-				},
-				POST: {
-					request_body: true,
-					default_tab: "body"
-				},
-				PUT: {
-					request_body: true,
-					default_tab: "body"
-				},
-				DELETE: {
-					request_body: true,
-					default_tab: "body"
-				},
-				HEAD: {
-					request_body: false,
-					default_tab: "query"
-				},
-				OPTIONS: {
-					request_body: false,
-					default_tab: "query"
-				},
-				PATCH: {
-					request_body: true,
-					default_tab: "body"
-				}
-			},
-			PROJECT_COLOR: {
-				blue: "#2395f1",
-				green: "#00a854",
-				yellow: "#ffbf00",
-				red: "#f56a00",
-				pink: "#f5317f",
-				cyan: "#00a2ae",
-				gray: "#bfbfbf",
-				purple: "#7265e6"
-			},
-			PROJECT_ICON: [
-				"code-o",
-				"swap",
-				"clock-circle-o",
-				"unlock",
-				"calendar",
-				"play-circle-o",
-				"file-text",
-				"desktop",
-				"hdd",
-				"appstore-o",
-				"line-chart",
-				"mail",
-				"mobile",
-				"notification",
-				"picture",
-				"poweroff",
-				"search",
-				"setting",
-				"share-alt",
-				"shopping-cart",
-				"tag-o",
-				"video-camera",
-				"cloud-o",
-				"star-o",
-				"environment-o",
-				"camera-o",
-				"team",
-				"customer-service",
-				"pay-circle-o",
-				"rocket",
-				"database",
-				"tool",
-				"wifi",
-				"idcard",
-				"medicine-box",
-				"coffee",
-				"safety",
-				"global",
-				"api",
-				"fork",
-				"android-o",
-				"apple-o"
-			],
-			HTTP_REQUEST_HEADER: [
-				"Accept",
-				"Accept-Charset",
-				"Accept-Encoding",
-				"Accept-Language",
-				"Accept-Datetime",
-				"Authorization",
-				"Cache-Control",
-				"Connection",
-				"Cookie",
-				"Content-Disposition",
-				"Content-Length",
-				"Content-MD5",
-				"Content-Type",
-				"Date",
-				"Expect",
-				"From",
-				"Host",
-				"If-Match",
-				"If-Modified-Since",
-				"If-None-Match",
-				"If-Range",
-				"If-Unmodified-Since",
-				"Max-Forwards",
-				"Origin",
-				"Pragma",
-				"Proxy-Authorization",
-				"Range",
-				"Referer",
-				"TE",
-				"User-Agent",
-				"Upgrade",
-				"Via",
-				"Warning",
-				"X-Requested-With",
-				"DNT",
-				"X-Forwarded-For",
-				"X-Forwarded-Host",
-				"X-Forwarded-Proto",
-				"Front-End-Https",
-				"X-Http-Method-Override",
-				"X-ATT-DeviceId",
-				"X-Wap-Profile",
-				"Proxy-Connection",
-				"X-UIDH",
-				"X-Csrf-Token"
-			],
-			METHOD_COLOR: {
-				post: {
-					bac: "#d2eafb",
-					color: "#108ee9"
-				},
-				get: {
-					bac: "#cfefdf",
-					color: "#00a854"
-				},
-				put: {
-					bac: "#fff3cf",
-					color: "#ffbf00"
-				},
-				delete: {
-					bac: "#fcdbd9",
-					color: "#f04134"
-				},
-				head: {
-					bac: "#fff3cf",
-					color: "#ffbf00"
-				},
-				patch: {
-					bac: "#fff3cf",
-					color: "#ffbf00"
-				},
-				options: {
-					bac: "#fff3cf",
-					color: "#ffbf00"
-				}
-			},
-			MOCK_SOURCE: [
-				{ name: "字符串", mock: "@string" },
-				{ name: "自然数", mock: "@natural" },
-				{ name: "浮点数", mock: "@float" },
-				{ name: "字符", mock: "@character" },
-				{ name: "布尔", mock: "@boolean" },
-				{ name: "url", mock: "@url" },
-				{ name: "域名", mock: "@domain" },
-				{ name: "ip地址", mock: "@ip" },
-				{ name: "id", mock: "@id" },
-				{ name: "guid", mock: "@guid" },
-				{ name: "当前时间", mock: "@now" },
-				{ name: "时间戳", mock: "@timestamp" },
-				{ name: "日期", mock: "@date" },
-				{ name: "时间", mock: "@time" },
-				{ name: "日期时间", mock: "@datetime" },
-				{ name: "图片连接", mock: "@image" },
-				{ name: "图片data", mock: "@imageData" },
-				{ name: "颜色", mock: "@color" },
-				{ name: "颜色hex", mock: "@hex" },
-				{ name: "颜色rgba", mock: "@rgba" },
-				{ name: "颜色rgb", mock: "@rgb" },
-				{ name: "颜色hsl", mock: "@hsl" },
-				{ name: "整数", mock: "@integer" },
-				{ name: "email", mock: "@email" },
-				{ name: "大段文本", mock: "@paragraph" },
-				{ name: "句子", mock: "@sentence" },
-				{ name: "单词", mock: "@word" },
-				{ name: "大段中文文本", mock: "@cparagraph" },
-				{ name: "中文标题", mock: "@ctitle" },
-				{ name: "标题", mock: "@title" },
-				{ name: "姓名", mock: "@name" },
-				{ name: "中文姓名", mock: "@cname" },
-				{ name: "中文姓", mock: "@cfirst" },
-				{ name: "中文名", mock: "@clast" },
-				{ name: "英文姓", mock: "@first" },
-				{ name: "英文名", mock: "@last" },
-				{ name: "中文句子", mock: "@csentence" },
-				{ name: "中文词组", mock: "@cword" },
-				{ name: "地址", mock: "@region" },
-				{ name: "省份", mock: "@province" },
-				{ name: "城市", mock: "@city" },
-				{ name: "地区", mock: "@county" },
-				{ name: "转换为大写", mock: "@upper" },
-				{ name: "转换为小写", mock: "@lower" },
-				{ name: "挑选（枚举）", mock: "@pick" },
-				{ name: "打乱数组", mock: "@shuffle" },
-				{ name: "协议", mock: "@protocol" }
-			],
-			IP_REGEXP:
-				/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/,
-			docHref: {
-				adv_mock_case:
-					"https://hellosean1025.github.io/yapi/documents/mock.html",
-				adv_mock_script:
-					"https://hellosean1025.github.io/yapi/documents/adv_mock.html"
-			}
-		},
-		isSame(a, b) {
-			return String(a) === String(b);
-		},
-		autowareController(Controller, info) {
-			_.each(info, (value, key) => {
-				Controller[key] = value;
-			});
-			return Controller;
-		}
-	},
-	{
-		get(obj, prop) {
-			if (_[prop]) {
-				return _[prop];
-			}
-			if (exports[prop]) {
-				return exports[prop];
-			}
-			return obj[prop];
-		},
-		set(obj, prop, val) {
-			if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-				throw new Error(`重复设置 xU ${prop} `);
-			} else {
-				obj[prop] = val;
-				return true;
-			}
-		}
-	}
-);
 
 jsf.extend("mock", function () {
 	return {
@@ -415,7 +144,7 @@ function schemaToJson(schema, options = {}) {
 	return result;
 }
 
-function $response(data, errcode, message) {
+function $response(data, errcode = 0, message = "") {
 	return {
 		errcode: errcode || 0,
 		message: message || "",
@@ -599,7 +328,7 @@ function filterRes(list, rules) {
 
 function handleVarPath(pathname, params) {
 	function insertParams(name) {
-		if (!_.find(params, { name: name })) {
+		if (!xU._.find(params, { name: name })) {
 			params.push({
 				name: name,
 				desc: ""
@@ -854,7 +583,7 @@ function handleParamsValue(params, val) {
 	params.forEach((item, index) => {
 		if (!value[item.name] || typeof value[item.name] !== "object") return null;
 		params[index].value = value[item.name].value;
-		if (!_.isUndefined(value[item.name].enable)) {
+		if (!xU._.isUndefined(value[item.name].enable)) {
 			params[index].enable = value[item.name].enable;
 		}
 	});
@@ -990,8 +719,7 @@ ${JSON.stringify(schema, null, 2)}`;
 
 async function getUserdata(uid, role) {
 	role = role || "dev";
-	let userInst = orm.user;
-	let userData = await userInst.findById(uid);
+	let userData = await orm.user.findById(uid);
 	if (!userData) {
 		return null;
 	}
@@ -1065,71 +793,361 @@ function createWebAPIRequest(ops) {
 		http_client.end();
 	});
 }
-exports.handleBasepath = function (basepath) {
-	if (!basepath) {
-		return "";
+
+const STATIC_VAR = {
+	DESC: -1,
+	PRIVATE: "private",
+	ALL: "all",
+	GROUP: "group",
+	PROJECT: "project",
+	APP_ROOT_DIR,
+	APP_ROOT_SERVER_DIR,
+	UPLOADS: "uploads",
+	RESOURCE_ASSETS: "RESOURCE_ASSETS",
+	INDEX_FILE: "index.html",
+	PAGE_LIMIT: 10, // 默认每页展示10条数据
+	NAME_LIMIT: 100, // 限制名称的字符长度(中文算两个长度)
+	HTTP_METHOD: {
+		GET: {
+			request_body: false,
+			default_tab: "query"
+		},
+		POST: {
+			request_body: true,
+			default_tab: "body"
+		},
+		PUT: {
+			request_body: true,
+			default_tab: "body"
+		},
+		DELETE: {
+			request_body: true,
+			default_tab: "body"
+		},
+		HEAD: {
+			request_body: false,
+			default_tab: "query"
+		},
+		OPTIONS: {
+			request_body: false,
+			default_tab: "query"
+		},
+		PATCH: {
+			request_body: true,
+			default_tab: "body"
+		}
+	},
+	PROJECT_COLOR: {
+		blue: "#2395f1",
+		green: "#00a854",
+		yellow: "#ffbf00",
+		red: "#f56a00",
+		pink: "#f5317f",
+		cyan: "#00a2ae",
+		gray: "#bfbfbf",
+		purple: "#7265e6"
+	},
+	PROJECT_ICON: [
+		"code-o",
+		"swap",
+		"clock-circle-o",
+		"unlock",
+		"calendar",
+		"play-circle-o",
+		"file-text",
+		"desktop",
+		"hdd",
+		"appstore-o",
+		"line-chart",
+		"mail",
+		"mobile",
+		"notification",
+		"picture",
+		"poweroff",
+		"search",
+		"setting",
+		"share-alt",
+		"shopping-cart",
+		"tag-o",
+		"video-camera",
+		"cloud-o",
+		"star-o",
+		"environment-o",
+		"camera-o",
+		"team",
+		"customer-service",
+		"pay-circle-o",
+		"rocket",
+		"database",
+		"tool",
+		"wifi",
+		"idcard",
+		"medicine-box",
+		"coffee",
+		"safety",
+		"global",
+		"api",
+		"fork",
+		"android-o",
+		"apple-o"
+	],
+	HTTP_REQUEST_HEADER: [
+		"Accept",
+		"Accept-Charset",
+		"Accept-Encoding",
+		"Accept-Language",
+		"Accept-Datetime",
+		"Authorization",
+		"Cache-Control",
+		"Connection",
+		"Cookie",
+		"Content-Disposition",
+		"Content-Length",
+		"Content-MD5",
+		"Content-Type",
+		"Date",
+		"Expect",
+		"From",
+		"Host",
+		"If-Match",
+		"If-Modified-Since",
+		"If-None-Match",
+		"If-Range",
+		"If-Unmodified-Since",
+		"Max-Forwards",
+		"Origin",
+		"Pragma",
+		"Proxy-Authorization",
+		"Range",
+		"Referer",
+		"TE",
+		"User-Agent",
+		"Upgrade",
+		"Via",
+		"Warning",
+		"X-Requested-With",
+		"DNT",
+		"X-Forwarded-For",
+		"X-Forwarded-Host",
+		"X-Forwarded-Proto",
+		"Front-End-Https",
+		"X-Http-Method-Override",
+		"X-ATT-DeviceId",
+		"X-Wap-Profile",
+		"Proxy-Connection",
+		"X-UIDH",
+		"X-Csrf-Token"
+	],
+	METHOD_COLOR: {
+		post: {
+			bac: "#d2eafb",
+			color: "#108ee9"
+		},
+		get: {
+			bac: "#cfefdf",
+			color: "#00a854"
+		},
+		put: {
+			bac: "#fff3cf",
+			color: "#ffbf00"
+		},
+		delete: {
+			bac: "#fcdbd9",
+			color: "#f04134"
+		},
+		head: {
+			bac: "#fff3cf",
+			color: "#ffbf00"
+		},
+		patch: {
+			bac: "#fff3cf",
+			color: "#ffbf00"
+		},
+		options: {
+			bac: "#fff3cf",
+			color: "#ffbf00"
+		}
+	},
+	MOCK_SOURCE: [
+		{ name: "字符串", mock: "@string" },
+		{ name: "自然数", mock: "@natural" },
+		{ name: "浮点数", mock: "@float" },
+		{ name: "字符", mock: "@character" },
+		{ name: "布尔", mock: "@boolean" },
+		{ name: "url", mock: "@url" },
+		{ name: "域名", mock: "@domain" },
+		{ name: "ip地址", mock: "@ip" },
+		{ name: "id", mock: "@id" },
+		{ name: "guid", mock: "@guid" },
+		{ name: "当前时间", mock: "@now" },
+		{ name: "时间戳", mock: "@timestamp" },
+		{ name: "日期", mock: "@date" },
+		{ name: "时间", mock: "@time" },
+		{ name: "日期时间", mock: "@datetime" },
+		{ name: "图片连接", mock: "@image" },
+		{ name: "图片data", mock: "@imageData" },
+		{ name: "颜色", mock: "@color" },
+		{ name: "颜色hex", mock: "@hex" },
+		{ name: "颜色rgba", mock: "@rgba" },
+		{ name: "颜色rgb", mock: "@rgb" },
+		{ name: "颜色hsl", mock: "@hsl" },
+		{ name: "整数", mock: "@integer" },
+		{ name: "email", mock: "@email" },
+		{ name: "大段文本", mock: "@paragraph" },
+		{ name: "句子", mock: "@sentence" },
+		{ name: "单词", mock: "@word" },
+		{ name: "大段中文文本", mock: "@cparagraph" },
+		{ name: "中文标题", mock: "@ctitle" },
+		{ name: "标题", mock: "@title" },
+		{ name: "姓名", mock: "@name" },
+		{ name: "中文姓名", mock: "@cname" },
+		{ name: "中文姓", mock: "@cfirst" },
+		{ name: "中文名", mock: "@clast" },
+		{ name: "英文姓", mock: "@first" },
+		{ name: "英文名", mock: "@last" },
+		{ name: "中文句子", mock: "@csentence" },
+		{ name: "中文词组", mock: "@cword" },
+		{ name: "地址", mock: "@region" },
+		{ name: "省份", mock: "@province" },
+		{ name: "城市", mock: "@city" },
+		{ name: "地区", mock: "@county" },
+		{ name: "转换为大写", mock: "@upper" },
+		{ name: "转换为小写", mock: "@lower" },
+		{ name: "挑选（枚举）", mock: "@pick" },
+		{ name: "打乱数组", mock: "@shuffle" },
+		{ name: "协议", mock: "@protocol" }
+	],
+	IP_REGEXP:
+		/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/,
+	docHref: {
+		adv_mock_case: "https://hellosean1025.github.io/yapi/documents/mock.html",
+		adv_mock_script:
+			"https://hellosean1025.github.io/yapi/documents/adv_mock.html"
 	}
-	if (basepath === "/") {
-		return "";
-	}
-	if (basepath[0] !== "/") {
-		basepath = "/" + basepath;
-	}
-	if (basepath[basepath.length - 1] === "/") {
-		basepath = basepath.substr(0, basepath.length - 1);
-	}
-	if (!/^\/[a-zA-Z0-9\-\/\._]+$/.test(basepath)) {
-		return false;
-	}
-	return basepath;
 };
 
-exports.TARGET_PREFIX = xU.path.join(
-	xU.var.APP_ROOT_SERVER_DIR,
-	xU.var.UPLOADS,
-	xU.var.RESOURCE_ASSETS
+const xU = new Proxy(
+	{
+		_,
+		fs,
+		path,
+		MAP_ORM,
+		var: STATIC_VAR,
+		TARGET_PREFIX: path.join(
+			STATIC_VAR.APP_ROOT_SERVER_DIR,
+			STATIC_VAR.UPLOADS,
+			STATIC_VAR.RESOURCE_ASSETS
+		),
+		applog,
+		mail,
+		$orm,
+		schemaToJson,
+		$response,
+		log: log,
+		fileExist,
+		time,
+		fieldSelect,
+		rand,
+		json_parse,
+		randStr,
+		getIp,
+		$saltIt,
+		expireDate,
+		expireDay,
+		sendMail,
+		validateSearchKeyword,
+		filterRes,
+		handleVarPath,
+		verifyPath,
+		sandbox,
+		trim,
+		ltrim,
+		rtrim,
+		ensureParamsType,
+		validateParams,
+		saveLog,
+		createAction,
+		handleParamsValue,
+		getCaseList,
+		runCaseScript,
+		getUserdata,
+		handleMockScript,
+		createWebAPIRequest,
+		storageCreator,
+		dayjs,
+		handleBasepath(basepath) {
+			if (!basepath) {
+				return "";
+			}
+			if (basepath === "/") {
+				return "";
+			}
+			if (basepath[0] !== "/") {
+				basepath = "/" + basepath;
+			}
+			if (basepath[basepath.length - 1] === "/") {
+				basepath = basepath.substr(0, basepath.length - 1);
+			}
+			if (!/^\/[a-zA-Z0-9\-\/\._]+$/.test(basepath)) {
+				return false;
+			}
+			return basepath;
+		},
+		isInput(val) {
+			if (val) {
+				return true;
+			}
+			if (val === "") {
+				return true;
+			}
+			if (val === false) {
+				return true;
+			}
+			if (val === null) {
+				return true;
+			}
+			if (val === 0) {
+				return true;
+			}
+			return false;
+		},
+		isSame(a, b) {
+			return String(a) === String(b);
+		},
+		autowareController(Controller, info) {
+			xU._.each(info, (value, key) => {
+				Controller[key] = value;
+			});
+			return Controller;
+		},
+		$hashCode(Salt) {
+			/* https://cryptojs.gitbook.io/docs/ */
+			const hash = CryptoJS.SHA256(Salt + Date.now());
+			return hash.toString(CryptoJS.enc.Hex);
+		},
+		/* 便捷使用schema auto entry router */
+		schema: schema => ({ $ref: `#/definitions/${schema}` }),
+		swagger_id: desc => ({
+			description: desc,
+			type: "string"
+		})
+	},
+	{
+		get(_xU, prop) {
+			if (_xU[prop]) {
+				return _xU[prop];
+			}
+			return _xU[prop];
+		},
+		set(_xU, prop, val) {
+			if (Object.prototype.hasOwnProperty.call(_xU, prop)) {
+				throw new Error(`重复设置 xU ${prop} `);
+			} else {
+				_xU[prop] = val;
+				return true;
+			}
+		}
+	}
 );
-exports.applog = applog;
-exports.mail = mail;
-exports.$orm = $orm;
-exports.schemaToJson = schemaToJson;
-exports.$response = $response;
-exports.log = log;
-exports.fileExist = fileExist;
-exports.time = time;
-exports.fieldSelect = fieldSelect;
-exports.rand = rand;
-exports.json_parse = json_parse;
-exports.randStr = randStr;
-exports.getIp = getIp;
-exports.$saltIt = $saltIt;
-exports.expireDate = expireDate;
-exports.expireDay = expireDay;
-exports.sendMail = sendMail;
-exports.validateSearchKeyword = validateSearchKeyword;
-exports.filterRes = filterRes;
-exports.handleVarPath = handleVarPath;
-exports.verifyPath = verifyPath;
-exports.sandbox = sandbox;
-exports.trim = trim;
-exports.ltrim = ltrim;
-exports.rtrim = rtrim;
-exports.ensureParamsType = ensureParamsType;
-exports.validateParams = validateParams;
-exports.saveLog = saveLog;
-exports.createAction = createAction;
-exports.handleParamsValue = handleParamsValue;
-exports.getCaseList = getCaseList;
-exports.runCaseScript = runCaseScript;
-exports.getUserdata = getUserdata;
-exports.handleMockScript = handleMockScript;
-exports.createWebAPIRequest = createWebAPIRequest;
-exports.storageCreator = storageCreator;
-exports.dayjs = dayjs;
-exports.$hashCode = function $hashCode(Salt) {
-	/* https://cryptojs.gitbook.io/docs/ */
-	const hash = CryptoJS.SHA256(Salt + Date.now());
-	return hash.toString(CryptoJS.enc.Hex);
-};
 
 global.xU = xU;

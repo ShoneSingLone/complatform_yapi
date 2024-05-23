@@ -1,4 +1,3 @@
-const _ = require("lodash");
 const axios = require("axios");
 const https = require("https");
 async function checkProjectName(name, groupId) {
@@ -339,7 +338,7 @@ module.exports = {
 								}
 							}
 
-							let f = _.find(follow, { projectid: item.id });
+							let f = xU._.find(follow, { projectid: item.id });
 							// 排序：收藏的项目放前面
 							if (f) {
 								item.follow = true;
@@ -356,7 +355,7 @@ module.exports = {
 							item.follow = true;
 							return item;
 						});
-						project_list = _.uniq(follow.concat(result), item => item._id);
+						project_list = xU._.uniq(follow.concat(result), item => item._id);
 					}
 
 					ctx.body = xU.$response({

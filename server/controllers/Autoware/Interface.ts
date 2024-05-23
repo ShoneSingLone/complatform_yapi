@@ -3,7 +3,6 @@ const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
 const mergeJsonSchema = require("../../../common/mergeJsonSchema");
 const { parse: urlParse } = require("url");
-const _ = require("lodash");
 
 function diffHTML(html) {
 	if (html.length === 0) {
@@ -33,7 +32,7 @@ async function autoAddTag(params) {
 		) {
 			tags.forEach(tag => {
 				if (
-					!_.find(tagsInProject, item => {
+					!xU._.find(tagsInProject, item => {
 						return item.name === tag;
 					})
 				) {
@@ -148,7 +147,7 @@ async function hander_interface_add(ctx) {
 	payload.query_path = {};
 	payload.query_path.path = http_path.pathname;
 	payload.query_path.params = [];
-	_.each(http_path.query, (value, name) => {
+	xU._.each(http_path.query, (value, name) => {
 		payload.query_path.params.push({
 			name: name,
 			value: value
@@ -590,7 +589,7 @@ module.exports = {
 				async handler(ctx) {
 					let params = ctx.payload;
 
-					if (!_.isUndefined(params.method)) {
+					if (!xU._.isUndefined(params.method)) {
 						params.method = params.method || "GET";
 						params.method = params.method.toUpperCase();
 					}
@@ -667,7 +666,7 @@ module.exports = {
 						}
 					}
 
-					if (!_.isUndefined(data.req_params)) {
+					if (!xU._.isUndefined(data.req_params)) {
 						if (Array.isArray(data.req_params) && data.req_params.length > 0) {
 							data.type = "var";
 						} else {

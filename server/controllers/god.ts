@@ -1,5 +1,5 @@
 const ControllerBase = require("server/controllers/base");
-const _ = require("lodash");
+
 const fs = require("fs");
 
 class ControllerGod extends ControllerBase {
@@ -32,7 +32,7 @@ class ControllerGod extends ControllerBase {
 
 const STRATEGY = {
 	async upsertOneI18nRecord(ctx) {
-		const params = _.omit(ctx.params, ["incantations"]);
+		const params = xU._.omit(ctx.params, ["incantations"]);
 		let res;
 		if (params._id) {
 			res = await orm.I18n.up(params._id, params);
@@ -48,7 +48,7 @@ const STRATEGY = {
 	async upsertI18nRecordMany(ctx) {
 		return {
 			msg: await Promise.all(
-				_.map(_.omit(ctx.params, ["incantations"]), async row => {
+				xU._.map(xU._.omit(ctx.params, ["incantations"]), async row => {
 					if (row._id) {
 						return orm.I18n.up(row._id, row);
 					} else {
@@ -93,7 +93,7 @@ const STRATEGY = {
 				}
 
 				const i18nObj = InnerScope(content);
-				const newRecords = _.map(i18nObj, (valueArray, key) => {
+				const newRecords = xU._.map(i18nObj, (valueArray, key) => {
 					return {
 						key,
 						isRectified: false,

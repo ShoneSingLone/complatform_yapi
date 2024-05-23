@@ -1,7 +1,5 @@
 const ControllerBase = require("./base");
 
-const _ = require("lodash");
-
 const ROLE_NAME = {
 	owner: "组长",
 	dev: "开发者",
@@ -299,7 +297,7 @@ class groupController extends ControllerBase {
 				groupByProject.forEach(_data => {
 					const _temp = [...groupIds, ...newGroupIds];
 					/* 不在已确认的分组中则添加进来 */
-					if (!_.find(_temp, id => id === _data.group_id)) {
+					if (!xU._.find(_temp, id => id === _data.group_id)) {
 						newGroupIds.push(_data.group_id);
 					}
 				});

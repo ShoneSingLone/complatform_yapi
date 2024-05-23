@@ -55,21 +55,17 @@ class ModelResource extends ModelBase {
 			.exec();
 	}
 
-	search(keyword) {
-		return this.model
-			.find(
-				{
-					$or: [
-						{ email: new RegExp(keyword, "i") },
-						{ username: new RegExp(keyword, "i") }
-					]
-				},
-				{
-					passsalt: 0,
-					password: 0
-				}
-			)
-			.limit(10);
+	/**
+	 * @description
+	 *
+	 * @param {any} condition
+	 * @returns
+	 *
+	 * @memberOf ModelResource
+	 */
+	/* @typescriptDeclare (condition:object,orderBy:object)=> Promise<any> */
+	search(condition, orderBy) {
+		return this.model.find(condition).sort(orderBy).exec();
 	}
 }
 

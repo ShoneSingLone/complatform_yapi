@@ -1,5 +1,3 @@
-const _ = require("lodash");
-
 const middlewareWhenDev = () => async (ctx, next) => {
 	ctx.callme = ctx.callme || ["middlewareWhenDev"];
 	xU.applog.info(ctx.path, ctx.callme);
@@ -16,14 +14,14 @@ const middlewareWhenDev = () => async (ctx, next) => {
 		const start = Date.now();
 		await next();
 		const yapiTips = {
-			..._.pick(ctx, ["headers", "method", "url"])
+			...xU._.pick(ctx, ["headers", "method", "url"])
 		};
 
 		function flattenDeep(obj, target) {
-			return _.reduce(
+			return xU._.reduce(
 				obj,
 				(target, value, key) => {
-					if (_.isPlainObject(value)) {
+					if (xU._.isPlainObject(value)) {
 						return flattenDeep(value, target);
 					} else {
 						target[`yapi-${key}`] = value;
@@ -37,7 +35,7 @@ const middlewareWhenDev = () => async (ctx, next) => {
 		const duration = Date.now() - start;
 		xU.applog.info(ctx.path, ctx.ip, ctx.ips.join(","), `${duration}ms`);
 
-		_.each(
+		xU._.each(
 			flattenDeep(yapiTips, { "response-time": `${duration}ms` }),
 			(value, key) => {
 				ctx.set(key, value);

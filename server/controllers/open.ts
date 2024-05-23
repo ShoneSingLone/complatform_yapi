@@ -17,7 +17,7 @@ const { handleParamsValue, ArrayToObject } = require("../../common/utils");
 const renderToHtml = require("../utils/reportHtml");
 const axios = require("axios");
 const HanldeImportData = require("../../common/HandleImportData");
-const _ = require("lodash");
+
 const createContex = require("../../common/createContext");
 
 /**
@@ -227,7 +227,7 @@ class openController extends ControllerBase {
 			let projectEvn = await orm.project.getByEnv(item.project_id);
 
 			item.id = item._id;
-			let curEnvItem = _.find(curEnvList, key => {
+			let curEnvItem = xU._.find(curEnvList, key => {
 				return key.project_id == item.project_id;
 			});
 

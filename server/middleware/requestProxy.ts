@@ -110,7 +110,7 @@ exports.getResponseThroghProxy = function ({ ctx, path, host, port }) {
 						httpRequest.end(endData);
 					}
 				}
-				_.each(fileKeyArray, key => {
+				xU._.each(fileKeyArray, key => {
 					let frs = fs.createReadStream(bodyFiles[key].path);
 					frs.on("err", logError);
 					frs.on("end", handleUploadFileOnEnd);

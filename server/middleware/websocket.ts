@@ -1,5 +1,5 @@
 const ControllerBase = require("server/controllers/base");
-const _ = require("lodash");
+
 var cps = require("current-processes");
 
 const ONLINE_USERS = new Map();
@@ -60,7 +60,7 @@ const wsHandler = {
 		ONLINE_USERS.delete(vm.$uid);
 		const users = Array.from(ONLINE_USERS, ([uid, payload]) => {
 			const { currentVM: onlineVM } = payload;
-			return _.pick(onlineVM.$user, ["_id", "username", "email"]);
+			return xU._.pick(onlineVM.$user, ["_id", "username", "email"]);
 		});
 		wsHandler.toAllClient({
 			wsPayload: newWsPayload("logout", {
@@ -77,7 +77,7 @@ const wsHandler = {
 		/* 所有人（包括自己） */
 		const users = Array.from(ONLINE_USERS, ([uid, payload]) => {
 			const { currentVM: onlineVM } = payload;
-			return _.pick(onlineVM.$user, ["_id", "username", "email"]);
+			return xU._.pick(onlineVM.$user, ["_id", "username", "email"]);
 		});
 		wsHandler.toAllClient({
 			wsPayload: newWsPayload("login", {
@@ -119,12 +119,12 @@ const middlewareWebsocket = () => async (ctx, next) => {
 		/* 异步，不能用open来确定可以发消息的事件，只有通过权限校验才接受client发送的消息 */
 		if (vm.$user) {
 			console.log("ws", ctx.path, vm.$user);
-			vm.handleProcessUseage = _.debounce((err, processes) => {
+			vm.handleProcessUseage = xU._.debounce((err, processes) => {
 				try {
-					const currentProcess = _.find(processes, { pid: process.pid });
+					const currentProcess = xU._.find(processes, { pid: process.pid });
 					ctx.websocket.send(
 						newWsPayload("current-processes", {
-							info: _.pick(currentProcess, ["cpu", "mem"])
+							info: xU._.pick(currentProcess, ["cpu", "mem"])
 						})
 					);
 				} catch (error) {}

@@ -4,8 +4,6 @@ const ModelInterface = require("server/models/interface");
 const ModelProject = require("server/models/project");
 const ControllerBase = require("./base");
 
-const _ = require("lodash");
-
 class interfaceColController extends ControllerBase {
 	constructor(ctx) {
 		super(ctx);
