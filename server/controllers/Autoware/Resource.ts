@@ -687,6 +687,106 @@ module.exports = {
 					}
 				}
 			}
+		},
+		"/resource/cloud_disk_shard_upload": {
+			post: {
+				summary: "分片上传单个文件",
+				description: "文件保存在服务器上",
+				request: {
+					formData: {
+						file: { description: "上传的文件", required: true, type: "file" },
+						fileHash: {
+							description: "文件名称",
+							required: true,
+							type: "string"
+						},
+						chunkIndex: {
+							description: "分片序号",
+							required: true,
+							type: "number"
+						},
+						chunckSize: {
+							description: "分片大小",
+							required: true,
+							type: "string"
+						},
+						chunckTotal: {
+							description: "总分片数",
+							required: true,
+							type: "string"
+						}
+					}
+				},
+				response: {
+					200: {
+						description: "成功",
+						schema: xU.schema("UploadSuccess")
+					}
+				},
+				async handler(ctx) {
+					debugger;
+					try {
+						const {
+							fields: { file, fileHash, chunkIndex, chunckSize, chunckTotal }
+						} = ctx.payload;
+						const sourcePath = file.path;
+						let targetPath = path.resolve(
+							TARGET_PREFIX,
+							"user",
+							this.$uid,
+							fileHash
+						);
+						await _n.asyncSafeMakeDir(targetPath);
+						const basename = path.basename(sourcePath);
+						targetPath = path.resolve(targetPath, basename);
+						await xU.fs.promises.copyFile(sourcePath, targetPath);
+						await xU.fs.promises.unlink(sourcePath);
+
+						const res = await orm.ResourceChunck.save({
+							fileHash,
+							chunkIndex,
+							chunckSize,
+							chunckTotal
+						});
+
+						ctx.body = xU.$response(res);
+					} catch (e) {
+						xU.applog.error(e.message);
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		"/resource/cloud_disk_check_chuncks": {
+			post: {
+				summary: "上传单个文件",
+				description: "文件保存在服务器上",
+				request: {
+					body: {
+						md5: {
+							description: "文件hash",
+							required: true,
+							type: "string"
+						}
+					}
+				},
+				response: {
+					200: {
+						description: "成功",
+						schema: xU.schema("UploadSuccess")
+					}
+				},
+				async handler(ctx) {
+					try {
+						const { md5 } = ctx.payload;
+						const res = await orm.ResourceChunck.findByMd5(md5);
+						ctx.body = xU.$response(res);
+					} catch (e) {
+						xU.applog.error(e.message);
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
 		}
 	}
 };
