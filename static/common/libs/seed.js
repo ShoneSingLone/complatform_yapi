@@ -430,6 +430,7 @@
 		await Promise.all([$appendScript("/common/libs/dayjs.js"), $appendScript("/common/libs/vue.js")]);
 
 		(function () {
+			Vue.prototype._ = _;
 			Vue.prototype.$X_APP_THEME = $("html").attr("data-theme");
 		})();
 

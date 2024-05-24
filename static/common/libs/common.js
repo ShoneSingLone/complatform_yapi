@@ -6,6 +6,20 @@
 	}
 
 	/**
+	 * 该函数用于将字节大小转换为可读性更好的格式，如KB、MB、GB等
+	 * @param {*} bytes 
+	 * @returns 
+	 */
+	/* @typescriptDeclare (bytes:number)=>string */
+	_.$bytesToSize = function (bytes) {
+		if (!bytes) return "0 KB";
+		var k = 1024;
+		var sizes = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+		var i = Math.floor(Math.log(bytes) / Math.log(k));
+		return (bytes / Math.pow(k, i)).toPrecision(3) + " " + sizes[i - 1];
+	};
+
+	/**
 	 * requestAnimationFrame Throttle
 	 */
 	_.$rafThrottle = function (fn) {
@@ -975,7 +989,7 @@
 					})
 					.filter(row => !!row);
 				console.log(isLoading ? "open x-loading" : "close x-loading", msg.join("\n=>"));
-			} catch (error) {}
+			} catch (error) { }
 		}
 	};
 
@@ -1077,7 +1091,7 @@
 					} else if (_msg?.message) {
 						msg = _msg.message;
 					}
-				} catch (error) {}
+				} catch (error) { }
 			}
 
 			return _.$notify.error({

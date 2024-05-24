@@ -72,11 +72,11 @@ export default async function () {
 							const { data: allUser } = await _api.yapi.userSearch({});
 							vm.allUser = allUser;
 
-							/* TODO: 跳转到首页 或者note应用*/
-							if (vm.$route.path === "/home") {
+							/* TODO: 跳转到首页 或者应用*/
+							if (["/resource", "/transfer", "/me"].includes(vm.$route.path)) {
 								return;
 							} else {
-								vm.$router.push({ path: "/home" });
+								vm.$router.push({ path: "/resource" });
 							}
 						}
 						return true;
@@ -91,20 +91,13 @@ export default async function () {
 			);
 
 			return {
-				currentTabName: "首页",
+				homeListSearchKey: "",
+				currentTabName: "资源",
 				homeListDrawer: false,
 				/* ****************** */
 				isMobile: /Mobile/gi.test(window.navigator.userAgent),
 				useMobileView: true,
 				BASE_URL: window.__BASE_URL || window.location.origin,
-				expandedKeys: {
-					group: []
-				},
-				allUser: [],
-				menu: {},
-				globalSize: "",
-				isFooterFold: false,
-				urlHash: window.location.hash,
 				user: {
 					add_time: "",
 					email: "",
@@ -121,19 +114,12 @@ export default async function () {
 					loginState: LOADING_STATUS,
 					breadcrumb: [],
 					studyTip: 0,
-					imageUrl: ""
+					imageUrl: "",
+					cloudDiskSizeUsed: 0,
+					cloudDiskSizeTotal: 0
 				},
-				news: {
-					newsData: {
-						list: [],
-						total: 0
-					},
-					curpage: 1
-				},
-				/* group */
-				groupList: [],
-				groupMemberList: [],
-				groupProjectList: []
+				listSortBy: "name",
+				selectedItems: []
 			};
 		},
 		methods: {
@@ -223,37 +209,6 @@ export default async function () {
 					});
 				}
 			},
-			logout({ state }) {
-				$H.post(
-					"/logout",
-					{},
-					{
-						token: true
-					}
-				);
-				state.user = null;
-				state.token = null;
-				uni.removeStorageSync("user");
-				uni.removeStorageSync("token");
-
-				uni.reLaunch({
-					url: "/pages/login/login"
-				});
-			},
-			login({ state }, user) {
-				state.user = user;
-				state.token = user.token;
-
-				uni.setStorageSync("user", JSON.stringify(user));
-				uni.setStorageSync("token", user.token);
-			},
-			initUser({ state }) {
-				let user = uni.getStorageSync("user");
-				if (user) {
-					state.user = JSON.parse(user);
-					state.token = state.user.token;
-				}
-			},
 			updateSize({ state }, e) {
 				state.user.total_size = e.total_size;
 				state.user.used_size = e.used_size;
@@ -317,9 +272,21 @@ export default async function () {
 		},
 		computed: {},
 		watch: {
-			"$route.path": {
+			currentTabName: {
 				immediate: true,
 				handler() {
+					const PATH_MAP = {
+						资源: "/resource",
+						传输: "/transfer",
+						我的: "/me"
+					};
+					const path = PATH_MAP[this.currentTabName];
+					this.$router.push(path);
+				}
+			},
+			"$route.path": {
+				immediate: true,
+				handler(path) {
 					this.refreshUserInfo().then(res => {
 						console.log("🚀 ~ this.refreshUserInfo ~ res:", res);
 					});
@@ -332,4 +299,8 @@ export default async function () {
 }
 </script>
 
-<style lang="less"></style>
+<style lang="less">
+* {
+	font-size: 14px;
+}
+</style>

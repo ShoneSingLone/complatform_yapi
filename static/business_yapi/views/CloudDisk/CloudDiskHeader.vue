@@ -1,7 +1,11 @@
 <template>
 	<header class="AppLayoutHeader flex middle">
 		<span class="flex middle pointer"> {{ APP.currentTabName }} </span>
-		<xGap f />
+		<xGap r />
+		<xInput placeholder="搜索网盘内容" v-model="APP.homeListSearchKey" class="flex1" clearable>
+			<i slot="prefix" class="el-icon-search"></i>
+		</xInput>
+		<xGap r />
 		<xBtn circle icon="el-icon-plus" @click="APP.homeListDrawer = true" />
 		<xBtn circle icon="el-icon-more" @click="APP.homeListDrawer = true" style="transform: rotate(90deg)" />
 		<xGap r />

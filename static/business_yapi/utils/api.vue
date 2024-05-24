@@ -86,6 +86,11 @@ export default async function () {
 						data
 					});
 				},
+				getResourceCloudDiskFileList(data) {
+					return _.$ajax.get("/api/resource/cloud_disk_file_list", {
+						data
+					});
+				},
 				apiInterfaceListMenu(project_id) {
 					return _.$ajax.get("/api/interface/list_menu", {
 						data: { project_id }

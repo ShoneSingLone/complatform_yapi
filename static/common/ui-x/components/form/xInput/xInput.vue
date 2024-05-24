@@ -31,7 +31,7 @@
 				<i class="el-input__icon" v-if="prefixIcon" :class="prefixIcon"> </i>
 			</span>
 			<!-- 后置内容 -->
-			<span class="el-input__suffix" v-if="getSuffixVisible()">
+			<span class="el-input__suffix flex middle" v-if="getSuffixVisible()">
 				<span class="el-input__suffix-inner">
 					<template v-if="!showClear || !showPwdVisible || !isWordLimitVisible">
 						<slot name="suffix"></slot>

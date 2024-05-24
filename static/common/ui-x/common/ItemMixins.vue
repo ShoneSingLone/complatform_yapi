@@ -1,7 +1,7 @@
 <script lang="ts">
 export default async function () {
 	if (!Vue._itemMixins) {
-		const EVENT_ARRAY = ["change", "blur", "input", "focus"];
+		const EVENT_ARRAY = ["change", "blur", "input", "focus", "keyup", "keydown"];
 		var HIDDEN_STYLE =
 			"\n  height:0 !important;\n  visibility:hidden !important;\n  overflow:hidden !important;\n  position:absolute !important;\n  z-index:-1000 !important;\n  top:0 !important;\n  right:0 !important\n";
 		var CONTEXT_STYLE = [

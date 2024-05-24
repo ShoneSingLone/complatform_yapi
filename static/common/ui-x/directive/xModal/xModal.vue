@@ -31,7 +31,7 @@
 			display: flex;
 			flex-flow: column nowrap;
 			width: 100vw;
-			height: 100vh;
+			height: 100%;
 		}
 
 		> .el-dialog__header {

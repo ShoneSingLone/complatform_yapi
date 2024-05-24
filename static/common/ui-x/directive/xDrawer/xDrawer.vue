@@ -199,7 +199,6 @@ export default async function () {
 		},
 		mounted() {
 			if (this.visible) {
-				debugger;
 				this.rendered = true;
 				this.open();
 				if (this.appendToBody) {
