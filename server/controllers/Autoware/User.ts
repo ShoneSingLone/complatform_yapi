@@ -127,17 +127,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						const response = xU._.pick(this.$user, [
-							"study",
-							"type",
-							"_id",
-							"username",
-							"email",
-							"role",
-							"add_time",
-							"up_time",
-							"__v"
-						]);
+						const response = xU._.pick(this.$user, xU.var.pickUserInfo);
 						/* 只暴露必要的信息 */
 						ctx.body = xU.$response(response);
 					} catch (e) {

@@ -545,7 +545,7 @@ module.exports = {
 				description: "文件保存在服务器上",
 				request: {
 					query: {
-						file_id: {
+						fileId: {
 							required: true,
 							type: "number",
 							default: 0,
@@ -568,30 +568,34 @@ module.exports = {
 							type: "number",
 							default: 2,
 							enum: [0, 1, 2],
-							description: "是否为目录"
+							description: `是否为目录  	
+							- FILE_NOT_DIR: 0,
+							- FILE_DIR: 1,
+							- FILE_ALL: 2,
+						`
 						}
 					}
 				},
 				async handler(ctx) {
-					let { file_id, orderby, type, isdir } = ctx.payload;
-					isdir = isdir || 2;
-					const user_id = this.$uid;
+					let { fileId, orderby, type, isdir } = ctx.payload;
+					isdir = isdir || xU.var.FILE_ALL;
+					const uploadBy = this.$uid;
 
 					const sort = {};
 					if (orderby) {
 						sort[orderby] = xU.var.DESC;
 					}
 
-					let condition = [{ user_id }, { file_id }];
+					let condition = [{ uploadBy }, { fileId }];
 					/* 如果不是查全部,可以模糊查询 */
 					if (type && type !== "all") {
 						condition = [
-							{ user_id: new RegExp(user_id, "i") },
-							{ file_id: new RegExp(file_id, "i") }
+							{ uploadBy: new RegExp(uploadBy, "i") },
+							{ fileId: new RegExp(fileId, "i") }
 						];
 					}
 
-					if (isdir != 2) {
+					if (isdir != xU.var.FILE_ALL) {
 						condition.push({ isdir });
 					}
 
@@ -602,6 +606,85 @@ module.exports = {
 						sort
 					);
 					ctx.body = xU.$response(res);
+				}
+			}
+		},
+		"/resource/cloud_disk_upload": {
+			post: {
+				summary: "上传单个文件",
+				description: "文件保存在服务器上",
+				request: {
+					query: {
+						fileId: {
+							description: "目录id",
+							required: true,
+							default: 0,
+							type: "number"
+						}
+					},
+					formData: {
+						file: {
+							description: "上传的文件",
+							required: true,
+							type: "file"
+						}
+					}
+				},
+				response: {
+					200: {
+						description: "成功",
+						schema: xU.schema("UploadSuccess")
+					}
+				},
+				async handler(ctx) {
+					try {
+						const { files, fields, fileId } = ctx.payload;
+						if (fileId > 0) {
+							if (!(await xU.isCloudDiskDirExist(fileId, this.$uid))) {
+								return (ctx.body = xU.$response(null, 402, "目录不存在"));
+							}
+						}
+						const { file } = files;
+						const sourcePath = file.path;
+						let targetPath = path.resolve(TARGET_PREFIX, "user", this.$uid);
+						await _n.asyncSafeMakeDir(targetPath);
+						const basename = path.basename(sourcePath);
+						targetPath = path.resolve(targetPath, basename);
+						await xU.fs.promises.copyFile(sourcePath, targetPath);
+						await xU.fs.promises.unlink(sourcePath);
+
+						const resourceInfo = {
+							name: file.name,
+							ext: file.mimeType || xU.path.extname(file.name),
+							path: xU._.last(String(targetPath).split(xU.var.RESOURCE_ASSETS)),
+							type: file.type,
+							size: file.size,
+							uploadBy: this.$uid,
+							add_time: xU.time(),
+							isdir: xU.var.FILE_NOT_DIR
+						};
+						const res = await orm.Resource.save(resourceInfo);
+
+						let cloudDiskSizeUsed = this.$user.cloudDiskSizeUsed || 0;
+						cloudDiskSizeUsed += file.size;
+
+						let userData = {
+							cloudDiskSizeUsed,
+							cloudDiskSizeTotal: await xU.getSystemDiskSize(),
+							up_time: xU.time()
+						};
+						await orm.user.update(this.$uid, userData);
+
+						const currentUserStatus = await orm.user.findById(this.$uid);
+
+						ctx.body = xU.$response({
+							_id: res._id,
+							status: xU._.pick(currentUserStatus, xU.var.pickUserInfo)
+						});
+					} catch (e) {
+						xU.applog.error(e.message);
+						ctx.body = xU.$response(null, 402, e.message);
+					}
 				}
 			}
 		}

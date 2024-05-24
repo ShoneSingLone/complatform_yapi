@@ -7,7 +7,13 @@ class ModelUser extends ModelBase {
 
 	getSchema() {
 		return {
+			/* 用户名 */
 			username: {
+				type: String,
+				required: true
+			},
+			/* 昵称 */
+			nickname: {
 				type: String,
 				required: true
 			},
@@ -19,13 +25,27 @@ class ModelUser extends ModelBase {
 				type: String,
 				required: true
 			},
+			/* 手机 */
+			phone: {
+				type: String
+			},
 			passsalt: String,
 			study: { type: Boolean, default: false },
 			role: String,
 			add_time: Number,
 			up_time: Number,
 			//site用户是网站注册用户, third是第三方登录过来的用户
-			type: { type: String, enum: ["site", "third"], default: "site" }
+			type: { type: String, enum: ["site", "third"], default: "site" },
+			/* 网盘总大小，单位:kb */
+			cloudDiskSizeTotal: {
+				type: Number,
+				default: 0
+			},
+			/* 网盘已使用，单位:kb */
+			cloudDiskSizeUsed: {
+				type: Number,
+				default: 0
+			}
 		};
 	}
 
@@ -88,6 +108,15 @@ class ModelUser extends ModelBase {
 		});
 	}
 
+	/**
+	 * @description
+	 *
+	 * @param {any} id
+	 * @param {any} data
+	 * @returns
+	 *
+	 * @memberOf ModelUser
+	 */
 	update(id, data) {
 		return this.model.update(
 			{

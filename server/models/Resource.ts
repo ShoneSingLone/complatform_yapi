@@ -7,7 +7,18 @@ class ModelResource extends ModelBase {
 
 	getSchema() {
 		return {
+			/* 文件名 */
 			name: String,
+			/* ext */
+			ext: String,
+			/* 文件MD5 */
+			md5: String,
+			/* 目录id */
+			fileId: {
+				type: String,
+				default: 0
+			},
+			/* 资源真实url */
 			path: {
 				type: String,
 				required: true
@@ -16,14 +27,23 @@ class ModelResource extends ModelBase {
 				type: String,
 				required: true
 			},
-			size: Number,
+			/* 文件大小 kb */
+			size: { type: Number, default: 0 },
+			/* 是否为文件夹 */
+			isdir: {
+				type: Number,
+				default: 0,
+				enum: [0, 1, 2]
+			},
 			desc: String,
+			/* 用户id */
 			uploadBy: String,
 			add_time: Number,
 			basecode: String
 		};
 	}
 
+	/* @typescriptDeclare (data:object)=> Promise<any> */
 	save(data) {
 		let modelVM = new this.model(data);
 		return modelVM.save();
@@ -63,8 +83,8 @@ class ModelResource extends ModelBase {
 	 *
 	 * @memberOf ModelResource
 	 */
-	/* @typescriptDeclare (condition:object,orderBy:object)=> Promise<any> */
-	search(condition, orderBy) {
+	/* @typescriptDeclare (condition:object,orderBy?:object)=> Promise<any> */
+	search(condition, orderBy = {}) {
 		return this.model.find(condition).sort(orderBy).exec();
 	}
 }

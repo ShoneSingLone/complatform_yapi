@@ -142,8 +142,9 @@
 		"@babel/parser": "^7.23.6",
 		"@babel/preset-env": "^7.23.7",
 		"@babel/traverse": "^7.23.7",
-		"@types/node": "^20.3.3",
 		"@types/lodash": "^4.14.202",
+		"@types/node": "^20.3.3",
+		"diskinfo": "^0.0.3",
 		"typescript": "^5.3.3"
 	}
 }

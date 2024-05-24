@@ -1,5 +1,5 @@
 {
 	"search.exclude": {
-		"**/static": true
+		// "**/static": true
 	}
 }
