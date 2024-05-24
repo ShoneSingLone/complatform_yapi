@@ -24,6 +24,8 @@ module.exports = async function (app) {
 				} else {
 					return `business_${dirname}/${dirname}.html`;
 				}
+			} else if (dirname === "cloud-disk") {
+				return `business_yapi/${dirname}.html`;
 			} else if (!dirname && !entryName) {
 				ctx.status = 301;
 				ctx.redirect("/yapi");
