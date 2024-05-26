@@ -13,12 +13,12 @@ class ModelResource extends ModelBase {
 			ext: String,
 			/* 文件MD5 */
 			md5: String,
-			/* 目录id */
+			/* 目录id 对应的就是resource 的_id 类似pid的意思，通常fileId对应的类型是文件夹*/
 			fileId: {
 				type: String,
 				default: 0
 			},
-			/* 资源真实url */
+			/* 资源存放在服务器的真实url */
 			path: {
 				type: String,
 				required: true
@@ -52,6 +52,15 @@ class ModelResource extends ModelBase {
 	update(_id, newResource) {
 		return this.model.updateOne({ _id }, newResource);
 	}
+	/* @typescriptDeclare (...args:any)=> Promise<any> */
+	async updateOneByMd5(md5, newResource) {
+		const findFileInResource = await this.findByMd5(md5);
+		if (findFileInResource) {
+			return this.model.update({ md5 }, newResource);
+		} else {
+			return this.save(newResource);
+		}
+	}
 
 	getResourceById(_id) {
 		return this.model
@@ -67,11 +76,18 @@ class ModelResource extends ModelBase {
 			})
 			.exec();
 	}
+	findByMd5(md5) {
+		return this.model
+			.findOne({
+				md5
+			})
+			.exec();
+	}
 
 	findAll() {
 		return this.model
 			.find()
-			.select("_id name path type size desc uploadBy add_time basecode")
+			.select("_id name type size desc uploadBy add_time basecode")
 			.exec();
 	}
 

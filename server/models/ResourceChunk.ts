@@ -1,20 +1,22 @@
 const ModelBase = require("server/models/base");
 
-class ResourceChunck extends ModelBase {
+class ResourceChunk extends ModelBase {
 	getName() {
-		return "ResourceChunck";
+		return "ResourceChunk";
 	}
 
 	getSchema() {
 		return {
 			/* 文件名称 */
 			fileHash: { type: String },
+			/* 分片名称 */
+			chunkName: { type: String },
 			/* 分片序号 */
 			chunkIndex: { type: Number },
 			/* 分片大小 */
-			chunckSize: { type: String },
+			chunkSize: { type: Number },
 			/* 总分片数 */
-			chunckTotal: { type: String }
+			chunkTotal: { type: Number }
 		};
 	}
 
@@ -24,22 +26,24 @@ class ResourceChunck extends ModelBase {
 		return modelVM.save();
 	}
 
+	delChunksByFileHash(fileHash) {
+		return this.model.remove({
+			fileHash
+		});
+	}
 	/**
-	 * @description 根据md5查询分片信息
-	 *
+	 * 根据md5查询分片信息
 	 * @param {any} md5
 	 * @returns
-	 *
-	 * @memberOf ResourceChunck
 	 */
 	/* @typescriptDeclare (md5: string)=> Promise<any> */
 	findByMd5(fileHash) {
 		return this.model
 			.find({ fileHash })
-			.sort({ chunkIndex: -1 })
-			.select("_id chunckHash chunkIndex chunckSize fileHash chunckTotal")
+			.sort({ chunkIndex: 1 })
+			.select("_id chunkName chunkIndex chunkSize fileHash chunkTotal")
 			.exec();
 	}
 }
 
-module.exports = ResourceChunck;
+module.exports = ResourceChunk;
