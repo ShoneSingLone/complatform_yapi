@@ -1,9 +1,8 @@
-import { t_orm } from "../common/defineFile/customType";
-import { LoDashStatic } from "lodash";
+import { t_orm, t_xU } from "../common/defineFile/customType";
 
 declare global {
 	var orm: t_orm;
-	var xU: LoDashStatic;
+	var xU: t_xU;
 
 	var yapi_configs: {
 		RESOURCE_ASSETS_REMOTE: string;

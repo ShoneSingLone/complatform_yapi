@@ -194,20 +194,29 @@ export type t_orm = {
 
 		get: () => Promise<any>;
 	};
+<<<<<<< HEAD
 	ResourceChunck: {
+=======
+	ResourceChunk: {
+>>>>>>> c76691b67313a2d5c4a3685428f87ed9c972e7c2
 		getName: () => Promise<any>;
 
 		getSchema: () => Promise<any>;
 
 		save: (data: any) => Promise<any>;
 
+<<<<<<< HEAD
 		/**
 	 * @description 根据md5查询分片信息
 	 *
+=======
+		delChunksByFileHash: () => Promise<any>;
+
+		/**
+	 * 根据md5查询分片信息
+>>>>>>> c76691b67313a2d5c4a3685428f87ed9c972e7c2
 	 * @param {any} md5
 	 * @returns
-	 *
-	 * @memberOf ResourceChunck
 	 
 */
 
@@ -222,12 +231,25 @@ export type t_orm = {
 
 		update: () => Promise<any>;
 
+<<<<<<< HEAD
 		getResourceById: () => Promise<any>;
 
 		getResourceByName: () => Promise<any>;
 
 		findAll: () => Promise<any>;
 
+=======
+		updateOneByMd5: (...args: any) => Promise<any>;
+
+		getResourceById: () => Promise<any>;
+
+		getResourceByName: () => Promise<any>;
+
+		findByMd5: () => Promise<any>;
+
+		findAll: () => Promise<any>;
+
+>>>>>>> c76691b67313a2d5c4a3685428f87ed9c972e7c2
 		/**
 	 * @description
 	 *

@@ -694,6 +694,12 @@ module.exports = {
 				description: "文件保存在服务器上",
 				request: {
 					formData: {
+						fileId: {
+							required: true,
+							type: "number",
+							default: 0,
+							description: "目录id"
+						},
 						file: { description: "上传的文件", required: true, type: "file" },
 						fileHash: {
 							description: "文件名称",
@@ -705,15 +711,15 @@ module.exports = {
 							required: true,
 							type: "number"
 						},
-						chunckSize: {
+						chunkSize: {
 							description: "分片大小",
 							required: true,
-							type: "string"
+							type: "number"
 						},
-						chunckTotal: {
+						chunkTotal: {
 							description: "总分片数",
 							required: true,
-							type: "string"
+							type: "number"
 						}
 					}
 				},
@@ -724,31 +730,96 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					debugger;
 					try {
 						const {
-							fields: { file, fileHash, chunkIndex, chunckSize, chunckTotal }
+							files: { file },
+							fields: { fileHash, chunkIndex, chunkSize, chunkTotal, fileId }
 						} = ctx.payload;
-						const sourcePath = file.path;
-						let targetPath = path.resolve(
+
+						const { path: filePathStamp, name: fileName } = file;
+
+						let dirPathChuncks = path.resolve(
 							TARGET_PREFIX,
 							"user",
 							this.$uid,
 							fileHash
 						);
-						await _n.asyncSafeMakeDir(targetPath);
-						const basename = path.basename(sourcePath);
-						targetPath = path.resolve(targetPath, basename);
-						await xU.fs.promises.copyFile(sourcePath, targetPath);
-						await xU.fs.promises.unlink(sourcePath);
+						await _n.asyncSafeMakeDir(dirPathChuncks);
+						const chunkName = path.basename(filePathStamp);
+						const filePathChunck = path.resolve(dirPathChuncks, chunkName);
+						await xU.fs.promises.copyFile(filePathStamp, filePathChunck);
+						await xU.fs.promises.unlink(filePathStamp);
 
-						const res = await orm.ResourceChunck.save({
+						const res = await orm.ResourceChunk.save({
 							fileHash,
 							chunkIndex,
-							chunckSize,
-							chunckTotal
+							chunkSize,
+							chunkTotal,
+							chunkName
 						});
 
+						const chunks = await orm.ResourceChunk.findByMd5(fileHash);
+						if (String(chunks.length) === String(chunkTotal)) {
+							try {
+								/* 可以合并chuncks */
+								//创建合并后的文件夹
+								let file_merged_path = path.join(
+									TARGET_PREFIX,
+									"user",
+									this.$uid,
+									"merged"
+								);
+								await _n.asyncSafeMakeDir(file_merged_path);
+								file_merged_path = path.resolve(file_merged_path, fileName);
+								//创建储存文件
+								fs.writeFileSync(file_merged_path, "");
+
+								for (let i = 0; i < chunks.length; i++) {
+									const { chunkName } = chunks[i];
+									const currentChunckPath = path.resolve(
+										dirPathChuncks,
+										chunkName
+									);
+									const chunck = fs.readFileSync(currentChunckPath);
+									//写入当前切片
+									fs.appendFileSync(file_merged_path, chunck);
+								}
+
+								const resSaveResource = await orm.Resource.updateOneByMd5(
+									fileHash,
+									{
+										name: fileName,
+										ext: file.mimeType || xU.path.extname(fileName),
+										size: xU._.reduce(
+											chunks,
+											(total, chunk) => {
+												total += Number(chunk.chunkSize);
+												return total;
+											},
+											0
+										),
+										type: getType(file_merged_path),
+										useFor: "CloudDisk",
+										md5: fileHash,
+										path: xU._.last(
+											String(file_merged_path).split(xU.var.RESOURCE_ASSETS)
+										),
+										uploadBy: this.$uid,
+										add_time: xU.time(),
+										isdir: 0,
+										fileId
+									}
+								);
+
+								/*合成成功后清理 */
+								await orm.ResourceChunk.delChunksByFileHash(fileHash);
+								await _n.asyncRmDir(dirPathChuncks);
+								ctx.body = xU.$response(resSaveResource);
+							} catch (error) {
+								ctx.body = xU.$response(null, 500, error.message);
+								return;
+							}
+						}
 						ctx.body = xU.$response(res);
 					} catch (e) {
 						xU.applog.error(e.message);
@@ -757,10 +828,12 @@ module.exports = {
 				}
 			}
 		},
-		"/resource/cloud_disk_check_chuncks": {
+		"/resource/cloud_disk_check_chunks": {
 			post: {
-				summary: "上传单个文件",
-				description: "文件保存在服务器上",
+				summary: "检查是否上传过文件",
+				description: `response:
+				- file:已经上传完成(已合并chunk);
+				- chunks：已上传的片段数组;`,
 				request: {
 					body: {
 						md5: {
@@ -779,8 +852,19 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						const { md5 } = ctx.payload;
-						const res = await orm.ResourceChunck.findByMd5(md5);
-						ctx.body = xU.$response(res);
+						const findFileInResource = await orm.Resource.findByMd5(md5);
+						if (findFileInResource) {
+							ctx.body = xU.$response({
+								chunks: [],
+								file: true
+							});
+							return;
+						}
+						const chunks = await orm.ResourceChunk.findByMd5(md5);
+						ctx.body = xU.$response({
+							chunks,
+							file: false
+						});
 					} catch (e) {
 						xU.applog.error(e.message);
 						ctx.body = xU.$response(null, 402, e.message);
