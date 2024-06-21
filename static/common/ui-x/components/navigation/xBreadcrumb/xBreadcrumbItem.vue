@@ -21,10 +21,10 @@ export default async function () {
 				separatorClass: ""
 			};
 		},
-		inject: ["elBreadcrumb"],
+		inject: ["xBreadcrumb"],
 		mounted() {
-			this.separator = this.elBreadcrumb.separator;
-			this.separatorClass = this.elBreadcrumb.separatorClass;
+			this.separator = this.xBreadcrumb.separator;
+			this.separatorClass = this.xBreadcrumb.separatorClass;
 			const link = this.$refs.link;
 			link.setAttribute("role", "link");
 			link.addEventListener("click", _ => {

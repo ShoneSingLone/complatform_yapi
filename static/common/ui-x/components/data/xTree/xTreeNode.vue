@@ -1,5 +1,11 @@
 <style lang="less">
 .xTreeNode {
+	&.is-current {
+		.el-tree-node__content {
+			background-color: var(--xTreeNode-bg-current, var(--ui-primary));
+			color: var(--xTreeNode-text-color-current, white);
+		}
+	}
 	&.dragged {
 		opacity: 0.3;
 		transition: all 0.3s ease-in-out;

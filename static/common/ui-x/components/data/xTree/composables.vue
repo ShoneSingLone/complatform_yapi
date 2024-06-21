@@ -13,9 +13,18 @@ export default async function () {
 	const ON_NODE_CONTEXTMENU = "node-contextmenu";
 
 	function useTree(props, emit, injectRootTree) {
-		const expandedKeySet = ref(new Set(props.expandedKeys));
+		const expandedKeySet = ref(new Set());
 		const currentKey = ref();
 		const tree = shallowRef();
+		watch(
+			() => props.expandedKeys,
+			expandedKeys => {
+				expandedKeySet.value = new Set(expandedKeys);
+			},
+			{
+				immediate: true
+			}
+		);
 		watch(
 			() => props.currentNodeKey,
 			key => {
@@ -169,12 +178,17 @@ export default async function () {
 		}
 		function handleNodeClick(node, e) {
 			emit(NODE_CLICK, node.data, node, e);
-			handleCurrentChange(node);
+
+			if (props.showCheckbox) {
+				if (props.checkOnClickNode && !node.disabled) {
+					toggleCheckbox(node, !isChecked(node), true);
+				}
+			} else {
+				handleCurrentChange(node);
+			}
+
 			if (props.expandOnClickNode) {
 				toggleExpand(node);
-			}
-			if (props.showCheckbox && props.checkOnClickNode && !node.disabled) {
-				toggleCheckbox(node, !isChecked(node), true);
 			}
 		}
 		function handleCurrentChange(node) {
@@ -372,7 +386,7 @@ export default async function () {
 		function getChecked(leafOnly = false) {
 			const checkedNodes = [];
 			const keys2 = [];
-			if ((tree == null ? void 0 : tree.value) && props.showCheckbox) {
+			if (tree?.value && props.showCheckbox) {
 				const { treeNodeMap } = tree.value;
 				checkedKeysSet.value.forEach(key => {
 					const node = treeNodeMap.get(key);
@@ -390,7 +404,7 @@ export default async function () {
 		function getHalfChecked() {
 			const halfCheckedNodes = [];
 			const halfCheckedKeys = [];
-			if ((tree == null ? void 0 : tree.value) && props.showCheckbox) {
+			if (tree?.value && props.showCheckbox) {
 				const { treeNodeMap } = tree.value;
 				indeterminateKeys.value.forEach(key => {
 					const node = treeNodeMap.get(key);
@@ -411,7 +425,7 @@ export default async function () {
 			_setCheckedKeys(keys2);
 		}
 		function setChecked(key, isChecked2) {
-			if ((tree == null ? void 0 : tree.value) && props.showCheckbox) {
+			if (tree?.value && props.showCheckbox) {
 				const node = tree.value.treeNodeMap.get(key);
 				if (node) {
 					toggleCheckbox(node, isChecked2, false);
@@ -419,14 +433,19 @@ export default async function () {
 			}
 		}
 		function _setCheckedKeys(keys2) {
-			if (tree == null ? void 0 : tree.value) {
+			if (tree?.value) {
 				const { treeNodeMap } = tree.value;
 				if (props.showCheckbox && treeNodeMap && keys2) {
-					for (const key of keys2) {
-						const node = treeNodeMap.get(key);
-						if (node && !isChecked(node)) {
-							toggleCheckbox(node, true, false);
+					try {
+						for (const key of keys2) {
+							const node = treeNodeMap.get(key);
+							if (node && !isChecked(node)) {
+								toggleCheckbox(node, true, false);
+							}
 						}
+					} catch (error) {
+						// console.log(error);
+						/* TODO: */
 					}
 				}
 			}

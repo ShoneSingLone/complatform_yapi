@@ -8,7 +8,7 @@
 		<DemoAndCode title="可选项目数量的限制" path="@/views/component/form/checkbox/KeXuanXiangMuShuLiangDeXianZhi.vue" unfold />
 		<DemoAndCode title="按钮样式的多选组合" path="@/views/component/form/checkbox/AnNiuYangShiDeDuoXuanZuHe.vue" unfold />
 		<DemoAndCode title="带有边框" path="@/views/component/form/checkbox/DaiYouBianKuang.vue" unfold />
-		<xMd :md="desc" />
+		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
 
@@ -20,7 +20,7 @@ export default async function () {
 				mdTips: `## Checkbox 多选框
 一组备选项中进行多选
 `,
-				desc: `### Checkbox Attributes
+				apiString: `### Checkbox Attributes
 | 参数      | 说明    | 类型      | 可选值       | 默认值   |
 |---------- |-------- |---------- |-------------  |-------- |
 | value / v-model | 绑定值 | string / number / boolean | — | — |

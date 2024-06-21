@@ -1,14 +1,5 @@
 <template>
-	<li
-		@mouseenter="hoverItem"
-		@click.stop="selectOptionClick"
-		class="el-select-dropdown__item"
-		v-show="visible"
-		:class="{
-			selected: itemSelected,
-			'is-disabled': disabled || groupDisabled || limitReached,
-			hover: hover
-		}">
+	<li v-if="visible" @mouseenter="hoverItem" @click.stop="selectOptionClick" class="el-select-dropdown__item" :class="cptOptionClass">
 		<slot>
 			<span>{{ currentLabel }}</span>
 		</slot>
@@ -43,6 +34,14 @@ export default async function () {
 		},
 
 		computed: {
+			cptOptionClass() {
+				const { itemSelected, disabled, groupDisabled, limitReached, hover } = this;
+				return {
+					selected: itemSelected,
+					"is-disabled": disabled || groupDisabled || limitReached,
+					hover: hover
+				};
+			},
 			isObject() {
 				return Object.prototype.toString.call(this.value).toLowerCase() === "[object object]";
 			},
@@ -73,6 +72,12 @@ export default async function () {
 		},
 
 		watch: {
+			visible: {
+				immediate: true,
+				handler(val) {
+					this.$emit("visiblechange", val);
+				}
+			},
 			currentLabel() {
 				if (!this.created && !this.select.remote) this.dispatch("xSelect", "setSelected");
 			},

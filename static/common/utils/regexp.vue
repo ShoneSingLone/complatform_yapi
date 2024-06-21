@@ -59,7 +59,8 @@ export default async function () {
 			unixFilePathName: "/^(/\\w+)+(\\.\\w+)?$/",
 			winFilePathName: "/^[a-zA-Z]:(\\\\\\w+)+(\\.\\w+)?$/",
 			letterNumber: "/^[a-zA-Z0-9]+$/",
-			phoneRe: "((d{11})|^((d{7,8})|(d{4}|d{3})-(d{7,8})|(d{4}|d{3})-(d{7,8})-(d{4}|d{3}|d{2}|d{1})|(d{7,8})-(d{4}|d{3}|d{2}|d{1}))$)",
+			// phoneRe: () => /((d{11})|^((d{7,8})|(d{4}|d{3})-(d{7,8})|(d{4}|d{3})-(d{7,8})-(d{4}|d{3}|d{2}|d{1})|(d{7,8})-(d{4}|d{3}|d{2}|d{1}))$)/,
+			phoneRe: () => /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
 			macRe: "^[A-Fa-f\\d]{2}:[A-Fa-f\\d]{2}:[A-Fa-f\\d]{2}:[A-Fa-f\\d]{2}:[A-Fa-f\\d]{2}:[A-Fa-f\\d]{2}$",
 			notAllSpaceReg: "/^.*[^ ].*$/",
 			/**

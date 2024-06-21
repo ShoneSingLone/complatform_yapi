@@ -145,7 +145,9 @@ export default async function () {
 			return {
 				data: [],
 				configsTable: defTable({
+					isHideQuery: true,
 					onQuery() {
+						debugger;
 						vm.filterList();
 					},
 					data: {

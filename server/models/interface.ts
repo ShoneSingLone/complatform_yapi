@@ -94,6 +94,7 @@ class ModelInterface extends ModelBase {
 					}
 				}
 			],
+			/* 路径参数 */
 			req_params: [
 				{
 					name: String,

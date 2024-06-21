@@ -21,6 +21,7 @@ export default async function () {
 |---------------------|------------------|---------|-----------------------------|--------|
 | icon                | svg路径             | string  | — | —      |
 | img                | 图片路径             | string  | — | —      |
+| useCurrentColor                |   若为真值，会置icon的fill为currentColor          | any  | — | false   |
 `
 			};
 		}

@@ -9,6 +9,7 @@ export default async function () {
 			YapiItemProxyEnv: "@/components/YapiItemProxyEnv.vue",
 			YapiItemAvatar: "@/components/YapiItemAvatar.vue",
 			YapiItemUac: "@/components/YapiItemUac.vue",
+			YapiItemPathParams: "@/components/YapiItemPathParams.vue",
 			YapiProjectCard: "@/components/YapiProjectCard.vue",
 			YapiPlaceholderView: "@/components/YapiPlaceholderView.vue"
 		},

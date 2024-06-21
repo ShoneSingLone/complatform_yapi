@@ -24,20 +24,9 @@
 export default async function () {
 	const Popper = await _.$importVue("/common/libs/VuePopper/VuePopper.vue");
 
-	const { directive, on, off, addClass, removeClass } = (() => {
-		const on = (el, eventName, handler) => {
-			$(el).on(eventName, handler);
-		};
-		const off = (el, eventName, handler) => {
-			$(el).off(eventName, handler);
-		};
-		const addClass = (el, className) => {
-			$(el).addClass(className);
-		};
-		const removeClass = (el, className) => {
-			$(el).removeClass(className);
-		};
+	const { on, off, addClass, removeClass } = window._useXui;
 
+	const { directive } = (() => {
 		const getReference = (el, binding, vnode) => {
 			const _ref = binding.expression ? binding.value : binding.arg;
 			const popper = vnode.context.$refs[_ref];
@@ -62,11 +51,7 @@ export default async function () {
 		Vue.directive("popover", directive);
 
 		return {
-			directive,
-			on,
-			off,
-			addClass,
-			removeClass
+			directive
 		};
 	})();
 

@@ -79,10 +79,12 @@ export default async function () {
 		},
 		computed: {
 			xDialogClass() {
-				return {
-					"xDialog xDialog-wrapper": true,
-					fullscreen: this.inject_modal.dialogClass?.fullscreen
-				};
+				return [
+					"xDialog xDialog-wrapper",
+					{
+						fullscreen: this.inject_modal.dialogClass?.fullscreen
+					}
+				];
 			}
 		}
 	};
@@ -104,6 +106,8 @@ export default async function () {
 		&.fullscreen {
 			max-height: 100vh;
 			width: 100vw;
+			flex: 1;
+			height: 1px;
 		}
 
 		&.xDialog-list-view {

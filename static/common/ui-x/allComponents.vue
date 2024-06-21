@@ -20,6 +20,11 @@ export default async function () {
 		"components/base/xBtn/xColActionAndMore",
 		/*  */
 		"components/data/xMenuTree/xMenuTree",
+		/*  */
+		"components/navigation/xMenu/xMenu",
+		"components/navigation/xMenu/xMenuItem",
+		"components/navigation/xMenu/xMenuItemGroup",
+		"components/navigation/xMenu/xSubMenu",
 		"components/navigation/xTabs/mobile/xMobileTabBar",
 		"components/navigation/xTabs/xTabs",
 		"components/navigation/xTabs/xTabPane",
@@ -32,12 +37,17 @@ export default async function () {
 		"components/data/xTree/xTree",
 		"components/data/xTree/xTreeNode",
 		"components/data/xTree/xNodeContent",
+		"components/form/xAdvancedSearch/xAdvancedSearch",
 		"components/form/xInput/xInput",
 		"components/form/xInputNumber/xInputNumber",
 		"components/form/xIpAddress/xIpAddress",
 		"components/form/xAutocomplete/xAutocomplete",
 		"components/form/xAutocomplete/xAutocompleteSuggestions",
 		"components/form/xSelect/xSelect",
+		/* ******************** */
+		"components/form/xCascader/xCascader",
+		"components/form/xCascader/xCascaderPanel/xCascaderPanel",
+		/* ******************** */
 		"components/form/xSwitch/xSwitch",
 		"components/form/xRadio/xRadio",
 		"components/form/xRadio/xRadioButton",
@@ -53,6 +63,9 @@ export default async function () {
 		"components/other/xBlock/xBlock",
 		"components/other/xAffix/xAffix",
 		/*  */
+		"components/form/xDatePicker/xDatePicker",
+		"components/form/xDatePicker/xTimePicker",
+		"components/form/xDatePicker/xTimeSelect",
 		"components/form/xSelect/xSelect",
 		"components/form/xSelect/xOption",
 		"components/form/xSelect/xOptionGroup",

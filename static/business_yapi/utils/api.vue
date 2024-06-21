@@ -3,7 +3,7 @@ export default async function () {
 	if (!window._api.yapi) {
 		(function () {
 			_.$ajax.requestInjector = function (req) {
-				req.url = Vue._yapi_utils.appendToken(req.url);
+				req.url = Vue._common_utils.appendToken(req.url);
 				return req;
 			};
 			_.$ajax.responseInjector = function (response) {
@@ -23,11 +23,6 @@ export default async function () {
 			};
 
 			window._api.yapi = {
-				resourceLs(data) {
-					return _.$ajax.post("/api/resource/ls", {
-						data
-					});
-				},
 				i18nTranslate(data) {
 					return _.$ajax.post("/api/i18n/translate", {
 						data
@@ -86,9 +81,26 @@ export default async function () {
 						data
 					});
 				},
-				getResourceCloudDiskFileList(data) {
+				resourceLs(data) {
+					return _.$ajax.post("/api/resource/ls", {
+						data
+					});
+				},
+				resourceCloudDiskCheckChunks(data) {
+					return _.$ajax.post("/api/resource/cloud_disk_check_chunks", {
+						data
+					});
+				},
+				resourceCloudDiskFileList(data) {
 					return _.$ajax.get("/api/resource/cloud_disk_file_list", {
 						data
+					});
+				},
+				resourceCloudDiskShardUpload({ formData, callback }) {
+					return _.$ajax.upload({
+						url: "/api/resource/cloud_disk_shard_upload",
+						formData,
+						callback
 					});
 				},
 				apiInterfaceListMenu(project_id) {

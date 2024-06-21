@@ -9,7 +9,7 @@
 <script lang="ts">
 export default async function () {
 	return {
-		name: "ElBreadcrumb",
+		name: "xBreadcrumb",
 		props: {
 			items: {
 				type: [Array, Boolean],
@@ -26,7 +26,7 @@ export default async function () {
 		},
 		provide() {
 			return {
-				elBreadcrumb: this
+				xBreadcrumb: this
 			};
 		},
 		mounted() {

@@ -12,6 +12,9 @@
 	var isArray = Array.isArray;
 
 	function isESModule(obj) {
+		if (!obj) {
+			return false;
+		}
 		return obj.__esModule || obj[Symbol.toStringTag] === "Module";
 	}
 
@@ -765,6 +768,9 @@
 		}
 		var hasHandler_1 = {
 			has: function (target, key) {
+				if (typeof key === "symbol") {
+					return false;
+				}
 				var has = key in target;
 				var isAllowed = allowedGlobals_1(key) || (typeof key === "string" && key.charAt(0) === "_" && !(key in target.$data));
 				if (!has && !isAllowed) {
@@ -1945,6 +1951,7 @@
 				namespace = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag);
 				/* platform built-in elements平台内置元素 */
 				vnode = (function () {
+					/* 是否是原生的标签 */
 					if (config.isReservedTag(tag)) {
 						if (isDef(props) && isDef(props.nativeOn) && props.tag !== "component") {
 							warnMsgVm("The .native modifier for v-on is only valid on components but it was used on <".concat(tag, ">."), context);
@@ -2718,12 +2725,12 @@
 
 	function createAsyncPlaceholder(factory, data, context, children, tag) {
 		/* 占位 */
-		var node = h("span", { staticClass: "el-skeleton is-animated " + tag, attrs: { "data-skeleton-id": context._uid } }, [
-			h("span", {
-				staticClass: "el-skeleton__item el-skeleton__p el-skeleton__paragraph"
-			})
-		]);
-		// node = h("span", { style: "display:inline-block;width:var(--ui-one);height:var(--ui-one);" }, []);
+		var node = h("AsyncPlaceholder", {
+			tag: tag,
+			context: context,
+			data: data,
+			children: children
+		});
 		node.asyncFactory = factory;
 		node.asyncMeta = {
 			data: data,
@@ -5741,6 +5748,21 @@
 	 * to assets defined in its ancestor chain.
 	 */
 	function resolveAsset(options, type, id, warnMissing) {
+		if (["animateTransform"].includes(id)) {
+			return;
+		}
+		const getComponentFromParent = options => {
+			if (options.parent?.$options.components) {
+				res = options.parent?.$options.components[id];
+				if (res) {
+					return res;
+				}
+			}
+			if (options?.parent?.$options) {
+				return getComponentFromParent(options.parent.$options);
+			}
+		};
+
 		/* istanbul ignore if */
 		if (typeof id !== "string") {
 			return;
@@ -5756,6 +5778,11 @@
 		var res = assets[id] || assets[camelizedId] || assets[PascalCaseId];
 		if (warnMissing && !res) {
 			warnMsgVm("Failed to resolve " + type.slice(0, -1) + ": " + id);
+		}
+
+		if (!res) {
+			console.log("getComponentFromParent", id);
+			res = getComponentFromParent(options);
 		}
 		return res;
 	}
@@ -8468,7 +8495,7 @@
 			if (def.css !== false) {
 				extend(res, autoCssTransition(def.name || "v"));
 			}
-			extend(res, def);
+			res = _.merge(res, def);
 			return res;
 		} else if (typeof def === "string") {
 			return autoCssTransition(def);
@@ -12172,5 +12199,46 @@
 	Vue.prototype.broadcast = broadcast;
 	Vue.prototype.isDef = isDef;
 	Vue.prototype.$log = (...args) => console.log.apply(console, args);
+
+	Vue.AsyncPlaceholderCollection = {};
+
+	Vue.component("AsyncPlaceholder", {
+		props: ["tag", "context"],
+		setup() {
+			// const state = reactive({ count: 0 });
+			// const key = computed(() => _.$genId(`AsyncPlaceholder-${this.tag}-${state.count}`));
+			// let timer;
+			// onMounted(() => {
+			// 	Vue.AsyncPlaceholderCollection[this._uid] = this;
+			// });
+			// onBeforeUnmount(() => {
+			// 	delete Vue.AsyncPlaceholderCollection[this._uid];
+			// 	clearInterval(timer);
+			// });
+			return function (h) {
+				const { tag, context } = this;
+				if (localStorage.needSkeleton) {
+					return h(
+						"span",
+						{
+							staticClass: "el-skeleton is-animated " + tag,
+							attrs: { "data-skeleton-id": context._uid }
+						},
+						[
+							h("span", {
+								staticClass: "el-skeleton__item el-skeleton__p el-skeleton__paragraph"
+							})
+						]
+					);
+				}
+				return h("span", {
+					attrs: {
+						"data-skeleton-tag": tag,
+						"data-skeleton-id": context._uid
+					}
+				});
+			};
+		}
+	});
 	return Vue;
 });

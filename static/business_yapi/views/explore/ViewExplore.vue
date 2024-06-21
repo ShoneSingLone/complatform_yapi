@@ -192,7 +192,7 @@ export default async function () {
 				}
 				let uri = encodeURIComponent(JSON.stringify(path));
 				stateMusicPlayer.songId = name;
-				stateMusicPlayer.audio.src = Vue._yapi_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?uri=${uri}`);
+				stateMusicPlayer.audio.src = Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?uri=${uri}`);
 				await canPlay();
 				stateMusicPlayer.audio.play();
 				stateMusicPlayer.isPlaying = true;

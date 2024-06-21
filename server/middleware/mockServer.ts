@@ -14,7 +14,7 @@ const { getResponseThroghProxy } = require("./requestProxy");
  * 	ctx, modelInterface, interfaceData
  * }
  */
-async function ifTheResponseIsSuccessfulACopyIsRequired({
+async function ifSuccessfulStoreResponse({
 	ctx,
 	modelInterface,
 	interfaceData
@@ -34,7 +34,7 @@ async function ifTheResponseIsSuccessfulACopyIsRequired({
 			res = ctx.body;
 		}
 
-		if (xU.isPlainObject(res)) {
+		if (xU._.isPlainObject(res)) {
 			data.resBackupJson = JSON.stringify(res, null, 2);
 			await modelInterface.up(interfaceData._id, data);
 		} else {
@@ -45,10 +45,26 @@ async function ifTheResponseIsSuccessfulACopyIsRequired({
 	}
 }
 
-async function handleProxy(ctx, { domain, projectId }) {
+async function setResponseByRunProxy(ctx, { ENV_VAR, projectId }) {
+	const { domain, header: ENV_VAR_HEADER_ARRAY } = ENV_VAR || {};
 	const targetURL = ctx.originalUrl.replace(`/mock/${projectId}`, "");
 	const headers = (() => {
-		return { ...ctx.headers };
+		/* 如果有ENV_VAR,那么用ENV_VAR覆盖，否则直接用ctx的headers */
+
+		if (xU._.isEmpty(ENV_VAR_HEADER_ARRAY)) {
+			return { ...ctx.headers };
+		}
+		return xU._.reduce(
+			ENV_VAR_HEADER_ARRAY,
+			(_headers, { name, value }) => {
+				/* TODO:如果value是表达式，还需要处理表达式=》比如全局变量， */
+				if (!_headers[name]) {
+					_headers[name] = value;
+				}
+				return _headers;
+			},
+			{ ...ctx.headers }
+		);
 	})();
 
 	const [path, proxyHOST, proxyPORT] = (() => {
@@ -76,6 +92,7 @@ async function handleProxy(ctx, { domain, projectId }) {
 		response = await getResponseThroghProxy({
 			ctx,
 			path,
+			headers,
 			host: proxyHOST,
 			port: proxyPORT
 		});
@@ -103,6 +120,12 @@ async function handleProxy(ctx, { domain, projectId }) {
 				}
 				ctx.set(prop, value);
 			});
+			try {
+				ctx.set(
+					"httpRequestOptions",
+					JSON.stringify(response.httpRequestOptions)
+				);
+			} catch (error) {}
 		}
 	} catch (error) {
 		body = xU.$response(null, 555, `错误来自yapi服务器： ${error.message}`);
@@ -304,7 +327,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 	/*用于初步确定Interface的中间变量*/
 	let interfaceArray;
 	/*具体的interfac数据*/
-	let interfaceData;
+	let currentRequestInterfaceDataInYapiDB;
 	/**
 	 * @type ModelInterface
 	 */
@@ -389,11 +412,14 @@ const middlewareMockServer = () => async (ctx, next) => {
 		} else if (interfaceArray.length > 1) {
 			return (ctx.body = xU.$response(null, 405, "存在多个api，请检查数据库"));
 		}
-		interfaceData = interfaceArray[0];
+		currentRequestInterfaceDataInYapiDB = interfaceArray[0];
 
 		// 必填字段是否填写好
 		if (project.strice) {
-			const validResult = mockValidator(interfaceData, ctx);
+			const validResult = mockValidator(
+				currentRequestInterfaceDataInYapiDB,
+				ctx
+			);
 			if (!validResult.valid) {
 				return (ctx.body = xU.$response(
 					null,
@@ -403,24 +429,37 @@ const middlewareMockServer = () => async (ctx, next) => {
 			}
 		}
 
-		if (interfaceData?.isProxy || ctx.headers["yapi-run-test"]) {
-			const env = xU._.find(project.env, i => {
-				try {
-					const id = ObjectId(i._id).toString();
-					return id === interfaceData.witchEnv;
-				} catch (error) {}
-				return false;
-			});
-			await handleProxy(ctx, {
+		/* 是否启用代理，在局域网中访问其他主机 */
+		const isRunWithYapiProxy = (() => {
+			return (
+				currentRequestInterfaceDataInYapiDB?.isProxy ||
+				ctx.headers["yapi-run-test"]
+			);
+		})();
+
+		if (isRunWithYapiProxy) {
+			const ENV_VAR = ((/* 获取对应的代理环境 */) => {
+				return xU._.find(project.env, i => {
+					try {
+						const id = ObjectId(i._id).toString();
+						return id === currentRequestInterfaceDataInYapiDB.witchEnv;
+					} catch (error) {
+						console.log("ERROR:获取对应的代理环境", error);
+					}
+					return false;
+				});
+			})();
+
+			await setResponseByRunProxy(ctx, {
 				projectId: project._id,
-				domain: env && env.domain,
+				ENV_VAR,
 				yapiRun: ctx.headers["yapi-run-test"]
 			});
 
-			ifTheResponseIsSuccessfulACopyIsRequired({
+			ifSuccessfulStoreResponse({
 				ctx,
 				modelInterface: orm.interface,
-				interfaceData
+				interfaceData: currentRequestInterfaceDataInYapiDB
 			});
 
 			return;
@@ -428,12 +467,16 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 		let res;
 		// mock 返回值处理
-		res = interfaceData.res_body;
+		res = currentRequestInterfaceDataInYapiDB.res_body;
 		try {
-			if (interfaceData.res_body_type === "json") {
-				if (interfaceData.res_body_is_json_schema === true) {
+			if (currentRequestInterfaceDataInYapiDB.res_body_type === "json") {
+				if (
+					currentRequestInterfaceDataInYapiDB.res_body_is_json_schema === true
+				) {
 					//json-schema
-					const schema = xU.json_parse(interfaceData.res_body);
+					const schema = xU.json_parse(
+						currentRequestInterfaceDataInYapiDB.res_body
+					);
 					res = xU.schemaToJson(schema, {
 						alwaysFakeOptionals: true
 					});
@@ -450,11 +493,14 @@ const middlewareMockServer = () => async (ctx, next) => {
 					}
 					// console.log('body', ctx.request.body)
 
-					res = mockExtra(xU.json_parse(interfaceData.res_body), {
-						query: ctx.request.query,
-						body: ctx.request.body,
-						params: Object.assign({}, ctx.request.query, ctx.request.body)
-					});
+					res = mockExtra(
+						xU.json_parse(currentRequestInterfaceDataInYapiDB.res_body),
+						{
+							query: ctx.request.query,
+							body: ctx.request.body,
+							params: Object.assign({}, ctx.request.query, ctx.request.body)
+						}
+					);
 					// console.log('res',res)
 				}
 
@@ -468,7 +514,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 			let context = {
 				projectData: project,
-				interfaceData: interfaceData,
+				interfaceData: currentRequestInterfaceDataInYapiDB,
 				ctx: ctx,
 				mockJson: res,
 				resHeader: {},
@@ -533,9 +579,9 @@ const middlewareMockServer = () => async (ctx, next) => {
 			try {
 				/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
 				/* isUseBackup */
-				if (interfaceData.res_body_type === "backup") {
+				if (currentRequestInterfaceDataInYapiDB.res_body_type === "backup") {
 					const getJsonFn = new Function(
-						`return ${interfaceData.resBackupJson}`
+						`return ${currentRequestInterfaceDataInYapiDB.resBackupJson}`
 					);
 					responseByMock = getJsonFn.call(null);
 					A_TIPS = `使用备份的JSON数据`;

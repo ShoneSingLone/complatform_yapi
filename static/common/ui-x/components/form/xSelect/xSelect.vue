@@ -22,7 +22,6 @@
 					<span class="el-select__tags-text">{{ item.currentLabel }}</span>
 				</xTag>
 			</transition-group>
-
 			<input
 				type="text"
 				class="el-select__input"
@@ -48,41 +47,47 @@
 				:style="{ 'flex-grow': '1', width: inputLength / (inputWidth - 32) + '%', 'max-width': inputWidth - 42 + 'px' }"
 				ref="input" />
 		</div>
-		<xInput
-			ref="reference"
-			v-model="selectedLabel"
-			type="text"
-			:placeholder="currentPlaceholder"
-			:name="name"
-			:id="id"
-			:autocomplete="autoComplete || autocomplete"
-			:size="selectSize"
-			:disabled="selectDisabled"
-			:readonly="readonly"
-			:validate-event="false"
-			:class="{ 'is-focus': visible }"
-			:tabindex="multiple && filterable ? '-1' : null"
-			@focus="handleFocus"
-			@blur="handleBlur"
-			@input="debouncedOnInputChange"
-			@keydown.native.down.stop.prevent="handleNavigate('next')"
-			@keydown.native.up.stop.prevent="handleNavigate('prev')"
-			@keydown.native.enter.prevent="selectOption"
-			@keydown.native.esc.stop.prevent="visible = false"
-			@keydown.native.tab="visible = false"
-			@compositionstart="handleComposition"
-			@compositionupdate="handleComposition"
-			@compositionend="handleComposition"
-			@mouseenter.native="inputHovering = true"
-			@mouseleave.native="inputHovering = false">
-			<template slot="prefix" v-if="$slots.prefix">
-				<slot name="prefix"></slot>
-			</template>
-			<template slot="suffix">
-				<i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
-				<i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick"></i>
-			</template>
-		</xInput>
+		<div class="xSelect-middle-wrapper flex middle">
+			<!-- 前置元素 -->
+			<div class="xSelect-middle-wrapper_prepend" v-if="$scopedSlots.prepend">
+				<slot name="prepend"></slot>
+			</div>
+			<xInput
+				ref="reference"
+				v-model="selectedLabel"
+				type="text"
+				:placeholder="currentPlaceholder"
+				:name="name"
+				:id="id"
+				:autocomplete="autoComplete || autocomplete"
+				:size="selectSize"
+				:disabled="selectDisabled"
+				:readonly="readonly"
+				:validate-event="false"
+				:class="{ 'is-focus': visible }"
+				:tabindex="multiple && filterable ? '-1' : null"
+				@focus="handleFocus"
+				@blur="handleBlur"
+				@input="debouncedOnInputChange"
+				@keydown.native.down.stop.prevent="handleNavigate('next')"
+				@keydown.native.up.stop.prevent="handleNavigate('prev')"
+				@keydown.native.enter.prevent="selectOption"
+				@keydown.native.esc.stop.prevent="visible = false"
+				@keydown.native.tab="visible = false"
+				@compositionstart="handleComposition"
+				@compositionupdate="handleComposition"
+				@compositionend="handleComposition"
+				@mouseenter.native="inputHovering = true"
+				@mouseleave.native="inputHovering = false">
+				<template slot="prefix" v-if="$slots.prefix">
+					<slot name="prefix"></slot>
+				</template>
+				<template slot="suffix">
+					<i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
+					<i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick"></i>
+				</template>
+			</xInput>
+		</div>
 		<transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
 			<xSelectDropdown ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
 				<xScrollbar
@@ -739,6 +744,9 @@ export default async function () {
 			resetInputWidth() {
 				if (this.$refs.reference?.$el?.getBoundingClientRect) {
 					this.inputWidth = this.$refs.reference.$el.getBoundingClientRect().width;
+					this.$emit("resize", {
+						inputWidth: this.inputWidth
+					});
 				}
 			},
 
@@ -847,4 +855,293 @@ export default async function () {
 	});
 }
 </script>
-<style lang="less"></style>
+<style lang="less">
+.el-select {
+	display: inline-block;
+	position: relative;
+
+	.el-select__tags {
+		> span {
+			display: contents;
+		}
+	}
+
+	.el-input__inner {
+		cursor: pointer;
+		padding-right: 35px;
+		&:focus {
+			border-color: var(--ui-primary);
+		}
+	}
+
+	.el-input .el-select__caret {
+		color: var(--el-text-color-disabled);
+		font-size: 14px;
+		-webkit-transition: -webkit-transform 0.3s;
+		transition: -webkit-transform 0.3s;
+		transition: transform 0.3s;
+		transition:
+			transform 0.3s,
+			-webkit-transform 0.3s;
+		-webkit-transform: rotateZ(180deg);
+		transform: rotateZ(180deg);
+		cursor: pointer;
+	}
+
+	.el-input .el-select__caret.is-reverse {
+		-webkit-transform: rotateZ(0);
+		transform: rotateZ(0);
+	}
+
+	.el-input .el-select__caret.is-show-close {
+		font-size: 14px;
+		text-align: center;
+		-webkit-transform: rotateZ(180deg);
+		transform: rotateZ(180deg);
+		border-radius: 100%;
+		color: var(--el-text-color-disabled);
+		-webkit-transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+		transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+	}
+
+	.el-input .el-select__caret.is-show-close:hover {
+		color: var(--el-text-color-secondary);
+	}
+
+	.el-input.is-disabled .el-input__inner {
+		cursor: not-allowed;
+	}
+
+	.el-input.is-disabled .el-input__inner:hover {
+		border-color: #e4e7ed;
+	}
+
+	.el-input.is-focus .el-input__inner {
+		border-color: var(--ui-primary);
+	}
+
+	> .el-input {
+		display: block;
+	}
+
+	.el-tag {
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		border-color: transparent;
+		margin: 2px 0 2px 6px;
+		background-color: #f0f2f5;
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		max-width: 100%;
+		-webkit-box-align: center;
+		-ms-flex-align: center;
+		align-items: center;
+	}
+
+	.el-tag__close.el-icon-close {
+		background-color: var(--el-text-color-disabled);
+		top: 0;
+		color: #fff;
+		-ms-flex-negative: 0;
+		flex-shrink: 0;
+	}
+
+	.el-tag__close.el-icon-close:hover {
+		background-color: var(--el-text-color-secondary);
+	}
+}
+
+.el-select-dropdown {
+	position: absolute;
+	z-index: 1001;
+	border: 1px solid #e4e7ed;
+	border-radius: var(--border-radius);
+	background-color: #fff;
+	-webkit-box-shadow: var(--normal-box-shadow);
+	box-shadow: var(--normal-box-shadow);
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	margin: 5px 0;
+}
+
+.el-select-dropdown.is-multiple .el-select-dropdown__item {
+	padding-right: 40px;
+}
+
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+	color: var(--ui-primary);
+	background-color: #fff;
+}
+
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+	background-color: var(--el-fill-color-light);
+}
+
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
+	position: absolute;
+	right: 20px;
+	font-family: element-icons;
+	content: "\e6da";
+	font-size: 12px;
+	font-weight: 700;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.el-select-dropdown .el-scrollbar.is-empty .el-select-dropdown__list {
+	padding: 0;
+}
+
+.el-select-dropdown__empty {
+	padding: 10px;
+	margin: 0;
+	text-align: center;
+	color: #999;
+	font-size: 14px;
+}
+
+.el-select-dropdown__wrap {
+	max-height: 274px;
+}
+
+.el-select-dropdown__list {
+	list-style: none;
+	padding: 6px 0;
+	margin: 0;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.el-select-dropdown__item {
+	font-size: 14px;
+	padding: 0 20px;
+	position: relative;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: #606266;
+	height: 34px;
+	line-height: 34px;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	cursor: pointer;
+}
+
+.el-select-dropdown__item.is-disabled {
+	color: var(--el-text-color-disabled);
+	cursor: not-allowed;
+}
+
+.el-select-dropdown__item.is-disabled:hover {
+	background-color: #fff;
+}
+
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+	background-color: var(--el-fill-color-light);
+}
+
+.el-select-dropdown__item.selected {
+	color: var(--ui-primary);
+	font-weight: 700;
+}
+
+.el-select-group {
+	margin: 0;
+	padding: 0;
+}
+
+.el-select-group__wrap {
+	position: relative;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.el-select-group__wrap:not(:last-of-type) {
+	padding-bottom: 24px;
+}
+
+.el-select-group__wrap:not(:last-of-type)::after {
+	content: "";
+	position: absolute;
+	display: block;
+	left: 20px;
+	right: 20px;
+	bottom: 12px;
+	height: 1px;
+	background: #e4e7ed;
+}
+
+.el-select-group__title {
+	padding-left: 20px;
+	font-size: 12px;
+	color: var(--el-text-color-secondary);
+	line-height: 30px;
+}
+
+.el-select-group .el-select-dropdown__item {
+	padding-left: 20px;
+}
+
+.el-select:hover .el-input__inner {
+	border-color: var(--el-text-color-disabled);
+}
+
+.el-select__input {
+	border: none;
+	outline: 0;
+	padding: 0;
+	margin-left: 15px;
+	color: #666;
+	font-size: 14px;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	height: 28px;
+	background-color: transparent;
+}
+
+.el-select__input.is-mini {
+	height: 14px;
+}
+
+.el-select__close {
+	cursor: pointer;
+	position: absolute;
+	top: 8px;
+	z-index: 1000;
+	right: 25px;
+	color: var(--el-text-color-disabled);
+	line-height: 18px;
+	font-size: 14px;
+}
+
+.el-select__close:hover {
+	color: var(--el-text-color-secondary);
+}
+
+.el-select__tags {
+	position: absolute;
+	line-height: normal;
+	white-space: normal;
+	z-index: 1;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+}
+
+.el-select__tags-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+</style>

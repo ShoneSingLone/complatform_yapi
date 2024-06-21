@@ -1,7 +1,7 @@
 <script lang="ts">
 export default async function () {
-	if (!Vue._yapi_utils) {
-		Vue._yapi_utils = {
+	if (!Vue._common_utils) {
+		Vue._common_utils = {
 			RequestCode: function RequestCode({ basepath, title, projectId, groupId, interfaceId, path, method, camelCase }) {
 				basepath = basepath || "";
 				return `
@@ -217,6 +217,6 @@ async ${camelCase(path)}({params,data}) {
 			}
 		};
 	}
-	return Vue._yapi_utils;
+	return Vue._common_utils;
 }
 </script>

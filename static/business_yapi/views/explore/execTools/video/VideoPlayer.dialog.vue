@@ -18,7 +18,7 @@ export default async function ({ uri }) {
 				return "";
 			},
 			videoSrc() {
-				return Vue._yapi_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/video?uri=${uri}`);
+				return Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/video?uri=${uri}`);
 			}
 		}
 	});

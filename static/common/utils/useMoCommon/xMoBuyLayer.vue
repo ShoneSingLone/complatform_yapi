@@ -24,7 +24,7 @@
 			<slot name="left"> </slot>
 			<slot>
 				<span class="xMoBuyLayer-label mr" v-if="!configs.isHideCost">{{ i18n("配置费用") }}: </span>
-				<span class="xMoBuyLayer-price-elmt flex middle">
+				<span class="xMoBuyLayer-price-elmt flex middle" v-if="!configs.isHideCost">
 					<span class="xMoBuyLayer-price-num mr"> {{ cptPrice || "--" }} </span>
 					<span class="xMoBuyLayer-price-unit mr" v-if="cptPrice">/</span>
 					<span class="xMoBuyLayer-price-unit mr" v-if="cptPrice">{{ configs.measureUnit }}</span>
@@ -50,7 +50,8 @@ export default async function () {
 					/*
 					isHideCost,
 					onOk,
-					onCancel
+					onCancel,
+					priceInfo
 				 */
 				})
 			}
@@ -60,7 +61,7 @@ export default async function () {
 		},
 		computed: {
 			cptPrice() {
-				const { value, singleValue, measureUnit, currency, symbol } = this.configs;
+				const { value, singleValue, measureUnit, currency, symbol } = this.configs?.priceInfo;
 
 				if (!singleValue) {
 					return "";
@@ -68,22 +69,30 @@ export default async function () {
 				return `${symbol} ${singleValue} ${currency}`;
 			},
 			btnOk() {
-				return {
+				const vm = this;
+				if (vm?.configs?.btnOk) {
+					return vm?.configs?.btnOk;
+				}
+				const configs = _.merge({
 					label: i18n("立即申请"),
 					preset: "blue",
-					isHide: () => {
-						return !this?.configs?.isShowBtn;
+					isHide() {
+						return !vm?.configs?.isShowBtn;
 					},
-					onClick: () => {
-						if (this.configs.onOk) {
-							return this.configs.onOk();
+					onClick() {
+						if (vm.configs.onOk) {
+							return vm.configs.onOk();
 						} else {
 							throw new Error("miss onOk callback");
 						}
 					}
-				};
+				});
+				return configs;
 			},
 			btnCancel() {
+				if (this?.configs?.btnCancel) {
+					return this?.configs?.btnCancel;
+				}
 				return {
 					label: i18n("取消"),
 					onClick: () => {

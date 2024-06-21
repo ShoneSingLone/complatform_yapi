@@ -106,7 +106,9 @@ class ModelProject extends ModelBase {
 	}
 
 	handleEnvNullData(data) {
-		if (!data) debugger;
+		if (!data) {
+			console.log("🚀 ~ ModelProject ~ handleEnvNullData ~ data:", data);
+		}
 		data = data.toObject();
 		data.toObject = () => data;
 		let isFix = false;

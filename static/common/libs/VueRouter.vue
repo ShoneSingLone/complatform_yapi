@@ -1314,7 +1314,6 @@ export default async function () {
 				routes.forEach(function (route) {
 					addRouteRecord(pathList, pathMap, nameMap, route, parentRoute);
 				});
-
 				// ensure wildcard routes are always at the end
 				for (var i = 0, l = pathList.length; i < l; i++) {
 					if (pathList[i] === "*") {

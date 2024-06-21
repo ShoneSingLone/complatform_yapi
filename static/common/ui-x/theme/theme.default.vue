@@ -565,6 +565,9 @@ svg.pointer {
 .height100 {
 	height: 100%;
 }
+.height1px {
+	height: 1px;
+}
 
 /* grid */
 .grid {
@@ -632,6 +635,31 @@ svg.pointer {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+
+/* *****************************************transition********************************** */
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+	opacity: 0;
+}
+
+.slide-fade-enter-active {
+	transition: all 0.4s 0.3s ease;
+	position: absolute;
+}
+.slide-fade-leave-active {
+	transition: all 0.3s cubic-bezier(1, 0.5, 0.3, 1);
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+	transform: translateX(10px);
+	opacity: 0;
+}
+
+/* *****************************************transition********************************** */
 
 html,
 body,
@@ -721,6 +749,7 @@ body,
 
 	> .AppLayoutLeft {
 		height: 100%;
+		transition: 0.3s ease-in-out;
 	}
 
 	> .AppLayoutContent {
@@ -735,6 +764,15 @@ body,
 .x-page-content-middle {
 	flex: 1;
 	height: 1px;
+	position: relative;
+	min-width: 800px;
+	.xDataGrid.el-auto-resizer {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
 }
 
 .position-relative {
@@ -763,6 +801,11 @@ body,
 		height: 1px;
 		flex: 1;
 		width: var(--left-aside-width);
+
+		.x-sidebar-menu,
+		.x-sidebar-menu-title {
+			overflow: hidden;
+		}
 
 		&.hide {
 			.xIcon.icon_console,
@@ -841,6 +884,7 @@ body,
 		}
 
 		.leftmenu-toggle {
+			transition: left 0.3s ease-in-out;
 			--app-toggle-width: 10px;
 			position: absolute;
 			top: 50%;

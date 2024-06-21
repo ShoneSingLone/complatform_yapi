@@ -59,6 +59,27 @@ export default async function () {
 			controllerWrapperProps.directives = [_jsxFns.xTipsHover({ msg: vm.cptDisabled, placement: "top" })];
 		}
 
+		const controllerChildren = [h(vm.itemType, xItem_controllerProps)];
+
+		if (CONFIGS?.itemSlots?.beforeController) {
+			controllerChildren.unshift(
+				/* beforeController插槽 */
+				h("xRender", {
+					render: CONFIGS?.itemSlots?.beforeController,
+					payload: { xItem: vm }
+				})
+			);
+		}
+		if (CONFIGS?.itemSlots?.afterController) {
+			controllerChildren.push(
+				/* afterController插槽 */
+				h("xRender", {
+					render: CONFIGS?.itemSlots?.afterController,
+					payload: { xItem: vm }
+				})
+			);
+		}
+
 		return h("div", xItemWrapperProps, [
 			h(
 				"div",
@@ -102,15 +123,7 @@ export default async function () {
 						]
 					),
 					/* controller */
-					h("div", controllerWrapperProps, [
-						h(vm.itemType, xItem_controllerProps),
-						/* afterController插槽 */
-						h("xRender", {
-							vIf: CONFIGS?.itemSlots?.afterController,
-							render: CONFIGS?.itemSlots?.afterController,
-							payload: { xItem: vm }
-						})
-					]),
+					h("div", controllerWrapperProps, controllerChildren),
 
 					/* 校验错误提示 */
 					h(

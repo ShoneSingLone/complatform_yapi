@@ -534,8 +534,16 @@ export default async function () {
 			flex-flow: row nowrap;
 			align-items: center;
 			overflow: hidden !important;
+			.after-flex1 + * {
+				flex: 1;
+			}
 
 			> [class^="el-"] {
+				width: 100%;
+			}
+
+			> .xCascader,
+			.el-descriptions {
 				width: 100%;
 			}
 

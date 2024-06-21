@@ -129,9 +129,6 @@ export default async function () {
 				}
 				return this.itemUseDefault;
 			},
-			cptCheckItemArray() {
-				return _.map(this.selectOptions, this.cptItemRederer);
-			},
 			cptDefaultItem() {
 				let item = _.first(this.cptConfigs?.options);
 				if (!_.isPlainObject(item)) {
@@ -151,6 +148,9 @@ export default async function () {
 			}
 		},
 		methods: {
+			cptCheckItemArray() {
+				return _.map(this.selectOptions, this.cptItemRederer);
+			},
 			setPrivateSet(itemValue, isChecked) {
 				if (!this.cptDisabled) {
 					if (isChecked) {
@@ -247,7 +247,7 @@ export default async function () {
 											style: this.cptFormStyle,
 											col: this.col
 										},
-										this.cptCheckItemArray
+										this.cptCheckItemArray()
 									);
 								}
 							}

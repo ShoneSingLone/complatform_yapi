@@ -41,12 +41,16 @@ export default async function () {
 				}),
 				_.$newRoute("/component/form", ComponentRouterView, {
 					children: [
+						_.$newRoute("/component/form/advanced-search", "@/views/component/form/advancedSearch/DemoAdvancedSearch.vue"),
 						_.$newRoute("/component/form/input", "@/views/component/form/input/input.vue"),
 						_.$newRoute("/component/form/input-number", "@/views/component/form/inputNumber/inputNumber.vue"),
 						_.$newRoute("/component/form/radio", "@/views/component/form/radio/radio.vue"),
 						_.$newRoute("/component/form/checkbox", "@/views/component/form/checkbox/checkbox.vue"),
 						_.$newRoute("/component/form/switch", "@/views/component/form/switch/switch.vue"),
 						_.$newRoute("/component/form/select", "@/views/component/form/select/select.vue"),
+						_.$newRoute("/component/form/cascader", "@/views/component/form/cascader/DemoCascader.vue"),
+						_.$newRoute("/component/form/date-picker", "@/views/component/form/DatePicker/DemoDatePicker.vue"),
+						_.$newRoute("/component/form/date-time-picker", "@/views/component/form/DateTimePicker/DemoDateTimePicker.vue"),
 						_.$newRoute("/component/form/ip-address", "@/views/component/form/ipAddress/DemoIpAddress.vue")
 					]
 				}),
@@ -67,6 +71,7 @@ export default async function () {
 				/* Navigation */
 				_.$newRoute("/component/navigation", ComponentRouterView, {
 					children: [
+						_.$newRoute("/component/navigation/menu", "@/views/component/navigation/menu/DemoMenu.vue"),
 						_.$newRoute("/component/navigation/tabs", "@/views/component/navigation/tabs/tabs.vue"),
 						_.$newRoute("/component/navigation/dropdown", "@/views/component/navigation/dropdown/dropdown.vue"),
 						_.$newRoute("/component/navigation/breadcrumb", "@/views/component/navigation/breadcrumb/breadcrumb.vue"),

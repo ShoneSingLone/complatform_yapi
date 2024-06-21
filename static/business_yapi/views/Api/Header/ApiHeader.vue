@@ -9,6 +9,10 @@
 			<xIcon icon="_icon_i18n" />
 		</a>
 		<xGap r="4" />
+		<a class="flex middle" :href="hoppscotchHref" target="_blank" v-xtips="{ content: 'hoppscotch', trigger: 'hover', placement: 'left' }">
+			<xIcon icon="_hoppscotch" />
+		</a>
+		<xGap r="4" />
 		<a class="flex middle" :href="publicNoteHref" target="_blank" v-xtips="{ content: '文档', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_wikidoc" />
 		</a>
@@ -38,6 +42,9 @@ export default async function () {
 			return {};
 		},
 		computed: {
+			hoppscotchHref() {
+				return _.$aHashLink("/hoppscotch", {});
+			},
 			i18nHref() {
 				return _.$aHashLink("/i18n", {});
 			},

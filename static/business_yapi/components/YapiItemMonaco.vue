@@ -40,10 +40,11 @@ export default async function () {
 			syncData() {
 				try {
 					const newCode = this.raw$editor.getValue();
-					if (this.mixin_value && !newCode) {
-						this.raw$editor.setValue(this.mixin_value);
-					} else if (newCode !== this.mixin_value) {
+
+					if (newCode !== this.mixin_value) {
 						this.mixin_value = newCode;
+					} else if (this.mixin_value && !newCode) {
+						this.raw$editor.setValue(this.mixin_value);
 					}
 				} catch (error) {
 					console.error(error);

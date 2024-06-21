@@ -181,6 +181,44 @@ export default async function hooks() {
 				});
 				/* 让vm保持对此引用 */
 				return contentRect;
+			},
+			/* 动态修改css样式 */
+			useDynamicStyle({ vm }) {
+				const id = vm._uid;
+				const styleId = `dynamicstyleid${id}`;
+				let $style;
+				onBeforeMount(() => {
+					$style = _.$$id(styleId);
+					if (!$style) {
+						$style = document.createElement("style");
+
+						$style.id = styleId;
+						const body = _.$$tags("body")[0];
+						body.appendChild($style);
+					}
+				});
+				onBeforeUnmount(() => {
+					try {
+						if ($style) {
+							$style.parentNode.removeChild($style);
+						}
+					} catch (error) {
+						$style = null;
+					}
+				});
+
+				return {
+					styleId,
+					setStyle: _.debounce(async cssLessString => {
+						try {
+							await _.$ensure(() => $style);
+							const css = await _.$preprocessCssByless(cssLessString);
+							_.$appendStyle(styleId, css);
+						} catch (error) {
+							console.error(error);
+						}
+					}, 64)
+				};
 			}
 		};
 	}

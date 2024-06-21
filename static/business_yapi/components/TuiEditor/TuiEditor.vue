@@ -146,7 +146,7 @@ export default async function () {
 						const src = (() => {
 							const [_, id] = String(destination).match(/^_id:(\d+)/) || [];
 							if (id) {
-								return Vue._yapi_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${id}`);
+								return Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${id}`);
 							} else {
 								return destination;
 							}

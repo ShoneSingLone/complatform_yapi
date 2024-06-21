@@ -51,7 +51,7 @@ export default async function () {
 				const vm = this;
 				const jsondiffpatch = await _.$appendScript("/common/libs/jsondiffpatch.umd.js", "jsondiffpatch");
 				const formattersHtml = jsondiffpatch.formatters.html;
-				const diffView = Vue._yapi_utils.diffMessage(jsondiffpatch, formattersHtml, data);
+				const diffView = Vue._common_utils.diffMessage(jsondiffpatch, formattersHtml, data);
 				const addMember = await _.$importVue("@/views/Api/Group/Section/Log/GroupSectionLogWindowDiff.vue", {
 					parent: this,
 					diffView,

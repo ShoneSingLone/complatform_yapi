@@ -15729,7 +15729,7 @@ body {
 	align-items: center;
 	color: #72767b;
 	display: flex;
-	margin-bottom: 32px;
+	// margin-bottom: 32px;
 	padding: 20px 20px 0;
 }
 

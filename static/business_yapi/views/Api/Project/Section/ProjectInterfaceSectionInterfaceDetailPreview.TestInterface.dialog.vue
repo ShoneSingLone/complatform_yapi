@@ -31,6 +31,7 @@ export default async function ({ mockHref, reqMethod, interfaceId, projectId }) 
 		data() {
 			return {
 				response: "",
+				httprequestoptions: {},
 				form: defItems({
 					editor: {
 						type: "textarea",
@@ -47,16 +48,22 @@ export default async function ({ mockHref, reqMethod, interfaceId, projectId }) 
 		computed: {
 			cptCode() {
 				let response = "";
+				let httprequestoptions = "";
 				try {
 					if (this.response) {
 						response = JSON.stringify(this.response, null, 2);
+					}
+					if (this.httprequestoptions) {
+						httprequestoptions = JSON.stringify(this.httprequestoptions, null, 2);
 					}
 				} catch (error) {
 					console.error(error);
 				}
 				if (response) {
-					return `\`\`\`json
+					return `\`\`\`js
 ${response}
+
+${httprequestoptions}
 \`\`\``;
 				}
 				return response;
@@ -191,6 +198,11 @@ ${response}
 						this.response = response;
 					}
 				}
+
+				try {
+					const { httprequestoptions } = response.headers;
+					this.httprequestoptions = JSON.parse(httprequestoptions);
+				} catch (error) {}
 			}
 		}
 	});

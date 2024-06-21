@@ -18,6 +18,7 @@ export default async function () {
 				_.$newRoute("/rtc/p2p", "@/views/Rtc/ViewRtcP2PLogin.vue")
 			]
 		}),
+		_.$newRoute("/hoppscotch", "@/views/hoppscotch/ViewHoppscotch.vue"),
 		_.$newRoute("/explore", "@/views/explore/ViewExplore.vue"),
 		_.$newRoute("/login", "@/views/Login/Login.vue"),
 		_.$newRoute("/api", "@/views/Api/Api.vue", {

@@ -45,6 +45,9 @@ export default async function (options = {}) {
 				/* 懒加载组件 */
 				/* @ts-ignore */
 				Vue.component(componentName, async () => {
+					// if (componentName === "xCheckbox") {
+					// 	debugger;
+					// }
 					const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
 					setComponentName(component, componentName);
 					/* @ts-ignore */

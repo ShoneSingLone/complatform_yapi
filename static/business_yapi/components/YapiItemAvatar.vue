@@ -32,7 +32,7 @@ export default async function () {
 				return this.configs.usedBy || "";
 			},
 			cptAvatarUrl() {
-				return this.imageUrl || Vue._yapi_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${this.value}&usedBy=${this.cptUsedBy}`);
+				return this.imageUrl || Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${this.value}&usedBy=${this.cptUsedBy}`);
 			}
 		},
 		data() {

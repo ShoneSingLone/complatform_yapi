@@ -14,7 +14,7 @@ export default async function () {
 				type: String,
 				default: "light",
 				validator(val) {
-					return ["dark", "light", "plain"].indexOf(val) !== -1;
+					return ["dark", "light", "plain", ""].indexOf(val) !== -1;
 				}
 			}
 		},
@@ -33,7 +33,8 @@ export default async function () {
 			}
 		},
 		render(h) {
-			const { type, tagSize, hit, effect } = this;
+			let { type, tagSize, hit, effect } = this;
+			effect = effect || "empty";
 			const classes = ["el-tag", type ? `el-tag--${type}` : "", tagSize ? `el-tag--${tagSize}` : "", effect ? `el-tag--${effect}` : "", hit && "is-hit"];
 			const tagEl = h(
 				"span",

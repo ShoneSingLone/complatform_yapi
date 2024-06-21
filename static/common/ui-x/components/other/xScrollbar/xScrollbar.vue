@@ -7,6 +7,10 @@ export default async function () {
 		name: "xScrollbar",
 		components: { Bar: () => _.$importVue("/common/ui-x/components/other/xScrollbar/Bar.vue") },
 		props: {
+			vertical: {
+				type: Boolean,
+				default: true
+			},
 			native: Boolean,
 			wrapStyle: {},
 			wrapClass: {},
@@ -77,7 +81,7 @@ export default async function () {
 					/* horizon */
 					h("Bar", { size: this.sizeWidth, move: this.moveX }),
 					/* vertical */
-					h("Bar", { vertical: true, size: this.sizeHeight, move: this.moveY })
+					h("Bar", { vertical: this.vertical, size: this.sizeHeight, move: this.moveY })
 				];
 			} else {
 				nodes = [

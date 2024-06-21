@@ -106,7 +106,7 @@ ${resBackupJson}
 				if (this.APP.cptProject.requestCode) {
 					return this.APP.cptProject.requestCode;
 				} else {
-					return Vue._yapi_utils.RequestCode.toString();
+					return Vue._common_utils.RequestCode.toString();
 				}
 			},
 			cptInfo() {

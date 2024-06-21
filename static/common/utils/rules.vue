@@ -4,6 +4,23 @@ export default async function () {
 
 	if (!window._rules) {
 		window._rules = {
+			mobilePhone() {
+				return {
+					name: "mobilePhone",
+					async validator({ val }) {
+						if (!_.$isInput(val)) {
+							return;
+						}
+						var urlRegex = _reg.phoneRe();
+						if (urlRegex.test(val)) {
+							return "";
+						} else {
+							return i18n("请输入正确的手机号码");
+						}
+					},
+					trigger: ["change", "blur"]
+				};
+			},
 			serviceName() {
 				return {
 					name: "serviceName",
@@ -152,6 +169,9 @@ export default async function () {
 				return {
 					name: "email",
 					async validator({ val }) {
+						if (!val) {
+							return "";
+						}
 						var urlRegex = _reg.email();
 						if (!urlRegex.test(val)) {
 							return i18n("请输入Email");

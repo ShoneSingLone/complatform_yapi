@@ -89,15 +89,14 @@ export default async function () {
 						options = options();
 					}
 					content = _.find(options, { value: this.item?.value })?.label;
-				}
-
-				if (_.isBoolean(content)) {
+				} else if (_.isBoolean(content)) {
 					content = content ? i18n("是") : i18n("否");
+				} else if (_.isFunction(this.item?.xItemRender)) {
+					content = this.item.xItemRender.call(this.item, { xItemDesc: this });
+				} else if (_.isPlainObject(content)) {
+					content = "";
 				}
 
-				if (_.isFunction(this.item?.xItemRender)) {
-					content = this.item.xItemRender.call(this.item, { xItemDesc: this });
-				}
 				return content || "--";
 			}
 		}

@@ -1,6 +1,6 @@
 <template>
 	<div class="xInfoCard el-descriptions opacity0" ref="descriptionsBody">
-		<div class="el-descriptions__header">
+		<div class="el-descriptions__header" v-if="cptIsShowHeader">
 			<div class="el-descriptions__title">
 				{{ configs.title }}
 				<slot name="title" />
@@ -42,6 +42,20 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptIsShowHeader() {
+				if (this.$slots.header) {
+					return true;
+				}
+
+				if (this.configs?.header) {
+					return true;
+				}
+
+				if (this.$scopedSlots.header) {
+					return true;
+				}
+				return false;
+			},
 			fillItems() {
 				return this.configs?.items.length % this.col;
 			},
