@@ -57,3 +57,4 @@ yapi.installed
 static/dist
 server/app.js
 push.bat
+static/common/mo
