@@ -2,7 +2,7 @@
 	<div>
 		<xMd :md="md" class="mb" />
 		<div class="flex">
-			<el-cascader-panel :options="DemoCascader.options"></el-cascader-panel>
+			<xCascaderPanel :options="DemoCascader.options"></xCascaderPanel>
 		</div>
 	</div>
 </template>

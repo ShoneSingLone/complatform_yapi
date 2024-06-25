@@ -124,25 +124,31 @@ export default async function () {
 			},
 			cptClassName() {
 				const vm = this;
+				const setClass = (prefix, value, defaultString = "") => (value ? `${prefix}${value}` : defaultString);
 				return [
+					"xBtn el-button",
 					vm?.configs?.class || "",
-					"el-button",
 					/* 颜色 */
-					vm.cptPreset ? "el-button--" + vm.cptPreset : "",
+					setClass("el-button--", vm.cptPreset),
 					/* 大小 */
-					vm.buttonSize ? "el-button--" + vm.buttonSize : "",
+					setClass("el-button--", vm.buttonSize),
 					/* 形状 */
+					setClass("is-", vm.cptShape),
 					{
 						"is-disabled": vm.buttonDisabled,
-						"is-loading": vm.cptLoading,
-						"is-plain": vm.plain,
-						"is-round": vm.round,
-						"is-circle": vm.cptCircle
+						"is-loading": vm.cptLoading
 					}
 				];
 			},
-			cptCircle() {
-				return this.circle || this.configs.circle;
+			cptShape() {
+				for (const prop of ["plain", "round", "circle"]) {
+					if (this[prop]) {
+						return prop;
+					}
+				}
+				if (this.configs?.shape) {
+					return this.configs?.shape;
+				}
 			}
 		},
 		methods: {
@@ -224,6 +230,7 @@ export default async function () {
 			}
 
 			const buttonProps = {
+				...(vm.configs.props || {}),
 				directives: vm.getDirectives({}),
 				onClick() {
 					vm.handleClick();

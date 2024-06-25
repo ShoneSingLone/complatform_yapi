@@ -47,6 +47,7 @@ export default async function () {
 						_.$newRoute("/component/form/radio", "@/views/component/form/radio/radio.vue"),
 						_.$newRoute("/component/form/checkbox", "@/views/component/form/checkbox/checkbox.vue"),
 						_.$newRoute("/component/form/switch", "@/views/component/form/switch/switch.vue"),
+						_.$newRoute("/component/form/slider", "@/views/component/form/slider/DemoSlider.vue"),
 						_.$newRoute("/component/form/select", "@/views/component/form/select/select.vue"),
 						_.$newRoute("/component/form/cascader", "@/views/component/form/cascader/DemoCascader.vue"),
 						_.$newRoute("/component/form/date-picker", "@/views/component/form/DatePicker/DemoDatePicker.vue"),
@@ -93,6 +94,7 @@ export default async function () {
 				_.$newRoute("/other/popover", "@/views/other/popover/popover.vue"),
 				_.$newRoute("/other/tooltip", "@/views/other/tooltip/tooltip.vue"),
 				_.$newRoute("/other/timeline", "@/views/other/timeline/DemoTimeline.vue"),
+				_.$newRoute("/other/calendar", "@/views/other/calendar/DemoCalendar.vue"),
 				_.$newRoute("/other/divider", "@/views/other/divider/DemoDivider.vue"),
 				_.$newRoute("/other/open_window", "@/views/other/dialog/dialog.vue"),
 				_.$newRoute("/other/drawer", "@/views/other/drawer/DemoDrawer.vue")

@@ -49,6 +49,7 @@ export default async function () {
 		"components/form/xCascader/xCascaderPanel/xCascaderPanel",
 		/* ******************** */
 		"components/form/xSwitch/xSwitch",
+		"components/form/xSlider/xSlider",
 		"components/form/xRadio/xRadio",
 		"components/form/xRadio/xRadioButton",
 		"components/form/xRadio/xRadioGroup",
@@ -56,6 +57,7 @@ export default async function () {
 		"components/form/xCheckbox/xCheckboxButton",
 		"components/form/xCheckbox/xCheckboxGroup",
 		"components/other/xAvatar/xAvatar",
+		"components/other/xCalendar/xCalendar",
 		"components/other/xDivider/xDivider",
 		"components/other/xCard/xCard",
 		"components/other/xTimeline/xTimeline",
@@ -139,7 +141,9 @@ export default async function () {
 		"common/xItem/xItemRadioGroup",
 		"common/xItem/xItemSelect",
 		"common/xItem/xItemSlider",
-		"common/xItem/xItemSwitch"
+		"common/xItem/xItemSwitch",
+		/* ******************* */
+		"components/form/xToggleEditor/xToggleText/xToggleText"
 	];
 }
 </script>

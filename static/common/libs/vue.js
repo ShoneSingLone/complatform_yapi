@@ -12170,29 +12170,31 @@
 	Vue.prototype.$dev = (...args) => console.log.apply(console, args);
 	/* xItem 的itemType 子组件用于获取 在 xItem上的attrs属性【响应的】 */
 	Vue.prototype.$xItemAttr = function name(prop) {
-		try {
-			let current = this;
-			let attrs = current.$attrs;
+		const val = (() => {
+			try {
+				let current = this;
+				let attrs = current.$attrs;
 
-			if (hasOwn(attrs, prop)) {
-				return attrs[prop];
-			}
-			current = current.$parent;
-			while (current) {
-				if (current?.componentName === "xItem") {
-					attrs = current?.$attrs;
-					break;
-				} else {
-					current = current.$parent;
+				if (hasOwn(attrs, prop)) {
+					return attrs[prop];
 				}
+				current = current.$parent;
+				while (current) {
+					if (current?.componentName === "xItem") {
+						attrs = current?.$attrs;
+						break;
+					} else {
+						current = current.$parent;
+					}
+				}
+				if (hasOwn(attrs, prop)) {
+					return attrs[prop];
+				}
+			} catch (error) {
+				console.error(error);
 			}
-			if (hasOwn(attrs, prop)) {
-				return attrs[prop];
-			}
-		} catch (error) {
-			console.error(error);
-		}
-		return false;
+		})();
+		return _.$isInput(val) ? val : false;
 	};
 
 	Vue.prototype.dispatch = dispatch;

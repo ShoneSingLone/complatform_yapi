@@ -68,7 +68,7 @@ export default async function () {
 				return {
 					// label: i18n("编辑分组"),
 					icon: "el-icon-edit",
-					circle: true,
+					shape: "circle",
 					onClick: vm.openGroupUpsertDialog
 				};
 			},

@@ -72,7 +72,7 @@ export default async function () {
 			icon: "_icon_components",
 			label: i18n("组件"),
 			children: [
-				{ icon: "icon_report", label: `${i18n("Layout")} ${i18n("布局")}`, href: "/component/base/layout" },
+				{ icon: "_icon_layout", label: `${i18n("Layout")} ${i18n("布局")}`, href: "/component/base/layout" },
 				{ icon: "icon_report", label: i18n("button"), href: "/component/base/button" },
 				{ icon: "icon_report", label: `${i18n("AdvancedSearch")} ${i18n("高级搜索按钮")}`, href: "/component/form/advanced-search" },
 				{ icon: "icon_report", label: i18n("input"), href: "/component/form/input" },
@@ -80,6 +80,7 @@ export default async function () {
 				{ icon: "icon_report", label: i18n("checkbox"), href: "/component/form/checkbox" },
 				{ icon: "icon_report", label: i18n("radio"), href: "/component/form/radio" },
 				{ icon: "_icon_switch", label: i18n("switch"), href: "/component/form/switch" },
+				{ icon: "_icon_selector", label: `${i18n("Slider")} ${i18n("滑块")}`, href: "/component/form/slider" },
 				{ icon: "_icon_selector", label: i18n("select"), href: "/component/form/select" },
 				{ icon: "_icon_selector", label: `${i18n("Cascader")} ${i18n("级联选择器")}`, href: "/component/form/cascader" },
 				{ icon: "_icon_selector", label: `${i18n("DatePicker")} ${i18n("日期选择器")}`, href: "/component/form/date-picker" },
@@ -88,7 +89,7 @@ export default async function () {
 				{ icon: "_icon_image", label: i18n("image") + i18n("图片"), href: "/component/data/image" },
 				{ icon: "_icon_image", label: i18n("Drawer") + i18n("抽屉"), href: "/other/drawer" },
 				{ icon: "_icon_avatar", label: i18n("Avatar") + i18n("头像"), href: "/component/data/avatar" },
-				{ icon: "icon_report", label: i18n("icon"), href: "/component/data/icon" },
+				{ icon: "_icon_affix", label: `${i18n("Icon")} ${i18n("图标")}`, href: "/component/data/icon" },
 				{ icon: "icon_report", label: `${i18n("Card")} ${i18n("卡片")}`, href: "/component/data/card" },
 				{ icon: "icon_report", label: `${i18n("Descriptions")} ${i18n("描述列表")}`, href: "/component/data/descriptions" },
 				{ icon: "icon_report", label: `${i18n("Tag")} ${i18n("标签")}`, href: "/component/data/tag" },
@@ -104,6 +105,7 @@ export default async function () {
 				{ icon: "_icon_affix", label: `${i18n("Alert")} ${i18n("警告")}`, href: "/other/alert" },
 				{ icon: "_icon_collapse", label: `${i18n("Collapse")} ${i18n("折叠面板")}`, href: "/other/collapse" },
 				{ icon: "_icon_timeline", label: `${i18n("Timeline")} ${i18n("时间线")}`, href: "/other/timeline" },
+				{ icon: "_icon_timeline", label: `${i18n("Calendar")} ${i18n("日历")}`, href: "/other/calendar" },
 				{ icon: "_icon_timeline", label: `${i18n("Divider")} ${i18n("分割线")}`, href: "/other/divider" },
 				{ icon: "_icon_affix", label: `${i18n("xExcalidraw")} ${i18n("白板")}`, href: "/component/data/excalidraw" }
 			]

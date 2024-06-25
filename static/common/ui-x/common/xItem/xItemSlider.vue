@@ -1,5 +1,5 @@
 <template>
-	<el-slider
+	<xSlider
 		class="xItemSlider"
 		v-model="mixin_value"
 		v-bind="$attrs"
@@ -10,7 +10,7 @@
 		:min="min"
 		:max="max"
 		:show-input="showInput">
-	</el-slider>
+	</xSlider>
 </template>
 
 <script lang="ts">

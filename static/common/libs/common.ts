@@ -13,15 +13,18 @@
 	 * @param prop 可选，默认 "prop"
 	 * @returns object {prop:{prop: "prop", label: string},value:{prop: "value", label: string}}
 	 */
-	/* @typescriptDeclare  (columns: any, propsArray: any, prop?: string)=> {[prop:string]:object}*/
+	/* @ts-ignore */
 	_.$pickFromArray = function (columns, propsArray, prop = "prop") {
+		/* @ts-ignore */
 		if (!_.$isArrayFill(propsArray) || !_.$isArrayFill(columns)) {
 			alert("pickFromArray miss props array");
 		}
 		return _.reduce(
 			columns,
 			(target, v) => {
+				/* @ts-ignore */
 				if (propsArray.includes(v[prop])) {
+					/* @ts-ignore */
 					target[v[prop]] = v;
 				}
 				return target;

@@ -50,7 +50,7 @@ export default async function () {
 		},
 		data() {
 			return {
-				mdTitle: "基础的按钮用法。\n\n使用`type`、`plain`、`round`和`circle`属性来定义 Button 的样式。"
+				mdTitle: "基础的按钮用法。\n\n使用`preset`、`plain`、`round`和`circle`属性来定义 Button 的样式。"
 			};
 		}
 	});

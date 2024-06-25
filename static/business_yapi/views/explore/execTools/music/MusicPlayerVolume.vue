@@ -6,7 +6,7 @@
 		</xBtn>
 		<xGap l />
 		<div class="flex1">
-			<elSlider id="test" v-model="stateMusicPlayer.volume" :tooltip-visible="isTooltipVisible" @change="changeVolume" />
+			<xSlider id="test" v-model="stateMusicPlayer.volume" :tooltip-visible="isTooltipVisible" @change="changeVolume" />
 		</div>
 	</div>
 </template>
