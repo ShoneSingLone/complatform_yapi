@@ -50,6 +50,7 @@ export default async function () {
 						_.$newRoute("/component/form/slider", "@/views/component/form/slider/DemoSlider.vue"),
 						_.$newRoute("/component/form/select", "@/views/component/form/select/select.vue"),
 						_.$newRoute("/component/form/cascader", "@/views/component/form/cascader/DemoCascader.vue"),
+						_.$newRoute("/component/form/time-picker", "@/views/component/form/TimePicker/DemoTimePicker.vue"),
 						_.$newRoute("/component/form/date-picker", "@/views/component/form/DatePicker/DemoDatePicker.vue"),
 						_.$newRoute("/component/form/date-time-picker", "@/views/component/form/DateTimePicker/DemoDateTimePicker.vue"),
 						_.$newRoute("/component/form/ip-address", "@/views/component/form/ipAddress/DemoIpAddress.vue")

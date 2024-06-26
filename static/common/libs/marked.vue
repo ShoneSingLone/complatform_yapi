@@ -995,11 +995,11 @@ export default async function () {
 					return text;
 				}
 
-				var out = '<img src="' + href + '" alt="' + text + '"';
-				if (title) {
-					out += ' title="' + title + '"';
-				}
-				out += this.options.xhtml ? "/>" : ">";
+				title = title ? ` title="${title}"` : "";
+				let xhtml = this.options.xhtml ? "/>" : ">";
+
+				var out = `<img class="pointer" data-role="xMdItemImg" src="${href}" alt="${text}"${title}${xhtml}`;
+
 				return out;
 			};
 

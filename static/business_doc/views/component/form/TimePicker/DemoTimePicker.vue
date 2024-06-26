@@ -1,9 +1,10 @@
 <template>
 	<DocContentOfDemo class="demo-input">
 		<xMd :md="mdTips" />
-		<DemoAndCode title="日期和时间点" path="@/views/component/form/DateTimePicker/RiQiHeShiJianDian.vue" unfold />
-		<DemoAndCode title="日期和时间范围" path="@/views/component/form/DateTimePicker/RiQiHeShiJianFanWei.vue" unfold />
-		<DemoAndCode title="默认的起始与结束时刻" path="@/views/component/form/DateTimePicker/MoRenDeQiShiYuJieShuShiKe.vue" unfold />
+		<DemoAndCode title="固定时间点" path="@/views/component/form/TimePicker/GuDingShiJianDian.vue" unfold />
+		<DemoAndCode title="任意时间点" path="@/views/component/form/TimePicker/RenYiShiJianDian.vue" unfold />
+		<DemoAndCode title="固定时间范围" path="@/views/component/form/TimePicker/GuDingShiJianFanWei.vue" unfold />
+		<DemoAndCode title="任意时间范围" path="@/views/component/form/TimePicker/RenYiShiJianFanWei.vue" unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>
@@ -13,18 +14,14 @@ export default async function () {
 	return {
 		data() {
 			return {
-				mdTips: `### DateTimePicker 日期时间选择器
-在同一个选择器里选择日期和时间
-> DateTimePicker 由 DatePicker 和 TimePicker 派生，\`Picker Options\` 或者其他选项可以参照 DatePicker 和 TimePicker。
+				mdTips: `### TimePicker 日期时间选择器
 
-- basic是基本的选择方法，单选和range选择；
-- type对应 Panel是各种展示形式，
-- 可以通过扩展type得到不同的形式
-                `,
+用于选择或输入时间
+`,
 				apiString: `### Attributes
 | 参数      | 说明          | 类型      | 可选值                           | 默认值  |
 |---------- |-------------- |---------- |--------------------------------  |-------- |
-| value / v-model | 绑定值 | date(DateTimePicker) / array(DateTimeRangePicker) | — | — |
+| value / v-model | 绑定值 | date(TimePicker) / array(DateTimeRangePicker) | — | — |
 | readonly | 完全只读 | boolean | — | false |
 | disabled | 禁用 | boolean | — | false |
 | editable | 文本框可输入 | boolean | — | true |
@@ -37,7 +34,7 @@ export default async function () {
 | type | 显示类型 | string | year/month/date/week/ datetime/datetimerange/daterange | date |
 | format | 显示在输入框中的格式 | string | 见[日期格式](#/zh-CN/component/date-picker#ri-qi-ge-shi) | yyyy-MM-dd HH:mm:ss |
 | align | 对齐方式 | string | left, center, right | left |
-| popper-class | DateTimePicker 下拉框的类名 | string | — | — |
+| popper-class | TimePicker 下拉框的类名 | string | — | — |
 | picker-options | 当前时间日期选择器特有的选项参考下表 | object |  — | {} |
 | range-separator | 选择范围时的分隔符 | string | - | '-' |
 | default-value | 可选，选择器打开时默认显示的时间 | Date | 可被\`new Date()\`解析 | — |

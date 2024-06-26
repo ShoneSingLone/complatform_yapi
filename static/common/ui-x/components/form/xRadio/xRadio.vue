@@ -1,7 +1,7 @@
 <style lang="less"></style>
 <template>
 	<label
-		class="el-radio xRadio"
+		class="xRadio el-radio"
 		:class="[border && radioSize ? 'el-radio--' + radioSize : '', { 'is-disabled': isDisabled }, { 'is-focus': focus }, { 'is-bordered': border }, { 'is-checked': model === label }]"
 		role="radio"
 		:aria-checked="model === label"
@@ -40,6 +40,7 @@
 export default async function () {
 	return defineComponent({
 		name: "xRadio",
+		componentName: "xRadio",
 		inject: {
 			elForm: {
 				default: ""
@@ -48,7 +49,6 @@ export default async function () {
 				default: ""
 			}
 		},
-		componentName: "xRadio",
 		props: {
 			value: {},
 			label: {},

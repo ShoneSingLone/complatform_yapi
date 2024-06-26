@@ -68,7 +68,7 @@ export default async function () {
 	.xForm {
 		outline: 1px solid royalblue;
 	}
-	.xItem-label-contorller {
+	.xItem-label-controller {
 		outline: 1px dashed darkcyan;
 		.xItem_label {
 			outline: 1px dashed red;

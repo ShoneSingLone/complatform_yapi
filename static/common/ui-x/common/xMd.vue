@@ -9,8 +9,26 @@
 </template>
 
 <script lang="ts">
-export default async function ({ code }) {
+export default async function ({ code, PRIVATE_GLOBAL }) {
 	const [hljs, marked] = await Promise.all([_.$importVue("/common/libs/highlight.vue"), _.$importVue("/common/libs/marked.vue")]);
+
+	if (!PRIVATE_GLOBAL.isSetXmarkdownListenner) {
+		$(document).on("click.xmarkdownmarkdownListenner", "[data-role=xMdItemImg]", function (e) {
+			const $img = $(this);
+			const src = $img.attr("src");
+			let currentIndex = 0;
+			const $doc = $(document);
+			const imgList = $doc.find(".markdown-wrapper img");
+			const urlList = _.map(imgList, (img, index) => {
+				if (img.src === src) {
+					currentIndex = index;
+				}
+				return img.src;
+			});
+			_.$previewImgs({ urlList, index: currentIndex });
+		});
+		PRIVATE_GLOBAL.isSetXmarkdownListenner = true;
+	}
 
 	return {
 		props: ["md" /* md text content */],
@@ -142,10 +160,18 @@ export default async function ({ code }) {
 				const { Renderer } = marked;
 				marked.options = { langClass: "hljs" };
 				const renderer = new Renderer();
-				this.html = marked(this.originHTML, {
+				const html = marked(this.originHTML, {
 					renderer,
 					highlight: code => hljs.highlightAuto(code).value
 				});
+				const $html = $(`<div>${html}</div>`);
+				$html.find("img").each(function () {
+					const $img = $(this);
+					let src = $img.attr("src");
+					src = _.$resolvePath(src);
+					$img.attr("src", src);
+				});
+				this.html = $html[0].innerHTML;
 			}
 		}
 	};

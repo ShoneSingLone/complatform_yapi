@@ -18,7 +18,7 @@ export default async function () {
 				h(
 					"div",
 					{
-						staticClass: "xItem-label-contorller"
+						staticClass: "xItem-label-controller"
 					},
 					[
 						/* label */
@@ -56,7 +56,7 @@ export default async function () {
 								)
 							]
 						),
-						/* contorller */
+						/* controller */
 						h(
 							"div",
 							{

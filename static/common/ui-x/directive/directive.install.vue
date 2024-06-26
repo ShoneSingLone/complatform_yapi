@@ -24,12 +24,53 @@ export default async function () {
 		_.$openModal = async function (options, modalConfigs) {
 			const xModal = await _.$importVue("/common/ui-x/directive/xModal/xModal.vue", { options, modalConfigs });
 			const PopupManager = await _.$importVue("/common/libs/VuePopper/popupManager.vue");
-
 			xModal.parent = options.parent || Vue.forceUpdate.getVM();
 			let instance = new Vue(xModal);
 			instance.$mount();
 			document.body.appendChild(instance.$el);
 			instance.viewerZIndex = PopupManager.nextZIndex();
+			return instance;
+		};
+	})();
+	(function (/* xDrawer */) {
+		_.$openDrawer = async function (options) {
+			const [xDrawer, PopupManager] = await _.$importVue(["/common/ui-x/directive/xDrawer/xDrawer.vue", "/common/libs/VuePopper/popupManager.vue"]);
+			xDrawer.parent = options.parent || Vue.forceUpdate.getVM();
+			const xDrawerComponent = Vue.extend(xDrawer);
+			let instance = new xDrawerComponent({
+				_parentListeners: {
+					"update:visible"(val) {
+						if (!val) {
+							instance.$closeModal();
+						}
+					}
+				},
+				propsData: _.merge(
+					{
+						destroyOnClose: true
+					},
+					options
+				)
+			});
+			instance.$closeModal = () => {
+				instance.$props.visible = false;
+				instance.$nextTick(() => {
+					setTimeout(() => {
+						instance.$destroy();
+					}, 600);
+				});
+			};
+			const contentComponent = await _.$importVue(options.url, {
+				options,
+				xDrawerVm: instance
+			});
+			instance.currentContentComponent = contentComponent;
+			instance.$mount();
+			document.body.appendChild(instance.$el);
+			instance.viewerZIndex = PopupManager.nextZIndex();
+			instance.$nextTick(() => {
+				instance.$props.visible = true;
+			});
 			return instance;
 		};
 	})();

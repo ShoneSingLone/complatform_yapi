@@ -5833,8 +5833,38 @@ export default async function () {
 .markdown-wrapper {
 	overflow: auto;
 
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p,
+	ul {
+		& + pre {
+			margin-top: 8px;
+			> code {
+				margin-left: var(--ui-one);
+			}
+		}
+	}
+
+	p {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+
+		> img {
+			max-width: 90%;
+			margin: auto;
+		}
+	}
+
 	pre {
 		margin: 0;
+		& + p {
+			margin-top: 8px;
+		}
 
 		> code {
 			display: flex;
@@ -5881,7 +5911,8 @@ export default async function () {
 	ul {
 		> li {
 			text-indent: 16px;
-			margin-top: 4px;
+			margin-top: 8px;
+			margin-bottom: 8px;
 			line-height: 24px;
 			list-style: disc;
 			list-style-position: inside;

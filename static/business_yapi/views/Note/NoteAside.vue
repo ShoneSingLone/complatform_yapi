@@ -83,7 +83,14 @@ export default async function () {
 		inject: ["APP", "inject_note"],
 		mounted() {},
 		setup(props) {
-			const { stateStyle, resizeOptions } = useXmove(props);
+			const { stateStyle, resizeOptions } = (() => {
+				if (this.APP.isMobile) {
+					return { stateStyle: {}, resizeOptions: {} };
+				} else {
+					return useXmove(props);
+				}
+			})();
+
 			return {
 				stateStyle,
 				resizeOptions,

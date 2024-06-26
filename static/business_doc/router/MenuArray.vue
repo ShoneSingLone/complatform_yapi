@@ -83,6 +83,7 @@ export default async function () {
 				{ icon: "_icon_selector", label: `${i18n("Slider")} ${i18n("滑块")}`, href: "/component/form/slider" },
 				{ icon: "_icon_selector", label: i18n("select"), href: "/component/form/select" },
 				{ icon: "_icon_selector", label: `${i18n("Cascader")} ${i18n("级联选择器")}`, href: "/component/form/cascader" },
+				{ icon: "_icon_selector", label: `${i18n("TimePicker")} ${i18n("时间选择器")}`, href: "/component/form/time-picker" },
 				{ icon: "_icon_selector", label: `${i18n("DatePicker")} ${i18n("日期选择器")}`, href: "/component/form/date-picker" },
 				{ icon: "_icon_selector", label: `${i18n("DateTimePicker")} ${i18n("日期时间选择器")}`, href: "/component/form/date-time-picker" },
 				{ icon: "icon_report", label: i18n("ip-address"), href: "/component/form/ip-address" },

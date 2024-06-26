@@ -354,7 +354,7 @@ each(@list, {
 /* .flex-loop (@i) when (@i <= 50) { .flex@{i} { flex: @i; } .flex-loop(@i + 1); } */
 
 .flex {
-	display: flex !important;
+	display: flex;
 	&.like-float {
 		flex-flow: row wrap;
 

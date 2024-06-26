@@ -16,7 +16,7 @@ export default async function () {
 				h(
 					"div",
 					{
-						staticClass: "xItem-label-contorller"
+						staticClass: "xItem-label-controller"
 					},
 					[
 						/* label */

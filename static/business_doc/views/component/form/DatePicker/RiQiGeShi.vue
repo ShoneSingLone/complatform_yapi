@@ -18,7 +18,6 @@
 				<xDatePicker v-model="value3" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="timestamp"> </xDatePicker>
 			</div>
 		</xForm>
-		<xMd :md="desc" />
 	</div>
 </template>
 <script lang="ts">
