@@ -337,7 +337,7 @@
 </style>
 
 <script lang="ts">
-export default async function () {
+export default async function ({ merge_hFnProps }) {
 	const { emptyRender } = await _.$importVue("/common/ui-x/components/data/xTableVir/xTableEmptyRender.vue");
 	_.each(
 		{
@@ -366,7 +366,6 @@ export default async function () {
 	} = _useXui;
 
 	/* resolveDynamicComponent */
-	const { merge_hFnProps } = Vue;
 	var _a;
 
 	isClient && ((_a = window == null ? false : window.navigator) == null ? false : _a.userAgent) && /iP(ad|hone|od)/.test(window.navigator.userAgent);
@@ -388,8 +387,14 @@ export default async function () {
 					value
 				})
 			: (obj[key] = value);
-	var __spreadValues = (a, b) => {
-		for (var prop in b || (b = {})) if (hasOwnProperty.call(b, prop)) __defNormalProp(a, prop, b[prop]);
+
+	var __spreadValues = (a, b = {}) => {
+		for (var prop in b) {
+			if (hasOwn(b, prop)) {
+				__defNormalProp(a, prop, b[prop]);
+			}
+		}
+
 		if (__getOwnPropSymbols)
 			for (var prop of __getOwnPropSymbols(b)) {
 				if (__propIsEnum.call(b, prop)) __defNormalProp(a, prop, b[prop]);
@@ -435,7 +440,7 @@ export default async function () {
 	var symToStringTag$1 = root.Symbol ? root.Symbol.toStringTag : false;
 
 	function getRawTag(value) {
-		var isOwn = hasOwnProperty.call(value, symToStringTag$1),
+		var isOwn = hasOwn(value, symToStringTag$1),
 			tag = value[symToStringTag$1];
 		try {
 			value[symToStringTag$1] = false;
@@ -591,7 +596,7 @@ export default async function () {
 	var reIsNative = RegExp(
 		"^" +
 			funcToString
-				.call(hasOwnProperty)
+				.call(hasOwn)
 				.replace(reRegExpChar, "\\$&")
 				.replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") +
 			"$"
@@ -654,12 +659,12 @@ export default async function () {
 			var result = data[key];
 			return result === HASH_UNDEFINED$1 ? false : result;
 		}
-		return hasOwnProperty.call(data, key) ? data[key] : false;
+		return hasOwn(data, key) ? data[key] : false;
 	}
 
 	function hashHas(key) {
 		var data = this.__data__;
-		return nativeCreate$1 ? data[key] !== false : hasOwnProperty.call(data, key);
+		return nativeCreate$1 ? data[key] !== false : hasOwn(data, key);
 	}
 
 	var HASH_UNDEFINED = "__lodash_hash_undefined__";
@@ -817,6 +822,7 @@ export default async function () {
 	MapCache.prototype.get = mapCacheGet;
 	MapCache.prototype.has = mapCacheHas;
 	MapCache.prototype.set = mapCacheSet;
+
 	var FUNC_ERROR_TEXT$1 = "Expected a function";
 
 	function memoize(func, resolver) {
@@ -1032,7 +1038,7 @@ export default async function () {
 				viewBox: "0 0 1024 1024",
 				xmlns: "http://www.w3.org/2000/svg"
 			},
-			_hoisted_210 = /* @__PURE__ */ h(
+			_hoisted_210 = h(
 				"path",
 				{
 					fill: "currentColor",
@@ -1045,7 +1051,7 @@ export default async function () {
 		return h("svg", _hoisted_110, _hoisted_310);
 	}
 
-	var arrow_right_default = /* @__PURE__ */ export_helper_default(_sfc_main10, [
+	var arrow_right_default = export_helper_default(_sfc_main10, [
 		["render", _sfc_render10],
 		["__file", "arrow-right.vue"]
 	]);
@@ -1058,7 +1064,7 @@ export default async function () {
 				viewBox: "0 0 1024 1024",
 				xmlns: "http://www.w3.org/2000/svg"
 			},
-			_hoisted_2236 = /* @__PURE__ */ h(
+			_hoisted_2236 = h(
 				"path",
 				{
 					fill: "currentColor",
@@ -1071,7 +1077,7 @@ export default async function () {
 		return h("svg", _hoisted_1236, _hoisted_3235);
 	}
 
-	var sort_down_default = /* @__PURE__ */ export_helper_default(_sfc_main236, [
+	var sort_down_default = export_helper_default(_sfc_main236, [
 		["render", _sfc_render236],
 		["__file", "sort-down.vue"]
 	]);
@@ -1084,7 +1090,7 @@ export default async function () {
 				viewBox: "0 0 1024 1024",
 				xmlns: "http://www.w3.org/2000/svg"
 			},
-			_hoisted_2237 = /* @__PURE__ */ h(
+			_hoisted_2237 = h(
 				"path",
 				{
 					fill: "currentColor",
@@ -1097,7 +1103,7 @@ export default async function () {
 		return h("svg", _hoisted_1237, _hoisted_3236);
 	}
 
-	var sort_up_default = /* @__PURE__ */ export_helper_default(_sfc_main237, [
+	var sort_up_default = export_helper_default(_sfc_main237, [
 		["render", _sfc_render237],
 		["__file", "sort-up.vue"]
 	]);
@@ -1283,22 +1289,6 @@ export default async function () {
 			}
 		}
 	};
-	const buildTranslator = locale => (path, option) => translate(path, option, unref(locale));
-	const translate = (path, option, locale) => get(locale, path, path).replace(/\{(\w+)\}/g, (_, key) => `${option?.[key] ?? `{${key}}`}`);
-	const buildLocaleContext = locale => {
-		const lang = computed(() => unref(locale).name);
-		const localeRef = isRef(locale) ? locale : ref(locale);
-		return {
-			lang,
-			locale: localeRef,
-			t: buildTranslator(locale)
-		};
-	};
-	const localeContextKey = Symbol("localeContextKey");
-	const useLocale = localeOverrides => {
-		const locale = localeOverrides || inject(localeContextKey, ref());
-		return buildLocaleContext(computed(() => locale.value || English));
-	};
 
 	const modalStack = [];
 	const closeModal = e => {
@@ -1337,17 +1327,17 @@ export default async function () {
 		values: componentSizes,
 		required: false
 	});
-	var SortOrder = /* @__PURE__ */ (SortOrder2 => {
+	var SortOrder = (SortOrder2 => {
 		SortOrder2["ASC"] = "asc";
 		SortOrder2["DESC"] = "desc";
 		return SortOrder2;
 	})(SortOrder || {});
-	var Alignment = /* @__PURE__ */ (Alignment2 => {
+	var Alignment = (Alignment2 => {
 		Alignment2["CENTER"] = "center";
 		Alignment2["RIGHT"] = "right";
 		return Alignment2;
 	})(Alignment || {});
-	var FixedDir = /* @__PURE__ */ (FixedDir2 => {
+	var FixedDir = (FixedDir2 => {
 		FixedDir2["LEFT"] = "left";
 		FixedDir2["RIGHT"] = "right";
 		return FixedDir2;
@@ -1940,7 +1930,7 @@ export default async function () {
 		}
 	});
 
-	var _sfc_main$2 = /* @__PURE__ */ defineComponent({
+	var _sfc_main$2 = defineComponent({
 		__name: "icon",
 		props: iconProps,
 		setup(__props) {
@@ -1981,7 +1971,7 @@ export default async function () {
 		);
 	};
 	var _sfc_staticRenderFns$2 = [];
-	var __component__$2 = /* @__PURE__ */ _useXui.normalizeComponent(_sfc_main$2, _sfc_render$2, _sfc_staticRenderFns$2, false, null, null, null, null);
+	var __component__$2 = _useXui.normalizeComponent(_sfc_main$2, _sfc_render$2, _sfc_staticRenderFns$2, false, null, null, null, null);
 	var Icon = __component__$2.exports;
 
 	const SortIcon = {
@@ -2741,7 +2731,7 @@ export default async function () {
   exports.TableV2SortOrder = SortOrder;
   exports.tableV2Props = tableV2Props;
 
- */
+  */
 	let curr = {
 		id: 0,
 		x: 0,
