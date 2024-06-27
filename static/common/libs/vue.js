@@ -4594,7 +4594,9 @@
 					key,
 					value,
 					function () {
-						if (!isRoot && !isUpdatingChildComponent) {
+						if (vm.ALLOW_MUTATING_A_PROP_DIRECTLY) {
+							return;
+						} else if (!isRoot && !isUpdatingChildComponent) {
 							warnMsgVm(
 								"Avoid mutating a prop directly since the value will be " +
 									"overwritten whenever the parent component re-renders. " +

@@ -66,14 +66,14 @@ export default async function () {
 			return edgeReached;
 		};
 		const onWheel = e => {
-			_useXui.cAF(frameHandle);
+			_xUtils.cAF(frameHandle);
 			const newOffset = e[LayoutKeys[layout2.value]];
 			if (hasReachedEdge(offset) && hasReachedEdge(offset + newOffset)) return;
 			offset += newOffset;
 			if (!_.$isFirefox()) {
 				e.preventDefault();
 			}
-			frameHandle = _useXui.rAF(() => {
+			frameHandle = _xUtils.rAF(() => {
 				onWheelDelta(offset);
 				offset = 0;
 			});
@@ -87,7 +87,7 @@ export default async function () {
 	const createList = ({ name, getOffset, getItemSize, getItemOffset, getEstimatedTotalSize, getStartIndexForOffset, getStopIndexForStartIndex, initCache, clearCache, validateProps }) => {
 		return defineComponent({
 			name: name || "ElVirtualList",
-			props: _useXui.virtualizedListProps,
+			props: _xUtils.virtualizedListProps,
 			emits: [ITEM_RENDER_EVT, SCROLL_EVT],
 			components: {
 				/* 循环引用 => 异步加载 */
@@ -96,9 +96,9 @@ export default async function () {
 			setup(props, { emit, expose }) {
 				validateProps(props);
 				const instance = getCurrentInstance();
-				const ns_vl = _useXui.useNamespace("vl");
+				const ns_vl = _xUtils.useNamespace("vl");
 				const dynamicSizeCache = ref(initCache(props, instance));
-				const getItemStyleCache = _useXui.useCache();
+				const getItemStyleCache = _xUtils.useCache();
 				const windowRef = ref();
 				const innerRef = ref();
 				const scrollbarRef = ref();

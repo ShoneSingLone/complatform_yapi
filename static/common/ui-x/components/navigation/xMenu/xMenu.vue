@@ -1,6 +1,6 @@
 <script lang="ts">
 export default async function () {
-	const { on, off, hasClass, addClass, removeClass, ARIA_UTILS: Utils } = window._useXui;
+	const { on, off, hasClass, addClass, removeClass, ARIA_UTILS: Utils } = _xUtils;
 
 	class SubMenu {
 		domNode;

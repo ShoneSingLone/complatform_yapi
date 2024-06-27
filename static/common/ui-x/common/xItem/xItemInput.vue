@@ -25,8 +25,8 @@ export default async function () {
 				autocomplete: "on",
 				type: vm.$attrs.type || vm.configs?.type || "text"
 			};
-			if (_.isFunction(_useXui?.globalConfigs?.xItemInput?.defaultProps)) {
-				attrs = _useXui.globalConfigs.xItemInput.defaultProps(this, attrs);
+			if (_.isFunction(_xUtils?.globalConfigs?.xItemInput?.defaultProps)) {
+				attrs = _xUtils.globalConfigs.xItemInput.defaultProps(this, attrs);
 			}
 
 			if (vm.configs?.type === "textarea") {

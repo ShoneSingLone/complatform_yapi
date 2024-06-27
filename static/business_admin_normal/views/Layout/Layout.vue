@@ -85,7 +85,7 @@ export default async function () {
 			);
 		},
 		setup(props) {
-			const { height, width } = _useXui.useWindowSize();
+			const { height, width } = _xUtils.useWindowSize();
 			return {
 				height,
 				width

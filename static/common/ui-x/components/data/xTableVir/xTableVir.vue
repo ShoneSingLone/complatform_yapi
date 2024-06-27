@@ -363,7 +363,7 @@ export default async function ({ merge_hFnProps }) {
 		buildProp,
 		buildProps,
 		tableV2Props
-	} = _useXui;
+	} = _xUtils;
 
 	/* resolveDynamicComponent */
 	var _a;
@@ -1318,7 +1318,7 @@ export default async function ({ merge_hFnProps }) {
 	};
 	const useId = deterministicId => {
 		const idInjection = useIdInjection();
-		const namespace = _useXui.useGetDerivedNamespace();
+		const namespace = _xUtils.useGetDerivedNamespace();
 		const idRef = computed(() => unref(deterministicId) || `${namespace.value}-id-${idInjection.prefix}-${idInjection.current++}`);
 		return idRef;
 	};
@@ -1971,7 +1971,7 @@ export default async function ({ merge_hFnProps }) {
 		);
 	};
 	var _sfc_staticRenderFns$2 = [];
-	var __component__$2 = _useXui.normalizeComponent(_sfc_main$2, _sfc_render$2, _sfc_staticRenderFns$2, false, null, null, null, null);
+	var __component__$2 = _xUtils.normalizeComponent(_sfc_main$2, _sfc_render$2, _sfc_staticRenderFns$2, false, null, null, null, null);
 	var Icon = __component__$2.exports;
 
 	const SortIcon = {

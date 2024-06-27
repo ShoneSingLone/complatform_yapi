@@ -28,7 +28,7 @@ export default async function (options = {}) {
 	]);
 
 	if (_.isFunction(options.bootstrap)) {
-		await options.bootstrap(window._useXui);
+		await options.bootstrap(_xUtils);
 	}
 
 	await (async function lazyLoadAllComponents() {

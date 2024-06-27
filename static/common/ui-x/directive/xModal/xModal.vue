@@ -123,7 +123,7 @@ export default async function ({ options, modalConfigs }) {
 		setup(props) {
 			const vm = this;
 			useModal(this);
-			const { useAutoResize } = _useXui;
+			const { useAutoResize } = _xUtils;
 
 			const { height: refDialogRectHeight, width: refDialogRectWidth, sizer: refDialog } = useAutoResize(props);
 			const { height: refContentHeight, width: refContentWidth, sizer: refContent } = useAutoResize(props);

@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const DEFAULT_DYNAMIC_LIST_ITEM_SIZE = 50;
 	const ITEM_RENDER_EVT = "itemRendered";
 	const SCROLL_EVT = "scroll";
@@ -1602,7 +1602,7 @@ export default async function () {
 
 	/*****************************************/
 	(function () {
-		window._useXui = {
+		PRIVATE_GLOBAL._xUtils = {
 			RepeatClick: {
 				bind(el, binding, vnode) {
 					let interval = null;
@@ -1732,7 +1732,7 @@ export default async function () {
 					true: "overflow-y",
 					false: "overflow-x"
 				}[String(isVertical)];
-				const overflow = _useXui.getStyle(el, key);
+				const overflow = _xUtils.getStyle(el, key);
 				return ["scroll", "auto", "overlay"].some(s => overflow.includes(s));
 			},
 			getScrollContainer(el, isVertical) {
@@ -1740,7 +1740,7 @@ export default async function () {
 				let parent = el;
 				while (parent) {
 					if ([window, document, document.documentElement].includes(parent)) return window;
-					if (_useXui.isScroll(parent, isVertical)) return parent;
+					if (_xUtils.isScroll(parent, isVertical)) return parent;
 					parent = parent.parentNode;
 				}
 				return parent;
@@ -1884,7 +1884,8 @@ export default async function () {
 	/*****************************************/
 
 	(function () {
-		window._jsxFns = {
+		/* @ts-ignore */
+		PRIVATE_GLOBAL._jsxFns = {
 			/* _jsxFns_jsxFns_jsxFns */
 			xTipsHover({ msg, placement }) {
 				placement = placement || "right-start";

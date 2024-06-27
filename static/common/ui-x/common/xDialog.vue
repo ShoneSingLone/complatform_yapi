@@ -24,9 +24,9 @@ export default async function () {
 		},
 		setup(props) {
 			const { inject_modal } = this;
-			const { useAutoResize } = _useXui;
+			const { useAutoResize, useWindowSize } = _xUtils;
 			const { height, width, sizer: refDialog } = useAutoResize(props);
-			const { height: windowHeight, width: windowWidth } = _useXui.useWindowSize();
+			const { height: windowHeight, width: windowWidth } = useWindowSize();
 
 			let origin = { height: 0, width: 0 };
 

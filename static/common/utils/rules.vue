@@ -357,7 +357,6 @@ export default async function () {
 						for (let key of rowArray) {
 							record.push(rows[key]);
 						}
-						debugger;
 						if (_.every(record, i => !i)) {
 							/* 都没填 */
 							return "";

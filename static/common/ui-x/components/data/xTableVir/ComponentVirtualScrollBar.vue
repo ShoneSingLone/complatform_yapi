@@ -1,6 +1,6 @@
 <script lang="ts">
 export default async function () {
-	const { BAR_MAP, virtualizedScrollbarProps, useNamespace, HORIZONTAL, ScrollbarDirKey, SCROLLBAR_MIN_SIZE, renderThumbStyle, rAF, cAF } = _useXui;
+	const { BAR_MAP, virtualizedScrollbarProps, useNamespace, HORIZONTAL, ScrollbarDirKey, SCROLLBAR_MIN_SIZE, renderThumbStyle, rAF, cAF } = _xUtils;
 	return defineComponent({
 		name: "ComponentVirtualScrollBar",
 		props: virtualizedScrollbarProps,

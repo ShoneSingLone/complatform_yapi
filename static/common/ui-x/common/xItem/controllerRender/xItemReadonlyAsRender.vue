@@ -9,7 +9,11 @@ export default async function () {
 				staticClass: "xItem-wrapper flex vertical",
 				attrs: {
 					"data-form-item-type": vm.itemType,
-					"data-form-item-id": vm.cpt_id
+					"data-form-item-id": vm.cpt_id,
+					key: vm.itemType + vm.cpt_id
+				},
+				props: {
+					key: vm.itemType + vm.cpt_id
 				}
 			},
 			[

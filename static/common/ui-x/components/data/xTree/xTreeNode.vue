@@ -116,7 +116,7 @@ export default async function () {
 
 	return defineComponent({
 		name: "xTreeNode",
-		props: _useXui.buildProps({
+		props: _xUtils.buildProps({
 			node: {
 				type: Object,
 				default: () => ({
@@ -160,7 +160,7 @@ export default async function () {
 			const vm = this;
 			/* @ts-ignore */
 			const injectRootTree = this.injectRootTree;
-			const ns = _useXui.useNamespace("tree");
+			const ns = _xUtils.useNamespace("tree");
 			const indent = computed(() => {
 				return injectRootTree.props?.indent || 16;
 			});

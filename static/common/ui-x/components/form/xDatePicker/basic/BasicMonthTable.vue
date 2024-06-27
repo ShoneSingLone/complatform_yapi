@@ -15,7 +15,7 @@
 <script lang="ts">
 export default async function () {
 	const [{ isDate, range, getDayCountOfMonth, nextDate }] = await _.$importVue(["/common/ui-x/components/form/xDatePicker/dateUtils.vue"]);
-	const { hasClass } = _useXui;
+	const { hasClass } = _xUtils;
 
 	const datesInMonth = (year, month) => {
 		const numOfDays = getDayCountOfMonth(year, month);

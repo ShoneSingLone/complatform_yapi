@@ -24,7 +24,7 @@
 export default async function () {
 	const Popper = await _.$importVue("/common/libs/VuePopper/VuePopper.vue");
 
-	const { on, off, addClass, removeClass } = window._useXui;
+	const { on, off, addClass, removeClass } = _xUtils;
 
 	const { directive } = (() => {
 		const getReference = (el, binding, vnode) => {

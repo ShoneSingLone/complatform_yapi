@@ -1,6 +1,6 @@
 <script lang="ts">
 export default async function () {
-	const { tableV2RowProps, useTableRow } = _useXui;
+	const { tableV2RowProps, useTableRow } = _xUtils;
 
 	return defineComponent({
 		name: "ComponentTableV2Row",
