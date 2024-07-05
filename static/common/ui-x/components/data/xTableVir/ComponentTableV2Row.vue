@@ -1,6 +1,6 @@
 <script lang="ts">
 export default async function () {
-	const { tableV2RowProps, useTableRow } = _useXui;
+	const { tableV2RowProps, useTableRow } = _xUtils;
 
 	return defineComponent({
 		name: "ComponentTableV2Row",
@@ -51,6 +51,12 @@ export default async function () {
 					});
 				}
 
+				const attrs = {
+					role: "row",
+					"data-row-index": rowIndex,
+					"even-number": rowIndex % 2
+				};
+
 				if (unref(measurable)) {
 					const { height, ...exceptHeightStyle } = style || {};
 					const _measured = unref(measured);
@@ -61,9 +67,7 @@ export default async function () {
 								ref: rowRef,
 								class: props.classV2,
 								style: _measured ? style : exceptHeightStyle,
-								attrs: {
-									role: "row"
-								}
+								attrs
 							},
 							attrs,
 							unref(eventHandlers)
@@ -79,9 +83,7 @@ export default async function () {
 							ref: rowRef,
 							class: props.classV2,
 							style: style,
-							attrs: {
-								role: "row"
-							}
+							attrs
 						},
 						unref(eventHandlers)
 					]),

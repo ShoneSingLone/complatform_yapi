@@ -106,7 +106,7 @@ export default async function () {
 		.form-check-label {
 			&:hover {
 				.el-checkbox__label {
-					color: var(--ui-primary);
+					color: var(--el-color-primary);
 				}
 			}
 		}

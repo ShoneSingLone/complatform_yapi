@@ -1,7 +1,7 @@
 <style lang="less">
 #xTreeZiDingYiJieDianNeiRong {
 	.prefix {
-		color: var(--ui-primary);
+		color: var(--el-color-primary);
 		margin-right: 10px;
 		&.is-leaf {
 			color: var(--el-color-success);

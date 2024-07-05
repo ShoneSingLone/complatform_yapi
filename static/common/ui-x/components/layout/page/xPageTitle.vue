@@ -4,7 +4,7 @@
 	--xPageTitle-back-bg: var(--ti-base-color-common-6);
 
 	font-size: 18px;
-	padding: var(--ui-one);
+	padding: var(--xPageTitle-padding, var(--ui-one));
 	padding-bottom: 0;
 	color: var(--el-text-color-primary);
 	.title-text {

@@ -29,7 +29,8 @@ export default async function () {
 		computed: {
 			isShowSlot() {
 				try {
-					return this.direction !== "vertical" && this.$slots().default;
+					const isHorizon = this.direction !== "vertical";
+					return isHorizon && this.$slots.default;
 				} catch (e) {
 					return false;
 				}

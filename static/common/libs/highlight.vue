@@ -5853,6 +5853,8 @@ export default async function () {
 		width: 100%;
 		display: flex;
 		justify-content: flex-start;
+		align-items: center;
+		flex-flow:row wrap;
 
 		> img {
 			max-width: 90%;
@@ -5893,9 +5895,9 @@ export default async function () {
 
 	blockquote {
 		padding: 8px 16px;
-		background-color: var(--ui-primary-light-8);
+		background-color: var(--el-color-primary-light-8);
 		border-radius: 4px;
-		border-left: 5px solid var(--ui-primary);
+		border-left: 5px solid var(--el-color-primary);
 		margin: 20px 0;
 	}
 
@@ -8391,7 +8393,7 @@ hue-6-2: #c18401
 		display: block;
 		padding: 0.5em;
 		color: #383a42;
-		background: #fafafa;
+		background: var(--el-fill-color-lighter);
 	}
 
 	.hljs-comment,

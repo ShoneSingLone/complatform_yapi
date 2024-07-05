@@ -69,12 +69,12 @@ class ModelResource extends ModelBase {
 			})
 			.exec();
 	}
-	getResourceByName(name) {
-		return this.model
-			.findOne({
-				name
-			})
-			.exec();
+	getResourceByName(name, fileId) {
+		const params = { name };
+		if (fileId || fileId === 0) {
+			params.fileId = fileId;
+		}
+		return this.model.findOne(params).exec();
 	}
 	findByMd5(md5) {
 		return this.model

@@ -1,8 +1,8 @@
 <style lang="less"></style>
 <template>
 	<div class="el-page-header xPageHeader">
-		<div class="el-page-header__left" @click="$emit('back')">
-			<i class="el-icon-back"></i>
+		<div class="el-page-header__left flex middle" @click="$emit('back')">
+			<xIcon :icon="cptBackIcon" class="mr4" />
 			<div class="el-page-header__title">
 				<slot name="title">{{ title }}</slot>
 			</div>
@@ -23,7 +23,13 @@ export default async function () {
 					return i18n("el.pageHeader.title");
 				}
 			},
-			content: String
+			content: String,
+			backIcon: String
+		},
+		computed: {
+			cptBackIcon() {
+				return this.backIcon || this.$xUiConfigs.xPageTitle_backIcon;
+			}
 		}
 	});
 }

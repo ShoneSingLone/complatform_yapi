@@ -91,6 +91,14 @@ export default async function () {
 			);
 
 			return {
+				fileId: 0,
+				breadcrumbItems: [
+					{
+						label: "我的空间",
+						fileId: 0
+					}
+				],
+				/* *********************** */
 				homeListSearchKey: "",
 				currentTabName: "资源",
 				homeListDrawer: false,
@@ -123,6 +131,17 @@ export default async function () {
 			};
 		},
 		methods: {
+			pushDir(item) {
+				this.fileId = item._id;
+				this.breadcrumbItems.push({
+					label: item.name,
+					fileId: item._id
+				});
+			},
+			popDir(index, item) {
+				this.fileId = item.fileId;
+				this.breadcrumbItems.splice(index + 1);
+			},
 			getShareUrl({ state }) {
 				// #ifndef H5
 				uni.getClipboardData({

@@ -28,9 +28,9 @@
 
 		.active {
 			> .tags-view-item {
-				background-color: var(--ui-primary);
+				background-color: var(--el-color-primary);
 				color: #fff;
-				border-color: var(--ui-primary);
+				border-color: var(--el-color-primary);
 				&::before {
 					content: "";
 					background: #fff;

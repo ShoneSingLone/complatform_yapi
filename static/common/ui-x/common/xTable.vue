@@ -9,7 +9,7 @@ export default async function () {
 	return defineComponent({
 		props: ["configs", "data"],
 		setup(props) {
-			const { useAutoResize } = _useXui;
+			const { useAutoResize } = _xUtils;
 			const { height, width, sizer: refxTable } = useAutoResize(props);
 
 			const setColActionWidthImmediate = () => {

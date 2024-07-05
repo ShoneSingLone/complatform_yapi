@@ -13,8 +13,8 @@ export default async function () {
 		render() {
 			const vm = this;
 			let attrs = {};
-			if (_.isFunction(_useXui?.globalConfigs?.xItemSelect?.defaultProps)) {
-				attrs = _useXui.globalConfigs.xItemSelect.defaultProps(vm, vm.$attrs);
+			if (_.isFunction(_xUtils?.globalConfigs?.xItemSelect?.defaultProps)) {
+				attrs = _xUtils.globalConfigs.xItemSelect.defaultProps(vm, vm.$attrs);
 			}
 
 			const selectProps = merge_hFnProps([

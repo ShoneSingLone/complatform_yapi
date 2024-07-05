@@ -131,7 +131,7 @@ export default async function () {
 		margin-top: var(--ui-one);
 		padding: 0px 16px;
 		a {
-			color: var(--ui-primary-active);
+			color: var(--el-color-primary-active);
 		}
 	}
 }

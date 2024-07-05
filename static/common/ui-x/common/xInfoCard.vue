@@ -11,15 +11,20 @@
 			</div>
 		</div>
 		<div class="el-descriptions__body el-descriptions__table is-bordered el-descriptions--small" :style="cellStyle" v-for="(layoutRow, index) in layout" :key="index">
-			<xInfoCardItem v-for="prop in layoutRow" :key="prop + index" :item="filterItemPropSpan(prop)" :unitWidth="unitWidth" />
+			<xInfoCardItem v-for="prop in layoutRow" :key="itemKey(prop)" :item="filterItemPropSpan(prop)" :unitWidth="unitWidth" />
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const { useElementSize } = await _.$importVue("/common/utils/hooks.vue");
 	const { ref, watch } = Vue;
+	if (!_.$isInput(PRIVATE_GLOBAL.xInfoCardCount)) {
+		PRIVATE_GLOBAL.xInfoCardCount = {
+			count: 0
+		};
+	}
 	return {
 		props: ["configs"],
 		setup() {
@@ -93,7 +98,17 @@ export default async function () {
 				return this.layout[0].length;
 			}
 		},
+		data() {
+			return {};
+		},
 		methods: {
+			itemKey(prop) {
+				if (prop) {
+					return `${prop}_${this._uid}`;
+				} else {
+					return `${this._uid}_${++PRIVATE_GLOBAL.xInfoCardCount.count}`;
+				}
+			},
 			filterItemPropSpan(propString) {
 				const [prop, span] = String(propString).split(":");
 				const item = this.items[prop] || {};

@@ -7,7 +7,7 @@
 		}
 		.is-current {
 			.el-tree-node__content {
-				color: var(--ui-primary);
+				color: var(--el-color-primary);
 				background: #ecf5ff;
 				border-color: #b3d8ff;
 			}
@@ -83,7 +83,14 @@ export default async function () {
 		inject: ["APP", "inject_note"],
 		mounted() {},
 		setup(props) {
-			const { stateStyle, resizeOptions } = useXmove(props);
+			const { stateStyle, resizeOptions } = (() => {
+				if (this.APP.isMobile) {
+					return { stateStyle: {}, resizeOptions: {} };
+				} else {
+					return useXmove(props);
+				}
+			})();
+
 			return {
 				stateStyle,
 				resizeOptions,

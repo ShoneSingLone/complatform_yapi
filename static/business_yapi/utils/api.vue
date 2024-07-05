@@ -91,6 +91,11 @@ export default async function () {
 						data
 					});
 				},
+				resourceCloudDiskDir(data) {
+					return _.$ajax.post("/api/resource/cloud_disk_dir", {
+						data
+					});
+				},
 				resourceCloudDiskFileList(data) {
 					return _.$ajax.get("/api/resource/cloud_disk_file_list", {
 						data

@@ -5,7 +5,7 @@
 }
 
 #nprogress .bar {
-	background: #29d;
+	background: var(--el-color-primary);
 
 	position: fixed;
 	z-index: 1031;
@@ -24,8 +24,8 @@
 	width: 100px;
 	height: 100%;
 	box-shadow:
-		0 0 10px #29d,
-		0 0 5px #29d;
+		0 0 10px var(--el-color-primary),
+		0 0 5px var(--el-color-primary);
 	opacity: 1;
 
 	-webkit-transform: rotate(3deg) translate(0px, -4px);
@@ -48,8 +48,8 @@
 	box-sizing: border-box;
 
 	border: solid 2px transparent;
-	border-top-color: #29d;
-	border-left-color: #29d;
+	border-top-color: var(--el-color-primary);
+	border-left-color: var(--el-color-primary);
 	border-radius: 50%;
 
 	-webkit-animation: nprogress-spinner 400ms linear infinite;
@@ -489,62 +489,16 @@ export default async function () {
 			};
 		})();
 
-		/**
-		 * (Internal) Determines if an element or space separated list of class names contains a class name.
-		 */
-
-		function hasClass(element, name) {
-			var list = typeof element == "string" ? element : classList(element);
-			return list.indexOf(" " + name + " ") >= 0;
-		}
-
-		/**
-		 * (Internal) Adds a class to an element.
-		 */
-
 		function addClass(element, name) {
-			var oldList = classList(element),
-				newList = oldList + name;
-
-			if (hasClass(oldList, name)) return;
-
-			// Trim the opening space.
-			element.className = newList.substring(1);
+			$(element).addClass(name);
 		}
-
-		/**
-		 * (Internal) Removes a class from an element.
-		 */
 
 		function removeClass(element, name) {
-			var oldList = classList(element),
-				newList;
-
-			if (!hasClass(element, name)) return;
-
-			// Replace the class name.
-			newList = oldList.replace(" " + name + " ", " ");
-
-			// Trim the opening and closing spaces.
-			element.className = newList.substring(1, newList.length - 1);
+			$(element).removeClass(name);
 		}
-
-		/**
-		 * (Internal) Gets a space separated list of the class names on the element.
-		 * The list is wrapped with a single space on each end to facilitate finding
-		 * matches within the list.
-		 */
-
-		function classList(element) {
-			return (" " + (element.className || "") + " ").replace(/\s+/gi, " ");
-		}
-
-		/**
-		 * (Internal) Removes an element from the DOM.
-		 */
 
 		function removeElement(element) {
-			element && element.parentNode && element.parentNode.removeChild(element);
+			$(element).remove();
 		}
 
 		return NProgress;

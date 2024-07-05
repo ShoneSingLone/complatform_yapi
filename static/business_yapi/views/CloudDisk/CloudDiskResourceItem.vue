@@ -34,7 +34,7 @@
 }
 </style>
 <template>
-	<div class="resource-wrapper flex middle" v-ripple="{ color: 'var(--ui-primary)', duration: 300, delay: 300 }">
+	<div class="resource-wrapper flex middle" v-ripple="{ color: 'var(--el-color-primary)', duration: 300, delay: 300 }">
 		<div class="resource-icon flex middle center" @click="preview">
 			<xIcon :icon="cptIcon" />
 		</div>
@@ -47,7 +47,7 @@
 			</div>
 		</div>
 		<div class="resource-opr mr pointer" @click="toggle">
-			<xIcon icon="_cloud_select_resource" style="color: var(--ui-primary)" v-if="checked" />
+			<xIcon icon="_cloud_select_resource" style="color: var(--el-color-primary)" v-if="checked" />
 			<xIcon icon="_cloud_unselect_resource" style="color: var(--el-border-color)" v-else />
 		</div>
 	</div>

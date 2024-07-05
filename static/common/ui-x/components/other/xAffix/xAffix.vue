@@ -13,7 +13,7 @@
 <script lang="ts">
 export default async function () {
 	const COMPONENT_NAME = "xAffix";
-	const { buildProps, useResizeObserver, useNamespace, useWindowSize, useElementBounding, addUnit, throwError, getScrollContainer, useEventListener } = _useXui;
+	const { buildProps, useResizeObserver, useNamespace, useWindowSize, useElementBounding, addUnit, throwError, getScrollContainer, useEventListener } = _xUtils;
 	return defineComponent({
 		props: buildProps({
 			zIndex: {
@@ -66,7 +66,7 @@ export default async function () {
 
 			const scrollContainer = shallowRef();
 			const { height: windowHeight, width: windowWidth } = useWindowSize();
-			const { height: rootHeight, width: rootWidth, top: rootTop, bottom: rootBottom, update: updateRoot } = _useXui.useElementBounding(root, { windowScroll: false });
+			const { height: rootHeight, width: rootWidth, top: rootTop, bottom: rootBottom, update: updateRoot } = _xUtils.useElementBounding(root, { windowScroll: false });
 
 			const targetRect = useElementBounding(target);
 			const fixed = ref(false);

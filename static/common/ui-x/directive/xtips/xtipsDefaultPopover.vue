@@ -41,7 +41,7 @@ export default async function () {
 			}
 		},
 		setup(props) {
-			const { useResizeObserver } = _useXui;
+			const { useResizeObserver } = _xUtils;
 
 			let resizerStopper;
 			this.popperJsUpdate = _.debounce(() => {

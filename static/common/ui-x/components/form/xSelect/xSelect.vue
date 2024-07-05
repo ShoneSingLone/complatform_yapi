@@ -870,7 +870,7 @@ export default async function () {
 		cursor: pointer;
 		padding-right: 35px;
 		&:focus {
-			border-color: var(--ui-primary);
+			border-color: var(--el-color-primary);
 		}
 	}
 
@@ -917,7 +917,7 @@ export default async function () {
 	}
 
 	.el-input.is-focus .el-input__inner {
-		border-color: var(--ui-primary);
+		border-color: var(--el-color-primary);
 	}
 
 	> .el-input {
@@ -970,7 +970,7 @@ export default async function () {
 }
 
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-	color: var(--ui-primary);
+	color: var(--el-color-primary);
 	background-color: #fff;
 }
 
@@ -1043,7 +1043,7 @@ export default async function () {
 }
 
 .el-select-dropdown__item.selected {
-	color: var(--ui-primary);
+	color: var(--el-color-primary);
 	font-weight: 700;
 }
 

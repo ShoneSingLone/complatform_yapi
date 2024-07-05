@@ -95,7 +95,7 @@
 	--el-table-text-color: var(--el-text-color-regular);
 	--el-table-header-text-color: var(--el-text-color-primary);
 	--el-table-row-hover-bg-color: var(--el-fill-color-light);
-	--el-table-current-row-bg-color: var(--ui-primary-light-9);
+	--el-table-current-row-bg-color: var(--el-color-primary-light-9);
 	--el-table-header-bg-color: var(--el-border-color-lighter);
 	--el-table-fixed-box-shadow: var(--el-box-shadow-light);
 	--el-table-bg-color: var(--el-fill-color-blank);
@@ -337,8 +337,9 @@
 </style>
 
 <script lang="ts">
-export default async function ({ merge_hFnProps }) {
-	const { emptyRender } = await _.$importVue("/common/ui-x/components/data/xTableVir/xTableEmptyRender.vue");
+export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
+	let xTableVir_emptyComponent = PRIVATE_GLOBAL.xTableVir_emptyComponent || "/common/ui-x/components/data/xTableVir/xTableEmptyRender.vue";
+	const { emptyRender } = await _.$importVue(xTableVir_emptyComponent);
 	_.each(
 		{
 			ComponentTableV2HeaderRow: "/common/ui-x/components/data/xTableVir/ComponentTableV2HeaderRow.vue",
@@ -363,7 +364,7 @@ export default async function ({ merge_hFnProps }) {
 		buildProp,
 		buildProps,
 		tableV2Props
-	} = _useXui;
+	} = _xUtils;
 
 	/* resolveDynamicComponent */
 	var _a;
@@ -893,19 +894,15 @@ export default async function ({ merge_hFnProps }) {
 		return result == "0" && 1 / value == -INFINITY ? "-0" : result;
 	}
 
-	function baseGet(object, path) {
-		path = castPath(path, object);
-		var index = 0,
-			length = path.length;
-		while (object != null && index < length) {
-			object = object[toKey(path[index++])];
-		}
-		return index && index == length ? object : false;
-	}
-
 	function get(object, path, defaultValue) {
-		var result = object == null ? false : baseGet(object, path);
-		return result === false ? defaultValue : result;
+		const val = _.$val(object, path);
+		if (_.$isInput(val)) {
+			return val;
+		} else if (_.$isInput(defaultValue)) {
+			return defaultValue;
+		} else {
+			return "--";
+		}
 	}
 
 	var now = function () {
@@ -1318,7 +1315,7 @@ export default async function ({ merge_hFnProps }) {
 	};
 	const useId = deterministicId => {
 		const idInjection = useIdInjection();
-		const namespace = _useXui.useGetDerivedNamespace();
+		const namespace = _xUtils.useGetDerivedNamespace();
 		const idRef = computed(() => unref(deterministicId) || `${namespace.value}-id-${idInjection.prefix}-${idInjection.current++}`);
 		return idRef;
 	};
@@ -1971,7 +1968,7 @@ export default async function ({ merge_hFnProps }) {
 		);
 	};
 	var _sfc_staticRenderFns$2 = [];
-	var __component__$2 = _useXui.normalizeComponent(_sfc_main$2, _sfc_render$2, _sfc_staticRenderFns$2, false, null, null, null, null);
+	var __component__$2 = _xUtils.normalizeComponent(_sfc_main$2, _sfc_render$2, _sfc_staticRenderFns$2, false, null, null, null, null);
 	var Icon = __component__$2.exports;
 
 	const SortIcon = {
@@ -2373,7 +2370,16 @@ export default async function ({ merge_hFnProps }) {
 	const ComponentEmpty = {
 		displayName: "ComponentEmpty",
 		functional: true,
-		render: (h, { data: props, slots }) => {
+		render(h, { data: props, slots, scopedSlots }, vm) {
+			const inject_xTableVir = injectVm(vm, "xTableVirWrapper");
+
+			let emptyChild = (() => {
+				if (inject_xTableVir?.$scopedSlots?.empty) {
+					return inject_xTableVir.$scopedSlots.empty();
+				}
+				return emptyRender();
+			})();
+
 			return h(
 				"div",
 				{
@@ -2385,7 +2391,7 @@ export default async function ({ merge_hFnProps }) {
 						width: "100%"
 					}
 				},
-				[slots.default ? slots.default() : emptyRender()]
+				[emptyChild]
 			);
 		}
 	};
@@ -2778,6 +2784,7 @@ export default async function ({ merge_hFnProps }) {
 
 	return defineComponent({
 		inheritAttrs: false,
+		componentName: "xTableVirWrapper",
 		props: ["columns"],
 		provide() {
 			return {

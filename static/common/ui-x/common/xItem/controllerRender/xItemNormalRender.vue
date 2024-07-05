@@ -120,6 +120,14 @@ export default async function () {
 										staticClass: "ml4"
 									})
 								]
+							),
+							h(
+								"span",
+								{
+									staticClass: "xItem_label-colon",
+									vIf: vm.cptIsShowItemColon
+								},
+								[":"]
 							)
 						]
 					),

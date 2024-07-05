@@ -16,7 +16,7 @@ export default async function () {
 	const { useTree, itemSize, iconPropType } = await _.$importVue("/common/ui-x/components/data/xTree/composables.vue");
 
 	return defineComponent({
-		props: _useXui.buildProps({
+		props: _xUtils.buildProps({
 			dragAndDrop: {
 				type: Function
 			},
@@ -133,7 +133,7 @@ export default async function () {
 			} = useTree(props, emit, this);
 
 			return {
-				ns: _useXui.useNamespace("tree"),
+				ns: _xUtils.useNamespace("tree"),
 				treeNodeSize,
 				/*  */
 				flattenTree,

@@ -1,21 +1,11 @@
 <style lang="less"></style>
 <template>
-	<li
-		class="el-menu-item"
-		role="menuitem"
-		tabindex="-1"
-		:style="[paddingStyle, itemStyle, { backgroundColor }]"
-		:class="{
-			'is-active': active,
-			'is-disabled': disabled
-		}"
-		@click="handleClick"
-		@mouseenter="onMouseEnter"
-		@focus="onMouseEnter"
-		@blur="onMouseLeave"
-		@mouseleave="onMouseLeave">
+	<xRender :render="itemRender" v-if="itemRender" />
+	<li v-else role="menuitem" tabindex="-1" :style="cptStyle" :class="cptClass" @click="handleClick" @mouseenter="onMouseEnter" @focus="onMouseEnter" @blur="onMouseLeave" @mouseleave="onMouseLeave">
 		<xTooltip v-if="parentMenu.$options.componentName === 'ElMenu' && rootMenu.collapse && $slots.title" effect="dark" placement="right">
-			<div slot="content"><slot name="title"></slot></div>
+			<div slot="content">
+				<slot name="title"></slot>
+			</div>
 			<div style="position: absolute; left: 0; top: 0; height: 100%; width: 100%; display: inline-block; box-sizing: border-box; padding: 0 20px">
 				<slot></slot>
 			</div>
@@ -35,15 +25,36 @@ export default async function () {
 		componentName: "ElMenuItem",
 		mixins: [xMenuMixin],
 		props: {
+			itemRender: {
+				type: Function,
+				default: null
+			},
 			index: {
 				default: null,
 				validator: val => typeof val === "string" || val === null
 			},
 			route: [String, Object],
-			disabled: Boolean
+			disabled: Boolean,
+			item: {
+				type: Object,
+				default: () => ({})
+			}
 		},
 		computed: {
+			cptStyle() {
+				return [this.paddingStyle, this.itemStyle, { backgroundColor: this.backgroundColor }];
+			},
+			cptClass() {
+				return {
+					"xMenuItem el-menu-item": true,
+					"is-active": this.active,
+					"is-disabled": this.disabled
+				};
+			},
 			active() {
+				if (this.item?.href) {
+					return this.item.href === this.rootMenu.defaultActive;
+				}
 				return this.index === this.rootMenu.activeIndex;
 			},
 			hoverBackground() {
@@ -73,6 +84,17 @@ export default async function () {
 			},
 			isNested() {
 				return this.parentMenu !== this.rootMenu;
+			}
+		},
+		watch: {
+			active: {
+				immediate: true,
+				handler(val) {
+					this.$emit("activechange", {
+						index: this.index,
+						isActive: val
+					});
+				}
 			}
 		},
 		methods: {

@@ -85,6 +85,9 @@ export default async function () {
 				return this.rootMenu.openedMenus.indexOf(this.index) > -1;
 			},
 			active() {
+				if (this.rootMenu.defaultActive) {
+					return _.some(this.items, item => item.href === this.rootMenu.defaultActive);
+				}
 				let isActive = false;
 				const submenus = this.submenus;
 				const items = this.items;
@@ -243,7 +246,27 @@ export default async function () {
 			this.rootMenu.removeSubmenu(this);
 		},
 		render(h) {
-			const { active, opened, paddingStyle, titleStyle, backgroundColor, rootMenu, currentPlacement, menuTransitionName, mode, disabled, popperClass, $slots, isFirstLevel } = this;
+			const { active, opened, paddingStyle, titleStyle, backgroundColor, rootMenu, currentPlacement, menuTransitionName, mode, disabled, popperClass, $slots, $vSlots, isFirstLevel } = this;
+
+			const children = (() => {
+				if ($slots.default) {
+					return $slots.default;
+				}
+
+				if (_.isFunction($vSlots.default)) {
+					return $vSlots.default();
+				}
+			})();
+			const title = (() => {
+				if ($slots.title) {
+					return $slots.title;
+				}
+
+				if (_.isFunction($vSlots.title)) {
+					return $vSlots.title();
+				}
+			})();
+
 			const popupMenu = h("transition", {
 				name: menuTransitionName,
 				children: h("div", {
@@ -258,7 +281,7 @@ export default async function () {
 						style: {
 							backgroundColor: rootMenu.backgroundColor || ""
 						},
-						children: $slots.default
+						children
 					})
 				})
 			});
@@ -272,7 +295,7 @@ export default async function () {
 					style: {
 						backgroundColor: rootMenu.backgroundColor || ""
 					},
-					children: $slots.default
+					children
 				})
 			});
 			const submenuTitleIcon = (rootMenu.mode === "horizontal" && isFirstLevel) || (rootMenu.mode === "vertical" && !rootMenu.collapse) ? "el-icon-arrow-down" : "el-icon-arrow-right";
@@ -304,7 +327,7 @@ export default async function () {
 							}
 						],
 						children: [
-							$slots.title,
+							title,
 							h("i", {
 								class: ["el-submenu__icon-arrow", submenuTitleIcon]
 							})

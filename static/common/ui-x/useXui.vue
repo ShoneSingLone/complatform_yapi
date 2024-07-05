@@ -1,34 +1,56 @@
 <script lang="ts">
-export default async function (options = {}) {
-	Vue.prototype.$xUiConfigs = _.merge({
-		size: options.size || "small",
-		zIndex: options.zIndex || 2e3
-	});
+export default async function ({
+	PRIVATE_GLOBAL,
+	size,
+	zIndex,
+	bootstrap,
+	xTableVir_emptyComponent,
+	xSwitch_width,
+	xPageTitle_backIcon,
+	xItem_isShowItemColon,
+	xModal_closeIcon,
+	xPagination_paginationComponent,
+	xPagination_position
+}) {
+	((/* ui 默认配置 */) => {
+		/* tableVir empty 的默认组件地址 */
+		PRIVATE_GLOBAL.xTableVir_emptyComponent = xTableVir_emptyComponent;
+
+		Vue.prototype.$xUiConfigs = _.merge({
+			size: size || "small",
+			zIndex: zIndex || 2e3,
+			xSwitch_width: xSwitch_width || 40,
+			xPageTitle_backIcon: xPageTitle_backIcon || "icon_back",
+			xItem_isShowItemColon: xItem_isShowItemColon || false,
+			xModal_closeIcon: xModal_closeIcon || "icon_close",
+			xPagination_paginationComponent: xPagination_paginationComponent || "PrivatePagination",
+			xPagination_position: xPagination_position || "end"
+		});
+	})();
 	/* @ts-ignore */
 	window._api = window._api || {};
 	/* @ts-ignore */
 	window._opts = window._opts || {};
 
-	/* 全局 */
-	await Promise.all([
-		/* 基础工具类 */
-		_.$importVue("/common/ui-x/common/xUIcomponetUtils.vue"),
-		Promise.all(
-			_.map(
-				[
-					"/common/ui-x/directive/directive.install.vue",
-					"/common/ui-x/directive/xtips/xtips.vue",
-					"/common/ui-x/directive/ripple.vue",
-					"/common/ui-x/directive/xloading.vue",
-					"/common/ui-x/directive/xmove.vue"
-				],
-				url => _.$importVue(url)
-			)
+	/* 全局 _xUtils */
+	await _.$importVue("/common/ui-x/common/xUIcomponetUtils.vue");
+	/* 基础工具类 */
+	await Promise.all(
+		_.map(
+			[
+				"/common/ui-x/directive/directive.install.vue",
+				"/common/ui-x/directive/xtips/xtips.vue",
+				"/common/ui-x/directive/ripple.vue",
+				"/common/ui-x/directive/xloading.vue",
+				"/common/ui-x/directive/xmove.vue"
+			],
+			url => _.$importVue(url)
 		)
-	]);
+	);
 
-	if (_.isFunction(options.bootstrap)) {
-		await options.bootstrap(window._useXui);
+	if (_.isFunction(bootstrap)) {
+		const { _xUtils } = PRIVATE_GLOBAL;
+		await bootstrap(_xUtils);
 	}
 
 	await (async function lazyLoadAllComponents() {
@@ -62,9 +84,7 @@ export default async function (options = {}) {
 				});
 			}
 		};
-
-		_.each(ALL_COMPONENTS, loadComponentByImportVue);
-
+		await Promise.all(_.map(ALL_COMPONENTS, loadComponentByImportVue));
 		function setComponentName(component, componentName) {
 			if (!component.componentName) {
 				component.componentName = componentName;
@@ -123,6 +143,7 @@ export default async function (options = {}) {
 
 	await (async () => {
 		/* 设置样式 */
+
 		await _.$importVue("/common/ui-x/theme/theme.default.vue");
 		async function setThemeCss() {
 			const currentTheme = $("html").attr("data-theme");

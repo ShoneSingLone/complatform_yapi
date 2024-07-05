@@ -70,6 +70,7 @@ export default async function () {
 					ref: "xForm",
 					class: "xForm",
 					attrs: {
+						"data-col": cptCol.value,
 						"data-style-id": styleId,
 						...attrs
 					},

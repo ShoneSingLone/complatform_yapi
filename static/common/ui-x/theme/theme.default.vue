@@ -12,15 +12,17 @@
 	--ui-half: 8px;
 	--ui-half-reverse: -8px;
 	--ui-height: 32px;
-	--ui-primary: #5e7ce0;
-	--ui-primary-hover: #7693f5;
-	--ui-primary-active: #344899;
-	--ui-primary-light-3: #8ea3e9;
-	--ui-primary-light-5: #afbef0;
-	--ui-primary-light-7: #cfd8f6;
-	--ui-primary-light-8: #dfe5f9;
-	--ui-primary-light-9: #eff2fc;
-	--ui-primary-dark-2: #4b63b3;
+	/*  */
+	--el-color-primary-hover: #7693f5;
+	--el-color-primary-active: #344899;
+	/*  */
+	--el-color-primary: #5e7ce0;
+	--el-color-primary-light-3: #8ea3e9;
+	--el-color-primary-light-5: #afbef0;
+	--el-color-primary-light-7: #cfd8f6;
+	--el-color-primary-light-8: #dfe5f9;
+	--el-color-primary-light-9: #eff2fc;
+	--el-color-primary-dark-2: #4b63b3;
 	--el-color-success: #67c23a;
 	--el-color-success-light-3: #95d475;
 	--el-color-success-light-5: #b3e19d;
@@ -106,9 +108,9 @@
 	--ui-base-bg: #ffffff;
 	--ui-base-bg-dark: #252b3a;
 	--ui-brand: #5e7ce0;
-	--ui-brand-foil: #f2f2f3;
 	--ui-brand-hover: #7693f5;
 	--ui-brand-active: #526ecc;
+	--ui-brand-foil: #f2f2f3;
 	--ui-brand-active-focus: #344899;
 	--ui-contrast: #c7000b;
 	--ui-text: #252b3a;
@@ -164,7 +166,7 @@
 	--ui-disabled-bg: #f5f5f5;
 	--ui-disabled-line: #dfe1e6;
 	--ui-disabled-text: #cfd0d3;
-	--ui-primary-disabled: #beccfa;
+	--el-color-primary-disabled: #beccfa;
 	--ui-icon-fill-active-disabled: #beccfa;
 	--ui-label-bg: #e9edfa;
 	--ui-connected-overlay-bg: #ffffff;
@@ -189,7 +191,7 @@
 	--ui-info-bg: #e9edfa;
 	--ui-success-line: #50d4ab;
 	--ui-success-bg: #cffcee;
-	--ui-primary-bg: #f2f5fc;
+	--el-color-primary-bg: #f2f5fc;
 	--ui-default-bg: #f7f8fa;
 	--ui-shadow-length-base: 0 2px 6px 0;
 	--ui-shadow-length-slide-left: -2px 0 8px 0;
@@ -354,7 +356,7 @@ each(@list, {
 /* .flex-loop (@i) when (@i <= 50) { .flex@{i} { flex: @i; } .flex-loop(@i + 1); } */
 
 .flex {
-	display: flex !important;
+	display: flex;
 	&.like-float {
 		flex-flow: row wrap;
 
@@ -496,7 +498,7 @@ li {
 
 a {
 	text-decoration: none;
-	color: var(--ui-primary);
+	color: var(--el-color-primary);
 	cursor: pointer;
 }
 
@@ -516,7 +518,7 @@ a:active {
 }
 
 svg.pointer {
-	color: var(--ui-primary);
+	color: var(--el-color-primary);
 	&:focus,
 	&:hover,
 	&:active {
@@ -526,11 +528,11 @@ svg.pointer {
 
 	&:focus,
 	&:hover {
-		color: var(--ui-primary-hover);
+		color: var(--el-color-primary-hover);
 	}
 
 	&:active {
-		color: var(--ui-primary-active);
+		color: var(--el-color-primary-active);
 	}
 
 	&.is-disabled,
@@ -644,6 +646,15 @@ svg.pointer {
 .fade-enter,
 .fade-leave-to {
 	opacity: 0;
+}
+
+.fade-short-enter-active,
+.fade-short-leave-active {
+	transition: opacity 0.5s;
+}
+.fade-short-enter,
+.fade-short-leave-to {
+	opacity: 0.8;
 }
 
 .slide-fade-enter-active {
@@ -863,7 +874,7 @@ body,
 					.el-submenu {
 						.el-submenu__title {
 							background-color: #ecf5ff;
-							color: var(--ui-primary) !important;
+							color: var(--el-color-primary) !important;
 							// font-weight: 600;
 
 							&::before {
@@ -874,7 +885,7 @@ body,
 								right: 0;
 								bottom: 0;
 								left: 0;
-								border-right: 4px solid var(--ui-primary) !important;
+								border-right: 4px solid var(--el-color-primary) !important;
 								z-index: 1;
 							}
 						}

@@ -2,7 +2,7 @@
 .xTreeNode {
 	&.is-current {
 		.el-tree-node__content {
-			background-color: var(--xTreeNode-bg-current, var(--ui-primary));
+			background-color: var(--xTreeNode-bg-current, var(--el-color-primary));
 			color: var(--xTreeNode-text-color-current, white);
 		}
 	}
@@ -14,7 +14,7 @@
 		position: absolute;
 		z-index: 1;
 		display: none;
-		background-color: var(--ui-primary);
+		background-color: var(--el-color-primary);
 		&.top {
 			height: 2px;
 			left: 0;
@@ -116,7 +116,7 @@ export default async function () {
 
 	return defineComponent({
 		name: "xTreeNode",
-		props: _useXui.buildProps({
+		props: _xUtils.buildProps({
 			node: {
 				type: Object,
 				default: () => ({
@@ -160,7 +160,7 @@ export default async function () {
 			const vm = this;
 			/* @ts-ignore */
 			const injectRootTree = this.injectRootTree;
-			const ns = _useXui.useNamespace("tree");
+			const ns = _xUtils.useNamespace("tree");
 			const indent = computed(() => {
 				return injectRootTree.props?.indent || 16;
 			});

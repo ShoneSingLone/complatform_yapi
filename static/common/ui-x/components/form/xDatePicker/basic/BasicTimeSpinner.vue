@@ -90,7 +90,7 @@ export default async function () {
 
 	return defineComponent({
 		directives: {
-			repeatClick: _useXui.RepeatClick
+			repeatClick: _xUtils.RepeatClick
 		},
 		props: {
 			date: {},

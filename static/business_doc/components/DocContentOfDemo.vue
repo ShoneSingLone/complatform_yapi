@@ -36,7 +36,7 @@ export default async function () {
 	return defineComponent({
 		setup(props) {
 			return {
-				ns: _useXui.useNamespace("DocContentOfDemo"),
+				ns: _xUtils.useNamespace("DocContentOfDemo"),
 				xCardStyle: `min-width: 200px;
 margin: var(--ui-one);
 max-height:calc(100vh - 200px);

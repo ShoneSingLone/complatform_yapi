@@ -140,7 +140,7 @@ export default async function () {
 			}
 			// font-size: 14px;
 			font-weight: 400;
-			border-left: 4px solid var(--ui-primary);
+			border-left: 4px solid var(--el-color-primary);
 			border-bottom: unset;
 
 			.card__header {

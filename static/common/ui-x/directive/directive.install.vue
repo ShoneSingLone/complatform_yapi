@@ -41,7 +41,7 @@ export default async function () {
 				_parentListeners: {
 					"update:visible"(val) {
 						if (!val) {
-							instance.$closeModal();
+							instance.closeModal();
 						}
 					}
 				},
@@ -52,7 +52,8 @@ export default async function () {
 					options
 				)
 			});
-			instance.$closeModal = () => {
+			instance.ALLOW_MUTATING_A_PROP_DIRECTLY = true;
+			instance.closeModal = () => {
 				instance.$props.visible = false;
 				instance.$nextTick(() => {
 					setTimeout(() => {
@@ -87,7 +88,7 @@ export default async function () {
 		};
 
 		_.$notify = async function (options) {
-			const xNotification = await getCurrentNotifyComponent(_useXui.globalConfigs?.xNotification?.componentName);
+			const xNotification = await getCurrentNotifyComponent(_xUtils.globalConfigs?.xNotification?.componentName);
 			const PopupManager = await _.$importVue("/common/libs/VuePopper/popupManager.vue");
 
 			const NotificationConstructor = Vue.extend(xNotification);
@@ -182,7 +183,7 @@ export default async function () {
 		};
 
 		_.$msg = async function (options) {
-			const xMsg = await getCurrentMessageComponent(_useXui.globalConfigs?.xNotification?.componentName);
+			const xMsg = await getCurrentMessageComponent(_xUtils.globalConfigs?.xNotification?.componentName);
 			const PopupManager = await _.$importVue("/common/libs/VuePopper/popupManager.vue");
 
 			const MsgConstructor = Vue.extend(xMsg);

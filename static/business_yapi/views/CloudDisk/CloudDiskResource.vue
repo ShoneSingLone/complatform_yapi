@@ -19,6 +19,9 @@
 </style>
 <template>
 	<div class="flex vertical height100 CloudDiskResource">
+		<xCard>
+			<xBreadcrumb :items="APP.breadcrumbItems" :itemRender="breadCrumbItemRender" />
+		</xCard>
 		<div class="flex flex1 vertical overflow-auto">
 			<CloudDiskResourceItem v-for="(item, index) in resourceList" :key="index" :item="item" :checked="APP.selectedItems.includes(item._id)" @toggle="toggle(item)" @preview="preview(item)" />
 		</div>
@@ -32,7 +35,7 @@
 					<span>上传文件</span>
 				</div>
 				<xGap f />
-				<div class="flex vertical center" @click="makeNewDir">
+				<div class="flex vertical center" @click="openMakeNewDirDialog">
 					<div class="CloudDiskResource-opr-icon mb4">
 						<xIcon icon="_cloud_item_dir" />
 					</div>
@@ -52,9 +55,6 @@ export default async function () {
 		components: {
 			CloudDiskResourceItem: () => _.$importVue("@/views/CloudDisk/CloudDiskResourceItem.vue")
 		},
-		mounted() {
-			this.getResourceList();
-		},
 		data() {
 			return {
 				chunkAndSizeArray: [],
@@ -73,6 +73,31 @@ export default async function () {
 			};
 		},
 		methods: {
+			breadCrumbItemRender({ target, item, index, items }) {
+				const isLastItem = index === items.length - 1;
+
+				target.push(
+					h(
+						"xBtn",
+						{
+							preset: "text",
+							onClick: () => {
+								if (item.fileId === this.APP.fileId) {
+									this.getResourceList();
+								} else {
+									this.APP.popDir(index, item);
+								}
+							}
+						},
+						[item.label]
+					)
+				);
+
+				if (!isLastItem) {
+					target.push(h("xIcon", { icon: "_back_group", style: "transform:rotate(180deg);" }));
+				}
+				return target;
+			},
 			//合并文件
 			async mergeFile(fileInfo, chunkTotal) {
 				const { md5Value, fileKey } = fileInfo[0];
@@ -123,7 +148,7 @@ export default async function () {
 				const {
 					data: { chunks: uploadedChunkArray, file: isMergeFile }
 				} = await _api.yapi.resourceCloudDiskCheckChunks({ md5 });
-
+				debugger;
 				const hasUploaded = (() => {
 					if (uploadedChunkArray.length === 0) {
 						return false;
@@ -186,19 +211,23 @@ export default async function () {
 			},
 			handleUploaded(payload) {
 				console.log(payload);
+				this.getResourceList();
 			},
-			async makeNewDir() {
+			async openMakeNewDirDialog() {
 				await _.$openModal({
 					title: "新建文件夹",
 					url: "@/views/CloudDisk/CloudDiskResource.NewDir.dialog.vue",
 					parent: this,
-					async makeNewDir(name) {}
+					makeNewDir: this.makeNewDir
 				});
 				this.APP.homeListDrawer = false;
 			},
 			preview(item) {
 				if (item.type === "image") {
 					this.preview_image(item);
+				}
+				if (item.type === "dir") {
+					this.APP.pushDir(item);
 				}
 			},
 			preview_image(item) {
@@ -212,6 +241,21 @@ export default async function () {
 					this.APP.selectedItems.splice(index, 1);
 				} else {
 					this.APP.selectedItems.push(item._id);
+				}
+			},
+			async makeNewDir(name) {
+				_.$loading(true);
+				try {
+					await _api.yapi.resourceCloudDiskDir({
+						fileId: this.APP.fileId || 0,
+						name
+					});
+					this.getResourceList();
+				} catch (error) {
+					_.$msgError(error);
+					console.error(error);
+				} finally {
+					_.$loading(false);
 				}
 			},
 			async getResourceList() {
@@ -246,6 +290,14 @@ export default async function () {
 						type
 					};
 				});
+			}
+		},
+		watch: {
+			"APP.fileId": {
+				immediate: true,
+				handler() {
+					this.getResourceList();
+				}
 			}
 		}
 	});

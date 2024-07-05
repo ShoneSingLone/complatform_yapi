@@ -142,7 +142,7 @@ export default async function () {
 						h("xIcon", {
 							icon: "currentLocation",
 							staticClass: "node-icon-current",
-							attrs: { color: "var(--ui-primary)" }
+							attrs: { color: "var(--el-color-primary)" }
 						})
 					]
 				);

@@ -1,7 +1,15 @@
 <template>
 	<section id="ViewNote" :class="cptNoteClass">
 		<AppHeader v-if="cptIsShowAppHeaderComponent" />
-		<div class="flex1-overflow-auto flex">
+		<div v-if="APP.isMobile" class="flex1-overflow-auto flex vertical">
+			<xAdvancedSearch mountTo="#MobileMenu" v-model="isCollapse" :label="false" :mountProps="cptMountProps" :style="cptToggleStyle">
+				<xGap t />
+				<NoteAside class="width100 flex1 height100" />
+			</xAdvancedSearch>
+			<div id="MobileMenu"></div>
+			<NoteSection style="width: 100%; height: 1px" v-show="isCollapse" />
+		</div>
+		<div v-else class="flex1-overflow-auto flex">
 			<NoteAside v-show="!isShowEditor" />
 			<NoteSection />
 		</div>
@@ -61,6 +69,7 @@ export default async function () {
 			}, 300);
 
 			return {
+				isCollapse: true,
 				treeData: [],
 				currentWiki: {},
 				expandedKeys: [],
@@ -158,6 +167,21 @@ export default async function () {
 			}
 		},
 		computed: {
+			cptToggleStyle() {
+				return {
+					position: "absolute",
+					zIndex: 1,
+					margin: "8px"
+				};
+			},
+			cptMountProps() {
+				return {
+					class: "flex1 flex vertical",
+					style: {
+						height: "1px"
+					}
+				};
+			},
 			cptNoteClass() {
 				return { "is-show-header": this.cptIsShowAppHeaderComponent };
 			},

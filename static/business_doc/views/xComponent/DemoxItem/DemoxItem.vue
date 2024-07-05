@@ -5,7 +5,7 @@
 		<DemoAndCode title="变量修改" path="@/views/xComponent/DemoxItem/BianLiangXiuGai.vue" />
 		<DemoAndCode title="itemType的扩展方法" path="@/views/xComponent/DemoxItem/JiChuYongFa.vue" />
 		<DemoAndCode title="NormalRender" path="@/views/xComponent/DemoxItem/JiChuYongFa.vue" />
-		<DemoAndCode title="_useXui.globalConfigs" path="@/views/xComponent/DemoxItem/JiChuYongFa.vue" />
+		<DemoAndCode title="_xUtils.globalConfigs" path="@/views/xComponent/DemoxItem/JiChuYongFa.vue" />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

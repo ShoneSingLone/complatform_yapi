@@ -4,7 +4,7 @@ export default async function () {
 	Vue.component("ComponentFixedSizeGrid", () => _.$importVue("/common/ui-x/components/data/xTableVir/ComponentFixedSizeGrid.vue"));
 	Vue.component("ComponentDynamicSizeGrid", () => _.$importVue("/common/ui-x/components/data/xTableVir/ComponentDynamicSizeGrid.vue"));
 
-	const { useTableGrid, TableV2InjectionKey, tableV2GridProps } = _useXui;
+	const { useTableGrid, TableV2InjectionKey, tableV2GridProps } = _xUtils;
 
 	/* ScrollBar */
 	return defineComponent({
@@ -77,6 +77,7 @@ export default async function () {
 								ref: bodyRef,
 								attrs: {
 									"data-name": Grid.name,
+									"data-role": "table-main_body",
 									data: data,
 									useIsScrolling: useIsScrolling,
 									itemKey: itemKey,

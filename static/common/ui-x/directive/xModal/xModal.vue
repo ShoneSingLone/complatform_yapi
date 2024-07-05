@@ -77,6 +77,7 @@
 				<div class="el-dialog__header">
 					<div class="el-dialog__title-bar" v-xmove="moveOptions" />
 					<span class="el-dialog__title">
+						<span class="xModel-title_prefixe"></span>
 						<xRender :render="cptTitle" />
 					</span>
 					<button v-if="isShowFullScreen" type="button" aria-label="Close" class="x-dialog__headerbtn fullscreen" @click="toggleFullScreen">
@@ -84,7 +85,8 @@
 						<i v-else class="el-icon el-icon-full-screen"></i>
 					</button>
 					<button type="button" aria-label="Close" class="x-dialog__headerbtn close" @click="closeModal">
-						<i class="el-dialog__close el-icon el-icon-close"></i>
+						<!-- <i class="el-dialog__close el-icon el-icon-close"></i> -->
+						<xIcon :icon="cptCloseIcon" class="el-dialog__close" />
 					</button>
 				</div>
 				<ComponentContent ref="refContent" :closeModal="closeModal" @hook:mounted="setDialogOffset" />
@@ -123,7 +125,7 @@ export default async function ({ options, modalConfigs }) {
 		setup(props) {
 			const vm = this;
 			useModal(this);
-			const { useAutoResize } = _useXui;
+			const { useAutoResize } = _xUtils;
 
 			const { height: refDialogRectHeight, width: refDialogRectWidth, sizer: refDialog } = useAutoResize(props);
 			const { height: refContentHeight, width: refContentWidth, sizer: refContent } = useAutoResize(props);
@@ -295,6 +297,9 @@ export default async function ({ options, modalConfigs }) {
 			}
 		},
 		computed: {
+			cptCloseIcon() {
+				return this.$xUiConfigs.xModal_closeIcon;
+			},
 			cptTitle() {
 				return options.title;
 			},

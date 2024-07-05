@@ -20,7 +20,7 @@
 	bottom: 0;
 	height: 2px;
 	width: 20px;
-	background-color: var(--ui-primary);
+	background-color: var(--el-color-primary);
 }
 
 .x-mobile-tab {
@@ -31,7 +31,7 @@
 }
 
 .x-mobile-tab_active {
-	color: var(--ui-primary);
+	color: var(--el-color-primary);
 }
 
 .x-mobile-tab-panels {

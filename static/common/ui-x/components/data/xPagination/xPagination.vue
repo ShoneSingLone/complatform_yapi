@@ -1,6 +1,7 @@
 <template>
-	<div class="xPagination flex end" v-if="isShowXPagination">
-		<PrivatePagination
+	<div :class="cptPaginationClass" v-if="isShowXPagination">
+		<component
+			:is="currentPaginationComponent"
 			background
 			@size-change="size => handleChange({ page: 1, size })"
 			@current-change="page => handleChange({ page })"
@@ -9,7 +10,7 @@
 			:page-size="privateValue.size"
 			layout="total, sizes, prev, pager, next, jumper"
 			:total="privateValue.total">
-		</PrivatePagination>
+		</component>
 	</div>
 	<PrivatePagination v-else-if="isShowElPagination" v-bind="$attrs" />
 </template>
@@ -27,10 +28,11 @@ export default async function () {
 			event: "change"
 		},
 		/* page,size,total */
-		props: ["value", "options", "configs"],
-		data() {
+		props: ["value", "options", "configs", "position"],
+		data(vm) {
 			return {
-				pagination: {}
+				pagination: {},
+				currentPaginationComponent: vm.$xUiConfigs.xPagination_paginationComponent
 			};
 		},
 		mounted() {
@@ -57,6 +59,10 @@ export default async function () {
 			}
 		},
 		computed: {
+			cptPaginationClass() {
+				let position = this.position || this.$xUiConfigs.xPagination_position;
+				return ["xPagination flex", position];
+			},
 			isShowElPagination() {
 				return !this.privateValue;
 			},

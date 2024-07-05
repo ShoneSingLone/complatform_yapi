@@ -1,5 +1,6 @@
 <script lang="ts">
 export default async function () {
+	// window._CURENT_IS_MOBILE = /Mobile/gi.test(window.navigator.userAgent)
 	/*anxin应用用到的组件*/
 	_.each(
 		{

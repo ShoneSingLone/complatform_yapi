@@ -6,7 +6,7 @@
 		</div>
 		<div class="mr8" v-else>{{ value }}</div>
 		<div class="pointer">
-			<xIcon icon="save" @click="save" v-if="isEdit" style="color: var(--ui-primary)" />
+			<xIcon icon="save" @click="save" v-if="isEdit" style="color: var(--el-color-primary)" />
 			<xIcon icon="close" @click="cancel" v-if="isEdit" style="color: var(--el-color-danger)" />
 			<xIcon icon="edit" @click="showEditor" v-else />
 		</div>

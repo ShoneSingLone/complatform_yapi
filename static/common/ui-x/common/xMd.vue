@@ -31,7 +31,7 @@ export default async function ({ code, PRIVATE_GLOBAL }) {
 	}
 
 	return {
-		props: ["md" /* md text content */],
+		props: ["md" /* md text content */, "htmlFilter"],
 		data() {
 			return {
 				originHTML: "",
@@ -145,15 +145,16 @@ export default async function ({ code, PRIVATE_GLOBAL }) {
 			};
 		},
 		async mounted() {
-			this.init();
+			this.renderHtml();
 		},
 		watch: {
 			md() {
-				this.init();
+				this.renderHtml();
 			}
 		},
 		methods: {
-			init() {
+			renderHtml() {
+				const htmlFilter = this.htmlFilter || (text => text);
 				let text = $(this.$refs.refSlot).text();
 				text = text.replace(/\\`\\`\\`/g, "```");
 				this.originHTML = this.md || text;
@@ -171,7 +172,7 @@ export default async function ({ code, PRIVATE_GLOBAL }) {
 					src = _.$resolvePath(src);
 					$img.attr("src", src);
 				});
-				this.html = $html[0].innerHTML;
+				this.html = htmlFilter($html[0].innerHTML);
 			}
 		}
 	};

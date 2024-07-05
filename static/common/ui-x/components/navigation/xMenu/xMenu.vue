@@ -1,6 +1,52 @@
+<style lang="less">
+.el-menu-item {
+	font-size: 14px;
+	color: var(--xMenu-color, var(--el-text-color-primary));
+	padding: 0 20px;
+	cursor: pointer;
+	-webkit-transition:
+		border-color 0.3s,
+		background-color 0.3s,
+		color 0.3s;
+	transition:
+		border-color 0.3s,
+		background-color 0.3s,
+		color 0.3s;
+	box-sizing: border-box;
+	* {
+		vertical-align: middle;
+	}
+
+	i {
+		color: var(--el-text-color-secondary);
+	}
+
+	&.is-disabled {
+		opacity: 0.25;
+		cursor: not-allowed;
+		background: 0 0 !important;
+	}
+
+	[class^="el-icon-"] {
+		margin-right: 5px;
+		width: 24px;
+		text-align: center;
+		font-size: 18px;
+		vertical-align: middle;
+	}
+
+	&.is-active {
+		color: var(--xMenu-color-is-active, var(--el-color-primary));
+		i {
+			color: inherit;
+		}
+	}
+}
+</style>
+
 <script lang="ts">
 export default async function () {
-	const { on, off, hasClass, addClass, removeClass, ARIA_UTILS: Utils } = window._useXui;
+	const { on, off, hasClass, addClass, removeClass, ARIA_UTILS: Utils } = _xUtils;
 
 	class SubMenu {
 		domNode;

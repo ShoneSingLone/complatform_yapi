@@ -117,6 +117,7 @@
 		const [srcRoot] = src.split("/common/libs/seed");
 
 		const { appName, appEntryName, appVersion, loadingImg } = srcRootDom.dataset;
+
 		if (!appName) {
 			alert("miss APP_NAME");
 		}

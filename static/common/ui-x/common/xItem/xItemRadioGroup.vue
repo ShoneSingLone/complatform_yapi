@@ -142,7 +142,7 @@ export default async function () {
 	}
 
 	.el-radio__input.is-checked + .el-radio__label {
-		color: var(--ui-primary);
+		color: var(--el-color-primary);
 	}
 }
 </style>

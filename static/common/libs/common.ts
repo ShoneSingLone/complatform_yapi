@@ -1,10 +1,28 @@
 (function () {
-	const isDev = !!localStorage.isDev;
-	const PRIVATE_GLOBAL = {};
+	const IS_DEV = !!localStorage.isDev;
 
-	if (isDev) {
+	if (IS_DEV) {
 		console.log("common.js");
 	}
+
+	const PRIVATE_GLOBAL = new Proxy(
+		{},
+		{
+			set(privateGlobal, prop, val) {
+				if (privateGlobal[prop]) {
+					alert(`PRIVATE_GLOBAL ${prop} 重复`);
+				} else {
+					privateGlobal[prop] = val;
+				}
+			}
+		}
+	);
+	_.$updateCol = function (tableConfigs, prop, value) {
+		const index = _.findIndex(tableConfigs.columns, { prop });
+		let item = tableConfigs.columns[index];
+		item = _.merge(item, value);
+		tableConfigs.columns.splice(index, 1, item);
+	};
 
 	/**
 	 * 常用于列表columns信息复用，将数组变为对象，默认key为prop
@@ -68,24 +86,38 @@
 	_.$isDef = val => val !== undefined && val !== null;
 
 	/**
-	 * 遍历树结构
+	 * 倒序遍历树结构，可以用pop移除节点
 	 * @param tree traverse
-	 * @param handler
+	 * @param handler(currentNode,nodeParenteList) 返回false则break
 	 * @param options
 	 */
 	/* @typescriptDeclare (tree:any[],handler:any,options?:{children:string})=>void */
-	_.$traverse = function (tree, handler, options) {
+	_.$traverse = function (tree, handler, options, propString = "") {
 		const childrenName = options?.children || "children";
 		if (_.$isArrayFill(tree)) {
-			_.each(tree, item => {
-				handler(item);
-				if (_.$isArrayFill(item[childrenName])) {
-					_.$traverse(item[childrenName], handler, options);
+			let len = tree.length - 1;
+			let i = len;
+
+			while (i > -1) {
+				const node = tree[i];
+				const isBreak = handler(node, tree, `${propString}.${i}`) === false;
+
+				if (isBreak) {
+					break;
+				} else {
+					const index = _.findIndex(tree, node);
+					if (~index) {
+						if (_.$isArrayFill(node[childrenName])) {
+							node[childrenName] = _.$traverse(node[childrenName], handler, options, `${propString}.${i}.${childrenName}`);
+						}
+					}
 				}
-			});
+				i--;
+			}
 		} else {
 			_.$traverse([tree], handler, options);
 		}
+		return tree;
 	};
 
 	_.$setDocTitle = title => title && (document.title = title);
@@ -1106,7 +1138,7 @@
 	 * 开发模式下才会在console打印日志
 	 */
 	const genConsole = type => {
-		if (isDev || localStorage.mustShowLog) {
+		if (IS_DEV || localStorage.mustShowLog) {
 			return windowConsole[type].bind(windowConsole);
 		}
 		return () => null;
@@ -1258,17 +1290,28 @@
 			if (!msg) {
 				return;
 			}
-			console.log("🚀$msgError:", msg);
+			console.log("🚀 ERROR: ", msg);
 			/*如果返回的是一個對象，且对象status为200，则不提示*/
 			if (_.isPlainObject(msg)) {
+				/* @ts-ignore */
 				if (msg.status === 200) {
 					return;
 				}
-				if (msg?.responseJSON?.detailArgs) {
-					msg = msg?.responseJSON?.detailArgs;
-				} else if (msg?.responseText) {
+				/* @ts-ignore */
+				if (_.isString(msg.error)) {
+					/* @ts-ignore */
+					msg = msg.error;
+					/* @ts-ignore */
+				} else if (_.isString(msg.responseJSON?.detailArgs)) {
+					/* @ts-ignore */
+					msg = msg.responseJSON.detailArgs;
+					/* @ts-ignore */
+				} else if (_.isString(msg.responseText)) {
+					/* @ts-ignore */
 					msg = msg.responseText;
-				} else if (msg?.message) {
+					/* @ts-ignore */
+				} else if (_.isString(msg.message)) {
+					/* @ts-ignore */
 					msg = msg.message;
 				}
 			} else {
@@ -1475,7 +1518,7 @@
 				payload = payload || {};
 				scritpSourceCode = scritpSourceCode || "";
 				scritpSourceCode = scritpSourceCode.replace("export default", "");
-				const isShowTemplate = templateSourceCode && isDev;
+				const isShowTemplate = templateSourceCode && IS_DEV;
 				const innerCode = [
 					`console.info("${resolvedURL}");`,
 					isShowTemplate ? `(()=>\`${templateSourceCode}\`)();` : ``,
@@ -1485,7 +1528,7 @@
 				let component = {};
 
 				try {
-					scfObjAsyncFn = new Function("payload", `with ({..._,...Vue,}){${innerCode};}`);
+					scfObjAsyncFn = new Function("payload", "PRIVATE_GLOBAL", `with ({...PRIVATE_GLOBAL,..._,...Vue,}){${innerCode};}`);
 				} catch (e) {
 					console.error(innerCode);
 					throw e;
@@ -1501,7 +1544,7 @@
 						return Vue[prop];
 					}
 				});
-				component = await scfObjAsyncFn(fnPayload);
+				component = await scfObjAsyncFn(fnPayload, PRIVATE_GLOBAL);
 				/* 可以不返回对象，只执行外层 wrapper层的function */
 				/* template */
 				if (templateSourceCode) {
@@ -1578,7 +1621,7 @@
 		_.$sourceCodeSFC = async function ({ resolvedURL, sourceCode }) {
 			/* @descript 非开发模式下，如果已经加载，直接返回，否则每次都获取最新的代码 */
 			/* @declare { scritpSourceCode, templateSourceCode, styleSourceCode } */
-			if (!isDev && VUE_COMPONENTS_CACHE[resolvedURL]) {
+			if (!IS_DEV && VUE_COMPONENTS_CACHE[resolvedURL]) {
 				return VUE_COMPONENTS_CACHE[resolvedURL];
 			}
 

@@ -72,7 +72,6 @@ export default async function ({ row, onSuccess, projectsDB }) {
 		methods: {
 			async onClickOk() {
 				const [error] = await _.$validateForm(this.$el);
-				return;
 				if (!error) {
 					_.$loading(true);
 					try {

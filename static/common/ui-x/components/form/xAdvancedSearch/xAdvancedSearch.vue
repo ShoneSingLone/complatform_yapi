@@ -3,7 +3,6 @@
 	.xAdvancedSearch-label {
 	}
 	.xAdvancedSearch-icon {
-		margin-left: 4px;
 		width: 12px;
 		height: 12px;
 		&.collapse {
@@ -18,7 +17,7 @@
 	<div class="xAdvancedSearch flex middle">
 		<slot name="collapse" class="xAdvancedSearch-collapse-wrapper" v-if="cptIsCollapse" />
 		<xBtn @click="toggleCollapse">
-			<span class="xAdvancedSearch-label">{{ cptLabel }}</span>
+			<span class="xAdvancedSearch-label mr4" v-if="cptLabel">{{ cptLabel }}</span>
 			<xIcon icon="advanced_search" :class="cptIconClass" />
 		</xBtn>
 		<xDrawer title="我是标题" :visible.sync="cptDrawer" :with-header="false" v-if="useDrawer">
@@ -32,6 +31,14 @@
 export default async function () {
 	return defineComponent({
 		props: {
+			mountProps: {
+				type: Object,
+				default: () => ({})
+			},
+			label: {
+				type: [String, Boolean],
+				default: i18n("高级搜索")
+			},
 			collapse: {
 				type: Boolean,
 				default: true
@@ -64,7 +71,8 @@ export default async function () {
 							$(vm.mountTo).hide();
 						},
 						render() {
-							return h("div", { id: String(vm.mountTo).replace("#", "") }, vm.$slots.default);
+							const props = _.merge({ id: String(vm.mountTo).replace("#", "") }, vm.mountProps);
+							return h("div", props, vm.$slots.default);
 						}
 					});
 
@@ -115,7 +123,10 @@ export default async function () {
 				}
 			},
 			cptLabel() {
-				return i18n("高级搜索");
+				if (_.isBoolean(this.label)) {
+					return this.label;
+				}
+				return this.label || i18n("高级搜索");
 			},
 			cptIconClass() {
 				return {

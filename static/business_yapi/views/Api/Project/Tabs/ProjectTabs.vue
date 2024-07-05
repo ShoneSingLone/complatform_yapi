@@ -61,7 +61,7 @@ export default async function () {
 
 		&.active {
 			.tab-icon {
-				border: 1px solid var(--ui-primary);
+				border: 1px solid var(--el-color-primary);
 			}
 		}
 	}

@@ -3,7 +3,7 @@ export default async function () {
 	const { useProps } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 	const RULES = await _.$importVue("/common/utils/rules.vue");
 	const { EVENT_ARRAY } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
-	const { useAutoResize } = _useXui;
+	const { useAutoResize } = _xUtils;
 
 	/* 懒加载对应的渲染器  */
 	const _xItem_lazyLoadRender = {
@@ -197,6 +197,13 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptIsShowItemColon() {
+				if (_.$isInput(this.cptConfigs.isShowItemColon)) {
+					return this.cptConfigs.isShowItemColon;
+				} else {
+					return this.$xUiConfigs.xItem_isShowItemColon;
+				}
+			},
 			cptStyle() {
 				const vm = this;
 				return {

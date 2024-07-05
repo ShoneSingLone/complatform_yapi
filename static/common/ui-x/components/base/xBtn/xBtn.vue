@@ -242,6 +242,8 @@ export default async function () {
 				class: vm.cptClassName
 			};
 			if (vm.configs) {
+				/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
+				const vChildren = this.$slots.default || vm.calChildren();
 				if (this.cptDisabledTips) {
 					// buttonProps.attrs = { title: this.cptDisabledTips };
 					return h(vm.type || "button", buttonProps, [
@@ -253,22 +255,42 @@ export default async function () {
 								content: this.cptDisabledTips
 							},
 							[
-								h("span", { staticClass: "flex", slot: "reference" }, [
-									h("i", { vIf: vm.cptLoading, class: "el-icon-loading mr4" }),
-									h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon, "mr4"] }),
-									/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
-									this.$slots.default || vm.calChildren()
+								h("span", { class: ["flex", { middle: vm.cptIcon }], slot: "reference" }, [
+									(() => {
+										if (vm.cptLoading) {
+											return h("i", { class: ["el-icon-loading", { mr4: !!vChildren }] });
+										} else if (vm.cptIcon) {
+											if (/el-/.test(vm.cptIcon)) {
+												return h("i", { class: [vm.cptIcon, { mr4: !!vChildren }] });
+											} else {
+												return h("xIcon", { icon: vm.cptIcon, class: [{ mr4: !!vChildren }] });
+											}
+										} else {
+											return null;
+										}
+									})(),
+									vChildren
 								])
 							]
 						)
 					]);
 				} else {
 					return h(vm.type || "button", buttonProps, [
-						h("span", { staticClass: "flex" }, [
-							h("i", { vIf: vm.cptLoading, class: "el-icon-loading" }),
-							h("i", { vIf: !vm.cptLoading && vm.cptIcon, class: [vm.cptIcon] }),
-							/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
-							this.$slots.default || vm.calChildren()
+						h("span", { class: ["flex", { middle: vm.cptIcon }] }, [
+							(() => {
+								if (vm.cptLoading) {
+									return h("i", { class: ["el-icon-loading", { mr4: !!vChildren }] });
+								} else if (vm.cptIcon) {
+									if (/el-/.test(vm.cptIcon)) {
+										return h("i", { class: [vm.cptIcon, { mr4: !!vChildren }] });
+									} else {
+										return h("xIcon", { icon: vm.cptIcon, class: [{ mr4: !!vChildren }] });
+									}
+								} else {
+									return null;
+								}
+							})(),
+							vChildren
 						])
 					]);
 				}
@@ -303,21 +325,21 @@ a.el-button {
 
 	&.el-button--primary {
 		color: #fff;
-		background-color: var(--ui-primary);
-		border-color: var(--ui-primary);
+		background-color: var(--el-color-primary);
+		border-color: var(--el-color-primary);
 	}
 
 	&.el-button--primary:focus,
 	&.el-button--primary:hover {
-		background: var(--ui-primary-hover);
-		border-color: var(--ui-primary-hover);
+		background: var(--el-color-primary-hover);
+		border-color: var(--el-color-primary-hover);
 		color: #fff;
 	}
 
 	&.el-button--primary.is-active,
 	&.el-button--primary:active {
-		background: var(--ui-primary-active);
-		border-color: var(--ui-primary-active);
+		background: var(--el-color-primary-active);
+		border-color: var(--el-color-primary-active);
 		color: #fff;
 	}
 
@@ -330,26 +352,26 @@ a.el-button {
 	&.el-button--primary.is-disabled:focus,
 	&.el-button--primary.is-disabled:hover {
 		color: #fff;
-		background-color: var(--ui-primary-light-5);
-		border-color: var(--ui-primary-light-5);
+		background-color: var(--el-color-primary-light-5);
+		border-color: var(--el-color-primary-light-5);
 	}
 
 	&.el-button--primary.is-plain {
-		color: var(--ui-primary);
+		color: var(--el-color-primary);
 		background: #ecf5ff;
 		border-color: #b3d8ff;
 	}
 
 	&.el-button--primary.is-plain:focus,
 	&.el-button--primary.is-plain:hover {
-		background: var(--ui-primary);
-		border-color: var(--ui-primary);
+		background: var(--el-color-primary);
+		border-color: var(--el-color-primary);
 		color: #fff;
 	}
 
 	&.el-button--primary.is-plain:active {
-		background: var(--ui-primary-active);
-		border-color: var(--ui-primary-active);
+		background: var(--el-color-primary-active);
+		border-color: var(--el-color-primary-active);
 		color: #fff;
 		outline: 0;
 	}
@@ -660,7 +682,7 @@ a.el-button {
 	}
 
 	&.el-button--text {
-		color: var(--ui-primary);
+		color: var(--el-color-primary);
 		background: 0 0;
 		padding-left: 0;
 		padding-right: 0;
@@ -668,13 +690,13 @@ a.el-button {
 
 	&.el-button--text:focus,
 	&.el-button--text:hover {
-		color: var(--ui-primary-hover);
+		color: var(--el-color-primary-hover);
 		border-color: transparent;
 		background-color: transparent;
 	}
 
 	&.el-button--text:active {
-		color: var(--ui-primary-active);
+		color: var(--el-color-primary-active);
 		background-color: transparent;
 	}
 }
@@ -685,14 +707,14 @@ a.el-button {
 
 .el-button:focus,
 .el-button:hover {
-	color: var(--ui-primary);
+	color: var(--el-color-primary);
 	border-color: #c6e2ff;
 	background-color: #ecf5ff;
 }
 
 .el-button:active {
-	color: var(--ui-primary-active);
-	border-color: var(--ui-primary-active);
+	color: var(--el-color-primary-active);
+	border-color: var(--el-color-primary-active);
 	outline: 0;
 }
 
@@ -707,14 +729,14 @@ a.el-button {
 .el-button.is-plain:focus,
 .el-button.is-plain:hover {
 	background: #fff;
-	border-color: var(--ui-primary);
-	color: var(--ui-primary);
+	border-color: var(--el-color-primary);
+	color: var(--el-color-primary);
 }
 
 .el-button.is-active,
 .el-button.is-plain:active {
-	color: var(--ui-primary-active);
-	border-color: var(--ui-primary-active);
+	color: var(--el-color-primary-active);
+	border-color: var(--el-color-primary-active);
 }
 
 .el-button.is-plain:active {
@@ -917,13 +939,13 @@ a.el-button {
 	--el-button-border-color: var(--el-border-color);
 	--el-button-bg-color: var(--el-fill-color-blank);
 	/* hover;focus */
-	--el-button-hover-text-color: var(--ui-primary);
-	--el-button-hover-border-color: var(--ui-primary);
-	--el-button-hover-bg-color: var(--ui-primary-light-9);
+	--el-button-hover-text-color: var(--el-color-primary);
+	--el-button-hover-border-color: var(--el-color-primary);
+	--el-button-hover-bg-color: var(--el-color-primary-light-9);
 	/* active */
-	--el-button-active-text-color: var(--ui-primary-active);
-	--el-button-active-border-color: var(--ui-primary-active);
-	--el-button-active-bg-color: var(--ui-primary-light-9);
+	--el-button-active-text-color: var(--el-color-primary-active);
+	--el-button-active-border-color: var(--el-color-primary-active);
+	--el-button-active-bg-color: var(--el-color-primary-light-9);
 	/* disabled */
 	--el-button-disabled-text-color: var(--el-disabled-text-color);
 	--el-button-disabled-border-color: var(--el-border-color-light);
@@ -931,17 +953,17 @@ a.el-button {
 
 	&.el-button--blue {
 		--el-button-text-color: var(--el-color-white);
-		--el-button-border-color: var(--ui-primary);
-		--el-button-bg-color: var(--ui-primary);
+		--el-button-border-color: var(--el-color-primary);
+		--el-button-bg-color: var(--el-color-primary);
 		--el-button-hover-text-color: var(--el-color-white);
-		--el-button-hover-border-color: var(--ui-primary-hover);
-		--el-button-hover-bg-color: var(--ui-primary-hover);
+		--el-button-hover-border-color: var(--el-color-primary-hover);
+		--el-button-hover-bg-color: var(--el-color-primary-hover);
 		--el-button-active-text-color: var(--el-color-white);
-		--el-button-active-border-color: var(--ui-primary-active);
-		--el-button-active-bg-color: var(--ui-primary-active);
+		--el-button-active-border-color: var(--el-color-primary-active);
+		--el-button-active-bg-color: var(--el-color-primary-active);
 		--el-button-disabled-text-color: var(--el-color-white);
-		--el-button-disabled-border-color: var(--ui-primary-light-5);
-		--el-button-disabled-bg-color: var(--ui-primary-light-5);
+		--el-button-disabled-border-color: var(--el-color-primary-light-5);
+		--el-button-disabled-bg-color: var(--el-color-primary-light-5);
 	}
 
 	color: var(--el-button-text-color);
@@ -977,7 +999,7 @@ a.el-button {
 	}
 
 	&.el-button--text {
-		color: var(--ui-primary);
+		color: var(--el-color-primary);
 		background: 0 0;
 		padding-left: 0;
 		padding-right: 0;
@@ -993,11 +1015,11 @@ a.el-button {
 
 		&:focus,
 		&:hover {
-			color: var(--ui-primary-hover);
+			color: var(--el-color-primary-hover);
 		}
 
 		&:active {
-			color: var(--ui-primary-active);
+			color: var(--el-color-primary-active);
 		}
 
 		&.is-disabled,
