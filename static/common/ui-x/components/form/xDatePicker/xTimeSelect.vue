@@ -1,11 +1,10 @@
 <style lang="less"></style>
 <script lang="ts">
 export default async function () {
-	const [PanelTimeSelect, BasicDatePicker] = await _.$importVue([
-		"/common/ui-x/components/form/xDatePicker/panel/PanelTimeSelect.vue",
-		"/common/ui-x/components/form/xDatePicker/basic/BasicDatePicker.vue"
+	const [BasicDatePicker, PanelTimeSelect] = await _.$importVue([
+		"/common/ui-x/components/form/xDatePicker/basic/BasicDatePicker.vue",
+		"/common/ui-x/components/form/xDatePicker/panel/PanelTimeSelect.vue"
 	]);
-
 	return defineComponent({
 		mixins: [BasicDatePicker],
 		name: "ElTimeSelect",

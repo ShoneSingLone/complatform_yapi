@@ -10,15 +10,17 @@ export default async function () {
 				staticClass: "xItem-wrapper flex vertical",
 				attrs: {
 					"data-form-item-type": vm.itemType,
-					"data-form-item-id": vm.cpt_id
+					"data-form-item-id": vm.cpt_id,
+					key: vm.itemType + vm.cpt_id
 				},
+				// props: {},
 				style: vm.cptStyle
 			},
 			[
 				h(
 					"div",
 					{
-						staticClass: "xItem-label-contorller"
+						staticClass: "xItem-label-controller"
 					},
 					[
 						/* label */
@@ -56,7 +58,7 @@ export default async function () {
 								)
 							]
 						),
-						/* contorller */
+						/* controller */
 						h(
 							"div",
 							{

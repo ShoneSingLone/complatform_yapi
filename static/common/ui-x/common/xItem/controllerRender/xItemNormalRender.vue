@@ -42,7 +42,8 @@ export default async function () {
 			attrs: {
 				"data-form-item-type": vm.itemType,
 				"data-form-item-id": vm.cpt_id,
-				disabled: vm.cptDisabled
+				disabled: vm.cptDisabled,
+				key: vm.itemType + vm.cpt_id
 			},
 			style: vm.cptStyle
 		};

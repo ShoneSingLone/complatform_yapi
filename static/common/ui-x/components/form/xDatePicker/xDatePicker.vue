@@ -1,11 +1,11 @@
 <style lang="less"></style>
 <script lang="ts">
 export default async function () {
-	const [BasicDatePicker, PanelDateRange, PanelMonthRange, PanelDate] = await _.$importVue([
+	const [BasicDatePicker, PanelDate, PanelDateRange, PanelMonthRange] = await _.$importVue([
 		"/common/ui-x/components/form/xDatePicker/basic/BasicDatePicker.vue",
+		"/common/ui-x/components/form/xDatePicker/panel/PanelDate.vue",
 		"/common/ui-x/components/form/xDatePicker/panel/PanelDateRange.vue",
-		"/common/ui-x/components/form/xDatePicker/panel/PanelMonthRange.vue",
-		"/common/ui-x/components/form/xDatePicker/panel/PanelDate.vue"
+		"/common/ui-x/components/form/xDatePicker/panel/PanelMonthRange.vue"
 	]);
 
 	const getPanel = function (type) {

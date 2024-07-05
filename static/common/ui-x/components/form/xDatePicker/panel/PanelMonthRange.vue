@@ -93,11 +93,11 @@ export default async function () {
 			},
 
 			leftLabel() {
-				return this.leftDate.getFullYear() + " " + this.t("el.datepicker.year");
+				return this.leftDate.getFullYear() + " " + this.i18n("el.datepicker.year");
 			},
 
 			rightLabel() {
-				return this.rightDate.getFullYear() + " " + this.t("el.datepicker.year");
+				return this.rightDate.getFullYear() + " " + this.i18n("el.datepicker.year");
 			},
 
 			leftYear() {

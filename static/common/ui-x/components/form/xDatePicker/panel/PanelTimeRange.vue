@@ -1,7 +1,7 @@
 <template>
 	<transition name="el-zoom-in-top" @after-leave="$emit('dodestroy')">
 		<div v-show="visible" class="el-time-range-picker el-picker-panel el-popper" :class="popperClass">
-			<div class="el-time-range-picker__content">
+			<div class="el-time-range-picker__content flex">
 				<div class="el-time-range-picker__cell">
 					<div class="el-time-range-picker__header">{{ i18n("el.datepicker.startTime") }}</div>
 					<div :class="{ 'has-seconds': showSeconds, 'is-arrow': arrowControl }" class="el-time-range-picker__body el-time-panel__content">
@@ -60,12 +60,9 @@ export default async function () {
 	};
 
 	return defineComponent({
-		mixins: [Locale],
-
 		components: {
 			BasicTimeSpinner: () => _.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicTimeSpinner.vue")
 		},
-
 		computed: {
 			showSeconds() {
 				return (this.format || "").indexOf("ss") !== -1;
@@ -178,7 +175,8 @@ export default async function () {
 				this.$emit("pick", [this.minDate, this.maxDate], visible);
 			},
 
-			adjustSpinners() {
+			async adjustSpinners() {
+				await _.$ensure(() => this.$refs.maxSpinner && this.$refs.minSpinner);
 				this.$refs.minSpinner.adjustSpinners();
 				this.$refs.maxSpinner.adjustSpinners();
 			},

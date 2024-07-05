@@ -1,6 +1,6 @@
 <style lang="less">
 .xDrawer {
-	z-index: 1;
+	z-index: var(--xDrawerZIndex, 1);
 	&::before {
 		content: " ";
 		display: block;
@@ -16,7 +16,7 @@
 </style>
 <template>
 	<transition name="el-drawer-fade" @after-enter="afterEnter" @after-leave="afterLeave">
-		<div class="el-drawer__wrapper xDrawer" tabindex="-1" v-show="visible">
+		<div class="el-drawer__wrapper xDrawer" tabindex="-1" v-show="visible" :style="cptDrawerWrapperStyle">
 			<div :class="cptDrawerContainerClass" @click.self="handleWrapperClick" role="document" tabindex="-1">
 				<div
 					aria-modal="true"
@@ -36,8 +36,10 @@
 							<i class="el-dialog__close el-icon el-icon-close"></i>
 						</button>
 					</header>
-					<section class="el-drawer__body">
-						<slot></slot>
+					<section class="el-drawer__body beautiful-scroll">
+						<slot>
+							<component :is="currentContentComponent" />
+						</slot>
 					</section>
 				</div>
 			</div>
@@ -110,6 +112,9 @@ export default async function () {
 			}
 		},
 		computed: {
+			cptDrawerWrapperStyle() {
+				return `--xDrawerZIndex: ${this.viewerZIndex}`;
+			},
 			cptDrawerContainerClass() {
 				return {
 					"el-drawer__container": true,
@@ -132,9 +137,11 @@ export default async function () {
 		},
 		data() {
 			return {
+				viewerZIndex: 1,
 				rendered: false,
 				closed: false,
-				prevActiveElement: null
+				prevActiveElement: null,
+				currentContentComponent: "div"
 			};
 		},
 		watch: {
@@ -200,7 +207,6 @@ export default async function () {
 		mounted() {
 			if (this.visible) {
 				this.rendered = true;
-				this.open();
 				if (this.appendToBody) {
 					document.body.appendChild(this.$el);
 				}

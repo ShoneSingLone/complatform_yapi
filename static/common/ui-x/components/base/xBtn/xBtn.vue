@@ -279,7 +279,8 @@ export default async function () {
 </script>
 
 <style lang="less">
-.el-button {
+.el-button,
+a.el-button {
 	display: inline-block;
 	line-height: 1;
 	white-space: nowrap;

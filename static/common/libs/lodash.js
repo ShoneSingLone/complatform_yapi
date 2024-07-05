@@ -328,7 +328,7 @@
 		typedArrayTags[uint8ClampedTag] =
 		typedArrayTags[uint16Tag] =
 		typedArrayTags[uint32Tag] =
-			true;
+		true;
 	typedArrayTags[argsTag] =
 		typedArrayTags[arrayTag] =
 		typedArrayTags[arrayBufferTag] =
@@ -344,7 +344,7 @@
 		typedArrayTags[setTag] =
 		typedArrayTags[stringTag] =
 		typedArrayTags[weakMapTag] =
-			false;
+		false;
 
 	/** Used to identify `toStringTag` values supported by `_.clone`. */
 	var cloneableTags = {};
@@ -370,7 +370,7 @@
 		cloneableTags[uint8ClampedTag] =
 		cloneableTags[uint16Tag] =
 		cloneableTags[uint32Tag] =
-			true;
+		true;
 	cloneableTags[errorTag] = cloneableTags[funcTag] = cloneableTags[weakMapTag] = false;
 
 	/** Used to map Latin Unicode letters to basic Latin letters. */
@@ -634,7 +634,7 @@
 
 			// Legacy `process.binding('util')` for Node.js < 10.
 			return freeProcess && freeProcess.binding && freeProcess.binding("util");
-		} catch (e) {}
+		} catch (e) { }
 	})();
 
 	/* Node.js helper references. */
@@ -1236,7 +1236,7 @@
 		var index = -1,
 			length = strSymbols.length;
 
-		while (++index < length && baseIndexOf(chrSymbols, strSymbols[index], 0) > -1) {}
+		while (++index < length && baseIndexOf(chrSymbols, strSymbols[index], 0) > -1) { }
 		return index;
 	}
 
@@ -1252,7 +1252,7 @@
 	function charsEndIndex(strSymbols, chrSymbols) {
 		var index = strSymbols.length;
 
-		while (index-- && baseIndexOf(chrSymbols, strSymbols[index], 0) > -1) {}
+		while (index-- && baseIndexOf(chrSymbols, strSymbols[index], 0) > -1) { }
 		return index;
 	}
 
@@ -1653,11 +1653,11 @@
 		/** Used to detect if a method is native. */
 		var reIsNative = RegExp(
 			"^" +
-				funcToString
-					.call(hasOwnProperty)
-					.replace(reRegExpChar, "\\$&")
-					.replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") +
-				"$"
+			funcToString
+				.call(hasOwnProperty)
+				.replace(reRegExpChar, "\\$&")
+				.replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") +
+			"$"
 		);
 
 		/** Built-in value references. */
@@ -1678,7 +1678,7 @@
 				var func = getNative(Object, "defineProperty");
 				func({}, "", {});
 				return func;
-			} catch (e) {}
+			} catch (e) { }
 		})();
 
 		/** Mocked built-ins. */
@@ -1867,7 +1867,7 @@
 		 * @returns {Object} Returns the new object.
 		 */
 		var baseCreate = (function () {
-			function object() {}
+			function object() { }
 			return function (proto) {
 				if (!isObject(proto)) {
 					return {};
@@ -4166,9 +4166,9 @@
 		var baseSetData = !metaMap
 			? identity
 			: function (func, data) {
-					metaMap.set(func, data);
-					return func;
-				};
+				metaMap.set(func, data);
+				return func;
+			};
 
 		/**
 		 * The base implementation of `setToString` without support for hot loop shorting.
@@ -4181,13 +4181,13 @@
 		var baseSetToString = !defineProperty
 			? identity
 			: function (func, string) {
-					return defineProperty(func, "toString", {
-						configurable: true,
-						enumerable: false,
-						value: constant(string),
-						writable: true
-					});
-				};
+				return defineProperty(func, "toString", {
+					configurable: true,
+					enumerable: false,
+					value: constant(string),
+					writable: true
+				});
+			};
 
 		/**
 		 * The base implementation of `_.shuffle`.
@@ -4503,7 +4503,7 @@
 			var length = array.length,
 				index = fromRight ? length : -1;
 
-			while ((fromRight ? index-- : ++index < length) && predicate(array[index], index, array)) {}
+			while ((fromRight ? index-- : ++index < length) && predicate(array[index], index, array)) { }
 
 			return isDrop ? baseSlice(array, fromRight ? 0 : index, fromRight ? index + 1 : length) : baseSlice(array, fromRight ? index + 1 : 0, fromRight ? length : index);
 		}
@@ -5591,8 +5591,8 @@
 		var createSet = !(Set && 1 / setToArray(new Set([, -0]))[1] == INFINITY)
 			? noop
 			: function (values) {
-					return new Set(values);
-				};
+				return new Set(values);
+			};
 
 		/**
 		 * Creates a `_.toPairs` or `_.toPairsIn` function.
@@ -6013,8 +6013,8 @@
 		var getData = !metaMap
 			? noop
 			: function (func) {
-					return metaMap.get(func);
-				};
+				return metaMap.get(func);
+			};
 
 		/**
 		 * Gets the name of `func`.
@@ -6127,7 +6127,7 @@
 			try {
 				value[symToStringTag] = undefined;
 				var unmasked = true;
-			} catch (e) {}
+			} catch (e) { }
 
 			var result = nativeObjectToString.call(value);
 			if (unmasked) {
@@ -6150,14 +6150,14 @@
 		var getSymbols = !nativeGetSymbols
 			? stubArray
 			: function (object) {
-					if (object == null) {
-						return [];
-					}
-					object = Object(object);
-					return arrayFilter(nativeGetSymbols(object), function (symbol) {
-						return propertyIsEnumerable.call(object, symbol);
-					});
-				};
+				if (object == null) {
+					return [];
+				}
+				object = Object(object);
+				return arrayFilter(nativeGetSymbols(object), function (symbol) {
+					return propertyIsEnumerable.call(object, symbol);
+				});
+			};
 
 		/**
 		 * Creates an array of the own and inherited enumerable symbols of `object`.
@@ -6169,13 +6169,13 @@
 		var getSymbolsIn = !nativeGetSymbols
 			? stubArray
 			: function (object) {
-					var result = [];
-					while (object) {
-						arrayPush(result, getSymbols(object));
-						object = getPrototype(object);
-					}
-					return result;
-				};
+				var result = [];
+				while (object) {
+					arrayPush(result, getSymbols(object));
+					object = getPrototype(object);
+				}
+				return result;
+			};
 
 		/**
 		 * Gets the `toStringTag` of `value`.
@@ -6900,10 +6900,10 @@
 			if (func != null) {
 				try {
 					return funcToString.call(func);
-				} catch (e) {}
+				} catch (e) { }
 				try {
 					return func + "";
-				} catch (e) {}
+				} catch (e) { }
 			}
 			return "";
 		}
@@ -11363,8 +11363,8 @@
 		)
 			? baseIsArguments
 			: function (value) {
-					return isObjectLike(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
-				};
+				return isObjectLike(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
+			};
 
 		/**
 		 * Checks if `value` is classified as an `Array` object.
@@ -14855,13 +14855,13 @@
 			// Compile the regexp to match each delimiter.
 			var reDelimiters = RegExp(
 				(options.escape || reNoMatch).source +
-					"|" +
-					interpolate.source +
-					"|" +
-					(interpolate === reInterpolate ? reEsTemplate : reNoMatch).source +
-					"|" +
-					(options.evaluate || reNoMatch).source +
-					"|$",
+				"|" +
+				interpolate.source +
+				"|" +
+				(interpolate === reInterpolate ? reEsTemplate : reNoMatch).source +
+				"|" +
+				(options.evaluate || reNoMatch).source +
+				"|$",
 				"g"
 			);
 
@@ -15372,11 +15372,11 @@
 			pairs = !length
 				? []
 				: arrayMap(pairs, function (pair) {
-						if (typeof pair[1] != "function") {
-							throw new TypeError(FUNC_ERROR_TEXT);
-						}
-						return [toIteratee(pair[0]), pair[1]];
-					});
+					if (typeof pair[1] != "function") {
+						throw new TypeError(FUNC_ERROR_TEXT);
+					}
+					return [toIteratee(pair[0]), pair[1]];
+				});
 
 			return baseRest(function (args) {
 				var index = -1;
