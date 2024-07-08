@@ -91,7 +91,6 @@ export default async function () {
 			);
 
 			return {
-				fileId: 0,
 				breadcrumbItems: [
 					{
 						label: "我的空间",
@@ -289,18 +288,54 @@ export default async function () {
 				}
 			}
 		},
-		computed: {},
+		computed: {
+			fileId: {
+				get() {
+					return this.$route.query.fileId || 0;
+				},
+				set(fileId) {
+					this.$router.push({
+						path: this.$route.path,
+						query: {
+							...this.$route.query,
+							fileId
+						}
+					});
+				}
+			}
+		},
 		watch: {
+			fileId(fileId) {
+				if (fileId !== 0) {
+					if (this.breadcrumbItems.length === 1) {
+						debugger;
+					}
+				}
+			},
 			currentTabName: {
 				immediate: true,
 				handler() {
+					debugger;
 					const PATH_MAP = {
 						资源: "/resource",
 						传输: "/transfer",
 						我的: "/me"
 					};
 					const path = PATH_MAP[this.currentTabName];
-					this.$router.push(path);
+					this.$nextTick(() => {
+						this.$router.push({
+							path,
+							query: {
+								...this.$route.query
+							}
+						});
+					});
+				}
+			},
+			"$route.path": {
+				deep: true,
+				handler() {
+					debugger;
 				}
 			},
 			"$route.path": {
