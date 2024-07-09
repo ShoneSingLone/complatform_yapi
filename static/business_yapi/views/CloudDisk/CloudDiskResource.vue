@@ -48,7 +48,7 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const CHUNCK_SIZE = 1 * 1024 * 1024; //1M
+	const CHUNK_SIZE = 0.1 * 1024 * 1024; //1M
 
 	return defineComponent({
 		inject: ["APP"],
@@ -110,17 +110,19 @@ export default async function () {
 			},
 			//文件切片
 			sliceFile(file) {
+				_.$loading(true);
 				//文件分片之后的集合
 				const chunkAndSizeArray = [];
 				let start = 0;
 				let end;
 				while (start < file.size) {
-					end = Math.min(start + CHUNCK_SIZE, file.size);
+					end = Math.min(start + CHUNK_SIZE, file.size);
 					//slice 截取文件字节
 					chunkAndSizeArray.push({ chunk: file.slice(start, end), size: end - start });
 					start = end;
 				}
-				this.chunkAndSizeArray = [...chunkAndSizeArray];
+				_.$loading(false);
+				return [...chunkAndSizeArray];
 			},
 			async handleUpload() {
 				this.APP.homeListDrawer = false;
@@ -143,12 +145,26 @@ export default async function () {
 				/* 检测文件是否上传过 */
 				const md5 = await _.$md5(file);
 				const { name } = file;
-				this.fileNameAndMd5 = { md5, name };
-				this.sliceFile(file);
+				this.APP.triggerUploadFileChange({ md5, name });
+				this.chunkAndSizeArray = this.sliceFile(file);
+				this.APP.triggerUploadFileChange({ md5, chunkTotal: this.chunkAndSizeArray.length });
 				const {
 					data: { chunks: uploadedChunkArray, file: isMergeFile }
-				} = await _api.yapi.resourceCloudDiskCheckChunks({ md5 });
-				debugger;
+				} = await _api.yapi.resourceCloudDiskCheckChunks({ md5, fileName: name, fileId: this.APP.fileId });
+
+				this.APP.triggerUploadFileChange({
+					md5,
+					uploaded: _.reduce(
+						uploadedChunkArray,
+						(uploaded, i) => {
+							uploaded[i.chunkIndex] = true;
+							return uploaded;
+						},
+						{}
+					),
+					isMerged: isMergeFile
+				});
+
 				const hasUploaded = (() => {
 					if (uploadedChunkArray.length === 0) {
 						return false;
@@ -176,6 +192,7 @@ export default async function () {
 				const callback = function (eventName, payload) {
 					console.log(eventName, payload);
 				};
+				this.APP.triggerUploadFileChange({ md5, chunkTotal });
 
 				if (isMergeFile) {
 					//上传过,并且已经完整上传，直接提示上传成功（秒传）
@@ -195,23 +212,38 @@ export default async function () {
 					);
 
 					_.each(needUploadchunkIndexArray, async chunkIndex => {
-						const { chunk, size: chunkSize } = this.chunkAndSizeArray[chunkIndex];
-						let formData = newFormData({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name });
-						const { data } = await _api.yapi.resourceCloudDiskShardUpload({ formData, callback });
-						this.handleUploaded(data);
+						try {
+							const { chunk, size: chunkSize } = this.chunkAndSizeArray[chunkIndex];
+							let formData = newFormData({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name });
+							const { data } = await _api.yapi.resourceCloudDiskShardUpload({ formData, callback });
+							this.handleUploaded(md5, data);
+						} catch (error) {
+							console.log(error);
+						}
 					});
 				} else {
 					//未上传，执行完整上传逻辑
 					_.each(this.chunkAndSizeArray, async ({ chunk, size: chunkSize }, chunkIndex) => {
-						let formData = newFormData({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name });
-						const { data } = await _api.yapi.resourceCloudDiskShardUpload({ formData, callback });
-						this.handleUploaded(data);
+						try {
+							let formData = newFormData({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name });
+							const { data } = await _api.yapi.resourceCloudDiskShardUpload({ formData, callback });
+							this.handleUploaded(md5, data);
+						} catch (error) {
+							console.log(error);
+						}
 					});
 				}
 			},
-			handleUploaded(payload) {
-				console.log(payload);
-				this.getResourceList();
+			handleUploaded(md5, { chunkIndex }) {
+				const info = this.APP.fileRecords[md5];
+				info.uploaded[chunkIndex] = true;
+				this.APP.triggerUploadFileChange(info);
+				const { chunkTotal, uploaded, name } = info;
+				if (chunkTotal === Object.keys(uploaded).length) {
+					_api.yapi.resourceCloudDiskCheckChunks({ md5, fileName: name, fileId: this.APP.fileId }).then(res => {
+						this.getResourceList();
+					});
+				}
 			},
 			async openMakeNewDirDialog() {
 				await _.$openModal({

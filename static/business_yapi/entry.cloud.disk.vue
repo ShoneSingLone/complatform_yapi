@@ -41,6 +41,8 @@ export default async function () {
 
 	// router.beforeEach(function (to, from) {});
 
+	const fileRecords = (await _.$idb.get(`FILE_RECORDS`)) || {};
+
 	var rootApp = new Vue({
 		el: "#app",
 		router,
@@ -90,7 +92,12 @@ export default async function () {
 				10
 			);
 
+			vm.saveFileRecords = _.debounce(function () {
+				_.$idb.set(`FILE_RECORDS`, vm.fileRecords);
+			}, 1000 * 10);
+
 			return {
+				fileRecords,
 				breadcrumbItems: [
 					{
 						label: "我的空间",
@@ -130,6 +137,12 @@ export default async function () {
 			};
 		},
 		methods: {
+			triggerUploadFileChange(args) {
+				const { md5 } = args;
+				this.$set(this.fileRecords, md5, _.merge({}, this.fileRecords[md5], args));
+				$(window).trigger("UPLOAD_FILE_CHANGE", md5);
+				this.saveFileRecords();
+			},
 			pushDir(item) {
 				this.fileId = item._id;
 				this.breadcrumbItems.push({
@@ -315,7 +328,6 @@ export default async function () {
 			currentTabName: {
 				immediate: true,
 				handler() {
-					debugger;
 					const PATH_MAP = {
 						资源: "/resource",
 						传输: "/transfer",

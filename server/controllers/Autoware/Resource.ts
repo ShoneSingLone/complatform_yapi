@@ -829,15 +829,6 @@ module.exports = {
 							chunkName
 						});
 
-						ifUploadAllChunckMergeIt({
-							fileHash,
-							chunkTotal,
-							fileName,
-							dirPathChuncks,
-							fileId,
-							file
-						});
-
 						ctx.body = xU.$response(res);
 					} catch (e) {
 						xU.applog.error(e.message);
@@ -854,11 +845,13 @@ module.exports = {
 				- chunks：已上传的片段数组;`,
 				request: {
 					body: {
-						md5: {
-							description: "文件hash",
+						md5: { description: "文件hash", required: true, type: "string" },
+						fileName: {
+							description: "文件名称",
 							required: true,
 							type: "string"
-						}
+						},
+						fileId: { description: "当前空间", required: true, type: "string" }
 					}
 				},
 				response: {
@@ -869,7 +862,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						const { md5 } = ctx.payload;
+						const { md5, fileName, fileId } = ctx.payload;
 						const findFileInResource = await orm.Resource.findByMd5(md5);
 						if (findFileInResource) {
 							return (ctx.body = xU.$response({
@@ -886,21 +879,26 @@ module.exports = {
 							md5
 						);
 
-						if (chunks.length === chunks[0].chunkTotal) {
-							ifUploadAllChunckMergeIt({
+						let response = {
+							chunks,
+							file: false
+						};
+						if (chunks.length && chunks.length === chunks[0].chunkTotal) {
+							const hasResponse = await ifUploadAllChunckMergeIt({
 								fileHash: md5,
 								chunkTotal: chunks.length,
 								dirPathChuncks,
 								fileName,
 								fileId,
-								file
+								$uid: this.$uid
 							});
+
+							if (hasResponse) {
+								response.file = hasResponse;
+							}
 						}
 
-						ctx.body = xU.$response({
-							chunks,
-							file: false
-						});
+						ctx.body = xU.$response(response);
 					} catch (e) {
 						xU.applog.error(e.message);
 						ctx.body = xU.$response(null, 402, e.message);
@@ -917,19 +915,14 @@ async function ifUploadAllChunckMergeIt({
 	fileName,
 	dirPathChuncks,
 	fileId,
-	file
+	$uid
 }) {
 	const chunks = await orm.ResourceChunk.findByMd5(fileHash);
 	if (String(chunks.length) === String(chunkTotal)) {
 		try {
 			/* 可以合并chuncks */
 			//创建合并后的文件夹
-			let file_merged_path = path.join(
-				TARGET_PREFIX,
-				"user",
-				this.$uid,
-				"merged"
-			);
+			let file_merged_path = path.join(TARGET_PREFIX, "user", $uid, "merged");
 			await _n.asyncSafeMakeDir(file_merged_path);
 			file_merged_path = path.resolve(file_merged_path, fileName);
 			//创建储存文件
@@ -945,7 +938,7 @@ async function ifUploadAllChunckMergeIt({
 
 			const resSaveResource = await orm.Resource.updateOneByMd5(fileHash, {
 				name: fileName,
-				ext: file.mimeType || xU.path.extname(fileName),
+				ext: xU.path.extname(fileName),
 				size: xU._.reduce(
 					chunks,
 					(total, chunk) => {
@@ -958,19 +951,17 @@ async function ifUploadAllChunckMergeIt({
 				useFor: "CloudDisk",
 				md5: fileHash,
 				path: xU._.last(String(file_merged_path).split(xU.var.RESOURCE_ASSETS)),
-				uploadBy: this.$uid,
+				uploadBy: $uid,
 				add_time: xU.time(),
 				isdir: 0,
 				fileId
 			});
-
 			/*合成成功后清理 */
 			await orm.ResourceChunk.delChunksByFileHash(fileHash);
 			await _n.asyncRmDir(dirPathChuncks);
-			ctx.body = xU.$response(resSaveResource);
+			return resSaveResource;
 		} catch (error) {
-			ctx.body = xU.$response(null, 500, error.message);
-			return;
+			return false;
 		}
 	}
 }

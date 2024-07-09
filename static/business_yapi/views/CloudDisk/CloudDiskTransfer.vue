@@ -1,25 +1,34 @@
 <style lang="less"></style>
 <template>
 	<div>
-		<xTabs v-model="activeName" @tabClick="handleClick">
-			<xTabPane label="用户管理" name="first">用户管理</xTabPane>
-			<xTabPane label="配置管理" name="second">配置管理</xTabPane>
-		</xTabs>
+		<CloudDiskTransferDetail :item="item" v-for="(item, hash) in APP.fileRecords" :key="hash" />
 	</div>
 </template>
 <script lang="ts">
 export default async function () {
-	const { THIS_FILE_URL } = this;
 	return defineComponent({
+		inject: ["APP"],
+		components: {
+			CloudDiskTransferDetail: () => _.$importVue("@/views/CloudDisk/CloudDiskTransferDetail.vue")
+		},
+		setup() {
+			this.handlerUploadFileChange = _.throttle((event, md5) => {
+				console.log("🚀 ~ this.handlerUploadFileChange=_.throttle ~ event, md5:", event, md5);
+			}, 1000);
+
+			$(window).on(`UPLOAD_FILE_CHANGE.${this._uid}`, this.handlerUploadFileChange);
+
+			onBeforeUnmount(() => {
+				$(window).off(`UPLOAD_FILE_CHANGE.${this._uid}`);
+			});
+		},
 		data() {
 			return {
-				activeName: "second"
+				listData: []
 			};
 		},
 		methods: {
-			handleClick(tab, event) {
-				console.log(tab, event);
-			}
+			handleClick(tab, event) {}
 		}
 	});
 }

@@ -6101,7 +6101,7 @@ body {
 .el-slider__button-wrapper {
 	height: 36px;
 	width: 36px;
-	z-index: 1001;
+	// z-index: 1001;
 	top: -15px;
 	transform: translateX(-50%);
 	background-color: transparent;

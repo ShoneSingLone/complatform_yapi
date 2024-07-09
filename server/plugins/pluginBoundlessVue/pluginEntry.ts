@@ -16,16 +16,25 @@ const APP_NAME_ARRAY = DIRS_ARRAY.reduce((target, dirname) => {
 module.exports = async function (app) {
 	app.use(async (ctx, next) => {
 		const fileURI = (() => {
-			const [, dirname, entryName] = ctx.path.split("/");
+			const [, dirname, entryName, ...suburl] = ctx.path.split("/");
 
-			if (APP_NAME_ARRAY.includes(dirname)) {
+			if (ctx.path.includes("/business_")) {
+				return businessAssets(ctx);
+			} else if (APP_NAME_ARRAY.includes(dirname)) {
 				if (entryName) {
-					return `business_${dirname}/${entryName}.html`;
+					if (suburl.length) {
+						if (entryName === "common") {
+							return commonAssets(ctx);
+						}
+						debugger;
+						// else {
+						// 	return subhtml({ dirname, entryName, suburl });
+						// }
+					}
+					return otherEntry({ dirname, entryName });
 				} else {
-					return `business_${dirname}/${dirname}.html`;
+					return defaultEntry({ dirname });
 				}
-			} else if (dirname === "cloud-disk") {
-				return `business_yapi/${dirname}.html`;
 			} else if (!dirname && !entryName) {
 				ctx.status = 301;
 				ctx.redirect("/yapi");
@@ -35,12 +44,20 @@ module.exports = async function (app) {
 		})();
 
 		if (xU._.isString(fileURI)) {
-			const $ = await loadHtmlEntry({
-				ctx,
-				app,
-				fileURI
-			});
-			return (ctx.body = $.html());
+			if (fileURI && /.html$/.test(fileURI)) {
+				const $ = await loadHtmlEntry({
+					ctx,
+					app,
+					fileURI
+				});
+				return (ctx.body = $.html());
+			} else {
+				return loadAssets({
+					ctx,
+					app,
+					fileURI
+				});
+			}
 		} else {
 			return next();
 		}
@@ -55,4 +72,32 @@ async function loadHtmlEntry({ ctx, app, fileURI }) {
 	$("#src-root").attr("data-app-version", app._version);
 	$("#src-root").attr("src", "./common/libs/seed.js");
 	return $;
+}
+
+async function loadAssets({ ctx, app, fileURI }) {
+	ctx.status = 200;
+	const docPath = path.resolve(xU.var.APP_ROOT_DIR, "static", fileURI);
+	const contentType = mime.lookup(docPath);
+	ctx.set("Content-Type", contentType);
+	ctx.body = fs.createReadStream(docPath);
+}
+function returnAsstes(ctx, spl) {
+	const arr = ctx.path.split(spl);
+	arr.shift();
+	return `${spl}${arr.join(spl)}`.substring(1);
+}
+function businessAssets(ctx) {
+	return returnAsstes(ctx, "/business_");
+}
+function commonAssets(ctx) {
+	return returnAsstes(ctx, "/common");
+}
+function subhtml({ dirname, entryName, suburl }) {
+	`business_${dirname}/${entryName}/${suburl.join("/")}.html`;
+}
+function defaultEntry({ dirname }) {
+	return `business_${dirname}/${dirname}.html`;
+}
+function otherEntry({ dirname, entryName }) {
+	return `business_${dirname}/${entryName}.html`;
 }

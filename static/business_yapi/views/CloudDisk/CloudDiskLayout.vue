@@ -3,7 +3,9 @@
 		<AppHeader />
 		<main class="x-app-layout-main">
 			<div class="AppLayoutContent">
-				<RouterView />
+				<KeepAlive>
+					<RouterView />
+				</KeepAlive>
 			</div>
 		</main>
 		<xMobileTabBar v-model="APP.currentTabName" :data="tabArray" style="background-color: white" />

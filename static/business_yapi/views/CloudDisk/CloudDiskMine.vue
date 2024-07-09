@@ -1,16 +1,9 @@
 <style lang="less"></style>
 <template>
 	<div>
-		<xTabs v-model="activeName" @tabClick="handleClick">
-			<xTabPane label="用户管理" name="first">{{ APP.user }}</xTabPane>
-			<xTabPane label="配置管理" name="second">
-				<div>{{ cptPercent }}</div>
-				<div>{{ _.$bytesToSize(cloudDiskSizeUsed) }}</div>
-				<div>{{ _.$bytesToSize(cloudDiskSizeTotal) }}</div>
-			</xTabPane>
-			<xTabPane label="角色管理" name="third">角色管理</xTabPane>
-			<xTabPane label="定时任务补偿" name="fourth">定时任务补偿</xTabPane>
-		</xTabs>
+		<div>{{ cptPercent }}</div>
+		<div>{{ _.$bytesToSize(cloudDiskSizeUsed) }}</div>
+		<div>{{ _.$bytesToSize(cloudDiskSizeTotal) }}</div>
 	</div>
 </template>
 <script lang="ts">
