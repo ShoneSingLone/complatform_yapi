@@ -1,14 +1,15 @@
 <template>
 	<div id="AppLayoutLeft" :style="leftStyle" :class="{ close: !isOpen }">
-		<div class="x-padding">
+		<div class="x-padding flex middle">
 			<xInput v-model="filterText" placeholder="Search" clearable />
+			<xIcon icon="_icon_local" @click="local" class="pointer ml" />
 		</div>
 		<aside
 			:class="{
 				'x-sidebar-menu-wrapper flex vertical center': true,
 				hide: !isOpen
 			}">
-			<div class="x-sidebar-menu">
+			<div class="x-sidebar-menu" ref="menuWrapper">
 				<!-- <xMenuTree :data="menuList" :render="defaultRender" /> -->
 				<xMenuTreeItem
 					v-for="menu in cptMenuArray"
@@ -32,6 +33,13 @@ export default async function () {
 	return {
 		inject: ["APP"],
 		methods: {
+			local() {
+				setTimeout(async () => {
+					await _.$ensure(() => this.$refs.menuWrapper);
+					const [currentMenu] = $(".xMenuTreeItem.el-menu.active");
+					_.$scrollIntoView(this.$refs.menuWrapper, currentMenu);
+				}, 1000);
+			},
 			traverse({ menuArray, prefix, target, level }) {
 				prefix = prefix || "";
 				level = level || 0;
@@ -115,7 +123,7 @@ export default async function () {
 			}
 		},
 		mounted() {
-			// this.initActive();
+			this.local();
 		},
 		computed: {
 			menuList() {

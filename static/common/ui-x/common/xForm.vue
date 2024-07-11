@@ -53,15 +53,7 @@ export default async function () {
 							};
 						})();
 
-						return h("div", { class: "xFormItem grid-column" + span + classString }, [
-							h(
-								"Transition",
-								{
-									name: "fade"
-								},
-								[slotVNode]
-							)
-						]);
+						return h("div", { class: "xFormItem grid-column" + span + classString }, [h("Transition", {}, [slotVNode])]);
 					}
 					return slotVNode;
 				});

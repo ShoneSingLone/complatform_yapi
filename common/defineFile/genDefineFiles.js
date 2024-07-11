@@ -90,7 +90,7 @@ const BABEL_PARSER = require("@babel/parser");
 							classPath.node,
 							{
 								ClassMethod(methodPath) {
-									let bodyDeclare = "()=>Promise<any>";
+									let bodyDeclare = "(...args?:any)=> Promise<any>";
 									const { key, leadingComments } = methodPath.node;
 									subTypeArray.push(`
 								${_.map(leadingComments, ({ value: comment }) => {

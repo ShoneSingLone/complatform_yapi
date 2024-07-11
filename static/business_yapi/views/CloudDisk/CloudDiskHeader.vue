@@ -7,7 +7,7 @@
 		</xInput>
 		<xGap r />
 		<xBtn circle icon="el-icon-plus" @click="APP.homeListDrawer = true" />
-		<xBtn circle icon="el-icon-more" @click="APP.homeListDrawer = true" style="transform: rotate(90deg)" />
+		<xBtn circle icon="el-icon-more" @click="APP.isShowBMoreDrawer = true" style="transform: rotate(90deg)" />
 		<xGap r />
 	</header>
 </template>

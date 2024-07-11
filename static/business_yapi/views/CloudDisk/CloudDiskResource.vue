@@ -44,6 +44,19 @@
 				<xGap f />
 			</div>
 		</xDrawer>
+		<xDrawer :visible.sync="APP.isShowBMoreDrawer" :with-header="false" direction="btt" size="var(--xDrawer-height)" class="CloudDiskResource-drawer">
+			<div class="flex vertical x-padding height100">
+				<div class="flex middle" @click="handleUpload">
+					<xIcon icon="_cloud_item_unknow" />
+					<span>按类型排序</span>
+				</div>
+				<div class="flex middle mt" @click="openMoveDirDialog">
+					<xIcon icon="_cloud_item_dir" />
+					<span>移动</span>
+				</div>
+				<xGap f />
+			</div>
+		</xDrawer>
 	</div>
 </template>
 <script lang="ts">
@@ -244,6 +257,23 @@ export default async function () {
 						this.getResourceList();
 					});
 				}
+			},
+			async openMoveDirDialog() {
+				const vm = this;
+				if (!_.$isArrayFill(vm.APP.selectedItems)) {
+					return _.$msgError("未选中任何文件");
+				}
+				await _.$openModal({
+					title: "移动文件",
+					url: "@/views/CloudDisk/cloud_disk_resource_move_dir_dialog.vue",
+					parent: vm,
+					selected: vm.APP.selectedItems,
+					refreshList() {
+						vm.getResourceList();
+					}
+				});
+				this.APP.selectedItems = [];
+				this.APP.isShowBMoreDrawer = false;
 			},
 			async openMakeNewDirDialog() {
 				await _.$openModal({

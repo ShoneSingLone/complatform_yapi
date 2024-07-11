@@ -17,6 +17,59 @@
 			}
 		}
 	);
+
+	/**
+	 * 构造树型结构数据
+	 * @param {*} data 数据源
+	 * @param {*} idProp id字段 默认 'id'
+	 * @param {*} pidProp 父节点字段 默认 'parentId'
+	 * @param {*} childrenProp 孩子节点字段 默认 'children'
+	 */
+	/* @typescriptDeclare (params: { data: any[]; id?: string; pid?: string; children?: string; label?: string; value?: string; rootId?: any }) => { TREE: any[]; CHILDREN_MAP: any; NODES_OBJ: any } */
+	_.$arrayToTree = function ({ data, id, pid, children, label, value, rootId }) {
+		data = _.cloneDeep(data);
+
+		let ID = id || "id";
+		let PID = pid || "parentId";
+		let CHILDREN = children || "children";
+		let LABEL = label || "label";
+		let VALUE = value || "value";
+		let ROOT_ID = rootId || null;
+
+		const CHILDREN_MAP = {};
+		const NODES_OBJ = {};
+		const TREE = [];
+
+		/* 收集数据，平铺 */
+		_.each(data, node => {
+			node.label = node[LABEL];
+			node.value = node[VALUE];
+			let pid = node[PID];
+
+			CHILDREN_MAP[pid] = CHILDREN_MAP[pid] || [];
+
+			NODES_OBJ[node[ID]] = node;
+			CHILDREN_MAP[pid].push(node);
+		});
+		/* 筛选出根节点 */
+		_.each(data, node => {
+			let pid = node[PID];
+			if (pid == ROOT_ID) {
+				TREE.push(node);
+			}
+		});
+		/* 适配子节点 */
+		_.each(TREE, function adaptToChildren(targetTree) {
+			if (CHILDREN_MAP[targetTree[ID]] !== null) {
+				targetTree[CHILDREN] = CHILDREN_MAP[targetTree[ID]];
+			}
+			if (targetTree[CHILDREN]) {
+				_.each(targetTree[CHILDREN], adaptToChildren);
+			}
+		});
+		return { TREE, CHILDREN_MAP, NODES_OBJ };
+	};
+
 	_.$updateCol = function (tableConfigs, prop, value) {
 		const index = _.findIndex(tableConfigs.columns, { prop });
 		let item = tableConfigs.columns[index];
@@ -24,13 +77,6 @@
 		tableConfigs.columns.splice(index, 1, item);
 	};
 
-	/**
-	 * 常用于列表columns信息复用，将数组变为对象，默认key为prop
-	 * @param columns [{prop: "value", label: string},{prop: "label", label: string}]
-	 * @param propsArray ["prop", "label"]
-	 * @param prop 可选，默认 "prop"
-	 * @returns object {prop:{prop: "prop", label: string},value:{prop: "value", label: string}}
-	 */
 	/* @ts-ignore */
 	_.$pickFromArray = function (columns, propsArray, prop = "prop") {
 		/* @ts-ignore */
@@ -152,7 +198,8 @@
 		var k = 1024;
 		var sizes = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 		var i = Math.floor(Math.log(bytes) / Math.log(k));
-		return (bytes / Math.pow(k, i)).toPrecision(3) + " " + sizes[i - 1];
+		const unit = sizes[i - 1] || "Byte";
+		return (bytes / Math.pow(k, i)).toPrecision(3) + " " + unit;
 	};
 
 	/**

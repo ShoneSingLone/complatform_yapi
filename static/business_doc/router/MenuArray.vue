@@ -99,6 +99,7 @@ export default async function () {
 				{ icon: "icon_report", label: `${i18n("Pagination")} ${i18n("分页")}`, href: "/component/data/pagination" },
 				{ icon: "icon_report", label: `${i18n("Menu")} ${i18n("菜单")}`, href: "/component/navigation/menu" },
 				{ icon: "icon_report", label: i18n("Tabs"), href: "/component/navigation/tabs" },
+				{ icon: "icon_report", label: i18n("step"), href: "/component/navigation/step" },
 				{ icon: "icon_report", label: i18n("dropdown"), href: "/component/navigation/dropdown" },
 				{ icon: "_icon_breadcrumb", label: `${i18n("Breadcrumb")} ${i18n("面包屑")}`, href: "/component/navigation/breadcrumb" },
 				{ icon: "_icon_breadcrumb", label: `${i18n("PageHeader")} ${i18n("页头")}`, href: "/component/navigation/pageheader" },

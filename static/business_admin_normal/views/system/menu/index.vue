@@ -209,7 +209,7 @@ export default async function () {
 				try {
 					_.$loading(true);
 					const { data } = await _adminTools.api_menu_list(this.cptSearchParams);
-					const { TREE } = _adminTools.handleTree({ data, id: "menuId" });
+					const { TREE } = _.$arrayToTree({ data, id: "menuId" });
 					_.$setTableData(this.configsTable, {
 						list: TREE
 					});

@@ -680,6 +680,88 @@ module.exports = {
 				}
 			}
 		},
+		"/resource/cloud_disk_move_dir": {
+			post: {
+				summary: "移动文件",
+				description: "移动文件",
+				request: {
+					body: {
+						ids: {
+							description: "待移动文件/文件夹",
+							required: true,
+							type: "array",
+							items: {
+								type: "number"
+							}
+						},
+						targetDirId: {
+							description: "目标文件夹",
+							required: true,
+							default: 0,
+							type: "number"
+						}
+					}
+				},
+				response: {
+					200: {
+						description: "成功",
+						schema: xU.schema("UploadSuccess")
+					}
+				},
+				async handler(ctx) {
+					try {
+						const { ids, targetDirId } = ctx.payload;
+
+						let isExist = await orm.Resource.getResourceById(targetDirId);
+
+						if (isExist) {
+							let result = await orm.Resource.update(ids, {
+								fileId: targetDirId
+							});
+							ctx.body = xU.$response(result);
+						} else {
+							return (ctx.body = xU.$response(null, 402, "目标目录不存在"));
+						}
+					} catch (e) {
+						xU.applog.error(e.message);
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		"/resource/cloud_disk_get_dirs": {
+			get: {
+				summary: "获取当前用户存储空间的文件夹",
+				description: `response:
+				- file:已经上传完成(已合并chunk);
+				- chunks：已上传的片段数组;`,
+				request: {
+					query: {}
+				},
+				response: {
+					200: {
+						description: "成功",
+						schema: xU.schema("UploadSuccess")
+					}
+				},
+				async handler(ctx) {
+					try {
+						const myDirs = await orm.Resource.search(
+							{
+								uploadBy: this.$uid,
+								isdir: xU.var.FILE_DIR
+							},
+							{ fileId: 1 },
+							`_id fileId name`
+						);
+						ctx.body = xU.$response(myDirs);
+					} catch (e) {
+						xU.applog.error(e.message);
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
 		"/resource/cloud_disk_upload": {
 			post: {
 				summary: "上传单个文件",

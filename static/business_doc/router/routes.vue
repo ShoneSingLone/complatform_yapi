@@ -75,6 +75,7 @@ export default async function () {
 					children: [
 						_.$newRoute("/component/navigation/menu", "@/views/component/navigation/menu/DemoMenu.vue"),
 						_.$newRoute("/component/navigation/tabs", "@/views/component/navigation/tabs/tabs.vue"),
+						_.$newRoute("/component/navigation/step", "@/views/component/navigation/step/demo_step.vue"),
 						_.$newRoute("/component/navigation/dropdown", "@/views/component/navigation/dropdown/dropdown.vue"),
 						_.$newRoute("/component/navigation/breadcrumb", "@/views/component/navigation/breadcrumb/breadcrumb.vue"),
 						_.$newRoute("/component/navigation/pageheader", "@/views/component/navigation/pageheader/pageheader.vue")

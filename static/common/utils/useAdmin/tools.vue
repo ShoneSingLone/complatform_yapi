@@ -448,55 +448,6 @@ export default async function ({ rootApp }) {
 		blobValidate(data) {
 			return data.type !== "application/json";
 		},
-		/**
-		 * 构造树型结构数据
-		 * @param {*} data 数据源
-		 * @param {*} idProp id字段 默认 'id'
-		 * @param {*} pidProp 父节点字段 默认 'parentId'
-		 * @param {*} childrenProp 孩子节点字段 默认 'children'
-		 */
-		handleTree({ data, id, pid, children, label, value }) {
-			data = _.cloneDeep(data);
-
-			let ID = id || "id";
-			let PID = pid || "parentId";
-			let CHILDREN = children || "children";
-			let LABEL = label || "label";
-			let VALUE = value || "value";
-
-			const CHILDREN_MAP = {};
-			const NODES_OBJ = {};
-			const TREE = [];
-
-			/* 收集数据，平铺 */
-			_.each(data, node => {
-				node.label = node[LABEL];
-				node.value = node[VALUE];
-				let pid = node[PID];
-
-				CHILDREN_MAP[pid] = CHILDREN_MAP[pid] || [];
-
-				NODES_OBJ[node[ID]] = node;
-				CHILDREN_MAP[pid].push(node);
-			});
-			/* 筛选出根节点 */
-			_.each(data, node => {
-				let pid = node[PID];
-				if (NODES_OBJ[pid] == null) {
-					TREE.push(node);
-				}
-			});
-			/* 适配子节点 */
-			_.each(TREE, function adaptToChildren(targetTree) {
-				if (CHILDREN_MAP[targetTree[ID]] !== null) {
-					targetTree[CHILDREN] = CHILDREN_MAP[targetTree[ID]];
-				}
-				if (targetTree[CHILDREN]) {
-					_.each(targetTree[CHILDREN], adaptToChildren);
-				}
-			});
-			return { TREE, CHILDREN_MAP, NODES_OBJ };
-		},
 		// 回显数据字典（字符串数组）
 		selectDictLabels(datas, value, separator) {
 			if (value === undefined || value.length === 0) {

@@ -5854,7 +5854,7 @@ export default async function () {
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
-		flex-flow:row wrap;
+		flex-flow: row wrap;
 
 		> img {
 			max-width: 90%;
@@ -5885,7 +5885,8 @@ export default async function () {
 	}
 	code {
 		overflow: auto;
-		padding: 4px;
+		padding: 0 2px;
+		font-size: 12px;
 		background-color: #fdf6ec;
 		border-color: var(--el-color-warning-light-8);
 		color: var(--el-color-warning);

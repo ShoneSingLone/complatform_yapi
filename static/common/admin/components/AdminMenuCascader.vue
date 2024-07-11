@@ -49,7 +49,7 @@ export default async function () {
 				try {
 					_.$loading(true);
 					const { data } = await _adminTools.api_menu_list(this.cptSearchParams);
-					const { TREE, CHILDREN_MAP, NODES_OBJ } = _adminTools.handleTree({ data, id: "menuId", label: "menuName", value: "menuId" });
+					const { TREE, CHILDREN_MAP, NODES_OBJ } = _.$arrayToTree({ data, id: "menuId", label: "menuName", value: "menuId" });
 					const root = { menuId: 0, menuName: "主类目", children: TREE, label: "主类目", value: 0 };
 					CHILDREN_MAP[0] = TREE;
 					this.CHILDREN_MAP = CHILDREN_MAP;

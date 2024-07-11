@@ -1,46 +1,48 @@
 const ModelBase = require("server/models/base");
 
+const schemaObj = {
+	/* 文件名 */
+	name: String,
+	/* ext */
+	ext: String,
+	/* 文件MD5 */
+	md5: String,
+	/* 目录id 对应的就是resource 的_id 类似pid的意思，通常fileId对应的类型是文件夹*/
+	fileId: {
+		type: String,
+		default: 0
+	},
+	/* 资源存放在服务器的真实url */
+	path: {
+		type: String,
+		required: true
+	},
+	type: {
+		type: String,
+		required: true
+	},
+	/* 文件大小 kb */
+	size: { type: Number, default: 0 },
+	/* 是否为文件夹 */
+	isdir: {
+		type: Number,
+		default: 0,
+		enum: [0, 1, 2]
+	},
+	desc: String,
+	/* 用户id */
+	uploadBy: String,
+	add_time: Number,
+	basecode: String
+};
+
 class ModelResource extends ModelBase {
 	getName() {
 		return "resource";
 	}
 
 	getSchema() {
-		return {
-			/* 文件名 */
-			name: String,
-			/* ext */
-			ext: String,
-			/* 文件MD5 */
-			md5: String,
-			/* 目录id 对应的就是resource 的_id 类似pid的意思，通常fileId对应的类型是文件夹*/
-			fileId: {
-				type: String,
-				default: 0
-			},
-			/* 资源存放在服务器的真实url */
-			path: {
-				type: String,
-				required: true
-			},
-			type: {
-				type: String,
-				required: true
-			},
-			/* 文件大小 kb */
-			size: { type: Number, default: 0 },
-			/* 是否为文件夹 */
-			isdir: {
-				type: Number,
-				default: 0,
-				enum: [0, 1, 2]
-			},
-			desc: String,
-			/* 用户id */
-			uploadBy: String,
-			add_time: Number,
-			basecode: String
-		};
+		return schemaObj;
 	}
 
 	/* @typescriptDeclare (data:object)=> Promise<any> */
@@ -49,8 +51,13 @@ class ModelResource extends ModelBase {
 		return modelVM.save();
 	}
 
+	/* @typescriptDeclare (id:number|number[],modify:object)=> Promise<any> */
 	update(_id, newResource) {
-		return this.model.updateOne({ _id }, newResource);
+		if (xU._.isArray(_id)) {
+			return this.model.updateMany({ _id: { $in: _id } }, newResource);
+		} else {
+			return this.model.updateOne({ _id }, newResource);
+		}
 	}
 	/* @typescriptDeclare (...args:any)=> Promise<any> */
 	async updateOneByMd5(md5, newResource) {
@@ -99,9 +106,16 @@ class ModelResource extends ModelBase {
 	 *
 	 * @memberOf ModelResource
 	 */
-	/* @typescriptDeclare (condition:object,orderBy?:object)=> Promise<any> */
-	search(condition, orderBy = {}) {
-		return this.model.find(condition).sort(orderBy).exec();
+	/* @typescriptDeclare (condition:object,orderBy?:object,select?:string)=> Promise<any> */
+	search(condition, orderBy = {}, select = "") {
+		if (select) {
+			return this.model.find(condition).select(select).sort(orderBy).exec();
+		}
+		return this.model
+			.find(condition)
+			.select(["_id", ...Object.keys(schemaObj)].join(" "))
+			.sort(orderBy)
+			.exec();
 	}
 }
 

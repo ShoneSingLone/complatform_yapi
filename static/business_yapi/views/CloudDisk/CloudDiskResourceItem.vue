@@ -43,7 +43,7 @@
 			<div class="flex">
 				<div class="resource-update-date">{{ cptDate }}</div>
 				<xGap f />
-				<div class="resource-update-date">{{ cptSize }}</div>
+				<div class="resource-update-date" v-if="!cptIsDir">{{ cptSize }}</div>
 			</div>
 		</div>
 		<div class="resource-opr mr pointer" @click="toggle">
@@ -60,8 +60,11 @@ export default async function () {
 			return {};
 		},
 		computed: {
+			cptIsDir() {
+				return this.item.type === "dir";
+			},
 			cptIcon() {
-				if (this.item.type === "dir") {
+				if (this.cptIsDir) {
 					return "_cloud_item_dir";
 				}
 				if (this.item.type === "image") {

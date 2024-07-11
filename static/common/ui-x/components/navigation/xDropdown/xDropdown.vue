@@ -271,7 +271,7 @@ export default async function () {
 
 			let triggerElm = null;
 			if (splitButton) {
-				triggerElm = h("xBtnGroup", [
+				triggerElm = h("xBtnGroup", { staticClass: "xDropdown" }, [
 					h(
 						"xBtn",
 						{
@@ -315,7 +315,7 @@ export default async function () {
 			return h(
 				"div",
 				{
-					staticClass: "el-dropdown",
+					staticClass: "el-dropdown xBtnGroup",
 					directives: [
 						{
 							name: "clickoutside",
@@ -332,4 +332,14 @@ export default async function () {
 	});
 }
 </script>
-<style lang="less"></style>
+<style lang="less">
+.el-button-group.xDropdown {
+	display: inline-flex;
+	align-items: center;
+	.xBtn {
+		&.el-button.el-button--primary.el-button--medium {
+			height: 37px;
+		}
+	}
+}
+</style>

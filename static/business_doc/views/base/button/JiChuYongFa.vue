@@ -56,4 +56,10 @@ export default async function () {
 	});
 }
 </script>
-<style lang="less"></style>
+<style lang="less">
+.card-JiChuYongFa {
+	button {
+		margin-top: 8px;
+	}
+}
+</style>

@@ -47,4 +47,8 @@ export default async function () {
 }
 </script>
 
-<style lang="less"></style>
+<style lang="less">
+.avatar-block {
+	margin: 8px;
+}
+</style>

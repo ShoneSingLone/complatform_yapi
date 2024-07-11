@@ -1,8 +1,8 @@
 <template>
-	<div class="xItemCidr flex middle">
+	<div class="flex middle">
 		<xItemIpAddress v-model="cptIp" :disabled="configs.disabled" />
-		<span class="cidr-point">/</span>
-		<xSelect v-if="optionsPorts.length > 0" v-model="cptPort" :disabled="configs.disabled" style="width: 64px" placeholder="">
+		<div class="cidr-point">/</div>
+		<xSelect v-if="optionsPorts.length > 0" v-model="cptPort" :disabled="configs.disabled" style="width: 94px" placeholder="">
 			<xOption v-for="item of optionsPorts" :key="item.value" :label="item.label" :value="item.value" />
 		</xSelect>
 		<div v-else class="xIpAddress">

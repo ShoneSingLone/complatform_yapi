@@ -61,7 +61,7 @@ export default async function () {
 		},
 		computed: {
 			cptPrice() {
-				const { value, singleValue, measureUnit, currency, symbol } = this.configs?.priceInfo;
+				const { value, singleValue, measureUnit, currency, symbol } = this.configs?.priceInfo || {};
 
 				if (!singleValue) {
 					return "";

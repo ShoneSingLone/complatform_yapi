@@ -96,6 +96,16 @@ export default async function () {
 						data
 					});
 				},
+				resourceCloudDiskMoveDir(data) {
+					return _.$ajax.post("/api/resource/cloud_disk_move_dir", {
+						data
+					});
+				},
+				resourceCloudDiskGetDirs(data) {
+					return _.$ajax.get("/api/resource/cloud_disk_get_dirs", {
+						data
+					});
+				},
 				resourceCloudDiskFileList(data) {
 					return _.$ajax.get("/api/resource/cloud_disk_file_list", {
 						data

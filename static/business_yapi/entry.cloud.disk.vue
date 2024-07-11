@@ -107,6 +107,8 @@ export default async function () {
 				/* *********************** */
 				homeListSearchKey: "",
 				currentTabName: "资源",
+				/* header 按钮 */
+				isShowBMoreDrawer: false,
 				homeListDrawer: false,
 				/* ****************** */
 				isMobile: /Mobile/gi.test(window.navigator.userAgent),
@@ -321,7 +323,7 @@ export default async function () {
 			fileId(fileId) {
 				if (fileId !== 0) {
 					if (this.breadcrumbItems.length === 1) {
-						debugger;
+						console.log("🚀 ~ fileId ~ this.breadcrumbItems:", this.breadcrumbItems);
 					}
 				}
 			},

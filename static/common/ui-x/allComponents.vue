@@ -76,6 +76,8 @@ export default async function () {
 		"components/navigation/xPageHeader/xPageHeader",
 		"components/navigation/xBreadcrumb/xBreadcrumb",
 		"components/navigation/xBreadcrumb/xBreadcrumbItem",
+		"components/navigation/xSteps/xSteps",
+		"components/navigation/xSteps/xStep",
 		"components/navigation/xDropdown/xDropdown",
 		"components/navigation/xDropdown/xDropdownItem",
 		"components/navigation/xDropdown/xDropdownMenu",

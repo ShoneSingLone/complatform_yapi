@@ -66,11 +66,11 @@ export type t_orm = {
 	 * @memberOf ModelWikiOrder
 	 
 */
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								/**
@@ -87,11 +87,11 @@ export type t_orm = {
 								
 
 								
-								detail:()=>Promise<any>;
+								detail:(...args?:any)=> Promise<any>;
 								
 
 								
-								upsertOne:()=>Promise<any>;
+								upsertOne:(...args?:any)=> Promise<any>;
 								
 
 								
@@ -103,15 +103,15 @@ export type t_orm = {
 								 };
 wiki:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								/**
@@ -129,80 +129,80 @@ wiki:{
 								
 
 								
-								detail:()=>Promise<any>;
+								detail:(...args?:any)=> Promise<any>;
 								
 
 								/* find  find  find  find  find  find  find  find  find  find  find  
 */
-								delete:()=>Promise<any>;
+								delete:(...args?:any)=> Promise<any>;
 								
 
 								
-								up:()=>Promise<any>;
+								up:(...args?:any)=> Promise<any>;
 								 };
 VerifyCode:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								upsertOne:()=>Promise<any>;
+								upsertOne:(...args?:any)=> Promise<any>;
 								
 
 								
-								findByEmail:()=>Promise<any>;
+								findByEmail:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								 };
 user:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								count:()=>Promise<any>;
+								count:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								
-								findByUids:()=>Promise<any>;
+								findByUids:(...args?:any)=> Promise<any>;
 								
 
 								
-								listWithPaging:()=>Promise<any>;
+								listWithPaging:(...args?:any)=> Promise<any>;
 								
 
 								
-								listCount:()=>Promise<any>;
+								listCount:(...args?:any)=> Promise<any>;
 								
 
 								
-								findByEmail:()=>Promise<any>;
+								findByEmail:(...args?:any)=> Promise<any>;
 								
 
 								
-								findById:()=>Promise<any>;
+								findById:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								/**
@@ -215,63 +215,63 @@ user:{
 	 * @memberOf ModelUser
 	 
 */
-								update:()=>Promise<any>;
+								update:(...args?:any)=> Promise<any>;
 								
 
 								
-								search:()=>Promise<any>;
+								search:(...args?:any)=> Promise<any>;
 								 };
 token:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								get:()=>Promise<any>;
+								get:(...args?:any)=> Promise<any>;
 								
 
 								
-								findId:()=>Promise<any>;
+								findId:(...args?:any)=> Promise<any>;
 								
 
 								
-								up:()=>Promise<any>;
+								up:(...args?:any)=> Promise<any>;
 								 };
 storage:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								
-								get:()=>Promise<any>;
+								get:(...args?:any)=> Promise<any>;
 								 };
 ResourceChunk:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
@@ -279,7 +279,7 @@ ResourceChunk:{
 								
 
 								
-								delChunksByFileHash:()=>Promise<any>;
+								delChunksByFileHash:(...args?:any)=> Promise<any>;
 								
 
 								/**
@@ -293,11 +293,11 @@ ResourceChunk:{
 								 };
 Resource:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
@@ -305,7 +305,7 @@ Resource:{
 								
 
 								
-								update:()=>Promise<any>;
+								update:  (id:number|number[],modify:object)=> Promise<any> ;
 								
 
 								
@@ -313,19 +313,19 @@ Resource:{
 								
 
 								
-								getResourceById:()=>Promise<any>;
+								getResourceById:(...args?:any)=> Promise<any>;
 								
 
 								
-								getResourceByName:()=>Promise<any>;
+								getResourceByName:(...args?:any)=> Promise<any>;
 								
 
 								
-								findByMd5:()=>Promise<any>;
+								findByMd5:(...args?:any)=> Promise<any>;
 								
 
 								
-								findAll:()=>Promise<any>;
+								findAll:(...args?:any)=> Promise<any>;
 								
 
 								/**
@@ -338,132 +338,132 @@ Resource:{
 	 
 */
 
-								search:  (condition:object,orderBy?:object)=> Promise<any> ;
+								search:  (condition:object,orderBy?:object,select?:string)=> Promise<any> ;
 								 };
 project:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								constructor:()=>Promise<any>;
+								constructor:(...args?:any)=> Promise<any>;
 								
 
 								
-								getAuthList:()=>Promise<any>;
+								getAuthList:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								updateMember:()=>Promise<any>;
+								updateMember:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								handleEnvNullData:()=>Promise<any>;
+								handleEnvNullData:(...args?:any)=> Promise<any>;
 								
 
 								
-								get:()=>Promise<any>;
+								get:(...args?:any)=> Promise<any>;
 								
 
 								
-								getByEnv:()=>Promise<any>;
+								getByEnv:(...args?:any)=> Promise<any>;
 								
 
 								
-								getProjectWithAuth:()=>Promise<any>;
+								getProjectWithAuth:(...args?:any)=> Promise<any>;
 								
 
 								
-								getBaseInfo:()=>Promise<any>;
+								getBaseInfo:(...args?:any)=> Promise<any>;
 								
 
 								
-								getByDomain:()=>Promise<any>;
+								getByDomain:(...args?:any)=> Promise<any>;
 								
 
 								
-								checkNameRepeat:()=>Promise<any>;
+								checkNameRepeat:(...args?:any)=> Promise<any>;
 								
 
 								
-								checkDomainRepeat:()=>Promise<any>;
+								checkDomainRepeat:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								/* 获取项目数量统计
 */
-								getProjectListCount:()=>Promise<any>;
+								getProjectListCount:(...args?:any)=> Promise<any>;
 								
 
 								
-								countWithPublic:()=>Promise<any>;
+								countWithPublic:(...args?:any)=> Promise<any>;
 								
 
 								
-								listWithPaging:()=>Promise<any>;
+								listWithPaging:(...args?:any)=> Promise<any>;
 								
 
 								
-								listCount:()=>Promise<any>;
+								listCount:(...args?:any)=> Promise<any>;
 								
 
 								
-								countByGroupId:()=>Promise<any>;
+								countByGroupId:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								
-								delByGroupid:()=>Promise<any>;
+								delByGroupid:(...args?:any)=> Promise<any>;
 								
 
 								
-								up:()=>Promise<any>;
+								up:(...args?:any)=> Promise<any>;
 								
 
 								
-								addMember:()=>Promise<any>;
+								addMember:(...args?:any)=> Promise<any>;
 								
 
 								
-								delMember:()=>Promise<any>;
+								delMember:(...args?:any)=> Promise<any>;
 								
 
 								
-								checkMemberRepeat:()=>Promise<any>;
+								checkMemberRepeat:(...args?:any)=> Promise<any>;
 								
 
 								
-								changeMemberRole:()=>Promise<any>;
+								changeMemberRole:(...args?:any)=> Promise<any>;
 								
 
 								
-								changeMemberEmailNotice:()=>Promise<any>;
+								changeMemberEmailNotice:(...args?:any)=> Promise<any>;
 								
 
 								
-								search:()=>Promise<any>;
+								search:(...args?:any)=> Promise<any>;
 								 };
 log:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								/**
@@ -475,382 +475,382 @@ log:{
 	 * @param {Number} add_time 时间
 	 
 */
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								
-								listWithPaging:()=>Promise<any>;
+								listWithPaging:(...args?:any)=> Promise<any>;
 								
 
 								
-								listWithPagingByGroup:()=>Promise<any>;
+								listWithPagingByGroup:(...args?:any)=> Promise<any>;
 								
 
 								
-								listCountByGroup:()=>Promise<any>;
+								listCountByGroup:(...args?:any)=> Promise<any>;
 								
 
 								
-								listCount:()=>Promise<any>;
+								listCount:(...args?:any)=> Promise<any>;
 								
 
 								
-								listWithCatid:()=>Promise<any>;
+								listWithCatid:(...args?:any)=> Promise<any>;
 								 };
 interfaceCol:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								get:()=>Promise<any>;
+								get:(...args?:any)=> Promise<any>;
 								
 
 								
-								count:()=>Promise<any>;
+								count:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								
-								delByProjectId:()=>Promise<any>;
+								delByProjectId:(...args?:any)=> Promise<any>;
 								
 
 								
-								up:()=>Promise<any>;
+								up:(...args?:any)=> Promise<any>;
 								
 
 								
-								upColIndex:()=>Promise<any>;
+								upColIndex:(...args?:any)=> Promise<any>;
 								 };
 interfaceCategory:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								get:()=>Promise<any>;
+								get:(...args?:any)=> Promise<any>;
 								
 
 								
-								count:()=>Promise<any>;
+								count:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								
-								search:()=>Promise<any>;
+								search:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								
-								delByProjectId:()=>Promise<any>;
+								delByProjectId:(...args?:any)=> Promise<any>;
 								
 
 								
-								up:()=>Promise<any>;
+								up:(...args?:any)=> Promise<any>;
 								
 
 								
-								upCatIndex:()=>Promise<any>;
+								upCatIndex:(...args?:any)=> Promise<any>;
 								 };
 interfaceCase:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								/*获取全部测试接口信息
 */
-								getInterfaceCaseListCount:()=>Promise<any>;
+								getInterfaceCaseListCount:(...args?:any)=> Promise<any>;
 								
 
 								
-								get:()=>Promise<any>;
+								get:(...args?:any)=> Promise<any>;
 								
 
 								
-								getAll:()=>Promise<any>;
+								getAll:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								
-								delByProjectId:()=>Promise<any>;
+								delByProjectId:(...args?:any)=> Promise<any>;
 								
 
 								
-								delByInterfaceId:()=>Promise<any>;
+								delByInterfaceId:(...args?:any)=> Promise<any>;
 								
 
 								
-								delByCol:()=>Promise<any>;
+								delByCol:(...args?:any)=> Promise<any>;
 								
 
 								
-								up:()=>Promise<any>;
+								up:(...args?:any)=> Promise<any>;
 								
 
 								
-								upCaseIndex:()=>Promise<any>;
+								upCaseIndex:(...args?:any)=> Promise<any>;
 								 };
 interface:{ 
 								
-								constructor:()=>Promise<any>;
+								constructor:(...args?:any)=> Promise<any>;
 								
 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								get:()=>Promise<any>;
+								get:(...args?:any)=> Promise<any>;
 								
 
 								
-								getBaseinfo:()=>Promise<any>;
+								getBaseinfo:(...args?:any)=> Promise<any>;
 								
 
 								
-								getVar:()=>Promise<any>;
+								getVar:(...args?:any)=> Promise<any>;
 								
 
 								
-								getByQueryPath:()=>Promise<any>;
+								getByQueryPath:(...args?:any)=> Promise<any>;
 								
 
 								
-								getByPath:()=>Promise<any>;
+								getByPath:(...args?:any)=> Promise<any>;
 								
 
 								
-								count:()=>Promise<any>;
+								count:(...args?:any)=> Promise<any>;
 								
 
 								
-								countByProjectId:()=>Promise<any>;
+								countByProjectId:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								
-								listWithPage:()=>Promise<any>;
+								listWithPage:(...args?:any)=> Promise<any>;
 								
 
 								
-								listByPid:()=>Promise<any>;
+								listByPid:(...args?:any)=> Promise<any>;
 								
 
 								/*获取全部接口信息
 */
-								getInterfaceListCount:()=>Promise<any>;
+								getInterfaceListCount:(...args?:any)=> Promise<any>;
 								
 
 								
-								listByCatid:()=>Promise<any>;
+								listByCatid:(...args?:any)=> Promise<any>;
 								
 
 								
-								listByCatidWithPage:()=>Promise<any>;
+								listByCatidWithPage:(...args?:any)=> Promise<any>;
 								
 
 								
-								listByOptionWithPage:()=>Promise<any>;
+								listByOptionWithPage:(...args?:any)=> Promise<any>;
 								
 
 								
-								listByInterStatus:()=>Promise<any>;
+								listByInterStatus:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								
-								delByCatid:()=>Promise<any>;
+								delByCatid:(...args?:any)=> Promise<any>;
 								
 
 								
-								delByProjectId:()=>Promise<any>;
+								delByProjectId:(...args?:any)=> Promise<any>;
 								
 
 								
-								up:()=>Promise<any>;
+								up:(...args?:any)=> Promise<any>;
 								
 
 								
-								upEditUid:()=>Promise<any>;
+								upEditUid:(...args?:any)=> Promise<any>;
 								
 
 								
-								getcustomFieldValue:()=>Promise<any>;
+								getcustomFieldValue:(...args?:any)=> Promise<any>;
 								
 
 								
-								listCount:()=>Promise<any>;
+								listCount:(...args?:any)=> Promise<any>;
 								
 
 								
-								upIndex:()=>Promise<any>;
+								upIndex:(...args?:any)=> Promise<any>;
 								
 
 								
-								search:()=>Promise<any>;
+								search:(...args?:any)=> Promise<any>;
 								 };
 I18n:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								deleteMany:()=>Promise<any>;
+								deleteMany:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								up:()=>Promise<any>;
+								up:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								
-								keyValue:()=>Promise<any>;
+								keyValue:(...args?:any)=> Promise<any>;
 								
 
 								
-								detail:()=>Promise<any>;
+								detail:(...args?:any)=> Promise<any>;
 								
 
 								
-								detailByKey:()=>Promise<any>;
+								detailByKey:(...args?:any)=> Promise<any>;
 								
 
 								
-								insertMany:()=>Promise<any>;
+								insertMany:(...args?:any)=> Promise<any>;
 								 };
 group:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								get:()=>Promise<any>;
+								get:(...args?:any)=> Promise<any>;
 								
 
 								
-								updateMember:()=>Promise<any>;
+								updateMember:(...args?:any)=> Promise<any>;
 								
 
 								
-								getByPrivateUid:()=>Promise<any>;
+								getByPrivateUid:(...args?:any)=> Promise<any>;
 								
 
 								
-								getGroupById:()=>Promise<any>;
+								getGroupById:(...args?:any)=> Promise<any>;
 								
 
 								
-								count:()=>Promise<any>;
+								count:(...args?:any)=> Promise<any>;
 								
 
 								/*  分组数量统计
 */
-								getGroupListCount:()=>Promise<any>;
+								getGroupListCount:(...args?:any)=> Promise<any>;
 								
 
 								
-								addMember:()=>Promise<any>;
+								addMember:(...args?:any)=> Promise<any>;
 								
 
 								
-								delMember:()=>Promise<any>;
+								delMember:(...args?:any)=> Promise<any>;
 								
 
 								
-								changeMemberRole:()=>Promise<any>;
+								changeMemberRole:(...args?:any)=> Promise<any>;
 								
 
 								
-								checkMemberRepeat:()=>Promise<any>;
+								checkMemberRepeat:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								/**
@@ -863,35 +863,35 @@ group:{
 	 * @memberOf ModelGroup
 	 
 */
-								getAuthList:()=>Promise<any>;
+								getAuthList:(...args?:any)=> Promise<any>;
 								
 
 								
-								findByGroups:()=>Promise<any>;
+								findByGroups:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								
-								up:()=>Promise<any>;
+								up:(...args?:any)=> Promise<any>;
 								
 
 								
-								getcustomFieldName:()=>Promise<any>;
+								getcustomFieldName:(...args?:any)=> Promise<any>;
 								
 
 								
-								search:()=>Promise<any>;
+								search:(...args?:any)=> Promise<any>;
 								 };
 follow:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								/**
@@ -901,52 +901,52 @@ follow:{
 	 * @param {String} icon 项目图标
 	 
 */
-								save:()=>Promise<any>;
+								save:(...args?:any)=> Promise<any>;
 								
 
 								
-								del:()=>Promise<any>;
+								del:(...args?:any)=> Promise<any>;
 								
 
 								
-								delByProjectId:()=>Promise<any>;
+								delByProjectId:(...args?:any)=> Promise<any>;
 								
 
 								
-								list:()=>Promise<any>;
+								list:(...args?:any)=> Promise<any>;
 								
 
 								
-								listByProjectId:()=>Promise<any>;
+								listByProjectId:(...args?:any)=> Promise<any>;
 								
 
 								
-								checkProjectRepeat:()=>Promise<any>;
+								checkProjectRepeat:(...args?:any)=> Promise<any>;
 								
 
 								
-								updateById:()=>Promise<any>;
+								updateById:(...args?:any)=> Promise<any>;
 								 };
 
 avatar:{ 
 								
-								getName:()=>Promise<any>;
+								getName:(...args?:any)=> Promise<any>;
 								
 
 								
-								getSchema:()=>Promise<any>;
+								getSchema:(...args?:any)=> Promise<any>;
 								
 
 								
-								getBy:()=>Promise<any>;
+								getBy:(...args?:any)=> Promise<any>;
 								
 
 								
-								get:()=>Promise<any>;
+								get:(...args?:any)=> Promise<any>;
 								
 
 								
-								upsert:()=>Promise<any>;
+								upsert:(...args?:any)=> Promise<any>;
 								 };
         }; 
     
