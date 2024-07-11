@@ -369,19 +369,19 @@ module.exports = {
 				description: "媒体文件流",
 				request: {
 					query: {
-						uri: {
-							description: "资源uri",
-							required: true,
-							type: "string"
+						id: {
+							description: "资源id",
+							type: "number"
 						}
 					}
 				},
 				async handler(ctx) {
 					const { headers, payload } = ctx;
-					const { uri: pathArrayString } = payload;
-					let pathArray = [];
+					const { id } = payload;
+					let resourcePath;
 					try {
-						pathArray = JSON.parse(decodeURIComponent(pathArrayString));
+						const resource = await orm.Resource.getResourceById(id);
+						resourcePath = resource.path;
 					} catch (error) {
 						ctx.body = xU.$response(
 							{
@@ -392,17 +392,13 @@ module.exports = {
 						);
 					}
 
-					let resourcePath = path.resolve.apply(path, [
-						yapi_configs.RESOURCE_ASSETS_REMOTE,
-						...pathArray
-					]);
 					const stat = await fs.promises.stat(resourcePath);
 					if (stat.isFile()) {
 						const type = getType(resourcePath);
 						if (isAudioType(type)) {
 							const record = await getAudioRecord({
 								filePath: resourcePath,
-								id: pathArrayString,
+								id,
 								size: stat.size,
 								type
 							});
@@ -457,19 +453,19 @@ module.exports = {
 				description: "媒体文件流_video",
 				request: {
 					query: {
-						uri: {
-							description: "资源uri",
-							required: true,
-							type: "string"
+						id: {
+							description: "资源id",
+							type: "number"
 						}
 					}
 				},
 				async handler(ctx) {
 					const { headers, payload } = ctx;
-					const { uri: pathArrayString } = payload;
-					let pathArray = [];
+					const { id } = payload;
+					let resourcePath = [];
 					try {
-						pathArray = JSON.parse(decodeURIComponent(pathArrayString));
+						const resource = await orm.Resource.getResourceById(id);
+						resourcePath = resource.path;
 					} catch (error) {
 						ctx.body = xU.$response(
 							{
@@ -481,11 +477,6 @@ module.exports = {
 					}
 
 					try {
-						let resourcePath = path.resolve.apply(path, [
-							yapi_configs.RESOURCE_ASSETS_REMOTE,
-							...pathArray
-						]);
-
 						// 检查文件是否存在
 						await fs.promises.access(resourcePath, fs.constants.R_OK);
 
@@ -852,7 +843,7 @@ module.exports = {
 						const resourceInfo = {
 							name: file.name,
 							ext: file.mimeType || xU.path.extname(file.name),
-							path: xU._.last(String(targetPath).split(xU.var.RESOURCE_ASSETS)),
+							path: String(targetPath),
 							type: file.type,
 							size: file.size,
 							uploadBy: this.$uid,
@@ -1075,7 +1066,7 @@ async function ifUploadAllChunckMergeIt({
 				type: getType(file_merged_path),
 				useFor: "CloudDisk",
 				md5: fileHash,
-				path: xU._.last(String(file_merged_path).split(xU.var.RESOURCE_ASSETS)),
+				path: String(file_merged_path),
 				uploadBy: $uid,
 				add_time: xU.time(),
 				isdir: 0,
