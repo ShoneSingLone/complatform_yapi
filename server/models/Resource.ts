@@ -111,9 +111,12 @@ class ModelResource extends ModelBase {
 		if (select) {
 			return this.model.find(condition).select(select).sort(orderBy).exec();
 		}
+		const defaultSelect = Object.keys(schemaObj);
+		xU._.remove(defaultSelect, ["path"]);
+
 		return this.model
 			.find(condition)
-			.select(["_id", ...Object.keys(schemaObj)].join(" "))
+			.select(["_id", ...defaultSelect].join(" "))
 			.sort(orderBy)
 			.exec();
 	}

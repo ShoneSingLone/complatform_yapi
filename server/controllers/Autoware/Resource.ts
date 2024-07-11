@@ -691,6 +691,7 @@ module.exports = {
 						const resourceInfo = {
 							name: name,
 							ext: "SYSTEM_DIR",
+							/* 目录的path是虚拟path，文件的path是物理主机上的path */
 							path: `${parentPath}/${name}`,
 							type: "SYSTEM_DIR",
 							size: 0,
