@@ -91,6 +91,11 @@ export default async function () {
 						data
 					});
 				},
+				resourceCloudDiskRename(data) {
+					return _.$ajax.put("/api/resource/cloud_disk_rename", {
+						data
+					});
+				},
 				resourceCloudDiskDir(data) {
 					return _.$ajax.post("/api/resource/cloud_disk_dir", {
 						data

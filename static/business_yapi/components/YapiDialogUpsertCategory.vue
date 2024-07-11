@@ -99,7 +99,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList, all
 					}
 					await getInterfaceList();
 					this.closeModal();
-					_.$msgSuccess(isUpdate ? "修改分类成功" : "添加分类成功");
+					_.$msg(isUpdate ? "修改分类成功" : "添加分类成功");
 				} catch (error) {
 					if (error.message) {
 						_.$msgError(error.message);

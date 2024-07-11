@@ -7,7 +7,7 @@
 	<xDialog class="CloudDiskResource-NewDir-dialog">
 		<xCard style="height: 100%; width: 100%">
 			<template #header> 选择目标文件夹: {{ currentNode.label }} </template>
-			<xTree :data="dirTree" :props="props" :expandedKeys.sync="expandedKeys" ref="refDirTree" @node-click="nodeClick" />
+			<xTree :data="APP.dirTree" :props="props" :expandedKeys.sync="expandedKeys" ref="refDirTree" @node-click="nodeClick" />
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
@@ -32,7 +32,6 @@ export default async function ({ selected, refreshList }) {
 					children: "children"
 				},
 				currentNode: {},
-				dirTree: [],
 				expandedKeys: ["0"]
 			};
 		},
@@ -66,25 +65,8 @@ export default async function ({ selected, refreshList }) {
 				this.currentNode = node;
 			},
 			async loadDirs() {
-				const { data } = await _api.yapi.resourceCloudDiskGetDirs();
-				const { TREE } = _.$arrayToTree({
-					rootId: "0",
-					data,
-					id: "_id",
-					pid: "fileId",
-					label: "name",
-					value: "_id"
-				});
-				this.dirTree = [
-					{
-						id: "0",
-						value: "0",
-						label: "我的空间",
-						children: TREE
-					}
-				];
-				this.expandedKeys = [];
-				_.$traverse(this.dirTree, node => {
+				await this.APP.loadDirs();
+				_.$traverse(this.APP.dirTree, node => {
 					if (_.$isSame(node.value, this.APP.fileId)) {
 						this.currentNode = node;
 						this.$refs.refDirTree.setCurrentKey(node.value);

@@ -1,7 +1,9 @@
 <style lang="less"></style>
 <template>
-	<div>
-		<CloudDiskTransferDetail :item="item" v-for="(item, hash) in APP.fileRecords" :key="hash" />
+	<div class="x-padding">
+		<xCard v-for="(item, hash) in APP.fileRecords" :key="hash" class="mb">
+			<CloudDiskTransferDetail :item="item" />
+		</xCard>
 	</div>
 </template>
 <script lang="ts">

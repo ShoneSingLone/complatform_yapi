@@ -11,8 +11,10 @@
 			set(privateGlobal, prop, val) {
 				if (privateGlobal[prop]) {
 					alert(`PRIVATE_GLOBAL ${prop} 重复`);
+					debugger;
 				} else {
 					privateGlobal[prop] = val;
+					return true;
 				}
 			}
 		}

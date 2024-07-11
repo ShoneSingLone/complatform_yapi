@@ -181,7 +181,7 @@ export default async function () {
 						this.inject_project.getInterfaceList();
 						this.inject_interface_section_interface_detail.updateInterface();
 					}
-					_.$msgSuccess("修改成功");
+					_.$msg("修改成功");
 				} catch (error) {
 					_.$msgError("修改失败");
 				} finally {

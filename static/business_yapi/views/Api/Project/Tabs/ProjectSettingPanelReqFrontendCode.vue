@@ -71,7 +71,7 @@ export default async function () {
 							};
 							await _api.yapi.project_update(dataForm);
 							this.APP.updateGroupProjectList();
-							_.$msgSuccess("更新成功");
+							_.$msg("更新成功");
 						} catch (error) {
 							_.$msgError(error);
 						}

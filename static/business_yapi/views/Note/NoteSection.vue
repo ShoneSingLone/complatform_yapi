@@ -101,7 +101,7 @@ export default async function () {
 					vm.inject_note.currentWiki = {};
 					await vm.inject_note.updateWikiMenuList();
 					await vm.inject_note.updateCurrentWiki();
-					_.$msgSuccess("保存成功");
+					_.$msg("保存成功");
 				} catch (error) {
 					console.error(error);
 				} finally {

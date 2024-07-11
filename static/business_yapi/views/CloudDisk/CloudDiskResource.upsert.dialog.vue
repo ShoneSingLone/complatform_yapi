@@ -15,7 +15,8 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ makeNewDir }) {
+export default async function ({ makeNewDir, item, refreshList, action }) {
+	const isRename = action === "RENAME";
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
 		props: useDialogProps(),
@@ -30,7 +31,8 @@ export default async function ({ makeNewDir }) {
 			return {
 				form: {
 					name: {
-						value: "",
+						value: isRename ? item.name : "",
+						clearable: true,
 						label: i18n("名称"),
 						rules: [_rules.required(), _rules.lessThan(50)],
 						onEnter() {
@@ -53,8 +55,13 @@ export default async function ({ makeNewDir }) {
 							if (error) {
 								return;
 							}
-							await makeNewDir(vm.form.name.value);
+							if (isRename) {
+								await vm.rename();
+							} else {
+								await makeNewDir(vm.form.name.value);
+							}
 							vm.closeModal();
+							refreshList();
 						} catch (error) {
 							console.error(error);
 						} finally {
@@ -62,6 +69,23 @@ export default async function ({ makeNewDir }) {
 						}
 					}
 				};
+			}
+		},
+		methods: {
+			async rename() {
+				_.$loading(true);
+				try {
+					await _api.yapi.resourceCloudDiskRename({
+						name: this.form.name.value,
+						id: item._id
+					});
+					_.$msg(i18n("重命名成功"));
+				} catch (error) {
+					_.$msgError(error);
+					console.error(error);
+				} finally {
+					_.$loading(false);
+				}
 			}
 		}
 	});

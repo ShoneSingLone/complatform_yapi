@@ -8,7 +8,7 @@
 				</KeepAlive>
 			</div>
 		</main>
-		<xMobileTabBar v-model="APP.currentTabName" :data="tabArray" style="background-color: white" />
+		<xMobileTabBar :value="APP.currentTabName" :data="tabArray" style="background-color: white" @change="mTabChange" />
 	</div>
 </template>
 
@@ -26,15 +26,29 @@ export default async function () {
 			return {
 				isMobile: true,
 				tabArray: [
-					{ label: "资源", icon: "_cloud_home_tab" },
-					{ label: "传输", icon: "_cloud_trans_tab" },
-					{ label: "我的", icon: "_UserOutlined" }
+					{ label: "资源", icon: "_cloud_home_tab", path: "/resource" },
+					{ label: "传输", icon: "_cloud_trans_tab", path: "/transfer" },
+					{ label: "我的", icon: "_UserOutlined", path: "/me" }
 				]
 			};
 		},
 		computed: {
 			isShowLoading() {
 				return;
+			}
+		},
+		methods: {
+			mTabChange(label) {
+				this.APP.currentTabName = label;
+				const { path } = _.find(this.tabArray, { label });
+				this.$nextTick(() => {
+					this.$router.push({
+						path,
+						query: {
+							...this.$route.query
+						}
+					});
+				});
 			}
 		}
 	};

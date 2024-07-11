@@ -6,7 +6,7 @@
 			<i slot="prefix" class="el-icon-search"></i>
 		</xInput>
 		<xGap r />
-		<xBtn circle icon="el-icon-plus" @click="APP.homeListDrawer = true" />
+		<xBtn circle icon="el-icon-plus" @click="APP.isShowResourceDrawer = true" />
 		<xBtn circle icon="el-icon-more" @click="APP.isShowBMoreDrawer = true" style="transform: rotate(90deg)" />
 		<xGap r />
 	</header>

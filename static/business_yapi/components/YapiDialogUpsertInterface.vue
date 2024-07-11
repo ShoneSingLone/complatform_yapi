@@ -101,7 +101,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList }) {
 					}
 					await getInterfaceList();
 					this.closeModal();
-					_.$msgSuccess("添加接口成功");
+					_.$msg("添加接口成功");
 				} catch (error) {
 					_.$msgError(error?.message || "添加接口失败");
 				}

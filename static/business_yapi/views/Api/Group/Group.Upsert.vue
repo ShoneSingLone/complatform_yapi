@@ -141,7 +141,7 @@ export default async function ({ groupInfo }) {
 								},
 								id: groupInfo._id
 							});
-							_.$msgSuccess("分组修改成功");
+							_.$msg("分组修改成功");
 						} else {
 							const { newGroupName, newGroupDesc, owner_uids } = vm.cptFormData;
 							await _api.yapi.groupAddGroup({
@@ -149,7 +149,7 @@ export default async function ({ groupInfo }) {
 								group_desc: newGroupDesc,
 								owner_uids: owner_uids
 							});
-							_.$msgSuccess("分组添加成功");
+							_.$msg("分组添加成功");
 						}
 						await vm.APP.updateGroupList();
 

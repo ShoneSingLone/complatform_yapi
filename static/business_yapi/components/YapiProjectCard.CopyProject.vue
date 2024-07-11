@@ -73,7 +73,7 @@ export default async function ({ onOk, projectData }) {
 				let { data } = await _api.yapi.getProjectById(id);
 				data = _.merge({}, data, { name: newProjectName }, { preName: data.name });
 				await _api.yapi.copyProject(data);
-				_.$msgSuccess("项目复制成功");
+				_.$msg("项目复制成功");
 				this.$emit("change");
 			},
 			renderDeleteGroup() {

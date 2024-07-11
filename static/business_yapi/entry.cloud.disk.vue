@@ -30,7 +30,6 @@ export default async function () {
 			"@/yapi.defaul.style.vue"
 		])
 	]);
-
 	/* app entry  */
 	const router = new VueRouter({ routes });
 	const LOADING_STATUS = 0;
@@ -58,6 +57,21 @@ export default async function () {
 		mounted() {
 			this.initMobileModel();
 			this.refreshUserInfo();
+			this.loadDirs().then(res => {
+				if (!_.$isSame(this.fileId, 0)) {
+					const breadcrumbItems = [];
+					let item;
+					let id = this.fileId;
+					while ((item = this.dirs[id])) {
+						breadcrumbItems.unshift({
+							label: item.name,
+							fileId: item._id
+						});
+						id = item.fileId;
+					}
+					this.breadcrumbItems = [...this.breadcrumbItems, ...breadcrumbItems];
+				}
+			});
 		},
 		data() {
 			const vm = this;
@@ -78,7 +92,13 @@ export default async function () {
 							if (["/resource", "/transfer", "/me"].includes(vm.$route.path)) {
 								return;
 							} else {
-								vm.$router.push({ path: "/resource" });
+								vm.$router.push({
+									path: "/resource",
+									query: {
+										...this.$route.query,
+										...query
+									}
+								});
 							}
 						}
 						return true;
@@ -94,9 +114,11 @@ export default async function () {
 
 			vm.saveFileRecords = _.debounce(function () {
 				_.$idb.set(`FILE_RECORDS`, vm.fileRecords);
-			}, 1000 * 10);
+			}, 1000 * 3);
 
 			return {
+				dirs: {},
+				dirTree: [],
 				fileRecords,
 				breadcrumbItems: [
 					{
@@ -109,7 +131,7 @@ export default async function () {
 				currentTabName: "资源",
 				/* header 按钮 */
 				isShowBMoreDrawer: false,
-				homeListDrawer: false,
+				isShowResourceDrawer: false,
 				/* ****************** */
 				isMobile: /Mobile/gi.test(window.navigator.userAgent),
 				useMobileView: true,
@@ -139,6 +161,26 @@ export default async function () {
 			};
 		},
 		methods: {
+			async loadDirs() {
+				const { data } = await _api.yapi.resourceCloudDiskGetDirs();
+				const { TREE, NODES_OBJ: dirs } = _.$arrayToTree({
+					rootId: "0",
+					data,
+					id: "_id",
+					pid: "fileId",
+					label: "name",
+					value: "_id"
+				});
+				this.dirs = dirs;
+				this.dirTree = [
+					{
+						id: "0",
+						value: "0",
+						label: "我的空间",
+						children: TREE
+					}
+				];
+			},
 			triggerUploadFileChange(args) {
 				const { md5 } = args;
 				this.$set(this.fileRecords, md5, _.merge({}, this.fileRecords[md5], args));
@@ -296,7 +338,7 @@ export default async function () {
 							type: ""
 						});
 						this.$router.push("/login");
-						_.$msgSuccess(i18n("退出成功! "));
+						_.$msg(i18n("退出成功! "));
 					}
 				} catch (error) {
 					_.$msgError(error);
@@ -327,37 +369,10 @@ export default async function () {
 					}
 				}
 			},
-			currentTabName: {
-				immediate: true,
-				handler() {
-					const PATH_MAP = {
-						资源: "/resource",
-						传输: "/transfer",
-						我的: "/me"
-					};
-					const path = PATH_MAP[this.currentTabName];
-					this.$nextTick(() => {
-						this.$router.push({
-							path,
-							query: {
-								...this.$route.query
-							}
-						});
-					});
-				}
-			},
-			"$route.path": {
+			$route: {
 				deep: true,
-				handler() {
-					debugger;
-				}
-			},
-			"$route.path": {
-				immediate: true,
-				handler(path) {
-					this.refreshUserInfo().then(res => {
-						console.log("🚀 ~ this.refreshUserInfo ~ res:", res);
-					});
+				handler($route) {
+					console.log("🚀 ~ handler ~ $route:", $route);
 				}
 			}
 		}

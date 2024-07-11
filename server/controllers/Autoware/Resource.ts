@@ -609,6 +609,43 @@ module.exports = {
 				}
 			}
 		},
+		"/resource/cloud_disk_rename": {
+			put: {
+				summary: "重命名",
+				description: "创建文件夹",
+				request: {
+					body: {
+						name: {
+							description: "文件名称",
+							required: true,
+							type: "string"
+						},
+						id: {
+							description: "文件ID",
+							required: true,
+							default: 0,
+							type: "number"
+						}
+					}
+				},
+				response: {
+					200: {
+						description: "成功",
+						schema: xU.schema("UploadSuccess")
+					}
+				},
+				async handler(ctx) {
+					try {
+						const { name, id } = ctx.payload;
+						let result = await orm.Resource.update(id, { name });
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						xU.applog.error(e.message);
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
 		"/resource/cloud_disk_dir": {
 			post: {
 				summary: "创建文件夹",
@@ -712,7 +749,13 @@ module.exports = {
 					try {
 						const { ids, targetDirId } = ctx.payload;
 
-						let isExist = await orm.Resource.getResourceById(targetDirId);
+						const isExist = await (() => {
+							if (targetDirId === 0) {
+								return true;
+							} else {
+								return orm.Resource.getResourceById(targetDirId);
+							}
+						})();
 
 						if (isExist) {
 							let result = await orm.Resource.update(ids, {

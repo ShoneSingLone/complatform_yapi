@@ -136,7 +136,7 @@ ${httprequestoptions}
 					}
 
 					this.APP.updateGroupProjectList();
-					_.$msgSuccess("更新成功");
+					_.$msg("更新成功");
 				} catch (error) {
 					_.$msgError(error);
 				}
@@ -152,7 +152,7 @@ ${httprequestoptions}
 					};
 					await _api.yapi.interface_usecase_upsert(dataForm);
 					this.APP.updateGroupProjectList();
-					_.$msgSuccess("更新成功");
+					_.$msg("更新成功");
 				} catch (error) {
 					_.$msgError(error);
 				}

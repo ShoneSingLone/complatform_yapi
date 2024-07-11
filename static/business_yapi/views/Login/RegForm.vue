@@ -146,7 +146,7 @@ export default async function () {
 						try {
 							const { data } = await _api.yapi.postNewVarifyCode(vm.configsForm.email.value);
 							if (data) {
-								_.$msgSuccess(data.msg);
+								_.$msg(data.msg);
 								vm.$router.push({ path: "/group" });
 							}
 						} catch (e) {
@@ -175,7 +175,7 @@ export default async function () {
 								console.error("未通过验证");
 							} else {
 								const res = await _api.yapi.userReg(formData);
-								_.$msgSuccess(i18n("注册成功"));
+								_.$msg(i18n("注册成功"));
 								vm.$router.push({ path: "/group" });
 							}
 						} catch (e) {

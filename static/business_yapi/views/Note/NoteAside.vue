@@ -183,7 +183,7 @@ export default async function () {
 						})()
 					});
 					await inject_note.updateWikiMenuList();
-					_.$msgSuccess(i18n("更新成功"));
+					_.$msg(i18n("更新成功"));
 				} catch (error) {
 					_.$msgError(error.message);
 				}

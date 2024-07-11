@@ -1,6 +1,6 @@
 <script lang="ts">
-export default async function () {
-	if (!window.VueRouter) {
+export default async function ({ PRIVATE_GLOBAL }) {
+	if (!PRIVATE_GLOBAL.VueRouter) {
 		(function () {
 			"use strict";
 			/*  */
@@ -146,7 +146,6 @@ export default async function () {
 				try {
 					query = clone(query);
 				} catch (e) {}
-
 				var route = {
 					name: location.name || (record && record.name),
 					meta: (record && record.meta) || {},
@@ -2782,6 +2781,7 @@ export default async function () {
 				this.matcher = createMatcher(options.routes || [], this);
 
 				var mode = options.mode || "hash";
+				PRIVATE_GLOBAL.VUE_ROUTER_MODE = mode;
 				this.fallback = mode === "history" && !supportsPushState && options.fallback !== false;
 				if (this.fallback) {
 					mode = "hash";
@@ -3021,10 +3021,9 @@ export default async function () {
 			if (inBrowser && window.Vue) {
 				window.Vue.use(VueRouter);
 			}
-			window.VueRouter = VueRouter;
+			PRIVATE_GLOBAL.VueRouter = VueRouter;
 		})();
 	}
-
-	return window.VueRouter;
+	return PRIVATE_GLOBAL.VueRouter;
 }
 </script>

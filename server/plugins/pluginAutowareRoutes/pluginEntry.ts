@@ -80,7 +80,7 @@ function appAddRoutes(app, routes) {
 											}
 										}
 									}
-
+									/* 转换和校验 */
 									if (xU.isInput(fieldValue)) {
 										if (type === "number") {
 											ctx.payload[field] = Number(fieldValue);

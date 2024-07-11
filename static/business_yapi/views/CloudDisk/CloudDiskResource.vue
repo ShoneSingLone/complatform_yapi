@@ -20,22 +20,22 @@
 <template>
 	<div class="flex vertical height100 CloudDiskResource">
 		<xCard>
-			<xBreadcrumb :items="APP.breadcrumbItems" :itemRender="breadCrumbItemRender" />
+			<xBreadcrumb :items="APP.breadcrumbItems" :itemRender="mRendeBreadCrumbItem" />
 		</xCard>
 		<div class="flex flex1 vertical overflow-auto">
 			<CloudDiskResourceItem v-for="(item, index) in resourceList" :key="index" :item="item" :checked="APP.selectedItems.includes(item._id)" @toggle="toggle(item)" @preview="preview(item)" />
 		</div>
-		<xDrawer :visible.sync="APP.homeListDrawer" :with-header="false" direction="btt" size="var(--xDrawer-height)" class="CloudDiskResource-drawer">
+		<xDrawer :visible.sync="APP.isShowResourceDrawer" :with-header="false" direction="btt" size="var(--xDrawer-height)" class="CloudDiskResource-drawer">
 			<div class="flex middle center height100">
 				<xGap f />
-				<div class="flex vertical center" @click="handleUpload">
+				<div class="flex vertical center" @click="mUpload">
 					<div class="CloudDiskResource-opr-icon mb4">
 						<xIcon icon="_cloud_item_unknow" />
 					</div>
 					<span>上传文件</span>
 				</div>
 				<xGap f />
-				<div class="flex vertical center" @click="openMakeNewDirDialog">
+				<div class="flex vertical center" @click="openUpsertNewDirDialog">
 					<div class="CloudDiskResource-opr-icon mb4">
 						<xIcon icon="_cloud_item_dir" />
 					</div>
@@ -44,17 +44,21 @@
 				<xGap f />
 			</div>
 		</xDrawer>
-		<xDrawer :visible.sync="APP.isShowBMoreDrawer" :with-header="false" direction="btt" size="var(--xDrawer-height)" class="CloudDiskResource-drawer">
+		<xDrawer :visible.sync="APP.isShowBMoreDrawer" :with-header="false" direction="btt" size="190px" class="CloudDiskResource-drawer">
 			<div class="flex vertical x-padding height100">
-				<div class="flex middle" @click="handleUpload">
-					<xIcon icon="_cloud_item_unknow" />
-					<span>按类型排序</span>
+				<div class="flex middle">
+					<xIcon icon="_icon_sort_by" />
+					<span class="ml8 mr">排序</span>
+					<xBtnArray :configs="oprBtnArray" />
 				</div>
-				<div class="flex middle mt" @click="openMoveDirDialog">
+				<div class="flex middle mt" @click="mOpenMoveDirDialog">
 					<xIcon icon="_cloud_item_dir" />
-					<span>移动</span>
+					<span class="ml8">移动</span>
 				</div>
-				<xGap f />
+				<div class="flex middle mt" @click="openUpsertNewDirDialog('RENAME')">
+					<xIcon icon="_icon_rename" />
+					<span class="ml8">重命名</span>
+				</div>
 			</div>
 		</xDrawer>
 	</div>
@@ -68,25 +72,33 @@ export default async function () {
 		components: {
 			CloudDiskResourceItem: () => _.$importVue("@/views/CloudDisk/CloudDiskResourceItem.vue")
 		},
-		data() {
+		data(vm) {
 			return {
 				chunkAndSizeArray: [],
 				resourceList: [],
-				sort: "name",
-				sortOptions: [
+				sortBy: "name",
+				oprBtnArray: [
 					{
-						name: "按名称排序",
-						key: "name"
+						label: i18n("名称"),
+						preset: "text",
+						onClick() {
+							vm.sortBy = "name";
+							vm.mSetResources(vm.resourceList);
+						}
 					},
 					{
-						name: "按时间排序",
-						key: "created_time"
+						label: i18n("时间"),
+						preset: "text",
+						onClick() {
+							vm.sortBy = "add_time";
+							vm.mSetResources(vm.resourceList);
+						}
 					}
 				]
 			};
 		},
 		methods: {
-			breadCrumbItemRender({ target, item, index, items }) {
+			mRendeBreadCrumbItem({ target, item, index, items }) {
 				const isLastItem = index === items.length - 1;
 
 				target.push(
@@ -95,7 +107,7 @@ export default async function () {
 						{
 							preset: "text",
 							onClick: () => {
-								if (item.fileId === this.APP.fileId) {
+								if (_.$isSame(item.fileId, this.APP.fileId)) {
 									this.getResourceList();
 								} else {
 									this.APP.popDir(index, item);
@@ -112,7 +124,7 @@ export default async function () {
 				return target;
 			},
 			//合并文件
-			async mergeFile(fileInfo, chunkTotal) {
+			async mMergeFile(fileInfo, chunkTotal) {
 				const { md5Value, fileKey } = fileInfo[0];
 				const params = {
 					chunkTotal: chunkTotal,
@@ -122,7 +134,7 @@ export default async function () {
 				const response = await makePostRequest("http://127.0.0.1:3000/merge", params);
 			},
 			//文件切片
-			sliceFile(file) {
+			mSlickFile(file) {
 				_.$loading(true);
 				//文件分片之后的集合
 				const chunkAndSizeArray = [];
@@ -137,8 +149,8 @@ export default async function () {
 				_.$loading(false);
 				return [...chunkAndSizeArray];
 			},
-			async handleUpload() {
-				this.APP.homeListDrawer = false;
+			async mUpload() {
+				this.APP.isShowResourceDrawer = false;
 				const newFormData = ({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name }) => {
 					let formData = new FormData();
 					formData.append("fileId", this.APP.fileId || 0);
@@ -159,7 +171,7 @@ export default async function () {
 				const md5 = await _.$md5(file);
 				const { name } = file;
 				this.APP.triggerUploadFileChange({ md5, name });
-				this.chunkAndSizeArray = this.sliceFile(file);
+				this.chunkAndSizeArray = this.mSlickFile(file);
 				this.APP.triggerUploadFileChange({ md5, chunkTotal: this.chunkAndSizeArray.length });
 				const {
 					data: { chunks: uploadedChunkArray, file: isMergeFile }
@@ -209,7 +221,7 @@ export default async function () {
 
 				if (isMergeFile) {
 					//上传过,并且已经完整上传，直接提示上传成功（秒传）
-					_.$msgSuccess("秒传成功");
+					_.$msg("秒传成功");
 					return Promise.resolve([]);
 				} else if (hasUploaded) {
 					//在所有的分片状态中找到未上传的分片，
@@ -229,7 +241,7 @@ export default async function () {
 							const { chunk, size: chunkSize } = this.chunkAndSizeArray[chunkIndex];
 							let formData = newFormData({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name });
 							const { data } = await _api.yapi.resourceCloudDiskShardUpload({ formData, callback });
-							this.handleUploaded(md5, data);
+							this.mAfterUpload(md5, data);
 						} catch (error) {
 							console.log(error);
 						}
@@ -240,14 +252,14 @@ export default async function () {
 						try {
 							let formData = newFormData({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name });
 							const { data } = await _api.yapi.resourceCloudDiskShardUpload({ formData, callback });
-							this.handleUploaded(md5, data);
+							this.mAfterUpload(md5, data);
 						} catch (error) {
 							console.log(error);
 						}
 					});
 				}
 			},
-			handleUploaded(md5, { chunkIndex }) {
+			mAfterUpload(md5, { chunkIndex }) {
 				const info = this.APP.fileRecords[md5];
 				info.uploaded[chunkIndex] = true;
 				this.APP.triggerUploadFileChange(info);
@@ -258,31 +270,43 @@ export default async function () {
 					});
 				}
 			},
-			async openMoveDirDialog() {
+			async mOpenMoveDirDialog() {
 				const vm = this;
 				if (!_.$isArrayFill(vm.APP.selectedItems)) {
 					return _.$msgError("未选中任何文件");
 				}
 				await _.$openModal({
 					title: "移动文件",
-					url: "@/views/CloudDisk/cloud_disk_resource_move_dir_dialog.vue",
+					url: "@/views/CloudDisk/CloudDiskResource.move.dialog.vue",
 					parent: vm,
 					selected: vm.APP.selectedItems,
-					refreshList() {
-						vm.getResourceList();
-					}
+					refreshList: vm.getResourceList
 				});
 				this.APP.selectedItems = [];
 				this.APP.isShowBMoreDrawer = false;
 			},
-			async openMakeNewDirDialog() {
+			async openUpsertNewDirDialog(action = "") {
+				const vm = this;
+
+				let title = "新建文件夹";
+				let item;
+				if (action === "RENAME") {
+					if (vm.APP.selectedItems.length !== 1) {
+						return _.$msgError("只能选择一个文件");
+					}
+					item = _.find(vm.resourceList, { _id: vm.APP.selectedItems[0] });
+					title = `重命名 ${item.name}`;
+				}
 				await _.$openModal({
-					title: "新建文件夹",
-					url: "@/views/CloudDisk/CloudDiskResource.NewDir.dialog.vue",
-					parent: this,
-					makeNewDir: this.makeNewDir
+					title,
+					url: "@/views/CloudDisk/CloudDiskResource.upsert.dialog.vue",
+					action,
+					item,
+					parent: vm,
+					makeNewDir: vm.makeNewDir,
+					refreshList: vm.getResourceList
 				});
-				this.APP.homeListDrawer = false;
+				this.APP.isShowBMoreDrawer = false;
 			},
 			preview(item) {
 				if (item.type === "image") {
@@ -327,31 +351,52 @@ export default async function () {
 						fileId: this.APP.fileId || 0,
 						orderby: this.APP.listSortBy
 					});
-					this.setList(data);
+					this.mSetResources(data);
 				} catch (error) {
 					console.error(error);
 				} finally {
 					_.$loading(false);
 				}
 			},
-			setList(data) {
-				this.resourceList = _.map(data, item => {
-					let type = "none";
+			mSetResources(resourceList) {
+				const vm = this;
+				const resource = _.groupBy(resourceList, "isdir");
+				const sort = resourceList =>
+					_.map(resourceList, item => {
+						let type = "none";
 
-					if (item.isdir) {
-						type = "dir";
-					} else if (/^image/.test(item.type) || ["image/jpeg", "image/png"].includes(item.type)) {
-						type = "image";
-					} else if (/^video/.test(item.type) || ["video/mp4"].includes(item.type)) {
-						type = "video";
-					} else {
-					}
+						if (item.isdir) {
+							type = "dir";
+						} else if (/^image/.test(item.type) || ["image/jpeg", "image/png"].includes(item.type)) {
+							type = "image";
+						} else if (/^video/.test(item.type) || ["video/mp4"].includes(item.type)) {
+							type = "video";
+						} else {
+						}
 
-					return {
-						...item,
-						type
-					};
-				});
+						return {
+							...item,
+							type
+						};
+					}).sort((a, b) => {
+						if (a.isdir === 1) {
+							return -1;
+						} else if (vm.sortBy === "name") {
+							try {
+								return a.name.localeCompare(b.name);
+							} catch (error) {
+								return 0;
+							}
+						} else if (vm.sortBy === "add_time") {
+							return a.add_time - b.add_time;
+						} else {
+							return 0;
+						}
+					});
+				const dirs = sort(resource[1]);
+				const unDirs = sort(resource[0]);
+				this.resourceList = [...dirs, ...unDirs];
+				this.APP.selectedItems = [];
 			}
 		},
 		watch: {

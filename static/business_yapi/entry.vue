@@ -226,7 +226,7 @@ export default async function () {
 							type: ""
 						});
 						this.$router.push("/login");
-						_.$msgSuccess(i18n("退出成功! "));
+						_.$msg(i18n("退出成功! "));
 					}
 				} catch (error) {
 					_.$msgError(error);

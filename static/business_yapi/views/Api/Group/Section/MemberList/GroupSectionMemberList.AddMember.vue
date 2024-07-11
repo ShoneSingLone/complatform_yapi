@@ -72,7 +72,7 @@ export default async function ({ onOk }) {
 						const { add_members, exist_members } = data;
 						const addLength = add_members.length;
 						const existLength = exist_members.length;
-						_.$msgSuccess(`新增 ${addLength} 人， ${existLength} 人已存在`);
+						_.$msg(`新增 ${addLength} 人， ${existLength} 人已存在`);
 						// 添加成功后重新获取分组成员列表
 						await onOk();
 						vm.closeModal();

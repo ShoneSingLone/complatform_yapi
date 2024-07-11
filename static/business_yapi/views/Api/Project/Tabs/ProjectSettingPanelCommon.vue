@@ -154,7 +154,7 @@ export default async function () {
 										path: "/api/group",
 										query: _.pick(vm.$route.query, ["groupId"])
 									});
-									_.$msgSuccess("删除成功");
+									_.$msg("删除成功");
 								} else {
 									throw new Error(res.message);
 								}
@@ -212,7 +212,7 @@ export default async function () {
 					};
 					await _api.yapi.project_update(dataForm);
 					this.APP.updateGroupProjectList();
-					_.$msgSuccess("更新成功");
+					_.$msg("更新成功");
 				} catch (error) {
 					_.$msgError(error);
 				}

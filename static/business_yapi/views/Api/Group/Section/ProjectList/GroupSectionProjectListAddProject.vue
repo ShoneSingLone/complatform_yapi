@@ -127,7 +127,7 @@ export default async function ({ onOk }) {
 						const group = _.find(vm.form.group_id.options, { value: group_id });
 						const group_name = group.label;
 						const { data } = await _api.yapi.project_add({ name, basepath, group_id, group_name, project_type, desc });
-						_.$msgSuccess(`添加成功`);
+						_.$msg(`添加成功`);
 						onOk();
 						vm.closeModal();
 					}

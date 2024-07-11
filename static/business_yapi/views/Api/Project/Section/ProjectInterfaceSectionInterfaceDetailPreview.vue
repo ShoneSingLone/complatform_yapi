@@ -180,7 +180,7 @@ ${resBackupJson}
 										try {
 											/* https://www.cnblogs.com/hellxz/p/15192573.html */
 											await _.$copyToClipboard($("#cptCode").text());
-											_.$msgSuccess("复制成功");
+											_.$msg("复制成功");
 										} catch (error) {
 											console.error(error);
 											debugger;
