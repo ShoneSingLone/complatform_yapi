@@ -1,11 +1,11 @@
 <style lang="less"></style>
 <template>
 	<div class="flex1 flex middle" id="MusicPlayerAudio">
-		<span>{{ formatDuring(stateMusicPlayer.currentTime) }}</span>
+		<span>{{ formatDuring(stateAudio.currentTime) }}</span>
 		<xGap l />
-		<xSlider class="flex1" :min="0" :max="stateMusicPlayer.duration" v-model="stateMusicPlayer.currentTime" :tooltip-visible="false" :format-tooltip="formatTooltip" @change="changSongProgress" />
+		<xSlider class="flex1" :min="0" :max="stateAudio.duration" v-model="stateAudio.currentTime" :tooltip-visible="false" :format-tooltip="formatTooltip" @change="changSongProgress" />
 		<xGap l />
-		<span>{{ formatDuring(stateMusicPlayer.duration) }}</span>
+		<span>{{ formatDuring(stateAudio.duration) }}</span>
 	</div>
 </template>
 <script lang="ts">
@@ -31,8 +31,8 @@ export default async function () {
 			};
 		},
 		computed: {
-			stateMusicPlayer() {
-				return this.inject_explore.stateMusicPlayer;
+			stateAudio() {
+				return this.inject_explore.stateAudio;
 			},
 			methodsMusicPlayer() {
 				return this.inject_explore.methodsMusicPlayer;

@@ -15,8 +15,8 @@ export default async function () {
 	return defineComponent({
 		inject: ["inject_explore"],
 		computed: {
-			stateMusicPlayer() {
-				return this.inject_explore.stateMusicPlayer;
+			stateAudio() {
+				return this.inject_explore.stateAudio;
 			},
 			methodsMusicPlayer() {
 				return this.inject_explore.methodsMusicPlayer;
@@ -51,7 +51,7 @@ export default async function () {
 			playOrPause() {
 				const vm = this;
 				return {
-					label: () => (vm.stateMusicPlayer.isPlaying ? h("xIcon", { icon: "_pausesong" }) : h("xIcon", { icon: "_playsong" })),
+					label: () => (vm.stateAudio.isPlaying ? h("xIcon", { icon: "_pausesong" }) : h("xIcon", { icon: "_playsong" })),
 					onClick() {
 						vm.methodsMusicPlayer.togglePlayOrPause();
 					}

@@ -315,6 +315,10 @@ export default async function () {
 				if (item.type === "dir") {
 					this.APP.pushDir(item);
 				}
+				if (["audio", "video"].includes(item.type)) {
+					item.useId = item._id;
+					this.APP.playMedia(item);
+				}
 			},
 			preview_image(item) {
 				const urlList = _.filter(this.resourceList, { type: "image" }).map(item => Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${item._id}`));
@@ -371,6 +375,8 @@ export default async function () {
 							type = "image";
 						} else if (/^video/.test(item.type) || ["video/mp4"].includes(item.type)) {
 							type = "video";
+						} else if (/^audio/.test(item.type) || ["audio/mpeg"].includes(item.type)) {
+							type = "audio";
 						} else {
 						}
 

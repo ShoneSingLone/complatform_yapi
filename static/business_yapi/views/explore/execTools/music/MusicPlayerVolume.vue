@@ -4,10 +4,10 @@
 		<xBtn class="volume flex horizon" @click="methodsMusicPlayer.toggleVolumeMute">
 			<xIcon :icon="cptIconSound" />
 		</xBtn>
-		<xGap l />
+		<!-- <xGap l />
 		<div class="flex1">
-			<xSlider id="test" v-model="stateMusicPlayer.volume" :tooltip-visible="isTooltipVisible" @change="changeVolume" />
-		</div>
+			<xSlider id="test" v-model="stateAudio.volume" :tooltip-visible="isTooltipVisible" @change="changeVolume" />
+		</div> -->
 	</div>
 </template>
 <script lang="ts">
@@ -21,10 +21,10 @@ export default async function () {
 		},
 		computed: {
 			cptIconSound() {
-				return this.stateMusicPlayer.isMute ? "_soundMute" : "_sound";
+				return this.stateAudio.isMute ? "_soundMute" : "_sound";
 			},
-			stateMusicPlayer() {
-				return this.inject_explore.stateMusicPlayer;
+			stateAudio() {
+				return this.inject_explore.stateAudio;
 			},
 			methodsMusicPlayer() {
 				return this.inject_explore.methodsMusicPlayer;

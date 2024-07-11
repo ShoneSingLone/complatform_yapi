@@ -5,8 +5,8 @@ export default async function () {
 	return defineComponent({
 		inject: ["inject_explore"],
 		computed: {
-			stateMusicPlayer() {
-				return this.inject_explore.stateMusicPlayer;
+			stateAudio() {
+				return this.inject_explore.stateAudio;
 			},
 			methodsMusicPlayer() {
 				return this.inject_explore.methodsMusicPlayer;
@@ -15,7 +15,7 @@ export default async function () {
 				const vm = this;
 				const { LOOP_TYPE_NAME_ARRAY } = vm.inject_explore;
 				return {
-					label: () => h("xIcon", { icon: `_${LOOP_TYPE_NAME_ARRAY[vm.stateMusicPlayer.loopType]}` }),
+					label: () => h("xIcon", { icon: `_${LOOP_TYPE_NAME_ARRAY[vm.stateAudio.loopType]}` }),
 					onClick() {
 						vm.methodsMusicPlayer.togglePlayModel();
 					}

@@ -1,6 +1,6 @@
 <script lang="ts">
 export default async function () {
-	const [, [VueRouter, routes]] = await Promise.all([
+	const [, [VueRouter, routes, { useMusic }]] = await Promise.all([
 		Promise.all([
 			_.$importVue("/common/ui-x/useXui.vue"),
 			_.$importVue("/common/ui-element/useElementUI.NoJS.vue", {
@@ -12,6 +12,7 @@ export default async function () {
 		_.$importVue([
 			"/common/libs/VueRouter.vue",
 			"@/router/cloudDisk/routes.vue",
+			"@/views/CloudDisk/CloudDiskMine.useMusic.vue",
 			/*常量*/
 			"@/utils/var.vue",
 			/*接口*/
@@ -52,6 +53,16 @@ export default async function () {
 		provide() {
 			return {
 				APP: this
+			};
+		},
+		setup() {
+			const { LOOP_TYPE_NAME_ARRAY, playAudio, playMedia, stateAudio, methodsMusicPlayer } = useMusic(this);
+			return {
+				LOOP_TYPE_NAME_ARRAY,
+				playAudio,
+				playMedia,
+				stateAudio,
+				methodsMusicPlayer
 			};
 		},
 		mounted() {
@@ -95,7 +106,7 @@ export default async function () {
 								vm.$router.push({
 									path: "/resource",
 									query: {
-										...this.$route.query,
+										...this.$route.query
 									}
 								});
 							}

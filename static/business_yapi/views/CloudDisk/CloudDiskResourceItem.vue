@@ -73,6 +73,9 @@ export default async function () {
 				if (this.item.type === "video") {
 					return "_cloud_item_video";
 				}
+				if (this.item.type === "audio") {
+					return "_cloud_item_audio";
+				}
 
 				return "_cloud_item_unknow";
 			},

@@ -1,17 +1,41 @@
-<style lang="less"></style>
+<style lang="less">
+.CloudDiskMine {
+	height: 1px;
+}
+</style>
 <template>
-	<div>
-		<div>{{ cptPercent }}</div>
-		<div>{{ _.$bytesToSize(cloudDiskSizeUsed) }}</div>
-		<div>{{ _.$bytesToSize(cloudDiskSizeTotal) }}</div>
+	<div class="CloudDiskMine flex1 flex vertical">
+		<div class="play-list flex1">
+			<div>{{ cptPercent }}</div>
+			<div>{{ _.$bytesToSize(cloudDiskSizeUsed) }}</div>
+			<div>{{ _.$bytesToSize(cloudDiskSizeTotal) }}</div>
+			<span>{{ APP.stateAudio.audioName }}</span>
+		</div>
+		<div class="player-opr x-padding">
+			<span>{{ APP.stateAudio.audioName }}</span>
+			<MusicPlayerAudio />
+			<div class="flex middle">
+				<MusicPlayerVolume class="flex1" />
+				<MusicPlayerModel />
+				<xGap l="4" />
+				<MusicPlayerOpration />
+			</div>
+		</div>
 	</div>
 </template>
 <script lang="ts">
 export default async function () {
-	const { THIS_FILE_URL } = this;
 	return defineComponent({
 		inject: ["APP"],
-
+		components: {
+			MusicPlayerModel: () => _.$importVue("@/views/explore/execTools/music/MusicPlayerModel.vue"),
+			MusicPlayerVolume: () => _.$importVue("@/views/explore/execTools/music/MusicPlayerVolume.vue"),
+			MusicPlayerAudio: () => _.$importVue("@/views/explore/execTools/music/MusicPlayerAudio.vue"),
+			MusicPlayerOpration: () => _.$importVue("@/views/explore/execTools/music/MusicPlayerOpration.vue")
+		},
+		provide() {
+			return { inject_explore: this.APP };
+		},
 		data() {
 			return {
 				activeName: "second"
