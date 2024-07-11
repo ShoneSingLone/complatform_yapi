@@ -96,7 +96,6 @@ export default async function () {
 									path: "/resource",
 									query: {
 										...this.$route.query,
-										...query
 									}
 								});
 							}
