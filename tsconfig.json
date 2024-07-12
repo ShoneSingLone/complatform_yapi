@@ -1,9 +1,18 @@
 {
 	"compilerOptions": {
+		"types": [
+			"node",
+			"lodash",
+		],
 		"moduleResolution": "node",
-		"lib": ["esnext", "dom"]
+		"lib": [
+			"esnext",
+			"dom"
+		]
 	},
-	"include": ["./**/*"],
+	"include": [
+		"./**/*"
+	],
 	"vueCompilerOptions": {
 		"target": 2.7
 	}

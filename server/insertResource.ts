@@ -2,57 +2,58 @@
 	await require("./utils/onFirstLine.ts")();
 	const fs = require("fs");
 	const path = require("path");
-	let cacheMap, files;
+	let cacheMap = {};
+	let files = [];
 	const SparkMD5 = getSparkMD5(undefined);
 	const { getType } = require("mime");
 	const { _n } = require("@ventose/utils-node");
+	const ENTRY_PATH = "D:\\Music";
+	const PREFIX = "D:\\";
+	const SEP = path.sep;
 	let count = 0;
-	[files, cacheMap] = require("./records.js")
+	try {
+		[files, cacheMap] = require(_n.pathR("D:\\Music\\record.Music.js"));
+	} catch (error) {}
 
 	async function main() {
 		async function ensure_dir_exit() {
-			const [dirs, files] = await _n.asyncAllDirAndFile([_n.pathR("/media/shone/Elements/resource/Music")]);
-			let dir;
-			while (dir = dirs.pop()) {
-				console.log(dir)
-				dir = dir.split("")[1]
-				let currentDir = await get(dir);
-				if (!currentDir) {
-					await ensureParent(dir)
-				}
-				console.clear()
-				console.log(count++)
+			const [dirs, files] = await _n.asyncAllDirAndFile([_n.pathR(ENTRY_PATH)]);
+			let fullPath;
+			while ((fullPath = dirs.pop())) {
+				await ensureDir(fullPath);
+				console.clear();
+				console.log(fullPath, count++);
 			}
-			fs.writeFileSync("./records.js", `module.exports=${JSON.stringify([files, cacheMap])}`);
-		};
+			fs.writeFileSync(
+				_n.pathR("D:\\Music\\record.Music.js"),
+				`module.exports=${JSON.stringify([files, cacheMap])}`
+			);
+		}
 
-		// await ensure_dir_exit()
+		await ensure_dir_exit();
 
-		console.log("ensure_dir_exit")
-
-		await (async function insert_files() {
-
+		async function insert_files() {
 			let file;
-			while (file = files.pop()) {
+			while ((file = files.pop())) {
 				let params;
 				try {
-
-					const filePath = file
-					const [isExit] = await orm.Resource.search({ path: filePath, uploadBy: "1" })
+					const filePath = file;
+					const [isExit] = await orm.Resource.search({
+						path: filePath,
+						uploadBy: "33"
+					});
 
 					if (isExit) {
 						continue;
 					}
 
-					file = file.split("/media/shone/Elements/resource")[1]
-					const fileArray = file.split("/");
-					const _p = _n.dropRight(fileArray).join("/");
-					const item = cacheMap[_p]
-					if (!item) {
+					const fileArray = file.split(SEP);
+					const _p = _n.dropRight(fileArray).join(SEP);
+					const parentItem = cacheMap[_p];
+					if (!parentItem) {
 						debugger;
 					}
-					const { _id: fileId } = item;
-
+					const { _id: fileId } = parentItem;
 					const fileBlob = fs.readFileSync(filePath);
 					const md5 = SparkMD5.ArrayBuffer.hash(fileBlob);
 					const stat = await fs.promises.stat(filePath);
@@ -66,70 +67,72 @@
 						useFor: "CloudDisk",
 						md5,
 						path: filePath,
-						uploadBy: "1",
+						uploadBy: "33",
 						add_time: xU.time(),
 						isdir: 0,
 						fileId
-					}
-					await orm.Resource.save(params)
-					console.log("file", params);
+					};
+					await orm.Resource.save(params);
+					console.log("file", params.name);
 				} catch (error) {
-					console.log(params, error)
-					debugger;
+					console.log(params, error);
 				}
 			}
-			throw new Error("EOF")
-		})();
+		}
 
-
-
+		await insert_files();
+		throw new Error("EOF");
 	}
-
 
 	main();
 
+	async function ensureDir(currentAbsolutePath) {
+		let item = await (async () => {
+			/* 1.缓存 */
+			let _item = cacheMap[currentAbsolutePath];
+			if (!_item) {
+				const currentPath = currentAbsolutePath
+					.split(PREFIX)[1]
+					.replaceAll(SEP, "/");
 
-	async function get(p) {
-		let item = cacheMap[p]
-		if (!item) {
-			[item] = await orm.Resource.search({ path: p, uploadBy: "1" })
-			if (item) {
-				cacheMap[p] = ({ _id: item._id });
-				return item
-			}
-		}
-
-		return false
-	}
-
-
-	async function ensureParent(dir) {
-		let _p = dir.split("/");
-		if (_p.length) {
-			const name = _p.pop();
-			_p = _p.join("/");
-			const [parentDir] = await orm.Resource.search({ path: _p, uploadBy: "1" })
-			if (!parentDir) {
-				await ensureParent(_p)
-			} else {
-				const resourceInfo = {
-					name: name,
-					ext: "SYSTEM_DIR",
-					path: `${_p}/${name}`,
-					type: "SYSTEM_DIR",
-					size: 0,
-					fileId: parentDir._id,
-					uploadBy: "1",
-					add_time: xU.time(),
-					isdir: xU.var.FILE_DIR
+				const params = {
+					path: currentPath,
+					uploadBy: "33"
 				};
-				await orm.Resource.save(resourceInfo)
+				/* 2.数据库查询 */
+				[_item] = await orm.Resource.search(params);
+				if (!_item) {
+					/* 3.创建目录 */
+					const name = currentAbsolutePath.split(PREFIX)[1].split(SEP).pop();
+					const parentItem = await (() => {
+						const parent = currentAbsolutePath.split(PREFIX)[1].split(SEP);
+						parent.pop();
+						if (parent.length === 0) {
+							return { _id: "0" };
+						} else {
+							return ensureDir(`${PREFIX}${parent.join(SEP)}`);
+						}
+					})();
+					const resourceInfo = {
+						name: name,
+						ext: "SYSTEM_DIR",
+						path: currentPath,
+						type: "SYSTEM_DIR",
+						size: 0,
+						fileId: parentItem?._id || "0",
+						uploadBy: "33",
+						add_time: xU.time(),
+						isdir: xU.var.FILE_DIR
+					};
+					_item = await orm.Resource.save(resourceInfo);
+				}
 			}
-		} else {
-		}
+			return _item;
+		})();
+		cacheMap[currentAbsolutePath] = { _id: item._id };
+		return item;
 	}
 })();
-
 
 function getSparkMD5(undefined) {
 	"use strict";
@@ -148,9 +151,26 @@ function getSparkMD5(undefined) {
 	  need the idiotic second function,
 	  generated by an if clause.  */
 	var add32 = function (a, b) {
-		return (a + b) & 0xffffffff;
-	},
-		hex_chr = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
+			return (a + b) & 0xffffffff;
+		},
+		hex_chr = [
+			"0",
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"a",
+			"b",
+			"c",
+			"d",
+			"e",
+			"f"
+		];
 
 	function cmn(q, a, b, x, s, t) {
 		a = add32(add32(a, q), add32(x, t));
@@ -306,7 +326,11 @@ function getSparkMD5(undefined) {
 			i; /* Andy King said do it this way. */
 
 		for (i = 0; i < 64; i += 4) {
-			md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
+			md5blks[i >> 2] =
+				s.charCodeAt(i) +
+				(s.charCodeAt(i + 1) << 8) +
+				(s.charCodeAt(i + 2) << 16) +
+				(s.charCodeAt(i + 3) << 24);
 		}
 		return md5blks;
 	}
@@ -316,7 +340,8 @@ function getSparkMD5(undefined) {
 			i; /* Andy King said do it this way. */
 
 		for (i = 0; i < 64; i += 4) {
-			md5blks[i >> 2] = a[i] + (a[i + 1] << 8) + (a[i + 2] << 16) + (a[i + 3] << 24);
+			md5blks[i >> 2] =
+				a[i] + (a[i + 1] << 8) + (a[i + 2] << 16) + (a[i + 3] << 24);
 		}
 		return md5blks;
 	}
@@ -763,7 +788,10 @@ function getSparkMD5(undefined) {
 			md5cycle(this._hash, md5blk_array(buff.subarray(i - 64, i)));
 		}
 
-		this._buff = i - 64 < length ? new Uint8Array(buff.buffer.slice(i - 64)) : new Uint8Array(0);
+		this._buff =
+			i - 64 < length
+				? new Uint8Array(buff.buffer.slice(i - 64))
+				: new Uint8Array(0);
 
 		return this;
 	};

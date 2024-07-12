@@ -171,11 +171,16 @@ module.exports = {
 						}
 
 						if (targetResource) {
+							/* 如果存在path路径 */
+							let isExist = xU.fileExist(targetResource.path);
+							if (isExist) {
+								/* 返回文件形式存储的文件 */
+								return returnFileByPath(targetResource.path, targetResource);
+							}
 							let targetPath = path.resolve(
 								`${TARGET_PREFIX}${targetResource.path}`
 							);
-							/* 如果存在path路径 */
-							const isExist = xU.fileExist(targetPath);
+							isExist = xU.fileExist(targetPath);
 							if (isExist) {
 								/* 返回文件形式存储的文件 */
 								return returnFileByPath(targetPath, targetResource);

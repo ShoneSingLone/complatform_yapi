@@ -33,7 +33,12 @@ const schemaObj = {
 	/* 用户id */
 	uploadBy: String,
 	add_time: Number,
-	basecode: String
+	basecode: String,
+	useFor: {
+		type: String,
+		default: 0,
+		enum: ["all", "CloudDisk", "wiki"]
+	}
 };
 
 class ModelResource extends ModelBase {
