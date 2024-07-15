@@ -61,4 +61,3 @@ httpRequest.on("error", e => {
 
 httpRequest.write('{"serviceConfigId":"9b05adae830a470d35b8ee2bb304b99b"}');
 httpRequest.end();
-

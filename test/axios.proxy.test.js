@@ -33,7 +33,8 @@ const agent = new https.Agent({
 	} catch (error) {
 		debugger;
 		console.error(error);
-	} finally { }
+	} finally {
+	}
 })();
 
 // (() => {
@@ -62,5 +63,3 @@ const agent = new https.Agent({
 // 		});
 
 // })();
-
-
