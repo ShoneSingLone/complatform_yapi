@@ -22,7 +22,12 @@ export default async function () {
 		},
 		computed: {
 			cptAvatarUrl() {
-				return this.imageUrl || Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${this.projectData._id}&usedBy=project`);
+				return (
+					this.imageUrl ||
+					Vue._common_utils.appendToken(
+						`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${this.projectData._id}&usedBy=project`
+					)
+				);
 			},
 			followIcon() {
 				return h(
@@ -89,19 +94,24 @@ export default async function () {
 				);
 			},
 			title() {
-				return h("div", { staticClass: "ui-title flex middle center" }, [this.projectData.name || this.projectData.projectname]);
+				return h("div", { staticClass: "ui-title flex middle center" }, [
+					this.projectData.name || this.projectData.projectname
+				]);
 			}
 		},
 		methods: {
 			async openCopyProjectDialog() {
 				const vm = this;
-				const addMember = await _.$importVue("@/components/YapiProjectCard.CopyProject.vue", {
-					parent: vm,
-					projectData: vm.projectData,
-					onOk() {
-						vm.$emit("change");
+				const addMember = await _.$importVue(
+					"@/components/YapiProjectCard.CopyProject.vue",
+					{
+						parent: vm,
+						projectData: vm.projectData,
+						onOk() {
+							vm.$emit("change");
+						}
 					}
-				});
+				);
 				_.$openWindow_deprecated(`复制项目${this.projectData.name}`, addMember);
 			},
 			follow: _.debounce(async function () {

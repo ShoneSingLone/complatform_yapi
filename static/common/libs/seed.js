@@ -52,7 +52,8 @@
 			const request = indexedDB.open(dbName);
 			request.onupgradeneeded = () => request.result.createObjectStore(storeName);
 			const dbp = promisifyRequest(request);
-			return (txMode, callback) => dbp.then(db => callback(db.transaction(storeName, txMode).objectStore(storeName)));
+			return (txMode, callback) =>
+				dbp.then(db => callback(db.transaction(storeName, txMode).objectStore(storeName)));
 		}
 		let defaultGetStoreFunc;
 		function defaultGetStore() {
@@ -426,7 +427,10 @@
 	 */
 	function $resolveCssAssetsPath(styleSourceCode) {
 		/* 替换路径 */
-		styleSourceCode = styleSourceCode.replace(/\/common\/(assets|libs|ui-element|ui-tiny)/g, path => $resolvePath(path));
+		styleSourceCode = styleSourceCode.replace(
+			/\/common\/(assets|libs|ui-element|ui-tiny)/g,
+			path => $resolvePath(path)
+		);
 		/* 当前业务app 的相对地址*/
 		styleSourceCode = styleSourceCode.replace(/\/@\//g, $resolvePath("@/"));
 		return styleSourceCode;
@@ -512,7 +516,10 @@
 			Vue.prototype.$X_APP_THEME = $("html").attr("data-theme");
 
 			if (window._CURENT_IS_MOBILE) {
-				$("meta[name='viewport'").attr("content", "width=device-width, initial-scale=1.0, user-scalable=no");
+				$("meta[name='viewport'").attr(
+					"content",
+					"width=device-width, initial-scale=1.0, user-scalable=no"
+				);
 				function setRemBase() {
 					const wWidth = $(window).width();
 					const rate = wWidth / 375;
@@ -588,7 +595,9 @@
 
 		/* setup */
 		_.$importVue.Nprogress = await _.$importVue("/common/libs/Nprogress.vue");
-		const APP = await _.$importVue(`${SRC_ROOT_PATH}/business_${APP_NAME}/${APP_ENTRY_NAME}.vue`);
+		const APP = await _.$importVue(
+			`${SRC_ROOT_PATH}/business_${APP_NAME}/${APP_ENTRY_NAME}.vue`
+		);
 		if (isDev) {
 			window.HMR_APP = APP;
 		}

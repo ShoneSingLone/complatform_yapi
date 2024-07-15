@@ -3,11 +3,18 @@
 		<xMd :md="md" class="mb" />
 		<div class="block">
 			<span class="demonstration">单选可搜索</span>
-			<xCascader placeholder="试试搜索：指南" :options="DemoCascader.options" filterable></xCascader>
+			<xCascader
+				placeholder="试试搜索：指南"
+				:options="DemoCascader.options"
+				filterable></xCascader>
 		</div>
 		<div class="block mt">
 			<span class="demonstration">多选可搜索</span>
-			<xCascader placeholder="试试搜索：指南" :options="DemoCascader.options" :props="{ multiple: true }" filterable></xCascader>
+			<xCascader
+				placeholder="试试搜索：指南"
+				:options="DemoCascader.options"
+				:props="{ multiple: true }"
+				filterable></xCascader>
 		</div>
 	</div>
 </template>

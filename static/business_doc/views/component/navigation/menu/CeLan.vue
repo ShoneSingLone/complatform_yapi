@@ -4,7 +4,11 @@
 		<el-row class="tac">
 			<el-col :span="12">
 				<h5>默认颜色</h5>
-				<xMenu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+				<xMenu
+					default-active="2"
+					class="el-menu-vertical-demo"
+					@open="handleOpen"
+					@close="handleClose">
 					<xSubMenu index="1">
 						<template slot="title">
 							<i class="el-icon-location"></i>
@@ -39,7 +43,14 @@
 			</el-col>
 			<el-col :span="12">
 				<h5>自定义颜色</h5>
-				<xMenu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+				<xMenu
+					default-active="2"
+					class="el-menu-vertical-demo"
+					@open="handleOpen"
+					@close="handleClose"
+					background-color="#545c64"
+					text-color="#fff"
+					active-text-color="#ffd04b">
 					<xSubMenu index="1">
 						<template slot="title">
 							<i class="el-icon-location"></i>

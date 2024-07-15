@@ -115,7 +115,10 @@ export default async function () {
 					msg: "没有label",
 					$vSlots: {
 						prepend() {
-							return h("xItem", { configs: vm.xItemSelectSub, style: `--xItem-wrapper-width:80px` });
+							return h("xItem", {
+								configs: vm.xItemSelectSub,
+								style: `--xItem-wrapper-width:80px`
+							});
 						}
 					},
 					onFocus() {

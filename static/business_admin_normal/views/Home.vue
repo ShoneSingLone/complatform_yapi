@@ -15,7 +15,8 @@ export default async function () {
 	return defineComponent({
 		name: "Index",
 		components: {
-			AdminIconSelector: () => _.$importVue("/common/admin/components/AdminIconSelector/AdminIconSelector.vue")
+			AdminIconSelector: () =>
+				_.$importVue("/common/admin/components/AdminIconSelector/AdminIconSelector.vue")
 		},
 		data() {
 			return {

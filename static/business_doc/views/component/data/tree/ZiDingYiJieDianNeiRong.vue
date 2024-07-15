@@ -49,7 +49,12 @@ export default async function () {
 							"is-leaf": node.isLeaf
 						}
 					},
-					[node.isLeaf ? h("span", { staticClass: "mr" }, ["leaf"]) : h("xIcon", { icon: "tips", staticClass: "mr" }), node.label]
+					[
+						node.isLeaf
+							? h("span", { staticClass: "mr" }, ["leaf"])
+							: h("xIcon", { icon: "tips", staticClass: "mr" }),
+						node.label
+					]
 				);
 			}
 		}

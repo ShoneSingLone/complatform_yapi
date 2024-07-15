@@ -2,8 +2,14 @@
 	<DocContentOfDemo class="DemoCollapse-demo">
 		<xMd :md="md" />
 		<DemoAndCode title="基础用法" path="@/views/other/collapse/JiChuYongFa.vue" unfold />
-		<DemoAndCode title="手风琴效果" path="@/views/other/collapse/ShouFengQinXiaoGuo.vue" unfold />
-		<DemoAndCode title="自定义面板标题" path="@/views/other/collapse/ZiDingYiMianBanBiaoTi.vue" unfold />
+		<DemoAndCode
+			title="手风琴效果"
+			path="@/views/other/collapse/ShouFengQinXiaoGuo.vue"
+			unfold />
+		<DemoAndCode
+			title="自定义面板标题"
+			path="@/views/other/collapse/ZiDingYiMianBanBiaoTi.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

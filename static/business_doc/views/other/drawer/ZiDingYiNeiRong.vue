@@ -13,7 +13,13 @@
 			</xCard>
 		</xDrawer>
 
-		<xDrawer title="我嵌套了 Form !" :before-close="handleClose" :visible.sync="dialog" direction="ltr" custom-class="demo-drawer" ref="drawer">
+		<xDrawer
+			title="我嵌套了 Form !"
+			:before-close="handleClose"
+			:visible.sync="dialog"
+			direction="ltr"
+			custom-class="demo-drawer"
+			ref="drawer">
 			<div class="demo-drawer__content">
 				<el-form :model="form">
 					<el-form-item label="活动名称" :label-width="formLabelWidth">
@@ -28,7 +34,9 @@
 				</el-form>
 				<div class="demo-drawer__footer">
 					<xBtn @click="cancelForm">取 消</xBtn>
-					<xBtn preset="primary" @click="$refs.drawer.closeDrawer()" :loading="loading">{{ loading ? "提交中 ..." : "确 定" }}</xBtn>
+					<xBtn preset="primary" @click="$refs.drawer.closeDrawer()" :loading="loading">{{
+						loading ? "提交中 ..." : "确 定"
+					}}</xBtn>
 				</div>
 			</div>
 		</xDrawer>
@@ -39,7 +47,9 @@ export default async function () {
 	return defineComponent({
 		data() {
 			return {
-				md: ["和 `Dialog` 组件一样, `Drawer` 同样可以在其内部嵌套各种丰富的操作"].join("\n"),
+				md: ["和 `Dialog` 组件一样, `Drawer` 同样可以在其内部嵌套各种丰富的操作"].join(
+					"\n"
+				),
 				table: false,
 				dialog: false,
 				loading: false,

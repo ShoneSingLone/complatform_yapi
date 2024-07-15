@@ -2,10 +2,19 @@
 	<DocContentOfDemo class="radio-demo">
 		<xMd :md="mdTips" />
 		<DemoAndCode title="基础用法" path="@/views/component/form/radio/JiChuYongFa.vue" unfold />
-		<DemoAndCode title="禁用状态" path="@/views/component/form/radio/JinYongZhuangTai.vue" unfold />
-		<DemoAndCode title="单选框组" path="@/views/component/form/radio/DanXuanKuangZu.vue" unfold />
+		<DemoAndCode
+			title="禁用状态"
+			path="@/views/component/form/radio/JinYongZhuangTai.vue"
+			unfold />
+		<DemoAndCode
+			title="单选框组"
+			path="@/views/component/form/radio/DanXuanKuangZu.vue"
+			unfold />
 		<DemoAndCode title="按钮样式" path="@/views/component/form/radio/AnNiuYangShi.vue" unfold />
-		<DemoAndCode title="带有边框" path="@/views/component/form/radio/DaiYouBianKuang.vue" unfold />
+		<DemoAndCode
+			title="带有边框"
+			path="@/views/component/form/radio/DaiYouBianKuang.vue"
+			unfold />
 		<xMd :md="desc" />
 	</DocContentOfDemo>
 </template>

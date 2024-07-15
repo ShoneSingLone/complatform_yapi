@@ -31,7 +31,12 @@
 				</div>
 			</div>
 			<div class="flex1-overflow-auto" ref="refTreeScroll">
-				<xTree ref="refTree" :contentRender="treeContentRender" :data="inject_project.cptAsideTreeData" :props="treeProps" :filterHandler="treeFilterMethod" />
+				<xTree
+					ref="refTree"
+					:contentRender="treeContentRender"
+					:data="inject_project.cptAsideTreeData"
+					:props="treeProps"
+					:filterHandler="treeFilterMethod" />
 			</div>
 		</div>
 		<div class="resize_bar" icon="scroll" v-xmove="resizeOptions" />
@@ -93,7 +98,9 @@ export default async function () {
 				if (this.cptInterfaceId) {
 					setTimeout(() => {
 						try {
-							this.$el.querySelector(".is-current").scrollIntoView({ behavior: "smooth", block: "center" });
+							this.$el
+								.querySelector(".is-current")
+								.scrollIntoView({ behavior: "smooth", block: "center" });
 						} catch (error) {}
 					}, 300);
 				}
@@ -136,7 +143,12 @@ export default async function () {
 						class: itemClass,
 						onClick: () => this.selectInterface(menuInfo)
 					},
-					[h("xIcon", { icon: `_${iconName}` }), h("div", { staticClass: "node-name ml4" }, [title]), h("xIcon", updateIconPorps), h("xIcon", insertIconPorps)]
+					[
+						h("xIcon", { icon: `_${iconName}` }),
+						h("div", { staticClass: "node-name ml4" }, [title]),
+						h("xIcon", updateIconPorps),
+						h("xIcon", insertIconPorps)
+					]
 				);
 			},
 			openInsertDialog(menuInfo) {
@@ -151,13 +163,16 @@ export default async function () {
 				}
 			},
 			async openInsertCategoryDialog(categoryInfo = false) {
-				const DialogTypeVueSFC = await _.$importVue("@/components/YapiDialogUpsertCategory.vue", {
-					parent: this,
-					project_id: this.APP.cptProjectId,
-					categoryInfo,
-					allCategory: this.inject_project.allCategory,
-					getInterfaceList: this.inject_project.getInterfaceList
-				});
+				const DialogTypeVueSFC = await _.$importVue(
+					"@/components/YapiDialogUpsertCategory.vue",
+					{
+						parent: this,
+						project_id: this.APP.cptProjectId,
+						categoryInfo,
+						allCategory: this.inject_project.allCategory,
+						getInterfaceList: this.inject_project.getInterfaceList
+					}
+				);
 				_.$openWindow_deprecated(categoryInfo ? "修改分类" : "添加分类", DialogTypeVueSFC);
 			},
 			openInterfaceDialog(categoryInfo) {

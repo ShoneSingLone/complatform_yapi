@@ -7,7 +7,10 @@
 					<xBtnArray :configs="oprBtnArray" />
 				</template>
 				<template #right>
-					<xAdvancedSearch mountTo="#AdvancedSearch" :collapse="isAdvancedSearchCollapse" @change="handleAdvancedSearchCollapse">
+					<xAdvancedSearch
+						mountTo="#AdvancedSearch"
+						:collapse="isAdvancedSearchCollapse"
+						@change="handleAdvancedSearchCollapse">
 						<xBlock class="mt">
 							<xForm>
 								<xItem :configs="formSearch.postName" />
@@ -15,12 +18,16 @@
 								<xItem :configs="formSearch.status" />
 								<div class="flex end width100" span="2">
 									<xBtn @click="resetSearchForm">重置</xBtn>
-									<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+									<xBtn preset="primary" @click="getTableData({ page: 1 })"
+										>查询</xBtn
+									>
 								</div>
 							</xForm>
 						</xBlock>
 						<template #collapse>
-							<xInput v-model="formSearch.postName.value" placeholder="请输入岗位名称" />
+							<xInput
+								v-model="formSearch.postName.value"
+								placeholder="请输入岗位名称" />
 							<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
 						</template>
 					</xAdvancedSearch>
@@ -121,7 +128,8 @@ export default async function () {
 						{
 							label: i18n("状态"),
 							prop: "status",
-							cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, dicts.sys_normal_disable)
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, dicts.sys_normal_disable)
 						},
 						{ label: i18n("创建时间"), prop: "createTime" },
 						defTable.colActions({
@@ -137,7 +145,8 @@ export default async function () {
 									children: [
 										{
 											label: i18n("修改"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:post:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:post:edit"]),
 											onClick: async () => {
 												_.$openModal({
 													title: i18n("修改岗位"),
@@ -151,7 +160,8 @@ export default async function () {
 										},
 										{
 											label: i18n("删除"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:post:remove"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:post:remove"]),
 											onClick: async () => {
 												vm.doDelete(rowData);
 											}

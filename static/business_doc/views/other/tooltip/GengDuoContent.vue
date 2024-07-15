@@ -12,7 +12,9 @@ export default async function () {
 	return defineComponent({
 		data() {
 			return {
-				mdTitle: "展示多行文本或者是设置文本内容的格式" + "用具名 slot 分发`content`，替代`tooltip`中的`content`属性。"
+				mdTitle:
+					"展示多行文本或者是设置文本内容的格式" +
+					"用具名 slot 分发`content`，替代`tooltip`中的`content`属性。"
 			};
 		}
 	});

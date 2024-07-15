@@ -2,8 +2,16 @@
 	<div class="flex middle vertical">
 		<div v-for="(item, index) in value" :key="index" class="flex middle mt8">
 			<xInput :value="item.name" class="mr" />
-			<xInput :value="item.example" placeholder="参数实例" @input="$event => changeExample($event, index)" class="mr" />
-			<xInput :value="item.desc" placeholder="备注" @input="$event => changeDesc($event, index)" class="mr" />
+			<xInput
+				:value="item.example"
+				placeholder="参数实例"
+				@input="$event => changeExample($event, index)"
+				class="mr" />
+			<xInput
+				:value="item.desc"
+				placeholder="备注"
+				@input="$event => changeDesc($event, index)"
+				class="mr" />
 		</div>
 	</div>
 </template>

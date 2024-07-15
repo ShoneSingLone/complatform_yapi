@@ -54,7 +54,10 @@ export default async function ({ categoryInfo, project_id, getInterfaceList }) {
 						tips: "path第一位必需为 /, 只允许由 字母数字-/_:.! 组成",
 						$vSlots: {
 							prepend() {
-								return h("xItem", { configs: vm.form.apiMethod, style: `--xItem-wrapper-width:106px` });
+								return h("xItem", {
+									configs: vm.form.apiMethod,
+									style: `--xItem-wrapper-width:106px`
+								});
 							}
 						}
 					}

@@ -44,7 +44,11 @@ export default async function () {
 				audio.srcObject = stream;
 			},
 			handleError(error) {
-				console.log("navigator.MediaDevices.getUserMedia error: ", error.message, error.name);
+				console.log(
+					"navigator.MediaDevices.getUserMedia error: ",
+					error.message,
+					error.name
+				);
 			}
 		},
 		watch: {}

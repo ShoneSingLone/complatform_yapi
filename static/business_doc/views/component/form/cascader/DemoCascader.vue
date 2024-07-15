@@ -1,16 +1,37 @@
 <template>
 	<DocContentOfDemo class="demo-input">
 		<xMd :md="mdTips" />
-		<DemoAndCode title="基础用法" path="@/views/component/form/cascader/JiChuYongFa.vue" unfold />
-		<DemoAndCode title="禁用选项" path="@/views/component/form/cascader/JinYongXuanXiang.vue" unfold />
+		<DemoAndCode
+			title="基础用法"
+			path="@/views/component/form/cascader/JiChuYongFa.vue"
+			unfold />
+		<DemoAndCode
+			title="禁用选项"
+			path="@/views/component/form/cascader/JinYongXuanXiang.vue"
+			unfold />
 		<DemoAndCode title="可清空" path="@/views/component/form/cascader/KeQingKong.vue" unfold />
-		<DemoAndCode title="仅显示最后一级" path="@/views/component/form/cascader/JinXianShiZuiHouYiJi.vue" unfold />
+		<DemoAndCode
+			title="仅显示最后一级"
+			path="@/views/component/form/cascader/JinXianShiZuiHouYiJi.vue"
+			unfold />
 		<DemoAndCode title="多选" path="@/views/component/form/cascader/DuoXuan.vue" unfold />
-		<DemoAndCode title="选择任意一级选项" path="@/views/component/form/cascader/XuanZeRenYiYiJiXuanXiang.vue" unfold />
-		<DemoAndCode title="动态加载" path="@/views/component/form/cascader/DongTaiJiaZai.vue" unfold />
+		<DemoAndCode
+			title="选择任意一级选项"
+			path="@/views/component/form/cascader/XuanZeRenYiYiJiXuanXiang.vue"
+			unfold />
+		<DemoAndCode
+			title="动态加载"
+			path="@/views/component/form/cascader/DongTaiJiaZai.vue"
+			unfold />
 		<DemoAndCode title="可搜索" path="@/views/component/form/cascader/KeSouSuo.vue" unfold />
-		<DemoAndCode title="自定义节点内容" path="@/views/component/form/cascader/ZiDingYiJieDianNeiRong.vue" unfold />
-		<DemoAndCode title="级联面板" path="@/views/component/form/cascader/JiLianMianBan.vue" unfold />
+		<DemoAndCode
+			title="自定义节点内容"
+			path="@/views/component/form/cascader/ZiDingYiJieDianNeiRong.vue"
+			unfold />
+		<DemoAndCode
+			title="级联面板"
+			path="@/views/component/form/cascader/JiLianMianBan.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

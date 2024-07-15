@@ -53,7 +53,9 @@ export default async function ({ row }) {
 								row,
 								async onSelected({ userIds }) {
 									try {
-										const res = await _adminTools.api_role_auth_user_select_all({ roleId: row.roleId, userIds: userIds });
+										const res = await _adminTools.api_role_auth_user_select_all(
+											{ roleId: row.roleId, userIds: userIds }
+										);
 										debugger;
 										vm.getTableData({ page: 1 });
 										_.$msg("取消授权成功");
@@ -78,7 +80,10 @@ export default async function ({ row }) {
 						async onClick() {
 							try {
 								await _.$confirm_important(`是否取消选中用户授权数据项？`);
-								await _adminTools.api_role_auth_user_cancel_all({ roleId: row.roleId, userIds: Array.from(vm.configsTable.data.set).join(",") });
+								await _adminTools.api_role_auth_user_cancel_all({
+									roleId: row.roleId,
+									userIds: Array.from(vm.configsTable.data.set).join(",")
+								});
 								_.$msg("取消授权成功");
 								this.getTableData();
 							} catch (error) {
@@ -111,7 +116,8 @@ export default async function ({ row }) {
 						{
 							label: i18n("状态"),
 							prop: "status",
-							cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, sys_normal_disable)
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, sys_normal_disable)
 						},
 						{
 							label: i18n("创建时间"),
@@ -131,12 +137,20 @@ export default async function ({ row }) {
 									children: [
 										{
 											label: i18n("取消授权"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:role:remove"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:role:remove"]),
 											onClick: async () => {
 												try {
 													const { roleId, userId } = rowData;
-													await _.$confirm_important('确认要取消该用户"' + rowData.userName + '"角色吗？');
-													await _adminTools.api_role_auth_user_cancel({ roleId, userId });
+													await _.$confirm_important(
+														'确认要取消该用户"' +
+															rowData.userName +
+															'"角色吗？'
+													);
+													await _adminTools.api_role_auth_user_cancel({
+														roleId,
+														userId
+													});
 													_.$msg("取消授权成功");
 													this.getTableData();
 												} catch (error) {
@@ -195,7 +209,8 @@ export default async function ({ row }) {
 						phonenumber
 					};
 
-					const { rows, total } = await _adminTools.api_role_auth_user_allocated_list(queryData);
+					const { rows, total } =
+						await _adminTools.api_role_auth_user_allocated_list(queryData);
 					_.$setTableData(this.configsTable, { list: rows, total, set: new Set() });
 				} catch (error) {
 					_.$msgError(error);

@@ -7,11 +7,30 @@
 			</h1>
 			<audio ref="audioPlayer" controls autoPlay></audio>
 			<div>
-				<xBtn class="button" :disabled="status != 'start'" @click="startClickHandler"> 打开麦克风 </xBtn>
-				<xBtn class="button" :disabled="status != 'startRecord'" @click="startRecordButtonClickHandler"> 开始录制 </xBtn>
-				<xBtn class="button" :disabled="status != 'stopRecord'" @click="stopRecordButtonClickHandler"> 停止录制 </xBtn>
-				<xBtn class="button" :disabled="status != 'play'" @click="playButtonClickHandler"> 播放 </xBtn>
-				<xBtn class="button" :disabled="status != 'download'" @click="downloadButtonClickHandler"> 下载 </xBtn>
+				<xBtn class="button" :disabled="status != 'start'" @click="startClickHandler">
+					打开麦克风
+				</xBtn>
+				<xBtn
+					class="button"
+					:disabled="status != 'startRecord'"
+					@click="startRecordButtonClickHandler">
+					开始录制
+				</xBtn>
+				<xBtn
+					class="button"
+					:disabled="status != 'stopRecord'"
+					@click="stopRecordButtonClickHandler">
+					停止录制
+				</xBtn>
+				<xBtn class="button" :disabled="status != 'play'" @click="playButtonClickHandler">
+					播放
+				</xBtn>
+				<xBtn
+					class="button"
+					:disabled="status != 'download'"
+					@click="downloadButtonClickHandler">
+					下载
+				</xBtn>
 			</div>
 		</div>
 	</div>

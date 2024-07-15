@@ -2,9 +2,9 @@
 	<div>
 		<xMd :md="md" />
 		<xSteps :space="200" :active="1" finish-status="success">
-			<xStep title="已完成"/>
-			<xStep title="进行中"/>
-			<xStep title="步骤 3"/>
+			<xStep title="已完成" />
+			<xStep title="进行中" />
+			<xStep title="步骤 3" />
 		</xSteps>
 	</div>
 </template>

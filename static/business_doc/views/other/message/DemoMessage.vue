@@ -2,22 +2,34 @@
 	<DocContentOfDemo>
 		<xMd :md="md1" />
 		<div class="DemoMessage-demo">
-			<div role="alert" class="el-message el-message--info is-closable" style="position: relative">
+			<div
+				role="alert"
+				class="el-message el-message--info is-closable"
+				style="position: relative">
 				<i class="el-message__icon el-icon-info"></i>
 				<p class="el-message__content">这是一条消息提示</p>
 				<i class="el-message__closeBtn el-icon-close"></i>
 			</div>
-			<div role="alert" class="el-message el-message--success is-closable" style="position: relative">
+			<div
+				role="alert"
+				class="el-message el-message--success is-closable"
+				style="position: relative">
 				<i class="el-message__icon el-icon-success"></i>
 				<p class="el-message__content">恭喜你，这是一条成功消息</p>
 				<i class="el-message__closeBtn el-icon-close"></i>
 			</div>
-			<div role="alert" class="el-message el-message--warning is-closable" style="position: relative">
+			<div
+				role="alert"
+				class="el-message el-message--warning is-closable"
+				style="position: relative">
 				<i class="el-message__icon el-icon-warning"></i>
 				<p class="el-message__content">警告哦，这是一条警告消息</p>
 				<i class="el-message__closeBtn el-icon-close"></i>
 			</div>
-			<div role="alert" class="el-message el-message--error is-closable" style="position: relative">
+			<div
+				role="alert"
+				class="el-message el-message--error is-closable"
+				style="position: relative">
 				<i class="el-message__icon el-icon-error"></i>
 				<p class="el-message__content">错了哦，这是一条错误消息</p>
 				<i class="el-message__closeBtn el-icon-close"></i>
@@ -27,7 +39,10 @@
 		<DemoAndCode title="不同状态" path="@/views/other/message/BuTongZhuangTai.vue" unfold />
 		<DemoAndCode title="可关闭" path="@/views/other/message/KeGuanBi.vue" unfold />
 		<DemoAndCode title="文字居中" path="@/views/other/message/WenZiJuZhong.vue" unfold />
-		<DemoAndCode title="使用 HTML 片段" path="@/views/other/message/ShiYongHtmlPianDuan.vue" unfold />
+		<DemoAndCode
+			title="使用 HTML 片段"
+			path="@/views/other/message/ShiYongHtmlPianDuan.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

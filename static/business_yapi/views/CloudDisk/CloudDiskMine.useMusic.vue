@@ -18,6 +18,9 @@ export default async function () {
 				isMute: false, //是否静音
 				volume: 100
 			});
+			onBeforeMount(async () => {
+				stateAudio.AudioArray = (await _.$idb.get("AudioArray")) || [];
+			});
 
 			watch(
 				() => stateAudio.ended,
@@ -97,9 +100,22 @@ export default async function () {
 				}
 			}
 
-			function playMedia(record) {
+			function playMedia(record, { resource }) {
+				resource = resource || [];
 				if (record.type === "audio") {
 					playAudio(record);
+
+					stateAudio.AudioArray = _.uniqBy(
+						[
+							...stateAudio.AudioArray,
+							..._.filter(resource, i => i.type === "audio").map(i => {
+								i.useId = i._id;
+								return i;
+							})
+						],
+						"_id"
+					);
+					_.$idb.set("AudioArray", stateAudio.AudioArray);
 				}
 				if (record.type === "video") {
 					playVideo(record);
@@ -138,7 +154,9 @@ export default async function () {
 				}
 				let uri = encodeURIComponent(JSON.stringify(path));
 				stateAudio.audioName = name;
-				stateAudio.audio.src = Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?uri=${uri}&id=${useId}`);
+				stateAudio.audio.src = Vue._common_utils.appendToken(
+					`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?uri=${uri}&id=${useId}`
+				);
 				await canPlay();
 				stateAudio.audio.play();
 				stateAudio.isPlaying = true;
@@ -215,7 +233,8 @@ export default async function () {
 						cacheAudioVolume(audioVolume);
 					},
 					async togglePlayModel() {
-						stateAudio.loopType = (stateAudio.loopType + 1) % LOOP_TYPE_NAME_ARRAY.length;
+						stateAudio.loopType =
+							(stateAudio.loopType + 1) % LOOP_TYPE_NAME_ARRAY.length;
 					}
 				}
 			};

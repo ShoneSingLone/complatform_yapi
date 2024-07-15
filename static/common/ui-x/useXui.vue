@@ -57,7 +57,11 @@ export default async function ({
 		const ALL_COMPONENTS = await _.$importVue("/common/ui-x/allComponents.vue");
 		const loadComponentByImportVue = async componentpath => {
 			const componentName = _.last(componentpath.split("/"));
-			if (["xDropdownMenu", "xDropdown", "xBtn", "xTooltip", "xPopover"].includes(componentName)) {
+			if (
+				["xDropdownMenu", "xDropdown", "xBtn", "xTooltip", "xPopover"].includes(
+					componentName
+				)
+			) {
 				/* xBtn 多个地方用到，但是异步加载会有bug:骨架屏不刷新 */
 				const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
 				setComponentName(component, componentName);
@@ -102,14 +106,20 @@ export default async function ({
 			try {
 				var $ele = $(this);
 				var width = $ele.width();
-				var $child = $(`<span style="opacity:0;position:absolute;z-index:-1;"></span>`).appendTo($("body")).text($ele.text());
+				var $child = $(`<span style="opacity:0;position:absolute;z-index:-1;"></span>`)
+					.appendTo($("body"))
+					.text($ele.text());
 				var widthChild = $child.width();
 				$child.remove();
 				if (width < widthChild - 2) {
-					const vlayerIndex = layer.tips(`<div style="overflow: auto;">${$ele.text()}</div>`, this, {
-						tips: [1, "#fff"],
-						time: 1000 * 60 * 1
-					});
+					const vlayerIndex = layer.tips(
+						`<div style="overflow: auto;">${$ele.text()}</div>`,
+						this,
+						{
+							tips: [1, "#fff"],
+							time: 1000 * 60 * 1
+						}
+					);
 					$ele.attr("data-tips", vlayerIndex);
 				}
 			} catch (e) {

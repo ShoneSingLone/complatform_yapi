@@ -1,6 +1,10 @@
 <template>
 	<aside id="ViewProjectTabs" class="box-shadow">
-		<div :class="{ 'project-tab': true, active: inject_project.cptTabName === item.label }" v-for="(item, index) in items" :key="index" @click="inject_project.cptTabName = item.label">
+		<div
+			:class="{ 'project-tab': true, active: inject_project.cptTabName === item.label }"
+			v-for="(item, index) in items"
+			:key="index"
+			@click="inject_project.cptTabName = item.label">
 			<div class="tab-icon">
 				<xIcon :icon="item.icon" />
 			</div>

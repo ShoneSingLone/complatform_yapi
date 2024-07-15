@@ -7,7 +7,10 @@
 			</template>
 			<template #right>
 				<!-- {{ dictType }} -->
-				<xAdvancedSearch mountTo="#DictDataListDialog" :collapse="isAdvancedSearchCollapse" @change="handleAdvancedSearchCollapse">
+				<xAdvancedSearch
+					mountTo="#DictDataListDialog"
+					:collapse="isAdvancedSearchCollapse"
+					@change="handleAdvancedSearchCollapse">
 					<xBlock class="mt">
 						<xForm>
 							<xItem :configs="formSearch.dictType" />
@@ -15,7 +18,9 @@
 							<xItem :configs="formSearch.status" />
 							<div class="flex end width100" span="2">
 								<xBtn @click="resetSearchForm">重置</xBtn>
-								<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+								<xBtn preset="primary" @click="getTableData({ page: 1 })"
+									>查询</xBtn
+								>
 							</div>
 						</xForm>
 					</xBlock>
@@ -120,7 +125,10 @@ export default async function () {
 							label: i18n("标签标签"),
 							prop: "dictLabel",
 							cellRenderer({ rowData }) {
-								return _jsxFns.OptionsToLabel(rowData.dictValue, vm.cptCurrentOptions);
+								return _jsxFns.OptionsToLabel(
+									rowData.dictValue,
+									vm.cptCurrentOptions
+								);
 							}
 						},
 						{ label: i18n("标签键值"), prop: "dictValue" },
@@ -128,7 +136,8 @@ export default async function () {
 						{
 							label: i18n("状态"),
 							prop: "status",
-							cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, dicts.sys_normal_disable)
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, dicts.sys_normal_disable)
 						},
 						{
 							label: i18n("备注"),
@@ -143,7 +152,8 @@ export default async function () {
 									children: [
 										{
 											label: i18n("修改"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:dict:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:dict:edit"]),
 											onClick: async () => {
 												_.$openModal({
 													title: i18n("修改标签"),
@@ -158,7 +168,8 @@ export default async function () {
 										},
 										{
 											label: i18n("删除"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:dict:remove"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:dict:remove"]),
 											onClick: async () => {
 												vm.doDelete(rowData);
 											}
@@ -192,7 +203,9 @@ export default async function () {
 			async doDelete(rowData) {
 				const dictCodes = rowData?.dictCode || this.cptSelecteddictCodeString;
 				try {
-					await _.$confirm_important('是否确认删除标签编号为"' + dictCodes + '"的数据项？');
+					await _.$confirm_important(
+						'是否确认删除标签编号为"' + dictCodes + '"的数据项？'
+					);
 					await _adminTools.api_dict_data_delete(dictCodes);
 					_.$msg(i18n("删除成功"));
 					this.getTableData();

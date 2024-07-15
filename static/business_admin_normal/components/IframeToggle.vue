@@ -1,7 +1,12 @@
 <style lang="less"></style>
 <template>
 	<transition-group name="fade-transform" mode="out-in">
-		<InnerLink v-for="(item, index) in cptIframeViews" :key="item.path" :iframeId="iframeId(index)" v-show="$route.path === item.path" :src="iframeUrl(item)" />
+		<InnerLink
+			v-for="(item, index) in cptIframeViews"
+			:key="item.path"
+			:iframeId="iframeId(index)"
+			v-show="$route.path === item.path"
+			:src="iframeUrl(item)" />
 	</transition-group>
 </template>
 <script lang="ts">

@@ -19,13 +19,24 @@
 </style>
 <template>
 	<div class="flex vertical height100 CloudDiskResource">
-		<xCard>
+		<div class="width100 overflow-auto mr ml">
 			<xBreadcrumb :items="APP.breadcrumbItems" :itemRender="mRendeBreadCrumbItem" />
-		</xCard>
-		<div class="flex flex1 vertical overflow-auto">
-			<CloudDiskResourceItem v-for="(item, index) in resourceList" :key="index" :item="item" :checked="APP.selectedItems.includes(item._id)" @toggle="toggle(item)" @preview="preview(item)" />
 		</div>
-		<xDrawer :visible.sync="APP.isShowResourceDrawer" :with-header="false" direction="btt" size="var(--xDrawer-height)" class="CloudDiskResource-drawer">
+		<div class="flex flex1 vertical overflow-auto">
+			<CloudDiskResourceItem
+				v-for="(item, index) in resourceList"
+				:key="index"
+				:item="item"
+				:checked="APP.selectedItems.includes(item._id)"
+				@toggle="toggle(item)"
+				@preview="preview(item)" />
+		</div>
+		<xDrawer
+			:visible.sync="APP.isShowResourceDrawer"
+			:with-header="false"
+			direction="btt"
+			size="var(--xDrawer-height)"
+			class="CloudDiskResource-drawer">
 			<div class="flex middle center height100">
 				<xGap f />
 				<div class="flex vertical center" @click="mUpload">
@@ -44,7 +55,12 @@
 				<xGap f />
 			</div>
 		</xDrawer>
-		<xDrawer :visible.sync="APP.isShowBMoreDrawer" :with-header="false" direction="btt" size="190px" class="CloudDiskResource-drawer">
+		<xDrawer
+			:visible.sync="APP.isShowBMoreDrawer"
+			:with-header="false"
+			direction="btt"
+			size="190px"
+			class="CloudDiskResource-drawer">
 			<div class="flex vertical x-padding height100">
 				<div class="flex middle">
 					<xIcon icon="_icon_sort_by" />
@@ -93,6 +109,14 @@ export default async function () {
 							vm.sortBy = "add_time";
 							vm.mSetResources(vm.resourceList);
 						}
+					},
+					{
+						label: i18n("类型"),
+						preset: "text",
+						onClick() {
+							vm.sortBy = "type";
+							vm.mSetResources(vm.resourceList);
+						}
 					}
 				]
 			};
@@ -119,7 +143,9 @@ export default async function () {
 				);
 
 				if (!isLastItem) {
-					target.push(h("xIcon", { icon: "_back_group", style: "transform:rotate(180deg);" }));
+					target.push(
+						h("xIcon", { icon: "_back_group", style: "transform:rotate(180deg);" })
+					);
 				}
 				return target;
 			},
@@ -172,10 +198,17 @@ export default async function () {
 				const { name } = file;
 				this.APP.triggerUploadFileChange({ md5, name });
 				this.chunkAndSizeArray = this.mSlickFile(file);
-				this.APP.triggerUploadFileChange({ md5, chunkTotal: this.chunkAndSizeArray.length });
+				this.APP.triggerUploadFileChange({
+					md5,
+					chunkTotal: this.chunkAndSizeArray.length
+				});
 				const {
 					data: { chunks: uploadedChunkArray, file: isMergeFile }
-				} = await _api.yapi.resourceCloudDiskCheckChunks({ md5, fileName: name, fileId: this.APP.fileId });
+				} = await _api.yapi.resourceCloudDiskCheckChunks({
+					md5,
+					fileName: name,
+					fileId: this.APP.fileId
+				});
 
 				this.APP.triggerUploadFileChange({
 					md5,
@@ -239,8 +272,18 @@ export default async function () {
 					_.each(needUploadchunkIndexArray, async chunkIndex => {
 						try {
 							const { chunk, size: chunkSize } = this.chunkAndSizeArray[chunkIndex];
-							let formData = newFormData({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name });
-							const { data } = await _api.yapi.resourceCloudDiskShardUpload({ formData, callback });
+							let formData = newFormData({
+								chunkTotal,
+								chunkSize,
+								chunkIndex,
+								md5,
+								chunk,
+								name
+							});
+							const { data } = await _api.yapi.resourceCloudDiskShardUpload({
+								formData,
+								callback
+							});
 							this.mAfterUpload(md5, data);
 						} catch (error) {
 							console.log(error);
@@ -248,15 +291,28 @@ export default async function () {
 					});
 				} else {
 					//未上传，执行完整上传逻辑
-					_.each(this.chunkAndSizeArray, async ({ chunk, size: chunkSize }, chunkIndex) => {
-						try {
-							let formData = newFormData({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name });
-							const { data } = await _api.yapi.resourceCloudDiskShardUpload({ formData, callback });
-							this.mAfterUpload(md5, data);
-						} catch (error) {
-							console.log(error);
+					_.each(
+						this.chunkAndSizeArray,
+						async ({ chunk, size: chunkSize }, chunkIndex) => {
+							try {
+								let formData = newFormData({
+									chunkTotal,
+									chunkSize,
+									chunkIndex,
+									md5,
+									chunk,
+									name
+								});
+								const { data } = await _api.yapi.resourceCloudDiskShardUpload({
+									formData,
+									callback
+								});
+								this.mAfterUpload(md5, data);
+							} catch (error) {
+								console.log(error);
+							}
 						}
-					});
+					);
 				}
 			},
 			mAfterUpload(md5, { chunkIndex }) {
@@ -265,9 +321,15 @@ export default async function () {
 				this.APP.triggerUploadFileChange(info);
 				const { chunkTotal, uploaded, name } = info;
 				if (chunkTotal === Object.keys(uploaded).length) {
-					_api.yapi.resourceCloudDiskCheckChunks({ md5, fileName: name, fileId: this.APP.fileId }).then(res => {
-						this.getResourceList();
-					});
+					_api.yapi
+						.resourceCloudDiskCheckChunks({
+							md5,
+							fileName: name,
+							fileId: this.APP.fileId
+						})
+						.then(res => {
+							this.getResourceList();
+						});
 				}
 			},
 			async mOpenMoveDirDialog() {
@@ -317,12 +379,18 @@ export default async function () {
 				}
 				if (["audio", "video"].includes(item.type)) {
 					item.useId = item._id;
-					this.APP.playMedia(item);
+					this.APP.playMedia(item, { resource: this.resourceList });
 				}
 			},
 			preview_image(item) {
-				const urlList = _.filter(this.resourceList, { type: "image" }).map(item => Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${item._id}`));
-				const currentUrl = Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${item._id}`);
+				const urlList = _.filter(this.resourceList, { type: "image" }).map(item =>
+					Vue._common_utils.appendToken(
+						`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${item._id}`
+					)
+				);
+				const currentUrl = Vue._common_utils.appendToken(
+					`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${item._id}`
+				);
 				_.$previewImgs({ urlList, currentUrl });
 			},
 			toggle(item) {
@@ -371,11 +439,14 @@ export default async function () {
 
 						if (item.isdir) {
 							type = "dir";
-						} else if (/^image/.test(item.type) || ["image/jpeg", "image/png"].includes(item.type)) {
+						} else if (
+							/^image/.test(item.type) ||
+							["image/jpeg", "image/png"].includes(item.type)
+						) {
 							type = "image";
-						} else if (/^video/.test(item.type) || ["video/mp4"].includes(item.type)) {
+						} else if (/^video/.test(item.type)) {
 							type = "video";
-						} else if (/^audio/.test(item.type) || ["audio/mpeg"].includes(item.type)) {
+						} else if (/^audio/.test(item.type)) {
 							type = "audio";
 						} else {
 						}
@@ -387,9 +458,9 @@ export default async function () {
 					}).sort((a, b) => {
 						if (a.isdir === 1) {
 							return -1;
-						} else if (vm.sortBy === "name") {
+						} else if (["name", "type"].includes(vm.sortBy)) {
 							try {
-								return a.name.localeCompare(b.name);
+								return a[vm.sortBy].localeCompare(b[vm.sortBy]);
 							} catch (error) {
 								return 0;
 							}

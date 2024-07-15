@@ -8,7 +8,11 @@
 				</KeepAlive>
 			</div>
 		</main>
-		<xMobileTabBar :value="APP.currentTabName" :data="tabArray" style="background-color: white" @change="mTabChange" />
+		<xMobileTabBar
+			:value="APP.cptNavBarName"
+			:data="APP.tabArray"
+			style="background-color: white"
+			@change="mTabChange" />
 	</div>
 </template>
 
@@ -24,12 +28,7 @@ export default async function () {
 		},
 		data() {
 			return {
-				isMobile: true,
-				tabArray: [
-					{ label: "资源", icon: "_cloud_home_tab", path: "/resource" },
-					{ label: "传输", icon: "_cloud_trans_tab", path: "/transfer" },
-					{ label: "我的", icon: "_UserOutlined", path: "/me" }
-				]
+				isMobile: true
 			};
 		},
 		computed: {
@@ -39,16 +38,7 @@ export default async function () {
 		},
 		methods: {
 			mTabChange(label) {
-				this.APP.currentTabName = label;
-				const { path } = _.find(this.tabArray, { label });
-				this.$nextTick(() => {
-					this.$router.push({
-						path,
-						query: {
-							...this.$route.query
-						}
-					});
-				});
+				this.APP.cptNavBarName = label;
 			}
 		}
 	};

@@ -144,7 +144,9 @@ export default async function () {
 					},
 					async onClick() {
 						try {
-							const { data } = await _api.adminNormal.postNewVarifyCode(vm.configsForm.email.value);
+							const { data } = await _api.adminNormal.postNewVarifyCode(
+								vm.configsForm.email.value
+							);
 							if (data) {
 								_.$msg(data.msg);
 								vm.$router.push({ path: "/group" });

@@ -1,8 +1,14 @@
 <template>
 	<div class="tooltip-JiChuYongFa">
 		<xMd :md="mdTitle" />
-		<xTooltip :disabled="disabled" content="点击关闭 tooltip 功能" placement="bottom" effect="light">
-			<xBtn @click="disabled = !disabled">点击{{ disabled ? "开启" : "关闭" }} tooltip 功能</xBtn>
+		<xTooltip
+			:disabled="disabled"
+			content="点击关闭 tooltip 功能"
+			placement="bottom"
+			effect="light">
+			<xBtn @click="disabled = !disabled"
+				>点击{{ disabled ? "开启" : "关闭" }} tooltip 功能</xBtn
+			>
 		</xTooltip>
 	</div>
 </template>

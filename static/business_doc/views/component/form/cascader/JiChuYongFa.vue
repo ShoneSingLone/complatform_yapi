@@ -3,11 +3,18 @@
 		<xMd :md="md" class="mb" />
 		<div class="block">
 			<span class="demonstration mr">默认 click 触发子菜单</span>
-			<xCascader v-model="DemoCascader.value" :options="DemoCascader.options" @change="DemoCascader.handleChange"></xCascader>
+			<xCascader
+				v-model="DemoCascader.value"
+				:options="DemoCascader.options"
+				@change="DemoCascader.handleChange"></xCascader>
 		</div>
 		<div class="block mt">
 			<span class="demonstration mr">hover 触发子菜单</span>
-			<xCascader v-model="DemoCascader.value" :options="DemoCascader.options" :props="{ expandTrigger: 'hover' }" @change="DemoCascader.handleChange"></xCascader>
+			<xCascader
+				v-model="DemoCascader.value"
+				:options="DemoCascader.options"
+				:props="{ expandTrigger: 'hover' }"
+				@change="DemoCascader.handleChange"></xCascader>
 		</div>
 	</div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-	<div class="el-breadcrumb flex middle" aria-label="Breadcrumb" role="navigation">
+	<div class="el-breadcrumb inline flex middle" aria-label="Breadcrumb" role="navigation">
 		<slot>
 			<xRender :render="renderBreadcrumbItem" />
 		</slot>
@@ -67,7 +67,9 @@ export default async function () {
 				};
 				const linkProps = { attrs: isLastItem ? null : { href: item.href } };
 
-				target.push(h("span", itemProps, [h("span", innerProps, [h("a", linkProps, [item.label])])]));
+				target.push(
+					h("span", itemProps, [h("span", innerProps, [h("a", linkProps, [item.label])])])
+				);
 
 				if (!isLastItem) {
 					target.push(this.cptSeparator);

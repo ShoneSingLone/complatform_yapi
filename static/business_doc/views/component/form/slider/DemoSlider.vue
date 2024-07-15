@@ -3,10 +3,22 @@
 		<xMd :md="mdTips" />
 		<DemoAndCode title="基础用法" path="@/views/component/form/slider/JiChuYongFa.vue" unfold />
 		<DemoAndCode title="离散值" path="@/views/component/form/slider/LiSanZhi.vue" unfold />
-		<DemoAndCode title="带有输入框" path="@/views/component/form/slider/DaiYouShuRuKuang.vue" unfold />
-		<DemoAndCode title="范围选择" path="@/views/component/form/slider/FanWeiXuanZe.vue" unfold />
-		<DemoAndCode title="竖向模式" path="@/views/component/form/slider/ShuXiangMoShi.vue" unfold />
-		<DemoAndCode title="展示标记" path="@/views/component/form/slider/ZhanShiBiaoJi.vue" unfold />
+		<DemoAndCode
+			title="带有输入框"
+			path="@/views/component/form/slider/DaiYouShuRuKuang.vue"
+			unfold />
+		<DemoAndCode
+			title="范围选择"
+			path="@/views/component/form/slider/FanWeiXuanZe.vue"
+			unfold />
+		<DemoAndCode
+			title="竖向模式"
+			path="@/views/component/form/slider/ShuXiangMoShi.vue"
+			unfold />
+		<DemoAndCode
+			title="展示标记"
+			path="@/views/component/form/slider/ZhanShiBiaoJi.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

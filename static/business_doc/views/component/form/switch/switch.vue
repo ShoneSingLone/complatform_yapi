@@ -2,9 +2,18 @@
 	<DocContentOfDemo class="demo-input">
 		<xMd :md="mdTips" />
 		<DemoAndCode title="基础用法" path="@/views/component/form/switch/JiChuYongFa.vue" unfold />
-		<DemoAndCode title="文字描述" path="@/views/component/form/switch/WenZiMiaoShu.vue" unfold />
-		<DemoAndCode title="扩展的 value 类型" path="@/views/component/form/switch/KuoZhanDeValueLeiXing.vue" unfold />
-		<DemoAndCode title="禁用状态" path="@/views/component/form/switch/JinYongZhuangTai.vue" unfold />
+		<DemoAndCode
+			title="文字描述"
+			path="@/views/component/form/switch/WenZiMiaoShu.vue"
+			unfold />
+		<DemoAndCode
+			title="扩展的 value 类型"
+			path="@/views/component/form/switch/KuoZhanDeValueLeiXing.vue"
+			unfold />
+		<DemoAndCode
+			title="禁用状态"
+			path="@/views/component/form/switch/JinYongZhuangTai.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

@@ -1,6 +1,9 @@
 <template>
 	<div class="x-page-view ViewAllProject">
-		<xPageTitle title="所有项目" tips="源码static_vue2文件夹下所有非common文件夹，及其子目录的html文件"> </xPageTitle>
+		<xPageTitle
+			title="所有项目"
+			tips="源码static_vue2文件夹下所有非common文件夹，及其子目录的html文件">
+		</xPageTitle>
 		<xPageContent>
 			<xTablebar :configs="configsTable">
 				<template #left>
@@ -39,6 +42,12 @@ export default async function () {
 			onBeforeUnmount(() => {
 				$(window).off("WS_MESSAGE", setContent);
 			});
+			return {
+				download() {
+					debugger;
+					_.$ajax.downloadOctetStream({ url: "/rest/vdun/v1.0/node/downNodeAgent" });
+				}
+			};
 		},
 		async mounted() {
 			this.loadAllProject();
@@ -63,6 +72,12 @@ export default async function () {
 					}
 				},
 				oprBtnArray: [
+					{
+						label: i18n("download"),
+						async onClick() {
+							vm.download();
+						}
+					},
 					{
 						label: i18n("添加新项目"),
 						async onClick() {
@@ -177,40 +192,48 @@ export default async function () {
 									if (!vm.thisRowValue) {
 										vm.thisRowValue = rowData.desc;
 									}
-									return h("div", { staticClass: "flex middle width100 desc-input" }, [
-										h("xInput", {
-											value: vm.thisRowValue,
-											onInput(value) {
-												vm.thisRowValue = value;
-											},
-											onEnter() {
-												save();
-											}
-										}),
-										h("xIcon", {
-											icon: "save",
-											staticClass: "ml pointer",
-											onClick: save
-										}),
-										h("xIcon", {
-											icon: "close",
-											staticClass: "ml pointer mr",
-											onClick: close
-										})
-									]);
-								} else {
-									return h("div", { staticClass: "flex middle width100 desc-input" }, [
-										h("span", [rowData.desc || "--"]),
-										h("xIcon", {
-											icon: "edit",
-											staticClass: "ViewAllProject-edit-icon ml pointer",
-											onClick() {
-												if (!vm.editThisRow) {
-													vm.editThisRow = rowData.id;
+									return h(
+										"div",
+										{ staticClass: "flex middle width100 desc-input" },
+										[
+											h("xInput", {
+												value: vm.thisRowValue,
+												onInput(value) {
+													vm.thisRowValue = value;
+												},
+												onEnter() {
+													save();
 												}
-											}
-										})
-									]);
+											}),
+											h("xIcon", {
+												icon: "save",
+												staticClass: "ml pointer",
+												onClick: save
+											}),
+											h("xIcon", {
+												icon: "close",
+												staticClass: "ml pointer mr",
+												onClick: close
+											})
+										]
+									);
+								} else {
+									return h(
+										"div",
+										{ staticClass: "flex middle width100 desc-input" },
+										[
+											h("span", [rowData.desc || "--"]),
+											h("xIcon", {
+												icon: "edit",
+												staticClass: "ViewAllProject-edit-icon ml pointer",
+												onClick() {
+													if (!vm.editThisRow) {
+														vm.editThisRow = rowData.id;
+													}
+												}
+											})
+										]
+									);
 								}
 							}
 						},
@@ -282,7 +305,10 @@ export default async function () {
 					_.each(this.projects, project => {
 						const { children, name } = project;
 						const nameIsOk = ~name.indexOf(params);
-						const subIsOk = _.some(children, entryPage => ~entryPage.name.indexOf(params));
+						const subIsOk = _.some(
+							children,
+							entryPage => ~entryPage.name.indexOf(params)
+						);
 						if (nameIsOk || subIsOk) {
 							projectByFilter.push(project);
 						}

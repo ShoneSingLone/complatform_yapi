@@ -4,7 +4,13 @@
 		<xForm class="demo-input-size">
 			<div class="block">
 				<span class="demonstration">默认</span>
-				<xDatePicker v-model="value1" type="monthrange" range-separator="至" start-placeholder="开始月份" end-placeholder="结束月份"> </xDatePicker>
+				<xDatePicker
+					v-model="value1"
+					type="monthrange"
+					range-separator="至"
+					start-placeholder="开始月份"
+					end-placeholder="结束月份">
+				</xDatePicker>
 			</div>
 			<div class="block">
 				<span class="demonstration">带快捷选项</span>

@@ -46,7 +46,13 @@ export default async function ({ row, onClick }) {
 						options: dicts.sys_notice_type,
 						itemSlots: {
 							beforeController() {
-								return h("div", { class: "mr" }, [_jsxFns.OptionsToLabel(vm.form.noticeType.value, dicts.sys_notice_type), h("xGap", { f: true })]);
+								return h("div", { class: "mr" }, [
+									_jsxFns.OptionsToLabel(
+										vm.form.noticeType.value,
+										dicts.sys_notice_type
+									),
+									h("xGap", { f: true })
+								]);
 							}
 						}
 					},
@@ -58,7 +64,12 @@ export default async function ({ row, onClick }) {
 						isButton: true,
 						options: dicts.sys_notice_status
 					},
-					noticeContent: { value: "", label: i18n("内容"), rules: [_rules.required()], type: "textarea" }
+					noticeContent: {
+						value: "",
+						label: i18n("内容"),
+						rules: [_rules.required()],
+						type: "textarea"
+					}
 				})
 			};
 		},

@@ -32,7 +32,10 @@ export default async function () {
 			const imgArray = $html.find("img");
 			_.each(imgArray, (img, index) => {
 				const { alt, src } = img;
-				this.html = this.html.replace(img.outerHTML, newImageDomString(alt, alt, src, index));
+				this.html = this.html.replace(
+					img.outerHTML,
+					newImageDomString(alt, alt, src, index)
+				);
 			});
 			return this;
 		}

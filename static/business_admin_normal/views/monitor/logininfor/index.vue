@@ -7,7 +7,10 @@
 					<xBtnArray :configs="oprBtnArray" />
 				</template>
 				<template #right>
-					<xAdvancedSearch mountTo="#AdvancedSearch" :collapse="isAdvancedSearchCollapse" @change="handleAdvancedSearchCollapse">
+					<xAdvancedSearch
+						mountTo="#AdvancedSearch"
+						:collapse="isAdvancedSearchCollapse"
+						@change="handleAdvancedSearchCollapse">
 						<xBlock class="mt">
 							<xForm>
 								<xItem :configs="formSearch.ipaddr" />
@@ -16,7 +19,9 @@
 								<xItem :configs="formSearch.dateRange" />
 								<div class="flex end width100" span="2">
 									<xBtn @click="resetSearchForm">重置</xBtn>
-									<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+									<xBtn preset="primary" @click="getTableData({ page: 1 })"
+										>查询</xBtn
+									>
 								</div>
 							</xForm>
 						</xBlock>
@@ -82,7 +87,10 @@ export default async function () {
 				formSearch: defItems({
 					ipaddr: _adminTools.search_form_configs_text({ label: i18n("登录地址") }),
 					userName: _adminTools.search_form_configs_text({ label: i18n("用户名称") }),
-					status: _adminTools.search_form_configs_select({ label: i18n("状态"), options: dicts.sys_common_status }),
+					status: _adminTools.search_form_configs_select({
+						label: i18n("状态"),
+						options: dicts.sys_common_status
+					}),
 					dateRange: _adminTools.search_form_configs_text({ label: i18n("登录时间") })
 				}),
 				configsTable: defTable({
@@ -107,7 +115,12 @@ export default async function () {
 						{ label: i18n("登录地点"), prop: "loginLocation" },
 						{ label: i18n("浏览器"), prop: "browser" },
 						{ label: i18n("操作系统"), prop: "os" },
-						{ label: i18n("登录状态"), prop: "status", cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, dicts.sys_common_status) },
+						{
+							label: i18n("登录状态"),
+							prop: "status",
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, dicts.sys_common_status)
+						},
 						{ label: i18n("操作信息"), prop: "msg" },
 						{ label: i18n("登录日期"), prop: "loginTime" },
 						defTable.colActions({
@@ -119,12 +132,17 @@ export default async function () {
 									children: [
 										{
 											label: i18n("解锁"),
-											isHide: () => !vm.$auth.hasPermiOr(["monitor:logininfor:unlock"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["monitor:logininfor:unlock"]),
 											onClick: async () => {
 												try {
 													const { userName } = rowData;
-													await _.$confirm_important(`${i18n("确认解锁用户")}${userName}`);
-													await _adminTools.api_logininfor_unlock(userName);
+													await _.$confirm_important(
+														`${i18n("确认解锁用户")}${userName}`
+													);
+													await _adminTools.api_logininfor_unlock(
+														userName
+													);
 													_.$msg(i18n("解锁用户成功"));
 													vm.getTableData();
 												} catch (error) {

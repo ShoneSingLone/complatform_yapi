@@ -3,9 +3,24 @@
 		<xMd :md="md" />
 		<div class="demo-input-size">
 			<xInput placeholder="请输入内容" suffix-icon="el-icon-date" v-model="input1"> </xInput>
-			<xInput size="medium" placeholder="请输入内容" suffix-icon="el-icon-date" v-model="input2"> </xInput>
-			<xInput size="small" placeholder="请输入内容" suffix-icon="el-icon-date" v-model="input3"> </xInput>
-			<xInput size="mini" placeholder="请输入内容" suffix-icon="el-icon-date" v-model="input4"> </xInput>
+			<xInput
+				size="medium"
+				placeholder="请输入内容"
+				suffix-icon="el-icon-date"
+				v-model="input2">
+			</xInput>
+			<xInput
+				size="small"
+				placeholder="请输入内容"
+				suffix-icon="el-icon-date"
+				v-model="input3">
+			</xInput>
+			<xInput
+				size="mini"
+				placeholder="请输入内容"
+				suffix-icon="el-icon-date"
+				v-model="input4">
+			</xInput>
 		</div>
 	</div>
 </template>

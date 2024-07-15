@@ -54,7 +54,12 @@ export default async function () {
 									return "first";
 								},
 								params(props) {
-									return ["params:" + props.title, "params:" + props.title, "params:" + props.title, "params:" + props.title];
+									return [
+										"params:" + props.title,
+										"params:" + props.title,
+										"params:" + props.title,
+										"params:" + props.title
+									];
 								}
 							}
 						})

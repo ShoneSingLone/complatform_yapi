@@ -7,7 +7,10 @@
 					<xBtnArray :configs="oprBtnArray" />
 				</template>
 				<template #right>
-					<xAdvancedSearch mountTo="#AdvancedSearch" :collapse="isAdvancedSearchCollapse" @change="handleAdvancedSearchCollapse">
+					<xAdvancedSearch
+						mountTo="#AdvancedSearch"
+						:collapse="isAdvancedSearchCollapse"
+						@change="handleAdvancedSearchCollapse">
 						<xBlock class="mt">
 							<xForm>
 								<xItem :configs="formSearch.roleName" />
@@ -16,12 +19,16 @@
 								<xItem :configs="formSearch.dateRange" />
 								<div class="flex end width100" span="2">
 									<xBtn @click="resetSearchForm">重置</xBtn>
-									<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+									<xBtn preset="primary" @click="getTableData({ page: 1 })"
+										>查询</xBtn
+									>
 								</div>
 							</xForm>
 						</xBlock>
 						<template #collapse>
-							<xInput v-model="formSearch.roleName.value" placeholder="请输入角色名称" />
+							<xInput
+								v-model="formSearch.roleName.value"
+								placeholder="请输入角色名称" />
 							<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
 						</template>
 					</xAdvancedSearch>
@@ -165,7 +172,8 @@ export default async function () {
 									children: [
 										{
 											label: i18n("修改"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:role:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:role:edit"]),
 											onClick: async () => {
 												_.$openModal({
 													title: i18n("修改角色"),
@@ -179,14 +187,16 @@ export default async function () {
 										},
 										{
 											label: i18n("删除"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:role:remove"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:role:remove"]),
 											onClick: async () => {
 												vm.doDelete(rowData);
 											}
 										},
 										{
 											label: i18n("数据权限"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:role:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:role:edit"]),
 											onClick: async () => {
 												_.$openModal(
 													{
@@ -202,7 +212,8 @@ export default async function () {
 										},
 										{
 											label: i18n("分配用户"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:role:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:role:edit"]),
 											onClick: async () => {
 												_.$openModal(
 													{

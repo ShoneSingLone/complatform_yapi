@@ -37,11 +37,15 @@ export default async function () {
 			remoteVideo = this.$refs["remoteVideo"];
 			//获取本地视频尺寸
 			localVideo.addEventListener("loadedmetadata", () => {
-				console.log(`本地视频尺寸为: videoWidth: ${localVideo.videoWidth}px,  videoHeight: ${localVideo.videoHeight}px`);
+				console.log(
+					`本地视频尺寸为: videoWidth: ${localVideo.videoWidth}px,  videoHeight: ${localVideo.videoHeight}px`
+				);
 			});
 			//获取远端视频尺寸
 			remoteVideo.addEventListener("loadedmetadata", () => {
-				console.log(`远端视频尺寸为: videoWidth: ${remoteVideo.videoWidth}px,  videoHeight: ${remoteVideo.videoHeight}px`);
+				console.log(
+					`远端视频尺寸为: videoWidth: ${remoteVideo.videoWidth}px,  videoHeight: ${remoteVideo.videoHeight}px`
+				);
 			});
 			//监听远端视频尺寸的变化
 			remoteVideo.addEventListener("resize", () => {
@@ -58,7 +62,10 @@ export default async function () {
 				console.log("开始获取本地媒体流");
 				try {
 					//获取音视频流
-					const stream = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: true });
+					const stream = await navigator.mediaDevices.getDisplayMedia({
+						audio: true,
+						video: true
+					});
 					console.log("获取本地媒体流成功");
 					//本地视频获取流
 					localVideo.srcObject = stream;
@@ -211,7 +218,9 @@ export default async function () {
 				} catch (e) {
 					this.onAddIceCandidateError(peerConnB, e);
 				}
-				console.log(`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`);
+				console.log(
+					`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`
+				);
 			},
 			//Candidate事件回调方法
 			async onIceCandidateB(event) {
@@ -224,7 +233,9 @@ export default async function () {
 				} catch (e) {
 					this.onAddIceCandidateError(peerConnA, e);
 				}
-				console.log(`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`);
+				console.log(
+					`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`
+				);
 			},
 			//添加Candidate成功
 			onAddIceCandidateSuccess(pc) {

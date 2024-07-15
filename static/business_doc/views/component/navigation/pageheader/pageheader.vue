@@ -1,7 +1,11 @@
 <template>
 	<DocContentOfDemo class="pageheader-demo">
-		<xMd :md="'## PageHeader 页头 \n\n如果页面的路径比较简单，推荐使用页头组件而非面包屑组件。'" />
-		<DemoAndCode title="基础用法" path="@/views/component/navigation/pageheader/JiChuYongFa.vue" unfold />
+		<xMd
+			:md="'## PageHeader 页头 \n\n如果页面的路径比较简单，推荐使用页头组件而非面包屑组件。'" />
+		<DemoAndCode
+			title="基础用法"
+			path="@/views/component/navigation/pageheader/JiChuYongFa.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

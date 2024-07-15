@@ -14,7 +14,8 @@ export default async function () {
 	return defineComponent({
 		data() {
 			return {
-				mdTitle: "分栏之间存在间隔。\n\nRow 组件 提供 `gutter` 属性来指定每一栏之间的间隔，默认间隔为 0。"
+				mdTitle:
+					"分栏之间存在间隔。\n\nRow 组件 提供 `gutter` 属性来指定每一栏之间的间隔，默认间隔为 0。"
 			};
 		}
 	});

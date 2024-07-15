@@ -6,7 +6,13 @@
 				<span>摄像头示例</span>
 			</h1>
 			<div class="width100">
-				<video class="video" ref="myVideo" autoPlay playsInline controls style="max-height: 500px; max-width: 500px; margin: auto"></video>
+				<video
+					class="video"
+					ref="myVideo"
+					autoPlay
+					playsInline
+					controls
+					style="max-height: 500px; max-width: 500px; margin: auto"></video>
 			</div>
 		</div>
 	</div>

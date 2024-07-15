@@ -2,8 +2,14 @@
 	<DocContentOfDemo class="dropdown-demo">
 		<xMd :md="md" />
 		<DemoAndCode title="基础用法" path="@/views/other/timeline/JiChuYongFa.vue" unfold />
-		<DemoAndCode title="⾃定义节点样式" path="@/views/other/timeline/ZiDingYiJieDianYangShi.vue" unfold />
-		<DemoAndCode title="⾃定义时间戳" path="@/views/other/timeline/ZiDingYiShiJianChuo.vue" unfold />
+		<DemoAndCode
+			title="⾃定义节点样式"
+			path="@/views/other/timeline/ZiDingYiJieDianYangShi.vue"
+			unfold />
+		<DemoAndCode
+			title="⾃定义时间戳"
+			path="@/views/other/timeline/ZiDingYiShiJianChuo.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

@@ -10,7 +10,14 @@ export default async function () {
 		(componentURL, name) => Vue.component(name, () => _.$importVue(componentURL))
 	);
 
-	const [, [{ router, CONSTANT_ROUTES, DYNAMIC_ROUTES, ROUTE_NOT_FOUD }, { useAdminTagsView }, { useAppPermission }]] = await Promise.all([
+	const [
+		,
+		[
+			{ router, CONSTANT_ROUTES, DYNAMIC_ROUTES, ROUTE_NOT_FOUD },
+			{ useAdminTagsView },
+			{ useAppPermission }
+		]
+	] = await Promise.all([
 		Promise.all([
 			_.$importVue("/common/ui-x/useXui.vue"),
 			_.$importVue("/common/utils/useAdmin/tools.vue"),

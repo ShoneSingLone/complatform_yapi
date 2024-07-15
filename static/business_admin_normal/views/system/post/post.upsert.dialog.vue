@@ -36,8 +36,19 @@ export default async function ({ row, onClick }) {
 				isUpdate,
 				form: defItems({
 					postName: { value: "", label: "岗位名称", rules: [_rules.required()] },
-					postCode: { value: "", label: "岗位编码", rules: [_rules.required()], tips: "控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPost('admin')`)" },
-					postSort: { value: 0, label: "岗位顺序", rules: [_rules.required()], isNumber: true, min: 0 },
+					postCode: {
+						value: "",
+						label: "岗位编码",
+						rules: [_rules.required()],
+						tips: "控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPost('admin')`)"
+					},
+					postSort: {
+						value: 0,
+						label: "岗位顺序",
+						rules: [_rules.required()],
+						isNumber: true,
+						min: 0
+					},
 					status: {
 						value: "0",
 						label: "岗位状态",

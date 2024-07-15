@@ -1,9 +1,15 @@
 <script lang="ts">
 export default async function () {
 	await Promise.all([
-		_.$importVue("/common/ui-x/useXui.vue", { size: "small", I18N_LANGUAGE: window.I18N_LANGUAGE }),
+		_.$importVue("/common/ui-x/useXui.vue", {
+			size: "small",
+			I18N_LANGUAGE: window.I18N_LANGUAGE
+		}),
 		// _.$importVue("/common/ui-element/useElementUI.vue", { size: "small", I18N_LANGUAGE: window.I18N_LANGUAGE })
-		_.$importVue("/common/ui-element/useElementUI.NoJS.vue", { size: "small", I18N_LANGUAGE: window.I18N_LANGUAGE })
+		_.$importVue("/common/ui-element/useElementUI.NoJS.vue", {
+			size: "small",
+			I18N_LANGUAGE: window.I18N_LANGUAGE
+		})
 	]);
 	_.each(
 		{

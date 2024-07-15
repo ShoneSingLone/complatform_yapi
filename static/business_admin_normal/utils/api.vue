@@ -5,7 +5,9 @@ export default async function () {
 			_.$ajax.requestInjector = function (config) {
 				config.url = `/dev-api${config.url}`;
 				// 是否需要设置 token
-				const isToken = _.isBoolean(config.headers?.isToken) ? config.headers?.isToken : true;
+				const isToken = _.isBoolean(config.headers?.isToken)
+					? config.headers?.isToken
+					: true;
 				// 是否需要防止数据重复提交
 				const isRepeatSubmit = (config.headers || {}).repeatSubmit === false;
 				if (_.$lStorage.x_token && isToken) {

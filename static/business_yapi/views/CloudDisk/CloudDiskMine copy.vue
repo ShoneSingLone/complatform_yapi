@@ -1,26 +1,26 @@
 <style lang="less">
 .CloudDiskMine {
 	height: 1px;
-	.audio-title {
-		text-wrap: nowrap;
-	}
 }
 </style>
 <template>
 	<div class="CloudDiskMine flex1 flex vertical">
-		<div class="flex flex1 vertical overflow-auto">
-			<CloudDiskResourceAudioItem
-				v-for="(item, index) in APP.stateAudio.AudioArray"
-				:key="index"
-				:item="item"
-				:checked="APP.selectedItems.includes(item._id)"
-				@toggle="toggle(item)"
-				@preview="preview(item)" />
+		<div class="play-list flex1">
+			<div>{{ cptPercent }}</div>
+			<div>{{ _.$bytesToSize(cloudDiskSizeUsed) }}</div>
+			<div>{{ _.$bytesToSize(cloudDiskSizeTotal) }}</div>
+			<div class="flex flex1 vertical overflow-auto">
+				<CloudDiskResourceAudioItem
+					v-for="(item, index) in APP.stateAudio.AudioArray"
+					:key="index"
+					:item="item"
+					:checked="APP.selectedItems.includes(item._id)"
+					@toggle="toggle(item)"
+					@preview="preview(item)" />
+			</div>
 		</div>
 		<div class="player-opr x-padding">
-			<div class="overflow-auto width100">
-				<span class="flex middle audio-title"> {{ APP.stateAudio.audioName }}</span>
-			</div>
+			<span>{{ APP.stateAudio.audioName }}</span>
 			<MusicPlayerAudio />
 			<div class="flex middle">
 				<MusicPlayerVolume class="flex1" />

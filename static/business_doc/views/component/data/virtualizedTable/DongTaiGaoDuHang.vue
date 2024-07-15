@@ -1,7 +1,12 @@
 <template>
 	<div>
 		<xMd :md="md" />
-		<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" :height="500" fixed :estimated-row-height="40" />
+		<xTableVir
+			:columns="configsTable.columns"
+			:data="configsTable.data.list"
+			:height="500"
+			fixed
+			:estimated-row-height="40" />
 	</div>
 </template>
 <script lang="ts">
@@ -33,7 +38,10 @@ export default async function () {
 						});
 					},
 					onSelectedChange(newValue, oldValue) {
-						const row = _.find(vm.configsTable.data.list, item => item.id === newValue[0]);
+						const row = _.find(
+							vm.configsTable.data.list,
+							item => item.id === newValue[0]
+						);
 						if (row) {
 							vm.selected = row;
 						} else {

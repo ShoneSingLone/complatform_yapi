@@ -8,7 +8,11 @@
 }
 </style>
 <template>
-	<xScrollbar ref="scrollContainer" :vertical="false" class="scroll-container tags-view-scroll-pane-wrapper" @wheel.native.prevent="handleScroll">
+	<xScrollbar
+		ref="scrollContainer"
+		:vertical="false"
+		class="scroll-container tags-view-scroll-pane-wrapper"
+		@wheel.native.prevent="handleScroll">
 		<slot />
 	</xScrollbar>
 </template>
@@ -71,7 +75,8 @@ export default async function () {
 					const nextTag = tagList[currentIndex + 1];
 
 					// the tag's offsetLeft after of nextTag
-					const afterNextTagOffsetLeft = nextTag.$el.offsetLeft + nextTag.$el.offsetWidth + TAG_AND_TAG_SPACING;
+					const afterNextTagOffsetLeft =
+						nextTag.$el.offsetLeft + nextTag.$el.offsetWidth + TAG_AND_TAG_SPACING;
 
 					// the tag's offsetLeft before of prevTag
 					const beforePrevTagOffsetLeft = prevTag.$el.offsetLeft - TAG_AND_TAG_SPACING;

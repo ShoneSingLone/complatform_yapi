@@ -1,7 +1,11 @@
 <style lang="less"></style>
 <template>
 	<div class="AdminTree flex vertical">
-		<xInput v-model="search" clearable :placeholder="cptPlaceholder" @input="handleQueryChange" />
+		<xInput
+			v-model="search"
+			clearable
+			:placeholder="cptPlaceholder"
+			@input="handleQueryChange" />
 		<div class="flex1 AdminTree-tree mt">
 			<xTree
 				ref="refTree"

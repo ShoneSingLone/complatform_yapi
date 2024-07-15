@@ -108,14 +108,30 @@
 			<xMenu
 				:default-active="activeMenu"
 				:collapse="cptIsCollapse"
-				:background-hover-color="cptSideTheme === 'theme-dark' ? 'var(--base-menu-hover-bg-color)' : 'var(--base-menu-hover-light-background)'"
-				:background-color="cptSideTheme === 'theme-dark' ? 'var(--base-menu-background)' : 'var(--base-menu-light-background)'"
-				:text-color="cptSideTheme === 'theme-dark' ? 'var(--base-menu-color)' : 'var(--base-menu-light-color)'"
+				:background-hover-color="
+					cptSideTheme === 'theme-dark'
+						? 'var(--base-menu-hover-bg-color)'
+						: 'var(--base-menu-hover-light-background)'
+				"
+				:background-color="
+					cptSideTheme === 'theme-dark'
+						? 'var(--base-menu-background)'
+						: 'var(--base-menu-light-background)'
+				"
+				:text-color="
+					cptSideTheme === 'theme-dark'
+						? 'var(--base-menu-color)'
+						: 'var(--base-menu-light-color)'
+				"
 				:unique-opened="false"
 				:active-text-color="cptTheme"
 				:collapse-transition="false"
 				mode="vertical">
-				<AdminSidebarItem v-for="(route, index) in cptSidebarMenuTree" :key="route.path + index" :item="route" :base-path="route.path" />
+				<AdminSidebarItem
+					v-for="(route, index) in cptSidebarMenuTree"
+					:key="route.path + index"
+					:item="route"
+					:base-path="route.path" />
 			</xMenu>
 		</xScrollbar>
 	</div>
@@ -142,7 +158,10 @@ export default async function () {
 			cptSidebarContainerStyle() {
 				return {
 					"--base-sidebar-width": this.cptIsCollapse ? "54px" : "200px",
-					backgroundColor: this.cptSideTheme === "theme-dark" ? "var(--base-menu-background)" : "var(--base-menu-background)"
+					backgroundColor:
+						this.cptSideTheme === "theme-dark"
+							? "var(--base-menu-background)"
+							: "var(--base-menu-background)"
 				};
 			},
 			cptIsShowLogo() {

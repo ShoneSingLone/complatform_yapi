@@ -8,11 +8,30 @@
 			<video class="small-video" ref="videoPreview" playsInline autoPlay muted></video>
 			<video class="small-video" ref="videoPlayer" playsInline loop></video>
 			<div>
-				<xBtn class="button" @click="startClickHandler" :disabled="status != 'start'"> capture 共享屏幕示例 </xBtn>
-				<xBtn class="button" :disabled="status != 'startRecord'" @click="startRecordButtonClickHandler"> 开始录制 </xBtn>
-				<xBtn class="button" :disabled="status != 'stopRecord'" @click="stopRecordButtonClickHandler"> 停止录制 </xBtn>
-				<xBtn class="button" :disabled="status != 'play'" @click="playButtonClickHandler"> 播放 </xBtn>
-				<xBtn class="button" :disabled="status != 'download'" @click="downloadButtonClickHandler"> 下载 </xBtn>
+				<xBtn class="button" @click="startClickHandler" :disabled="status != 'start'">
+					capture 共享屏幕示例
+				</xBtn>
+				<xBtn
+					class="button"
+					:disabled="status != 'startRecord'"
+					@click="startRecordButtonClickHandler">
+					开始录制
+				</xBtn>
+				<xBtn
+					class="button"
+					:disabled="status != 'stopRecord'"
+					@click="stopRecordButtonClickHandler">
+					停止录制
+				</xBtn>
+				<xBtn class="button" :disabled="status != 'play'" @click="playButtonClickHandler">
+					播放
+				</xBtn>
+				<xBtn
+					class="button"
+					:disabled="status != 'download'"
+					@click="downloadButtonClickHandler">
+					下载
+				</xBtn>
 			</div>
 		</div>
 	</div>

@@ -2,7 +2,12 @@
 	<section id="ViewNote" :class="cptNoteClass">
 		<AppHeader v-if="cptIsShowAppHeaderComponent" />
 		<div v-if="APP.isMobile" class="flex1-overflow-auto flex vertical">
-			<xAdvancedSearch mountTo="#MobileMenu" v-model="isCollapse" :label="false" :mountProps="cptMountProps" :style="cptToggleStyle">
+			<xAdvancedSearch
+				mountTo="#MobileMenu"
+				v-model="isCollapse"
+				:label="false"
+				:mountProps="cptMountProps"
+				:style="cptToggleStyle">
 				<xGap t />
 				<NoteAside class="width100 flex1 height100" />
 			</xAdvancedSearch>

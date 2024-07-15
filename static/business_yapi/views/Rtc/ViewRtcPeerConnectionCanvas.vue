@@ -220,7 +220,9 @@ export default async function () {
 				} catch (e) {
 					this.onAddIceCandidateError(this.peerConnB, e);
 				}
-				console.log(`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`);
+				console.log(
+					`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`
+				);
 			},
 			//Candidate事件回调方法
 			async onIceCandidateB(event) {
@@ -233,7 +235,9 @@ export default async function () {
 				} catch (e) {
 					this.onAddIceCandidateError(this.peerConnA, e);
 				}
-				console.log(`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`);
+				console.log(
+					`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`
+				);
 			},
 			//添加Candidate成功
 			onAddIceCandidateSuccess(pc) {

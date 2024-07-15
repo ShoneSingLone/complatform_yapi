@@ -99,7 +99,11 @@ export default async function ({ row, onClick, DICT_TYPE }) {
 						options: LIST_CLASS_OPTIONS,
 						itemSlots: {
 							beforeController() {
-								return h("div", { vIf: vm.form.listClass.value, class: "mr" }, [h("xTag", { type: vm.form.listClass.value }, [`${vm.form.dictLabel.value}`])]);
+								return h("div", { vIf: vm.form.listClass.value, class: "mr" }, [
+									h("xTag", { type: vm.form.listClass.value }, [
+										`${vm.form.dictLabel.value}`
+									])
+								]);
 							}
 						},
 						optonsRender({ options }) {

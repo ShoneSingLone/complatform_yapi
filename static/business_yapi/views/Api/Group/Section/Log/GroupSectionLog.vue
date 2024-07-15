@@ -2,13 +2,22 @@
 	<div v-if="isShow" class="GroupSectionLog">
 		<section class="mb mt el-card x-padding flex1 log-wrapper beautiful-scroll">
 			<xTimeline>
-				<xTimelineItem center :timestamp="getTime(logItem.add_time)" placement="top" v-for="(logItem, index) in logList" :key="index">
+				<xTimelineItem
+					center
+					:timestamp="getTime(logItem.add_time)"
+					placement="top"
+					v-for="(logItem, index) in logList"
+					:key="index">
 					<xCard>
 						<template #header>
 							<div class="logtype flex middle">
 								<span class="logHead">{{ getTitle(logItem.type) }}</span>
-								<span class="logtime ml mr"> {{ getTimeAgo(logItem.add_time) }} </span>
-								<xBtn @click="showDiff(logItem.data)" v-if="hasDiff(logItem.data)">改动详情</xBtn>
+								<span class="logtime ml mr">
+									{{ getTimeAgo(logItem.add_time) }}
+								</span>
+								<xBtn @click="showDiff(logItem.data)" v-if="hasDiff(logItem.data)"
+									>改动详情</xBtn
+								>
 							</div>
 						</template>
 						<span class="logcontent" v-html="logItem.content" />
@@ -49,16 +58,22 @@ export default async function () {
 		methods: {
 			async showDiff(data) {
 				const vm = this;
-				const jsondiffpatch = await _.$appendScript("/common/libs/jsondiffpatch.umd.js", "jsondiffpatch");
+				const jsondiffpatch = await _.$appendScript(
+					"/common/libs/jsondiffpatch.umd.js",
+					"jsondiffpatch"
+				);
 				const formattersHtml = jsondiffpatch.formatters.html;
 				const diffView = Vue._common_utils.diffMessage(jsondiffpatch, formattersHtml, data);
-				const addMember = await _.$importVue("@/views/Api/Group/Section/Log/GroupSectionLogWindowDiff.vue", {
-					parent: this,
-					diffView,
-					onOk() {
-						vm.APP.updateGroupMemberList();
+				const addMember = await _.$importVue(
+					"@/views/Api/Group/Section/Log/GroupSectionLogWindowDiff.vue",
+					{
+						parent: this,
+						diffView,
+						onOk() {
+							vm.APP.updateGroupMemberList();
+						}
 					}
-				});
+				);
 				_.$openWindow_deprecated(i18n("Api 改动日志"), addMember, {
 					maxmin: true,
 					fullscreen: false

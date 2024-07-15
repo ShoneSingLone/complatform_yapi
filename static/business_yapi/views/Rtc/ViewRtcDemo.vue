@@ -35,7 +35,8 @@ export default async function () {
 			RtcRecordAudio: () => _.$importVue("@/views/Rtc/RtcComponents/RtcRecordAudio.vue"),
 			RtcCaptureCanvas: () => _.$importVue("@/views/Rtc/RtcComponents/RtcCaptureCanvas.vue"),
 			RtcCaptureVideo: () => _.$importVue("@/views/Rtc/RtcComponents/RtcCaptureVideo.vue"),
-			RtcMediaStreamAPI: () => _.$importVue("@/views/Rtc/RtcComponents/RtcMediaStreamAPI.vue"),
+			RtcMediaStreamAPI: () =>
+				_.$importVue("@/views/Rtc/RtcComponents/RtcMediaStreamAPI.vue"),
 			RtcScreenSharing: () => _.$importVue("@/views/Rtc/RtcComponents/RtcScreenSharing.vue"),
 			RtcMicrophone: () => _.$importVue("@/views/Rtc/RtcComponents/RtcMicrophone.vue")
 		},

@@ -89,12 +89,22 @@
 </style>
 <template>
 	<div class="navbar">
-		<NavbarHamburger id="hamburger-container" :is-active="APP.sidebar.isCollapse" class="hamburger-container" @toggleClick="APP.toggleSideBar" />
-		<NavbarBreadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!APP.settings.topNav" />
+		<NavbarHamburger
+			id="hamburger-container"
+			:is-active="APP.sidebar.isCollapse"
+			class="hamburger-container"
+			@toggleClick="APP.toggleSideBar" />
+		<NavbarBreadcrumb
+			id="breadcrumb-container"
+			class="breadcrumb-container"
+			v-if="!APP.settings.topNav" />
 		<NavbarTopNav id="topmenu-container" class="topmenu-container" v-if="APP.settings.topNav" />
 		<div class="right-menu">
 			<div class="avatar-container">
-				<xDropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="hover">
+				<xDropdown
+					@command="handleCommand"
+					class="right-menu-item hover-effect"
+					trigger="hover">
 					<div class="avatar-wrapper">
 						<xIcon :img="cptAvatarUrl" class="user-avatar" />
 					</div>

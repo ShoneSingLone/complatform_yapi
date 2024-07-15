@@ -25,7 +25,11 @@ export default async function () {
 			openVn() {
 				_.$msg({
 					//message 可以作为函数，返回一个字符串或一个 VNode ，它会被显示为正文内容。
-					message: () => h("p", null, [h("span", null, "内容可以是 "), h("i", { style: "color: teal" }, "返回VNode的函数")])
+					message: () =>
+						h("p", null, [
+							h("span", null, "内容可以是 "),
+							h("i", { style: "color: teal" }, "返回VNode的函数")
+						])
 				});
 			}
 		}

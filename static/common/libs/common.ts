@@ -156,7 +156,12 @@
 					const index = _.findIndex(tree, node);
 					if (~index) {
 						if (_.$isArrayFill(node[childrenName])) {
-							node[childrenName] = _.$traverse(node[childrenName], handler, options, `${propString}.${i}.${childrenName}`);
+							node[childrenName] = _.$traverse(
+								node[childrenName],
+								handler,
+								options,
+								`${propString}.${i}.${childrenName}`
+							);
 						}
 					}
 				}
@@ -341,68 +346,6 @@
 				resolve();
 			});
 		};
-		_.$downloadByAjax = function ({ url }) {
-			// ajax支持的服务器返回数据类型有：xml、json、script、html，
-			// 其他类型(例如二进制流)将被作为String返回，无法触发浏览器的下载处理机制和程序。
-
-			return new Promise(resolve => {
-				$.ajax({
-					url: url,
-					method: "get",
-					beforeSend(request) {},
-					xhrFields: {
-						responseType: "blob"
-					},
-					// xhr() {
-					// 	var xhr = new XMLHttpRequest();
-					// 	xhr.responseType = "blob";
-					// 	return xhr;
-					// },
-					data: {
-						//需要发送的数据
-					},
-					success(result, state, xhr) {
-						try {
-							//result:请求到的结果数据
-							//state:请求状态（success）
-							//xhr:XMLHttpRequest对象
-							// 从Response Headers中获取fileName
-							let header = xhr.getResponseHeader("content-disposition");
-							let fileName = header.split(";")[1].split("=")[1].replace(/\"/g, "");
-							//获取下载文件的类型
-							let type = xhr.getResponseHeader("content-type");
-							//结果数据类型处理
-							let blob = new Blob([result], { type: "image/jpeg" });
-
-							//对于<a>标签，只有 Firefox 和 Chrome（内核）支持 download 属性
-							//IE10以上支持blob，但是依然不支持download
-							if ("download" in document.createElement("a")) {
-								//支持a标签download的浏览器
-								//通过创建a标签实现
-								let link = document.createElement("a");
-								//文件名
-								link.download = fileName;
-								link.style.display = "none";
-								link.href = URL.createObjectURL(blob);
-								document.body.appendChild(link);
-								link.click(); //执行下载
-								URL.revokeObjectURL(link.href); //释放url
-								document.body.removeChild(link); //释放标签
-							} else {
-								//不支持
-								if (window.navigator.msSaveOrOpenBlob) {
-									window.navigator.msSaveOrOpenBlob(blob, fileName);
-								}
-							}
-						} catch (error) {
-							console.error(error);
-						} finally {
-							resolve();
-						}
-					}
-				});
-			});
-		};
 	})();
 
 	/**
@@ -561,23 +504,34 @@
 				fixed: "left",
 				headerCellRenderer(_props) {
 					const tableConfigs = getConfigs();
-					const isChecked = tableConfigs.data.list.length > 0 && tableConfigs.data.set.size === tableConfigs.data.list.length;
-					const isIndeterminate = tableConfigs.data.set.size > 0 && tableConfigs.data.set.size < tableConfigs.data.list.length;
+					const isChecked =
+						tableConfigs.data.list.length > 0 &&
+						tableConfigs.data.set.size === tableConfigs.data.list.length;
+					const isIndeterminate =
+						tableConfigs.data.set.size > 0 &&
+						tableConfigs.data.set.size < tableConfigs.data.list.length;
 					const checkBoxProps = {
 						indeterminate: isIndeterminate,
 						value: isChecked,
 						onChange() {
 							const old = Array.from(tableConfigs.data.set);
 							if (tableConfigs.data.set.size < tableConfigs.data.list.length) {
-								_.each(tableConfigs.data.list, i => tableConfigs.data.set.add(i[by]));
+								_.each(tableConfigs.data.list, i =>
+									tableConfigs.data.set.add(i[by])
+								);
 								tableConfigs.data.set = new Set(Array.from(tableConfigs.data.set));
 							} else {
-								_.each(tableConfigs.data.list, i => tableConfigs.data.set.delete(i[by]));
+								_.each(tableConfigs.data.list, i =>
+									tableConfigs.data.set.delete(i[by])
+								);
 								tableConfigs.data.set = new Set(Array.from(tableConfigs.data.set));
 							}
 
 							if (_.isFunction(tableConfigs.onSelectedChange)) {
-								tableConfigs.onSelectedChange(Array.from(tableConfigs.data.set), old);
+								tableConfigs.onSelectedChange(
+									Array.from(tableConfigs.data.set),
+									old
+								);
 							}
 						}
 					};
@@ -640,7 +594,10 @@
 									/* vue2 未对set map 做响应式支持？？？ */
 									tableConfigs.data.set = _.clone(tableConfigs.data.set);
 									if (tableConfigs.onSelectedChange) {
-										tableConfigs.onSelectedChange(Array.from(tableConfigs.data.set), old);
+										tableConfigs.onSelectedChange(
+											Array.from(tableConfigs.data.set),
+											old
+										);
 									}
 								}
 							})
@@ -699,7 +656,10 @@
 										tableConfigs.data.set = new Set();
 									}
 									if (tableConfigs.onSelectedChange) {
-										tableConfigs.onSelectedChange(Array.from(tableConfigs.data.set), old);
+										tableConfigs.onSelectedChange(
+											Array.from(tableConfigs.data.set),
+											old
+										);
 									}
 								}
 							})
@@ -899,7 +859,8 @@
 			offsetParents.push(pointer);
 			pointer = pointer.offsetParent;
 		}
-		const top = selected.offsetTop + offsetParents.reduce((prev, curr) => prev + curr.offsetTop, 0);
+		const top =
+			selected.offsetTop + offsetParents.reduce((prev, curr) => prev + curr.offsetTop, 0);
 		const bottom = top + selected.offsetHeight;
 		const viewRectTop = container.scrollTop;
 		const viewRectBottom = viewRectTop + container.clientHeight;
@@ -1459,7 +1420,10 @@
 	async function $globalVar(globalName, url) {
 		url = _.$resolvePath(url);
 		return new Promise(async resolve => {
-			if (_.$val(window, globalName) && $globalVar[globalName] === _.$val(window, globalName)) {
+			if (
+				_.$val(window, globalName) &&
+				$globalVar[globalName] === _.$val(window, globalName)
+			) {
 				return resolve(_.$val(window, globalName));
 			}
 			if ($globalVar[globalName] === "IS_PENDDING") {
@@ -1527,7 +1491,10 @@
 						return [targetSource, {}];
 					} else {
 						openingTag = openingTag[0];
-						targetSource = source.slice(source.indexOf(openingTag) + openingTag.length, source.lastIndexOf("</" + pickType + ">"));
+						targetSource = source.slice(
+							source.indexOf(openingTag) + openingTag.length,
+							source.lastIndexOf("</" + pickType + ">")
+						);
 					}
 					/* TODO: jsx解析*/
 					if (["template", "setup-render"].includes(pickType)) {
@@ -1543,7 +1510,10 @@
 				const [scritpSourceCode] = getSource(sourceCodeString, "script");
 				const [templateSourceCode] = getSource(sourceCodeString, "template");
 				const [styleSourceCode] = getSource(sourceCodeString, "style");
-				const [setupRenderSourceCode, { scope }] = getSource(sourceCodeString, "setup-render");
+				const [setupRenderSourceCode, { scope }] = getSource(
+					sourceCodeString,
+					"setup-render"
+				);
 				return {
 					scritpSourceCode,
 					templateSourceCode,
@@ -1562,7 +1532,12 @@
 		 * @returns
 		 */
 
-		_.$GenComponentOptions = async function ({ resolvedURL, scritpSourceCode, templateSourceCode, payload }) {
+		_.$GenComponentOptions = async function ({
+			resolvedURL,
+			scritpSourceCode,
+			templateSourceCode,
+			payload
+		}) {
 			try {
 				payload = payload || {};
 				scritpSourceCode = scritpSourceCode || "";
@@ -1577,7 +1552,11 @@
 				let component = {};
 
 				try {
-					scfObjAsyncFn = new Function("payload", "PRIVATE_GLOBAL", `with ({...PRIVATE_GLOBAL,..._,...Vue,}){${innerCode};}`);
+					scfObjAsyncFn = new Function(
+						"payload",
+						"PRIVATE_GLOBAL",
+						`with ({...PRIVATE_GLOBAL,..._,...Vue,}){${innerCode};}`
+					);
 				} catch (e) {
 					console.error(innerCode);
 					throw e;
@@ -1638,7 +1617,9 @@
 							if ($mask.length) {
 								target[prop] = $mask;
 							} else {
-								target[prop] = $(`<div id="x-layer-move" class="x-layer-move" />`).appendTo(_.$single.body);
+								target[prop] = $(
+									`<div id="x-layer-move" class="x-layer-move" />`
+								).appendTo(_.$single.body);
 							}
 						}
 					}
@@ -1744,7 +1725,10 @@
 			try {
 				/* 源文件加载之后会有缓存，但是payload会有变化 */
 				/* 所以只用异步组件不加payload，是可以用hmr，window需要自己重新加载 */
-				const { scritpSourceCode, templateSourceCode } = await _.$sourceCodeSFC({ resolvedURL, sourceCode });
+				const { scritpSourceCode, templateSourceCode } = await _.$sourceCodeSFC({
+					resolvedURL,
+					sourceCode
+				});
 				/* script and template*/
 				const params = {
 					resolvedURL,
@@ -1770,7 +1754,9 @@
 							return h(
 								"div",
 								{ class: "x-padding x-card" },
-								["Source Code File Not Found", resolvedURL, 404].map((content, index) => h(`h${index + 1}`, content))
+								["Source Code File Not Found", resolvedURL, 404].map(
+									(content, index) => h(`h${index + 1}`, content)
+								)
 							);
 						}
 					};
@@ -2162,12 +2148,17 @@
 			var t = 0,
 				o = "",
 				n = 16777216;
-			for (t = 0; t < 4; t++) (o = 0 === t ? o : o + "."), (o += parseInt(e / n)), (e -= parseInt(e / n) * n), (n /= 256);
+			for (t = 0; t < 4; t++)
+				(o = 0 === t ? o : o + "."),
+					(o += parseInt(e / n)),
+					(e -= parseInt(e / n) * n),
+					(n /= 256);
 			return o;
 		}
 	})();
 
-	_.$intToIp4 = int => [(int >>> 24) & 0xff, (int >>> 16) & 0xff, (int >>> 8) & 0xff, int & 0xff].join(".");
+	_.$intToIp4 = int =>
+		[(int >>> 24) & 0xff, (int >>> 16) & 0xff, (int >>> 8) & 0xff, int & 0xff].join(".");
 	_.$ip4ToInt = ip => ip.split(".").reduce((int, oct) => (int << 8) + parseInt(oct, 10), 0) >>> 0;
 	_.$isIp4InCidr = ip => cidr => {
 		const [range, bits = 32] = cidr.split("/");

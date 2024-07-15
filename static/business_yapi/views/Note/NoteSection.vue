@@ -13,7 +13,10 @@
 				<xBtn :configs="btnCancel" />
 			</div>
 			<!--      <div class="flex1-overflow-auto" style="width: 50vw;">{{ inject_note.cptCurrentWiki }}</div>-->
-			<TuiEditor :value="inject_note.cptCurrentWiki" :asRender="!inject_note.isShowEditor" @change="onMarkdownChange" />
+			<TuiEditor
+				:value="inject_note.cptCurrentWiki"
+				:asRender="!inject_note.isShowEditor"
+				@change="onMarkdownChange" />
 		</xPageContent>
 	</section>
 </template>

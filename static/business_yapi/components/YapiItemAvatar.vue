@@ -1,7 +1,12 @@
 <template>
 	<div class="avatar-uploader flex middle" v-bind="$attrs">
 		<xAvatar :src="cptAvatarUrl" @click.native="handleClick" />
-		<input type="file" accept="image/*" ref="uploader" style="display: none" @change="handleChange" />
+		<input
+			type="file"
+			accept="image/*"
+			ref="uploader"
+			style="display: none"
+			@change="handleChange" />
 	</div>
 </template>
 
@@ -32,7 +37,12 @@ export default async function () {
 				return this.configs.usedBy || "";
 			},
 			cptAvatarUrl() {
-				return this.imageUrl || Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${this.value}&usedBy=${this.cptUsedBy}`);
+				return (
+					this.imageUrl ||
+					Vue._common_utils.appendToken(
+						`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${this.value}&usedBy=${this.cptUsedBy}`
+					)
+				);
 			}
 		},
 		data() {
@@ -82,7 +92,11 @@ export default async function () {
 			async uploadAvatar(basecode) {
 				_.$loading(true);
 				try {
-					await _api.yapi.uploadAvatar({ basecode: basecode, uid: this.value, usedBy: this.configs.usedBy || "" });
+					await _api.yapi.uploadAvatar({
+						basecode: basecode,
+						uid: this.value,
+						usedBy: this.configs.usedBy || ""
+					});
 				} catch (error) {
 					_.$msgError(error);
 					this.imageUrl = "";

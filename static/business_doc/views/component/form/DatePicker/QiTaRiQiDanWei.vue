@@ -4,7 +4,12 @@
 		<xForm class="container">
 			<div class="block">
 				<span class="demonstration">周</span>
-				<xDatePicker v-model="value1" type="week" format="yyyy 第 WW 周" placeholder="选择周"> </xDatePicker>
+				<xDatePicker
+					v-model="value1"
+					type="week"
+					format="yyyy 第 WW 周"
+					placeholder="选择周">
+				</xDatePicker>
 			</div>
 			<div class="block">
 				<span class="demonstration">月</span>
@@ -16,15 +21,18 @@
 			</div>
 			<div class="block">
 				<span class="demonstration">多个日期</span>
-				<xDatePicker type="dates" v-model="value4" placeholder="选择一个或多个日期"> </xDatePicker>
+				<xDatePicker type="dates" v-model="value4" placeholder="选择一个或多个日期">
+				</xDatePicker>
 			</div>
 			<div class="block">
 				<span class="demonstration">多个月</span>
-				<xDatePicker type="months" v-model="value5" placeholder="选择一个或多个月"> </xDatePicker>
+				<xDatePicker type="months" v-model="value5" placeholder="选择一个或多个月">
+				</xDatePicker>
 			</div>
 			<div class="block">
 				<span class="demonstration">多个年</span>
-				<xDatePicker type="years" v-model="value6" placeholder="选择一个或多个年"> </xDatePicker>
+				<xDatePicker type="years" v-model="value6" placeholder="选择一个或多个年">
+				</xDatePicker>
 			</div>
 		</xForm>
 	</div>

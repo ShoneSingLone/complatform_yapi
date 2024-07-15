@@ -35,7 +35,8 @@ export default async function () {
 			"APP.cptProject.requestCode": {
 				immediate: true,
 				handler() {
-					const code = this.APP.cptProject.requestCode || _common_utils.RequestCode.toString();
+					const code =
+						this.APP.cptProject.requestCode || _common_utils.RequestCode.toString();
 					this.form.editor.value = code;
 				}
 			}

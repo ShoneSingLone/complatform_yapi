@@ -21,7 +21,11 @@
 		<xAffix :offset="100">
 			<xCard :style="xCardStyle" v-xloading="isLoading">
 				<ul>
-					<li v-for="(item, index) in contents" :key="index" class="mb pointer" @click="scrollTo(item)">
+					<li
+						v-for="(item, index) in contents"
+						:key="index"
+						class="mb pointer"
+						@click="scrollTo(item)">
 						<xTag>
 							{{ item[0] }}
 						</xTag>

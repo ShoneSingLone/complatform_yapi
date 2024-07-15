@@ -15,7 +15,8 @@ export default async function () {
 				const vm = this;
 				const { LOOP_TYPE_NAME_ARRAY } = vm.inject_explore;
 				return {
-					label: () => h("xIcon", { icon: `_${LOOP_TYPE_NAME_ARRAY[vm.stateAudio.loopType]}` }),
+					label: () =>
+						h("xIcon", { icon: `_${LOOP_TYPE_NAME_ARRAY[vm.stateAudio.loopType]}` }),
 					onClick() {
 						vm.methodsMusicPlayer.togglePlayModel();
 					}

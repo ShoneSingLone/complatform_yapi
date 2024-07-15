@@ -34,10 +34,14 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP", "Group"],
 		components: {
-			GroupSectionProjectList: () => _.$importVue("@/views/Api/Group/Section/ProjectList/GroupSectionProjectList.vue"),
-			GroupSectionMemberList: () => _.$importVue("@/views/Api/Group/Section/MemberList/GroupSectionMemberList.vue"),
-			GroupSectionLog: () => _.$importVue("@/views/Api/Group/Section/Log/GroupSectionLog.vue"),
-			GroupSectionWiki: () => _.$importVue("@/views/Api/Group/Section/Wiki/GroupSectionWiki.vue")
+			GroupSectionProjectList: () =>
+				_.$importVue("@/views/Api/Group/Section/ProjectList/GroupSectionProjectList.vue"),
+			GroupSectionMemberList: () =>
+				_.$importVue("@/views/Api/Group/Section/MemberList/GroupSectionMemberList.vue"),
+			GroupSectionLog: () =>
+				_.$importVue("@/views/Api/Group/Section/Log/GroupSectionLog.vue"),
+			GroupSectionWiki: () =>
+				_.$importVue("@/views/Api/Group/Section/Wiki/GroupSectionWiki.vue")
 		},
 		provide() {
 			const GroupSection = this;
@@ -47,7 +51,12 @@ export default async function () {
 		},
 		data() {
 			return {
-				btnArray: [TAB_KEY_PROJECT_LIST, TAB_KEY_MEMBER_LIST, TAB_KEY_GROUP_LOG, TAB_KEY_GROUP_WIKI]
+				btnArray: [
+					TAB_KEY_PROJECT_LIST,
+					TAB_KEY_MEMBER_LIST,
+					TAB_KEY_GROUP_LOG,
+					TAB_KEY_GROUP_WIKI
+				]
 			};
 		},
 		computed: {
@@ -55,7 +64,12 @@ export default async function () {
 				if (this.APP.cptCurrentGroup.privateSpace) {
 					return [TAB_KEY_PROJECT_LIST, TAB_KEY_GROUP_LOG, TAB_KEY_GROUP_WIKI];
 				}
-				return [TAB_KEY_PROJECT_LIST, TAB_KEY_MEMBER_LIST, TAB_KEY_GROUP_LOG, TAB_KEY_GROUP_WIKI];
+				return [
+					TAB_KEY_PROJECT_LIST,
+					TAB_KEY_MEMBER_LIST,
+					TAB_KEY_GROUP_LOG,
+					TAB_KEY_GROUP_WIKI
+				];
 			},
 			cptGroupDesc() {
 				return `${this.APP.cptCurrentGroup?.group_desc || "分组简介"}`;

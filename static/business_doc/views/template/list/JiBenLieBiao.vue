@@ -176,7 +176,9 @@ export default async function () {
 														ids: [{ id: row.id, name: row.name }]
 													}
 												});
-												_.$msgSuccess(i18n("msgDeleteTaskDeliveredSuccess"));
+												_.$msgSuccess(
+													i18n("msgDeleteTaskDeliveredSuccess")
+												);
 												vm.getTableData({ current: 0 });
 											} catch (e) {
 												_.$msgError(e.message);
@@ -198,13 +200,18 @@ export default async function () {
 										}).then(async () => {
 											try {
 												_.$loading(true);
-												await _.$ajax.post(`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`, {
-													data: {
-														status: "1",
-														id: row.id
+												await _.$ajax.post(
+													`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`,
+													{
+														data: {
+															status: "1",
+															id: row.id
+														}
 													}
-												});
-												_.$msgSuccess(i18n("msgSetUnavailableStatusSuccess"));
+												);
+												_.$msgSuccess(
+													i18n("msgSetUnavailableStatusSuccess")
+												);
 												vm.getTableData({ current: 0 });
 											} catch (e) {
 												_.$msgError(e.message);
@@ -226,13 +233,18 @@ export default async function () {
 										}).then(async () => {
 											try {
 												_.$loading(true);
-												await _.$ajax.post(`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`, {
-													data: {
-														status: "0",
-														id: row.id
+												await _.$ajax.post(
+													`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`,
+													{
+														data: {
+															status: "0",
+															id: row.id
+														}
 													}
-												});
-												_.$msgSuccess(i18n("msgSetUnavailableStatusSuccess"));
+												);
+												_.$msgSuccess(
+													i18n("msgSetUnavailableStatusSuccess")
+												);
 												vm.getTableData({ current: 0 });
 											} catch (e) {
 												_.$msgError(e.message);

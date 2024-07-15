@@ -29,7 +29,10 @@ export default async function () {
 				if (!this.isDashboard(first)) {
 					matched = [{ path: "/index", meta: { title: "首页" } }].concat(matched);
 				}
-				const levelList = _.filter(matched, item => item.meta?.title && item.meta?.breadcrumb !== false);
+				const levelList = _.filter(
+					matched,
+					item => item.meta?.title && item.meta?.breadcrumb !== false
+				);
 				this.levelList = _.unionBy(levelList, item => item?.meta?.title);
 			},
 			isDashboard(route) {
@@ -77,7 +80,9 @@ export default async function () {
 					);
 
 					if (item.redirect === "noRedirect" || index == levelList.length - 1) {
-						content = h("span", { key: item.path, staticClass: "no-redirect" }, [item.meta.title]);
+						content = h("span", { key: item.path, staticClass: "no-redirect" }, [
+							item.meta.title
+						]);
 					}
 
 					return h("xBreadcrumbItem", { key: index }, [content]);

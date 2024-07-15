@@ -5,23 +5,43 @@
 		</span>
 		<YapiBreadcrumbNavigation />
 		<xGap f />
-		<a class="flex middle" :href="i18nHref" target="_blank" v-xtips="{ content: '国际化', trigger: 'hover', placement: 'left' }">
+		<a
+			class="flex middle"
+			:href="i18nHref"
+			target="_blank"
+			v-xtips="{ content: '国际化', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_icon_i18n" />
 		</a>
 		<xGap r="4" />
-		<a class="flex middle" :href="hoppscotchHref" target="_blank" v-xtips="{ content: 'hoppscotch', trigger: 'hover', placement: 'left' }">
+		<a
+			class="flex middle"
+			:href="hoppscotchHref"
+			target="_blank"
+			v-xtips="{ content: 'hoppscotch', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_hoppscotch" />
 		</a>
 		<xGap r="4" />
-		<a class="flex middle" :href="publicNoteHref" target="_blank" v-xtips="{ content: '文档', trigger: 'hover', placement: 'left' }">
+		<a
+			class="flex middle"
+			:href="publicNoteHref"
+			target="_blank"
+			v-xtips="{ content: '文档', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_wikidoc" />
 		</a>
 		<xGap r="4" />
-		<a class="flex middle" :href="publicRtcHref" target="_blank" v-xtips="{ content: 'webrtc', trigger: 'hover', placement: 'left' }">
+		<a
+			class="flex middle"
+			:href="publicRtcHref"
+			target="_blank"
+			v-xtips="{ content: 'webrtc', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_webrtc" />
 		</a>
 		<xGap r="4" />
-		<a class="flex middle" :href="privateExploreHref" target="_blank" v-xtips="{ content: '资源访问', trigger: 'hover', placement: 'left' }">
+		<a
+			class="flex middle"
+			:href="privateExploreHref"
+			target="_blank"
+			v-xtips="{ content: '资源访问', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_hamburger" />
 		</a>
 		<xGap f />
@@ -36,7 +56,8 @@ export default async function () {
 		name: "AppLayoutHeader",
 		components: {
 			YapiToolUserBar: () => _.$importVue("@/components/YapiToolUserBar.vue"),
-			YapiBreadcrumbNavigation: () => _.$importVue("@/components/YapiBreadcrumbNavigation.vue")
+			YapiBreadcrumbNavigation: () =>
+				_.$importVue("@/components/YapiBreadcrumbNavigation.vue")
 		},
 		data() {
 			return {};

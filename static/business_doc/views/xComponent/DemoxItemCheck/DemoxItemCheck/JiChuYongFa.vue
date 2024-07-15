@@ -31,7 +31,9 @@ export default async function () {
 						value: true,
 						label: "default",
 						itemType: "xItemCheck",
-						options: ["如果不是group，options的元素可以是字符串，代表label。value为布尔值"]
+						options: [
+							"如果不是group，options的元素可以是字符串，代表label。value为布尔值"
+						]
 					},
 					xItemCheck_no_label: {
 						value: true,

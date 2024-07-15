@@ -1,7 +1,11 @@
 <template>
 	<div class="margin16">
 		<xMd :md="'让我们演示虚拟化表的性能，4 000行渲染一个基本示例。'" />
-		<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" :height="400" fixed />
+		<xTableVir
+			:columns="configsTable.columns"
+			:data="configsTable.data.list"
+			:height="400"
+			fixed />
 	</div>
 </template>
 <script lang="ts">

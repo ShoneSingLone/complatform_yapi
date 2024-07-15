@@ -5,7 +5,12 @@
 			<xRadioButton :label="false">展开</xRadioButton>
 			<xRadioButton :label="true">收起</xRadioButton>
 		</xRadioGroup>
-		<xMenu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+		<xMenu
+			default-active="1-4-1"
+			class="el-menu-vertical-demo"
+			@open="handleOpen"
+			@close="handleClose"
+			:collapse="isCollapse">
 			<xSubMenu index="1">
 				<template slot="title">
 					<i class="el-icon-location"></i>

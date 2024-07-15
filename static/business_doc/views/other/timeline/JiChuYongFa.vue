@@ -11,7 +11,10 @@
 			</div>
 			<xGap t />
 			<xTimeline :reverse="reverse">
-				<xTimelineItem v-for="(activity, index) in activities" :key="index" :timestamp="activity.timestamp">
+				<xTimelineItem
+					v-for="(activity, index) in activities"
+					:key="index"
+					:timestamp="activity.timestamp">
 					{{ activity.content }}
 				</xTimelineItem>
 			</xTimeline>
@@ -23,7 +26,8 @@ export default async function () {
 	return defineComponent({
 		data() {
 			return {
-				mdTitle: "Timeline 可拆分成多个按照时间戳正序或倒序排列的 activity，时间戳是其区分于其他控件的重要特征，使⽤时注意与 Steps 步骤条等区分。",
+				mdTitle:
+					"Timeline 可拆分成多个按照时间戳正序或倒序排列的 activity，时间戳是其区分于其他控件的重要特征，使⽤时注意与 Steps 步骤条等区分。",
 				reverse: true,
 				activities: [
 					{

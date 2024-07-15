@@ -17,7 +17,8 @@ export default async function () {
 	return defineComponent({
 		data() {
 			return {
-				mdTitle: "Card 组件包括`header`和`body`部分，`header`部分需要有显式具名 slot 分发，同时也是可选的。"
+				mdTitle:
+					"Card 组件包括`header`和`body`部分，`header`部分需要有显式具名 slot 分发，同时也是可选的。"
 			};
 		}
 	});

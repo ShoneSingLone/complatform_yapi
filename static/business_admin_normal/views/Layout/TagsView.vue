@@ -70,7 +70,10 @@
 <template>
 	<div id="tags-view-container" class="tags-view-container flex middle">
 		<TagsViewScrollPane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
-			<div v-for="tag in visitedViews" :class="{ active: isActive(tag), 'flex middle': true }" :key="tag.path">
+			<div
+				v-for="tag in visitedViews"
+				:class="{ active: isActive(tag), 'flex middle': true }"
+				:key="tag.path">
 				<RouterLink
 					ref="tag"
 					:to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
@@ -80,17 +83,30 @@
 					@click.middle.native="!isAffix(tag) ? closeSelectedTag(tag) : ''"
 					@contextmenu.prevent.native="openMenu(tag, $event)">
 					{{ tag.title }}
-					<span v-if="!isAffix(tag)" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
+					<span
+						v-if="!isAffix(tag)"
+						class="el-icon-close"
+						@click.prevent.stop="closeSelectedTag(tag)" />
 				</RouterLink>
 			</div>
 		</TagsViewScrollPane>
 		<ul v-show="visible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
-			<li @click="refreshSelectedTag(selectedTag)"><i class="el-icon-refresh-right"></i> 刷新页面</li>
-			<li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)"><i class="el-icon-close"></i> 关闭当前</li>
+			<li @click="refreshSelectedTag(selectedTag)">
+				<i class="el-icon-refresh-right"></i> 刷新页面
+			</li>
+			<li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
+				<i class="el-icon-close"></i> 关闭当前
+			</li>
 			<li @click="closeOthersTags"><i class="el-icon-circle-close"></i> 关闭其他</li>
-			<li v-if="!isFirstView()" @click="closeLeftTags"><i class="el-icon-back"></i> 关闭左侧</li>
-			<li v-if="!isLastView()" @click="closeRightTags"><i class="el-icon-right"></i> 关闭右侧</li>
-			<li @click="closeAllTags(selectedTag)"><i class="el-icon-circle-close"></i> 全部关闭</li>
+			<li v-if="!isFirstView()" @click="closeLeftTags">
+				<i class="el-icon-back"></i> 关闭左侧
+			</li>
+			<li v-if="!isLastView()" @click="closeRightTags">
+				<i class="el-icon-right"></i> 关闭右侧
+			</li>
+			<li @click="closeAllTags(selectedTag)">
+				<i class="el-icon-circle-close"></i> 全部关闭
+			</li>
 		</ul>
 	</div>
 </template>
@@ -154,14 +170,20 @@ export default async function () {
 			},
 			isFirstView() {
 				try {
-					return this.selectedTag.fullPath === "/index" || this.selectedTag.fullPath === this.visitedViews[1].fullPath;
+					return (
+						this.selectedTag.fullPath === "/index" ||
+						this.selectedTag.fullPath === this.visitedViews[1].fullPath
+					);
 				} catch (err) {
 					return false;
 				}
 			},
 			isLastView() {
 				try {
-					return this.selectedTag.fullPath === this.visitedViews[this.visitedViews.length - 1].fullPath;
+					return (
+						this.selectedTag.fullPath ===
+						this.visitedViews[this.visitedViews.length - 1].fullPath
+					);
 				} catch (err) {
 					return false;
 				}

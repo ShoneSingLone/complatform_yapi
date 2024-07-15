@@ -5,7 +5,12 @@
 			<h1>
 				<span>MediaStreamAPI测试</span>
 			</h1>
-			<video className="video" ref="myVideo" autoPlay playsInline id="RtcMediaStreamAPI"></video>
+			<video
+				className="video"
+				ref="myVideo"
+				autoPlay
+				playsInline
+				id="RtcMediaStreamAPI"></video>
 			<div class="flex mt">
 				<xBtn @click="btnGetTracks"> 获取所有轨道 </xBtn>
 				<xBtn @click="btnGetAudioTracks"> 获取音频轨道 </xBtn>

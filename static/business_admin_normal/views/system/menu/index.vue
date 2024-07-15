@@ -10,7 +10,11 @@
 				<xItem :configs="formSearch.status" />
 			</xTablebar>
 			<div class="x-page-content-middle mt8 flex horizon">
-				<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" :expandedRowKeys.sync="configsTable.data.expandedRowKeys" rowKey="menuId" />
+				<xTableVir
+					:columns="configsTable.columns"
+					:data="configsTable.data.list"
+					:expandedRowKeys.sync="configsTable.data.expandedRowKeys"
+					rowKey="menuId" />
 			</div>
 		</xPageContent>
 	</div>
@@ -91,7 +95,8 @@ export default async function () {
 						{
 							label: i18n("状态"),
 							prop: "status",
-							cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, sys_normal_disable)
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, sys_normal_disable)
 						},
 						{
 							label: i18n("创建时间"),
@@ -111,7 +116,8 @@ export default async function () {
 									children: [
 										{
 											label: i18n("修改"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:menu:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:menu:edit"]),
 											onClick: async () => {
 												_.$openModal({
 													title: i18n("修改菜单"),
@@ -125,7 +131,8 @@ export default async function () {
 										},
 										{
 											label: i18n("新增"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:menu:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:menu:edit"]),
 											onClick: async () => {
 												_.$openModal({
 													title: i18n("新增菜单"),
@@ -140,7 +147,8 @@ export default async function () {
 										},
 										{
 											label: i18n("删除"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:menu:remove"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:menu:remove"]),
 											onClick: async () => {
 												vm.doDelete(rowData);
 											}

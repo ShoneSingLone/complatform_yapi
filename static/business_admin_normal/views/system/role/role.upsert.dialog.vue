@@ -42,8 +42,19 @@ export default async function ({ row, onClick }) {
 				isUpdate,
 				form: defItems({
 					roleName: { value: "", label: "角色名称", rules: [_rules.required()] },
-					roleKey: { value: "", label: "权限字符", rules: [_rules.required()], tips: "控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)" },
-					roleSort: { value: 0, label: "角色顺序", rules: [_rules.required()], isNumber: true, min: 0 },
+					roleKey: {
+						value: "",
+						label: "权限字符",
+						rules: [_rules.required()],
+						tips: "控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)"
+					},
+					roleSort: {
+						value: 0,
+						label: "角色顺序",
+						rules: [_rules.required()],
+						isNumber: true,
+						min: 0
+					},
 					status: {
 						value: "",
 						label: "状态",
@@ -81,7 +92,9 @@ export default async function ({ row, onClick }) {
 				if (isUpdate) {
 					_.$setFormValues(this.form, row);
 					if (row.roleId) {
-						const { menus, checkedKeys } = await _adminTools.api_menu_tree_by_roleId(row.roleId);
+						const { menus, checkedKeys } = await _adminTools.api_menu_tree_by_roleId(
+							row.roleId
+						);
 						// const selected = [];
 						// _.$traverse(menus, item => {
 						// 	selected.push(item.roleId);

@@ -37,8 +37,20 @@ export default async function ({ row, onClick }) {
 					configName: { value: "", label: i18n("参数名称"), rules: [_rules.required()] },
 					configKey: { value: "", label: i18n("参数键名"), rules: [_rules.required()] },
 					configValue: { value: "", label: i18n("参数键值"), rules: [_rules.required()] },
-					configType: { value: "", label: i18n("系统内置"), rules: [_rules.required()], itemType: "xItemRadioGroup", isButton: true, options: configs.sys_yes_no },
-					remark: { value: "", label: i18n("备注"), rules: [_rules.required()], type: "textarea" }
+					configType: {
+						value: "",
+						label: i18n("系统内置"),
+						rules: [_rules.required()],
+						itemType: "xItemRadioGroup",
+						isButton: true,
+						options: configs.sys_yes_no
+					},
+					remark: {
+						value: "",
+						label: i18n("备注"),
+						rules: [_rules.required()],
+						type: "textarea"
+					}
 				})
 			};
 		},

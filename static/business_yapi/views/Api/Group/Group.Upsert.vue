@@ -130,7 +130,12 @@ export default async function ({ groupInfo }) {
 						if (atLestOne) return;
 
 						if (isUpdate) {
-							const { currGroupName, currGroupDesc, custom_field1_enable, custom_field1_name } = vm.cptFormData;
+							const {
+								currGroupName,
+								currGroupDesc,
+								custom_field1_enable,
+								custom_field1_name
+							} = vm.cptFormData;
 							await _api.yapi.groupUpdateGroup({
 								...groupInfo,
 								group_name: currGroupName,
@@ -174,7 +179,12 @@ export default async function ({ groupInfo }) {
 						custom_field1_enable: custom_field1.enable || false,
 						custom_field1_name: custom_field1.name || ""
 					},
-					order: ["currGroupName", "currGroupDesc", "custom_field1_enable", "custom_field1_name"]
+					order: [
+						"currGroupName",
+						"currGroupDesc",
+						"custom_field1_enable",
+						"custom_field1_name"
+					]
 				});
 			},
 			renderDeleteGroup() {
@@ -204,7 +214,11 @@ export default async function ({ groupInfo }) {
 										},
 										[
 											h("div", { staticClass: "card-danger-content" }, [
-												h("p", [i18n("分组一旦删除，将无法恢复数据，请慎重操作！")]),
+												h("p", [
+													i18n(
+														"分组一旦删除，将无法恢复数据，请慎重操作！"
+													)
+												]),
 												h("p", [i18n("只有超级管理员有权限删除分组。")])
 											]),
 											h("div", { staticClass: "flex end" }, [

@@ -224,8 +224,18 @@
 		</div>
 
 		<div class="hanoi-app__tiny-vue">
-			<p>Hanoi-3D: <a href="https://github.com/kagol/hanoi" target="_blank">https://github.com/kagol/hanoi</a></p>
-			<p>TinyVue: <a href="https://github.com/opentiny/tiny-vue" target="_blank">https://github.com/opentiny/tiny-vue</a></p>
+			<p>
+				Hanoi-3D:
+				<a href="https://github.com/kagol/hanoi" target="_blank"
+					>https://github.com/kagol/hanoi</a
+				>
+			</p>
+			<p>
+				TinyVue:
+				<a href="https://github.com/opentiny/tiny-vue" target="_blank"
+					>https://github.com/opentiny/tiny-vue</a
+				>
+			</p>
 		</div>
 
 		<script type="importmap">
@@ -261,7 +271,16 @@
 					nums: 1, // 盘子数量
 					maxPlateNums: 8,
 					height: 0.5,
-					colors: ["#c186e0", "#997feb", "#59b1ff", "#36cfc9", "#bae637", "#e7d558", "#ff9c6e", "#ff6b6b"]
+					colors: [
+						"#c186e0",
+						"#997feb",
+						"#59b1ff",
+						"#36cfc9",
+						"#bae637",
+						"#e7d558",
+						"#ff9c6e",
+						"#ff6b6b"
+					]
 				},
 
 				font: null,
@@ -379,7 +398,11 @@
 					directLight.shadow.camera.top = directionZ;
 					directLight.shadow.camera.bottom = -directionZ;
 
-					const directLightHelper = new THREE.DirectionalLightHelper(directLight, 1, "#f00");
+					const directLightHelper = new THREE.DirectionalLightHelper(
+						directLight,
+						1,
+						"#f00"
+					);
 
 					return [ambientLight, spotLight, directLight];
 				}
@@ -392,7 +415,8 @@
 					const material = new THREE.MeshLambertMaterial({
 						color: "#eeeec0"
 					});
-					const url = "https://cdn.pixabay.com/photo/2016/12/26/13/47/fresno-1932211_1280.jpg";
+					const url =
+						"https://cdn.pixabay.com/photo/2016/12/26/13/47/fresno-1932211_1280.jpg";
 
 					// 动态更新材质纹理
 					new THREE.TextureLoader().load(url, texture => {
@@ -450,7 +474,9 @@
 				#createBase(r, height) {
 					const pointNum = 10;
 					const unitY = height / (pointNum - 1);
-					const points = Array.from({ length: pointNum }).map((v, i) => new THREE.Vector2(Math.sin(i * r) * r + r, -unitY * i));
+					const points = Array.from({ length: pointNum }).map(
+						(v, i) => new THREE.Vector2(Math.sin(i * r) * r + r, -unitY * i)
+					);
 					const geometry = new THREE.LatheGeometry(points, 32);
 					const material = new THREE.MeshLambertMaterial({
 						color: "#353546",
@@ -598,7 +624,9 @@
 						new THREE.Vector2(sideRadius, height / 4),
 						new THREE.Vector2(sideRadius, 0)
 					];
-					const bottomPoints = topPoints.map(vector => vector.clone().setY(vector.y * -1)).reverse();
+					const bottomPoints = topPoints
+						.map(vector => vector.clone().setY(vector.y * -1))
+						.reverse();
 					const points = [...topPoints, ...bottomPoints];
 
 					return new THREE.LatheGeometry(points, 64);
@@ -620,9 +648,13 @@
 					const tweenGroup = new TWEEN.Group();
 					const scaleValue = isHover ? 1.1 : 1;
 					// 缩放
-					const scaleTween = new TWEEN.Tween(this.scale).to({ x: scaleValue, y: scaleValue, z: scaleValue }, 200).start();
+					const scaleTween = new TWEEN.Tween(this.scale)
+						.to({ x: scaleValue, y: scaleValue, z: scaleValue }, 200)
+						.start();
 					// 抬起/放下
-					const liftTween = new TWEEN.Tween(this.position).to({ y: this.offsetY + (isHover ? height / 2 : 0) }, 200).start();
+					const liftTween = new TWEEN.Tween(this.position)
+						.to({ y: this.offsetY + (isHover ? height / 2 : 0) }, 200)
+						.start();
 
 					tweenGroup.add(scaleTween, liftTween);
 					tweenGroup.update();
@@ -634,7 +666,11 @@
 					const angleRad = THREE.MathUtils.degToRad(15); // 倾斜角度（转为弧度）
 					const slantTween = new TWEEN.Tween(this.rotation).to({ x: angleRad }, 150);
 
-					return new TWEEN.Tween(this.position).to({ y: upDistence }, 200).easing(TWEEN.Easing.Quadratic.Out).chain(slantTween).start();
+					return new TWEEN.Tween(this.position)
+						.to({ y: upDistence }, 200)
+						.easing(TWEEN.Easing.Quadratic.Out)
+						.chain(slantTween)
+						.start();
 				}
 
 				#tweenPutIn(pillar) {
@@ -658,7 +694,9 @@
 						.easing(TWEEN.Easing.Quadratic.Out);
 
 					// 落地
-					const putdownTween = new TWEEN.Tween(this.position).to({ y: placementPosition.y }, 400).easing(TWEEN.Easing.Quadratic.Out);
+					const putdownTween = new TWEEN.Tween(this.position)
+						.to({ y: placementPosition.y }, 400)
+						.easing(TWEEN.Easing.Quadratic.Out);
 
 					// 缩放
 					const scaleTween = new TWEEN.Tween(this.scale).to({ x: 1, y: 1, z: 1 }, 200);
@@ -825,7 +863,11 @@
 					const hours = (ms / 3600) | 0;
 					const minutes = (ms / 60) % 60 | 0;
 					const seconds = ms % 60 | 0;
-					const timeStr = [hours ? `<b>${hours}</b>小时` : "", minutes ? `<b>${minutes}</b>分` : "", seconds ? `<b>${seconds}</b>秒` : ""].join("");
+					const timeStr = [
+						hours ? `<b>${hours}</b>小时` : "",
+						minutes ? `<b>${minutes}</b>分` : "",
+						seconds ? `<b>${seconds}</b>秒` : ""
+					].join("");
 
 					this.resultInfo.innerHTML = `
           <dt>难度</dt>
@@ -1006,7 +1048,9 @@
 					this.mouse.y = (-(clientY - top) / height) * 2 + 1;
 					this.raycaster.setFromCamera(this.mouse, cameraView.camera);
 
-					return this.raycaster.intersectObjects(model.scene.children).flatMap(({ object }) => (object.name ? [object] : []));
+					return this.raycaster
+						.intersectObjects(model.scene.children)
+						.flatMap(({ object }) => (object.name ? [object] : []));
 				},
 
 				handlePlateHover(plate) {

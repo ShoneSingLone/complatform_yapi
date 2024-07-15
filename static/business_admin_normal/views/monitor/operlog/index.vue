@@ -7,7 +7,10 @@
 					<xBtnArray :configs="oprBtnArray" />
 				</template>
 				<template #right>
-					<xAdvancedSearch mountTo="#AdvancedSearch" :collapse="isAdvancedSearchCollapse" @change="handleAdvancedSearchCollapse">
+					<xAdvancedSearch
+						mountTo="#AdvancedSearch"
+						:collapse="isAdvancedSearchCollapse"
+						@change="handleAdvancedSearchCollapse">
 						<xBlock class="mt">
 							<xForm>
 								<xItem :configs="formSearch.operIp" />
@@ -18,7 +21,9 @@
 								<xItem :configs="formSearch.dateRange" />
 								<div class="flex end width100" span="2">
 									<xBtn @click="resetSearchForm">重置</xBtn>
-									<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+									<xBtn preset="primary" @click="getTableData({ page: 1 })"
+										>查询</xBtn
+									>
 								</div>
 							</xForm>
 						</xBlock>
@@ -89,7 +94,10 @@ export default async function () {
 					status: _adminTools.search_form_configs_text({ label: i18n("状态") }),
 					dateRange: _adminTools.search_form_configs_text({ label: i18n("操作时间") }),
 					operlogKey: _adminTools.search_form_configs_text({ label: i18n("公告键名") }),
-					operlogType: _adminTools.search_form_configs_select({ label: i18n("系统内置"), options: dicts.sys_common_status })
+					operlogType: _adminTools.search_form_configs_select({
+						label: i18n("系统内置"),
+						options: dicts.sys_common_status
+					})
 				}),
 				configsTable: defTable({
 					isHideQuery: true,
@@ -109,11 +117,21 @@ export default async function () {
 						}),
 						{ label: i18n("日志编号"), prop: "operId" },
 						{ label: i18n("系统模块"), prop: "title" },
-						{ label: i18n("操作类型"), prop: "businessType", cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, dicts.sys_oper_type) },
+						{
+							label: i18n("操作类型"),
+							prop: "businessType",
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, dicts.sys_oper_type)
+						},
 						{ label: i18n("操作人员"), prop: "operName" },
 						{ label: i18n("操作地址"), prop: "operIp" },
 						{ label: i18n("操作地点"), prop: "operLocation" },
-						{ label: i18n("操作状态"), prop: "status", cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, dicts.sys_common_status) },
+						{
+							label: i18n("操作状态"),
+							prop: "status",
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, dicts.sys_common_status)
+						},
 						{ label: i18n("操作日期"), prop: "operTime" },
 						{ label: i18n("消耗时间"), prop: "costTime" }
 					]

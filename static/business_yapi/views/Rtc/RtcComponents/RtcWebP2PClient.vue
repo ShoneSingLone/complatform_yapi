@@ -23,7 +23,10 @@ export default async function () {
 				getLocalStream = type => {
 					return new Promise((pResolve, pReject) => {
 						//设置约束条件
-						var constraints = { audio: true, video: type === "video" ? { width: 1280, height: 720 } : false };
+						var constraints = {
+							audio: true,
+							video: type === "video" ? { width: 1280, height: 720 } : false
+						};
 						//屏幕类型
 						if (type == "screen") {
 							//调用getDisplayMedia接口获取桌面流
@@ -256,7 +259,10 @@ export default async function () {
 											pc.setLocalDescription(
 												desc,
 												() => {
-													console.log("setLocalDescription", pc.localDescription);
+													console.log(
+														"setLocalDescription",
+														pc.localDescription
+													);
 													//消息
 													let message = {
 														//应答消息类型
@@ -268,7 +274,10 @@ export default async function () {
 															//自己的Id
 															from: vm.userId,
 															//SDP信息
-															description: { sdp: desc.sdp, type: desc.type },
+															description: {
+																sdp: desc.sdp,
+																type: desc.type
+															},
 															//会话Id
 															sessionId: vm.sessionId,
 															//房间Id
@@ -302,7 +311,11 @@ export default async function () {
 					}
 					if (pc && data.description) {
 						//提议方设置远端描述信息SDP
-						pc.setRemoteDescription(new vm.RTCSessionDescription(data.description), () => {}, vm.logError);
+						pc.setRemoteDescription(
+							new vm.RTCSessionDescription(data.description),
+							() => {},
+							vm.logError
+						);
 					}
 				};
 				//接收到对方发过来的Candidate信息
@@ -403,11 +416,23 @@ export default async function () {
 			//本地媒体流
 			this.localStream;
 			//RTCPeerConnection兼容性处理
-			this.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection;
+			this.RTCPeerConnection =
+				window.RTCPeerConnection ||
+				window.mozRTCPeerConnection ||
+				window.webkitRTCPeerConnection ||
+				window.msRTCPeerConnection;
 			//RTCSessionDescription兼容性处理
-			this.RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription || window.msRTCSessionDescription;
+			this.RTCSessionDescription =
+				window.RTCSessionDescription ||
+				window.mozRTCSessionDescription ||
+				window.webkitRTCSessionDescription ||
+				window.msRTCSessionDescription;
 			//getUserMedia兼容性处理
-			navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia;
+			navigator.getUserMedia =
+				navigator.getUserMedia ||
+				navigator.mozGetUserMedia ||
+				navigator.webkitGetUserMedia ||
+				navigator.msGetUserMedia;
 			//ICE配置
 			this.configuration = { iceServers: [{ url: "stun:stun.l.google.com:19302" }] };
 			//访问TURN服务器
@@ -458,7 +483,13 @@ export default async function () {
 			this.socket.onmessage = e => {
 				//解析JSON消息
 				var parsedMessage = JSON.parse(e.data);
-				console.info("收到的消息: {\n type = " + parsedMessage.type + ", \n data = " + JSON.stringify(parsedMessage.data) + "\n}");
+				console.info(
+					"收到的消息: {\n type = " +
+						parsedMessage.type +
+						", \n data = " +
+						JSON.stringify(parsedMessage.data) +
+						"\n}"
+				);
 				//判断条件为消息类型
 				switch (parsedMessage.type) {
 					case "offer":

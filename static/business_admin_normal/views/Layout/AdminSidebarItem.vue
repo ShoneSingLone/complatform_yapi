@@ -35,7 +35,11 @@ export default async function () {
 				return this.APP.sidebar.isCollapse;
 			},
 			cptIsShowAsLink() {
-				return this.hasOneShowingChild(this.item.children, this.item) && (!this.onlyOneChild.children || this.onlyOneChild.noShowingChildren) && !this.item.alwaysShow;
+				return (
+					this.hasOneShowingChild(this.item.children, this.item) &&
+					(!this.onlyOneChild.children || this.onlyOneChild.noShowingChildren) &&
+					!this.item.alwaysShow
+				);
 			}
 		},
 		methods: {
@@ -124,7 +128,17 @@ export default async function () {
 				);
 			},
 			genAdminAppLink() {
-				const { item, onlyOneChild, resolvePath, _u, isNest, vMenuTitle, vIcon, level, cptIsCollapse } = this;
+				const {
+					item,
+					onlyOneChild,
+					resolvePath,
+					_u,
+					isNest,
+					vMenuTitle,
+					vIcon,
+					level,
+					cptIsCollapse
+				} = this;
 				return h(
 					"AdminAppLink",
 					{

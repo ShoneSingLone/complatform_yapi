@@ -51,7 +51,10 @@ export default async function () {
 			playOrPause() {
 				const vm = this;
 				return {
-					label: () => (vm.stateAudio.isPlaying ? h("xIcon", { icon: "_pausesong" }) : h("xIcon", { icon: "_playsong" })),
+					label: () =>
+						vm.stateAudio.isPlaying
+							? h("xIcon", { icon: "_pausesong" })
+							: h("xIcon", { icon: "_playsong" }),
 					onClick() {
 						vm.methodsMusicPlayer.togglePlayOrPause();
 					}

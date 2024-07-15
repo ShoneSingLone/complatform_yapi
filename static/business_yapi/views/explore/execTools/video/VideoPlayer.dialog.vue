@@ -1,6 +1,9 @@
 <template>
 	<xDialog>
-		<video :src="videoSrc" controls="true" style="max-width: 600px; width: 100%; margin: auto" />
+		<video
+			:src="videoSrc"
+			controls="true"
+			style="max-width: 600px; width: 100%; margin: auto" />
 	</xDialog>
 </template>
 <script lang="ts">
@@ -18,7 +21,9 @@ export default async function ({ uri, id }) {
 				return "";
 			},
 			videoSrc() {
-				return Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/video?uri=${uri}&id=${id}`);
+				return Vue._common_utils.appendToken(
+					`${window._URL_PREFIX_4_DEV || ""}/api/resource/video?uri=${uri}&id=${id}`
+				);
 			}
 		}
 	});

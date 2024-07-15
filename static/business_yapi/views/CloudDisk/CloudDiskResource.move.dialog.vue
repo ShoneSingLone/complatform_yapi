@@ -7,7 +7,12 @@
 	<xDialog class="CloudDiskResource-NewDir-dialog">
 		<xCard style="height: 100%; width: 100%">
 			<template #header> 选择目标文件夹: {{ currentNode.label }} </template>
-			<xTree :data="APP.dirTree" :props="props" :expandedKeys.sync="expandedKeys" ref="refDirTree" @node-click="nodeClick" />
+			<xTree
+				:data="APP.dirTree"
+				:props="props"
+				:expandedKeys.sync="expandedKeys"
+				ref="refDirTree"
+				@node-click="nodeClick" />
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />

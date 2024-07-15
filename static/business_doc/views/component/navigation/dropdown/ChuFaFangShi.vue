@@ -5,7 +5,9 @@
 			<xCol :span="12">
 				<span class="demonstration">hover 激活</span>
 				<xDropdown>
-					<span class="xDropdown-link"> 下拉菜单<i class="el-icon-arrow-down el-icon--right"></i> </span>
+					<span class="xDropdown-link">
+						下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
+					</span>
 					<xDropdownMenu slot="dropdown">
 						<xDropdownItem icon="el-icon-plus">黄金糕</xDropdownItem>
 						<xDropdownItem icon="el-icon-circle-plus">狮子头</xDropdownItem>
@@ -18,7 +20,9 @@
 			<xCol :span="12">
 				<span class="demonstration">click 激活</span>
 				<xDropdown trigger="click">
-					<span class="xDropdown-link"> 下拉菜单<i class="el-icon-arrow-down el-icon--right"></i> </span>
+					<span class="xDropdown-link">
+						下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
+					</span>
 					<xDropdownMenu slot="dropdown">
 						<xDropdownItem icon="el-icon-plus">黄金糕</xDropdownItem>
 						<xDropdownItem icon="el-icon-circle-plus">狮子头</xDropdownItem>

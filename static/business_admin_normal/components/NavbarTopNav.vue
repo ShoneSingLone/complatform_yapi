@@ -45,20 +45,35 @@
 }
 </style>
 <template>
-	<xMenu :default-active="cptActiveMenu" mode="horizontal" @select="handleSelect" :ellipsis="false">
+	<xMenu
+		:default-active="cptActiveMenu"
+		mode="horizontal"
+		@select="handleSelect"
+		:ellipsis="false">
 		<template v-for="(item, index) in cptTopMenus">
-			<xMenuItem :style="{ '--theme': cptTheme }" :index="item.path" :key="index" v-if="index < visibleNumber">
-				<xIcon v-if="item.meta && item.meta.icon && item.meta.icon !== '#'" :icon="item.meta.icon" />
+			<xMenuItem
+				:style="{ '--theme': cptTheme }"
+				:index="item.path"
+				:key="index"
+				v-if="index < visibleNumber">
+				<xIcon
+					v-if="item.meta && item.meta.icon && item.meta.icon !== '#'"
+					:icon="item.meta.icon" />
 				{{ item.meta.title }}
 			</xMenuItem>
 		</template>
 
 		<!-- 顶部菜单超出数量折叠 -->
-		<xSubMenu :style="{ '--theme': cptTheme }" index="more" v-if="cptTopMenus.length > visibleNumber">
+		<xSubMenu
+			:style="{ '--theme': cptTheme }"
+			index="more"
+			v-if="cptTopMenus.length > visibleNumber">
 			<template #title>更多菜单</template>
 			<template v-for="(item, index) in cptTopMenus">
 				<xMenuItem :index="item.path" :key="index" v-if="index >= visibleNumber">
-					<xIcon v-if="item.meta && item.meta.icon && item.meta.icon !== '#'" :icon="item.meta.icon" />
+					<xIcon
+						v-if="item.meta && item.meta.icon && item.meta.icon !== '#'"
+						:icon="item.meta.icon" />
 					{{ item.meta.title }}
 				</xMenuItem>
 			</template>
@@ -89,7 +104,11 @@ export default async function () {
 			cptActiveMenu() {
 				const path = this.$route.path;
 				let activePath = path;
-				if (path !== undefined && path.lastIndexOf("/") > 0 && this.hideList.indexOf(path) === -1) {
+				if (
+					path !== undefined &&
+					path.lastIndexOf("/") > 0 &&
+					this.hideList.indexOf(path) === -1
+				) {
 					const tmpPath = path.substring(1, path.length);
 					activePath = "/" + tmpPath.substring(0, tmpPath.indexOf("/"));
 					if (!this.$route.meta.link) {
@@ -128,7 +147,8 @@ export default async function () {
 								router.children[item].path = "/" + router.children[item].path;
 							} else {
 								if (!isHttp(router.children[item].path)) {
-									router.children[item].path = router.path + "/" + router.children[item].path;
+									router.children[item].path =
+										router.path + "/" + router.children[item].path;
 								}
 							}
 							router.children[item].parentPath = router.path;

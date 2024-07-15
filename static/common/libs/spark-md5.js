@@ -175,7 +175,11 @@
 			i; /* Andy King said do it this way. */
 
 		for (i = 0; i < 64; i += 4) {
-			md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
+			md5blks[i >> 2] =
+				s.charCodeAt(i) +
+				(s.charCodeAt(i + 1) << 8) +
+				(s.charCodeAt(i + 2) << 16) +
+				(s.charCodeAt(i + 3) << 24);
 		}
 		return md5blks;
 	}
@@ -632,7 +636,8 @@
 			md5cycle(this._hash, md5blk_array(buff.subarray(i - 64, i)));
 		}
 
-		this._buff = i - 64 < length ? new Uint8Array(buff.buffer.slice(i - 64)) : new Uint8Array(0);
+		this._buff =
+			i - 64 < length ? new Uint8Array(buff.buffer.slice(i - 64)) : new Uint8Array(0);
 
 		return this;
 	};

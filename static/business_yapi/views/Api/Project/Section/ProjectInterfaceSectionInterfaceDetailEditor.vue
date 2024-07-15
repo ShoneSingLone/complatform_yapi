@@ -14,7 +14,11 @@
 				<xItem :configs="form.isProxy" v-model="formData.isProxy" />
 				<xItem :configs="form.witchEnv" v-model="formData.witchEnv" />
 				<xItem :configs="form.res_body_type" v-model="formData.res_body_type" span="full" />
-				<xItem :configs="form.resBackupJson" v-model="formData.resBackupJson" span="full" style="--YapiItemMonaco-height: 300px" />
+				<xItem
+					:configs="form.resBackupJson"
+					v-model="formData.resBackupJson"
+					span="full"
+					style="--YapiItemMonaco-height: 300px" />
 			</xForm>
 		</xBlock>
 		<xGap t />
@@ -94,7 +98,9 @@ export default async function () {
 									let queue = [];
 									let insertParams = name => {
 										if (!name) return;
-										let findExist = _.find(vm.formData.req_params, { name: name });
+										let findExist = _.find(vm.formData.req_params, {
+											name: name
+										});
 										if (findExist) {
 											queue.push(findExist);
 										} else {

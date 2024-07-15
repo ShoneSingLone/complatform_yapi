@@ -53,15 +53,42 @@
 }
 </style>
 <template>
-	<div class="sidebar-logo-container" :class="{ collapse: collapse }" :style="{ backgroundColor: cptSideTheme === 'theme-dark' ? '--base-menu-background' : '--base-menu-light-background' }">
+	<div
+		class="sidebar-logo-container"
+		:class="{ collapse: collapse }"
+		:style="{
+			backgroundColor:
+				cptSideTheme === 'theme-dark'
+					? '--base-menu-background'
+					: '--base-menu-light-background'
+		}">
 		<transition name="sidebarLogoFade">
 			<RouterLink v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
 				<xIcon v-if="cptLogo" :img="cptLogo" class="sidebar-logo" />
-				<h1 v-else class="sidebar-title" :style="{ color: cptSideTheme === 'theme-dark' ? '--base-logo-title-color' : '--base-logo-light-title-color' }">{{ cptTitle }}</h1>
+				<h1
+					v-else
+					class="sidebar-title"
+					:style="{
+						color:
+							cptSideTheme === 'theme-dark'
+								? '--base-logo-title-color'
+								: '--base-logo-light-title-color'
+					}">
+					{{ cptTitle }}
+				</h1>
 			</RouterLink>
 			<RouterLink v-else key="expand" class="sidebar-logo-link" to="/">
 				<xIcon v-if="cptLogo" :img="cptLogo" class="sidebar-logo" />
-				<h1 class="sidebar-title" :style="{ color: cptSideTheme === 'theme-dark' ? '--base-logo-title-color' : '--base-cptLogo-light-title-color' }">{{ cptTitle }}</h1>
+				<h1
+					class="sidebar-title"
+					:style="{
+						color:
+							cptSideTheme === 'theme-dark'
+								? '--base-logo-title-color'
+								: '--base-cptLogo-light-title-color'
+					}">
+					{{ cptTitle }}
+				</h1>
 			</RouterLink>
 		</transition>
 	</div>

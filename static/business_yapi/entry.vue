@@ -244,7 +244,9 @@ export default async function () {
 				this.groupProjectList = groupProjectList;
 			},
 			async updateGroupMemberList() {
-				const { data: groupMemberList } = await _api.yapi.groupGetMemberListBy(this.cptGroupId);
+				const { data: groupMemberList } = await _api.yapi.groupGetMemberListBy(
+					this.cptGroupId
+				);
 				this.groupMemberList = groupMemberList;
 			}
 		},
@@ -270,7 +272,9 @@ export default async function () {
 			},
 			cptProject() {
 				if (this.cptProjectId && this.groupProjectList?.length) {
-					const projectItem = _.find(this.groupProjectList, { _id: Number(this.cptProjectId) });
+					const projectItem = _.find(this.groupProjectList, {
+						_id: Number(this.cptProjectId)
+					});
 					return projectItem;
 				}
 				return false;

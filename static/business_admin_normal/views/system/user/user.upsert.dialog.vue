@@ -81,7 +81,13 @@ export default async function ({ row, onClick }) {
 						isPwd: true,
 						isHide: isUpdate
 					},
-					sex: { value: "", label: "用户性别", itemType: "xItemRadioGroup", isButton: true, options: sys_user_sex },
+					sex: {
+						value: "",
+						label: "用户性别",
+						itemType: "xItemRadioGroup",
+						isButton: true,
+						options: sys_user_sex
+					},
 					status: {
 						value: "",
 						label: "状态",

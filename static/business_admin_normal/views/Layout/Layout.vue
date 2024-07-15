@@ -43,7 +43,10 @@
 </style>
 <template>
 	<div :class="cptWrapperClass" :style="cptWrapperStyle">
-		<div v-if="APP.isMobile && cptSidebar.isCollapse" class="drawer-bg" @click="handleClickOutside" />
+		<div
+			v-if="APP.isMobile && cptSidebar.isCollapse"
+			class="drawer-bg"
+			@click="handleClickOutside" />
 		<Sidebar v-if="!cptSidebar.hide" />
 		<div :class="cptMainContainerClass">
 			<div :class="cptFixedHeaderClass">

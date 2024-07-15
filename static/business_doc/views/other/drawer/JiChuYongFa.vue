@@ -10,7 +10,11 @@
 
 		<xBtn @click="drawer = true" preset="primary" style="margin-left: 16px"> 点我打开 </xBtn>
 
-		<xDrawer title="我是标题" :visible.sync="drawer" :direction="direction" :before-close="handleClose">
+		<xDrawer
+			title="我是标题"
+			:visible.sync="drawer"
+			:direction="direction"
+			:before-close="handleClose">
 			<span>我来啦!</span>
 		</xDrawer>
 	</div>

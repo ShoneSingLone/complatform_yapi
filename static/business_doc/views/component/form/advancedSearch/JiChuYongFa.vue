@@ -16,7 +16,11 @@ export default async function () {
 	const { THIS_FILE_URL } = this;
 	return defineComponent({
 		data() {
-			return { md: "- 通过ID选择器，可以挂载到任意元素 ", isCollapse: true, isCollapse2: true };
+			return {
+				md: "- 通过ID选择器，可以挂载到任意元素 ",
+				isCollapse: true,
+				isCollapse2: true
+			};
 		}
 	});
 }

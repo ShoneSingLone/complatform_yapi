@@ -13,7 +13,10 @@ export default async function () {
 		async mounted() {
 			const vm = this;
 			const container = this.$refs.refMonacoContainer;
-			const require = await _.$appendScript("//repo.bfw.wiki/bfwrepo/js/monaco-editor/loader.js", "require");
+			const require = await _.$appendScript(
+				"//repo.bfw.wiki/bfwrepo/js/monaco-editor/loader.js",
+				"require"
+			);
 			require.config({ paths: { vs: "//repo.bfw.wiki/bfwrepo/js/monaco-editor" } });
 			require(["vs/editor/editor.main"], function () {
 				const { monaco } = window;

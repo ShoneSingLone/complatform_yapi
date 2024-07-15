@@ -1,6 +1,9 @@
 <script lang="ts">
 export default async function () {
-	const { Editor: TuiEditor } = await _.$appendScript("/common/libs/toastui-editor-all.js", "toastui");
+	const { Editor: TuiEditor } = await _.$appendScript(
+		"/common/libs/toastui-editor-all.js",
+		"toastui"
+	);
 	const { PreprocessHTML } = await _.$importVue("@/components/TuiEditor/MkitTheme.vue");
 	return defineComponent({
 		props: ["value", "asRender"],
@@ -146,7 +149,9 @@ export default async function () {
 						const src = (() => {
 							const [_, id] = String(destination).match(/^_id:(\d+)/) || [];
 							if (id) {
-								return Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${id}`);
+								return Vue._common_utils.appendToken(
+									`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${id}`
+								);
 							} else {
 								return destination;
 							}
@@ -242,13 +247,18 @@ export default async function () {
 			const vm = this;
 			const viewerProps = {
 				onClick: vm.handleClick,
-				class: { "toastui-editor-contents flex1 border-radius box-shadow": true, "display-none": !vm.readonly },
+				class: {
+					"toastui-editor-contents flex1 border-radius box-shadow": true,
+					"display-none": !vm.readonly
+				},
 				style: "position:relative;height:100%;width:100%;z-index:1;padding:var(--note-normal-padding,var(--ui-one));"
 			};
 
 			return h("div", { class: "flex1-overflow-auto" }, [
 				/*viewer html*/
-				h("div", viewerProps, [h("div", { ref: "refViewer", staticClass: "toastui-viewer-contents" })]),
+				h("div", viewerProps, [
+					h("div", { ref: "refViewer", staticClass: "toastui-viewer-contents" })
+				]),
 				/*tuiEdior*/
 				h("div", {
 					id: vm._uid,

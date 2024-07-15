@@ -1,5 +1,5 @@
 <style lang="less">
-.resource-wrapper {
+.CloudDiskResourceAudioItem {
 	background-color: white;
 	width: 100%;
 
@@ -35,7 +35,7 @@
 </style>
 <template>
 	<div
-		class="resource-wrapper flex middle"
+		class="CloudDiskResourceAudioItem flex middle"
 		v-ripple="{ color: 'var(--el-color-primary)', duration: 300, delay: 300 }">
 		<div class="resource-icon flex middle center" @click="preview">
 			<xIcon :icon="cptIcon" />
@@ -48,18 +48,19 @@
 				<div class="resource-update-date" v-if="!cptIsDir">{{ cptSize }}</div>
 			</div>
 		</div>
-		<div class="resource-opr mr pointer" @click="toggle">
+		<!-- <div class="resource-opr mr pointer" @click="toggle">
 			<xIcon
 				icon="_cloud_select_resource"
 				style="color: var(--el-color-primary)"
 				v-if="checked" />
 			<xIcon icon="_cloud_unselect_resource" style="color: var(--el-border-color)" v-else />
-		</div>
+		</div> -->
 	</div>
 </template>
 <script lang="ts">
 export default async function () {
 	return defineComponent({
+		inject: ["APP"],
 		props: ["item", "checked"],
 		data() {
 			return {};
@@ -92,7 +93,7 @@ export default async function () {
 		},
 		methods: {
 			preview() {
-				this.$emit("preview", this.item);
+				this.APP.playAudio(this.item);
 			},
 			toggle() {
 				this.$emit("toggle", this.item);

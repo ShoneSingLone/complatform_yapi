@@ -77,19 +77,33 @@
 						<blockquote class="text-warning" style="font-size: 14px">
 							领取阿里云通用云产品1888优惠券
 							<br />
-							<a href="https://www.aliyun.com/minisite/goods?userCode=brki8iof" preset="primary" target="_blank">https://www.aliyun.com/minisite/goods?userCode=brki8iof</a>
+							<a
+								href="https://www.aliyun.com/minisite/goods?userCode=brki8iof"
+								preset="primary"
+								target="_blank"
+								>https://www.aliyun.com/minisite/goods?userCode=brki8iof</a
+							>
 							<br />
 							领取腾讯云通用云产品2860优惠券
 							<br />
-							<a href="https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console" type="primary" target="_blank"
+							<a
+								href="https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console"
+								type="primary"
+								target="_blank"
 								>https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console</a
 							>
 							<br />
 							阿里云服务器折扣区
-							<a href="http://aly.ruoyi.vip" type="primary" target="_blank">>☛☛点我进入☚☚</a>
+							<a href="http://aly.ruoyi.vip" type="primary" target="_blank"
+								>>☛☛点我进入☚☚</a
+							>
 							&nbsp;&nbsp;&nbsp; 腾讯云服务器秒杀区
-							<a href="http://txy.ruoyi.vip" type="primary" target="_blank">>☛☛点我进入☚☚</a><br />
-							<h4 class="text-danger">云产品通用红包，可叠加官网常规优惠使用。(仅限新用户)</h4>
+							<a href="http://txy.ruoyi.vip" type="primary" target="_blank"
+								>>☛☛点我进入☚☚</a
+							><br />
+							<h4 class="text-danger">
+								云产品通用红包，可叠加官网常规优惠使用。(仅限新用户)
+							</h4>
 						</blockquote>
 
 						<hr />
@@ -108,8 +122,21 @@
 							<xTag type="danger">&yen;免费开源</xTag>
 						</p>
 						<p>
-							<xBtn preset="primary" size="mini" icon="el-icon-cloudy" plain @click="goTarget('https://gitee.com/y_project/RuoYi-Vue')">访问码云</xBtn>
-							<xBtn size="mini" icon="el-icon-s-home" plain @click="goTarget('http://ruoyi.vip')">访问主页</xBtn>
+							<xBtn
+								preset="primary"
+								size="mini"
+								icon="el-icon-cloudy"
+								plain
+								@click="goTarget('https://gitee.com/y_project/RuoYi-Vue')"
+								>访问码云</xBtn
+							>
+							<xBtn
+								size="mini"
+								icon="el-icon-s-home"
+								plain
+								@click="goTarget('http://ruoyi.vip')"
+								>访问主页</xBtn
+							>
 						</p>
 					</xCol>
 
@@ -155,19 +182,41 @@
 								<span>联系信息</span>
 							</div>
 							<div class="body">
-								<p><i class="el-icon-s-promotion"></i> 官网：<a href="http://www.ruoyi.vip" target="_blank">http://www.ruoyi.vip</a></p>
 								<p>
-									<i class="el-icon-user-solid"></i> QQ群：<s> 满937441 </s> <s> 满887144332 </s> <s> 满180251782 </s> <s> 满104180207 </s> <s> 满186866453 </s> <s> 满201396349 </s>
-									<s> 满101456076 </s> <s> 满101539465 </s> <s> 满264312783 </s> <s> 满167385320 </s> <s> 满104748341 </s> <s> 满160110482 </s> <s> 满170801498 </s>
-									<s> 满108482800 </s> <s> 满101046199 </s> <s> 满136919097 </s> <s> 满143961921 </s> <s> 满174951577 </s> <s> 满161281055 </s> <s> 满138988063 </s>
+									<i class="el-icon-s-promotion"></i> 官网：<a
+										href="http://www.ruoyi.vip"
+										target="_blank"
+										>http://www.ruoyi.vip</a
+									>
+								</p>
+								<p>
+									<i class="el-icon-user-solid"></i> QQ群：<s> 满937441 </s>
+									<s> 满887144332 </s> <s> 满180251782 </s> <s> 满104180207 </s>
+									<s> 满186866453 </s> <s> 满201396349 </s> <s> 满101456076 </s>
+									<s> 满101539465 </s> <s> 满264312783 </s> <s> 满167385320 </s>
+									<s> 满104748341 </s> <s> 满160110482 </s> <s> 满170801498 </s>
+									<s> 满108482800 </s> <s> 满101046199 </s> <s> 满136919097 </s>
+									<s> 满143961921 </s> <s> 满174951577 </s> <s> 满161281055 </s>
+									<s> 满138988063 </s>
 									<a
 										href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=SUc-msaypcqB2UTFif4eqGlBHkKcvMNP&authKey=JdQBouY2PG%2BS%2BCzAfIgbCGNgxyahpfh24IW%2F03rPxGilhqVbisLma%2FFFnt79DHNh&noverify=0&grouphode=151450850"
 										target="_blank"
 										>151450850</a
 									>
 								</p>
-								<p><i class="el-icon-chat-dot-round"></i> 微信：<a href="javascript:;">/ *若依</a></p>
-								<p><i class="el-icon-money"></i> 支付宝：<a href="javascript:;" class="支付宝信息">/ *若依</a></p>
+								<p>
+									<i class="el-icon-chat-dot-round"></i> 微信：<a
+										href="javascript:;"
+										>/ *若依</a
+									>
+								</p>
+								<p>
+									<i class="el-icon-money"></i> 支付宝：<a
+										href="javascript:;"
+										class="支付宝信息"
+										>/ *若依</a
+									>
+								</p>
 							</div>
 						</xCard>
 					</xCol>
@@ -254,7 +303,9 @@
 										<li>优化用户导入更新时需获取用户编号问题</li>
 										<li>优化侧边栏的平台标题与VUE_APP_TITLE保持同步</li>
 										<li>优化导出Excel时设置dictType属性重复查缓存问题</li>
-										<li>连接池Druid支持新的配置connectTimeout和socketTimeout</li>
+										<li>
+											连接池Druid支持新的配置connectTimeout和socketTimeout
+										</li>
 										<li>其他细节优化</li>
 									</ol>
 								</xCollapse-item>
@@ -292,7 +343,9 @@
 										<li>修复table中更多按钮切换主题色未生效修复问题</li>
 										<li>修复某些特性的环境生成代码变乱码TXT文件问题</li>
 										<li>修复代码生成图片/文件/单选时选择必填无法校验问题</li>
-										<li>修复某些特性的情况用户编辑对话框中角色和部门无法修改问题</li>
+										<li>
+											修复某些特性的情况用户编辑对话框中角色和部门无法修改问题
+										</li>
 										<li>其他细节优化</li>
 									</ol>
 								</xCollapse-item>
@@ -353,7 +406,9 @@
 										<li>新增获取不带后缀文件名称方法</li>
 										<li>新增获取配置文件中的属性值方法</li>
 										<li>新增内容编码/解码方便插件集成使用</li>
-										<li>字典类型必须以字母开头，且只能为（小写字母，数字，下滑线）</li>
+										<li>
+											字典类型必须以字母开头，且只能为（小写字母，数字，下滑线）
+										</li>
 										<li>优化设置分页参数默认值</li>
 										<li>优化对空字符串参数处理的过滤</li>
 										<li>优化显示顺序orderNum类型为整型</li>
@@ -499,7 +554,9 @@
 										<li>修复字符串无法被反转义问题</li>
 										<li>修复后端主子表代码模板方法名生成错误问题</li>
 										<li>修复xss过滤后格式出现的异常</li>
-										<li>修复swagger没有指定dataTypeClass导致启动出现warn日志</li>
+										<li>
+											修复swagger没有指定dataTypeClass导致启动出现warn日志
+										</li>
 										<li>其他细节优化</li>
 									</ol>
 								</xCollapse-item>
@@ -556,9 +613,15 @@
 										<li>验证码默认20s超时</li>
 										<li>BLOB下载时清除URL对象引用</li>
 										<li>代码生成导入表按创建时间排序</li>
-										<li>修复代码生成页面数据编辑保存之后总是跳转第一页的问题</li>
-										<li>修复带safari浏览器无法格式化utc日期格式yyyy-MM-dd'T'HH:mm:ss.SSS问题</li>
-										<li>多图上传组件移除多余的api地址&验证失败导致图片删除问题&无法删除相应图片修复</li>
+										<li>
+											修复代码生成页面数据编辑保存之后总是跳转第一页的问题
+										</li>
+										<li>
+											修复带safari浏览器无法格式化utc日期格式yyyy-MM-dd'T'HH:mm:ss.SSS问题
+										</li>
+										<li>
+											多图上传组件移除多余的api地址&验证失败导致图片删除问题&无法删除相应图片修复
+										</li>
 										<li>其他细节优化</li>
 									</ol>
 								</xCollapse-item>
@@ -603,7 +666,9 @@
 								</xCollapse-item>
 								<xCollapse-item title="v3.5.0 - 2021-05-25">
 									<ol>
-										<li>新增菜单导航显示风格TopNav（false为左侧导航菜单，true为顶部导航菜单）</li>
+										<li>
+											新增菜单导航显示风格TopNav（false为左侧导航菜单，true为顶部导航菜单）
+										</li>
 										<li>布局设置支持保存&重置配置</li>
 										<li>修复树表数据显示不全&加载慢问题</li>
 										<li>新增IE浏览器版本过低提示页面</li>
@@ -622,7 +687,9 @@
 										<li>升级druid到最新版本v1.2.6</li>
 										<li>升级mybatis到最新版3.5.6 阻止远程代码执行漏洞</li>
 										<li>升级oshi到最新版本v5.6.0</li>
-										<li>velocity剔除commons-collections版本，防止3.2.1版本的反序列化漏洞</li>
+										<li>
+											velocity剔除commons-collections版本，防止3.2.1版本的反序列化漏洞
+										</li>
 										<li>数据监控页默认账户密码防止越权访问</li>
 										<li>修复firefox下表单构建拖拽会新打卡一个选项卡</li>
 										<li>修正后端导入表权限标识</li>
@@ -668,7 +735,9 @@
 										<li>移除path-to-regexp正则匹配插件</li>
 										<li>修复生成树表代码异常</li>
 										<li>修改ip字段长度防止ipv6地址长度不够</li>
-										<li>防止get请求参数值为false或0等特殊值会导致无法正确的传参</li>
+										<li>
+											防止get请求参数值为false或0等特殊值会导致无法正确的传参
+										</li>
 										<li>登录后push添加catch防止出现检查错误</li>
 										<li>其他细节优化</li>
 									</ol>
@@ -827,7 +896,9 @@
 										<li>创建用户不允许选择超级管理员角色</li>
 										<li>修复代码生成导入表结构出现异常页面不提醒问题</li>
 										<li>修复代码生成点击多次表修改数据不变化的问题</li>
-										<li>修复头像上传成功二次打开无法改变裁剪框大小和位置问题</li>
+										<li>
+											修复头像上传成功二次打开无法改变裁剪框大小和位置问题
+										</li>
 										<li>修复布局为small者mini用户表单显示错位问题</li>
 										<li>修复热部署导致的强换异常问题</li>
 										<li>修改用户管理复选框宽度，防止部分浏览器出现省略号</li>
@@ -837,7 +908,9 @@
 										<li>调整表头固定列默认样式</li>
 										<li>代码生成模板调整，字段为String并且必填则加空串条件</li>
 										<li>代码生成字典Integer/Long使用parseInt</li>
-										<li>修复dict_sort不可update为0的问题&查询返回增加dict_sort升序排序</li>
+										<li>
+											修复dict_sort不可update为0的问题&查询返回增加dict_sort升序排序
+										</li>
 										<li>修正岗位导出权限注解</li>
 										<li>禁止加密密文返回前端</li>
 										<li>修复代码生成页面中的查询条件创建时间未生效的问题</li>
@@ -998,7 +1071,9 @@
 							</div>
 							<div class="body">
 								<img src="@/assets/images/pay.png" alt="donate" width="100%" />
-								<span style="display: inline-block; height: 30px; line-height: 30px">你可以请作者喝杯咖啡表示鼓励</span>
+								<span style="display: inline-block; height: 30px; line-height: 30px"
+									>你可以请作者喝杯咖啡表示鼓励</span
+								>
 							</div>
 						</xCard>
 					</xCol>

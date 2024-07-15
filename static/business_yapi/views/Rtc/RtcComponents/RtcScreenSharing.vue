@@ -6,7 +6,14 @@
 				<span>共享屏幕示例</span>
 			</h1>
 			<div class="width100">
-				<video id="RtcScreenSharing" class="video" ref="myVideo" autoPlay playsInline controls style="max-height: 500px; max-width: 500px; margin: auto"></video>
+				<video
+					id="RtcScreenSharing"
+					class="video"
+					ref="myVideo"
+					autoPlay
+					playsInline
+					controls
+					style="max-height: 500px; max-width: 500px; margin: auto"></video>
 			</div>
 			<xBtn @click="startScreenShare">开始共享</xBtn>
 		</div>

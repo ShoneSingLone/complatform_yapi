@@ -2,7 +2,9 @@
 export default async function () {
 	const ComponentPageRouterView = {
 		render(h) {
-			return h("div", { class: "x-page-view Demo-view" }, [h("xPageContent", [h("router-view")])]);
+			return h("div", { class: "x-page-view Demo-view" }, [
+				h("xPageContent", [h("router-view")])
+			]);
 		}
 	};
 	const ComponentRouterView = {
@@ -16,7 +18,10 @@ export default async function () {
 			children: [_.$newRoute("/demo/config", "@/views/demo/demo/configList.vue")]
 		}),
 		_.$newRoute("/guide", ComponentPageRouterView, {
-			children: [_.$newRoute("/guide/i18n", "@/views/guide/guide/ViewI18n.vue"), _.$newRoute("/guide/class", "@/views/common/css/ClassName.vue")]
+			children: [
+				_.$newRoute("/guide/i18n", "@/views/guide/guide/ViewI18n.vue"),
+				_.$newRoute("/guide/class", "@/views/common/css/ClassName.vue")
+			]
 		}),
 		_.$newRoute("/all-project", "@/views/ViewAllProject.vue"),
 		/* 指令 */
@@ -27,9 +32,18 @@ export default async function () {
 		_.$newRoute("/x-component", ComponentPageRouterView, {
 			children: [
 				_.$newRoute("/x-component/x-item", "@/views/xComponent/DemoxItem/DemoxItem.vue"),
-				_.$newRoute("/x-component/x-item-check", "@/views/xComponent/DemoxItemCheck/DemoxItemCheck.vue"),
-				_.$newRoute("/x-component/x-item-cidr", "@/views/xComponent/DemoxItemCidr/DemoxItemCidr.vue"),
-				_.$newRoute("/x-component/x-item-checkbox-group", "@/views/xComponent/DemoxItemCheckboxGroup.vue"),
+				_.$newRoute(
+					"/x-component/x-item-check",
+					"@/views/xComponent/DemoxItemCheck/DemoxItemCheck.vue"
+				),
+				_.$newRoute(
+					"/x-component/x-item-cidr",
+					"@/views/xComponent/DemoxItemCidr/DemoxItemCidr.vue"
+				),
+				_.$newRoute(
+					"/x-component/x-item-checkbox-group",
+					"@/views/xComponent/DemoxItemCheckboxGroup.vue"
+				),
 				_.$newRoute("/x-component/x-form", "@/views/xComponent/DemoxForm/DemoxForm.vue")
 			]
 		}),
@@ -37,48 +51,132 @@ export default async function () {
 		_.$newRoute("/component", ComponentPageRouterView, {
 			children: [
 				_.$newRoute("/component/base", ComponentRouterView, {
-					children: [_.$newRoute("/component/base/button", "@/views/base/button/button.vue"), _.$newRoute("/component/base/layout", "@/views/component/base/layout/layout.vue")]
+					children: [
+						_.$newRoute("/component/base/button", "@/views/base/button/button.vue"),
+						_.$newRoute(
+							"/component/base/layout",
+							"@/views/component/base/layout/layout.vue"
+						)
+					]
 				}),
 				_.$newRoute("/component/form", ComponentRouterView, {
 					children: [
-						_.$newRoute("/component/form/advanced-search", "@/views/component/form/advancedSearch/DemoAdvancedSearch.vue"),
-						_.$newRoute("/component/form/input", "@/views/component/form/input/input.vue"),
-						_.$newRoute("/component/form/input-number", "@/views/component/form/inputNumber/inputNumber.vue"),
-						_.$newRoute("/component/form/radio", "@/views/component/form/radio/radio.vue"),
-						_.$newRoute("/component/form/checkbox", "@/views/component/form/checkbox/checkbox.vue"),
-						_.$newRoute("/component/form/switch", "@/views/component/form/switch/switch.vue"),
-						_.$newRoute("/component/form/slider", "@/views/component/form/slider/DemoSlider.vue"),
-						_.$newRoute("/component/form/select", "@/views/component/form/select/select.vue"),
-						_.$newRoute("/component/form/cascader", "@/views/component/form/cascader/DemoCascader.vue"),
-						_.$newRoute("/component/form/time-picker", "@/views/component/form/TimePicker/DemoTimePicker.vue"),
-						_.$newRoute("/component/form/date-picker", "@/views/component/form/DatePicker/DemoDatePicker.vue"),
-						_.$newRoute("/component/form/date-time-picker", "@/views/component/form/DateTimePicker/DemoDateTimePicker.vue"),
-						_.$newRoute("/component/form/ip-address", "@/views/component/form/ipAddress/DemoIpAddress.vue")
+						_.$newRoute(
+							"/component/form/advanced-search",
+							"@/views/component/form/advancedSearch/DemoAdvancedSearch.vue"
+						),
+						_.$newRoute(
+							"/component/form/input",
+							"@/views/component/form/input/input.vue"
+						),
+						_.$newRoute(
+							"/component/form/input-number",
+							"@/views/component/form/inputNumber/inputNumber.vue"
+						),
+						_.$newRoute(
+							"/component/form/radio",
+							"@/views/component/form/radio/radio.vue"
+						),
+						_.$newRoute(
+							"/component/form/checkbox",
+							"@/views/component/form/checkbox/checkbox.vue"
+						),
+						_.$newRoute(
+							"/component/form/switch",
+							"@/views/component/form/switch/switch.vue"
+						),
+						_.$newRoute(
+							"/component/form/slider",
+							"@/views/component/form/slider/DemoSlider.vue"
+						),
+						_.$newRoute(
+							"/component/form/select",
+							"@/views/component/form/select/select.vue"
+						),
+						_.$newRoute(
+							"/component/form/cascader",
+							"@/views/component/form/cascader/DemoCascader.vue"
+						),
+						_.$newRoute(
+							"/component/form/time-picker",
+							"@/views/component/form/TimePicker/DemoTimePicker.vue"
+						),
+						_.$newRoute(
+							"/component/form/date-picker",
+							"@/views/component/form/DatePicker/DemoDatePicker.vue"
+						),
+						_.$newRoute(
+							"/component/form/date-time-picker",
+							"@/views/component/form/DateTimePicker/DemoDateTimePicker.vue"
+						),
+						_.$newRoute(
+							"/component/form/ip-address",
+							"@/views/component/form/ipAddress/DemoIpAddress.vue"
+						)
 					]
 				}),
 				_.$newRoute("/component/data", ComponentRouterView, {
 					children: [
 						_.$newRoute("/component/data/icon", "@/views/component/data/icon/icon.vue"),
-						_.$newRoute("/component/data/avatar", "@/views/component/data/avatar/DemoAvatar.vue"),
-						_.$newRoute("/component/data/image", "@/views/component/data/image/image.vue"),
+						_.$newRoute(
+							"/component/data/avatar",
+							"@/views/component/data/avatar/DemoAvatar.vue"
+						),
+						_.$newRoute(
+							"/component/data/image",
+							"@/views/component/data/image/image.vue"
+						),
 						_.$newRoute("/component/data/card", "@/views/component/data/card/card.vue"),
 						_.$newRoute("/component/data/tag", "@/views/component/data/tag/tag.vue"),
-						_.$newRoute("/component/data/tree", "@/views/component/data/tree/DemoTree.vue"),
-						_.$newRoute("/component/data/descriptions", "@/views/component/data/descriptions/DemoDescriptions.vue"),
-						_.$newRoute("/component/data/virtualized-table", "@/views/component/data/virtualizedTable/virtualizedTable.vue"),
-						_.$newRoute("/component/data/pagination", "@/views/component/data/pagination/pagination.vue"),
-						_.$newRoute("/component/data/excalidraw", "@/views/component/data/xExcalidraw/DemoExcalidraw.vue")
+						_.$newRoute(
+							"/component/data/tree",
+							"@/views/component/data/tree/DemoTree.vue"
+						),
+						_.$newRoute(
+							"/component/data/descriptions",
+							"@/views/component/data/descriptions/DemoDescriptions.vue"
+						),
+						_.$newRoute(
+							"/component/data/virtualized-table",
+							"@/views/component/data/virtualizedTable/virtualizedTable.vue"
+						),
+						_.$newRoute(
+							"/component/data/pagination",
+							"@/views/component/data/pagination/pagination.vue"
+						),
+						_.$newRoute(
+							"/component/data/excalidraw",
+							"@/views/component/data/xExcalidraw/DemoExcalidraw.vue"
+						)
 					]
 				}),
 				/* Navigation */
 				_.$newRoute("/component/navigation", ComponentRouterView, {
 					children: [
-						_.$newRoute("/component/navigation/menu", "@/views/component/navigation/menu/DemoMenu.vue"),
-						_.$newRoute("/component/navigation/tabs", "@/views/component/navigation/tabs/tabs.vue"),
-						_.$newRoute("/component/navigation/step", "@/views/component/navigation/step/demo_step.vue"),
-						_.$newRoute("/component/navigation/dropdown", "@/views/component/navigation/dropdown/dropdown.vue"),
-						_.$newRoute("/component/navigation/breadcrumb", "@/views/component/navigation/breadcrumb/breadcrumb.vue"),
-						_.$newRoute("/component/navigation/pageheader", "@/views/component/navigation/pageheader/pageheader.vue")
+						_.$newRoute(
+							"/component/navigation/menu",
+							"@/views/component/navigation/menu/DemoMenu.vue"
+						),
+						_.$newRoute(
+							"/component/navigation/tabs",
+							"@/views/component/navigation/tabs/tabs.vue"
+						),
+						_.$newRoute(
+							"/component/navigation/step",
+							"@/views/component/navigation/step/demo_step.vue"
+						),
+						_.$newRoute(
+							"/component/navigation/dropdown",
+							"@/views/component/navigation/dropdown/dropdown.vue"
+						),
+						_.$newRoute(
+							"/component/navigation/breadcrumb",
+							"@/views/component/navigation/breadcrumb/breadcrumb.vue"
+						),
+						_.$newRoute(
+							"/component/navigation/pageheader",
+							"@/views/component/navigation/pageheader/pageheader.vue"
+						)
 					]
 				})
 			]

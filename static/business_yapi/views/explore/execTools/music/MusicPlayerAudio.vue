@@ -3,7 +3,14 @@
 	<div class="flex1 flex middle" id="MusicPlayerAudio">
 		<span>{{ formatDuring(stateAudio.currentTime) }}</span>
 		<xGap l />
-		<xSlider class="flex1" :min="0" :max="stateAudio.duration" v-model="stateAudio.currentTime" :tooltip-visible="false" :format-tooltip="formatTooltip" @change="changSongProgress" />
+		<xSlider
+			class="flex1"
+			:min="0"
+			:max="stateAudio.duration"
+			v-model="stateAudio.currentTime"
+			:tooltip-visible="false"
+			:format-tooltip="formatTooltip"
+			@change="changSongProgress" />
 		<xGap l />
 		<span>{{ formatDuring(stateAudio.duration) }}</span>
 	</div>

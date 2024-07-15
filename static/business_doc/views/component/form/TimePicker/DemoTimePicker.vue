@@ -1,10 +1,22 @@
 <template>
 	<DocContentOfDemo class="demo-input">
 		<xMd :md="mdTips" />
-		<DemoAndCode title="固定时间点" path="@/views/component/form/TimePicker/GuDingShiJianDian.vue" unfold />
-		<DemoAndCode title="任意时间点" path="@/views/component/form/TimePicker/RenYiShiJianDian.vue" unfold />
-		<DemoAndCode title="固定时间范围" path="@/views/component/form/TimePicker/GuDingShiJianFanWei.vue" unfold />
-		<DemoAndCode title="任意时间范围" path="@/views/component/form/TimePicker/RenYiShiJianFanWei.vue" unfold />
+		<DemoAndCode
+			title="固定时间点"
+			path="@/views/component/form/TimePicker/GuDingShiJianDian.vue"
+			unfold />
+		<DemoAndCode
+			title="任意时间点"
+			path="@/views/component/form/TimePicker/RenYiShiJianDian.vue"
+			unfold />
+		<DemoAndCode
+			title="固定时间范围"
+			path="@/views/component/form/TimePicker/GuDingShiJianFanWei.vue"
+			unfold />
+		<DemoAndCode
+			title="任意时间范围"
+			path="@/views/component/form/TimePicker/RenYiShiJianFanWei.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

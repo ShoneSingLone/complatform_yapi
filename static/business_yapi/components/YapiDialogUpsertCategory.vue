@@ -46,7 +46,12 @@ export default async function ({ categoryInfo, project_id, getInterfaceList, all
 							}
 						]
 					},
-					desc: { value: "", label: i18n("备注"), rules: [_rules.required()], type: "textarea" }
+					desc: {
+						value: "",
+						label: i18n("备注"),
+						rules: [_rules.required()],
+						type: "textarea"
+					}
 				}
 			};
 		},

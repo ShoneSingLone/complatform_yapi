@@ -2,9 +2,9 @@
 	<div>
 		<xMd :md="md" />
 		<xSteps :active="1">
-			<xStep title="步骤 1" icon="el-icon-edit"/>
-			<xStep title="步骤 2" icon="el-icon-upload"/>
-			<xStep title="步骤 3" icon="el-icon-picture"/>
+			<xStep title="步骤 1" icon="el-icon-edit" />
+			<xStep title="步骤 2" icon="el-icon-upload" />
+			<xStep title="步骤 3" icon="el-icon-picture" />
 		</xSteps>
 	</div>
 </template>

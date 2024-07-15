@@ -2,11 +2,26 @@
 	<DocContentOfDemo class="demo-input">
 		<xMd :md="mdTips" />
 		<DemoAndCode title="选择日" path="@/views/component/form/DatePicker/XuanZeRi.vue" unfold />
-		<DemoAndCode title="其他日期单位" path="@/views/component/form/DatePicker/QiTaRiQiDanWei.vue" unfold />
-		<DemoAndCode title="选择日期范围" path="@/views/component/form/DatePicker/XuanZeRiQiFanWei.vue" unfold />
-		<DemoAndCode title="选择月份范围" path="@/views/component/form/DatePicker/XuanZeYueFenFanWei.vue" unfold />
-		<DemoAndCode title="日期格式" path="@/views/component/form/DatePicker/RiQiGeShi.vue" unfold />
-		<DemoAndCode title="默认显示日期" path="@/views/component/form/DatePicker/MoRenXianShiRiQi.vue" unfold />
+		<DemoAndCode
+			title="其他日期单位"
+			path="@/views/component/form/DatePicker/QiTaRiQiDanWei.vue"
+			unfold />
+		<DemoAndCode
+			title="选择日期范围"
+			path="@/views/component/form/DatePicker/XuanZeRiQiFanWei.vue"
+			unfold />
+		<DemoAndCode
+			title="选择月份范围"
+			path="@/views/component/form/DatePicker/XuanZeYueFenFanWei.vue"
+			unfold />
+		<DemoAndCode
+			title="日期格式"
+			path="@/views/component/form/DatePicker/RiQiGeShi.vue"
+			unfold />
+		<DemoAndCode
+			title="默认显示日期"
+			path="@/views/component/form/DatePicker/MoRenXianShiRiQi.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

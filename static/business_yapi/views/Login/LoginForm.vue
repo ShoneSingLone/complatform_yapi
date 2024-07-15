@@ -3,7 +3,10 @@
 		<!-- 用户名 -->
 		<xItem :configs="configsForm.email" autocomplete="email" @keypress.enter="login" />
 		<!-- 密码 -->
-		<xItem :configs="configsForm.password" autocomplete="current-password" @keypress.enter="login" />
+		<xItem
+			:configs="configsForm.password"
+			autocomplete="current-password"
+			@keypress.enter="login" />
 		<div class="width100">
 			<xBtn :configs="configsSubmit" />
 		</div>

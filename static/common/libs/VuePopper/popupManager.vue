@@ -187,7 +187,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					const topPopup = getTopPopup();
 
 					if (topPopup && topPopup.closeOnPressEscape) {
-						topPopup.handleClose ? topPopup.handleClose() : topPopup.handleAction ? topPopup.handleAction("cancel") : topPopup.close();
+						topPopup.handleClose
+							? topPopup.handleClose()
+							: topPopup.handleAction
+								? topPopup.handleAction("cancel")
+								: topPopup.close();
 					}
 				}
 			});

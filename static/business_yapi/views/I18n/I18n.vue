@@ -8,7 +8,9 @@
 			</template>
 		</xPageTitle>
 		<xPageContent>
-			<xTablebar :configs="configsTable" style="--xItem-wrapper-width: 300px; --xItem-label-width: 80px">
+			<xTablebar
+				:configs="configsTable"
+				style="--xItem-wrapper-width: 300px; --xItem-label-width: 80px">
 				<template #left>
 					<xBtnArray :configs="oprBtnArray" />
 				</template>
@@ -178,7 +180,10 @@ export default async function () {
 					if (_.$isInput(search)) {
 						listForShow = _.filter(listForShow, i => {
 							search = _.trim(search);
-							return new RegExp(search, "i").test(i[prop]) || new RegExp(search, "i").test(i[prop]);
+							return (
+								new RegExp(search, "i").test(i[prop]) ||
+								new RegExp(search, "i").test(i[prop])
+							);
 						});
 					}
 				}

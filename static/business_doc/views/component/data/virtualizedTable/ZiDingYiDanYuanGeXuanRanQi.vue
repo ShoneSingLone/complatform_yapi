@@ -23,7 +23,12 @@ export default async function () {
 								content: _.$dateFormat(date),
 								placement: "top"
 							},
-							[h("span", { class: "flex" }, [h("xIcon", { icon: "msg", staticClass: "mr" }), _.$dateFormat(date)])]
+							[
+								h("span", { class: "flex" }, [
+									h("xIcon", { icon: "msg", staticClass: "mr" }),
+									_.$dateFormat(date)
+								])
+							]
 						)
 				},
 				{
@@ -37,7 +42,10 @@ export default async function () {
 				{
 					prop: "operations",
 					label: "Operations",
-					cellRenderer: ({ cellData }) => [h("xBtn", { preset: "blue" }, ["Edit"]), h("xBtn", { preset: "blue" }, ["Delete"])],
+					cellRenderer: ({ cellData }) => [
+						h("xBtn", { preset: "blue" }, ["Edit"]),
+						h("xBtn", { preset: "blue" }, ["Delete"])
+					],
 					width: 150,
 					align: "center"
 				}

@@ -2,7 +2,12 @@
 	<div>
 		<xMd :md="md" />
 		<div>configsTable.data.expandedRowKeys: {{ configsTable.data.expandedRowKeys }}</div>
-		<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" :height="500" fixed :expandedRowKeys.sync="configsTable.data.expandedRowKeys" />
+		<xTableVir
+			:columns="configsTable.columns"
+			:data="configsTable.data.list"
+			:height="500"
+			fixed
+			:expandedRowKeys.sync="configsTable.data.expandedRowKeys" />
 	</div>
 </template>
 <script lang="ts">

@@ -40,7 +40,12 @@ export default async function () {
 				}
 			}
 			function r(e) {
-				return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
+				return e
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;")
+					.replace(/'/g, "&#x27;");
 			}
 			function a(e, ...t) {
 				const n = Object.create(null);
@@ -89,10 +94,26 @@ export default async function () {
 						a = "";
 					const o = [];
 					function l() {
-						return e.length && t.length ? (e[0].offset !== t[0].offset ? (e[0].offset < t[0].offset ? e : t) : "start" === t[0].event ? e : t) : e.length ? e : t;
+						return e.length && t.length
+							? e[0].offset !== t[0].offset
+								? e[0].offset < t[0].offset
+									? e
+									: t
+								: "start" === t[0].event
+									? e
+									: t
+							: e.length
+								? e
+								: t;
 					}
 					function c(e) {
-						a += "<" + i(e) + [].map.call(e.attributes, e => " " + e.nodeName + '="' + r(e.value) + '"').join("") + ">";
+						a +=
+							"<" +
+							i(e) +
+							[].map
+								.call(e.attributes, e => " " + e.nodeName + '="' + r(e.value) + '"')
+								.join("") +
+							">";
 					}
 					function u(e) {
 						a += "</" + i(e) + ">";
@@ -108,7 +129,9 @@ export default async function () {
 								g(t.splice(0, 1)[0]), (t = l());
 							} while (t === e && t.length && t[0].offset === s);
 							o.reverse().forEach(c);
-						} else "start" === t[0].event ? o.push(t[0].node) : o.pop(), g(t.splice(0, 1)[0]);
+						} else
+							"start" === t[0].event ? o.push(t[0].node) : o.pop(),
+								g(t.splice(0, 1)[0]);
 					}
 					return a + r(n.substr(s));
 				}
@@ -169,7 +192,15 @@ export default async function () {
 					return this.constructor._walk(e, this.rootNode);
 				}
 				static _walk(e, t) {
-					return "string" == typeof t ? e.addText(t) : t.children && (e.openNode(t), t.children.forEach(t => this._walk(e, t)), e.closeNode(t)), e;
+					return (
+						"string" == typeof t
+							? e.addText(t)
+							: t.children &&
+								(e.openNode(t),
+								t.children.forEach(t => this._walk(e, t)),
+								e.closeNode(t)),
+						e
+					);
 				}
 				static _collapse(e) {
 					"string" != typeof e &&
@@ -261,11 +292,18 @@ export default async function () {
 				NUMBER_RE: p,
 				C_NUMBER_RE: m,
 				BINARY_NUMBER_RE: b,
-				RE_STARTERS_RE: "!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|-|-=|/=|/|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~",
+				RE_STARTERS_RE:
+					"!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|-|-=|/=|/|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~",
 				SHEBANG: (e = {}) => {
 					const t = /^#![ ]*\//;
 					return (
-						e.binary && (e.begin = ((...e) => e.map(e => d(e)).join(""))(t, /.*\b/, e.binary, /\b.*/)),
+						e.binary &&
+							(e.begin = ((...e) => e.map(e => d(e)).join(""))(
+								t,
+								/.*\b/,
+								e.binary,
+								/\b.*/
+							)),
 						a(
 							{
 								className: "meta",
@@ -297,7 +335,9 @@ export default async function () {
 				},
 				CSS_NUMBER_MODE: {
 					className: "number",
-					begin: p + "(%|em|ex|ch|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)?",
+					begin:
+						p +
+						"(%|em|ex|ch|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)?",
 					relevance: 0
 				},
 				REGEXP_MODE: {
@@ -340,20 +380,36 @@ export default async function () {
 						}
 					})
 			});
-			const M = ["of", "and", "for", "in", "not", "or", "if", "then", "parent", "list", "value"];
+			const M = [
+				"of",
+				"and",
+				"for",
+				"in",
+				"not",
+				"or",
+				"if",
+				"then",
+				"parent",
+				"list",
+				"value"
+			];
 			function O(e) {
 				function t(t, n) {
 					return RegExp(d(t), "m" + (e.case_insensitive ? "i" : "") + (n ? "g" : ""));
 				}
 				class n {
 					constructor() {
-						(this.matchIndexes = {}), (this.regexes = []), (this.matchAt = 1), (this.position = 0);
+						(this.matchIndexes = {}),
+							(this.regexes = []),
+							(this.matchAt = 1),
+							(this.position = 0);
 					}
 					addRule(e, t) {
 						(t.position = this.position++),
 							(this.matchIndexes[this.matchAt] = t),
 							this.regexes.push([t, e]),
-							(this.matchAt += (e => RegExp(e.toString() + "|").exec("").length - 1)(e) + 1);
+							(this.matchAt +=
+								(e => RegExp(e.toString() + "|").exec("").length - 1)(e) + 1);
 					}
 					compile() {
 						0 === this.regexes.length && (this.exec = () => null);
@@ -375,7 +431,9 @@ export default async function () {
 										}
 										(r += o.substring(0, e.index)),
 											(o = o.substring(e.index + e[0].length)),
-											"\\" === e[0][0] && e[1] ? (r += "\\" + (Number(e[1]) + i)) : ((r += e[0]), "(" === e[0] && s++);
+											"\\" === e[0][0] && e[1]
+												? (r += "\\" + (Number(e[1]) + i))
+												: ((r += e[0]), "(" === e[0] && s++);
 									}
 									r += ")";
 								}
@@ -396,12 +454,21 @@ export default async function () {
 				}
 				class s {
 					constructor() {
-						(this.rules = []), (this.multiRegexes = []), (this.count = 0), (this.lastIndex = 0), (this.regexIndex = 0);
+						(this.rules = []),
+							(this.multiRegexes = []),
+							(this.count = 0),
+							(this.lastIndex = 0),
+							(this.regexIndex = 0);
 					}
 					getMatcher(e) {
 						if (this.multiRegexes[e]) return this.multiRegexes[e];
 						const t = new n();
-						return this.rules.slice(e).forEach(([e, n]) => t.addRule(e, n)), t.compile(), (this.multiRegexes[e] = t), t;
+						return (
+							this.rules.slice(e).forEach(([e, n]) => t.addRule(e, n)),
+							t.compile(),
+							(this.multiRegexes[e] = t),
+							t
+						);
 					}
 					resumingScanAtSamePosition() {
 						return 0 !== this.regexIndex;
@@ -422,22 +489,33 @@ export default async function () {
 								const t = this.getMatcher(0);
 								(t.lastIndex = this.lastIndex + 1), (n = t.exec(e));
 							}
-						return n && ((this.regexIndex += n.position + 1), this.regexIndex === this.count && this.considerAll()), n;
+						return (
+							n &&
+								((this.regexIndex += n.position + 1),
+								this.regexIndex === this.count && this.considerAll()),
+							n
+						);
 					}
 				}
 				function r(e, t) {
 					"." === e.input[e.index - 1] && t.ignoreMatch();
 				}
-				if (e.contains && e.contains.includes("self")) throw Error("ERR: contains `self` is not supported at the top-level of a language.  See documentation.");
+				if (e.contains && e.contains.includes("self"))
+					throw Error(
+						"ERR: contains `self` is not supported at the top-level of a language.  See documentation."
+					);
 				return (
 					(e.classNameAliases = a(e.classNameAliases || {})),
 					(function n(i, o) {
 						const l = i;
 						if (i.compiled) return l;
-						(i.compiled = !0), (i.__beforeBegin = null), (i.keywords = i.keywords || i.beginKeywords);
+						(i.compiled = !0),
+							(i.__beforeBegin = null),
+							(i.keywords = i.keywords || i.beginKeywords);
 						let c = null;
 						if (
-							("object" == typeof i.keywords && ((c = i.keywords.$pattern), delete i.keywords.$pattern),
+							("object" == typeof i.keywords &&
+								((c = i.keywords.$pattern), delete i.keywords.$pattern),
 							i.keywords &&
 								(i.keywords = ((e, t) => {
 									const n = {};
@@ -459,18 +537,27 @@ export default async function () {
 								})(i.keywords, e.case_insensitive)),
 							i.lexemes && c)
 						)
-							throw Error("ERR: Prefer `keywords.$pattern` to `mode.lexemes`, BOTH are not allowed. (see mode reference) ");
+							throw Error(
+								"ERR: Prefer `keywords.$pattern` to `mode.lexemes`, BOTH are not allowed. (see mode reference) "
+							);
 						return (
 							(l.keywordPatternRe = t(i.lexemes || c || /\w+/, !0)),
 							o &&
-								(i.beginKeywords && ((i.begin = "\\b(" + i.beginKeywords.split(" ").join("|") + ")(?!\\.)(?=\\b|\\s)"), (i.__beforeBegin = r)),
+								(i.beginKeywords &&
+									((i.begin =
+										"\\b(" +
+										i.beginKeywords.split(" ").join("|") +
+										")(?!\\.)(?=\\b|\\s)"),
+									(i.__beforeBegin = r)),
 								i.begin || (i.begin = /\B|\b/),
 								(l.beginRe = t(i.begin)),
 								i.endSameAsBegin && (i.end = i.begin),
 								i.end || i.endsWithParent || (i.end = /\B|\b/),
 								i.end && (l.endRe = t(i.end)),
 								(l.terminator_end = d(i.end) || ""),
-								i.endsWithParent && o.terminator_end && (l.terminator_end += (i.end ? "|" : "") + o.terminator_end)),
+								i.endsWithParent &&
+									o.terminator_end &&
+									(l.terminator_end += (i.end ? "|" : "") + o.terminator_end)),
 							i.illegal && (l.illegalRe = t(i.illegal)),
 							void 0 === i.relevance && (i.relevance = 1),
 							i.contains || (i.contains = []),
@@ -545,12 +632,24 @@ export default async function () {
 						},
 						highlighted() {
 							if (!this.autoDetect && !e.getLanguage(this.language))
-								return console.warn(`The language "${this.language}" you specified could not be found.`), (this.unknownLanguage = !0), r(this.code);
+								return (
+									console.warn(
+										`The language "${this.language}" you specified could not be found.`
+									),
+									(this.unknownLanguage = !0),
+									r(this.code)
+								);
 							let t;
 							return (
 								this.autoDetect
-									? ((t = e.highlightAuto(this.code)), (this.detectedLanguage = t.language))
-									: ((t = e.highlight(this.language, this.code, this.ignoreIllegals)), (this.detectedLanguage = this.language)),
+									? ((t = e.highlightAuto(this.code)),
+										(this.detectedLanguage = t.language))
+									: ((t = e.highlight(
+											this.language,
+											this.code,
+											this.ignoreIllegals
+										)),
+										(this.detectedLanguage = this.language)),
 								t.value
 							);
 						},
@@ -589,7 +688,8 @@ export default async function () {
 					i = [];
 				let o = !0;
 				const l = /(^(<[^>]+>|\t|)+|\n)/gm,
-					c = "Could not find the language '{}', did you forget to load/include a language module?",
+					c =
+						"Could not find the language '{}', did you forget to load/include a language module?",
 					u = {
 						disableAutodetect: !0,
 						name: "Plain text",
@@ -626,9 +726,11 @@ export default async function () {
 									let e = null;
 									if ("string" == typeof y.subLanguage) {
 										if (!r[y.subLanguage]) return void k.addText(M);
-										(e = p(y.subLanguage, M, !0, R[y.subLanguage])), (R[y.subLanguage] = e.top);
+										(e = p(y.subLanguage, M, !0, R[y.subLanguage])),
+											(R[y.subLanguage] = e.top);
 									} else e = m(M, y.subLanguage.length ? y.subLanguage : null);
-									y.relevance > 0 && (L += e.relevance), k.addSublanguage(e.emitter, e.language);
+									y.relevance > 0 && (L += e.relevance),
+										k.addSublanguage(e.emitter, e.language);
 								})()
 							: (() => {
 									if (!y.keywords) return void k.addText(M);
@@ -645,14 +747,20 @@ export default async function () {
 											const a = _.classNameAliases[e] || e;
 											k.addKeyword(t[0], a);
 										} else n += t[0];
-										(e = y.keywordPatternRe.lastIndex), (t = y.keywordPatternRe.exec(M));
+										(e = y.keywordPatternRe.lastIndex),
+											(t = y.keywordPatternRe.exec(M));
 									}
 									(n += M.substr(e)), k.addText(n);
 								})(),
 							(M = "");
 					}
 					function g(e) {
-						return e.className && k.openNode(_.classNameAliases[e.className] || e.className), (y = Object.create(e, { parent: { value: y } })), y;
+						return (
+							e.className &&
+								k.openNode(_.classNameAliases[e.className] || e.className),
+							(y = Object.create(e, { parent: { value: y } })),
+							y
+						);
 					}
 					function h(e, t, n) {
 						let r = ((e, t) => {
@@ -680,17 +788,32 @@ export default async function () {
 							s = h(y, e, n);
 						if (!s) return P;
 						const r = y;
-						r.skip ? (M += t) : (r.returnEnd || r.excludeEnd || (M += t), u(), r.excludeEnd && (M = t));
+						r.skip
+							? (M += t)
+							: (r.returnEnd || r.excludeEnd || (M += t),
+								u(),
+								r.excludeEnd && (M = t));
 						do {
-							y.className && k.closeNode(), y.skip || y.subLanguage || (L += y.relevance), (y = y.parent);
+							y.className && k.closeNode(),
+								y.skip || y.subLanguage || (L += y.relevance),
+								(y = y.parent);
 						} while (y !== s.parent);
-						return s.starts && (s.endSameAsBegin && (s.starts.endRe = s.endRe), g(s.starts)), r.returnEnd ? 0 : t.length;
+						return (
+							s.starts &&
+								(s.endSameAsBegin && (s.starts.endRe = s.endRe), g(s.starts)),
+							r.returnEnd ? 0 : t.length
+						);
 					}
 					let x = {};
 					function E(t, r) {
 						const a = r && r[0];
 						if (((M += t), null == a)) return u(), 0;
-						if ("begin" === x.type && "end" === r.type && x.index === r.index && "" === a) {
+						if (
+							"begin" === x.type &&
+							"end" === r.type &&
+							x.index === r.index &&
+							"" === a
+						) {
 							if (((M += i.slice(r.index, r.index + 1)), !o)) {
 								const t = Error("0 width match regex");
 								throw ((t.languageName = e), (t.badRule = x.rule), t);
@@ -705,14 +828,29 @@ export default async function () {
 									a = [n.__beforeBegin, n["on:begin"]];
 								for (const n of a) if (n && (n(e, r), r.ignore)) return f(t);
 								return (
-									n && n.endSameAsBegin && (n.endRe = RegExp(t.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"), "m")),
-									n.skip ? (M += t) : (n.excludeBegin && (M += t), u(), n.returnBegin || n.excludeBegin || (M = t)),
+									n &&
+										n.endSameAsBegin &&
+										(n.endRe = RegExp(
+											t.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"),
+											"m"
+										)),
+									n.skip
+										? (M += t)
+										: (n.excludeBegin && (M += t),
+											u(),
+											n.returnBegin || n.excludeBegin || (M = t)),
 									g(n),
 									n.returnBegin ? 0 : t.length
 								);
 							})(r);
 						if ("illegal" === r.type && !n) {
-							const e = Error('Illegal lexeme "' + a + '" for mode "' + (y.className || "<unnamed>") + '"');
+							const e = Error(
+								'Illegal lexeme "' +
+									a +
+									'" for mode "' +
+									(y.className || "<unnamed>") +
+									'"'
+							);
 							throw ((e.mode = y), e);
 						}
 						if ("end" === r.type) {
@@ -720,11 +858,18 @@ export default async function () {
 							if (e !== P) return e;
 						}
 						if ("illegal" === r.type && "" === a) return 1;
-						if (j > 1e5 && j > 3 * r.index) throw Error("potential infinite loop, way more iterations than matches");
+						if (j > 1e5 && j > 3 * r.index)
+							throw Error(
+								"potential infinite loop, way more iterations than matches"
+							);
 						return (M += a), a.length;
 					}
 					const _ = v(e);
-					if (!_) throw (console.error(c.replace("{}", e)), Error('Unknown language: "' + e + '"'));
+					if (!_)
+						throw (
+							(console.error(c.replace("{}", e)),
+							Error('Unknown language: "' + e + '"'))
+						);
 					const w = O(_);
 					let N = "",
 						y = a || w;
@@ -732,7 +877,8 @@ export default async function () {
 						k = new d.__emitter(d);
 					(() => {
 						const e = [];
-						for (let t = y; t !== _; t = t.parent) t.className && e.unshift(t.className);
+						for (let t = y; t !== _; t = t.parent)
+							t.className && e.unshift(t.className);
 						e.forEach(e => k.openNode(e));
 					})();
 					let M = "",
@@ -819,7 +965,17 @@ export default async function () {
 					return (l.second_best = o), l;
 				}
 				function b(e) {
-					return d.tabReplace || d.useBR ? e.replace(l, e => ("\n" === e ? (d.useBR ? "<br>" : e) : d.tabReplace ? e.replace(/\t/g, d.tabReplace) : e)) : e;
+					return d.tabReplace || d.useBR
+						? e.replace(l, e =>
+								"\n" === e
+									? d.useBR
+										? "<br>"
+										: e
+									: d.tabReplace
+										? e.replace(/\t/g, d.tabReplace)
+										: e
+							)
+						: e;
 				}
 				function x(e) {
 					let t = null;
@@ -829,13 +985,26 @@ export default async function () {
 						const n = d.languageDetectRe.exec(t);
 						if (n) {
 							const t = v(n[1]);
-							return t || (console.warn(c.replace("{}", n[1])), console.warn("Falling back to no-highlight mode for this block.", e)), t ? n[1] : "no-highlight";
+							return (
+								t ||
+									(console.warn(c.replace("{}", n[1])),
+									console.warn(
+										"Falling back to no-highlight mode for this block.",
+										e
+									)),
+								t ? n[1] : "no-highlight"
+							);
 						}
 						return t.split(/\s+/).find(e => h(e) || v(e));
 					})(e);
 					if (h(n)) return;
 					N("before:highlightBlock", { block: e, language: n }),
-						d.useBR ? ((t = document.createElement("div")), (t.innerHTML = e.innerHTML.replace(/\n/g, "").replace(/<br[ /]*>/g, "\n"))) : (t = e);
+						d.useBR
+							? ((t = document.createElement("div")),
+								(t.innerHTML = e.innerHTML
+									.replace(/\n/g, "")
+									.replace(/<br[ /]*>/g, "\n")))
+							: (t = e);
 					const s = t.textContent,
 						r = n ? f(n, s, !0) : m(s),
 						i = T(t);
@@ -849,7 +1018,11 @@ export default async function () {
 						(e.className = ((e, t, n) => {
 							const s = t ? a[t] : n,
 								r = [e.trim()];
-							return e.match(/\bhljs\b/) || r.push("hljs"), e.includes(s) || r.push(s), r.join(" ").trim();
+							return (
+								e.match(/\bhljs\b/) || r.push("hljs"),
+								e.includes(s) || r.push(s),
+								r.join(" ").trim()
+							);
 						})(e.className, n, r.language)),
 						(e.result = {
 							language: r.language,
@@ -892,12 +1065,23 @@ export default async function () {
 					highlight: f,
 					highlightAuto: m,
 					fixMarkup: e => (
-						console.warn("fixMarkup is deprecated and will be removed entirely in v11.0"), console.warn("Please see https://github.com/highlightjs/highlight.js/issues/2534"), b(e)
+						console.warn(
+							"fixMarkup is deprecated and will be removed entirely in v11.0"
+						),
+						console.warn(
+							"Please see https://github.com/highlightjs/highlight.js/issues/2534"
+						),
+						b(e)
 					),
 					highlightBlock: x,
 					configure: e => {
 						e.useBR &&
-							(console.warn("'useBR' option is deprecated and will be removed entirely in v11.0"), console.warn("Please see https://github.com/highlightjs/highlight.js/issues/2559")),
+							(console.warn(
+								"'useBR' option is deprecated and will be removed entirely in v11.0"
+							),
+							console.warn(
+								"Please see https://github.com/highlightjs/highlight.js/issues/2559"
+							)),
 							(d = S(d, e));
 					},
 					initHighlighting: E,
@@ -909,19 +1093,38 @@ export default async function () {
 						try {
 							s = n(e);
 						} catch (e) {
-							if ((console.error("Language definition for '{}' could not be registered.".replace("{}", t)), !o)) throw e;
+							if (
+								(console.error(
+									"Language definition for '{}' could not be registered.".replace(
+										"{}",
+										t
+									)
+								),
+								!o)
+							)
+								throw e;
 							console.error(e), (s = u);
 						}
-						s.name || (s.name = t), (r[t] = s), (s.rawDefinition = n.bind(null, e)), s.aliases && _(s.aliases, { languageName: t });
+						s.name || (s.name = t),
+							(r[t] = s),
+							(s.rawDefinition = n.bind(null, e)),
+							s.aliases && _(s.aliases, { languageName: t });
 					},
 					listLanguages: () => Object.keys(r),
 					getLanguage: v,
 					registerAliases: _,
 					requireLanguage: e => {
-						console.warn("requireLanguage is deprecated and will be removed entirely in the future."), console.warn("Please see https://github.com/highlightjs/highlight.js/pull/2844");
+						console.warn(
+							"requireLanguage is deprecated and will be removed entirely in the future."
+						),
+							console.warn(
+								"Please see https://github.com/highlightjs/highlight.js/pull/2844"
+							);
 						const t = v(e);
 						if (t) return t;
-						throw Error("The '{}' language is required, but not loaded.".replace("{}", e));
+						throw Error(
+							"The '{}' language is required, but not loaded.".replace("{}", e)
+						);
 					},
 					autoDetection: w,
 					inherit: S,
@@ -1071,7 +1274,13 @@ export default async function () {
 										end: /\)/,
 										keywords: n,
 										relevance: 0,
-										contains: [a, e.APOS_STRING_MODE, e.QUOTE_STRING_MODE, r, e.C_BLOCK_COMMENT_MODE]
+										contains: [
+											a,
+											e.APOS_STRING_MODE,
+											e.QUOTE_STRING_MODE,
+											r,
+											e.C_BLOCK_COMMENT_MODE
+										]
 									},
 									e.C_LINE_COMMENT_MODE,
 									e.C_BLOCK_COMMENT_MODE
@@ -1159,7 +1368,8 @@ export default async function () {
 							endsWithParent: !0,
 							keywords: {
 								$pattern: "[a-z/_]+",
-								literal: "on off yes no true false none blocked debug info notice warn error crit select break last permanent redirect kqueue rtsig epoll poll /dev/poll"
+								literal:
+									"on off yes no true false none blocked debug info notice warn error crit select break last permanent redirect kqueue rtsig epoll poll /dev/poll"
 							},
 							relevance: 0,
 							illegal: "=>",
@@ -1313,7 +1523,17 @@ export default async function () {
 							"escape",
 							"unescape"
 						],
-						["arguments", "this", "super", "console", "window", "document", "localStorage", "module", "global"],
+						[
+							"arguments",
+							"this",
+							"super",
+							"console",
+							"window",
+							"document",
+							"localStorage",
+							"module",
+							"global"
+						],
 						[
 							"Intl",
 							"DataView",
@@ -1347,13 +1567,36 @@ export default async function () {
 							"Uint8ClampedArray",
 							"ArrayBuffer"
 						],
-						["EvalError", "InternalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError"]
+						[
+							"EvalError",
+							"InternalError",
+							"RangeError",
+							"ReferenceError",
+							"SyntaxError",
+							"TypeError",
+							"URIError"
+						]
 					);
 				return r => {
 					const t = {
 						keyword: e
-							.concat(["then", "unless", "until", "loop", "by", "when", "and", "or", "is", "isnt", "not"])
-							.filter(((i = ["var", "const", "let", "function", "static"]), e => !i.includes(e)))
+							.concat([
+								"then",
+								"unless",
+								"until",
+								"loop",
+								"by",
+								"when",
+								"and",
+								"or",
+								"is",
+								"isnt",
+								"not"
+							])
+							.filter(
+								((i = ["var", "const", "let", "function", "static"]),
+								e => !i.includes(e))
+							)
 							.join(" "),
 						literal: n.concat(["yes", "no", "on", "off"]).join(" "),
 						built_in: a.concat(["npm", "print"]).join(" ")
@@ -1561,7 +1804,8 @@ export default async function () {
 								begin: /#\s*[a-z]+\b/,
 								end: /$/,
 								keywords: {
-									"meta-keyword": "if else elif endif define undef warning error line pragma _Pragma ifdef ifndef include"
+									"meta-keyword":
+										"if else elif endif define undef warning error line pragma _Pragma ifdef ifndef include"
 								},
 								contains: [
 									{ begin: /\\\n/, relevance: 0 },
@@ -1648,7 +1892,14 @@ export default async function () {
 												end: /\)/,
 												keywords: u,
 												relevance: 0,
-												contains: ["self", n, e.C_BLOCK_COMMENT_MODE, s, c, i]
+												contains: [
+													"self",
+													n,
+													e.C_BLOCK_COMMENT_MODE,
+													s,
+													c,
+													i
+												]
 											}
 										]
 									},
@@ -1676,7 +1927,10 @@ export default async function () {
 									className: "class",
 									beginKeywords: "enum class struct union",
 									end: /[{;:<>=]/,
-									contains: [{ beginKeywords: "final class struct" }, e.TITLE_MODE]
+									contains: [
+										{ beginKeywords: "final class struct" },
+										e.TITLE_MODE
+									]
 								}
 							]),
 							exports: {
@@ -1686,7 +1940,12 @@ export default async function () {
 							}
 						};
 					})(e);
-					return (t.disableAutodetect = !1), (t.name = "C++"), (t.aliases = ["cc", "c++", "h++", "hpp", "hh", "hxx", "cxx"]), t;
+					return (
+						(t.disableAutodetect = !1),
+						(t.name = "C++"),
+						(t.aliases = ["cc", "c++", "h++", "hpp", "hh", "hxx", "cxx"]),
+						t
+					);
 				};
 			})()
 		);
@@ -1708,7 +1967,8 @@ export default async function () {
 							keyword:
 								"int float while char export sizeof typedef const struct for union unsigned long volatile static bool mutable if do return goto void enum else break extern asm case short default double register explicit signed typename this switch continue wchar_t inline readonly assign readwrite self @synchronized id typeof nonatomic super unichar IBOutlet IBAction strong weak copy in out inout bycopy byref oneway __strong __weak __block __autoreleasing @private @protected @public @try @property @end @throw @catch @finally @autoreleasepool @synthesize @dynamic @selector @optional @required @encode @package @import @defs @compatibility_alias __bridge __bridge_transfer __bridge_retained __bridge_retain __covariant __contravariant __kindof _Nonnull _Nullable _Null_unspecified __FUNCTION__ __PRETTY_FUNCTION__ __attribute__ getter setter retain unsafe_unretained nonnull nullable null_unspecified null_resettable class instancetype NS_DESIGNATED_INITIALIZER NS_UNAVAILABLE NS_REQUIRES_SUPER NS_RETURNS_INNER_POINTER NS_INLINE NS_AVAILABLE NS_DEPRECATED NS_ENUM NS_OPTIONS NS_SWIFT_UNAVAILABLE NS_ASSUME_NONNULL_BEGIN NS_ASSUME_NONNULL_END NS_REFINED_FOR_SWIFT NS_SWIFT_NAME NS_SWIFT_NOTHROW NS_DURING NS_HANDLER NS_ENDHANDLER NS_VALUERETURN NS_VOIDRETURN",
 							literal: "false true FALSE TRUE nil YES NO NULL",
-							built_in: "BOOL dispatch_once_t dispatch_queue_t dispatch_sync dispatch_async dispatch_once"
+							built_in:
+								"BOOL dispatch_once_t dispatch_queue_t dispatch_sync dispatch_async dispatch_once"
 						},
 						illegal: "</",
 						contains: [
@@ -1737,7 +1997,8 @@ export default async function () {
 								begin: /#\s*[a-z]+\b/,
 								end: /$/,
 								keywords: {
-									"meta-keyword": "if else elif endif define undef warning error line pragma ifdef ifndef include"
+									"meta-keyword":
+										"if else elif endif define undef warning error line pragma ifdef ifndef include"
 								},
 								contains: [
 									{ begin: /\\\n/, relevance: 0 },
@@ -1987,7 +2248,17 @@ export default async function () {
 							"escape",
 							"unescape"
 						],
-						["arguments", "this", "super", "console", "window", "document", "localStorage", "module", "global"],
+						[
+							"arguments",
+							"this",
+							"super",
+							"console",
+							"window",
+							"document",
+							"localStorage",
+							"module",
+							"global"
+						],
 						[
 							"Intl",
 							"DataView",
@@ -2021,7 +2292,15 @@ export default async function () {
 							"Uint8ClampedArray",
 							"ArrayBuffer"
 						],
-						["EvalError", "InternalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError"]
+						[
+							"EvalError",
+							"InternalError",
+							"RangeError",
+							"ReferenceError",
+							"SyntaxError",
+							"TypeError",
+							"URIError"
+						]
 					);
 				function t(e) {
 					return i("(?=", e, ")");
@@ -2037,9 +2316,34 @@ export default async function () {
 				return r => {
 					const c = {
 							$pattern: e,
-							keyword: n.concat(["type", "namespace", "typedef", "interface", "public", "private", "protected", "implements", "declare", "abstract", "readonly"]).join(" "),
+							keyword: n
+								.concat([
+									"type",
+									"namespace",
+									"typedef",
+									"interface",
+									"public",
+									"private",
+									"protected",
+									"implements",
+									"declare",
+									"abstract",
+									"readonly"
+								])
+								.join(" "),
 							literal: a.join(" "),
-							built_in: s.concat(["any", "void", "number", "boolean", "string", "object", "never", "enum"]).join(" ")
+							built_in: s
+								.concat([
+									"any",
+									"void",
+									"number",
+									"boolean",
+									"string",
+									"object",
+									"never",
+									"enum"
+								])
+								.join(" ")
 						},
 						o = {
 							className: "meta",
@@ -2170,7 +2474,15 @@ export default async function () {
 										r.C_LINE_COMMENT_MODE
 									]
 								},
-								p = [r.APOS_STRING_MODE, r.QUOTE_STRING_MODE, E, m, _, g, r.REGEXP_MODE];
+								p = [
+									r.APOS_STRING_MODE,
+									r.QUOTE_STRING_MODE,
+									E,
+									m,
+									_,
+									g,
+									r.REGEXP_MODE
+								];
 							u.contains = p.concat({
 								begin: /\{/,
 								end: /\}/,
@@ -2221,7 +2533,15 @@ export default async function () {
 									y,
 									g,
 									{
-										begin: i(/[{,\n]\s*/, t(i(/(((\/\/.*$)|(\/\*(\*[^/]|[^*])*\*\/))\s*)*/, c + "\\s*:"))),
+										begin: i(
+											/[{,\n]\s*/,
+											t(
+												i(
+													/(((\/\/.*$)|(\/\*(\*[^/]|[^*])*\*\/))\s*)*/,
+													c + "\\s*:"
+												)
+											)
+										),
 										relevance: 0,
 										contains: [
 											{
@@ -2232,14 +2552,20 @@ export default async function () {
 										]
 									},
 									{
-										begin: "(" + r.RE_STARTERS_RE + "|\\b(case|return|throw)\\b)\\s*",
+										begin:
+											"(" +
+											r.RE_STARTERS_RE +
+											"|\\b(case|return|throw)\\b)\\s*",
 										keywords: "return throw case",
 										contains: [
 											y,
 											r.REGEXP_MODE,
 											{
 												className: "function",
-												begin: "(\\([^()]*(\\([^()]*(\\([^()]*\\))*[^()]*\\))*[^()]*\\)|" + r.UNDERSCORE_IDENT_RE + ")\\s*=>",
+												begin:
+													"(\\([^()]*(\\([^()]*(\\([^()]*\\))*[^()]*\\))*[^()]*\\)|" +
+													r.UNDERSCORE_IDENT_RE +
+													")\\s*=>",
 												returnBegin: !0,
 												end: "\\s*=>",
 												contains: [
@@ -2316,7 +2642,9 @@ export default async function () {
 									},
 									{
 										className: "function",
-										begin: r.UNDERSCORE_IDENT_RE + "\\([^()]*(\\([^()]*(\\([^()]*\\))*[^()]*\\))*[^()]*\\)\\s*\\{",
+										begin:
+											r.UNDERSCORE_IDENT_RE +
+											"\\([^()]*(\\([^()]*(\\([^()]*\\))*[^()]*\\))*[^()]*\\)\\s*\\{",
 										returnBegin: !0,
 										contains: [
 											A,
@@ -2422,7 +2750,8 @@ export default async function () {
 				}
 				return n => {
 					var a,
-						i = "([a-zA-Z_]\\w*[!?=]?|[-+~]@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?)",
+						i =
+							"([a-zA-Z_]\\w*[!?=]?|[-+~]@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?)",
 						s = {
 							keyword:
 								"and then defined module in return redo if BEGIN retry end for self when next until do begin unless END rescue else break undef not super class case require yield alias while ensure elsif or include attr_reader attr_writer attr_accessor __FILE__",
@@ -2729,7 +3058,8 @@ export default async function () {
 								begin: /#\s*[a-z]+\b/,
 								end: /$/,
 								keywords: {
-									"meta-keyword": "if else elif endif define undef warning error line pragma _Pragma ifdef ifndef include"
+									"meta-keyword":
+										"if else elif endif define undef warning error line pragma _Pragma ifdef ifndef include"
 								},
 								contains: [
 									{ begin: /\\\n/, relevance: 0 },
@@ -2816,7 +3146,14 @@ export default async function () {
 												end: /\)/,
 												keywords: u,
 												relevance: 0,
-												contains: ["self", n, e.C_BLOCK_COMMENT_MODE, s, c, i]
+												contains: [
+													"self",
+													n,
+													e.C_BLOCK_COMMENT_MODE,
+													s,
+													c,
+													i
+												]
 											}
 										]
 									},
@@ -2844,7 +3181,10 @@ export default async function () {
 									className: "class",
 									beginKeywords: "enum class struct union",
 									end: /[{;:<>=]/,
-									contains: [{ beginKeywords: "final class struct" }, e.TITLE_MODE]
+									contains: [
+										{ beginKeywords: "final class struct" },
+										e.TITLE_MODE
+									]
 								}
 							]),
 							exports: {
@@ -2903,7 +3243,8 @@ export default async function () {
 						aliases: ["mk", "mak"],
 						keywords: {
 							$pattern: /[\w-]+/,
-							keyword: "define endef undefine ifdef ifndef ifeq ifneq else endif include -include sinclude override export unexport private vpath"
+							keyword:
+								"define endef undefine ifdef ifndef ifeq ifneq else endif include -include sinclude override export unexport private vpath"
 						},
 						contains: [
 							e.HASH_COMMENT_MODE,
@@ -3004,7 +3345,18 @@ export default async function () {
 						};
 					return {
 						name: "HTML, XML",
-						aliases: ["html", "xhtml", "rss", "atom", "xjb", "xsd", "xsl", "plist", "wsf", "svg"],
+						aliases: [
+							"html",
+							"xhtml",
+							"rss",
+							"atom",
+							"xjb",
+							"xsd",
+							"xsl",
+							"plist",
+							"wsf",
+							"svg"
+						],
 						case_insensitive: !0,
 						contains: [
 							{
@@ -3166,7 +3518,11 @@ export default async function () {
 					const o = {
 							begin: /\$\(\(/,
 							end: /\)\)/,
-							contains: [{ begin: /\d+#[0-9a-f]+/, className: "number" }, s.NUMBER_MODE, n]
+							contains: [
+								{ begin: /\d+#[0-9a-f]+/, className: "number" },
+								s.NUMBER_MODE,
+								n
+							]
 						},
 						r = s.SHEBANG({
 							binary: "(fish|bash|zsh|sh|csh|ksh|tcsh|dash|scsh)",
@@ -3189,7 +3545,18 @@ export default async function () {
 							built_in:
 								"break cd continue eval exec exit export getopts hash pwd readonly return shift test times trap umask unset alias bind builtin caller command declare echo enable help let local logout mapfile printf read readarray source type typeset ulimit unalias set shopt autoload bg bindkey bye cap chdir clone comparguments compcall compctl compdescribe compfiles compgroups compquote comptags comptry compvalues dirs disable disown echotc echoti emulate fc fg float functions getcap getln history integer jobs kill limit log noglob popd print pushd pushln rehash sched setcap setopt stat suspend ttyctl unfunction unhash unlimit unsetopt vared wait whence where which zcompile zformat zftp zle zmodload zparseopts zprof zpty zregexparse zsocket zstyle ztcp"
 						},
-						contains: [r, s.SHEBANG(), l, o, s.HASH_COMMENT_MODE, i, c, { className: "", begin: /\\"/ }, { className: "string", begin: /'/, end: /'/ }, n]
+						contains: [
+							r,
+							s.SHEBANG(),
+							l,
+							o,
+							s.HASH_COMMENT_MODE,
+							i,
+							c,
+							{ className: "", begin: /\\"/ },
+							{ className: "string", begin: /'/, end: /'/ },
+							n
+						]
 					};
 				};
 			})()
@@ -3275,7 +3642,13 @@ export default async function () {
 											end: /\)/,
 											endsParent: !0,
 											keywords: i,
-											contains: ["self", s, a, e.C_BLOCK_COMMENT_MODE, { begin: ":" }],
+											contains: [
+												"self",
+												s,
+												a,
+												e.C_BLOCK_COMMENT_MODE,
+												{ begin: ":" }
+											],
 											illegal: /["']/
 										}
 									],
@@ -3486,7 +3859,8 @@ export default async function () {
 					const n = {
 							keyword:
 								"abstract as val var vararg get set class object open private protected public noinline crossinline dynamic final enum if else do while for when throw try catch finally import package is in fun override companion reified inline lateinit init interface annotation data sealed internal infix operator out by constructor super tailrec where const inner suspend typealias external expect actual",
-							built_in: "Byte Short Char Int Long Boolean Float Double Void Unit Nothing",
+							built_in:
+								"Byte Short Char Int Long Boolean Float Double Void Unit Nothing",
 							literal: "true false null"
 						},
 						a = {
@@ -3528,7 +3902,10 @@ export default async function () {
 					s.contains.push(t);
 					const l = {
 							className: "meta",
-							begin: "@(?:file|property|field|get|set|receiver|param|setparam|delegate)\\s*:(?:\\s*" + e.UNDERSCORE_IDENT_RE + ")?"
+							begin:
+								"@(?:file|property|field|get|set|receiver|param|setparam|delegate)\\s*:(?:\\s*" +
+								e.UNDERSCORE_IDENT_RE +
+								")?"
 						},
 						r = {
 							className: "meta",
@@ -3649,7 +4026,8 @@ export default async function () {
 									illegal: "extends implements",
 									contains: [
 										{
-											beginKeywords: "public protected internal private constructor"
+											beginKeywords:
+												"public protected internal private constructor"
 										},
 										e.UNDERSCORE_TITLE_MODE,
 										{
@@ -3778,7 +4156,14 @@ export default async function () {
 									end: "[{;]",
 									returnBegin: !0,
 									keywords: "and or not only",
-									contains: [{ begin: t, className: "keyword" }, i, e.QUOTE_STRING_MODE, e.APOS_STRING_MODE, r, e.CSS_NUMBER_MODE]
+									contains: [
+										{ begin: t, className: "keyword" },
+										i,
+										e.QUOTE_STRING_MODE,
+										e.APOS_STRING_MODE,
+										r,
+										e.CSS_NUMBER_MODE
+									]
 								}
 							]
 						}
@@ -3796,7 +4181,11 @@ export default async function () {
 						s = {
 							className: "string",
 							relevance: 0,
-							variants: [{ begin: /'/, end: /'/ }, { begin: /"/, end: /"/ }, { begin: /\S+/ }],
+							variants: [
+								{ begin: /'/, end: /'/ },
+								{ begin: /"/, end: /"/ },
+								{ begin: /\S+/ }
+							],
 							contains: [
 								e.BACKSLASH_ESCAPE,
 								{
@@ -3809,7 +4198,11 @@ export default async function () {
 							]
 						},
 						i = e.inherit(s, {
-							variants: [{ begin: /'/, end: /'/ }, { begin: /"/, end: /"/ }, { begin: /[^\s,{}[\]]+/ }]
+							variants: [
+								{ begin: /'/, end: /'/ },
+								{ begin: /"/, end: /"/ },
+								{ begin: /[^\s,{}[\]]+/ }
+							]
 						}),
 						l = {
 							end: ",",
@@ -4110,7 +4503,8 @@ export default async function () {
 						keywords: {
 							$pattern: e.UNDERSCORE_IDENT_RE,
 							literal: "true false nil",
-							keyword: "and break do else elseif end for goto if in local not or repeat return then until while",
+							keyword:
+								"and break do else elseif end for goto if in local not or repeat return then until while",
 							built_in:
 								"_G _ENV _VERSION __index __newindex __mode __call __metatable __tostring __len __gc __add __sub __mul __div __mod __pow __concat __unm __eq __lt __le assert collectgarbage dofile error getfenv getmetatable ipairs load loadfile loadstring module next pairs pcall print rawequal rawget rawset require select setfenv setmetatable tonumber tostring type unpack xpcall arg self coroutine resume yield status wrap create running debug getupvalue debug sethook getmetatable gethook setmetatable setlocal traceback setfenv getinfo setupvalue getlocal getregistry getfenv io lines write close flush open output type read stderr stdin input stdout popen tmpfile math log max acos huge ldexp pi cos tanh pow deg tan cosh sinh random randomseed frexp ceil floor rad abs sqrt modf asin min mod fmod log10 atan2 exp sin atan os exit setlocale date getenv difftime remove time clock tmpname rename execute package preload loadlib loaded loaders cpath config path seeall string sub upper len gfind rep find match char dump gmatch reverse byte format gsub lower table setn insert getn foreachi maxn foreach concat sort remove"
 						},
@@ -4155,7 +4549,8 @@ export default async function () {
 						keyword:
 							"break default func interface select case map struct chan else goto package switch const fallthrough if range type continue for import return var go defer bool byte complex64 complex128 float32 float64 int8 int16 int32 int64 string uint8 uint16 uint32 uint64 int uint uintptr rune",
 						literal: "true false iota nil",
-						built_in: "append cap close complex copy imag len make new panic print println real recover delete"
+						built_in:
+							"append cap close complex copy imag len make new panic print println real recover delete"
 					};
 					return {
 						name: "Go",
@@ -4167,7 +4562,11 @@ export default async function () {
 							e.C_BLOCK_COMMENT_MODE,
 							{
 								className: "string",
-								variants: [e.QUOTE_STRING_MODE, e.APOS_STRING_MODE, { begin: "`", end: "`" }]
+								variants: [
+									e.QUOTE_STRING_MODE,
+									e.APOS_STRING_MODE,
+									{ begin: "`", end: "`" }
+								]
 							},
 							{
 								className: "number",
@@ -4385,7 +4784,17 @@ export default async function () {
 							"escape",
 							"unescape"
 						],
-						["arguments", "this", "super", "console", "window", "document", "localStorage", "module", "global"],
+						[
+							"arguments",
+							"this",
+							"super",
+							"console",
+							"window",
+							"document",
+							"localStorage",
+							"module",
+							"global"
+						],
 						[
 							"Intl",
 							"DataView",
@@ -4419,7 +4828,15 @@ export default async function () {
 							"Uint8ClampedArray",
 							"ArrayBuffer"
 						],
-						["EvalError", "InternalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError"]
+						[
+							"EvalError",
+							"InternalError",
+							"RangeError",
+							"ReferenceError",
+							"SyntaxError",
+							"TypeError",
+							"URIError"
+						]
 					);
 				function r(e) {
 					return i("(?=", e, ")");
@@ -4601,7 +5018,10 @@ export default async function () {
 							N,
 							d,
 							{
-								begin: i(/[{,\n]\s*/, r(i(/(((\/\/.*$)|(\/\*(\*[^/]|[^*])*\*\/))\s*)*/, c + "\\s*:"))),
+								begin: i(
+									/[{,\n]\s*/,
+									r(i(/(((\/\/.*$)|(\/\*(\*[^/]|[^*])*\*\/))\s*)*/, c + "\\s*:"))
+								),
 								relevance: 0,
 								contains: [
 									{
@@ -4619,7 +5039,10 @@ export default async function () {
 									t.REGEXP_MODE,
 									{
 										className: "function",
-										begin: "(\\([^()]*(\\([^()]*(\\([^()]*\\))*[^()]*\\))*[^()]*\\)|" + t.UNDERSCORE_IDENT_RE + ")\\s*=>",
+										begin:
+											"(\\([^()]*(\\([^()]*(\\([^()]*\\))*[^()]*\\))*[^()]*\\)|" +
+											t.UNDERSCORE_IDENT_RE +
+											")\\s*=>",
 										returnBegin: !0,
 										end: "\\s*=>",
 										contains: [
@@ -4690,7 +5113,9 @@ export default async function () {
 							},
 							{
 								className: "function",
-								begin: t.UNDERSCORE_IDENT_RE + "\\([^()]*(\\([^()]*(\\([^()]*\\))*[^()]*\\))*[^()]*\\)\\s*\\{",
+								begin:
+									t.UNDERSCORE_IDENT_RE +
+									"\\([^()]*(\\([^()]*(\\([^()]*\\))*[^()]*\\))*[^()]*\\)\\s*\\{",
 								returnBegin: !0,
 								contains: [p, t.inherit(t.TITLE_MODE, { begin: c })]
 							},
@@ -4726,7 +5151,11 @@ export default async function () {
 								begin: "(get|set)\\s+(?=" + c + "\\()",
 								end: /\{/,
 								keywords: "get set",
-								contains: [t.inherit(t.TITLE_MODE, { begin: c }), { begin: /\(\)/ }, p]
+								contains: [
+									t.inherit(t.TITLE_MODE, { begin: c }),
+									{ begin: /\(\)/ },
+									p
+								]
 							},
 							{ begin: /\$[(.]/ }
 						]
@@ -4763,7 +5192,10 @@ export default async function () {
 							variants: [
 								{ begin: /\$\d/ },
 								{
-									begin: e(/[$%@](\^\w\b|#\w+(::\w+)*|\{\w+\}|\w+(::\w*)*)/, "(?![A-Za-z])(?![@$%])")
+									begin: e(
+										/[$%@](\^\w\b|#\w+(::\w+)*|\{\w+\}|\w+(::\w*)*)/,
+										"(?![A-Za-z])(?![@$%])"
+									)
 								},
 								{ begin: /[$%@][^\s\w{]/, relevance: 0 }
 							]
@@ -4839,7 +5271,10 @@ export default async function () {
 								relevance: 0
 							},
 							{
-								begin: "(\\/\\/|" + n.RE_STARTERS_RE + "|\\b(split|return|print|reverse|grep)\\b)\\s*",
+								begin:
+									"(\\/\\/|" +
+									n.RE_STARTERS_RE +
+									"|\\b(split|return|print|reverse|grep)\\b)\\s*",
 								keywords: "split return print reverse grep",
 								relevance: 0,
 								contains: [
@@ -4952,7 +5387,12 @@ export default async function () {
 							contains: [i, r, t, l, a, "self"],
 							relevance: 0
 						},
-						g = "(" + [/[A-Za-z0-9_-]+/, /"(\\"|[^"])*"/, /'[^']*'/].map(n => e(n)).join("|") + ")";
+						g =
+							"(" +
+							[/[A-Za-z0-9_-]+/, /"(\\"|[^"])*"/, /'[^']*'/]
+								.map(n => e(n))
+								.join("|") +
+							")";
 					return {
 						name: "TOML, also INI",
 						aliases: ["toml"],
@@ -4962,7 +5402,13 @@ export default async function () {
 							i,
 							{ className: "section", begin: /\[+/, end: /\]+/ },
 							{
-								begin: n(g, "(\\s*\\.\\s*", g, ")*", n("(?=", /\s*=\s*[^#\s]/, ")")),
+								begin: n(
+									g,
+									"(\\s*\\.\\s*",
+									g,
+									")*",
+									n("(?=", /\s*=\s*[^#\s]/, ")")
+								),
 								className: "attr",
 								starts: {
 									end: /$/,
@@ -5154,7 +5600,8 @@ export default async function () {
 									"yield"
 								])
 								.join(" "),
-							built_in: "bool byte char decimal delegate double dynamic enum float int long nint nuint object sbyte short string ulong unit ushort",
+							built_in:
+								"bool byte char decimal delegate double dynamic enum float int long nint nuint object sbyte short string ulong unit ushort",
 							literal: "default false null true"
 						},
 						a = e.inherit(e.TITLE_MODE, {
@@ -5213,7 +5660,15 @@ export default async function () {
 							illegal: /\n/,
 							contains: [{ begin: /\{\{/ }, { begin: /\}\}/ }, { begin: '""' }, l]
 						});
-					(r.contains = [o, c, s, e.APOS_STRING_MODE, e.QUOTE_STRING_MODE, i, e.C_BLOCK_COMMENT_MODE]),
+					(r.contains = [
+						o,
+						c,
+						s,
+						e.APOS_STRING_MODE,
+						e.QUOTE_STRING_MODE,
+						i,
+						e.C_BLOCK_COMMENT_MODE
+					]),
 						(l.contains = [
 							d,
 							c,
@@ -5233,7 +5688,13 @@ export default async function () {
 							end: ">",
 							contains: [{ beginKeywords: "in out" }, a]
 						},
-						_ = e.IDENT_RE + "(<" + e.IDENT_RE + "(\\s*,\\s*" + e.IDENT_RE + ")*>)?(\\[\\])?",
+						_ =
+							e.IDENT_RE +
+							"(<" +
+							e.IDENT_RE +
+							"(\\s*,\\s*" +
+							e.IDENT_RE +
+							")*>)?(\\[\\])?",
 						b = {
 							begin: "@" + e.IDENT_RE,
 							relevance: 0
@@ -5266,7 +5727,8 @@ export default async function () {
 								begin: "#",
 								end: "$",
 								keywords: {
-									"meta-keyword": "if else elif endif define undef warning error line region endregion pragma checksum"
+									"meta-keyword":
+										"if else elif endif define undef warning error line region endregion pragma checksum"
 								}
 							},
 							g,
@@ -5276,7 +5738,13 @@ export default async function () {
 								relevance: 0,
 								end: /[{;=]/,
 								illegal: /[^\s:,]/,
-								contains: [{ beginKeywords: "where class" }, a, E, e.C_LINE_COMMENT_MODE, e.C_BLOCK_COMMENT_MODE]
+								contains: [
+									{ beginKeywords: "where class" },
+									a,
+									E,
+									e.C_LINE_COMMENT_MODE,
+									e.C_BLOCK_COMMENT_MODE
+								]
 							},
 							{
 								beginKeywords: "namespace",
@@ -5319,7 +5787,8 @@ export default async function () {
 								keywords: n,
 								contains: [
 									{
-										beginKeywords: "public private protected static internal protected abstract async extern override unsafe virtual new sealed partial",
+										beginKeywords:
+											"public private protected static internal protected abstract async extern override unsafe virtual new sealed partial",
 										relevance: 0
 									},
 									{
@@ -5384,7 +5853,13 @@ export default async function () {
 						l = {
 							className: "string",
 							contains: [e.BACKSLASH_ESCAPE, t],
-							variants: [e.inherit(n, { begin: "b'", end: "'" }), e.inherit(i, { begin: 'b"', end: '"' }), i, n, o]
+							variants: [
+								e.inherit(n, { begin: "b'", end: "'" }),
+								e.inherit(i, { begin: 'b"', end: '"' }),
+								i,
+								n,
+								o
+							]
 						},
 						c = {
 							variants: [e.BINARY_NUMBER_MODE, e.C_NUMBER_MODE]
@@ -5444,7 +5919,10 @@ export default async function () {
 								end: /\{/,
 								excludeEnd: !0,
 								illegal: /[:($"]/,
-								contains: [{ beginKeywords: "extends implements" }, e.UNDERSCORE_TITLE_MODE]
+								contains: [
+									{ beginKeywords: "extends implements" },
+									e.UNDERSCORE_TITLE_MODE
+								]
 							},
 							{
 								beginKeywords: "namespace",
@@ -5729,7 +6207,11 @@ export default async function () {
 													{
 														begin: /\(/,
 														end: /\)/,
-														contains: [e.APOS_STRING_MODE, e.QUOTE_STRING_MODE, e.CSS_NUMBER_MODE]
+														contains: [
+															e.APOS_STRING_MODE,
+															e.QUOTE_STRING_MODE,
+															e.CSS_NUMBER_MODE
+														]
 													}
 												]
 											},
@@ -9709,7 +10191,12 @@ Gradient Light (c) Samia Ali <samiaab1990@gmail.com>
 		display: block;
 		padding: 0.5em;
 		background: rgb(255, 253, 141);
-		background: linear-gradient(142deg, rgba(255, 253, 141, 1) 0%, rgba(252, 183, 255, 1) 35%, rgba(144, 236, 255, 1) 100%);
+		background: linear-gradient(
+			142deg,
+			rgba(255, 253, 141, 1) 0%,
+			rgba(252, 183, 255, 1) 35%,
+			rgba(144, 236, 255, 1) 100%
+		);
 		color: #250482;
 	}
 
@@ -9836,7 +10323,8 @@ grayscale style (c) MY Sun <simonmysun@gmail.com>
 	.hljs-doctag,
 	.hljs-formula {
 		color: #333;
-		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAJ0lEQVQIW2O8e/fufwYGBgZBQUEQxcCIIfDu3Tuwivfv30NUoAsAALHpFMMLqZlPAAAAAElFTkSuQmCC) repeat;
+		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAJ0lEQVQIW2O8e/fufwYGBgZBQUEQxcCIIfDu3Tuwivfv30NUoAsAALHpFMMLqZlPAAAAAElFTkSuQmCC)
+			repeat;
 	}
 
 	.hljs-title,
@@ -9871,7 +10359,8 @@ grayscale style (c) MY Sun <simonmysun@gmail.com>
 	.hljs-bullet,
 	.hljs-link {
 		color: #000;
-		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAKElEQVQIW2NkQAO7d+/+z4gsBhJwdXVlhAvCBECKwIIwAbhKZBUwBQA6hBpm5efZsgAAAABJRU5ErkJggg==) repeat;
+		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAKElEQVQIW2NkQAO7d+/+z4gsBhJwdXVlhAvCBECKwIIwAbhKZBUwBQA6hBpm5efZsgAAAABJRU5ErkJggg==)
+			repeat;
 	}
 
 	.hljs-built_in,
@@ -9887,12 +10376,14 @@ grayscale style (c) MY Sun <simonmysun@gmail.com>
 
 	.hljs-deletion {
 		color: #fff;
-		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAADCAYAAABS3WWCAAAAE0lEQVQIW2MMDQ39zzhz5kwIAQAyxweWgUHd1AAAAABJRU5ErkJggg==) repeat;
+		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAADCAYAAABS3WWCAAAAE0lEQVQIW2MMDQ39zzhz5kwIAQAyxweWgUHd1AAAAABJRU5ErkJggg==)
+			repeat;
 	}
 
 	.hljs-addition {
 		color: #000;
-		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAALUlEQVQYV2N89+7dfwYk8P79ewZBQUFkIQZGOiu6e/cuiptQHAPl0NtNxAQBAM97Oejj3Dg7AAAAAElFTkSuQmCC) repeat;
+		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAALUlEQVQYV2N89+7dfwYk8P79ewZBQUFkIQZGOiu6e/cuiptQHAPl0NtNxAQBAM97Oejj3Dg7AAAAAElFTkSuQmCC)
+			repeat;
 	}
 
 	.hljs-emphasis {

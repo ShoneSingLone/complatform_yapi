@@ -31,14 +31,21 @@
 
 <script lang="ts">
 export default async function () {
-	const [{ useTabName }, { useProjectForm }] = await _.$importVue(["/common/utils/hooks.vue", "@/views/Api/Group/Section/ProjectList/GroupSectionProjectListAddProject.vue"]);
+	const [{ useTabName }, { useProjectForm }] = await _.$importVue([
+		"/common/utils/hooks.vue",
+		"@/views/Api/Group/Section/ProjectList/GroupSectionProjectListAddProject.vue"
+	]);
 
 	return {
 		name: "ProjectSettingPanelCommonVue",
 		inject: ["APP", "inject_project"],
 		components: {},
 		setup() {
-			const cptProjectSettingTab = useTabName({ vm: this, propName: "project_setting_tab", defaultName: "1" });
+			const cptProjectSettingTab = useTabName({
+				vm: this,
+				propName: "project_setting_tab",
+				defaultName: "1"
+			});
 			return {
 				cptProjectSettingTab
 			};
@@ -82,7 +89,9 @@ export default async function () {
 						label: "代理服务器地址",
 						tips: () =>
 							h("div", [
-								h("div", ["如果请求需要使用VPN，则需要有一台开启VPN的PC作为代理机。"]),
+								h("div", [
+									"如果请求需要使用VPN，则需要有一台开启VPN的PC作为代理机。"
+								]),
 								h("div", [
 									"利用",
 									h(
@@ -133,21 +142,33 @@ export default async function () {
 						_.$confirm({
 							title: "请慎重操作！",
 							content: () => {
-								return h("xAlert", { type: "error", showIcon: true, closable: false }, [
-									h("div", { class: "flex vertical" }, [
-										h(
-											"div",
-											{
-												class: "card-danger-content"
-											},
-											[h("p", ["此操作非常危险,会删除该项目下面所有接口"]), h("p", ["项目一旦删除，将无法恢复数据"]), h("p", ["只有组长和管理员有权限删除项目。"])]
-										)
-									])
-								]);
+								return h(
+									"xAlert",
+									{ type: "error", showIcon: true, closable: false },
+									[
+										h("div", { class: "flex vertical" }, [
+											h(
+												"div",
+												{
+													class: "card-danger-content"
+												},
+												[
+													h("p", [
+														"此操作非常危险,会删除该项目下面所有接口"
+													]),
+													h("p", ["项目一旦删除，将无法恢复数据"]),
+													h("p", ["只有组长和管理员有权限删除项目。"])
+												]
+											)
+										])
+									]
+								);
 							}
 						}).then(async () => {
 							try {
-								const res = await _api.yapi.project_del({ id: vm.APP.cptProjectId });
+								const res = await _api.yapi.project_del({
+									id: vm.APP.cptProjectId
+								});
 								if (res.errcode === 0) {
 									await vm.APP.updateGroupList();
 									vm.$router.push({

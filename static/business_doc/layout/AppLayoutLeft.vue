@@ -69,7 +69,11 @@ export default async function () {
 						style,
 						staticClass: "flex middle"
 					},
-					[h("span", { staticClass: "mr" }, [node.label]), h("span", { staticClass: "mr" }, [node._munu_level]), h("span", { staticClass: "mr" }, [node._munu_id])]
+					[
+						h("span", { staticClass: "mr" }, [node.label]),
+						h("span", { staticClass: "mr" }, [node._munu_level]),
+						h("span", { staticClass: "mr" }, [node._munu_id])
+					]
 				);
 			},
 			search: _.debounce(function (value) {}, 1000),

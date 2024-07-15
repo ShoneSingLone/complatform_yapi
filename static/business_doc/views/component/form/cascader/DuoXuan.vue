@@ -7,7 +7,11 @@
 		</div>
 		<div class="block mt">
 			<span class="demonstration">折叠展示Tag</span>
-			<xCascader :options="DemoCascader.options" :props="props" collapse-tags clearable></xCascader>
+			<xCascader
+				:options="DemoCascader.options"
+				:props="props"
+				collapse-tags
+				clearable></xCascader>
 		</div>
 	</div>
 </template>

@@ -34,7 +34,8 @@ export default async function () {
 	return defineComponent({
 		data() {
 			return {
-				mdTitle: "通过 row 和 col 组件，并通过 col 组件的 `span` 属性我们就可以自由地组合布局。"
+				mdTitle:
+					"通过 row 和 col 组件，并通过 col 组件的 `span` 属性我们就可以自由地组合布局。"
 			};
 		}
 	});

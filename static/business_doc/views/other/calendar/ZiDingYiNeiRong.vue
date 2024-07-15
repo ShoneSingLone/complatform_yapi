@@ -3,7 +3,9 @@
 		<xMd :md="md" />
 		<xCalendar>
 			<template #dateCell="{ date, data }">
-				<p :class="data.isSelected ? 'is-selected' : ''">{{ data.day.split("-").slice(1).join("-") }} {{ data.isSelected ? "✔️" : "" }}</p>
+				<p :class="data.isSelected ? 'is-selected' : ''">
+					{{ data.day.split("-").slice(1).join("-") }} {{ data.isSelected ? "✔️" : "" }}
+				</p>
 			</template>
 		</xCalendar>
 	</div>

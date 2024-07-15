@@ -20,7 +20,10 @@
 	<div class="CloudDiskTransferDetail flex vertical">
 		<div>{{ cptLabel }}</div>
 		<div class="pl pr flex middle">
-			<xSlider :value="cptValue" disabled class="flex1 mr" /><span style="width: 60px; font-size: 12px">{{ cptProcess }}</span>
+			<xSlider :value="cptValue" disabled class="flex1 mr" /><span
+				style="width: 60px; font-size: 12px"
+				>{{ cptProcess }}</span
+			>
 		</div>
 	</div>
 </template>

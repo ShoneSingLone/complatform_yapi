@@ -19,7 +19,8 @@ export default async function () {
 	return defineComponent({
 		data() {
 			return {
-				mdTitle: "支持偏移指定的栏数。\n\n通过制定 col 组件的 `offset` 属性可以指定分栏偏移的栏数。"
+				mdTitle:
+					"支持偏移指定的栏数。\n\n通过制定 col 组件的 `offset` 属性可以指定分栏偏移的栏数。"
 			};
 		}
 	});

@@ -11,7 +11,12 @@
 		<div class="x-padding">
 			<xBreadcrumb separator="/">
 				<xBreadcrumbItem class="pointer" @click="back(-1)"> root </xBreadcrumbItem>
-				<xBreadcrumbItem class="pointer" v-for="(item, index) in pathStack" :key="index" @click="back(index)" preset="blue">
+				<xBreadcrumbItem
+					class="pointer"
+					v-for="(item, index) in pathStack"
+					:key="index"
+					@click="back(index)"
+					preset="blue">
 					{{ item }}
 				</xBreadcrumbItem>
 			</xBreadcrumb>
@@ -21,7 +26,13 @@
 		</div>
 		<div class="flex1 overflow-auto el-card">
 			<div v-for="(item, index) in cptResource" :key="index" class="mt pl pr">
-				<xBtn v-if="isShow(item)" @click="playMedia(item)" :preset="item.name === stateAudio.songId ? 'blue' : ''" class="width100">{{ item.name }}-{{ item.type }}</xBtn>
+				<xBtn
+					v-if="isShow(item)"
+					@click="playMedia(item)"
+					:preset="item.name === stateAudio.songId ? 'blue' : ''"
+					class="width100"
+					>{{ item.name }}-{{ item.type }}</xBtn
+				>
 				<xBtn v-else @click="getResource(item)" preset="text">
 					<div class="flex">
 						<xGap l /><span> {{ item.name }}</span>
@@ -46,10 +57,14 @@ export default async function () {
 	const LOOP_TYPE_NAME_ARRAY = ["playOrder", "playRandom", "playLoop", "playSingleLoop"];
 	return defineComponent({
 		components: {
-			MusicPlayerModel: () => _.$importVue("@/views/explore/execTools/music/MusicPlayerModel.vue"),
-			MusicPlayerVolume: () => _.$importVue("@/views/explore/execTools/music/MusicPlayerVolume.vue"),
-			MusicPlayerAudio: () => _.$importVue("@/views/explore/execTools/music/MusicPlayerAudio.vue"),
-			MusicPlayerOpration: () => _.$importVue("@/views/explore/execTools/music/MusicPlayerOpration.vue")
+			MusicPlayerModel: () =>
+				_.$importVue("@/views/explore/execTools/music/MusicPlayerModel.vue"),
+			MusicPlayerVolume: () =>
+				_.$importVue("@/views/explore/execTools/music/MusicPlayerVolume.vue"),
+			MusicPlayerAudio: () =>
+				_.$importVue("@/views/explore/execTools/music/MusicPlayerAudio.vue"),
+			MusicPlayerOpration: () =>
+				_.$importVue("@/views/explore/execTools/music/MusicPlayerOpration.vue")
 		},
 		setup() {
 			const vm = this;
@@ -192,7 +207,9 @@ export default async function () {
 				}
 				let uri = encodeURIComponent(JSON.stringify(path));
 				stateAudio.songId = name;
-				stateAudio.audio.src = Vue._common_utils.appendToken(`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?uri=${uri}`);
+				stateAudio.audio.src = Vue._common_utils.appendToken(
+					`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?uri=${uri}`
+				);
 				await canPlay();
 				stateAudio.audio.play();
 				stateAudio.isPlaying = true;
@@ -269,7 +286,8 @@ export default async function () {
 						cacheAudioVolume(audioVolume);
 					},
 					async togglePlayModel() {
-						stateAudio.loopType = (stateAudio.loopType + 1) % LOOP_TYPE_NAME_ARRAY.length;
+						stateAudio.loopType =
+							(stateAudio.loopType + 1) % LOOP_TYPE_NAME_ARRAY.length;
 					}
 				}
 			};
@@ -289,7 +307,9 @@ export default async function () {
 		computed: {
 			cptResource() {
 				if (this.searchKey) {
-					return _.filter(this.resource, item => _.lowerCase(item.name).includes(this.searchKey));
+					return _.filter(this.resource, item =>
+						_.lowerCase(item.name).includes(this.searchKey)
+					);
 				}
 				return this.resource;
 			},

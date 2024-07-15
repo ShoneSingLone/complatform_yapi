@@ -5,15 +5,27 @@
 			<div class="block">
 				<span class="demonstration">默认</span>
 				阿斯顿发生的发生大发是
-				<xDatePicker v-model="value1" type="time-select" placeholder="选择日期时间"> </xDatePicker>
+				<xDatePicker v-model="value1" type="time-select" placeholder="选择日期时间">
+				</xDatePicker>
 			</div>
 			<div class="block">
 				<span class="demonstration">带快捷选项</span>
-				<xDatePicker v-model="value2" type="datetime" placeholder="选择日期时间" align="right" :picker-options="pickerOptions"> </xDatePicker>
+				<xDatePicker
+					v-model="value2"
+					type="datetime"
+					placeholder="选择日期时间"
+					align="right"
+					:picker-options="pickerOptions">
+				</xDatePicker>
 			</div>
 			<div class="block">
 				<span class="demonstration">设置默认时间</span>
-				<xDatePicker v-model="value3" type="datetime" placeholder="选择日期时间" default-time="12:00:00"> </xDatePicker>
+				<xDatePicker
+					v-model="value3"
+					type="datetime"
+					placeholder="选择日期时间"
+					default-time="12:00:00">
+				</xDatePicker>
 			</div>
 		</xForm>
 	</div>

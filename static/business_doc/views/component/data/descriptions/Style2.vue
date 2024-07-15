@@ -33,7 +33,11 @@
 	<div>
 		<xMd :md="md" />
 		<xForm col="3" class="descriptions-style2">
-			<xItemDesc v-for="(item, index) in DemoDescriptions.items" :key="index" :item="item" :span="item.span" />
+			<xItemDesc
+				v-for="(item, index) in DemoDescriptions.items"
+				:key="index"
+				:item="item"
+				:span="item.span" />
 			<xItemDesc :item="DemoDescriptions.items[0]" />
 			<xItemDesc :item="DemoDescriptions.items[1]" />
 			<xItemDesc :item="{ isEmpty: true }" />

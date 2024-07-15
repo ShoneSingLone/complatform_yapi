@@ -14,7 +14,9 @@
 			<xCol :span="12">
 				<div class="sub-title">square</div>
 				<div class="flex middle">
-					<div class="avatar-block"><xAvatar shape="square" :size="50" :src="squareUrl"></xAvatar></div>
+					<div class="avatar-block">
+						<xAvatar shape="square" :size="50" :src="squareUrl"></xAvatar>
+					</div>
 					<div class="avatar-block" v-for="size in sizeList" :key="size">
 						<xAvatar shape="square" :size="size" :src="squareUrl"></xAvatar>
 					</div>

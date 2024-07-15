@@ -5,7 +5,10 @@
 			<xForm>
 				<div>
 					<h2>发送</h2>
-					<textarea ref="dataChannelSend" :disabled="false" placeholder="请输入要发送的文本..." />
+					<textarea
+						ref="dataChannelSend"
+						:disabled="false"
+						placeholder="请输入要发送的文本..." />
 					<div>
 						<xBtn preset="blue" @click="call" v-if="!isCalling"> 呼叫 </xBtn>
 						<xBtn @click="hangup" v-if="isCalling"> 挂断 </xBtn>
@@ -56,9 +59,15 @@ export default async function () {
 				//远端连接数据到达事件监听
 				this.remoteConnection.ondatachannel = this.receiveChannelCallback;
 				//监听ICE状态变化
-				this.localConnection.addEventListener("iceconnectionstatechange", this.onLocalIceStateChange);
+				this.localConnection.addEventListener(
+					"iceconnectionstatechange",
+					this.onLocalIceStateChange
+				);
 				//监听ICE状态变化
-				this.remoteConnection.addEventListener("iceconnectionstatechange", this.onRemoteIceStateChange);
+				this.remoteConnection.addEventListener(
+					"iceconnectionstatechange",
+					this.onRemoteIceStateChange
+				);
 				try {
 					console.log("localConnection创建提议Offer开始");
 					//创建提议Offer
@@ -154,7 +163,9 @@ export default async function () {
 				} catch (e) {
 					this.onAddIceCandidateError(this.remoteConnection, e);
 				}
-				console.log(`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`);
+				console.log(
+					`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`
+				);
 			},
 			//Candidate事件回调方法
 			async onRemoteIceCandidate(event) {
@@ -167,7 +178,9 @@ export default async function () {
 				} catch (e) {
 					this.onAddIceCandidateError(this.localConnection, e);
 				}
-				console.log(`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`);
+				console.log(
+					`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`
+				);
 			},
 			//添加Candidate成功
 			onAddIceCandidateSuccess(pc) {
@@ -179,12 +192,16 @@ export default async function () {
 			},
 			//监听I,E状态变化事件回调方法
 			onLocalIceStateChange(event) {
-				console.log(`localConnection连接的ICE状态: ${this.localConnection.iceConnectionState}`);
+				console.log(
+					`localConnection连接的ICE状态: ${this.localConnection.iceConnectionState}`
+				);
 				console.log("ICE状态改变事件: ", event);
 			},
 			//监听ICE状态变化事件回调方法
 			onRemoteIceStateChange(event) {
-				console.log(`remoteConnection连接的ICE状态: ${this.remoteConnection.iceConnectionState}`);
+				console.log(
+					`remoteConnection连接的ICE状态: ${this.remoteConnection.iceConnectionState}`
+				);
 				console.log("ICE状态改变事件: ", event);
 			},
 			//断开连接

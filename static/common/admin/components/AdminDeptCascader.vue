@@ -1,5 +1,11 @@
 <template>
-	<xCascader :options="options" :props="{ checkStrictly: true }" clearable filterable :show-all-levels="true" v-model="cptValue" />
+	<xCascader
+		:options="options"
+		:props="{ checkStrictly: true }"
+		clearable
+		filterable
+		:show-all-levels="true"
+		v-model="cptValue" />
 </template>
 
 <script lang="ts">
@@ -48,7 +54,12 @@ export default async function () {
 				try {
 					_.$loading(true);
 					const { data } = await _adminTools.api_dept_list(this.cptSearchParams);
-					const { TREE, CHILDREN_MAP, NODES_OBJ } = _.$arrayToTree({ data, id: "deptId", label: "deptName", value: "deptId" });
+					const { TREE, CHILDREN_MAP, NODES_OBJ } = _.$arrayToTree({
+						data,
+						id: "deptId",
+						label: "deptName",
+						value: "deptId"
+					});
 					this.CHILDREN_MAP = CHILDREN_MAP;
 					this.NODES_OBJ = NODES_OBJ;
 					this.options = TREE;

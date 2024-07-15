@@ -231,7 +231,8 @@ export default async function () {}
 	--ti-common-shadow-warn: 0 1px 3px 0 rgba(204, 100, 20, 0.25);
 	--ti-common-shadow-prompt: 0 1px 3px 0 rgba(70, 94, 184, 0.25);
 	--ti-common-shadow-success: 0 1px 3px 0 rgba(39, 176, 128, 0.25);
-	--ti-common-font-family: "Helvetica", "Arial", "PingFangSC-Regular", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", "Microsoft JhengHei";
+	--ti-common-font-family: "Helvetica", "Arial", "PingFangSC-Regular", "Hiragino Sans GB",
+		"Microsoft YaHei", "微软雅黑", "Microsoft JhengHei";
 	--ti-common-font-size-base: 12px;
 	--ti-common-font-size-1: 14px;
 	--ti-common-font-size-2: 16px;

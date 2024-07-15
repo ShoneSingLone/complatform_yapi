@@ -1,7 +1,18 @@
 <template>
 	<div class="flex middle">
-		<xSelect class="flex1" v-model="mixin_value" v-bind="$attrs" v-on="mixin_listeners" :disabled="cptDisabledSelector">
-			<xOption v-for="item in configs.options" :key="item.value || item.label" :value="item.value" :label="item.label" :disabled="item.disabled || false"> </xOption>
+		<xSelect
+			class="flex1"
+			v-model="mixin_value"
+			v-bind="$attrs"
+			v-on="mixin_listeners"
+			:disabled="cptDisabledSelector">
+			<xOption
+				v-for="item in configs.options"
+				:key="item.value || item.label"
+				:value="item.value"
+				:label="item.label"
+				:disabled="item.disabled || false">
+			</xOption>
 		</xSelect>
 		<xIcon icon="icon_refresh" @click="getOptions" class="ml4 pointer" />
 	</div>

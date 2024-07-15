@@ -8,7 +8,11 @@
 			</div>
 		</template>
 		<xForm :col="cptColNum">
-			<xOption v-for="item in icons" :key="item.value" :label="item.label" :value="item.value">
+			<xOption
+				v-for="item in icons"
+				:key="item.value"
+				:label="item.label"
+				:value="item.value">
 				<div class="flex middle">
 					<xIcon :icon="item.label | iconName" style="height: 18px; width: 18px" />
 					<span class="ml">{{ item.label }}</span>
@@ -26,7 +30,11 @@ export default async function () {
 		{
 			methods: { getCol }
 		}
-	] = await _.$importVue(["@/assets/svg/icons.vue", "/common/ui-x/common/ItemMixins.vue", "/common/ui-x/common/xItem/xItemCheck.vue"]);
+	] = await _.$importVue([
+		"@/assets/svg/icons.vue",
+		"/common/ui-x/common/ItemMixins.vue",
+		"/common/ui-x/common/xItem/xItemCheck.vue"
+	]);
 
 	const WIDTH = 200;
 	return defineComponent({

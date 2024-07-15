@@ -57,7 +57,8 @@ export default async function ({ row, onSelected }) {
 						{
 							label: i18n("状态"),
 							prop: "status",
-							cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, sys_normal_disable)
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, sys_normal_disable)
 						},
 						{
 							label: i18n("创建时间"),
@@ -106,7 +107,8 @@ export default async function ({ row, onSelected }) {
 						phonenumber
 					};
 
-					const { rows, total } = await _adminTools.api_role_auth_user_unallocated_list(queryData);
+					const { rows, total } =
+						await _adminTools.api_role_auth_user_unallocated_list(queryData);
 					_.$setTableData(this.configsTable, { list: rows, total, set: new Set() });
 				} catch (error) {
 					_.$msgError(error);

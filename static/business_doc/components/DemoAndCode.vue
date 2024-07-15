@@ -46,7 +46,9 @@ export default async function () {
 				this.isLoading = false;
 			},
 			async getBussinessComponent() {
-				this.BussinessComponentSourceCode = await _.$sourceCodeSFC({ resolvedURL: _.$resolvePath(this.path) });
+				this.BussinessComponentSourceCode = await _.$sourceCodeSFC({
+					resolvedURL: _.$resolvePath(this.path)
+				});
 				this.rerun();
 			},
 			async showSourceCodeDialog() {
@@ -77,7 +79,9 @@ export default async function () {
 				style: vm.styleContainer,
 				$vSlots: {
 					default() {
-						return h(vm.BussinessComponent, { vIf: vm.BussinessComponent && !vm.isFold });
+						return h(vm.BussinessComponent, {
+							vIf: vm.BussinessComponent && !vm.isFold
+						});
 					},
 					header() {
 						return h(

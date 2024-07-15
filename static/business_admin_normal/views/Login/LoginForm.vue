@@ -3,7 +3,10 @@
 		<!-- 用户名 -->
 		<xItem :configs="configsForm.username" autocomplete="username" @keypress.enter="login" />
 		<!-- 密码 -->
-		<xItem :configs="configsForm.password" autocomplete="current-password" @keypress.enter="login" />
+		<xItem
+			:configs="configsForm.password"
+			autocomplete="current-password"
+			@keypress.enter="login" />
 		<!-- 验证码 -->
 		<xItem :configs="configsForm.code" @keypress.enter="login" />
 		<!-- 记住我 -->
@@ -162,7 +165,12 @@ export default async function () {
 						const password = formData.password;
 						const code = formData.code;
 						const uuid = this.uuid;
-						const res = await _api.adminNormal.login({ username, password, code, uuid });
+						const res = await _api.adminNormal.login({
+							username,
+							password,
+							code,
+							uuid
+						});
 						this.token = res.token;
 						if (res.token) {
 							_.$lStorage.x_token = res.token;

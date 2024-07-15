@@ -35,7 +35,10 @@
 				<xGap l="10" />
 				<xIcon icon="currentLocation" class="icon-opreation_click pointer" />
 				<!-- 添加分组 -->
-				<xIcon icon="_add" class="icon-opreation_click pointer ml10" @click="addNewWiki()" />
+				<xIcon
+					icon="_add"
+					class="icon-opreation_click pointer ml10"
+					@click="addNewWiki()" />
 			</div>
 			<div class="flex1-overflow-auto wiki-tree-wrapper" ref="refTreeScroll">
 				<xTree

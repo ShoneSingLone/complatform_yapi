@@ -105,7 +105,16 @@ export default async function ({ onOk, userId, canModifyAvatar }) {
 						add_time: _.$dateFormat(userInfo.add_time),
 						up_time: _.$dateFormat(userInfo.up_time)
 					},
-					order: ["img", "uid", "username", "email", "role", "type", "add_time", "up_time"]
+					order: [
+						"img",
+						"uid",
+						"username",
+						"email",
+						"role",
+						"type",
+						"add_time",
+						"up_time"
+					]
 				});
 			}
 		}

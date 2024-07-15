@@ -4,7 +4,11 @@
 		<xBtn class="mb" @click="copyTo">复制到</xBtn>
 		<xCard header="基本信息">
 			<xForm col="3" style="--xItem-label-width: 100px">
-				<xItemDesc v-for="(item, index) in cptDescItems" :key="index" :item="item" :span="item.span || 1" />
+				<xItemDesc
+					v-for="(item, index) in cptDescItems"
+					:key="index"
+					:item="item"
+					:span="item.span || 1" />
 			</xForm>
 		</xCard>
 		<xGap t />
@@ -83,7 +87,8 @@ ${resBackupJson}
 			cptCode() {
 				try {
 					const fn = new Function("params", `return (${this.cptRequestCode})(params)`);
-					const { title, _id, up_time, path, tag, isProxy, witchEnv, method } = this.cptInfo;
+					const { title, _id, up_time, path, tag, isProxy, witchEnv, method } =
+						this.cptInfo;
 
 					if (!path) {
 						return "";
@@ -115,11 +120,23 @@ ${resBackupJson}
 			cptDescItems() {
 				const vm = this;
 				const { title, uid, up_time, path, tag, isProxy, witchEnv, method } = this.cptInfo;
-				console.log("🚀 ~ cptDescItems ~  title, uid, up_time, path, tag, isProxy, witchEnv :", title, uid, up_time, path, tag, isProxy, witchEnv);
+				console.log(
+					"🚀 ~ cptDescItems ~  title, uid, up_time, path, tag, isProxy, witchEnv :",
+					title,
+					uid,
+					up_time,
+					path,
+					tag,
+					isProxy,
+					witchEnv
+				);
 
 				/* @ts-ignore */
 				const { protocol, hostname, port } = location;
-				const apiURL = String(`${this.APP.cptProject?.basepath || ""}${path}`).replace(/\/\//g, "/");
+				const apiURL = String(`${this.APP.cptProject?.basepath || ""}${path}`).replace(
+					/\/\//g,
+					"/"
+				);
 				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${this.APP.cptProject._id}${apiURL}`;
 
 				return [
@@ -161,9 +178,16 @@ ${resBackupJson}
 										}
 									}
 								};
-								return h("div", { class: "mt" }, [h("xTag", { class: "mr" }, ["mock地址"]), h("span", [mockHref]), h("xBtn", btnProps)]);
+								return h("div", { class: "mt" }, [
+									h("xTag", { class: "mr" }, ["mock地址"]),
+									h("span", [mockHref]),
+									h("xBtn", btnProps)
+								]);
 							})();
-							return h("div", [h("div", [h("xTag", { class: "mr" }, [method]), h("span", [path])]), vDomMockHref]);
+							return h("div", [
+								h("div", [h("xTag", { class: "mr" }, [method]), h("span", [path])]),
+								vDomMockHref
+							]);
 						}
 					},
 					{
@@ -212,7 +236,10 @@ ${resBackupJson}
 						xItemRender: () => {
 							if (isProxy) {
 								const env = _.find(this.APP.cptProject.env, { _id: witchEnv });
-								return h("div", [h("xTag", { class: "mr" }, [env.name]), h("span", [env.domain])]);
+								return h("div", [
+									h("xTag", { class: "mr" }, [env.name]),
+									h("span", [env.domain])
+								]);
 							} else {
 								return "否";
 							}

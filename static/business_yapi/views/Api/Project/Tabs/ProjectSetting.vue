@@ -27,12 +27,19 @@ export default async function () {
 		name: "ProjectSettingVue",
 		inject: ["APP", "inject_project"],
 		components: {
-			ProjectSettingPanelCommon: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue"),
-			ProjectSettingPanelReqFrontendCode: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelReqFrontendCode.vue"),
-			ProjectSettingPanelDataImportExport: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelDataImportExport.vue")
+			ProjectSettingPanelCommon: () =>
+				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue"),
+			ProjectSettingPanelReqFrontendCode: () =>
+				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelReqFrontendCode.vue"),
+			ProjectSettingPanelDataImportExport: () =>
+				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelDataImportExport.vue")
 		},
 		setup() {
-			const cptProjectSettingTab = useTabName({ vm: this, propName: "project_setting_tab", defaultName: "1" });
+			const cptProjectSettingTab = useTabName({
+				vm: this,
+				propName: "project_setting_tab",
+				defaultName: "1"
+			});
 			return {
 				cptProjectSettingTab
 			};

@@ -56,7 +56,8 @@ export default async function () {
 			};
 		},
 		setup() {
-			const { LOOP_TYPE_NAME_ARRAY, playAudio, playMedia, stateAudio, methodsMusicPlayer } = useMusic(this);
+			const { LOOP_TYPE_NAME_ARRAY, playAudio, playMedia, stateAudio, methodsMusicPlayer } =
+				useMusic(this);
 			return {
 				LOOP_TYPE_NAME_ARRAY,
 				playAudio,
@@ -138,7 +139,11 @@ export default async function () {
 				],
 				/* *********************** */
 				homeListSearchKey: "",
-				currentTabName: "资源",
+				tabArray: [
+					{ label: "资源", icon: "_cloud_home_tab", path: "/resource" },
+					{ label: "传输", icon: "_cloud_trans_tab", path: "/transfer" },
+					{ label: "我的", icon: "_UserOutlined", path: "/me" }
+				],
 				/* header 按钮 */
 				isShowBMoreDrawer: false,
 				isShowResourceDrawer: false,
@@ -213,7 +218,10 @@ export default async function () {
 				uni.getClipboardData({
 					success: res => {
 						if (res.data.includes("http://127.0.0.1:7001/")) {
-							let key = res.data.substring(res.data.lastIndexOf("\/") + 1, res.data.length);
+							let key = res.data.substring(
+								res.data.lastIndexOf("\/") + 1,
+								res.data.length
+							);
 							if (!key) {
 								return;
 							}
@@ -356,6 +364,35 @@ export default async function () {
 			}
 		},
 		computed: {
+			cptNavBarName: {
+				get() {
+					let item = _.find(this.tabArray, item => item.path === this.$route.path);
+					if (!item) {
+						item = _.first(this.tabArray);
+						this.$nextTick(() => {
+							this.$router.push({
+								path: item.path,
+								query: {
+									...this.$route.query
+								}
+							});
+						});
+					}
+					return item.label;
+				},
+				set(label) {
+					const { path } = _.find(this.tabArray, { label });
+
+					this.$nextTick(() => {
+						this.$router.push({
+							path,
+							query: {
+								...this.$route.query
+							}
+						});
+					});
+				}
+			},
 			fileId: {
 				get() {
 					return this.$route.query.fileId || 0;

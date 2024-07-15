@@ -20,8 +20,12 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP", "inject_project"],
 		components: {
-			ProjectInterfaceSectionInterfaceDetail: () => _.$importVue("@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetail.vue"),
-			ProjectInterfaceSectionInterfaceList: () => _.$importVue("@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceList.vue")
+			ProjectInterfaceSectionInterfaceDetail: () =>
+				_.$importVue(
+					"@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetail.vue"
+				),
+			ProjectInterfaceSectionInterfaceList: () =>
+				_.$importVue("@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceList.vue")
 		},
 		provide() {
 			return { inject_project_interface_section: this };
@@ -34,7 +38,9 @@ export default async function () {
 				label: i18n("接口分类"),
 				width: 150,
 				cellRenderer({ rowData }) {
-					const label = _.find(vm.inject_project.allCategory, { _id: rowData.catid }).name;
+					const label = _.find(vm.inject_project.allCategory, {
+						_id: rowData.catid
+					}).name;
 					return label;
 				}
 			};
@@ -110,7 +116,9 @@ export default async function () {
 
 					if (rowData.isProxy) {
 						const vDom_yes = h("xTag", { type: "success" }, ["是"]);
-						const vDom_witchEnv = h("xTag", { class: "ml" }, [vm.cptEnvObject[rowData.witchEnv]?.name || "--"]);
+						const vDom_witchEnv = h("xTag", { class: "ml" }, [
+							vm.cptEnvObject[rowData.witchEnv]?.name || "--"
+						]);
 						return h("div", [vDom_yes, vDom_witchEnv]);
 					} else {
 						return h("xTag", { type: "info" }, ["否"]);
@@ -124,8 +132,16 @@ export default async function () {
 				cellRenderer: params => {
 					const { rowData } = params;
 
-					const isUseBackup = h("xTag", { type: "success", vIf: rowData.res_body_type === "backup" }, ["是"]);
-					const hasBackupData = h("xTag", { type: "warning", class: "ml8", vIf: !rowData.isSetBackupData }, ["无备份数据"]);
+					const isUseBackup = h(
+						"xTag",
+						{ type: "success", vIf: rowData.res_body_type === "backup" },
+						["是"]
+					);
+					const hasBackupData = h(
+						"xTag",
+						{ type: "warning", class: "ml8", vIf: !rowData.isSetBackupData },
+						["无备份数据"]
+					);
 
 					return [isUseBackup, hasBackupData];
 				}
@@ -166,7 +182,9 @@ export default async function () {
 							label: "序号",
 							width: 60,
 							cellRenderer({ rowIndex }) {
-								return h("div", { style: "width:100%;text-align:right;" }, [rowIndex + 1]);
+								return h("div", { style: "width:100%;text-align:right;" }, [
+									rowIndex + 1
+								]);
 							}
 						},
 						catid,
@@ -257,7 +275,10 @@ export default async function () {
 						clearable: true,
 						itemType: "xItemSelect",
 						multiple: true,
-						options: _.map(["是", "否", "无备份数据"], label => ({ label, value: label })),
+						options: _.map(["是", "否", "无备份数据"], label => ({
+							label,
+							value: label
+						})),
 						onEmitValue() {
 							vm.filterList();
 						}
@@ -362,7 +383,10 @@ export default async function () {
 									return search.includes(i.witchEnv);
 								} else {
 									search = _.trim(search);
-									return new RegExp(search, "i").test(i[prop]) || new RegExp(search, "i").test(i.title);
+									return (
+										new RegExp(search, "i").test(i[prop]) ||
+										new RegExp(search, "i").test(i.title)
+									);
 								}
 							});
 						}

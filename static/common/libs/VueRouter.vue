@@ -34,7 +34,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			// - escapes [!'()*]
 			// - preserve commas
 			var encode = function (str) {
-				return encodeURIComponent(str).replace(encodeReserveRE, encodeReserveReplacer).replace(commaRE, ",");
+				return encodeURIComponent(str)
+					.replace(encodeReserveRE, encodeReserveReplacer)
+					.replace(commaRE, ",");
 			};
 
 			function decode(str) {
@@ -61,7 +63,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 				for (var key in extraQuery) {
 					var value = extraQuery[key];
-					parsedQuery[key] = Array.isArray(value) ? value.map(castQueryParamValue) : castQueryParamValue(value);
+					parsedQuery[key] = Array.isArray(value)
+						? value.map(castQueryParamValue)
+						: castQueryParamValue(value);
 				}
 				return parsedQuery;
 			}
@@ -207,9 +211,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				} else if (!b) {
 					return false;
 				} else if (a.path && b.path) {
-					return a.path.replace(trailingSlashRE, "") === b.path.replace(trailingSlashRE, "") && (onlyPath || (a.hash === b.hash && isObjectEqual(a.query, b.query)));
+					return (
+						a.path.replace(trailingSlashRE, "") ===
+							b.path.replace(trailingSlashRE, "") &&
+						(onlyPath || (a.hash === b.hash && isObjectEqual(a.query, b.query)))
+					);
 				} else if (a.name && b.name) {
-					return a.name === b.name && (onlyPath || (a.hash === b.hash && isObjectEqual(a.query, b.query) && isObjectEqual(a.params, b.params)));
+					return (
+						a.name === b.name &&
+						(onlyPath ||
+							(a.hash === b.hash &&
+								isObjectEqual(a.query, b.query) &&
+								isObjectEqual(a.params, b.params)))
+					);
 				} else {
 					return false;
 				}
@@ -249,7 +263,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			function isIncludedRoute(current, target) {
 				return (
-					current.path.replace(trailingSlashRE, "/").indexOf(target.path.replace(trailingSlashRE, "/")) === 0 &&
+					current.path
+						.replace(trailingSlashRE, "/")
+						.indexOf(target.path.replace(trailingSlashRE, "/")) === 0 &&
 					(!target.hash || current.hash === target.hash) &&
 					queryIncludes(current.query, target.query)
 				);
@@ -333,7 +349,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							// #2301
 							// pass props
 							if (cachedData.configProps) {
-								fillPropsinData(cachedComponent, data, cachedData.route, cachedData.configProps);
+								fillPropsinData(
+									cachedComponent,
+									data,
+									cachedData.route,
+									cachedData.configProps
+								);
 							}
 							return h(cachedComponent, data, children);
 						} else {
@@ -373,7 +394,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					// register instance in init hook
 					// in case kept-alive component be actived when routes changed
 					data.hook.init = function (vnode) {
-						if (vnode.data.keepAlive && vnode.componentInstance && vnode.componentInstance !== matched.instances[name]) {
+						if (
+							vnode.data.keepAlive &&
+							vnode.componentInstance &&
+							vnode.componentInstance !== matched.instances[name]
+						) {
 							matched.instances[name] = vnode.componentInstance;
 						}
 
@@ -425,7 +450,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					case "boolean":
 						return config ? route.params : undefined;
 					default: {
-						warn(false, 'props in "' + route.path + '" is a ' + typeof config + ", " + "expecting an object, function or boolean.");
+						warn(
+							false,
+							'props in "' +
+								route.path +
+								'" is a ' +
+								typeof config +
+								", " +
+								"expecting an object, function or boolean."
+						);
 					}
 				}
 			}
@@ -589,7 +622,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						repeat: repeat,
 						partial: partial,
 						asterisk: !!asterisk,
-						pattern: pattern ? escapeGroup(pattern) : asterisk ? ".*" : "[^" + escapeString(delimiter) + "]+?"
+						pattern: pattern
+							? escapeGroup(pattern)
+							: asterisk
+								? ".*"
+								: "[^" + escapeString(delimiter) + "]+?"
 					});
 				}
 
@@ -688,14 +725,22 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 						if (isarray(value)) {
 							if (!token.repeat) {
-								throw new TypeError('Expected "' + token.name + '" to not repeat, but received `' + JSON.stringify(value) + "`");
+								throw new TypeError(
+									'Expected "' +
+										token.name +
+										'" to not repeat, but received `' +
+										JSON.stringify(value) +
+										"`"
+								);
 							}
 
 							if (value.length === 0) {
 								if (token.optional) {
 									continue;
 								} else {
-									throw new TypeError('Expected "' + token.name + '" to not be empty');
+									throw new TypeError(
+										'Expected "' + token.name + '" to not be empty'
+									);
 								}
 							}
 
@@ -703,7 +748,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								segment = encode(value[j]);
 
 								if (!matches[i].test(segment)) {
-									throw new TypeError('Expected all "' + token.name + '" to match "' + token.pattern + '", but received `' + JSON.stringify(segment) + "`");
+									throw new TypeError(
+										'Expected all "' +
+											token.name +
+											'" to match "' +
+											token.pattern +
+											'", but received `' +
+											JSON.stringify(segment) +
+											"`"
+									);
 								}
 
 								path += (j === 0 ? token.prefix : token.delimiter) + segment;
@@ -715,7 +768,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						segment = token.asterisk ? encodeAsterisk(value) : encode(value);
 
 						if (!matches[i].test(segment)) {
-							throw new TypeError('Expected "' + token.name + '" to match "' + token.pattern + '", but received "' + segment + '"');
+							throw new TypeError(
+								'Expected "' +
+									token.name +
+									'" to match "' +
+									token.pattern +
+									'", but received "' +
+									segment +
+									'"'
+							);
 						}
 
 						path += token.prefix + segment;
@@ -886,7 +947,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				// is valid at the end of a path match, not in the middle. This is important
 				// in non-ending mode, where "/test/" shouldn't match "/test//route".
 				if (!strict) {
-					route = (endsWithDelimiter ? route.slice(0, -delimiter.length) : route) + "(?:" + delimiter + "(?=$))?";
+					route =
+						(endsWithDelimiter ? route.slice(0, -delimiter.length) : route) +
+						"(?:" +
+						delimiter +
+						"(?=$))?";
 				}
 
 				if (end) {
@@ -925,10 +990,18 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 
 				if (isarray(path)) {
-					return arrayToRegexp(/** @type {!Array} */ path, /** @type {!Array} */ keys, options);
+					return arrayToRegexp(
+						/** @type {!Array} */ path,
+						/** @type {!Array} */ keys,
+						options
+					);
 				}
 
-				return stringToRegexp(/** @type {string} */ path, /** @type {!Array} */ keys, options);
+				return stringToRegexp(
+					/** @type {string} */ path,
+					/** @type {!Array} */ keys,
+					options
+				);
 			}
 			pathToRegexp_1.parse = parse_1;
 			pathToRegexp_1.compile = compile_1;
@@ -943,7 +1016,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			function fillParams(path, params, routeMsg) {
 				params = params || {};
 				try {
-					var filler = regexpCompileCache[path] || (regexpCompileCache[path] = pathToRegexp_1.compile(path));
+					var filler =
+						regexpCompileCache[path] ||
+						(regexpCompileCache[path] = pathToRegexp_1.compile(path));
 
 					// Fix #2505 resolving asterisk routes { name: 'not-found', params: { pathMatch: '/not-found' }}
 					// and fix #3106 so that you can work with location descriptor object having params.pathMatch equal to empty string
@@ -955,7 +1030,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				} catch (e) {
 					{
 						// Fix #3072 no warn if `pathMatch` is string
-						warn(typeof params.pathMatch === "string", "missing param for " + routeMsg + ": " + e.message);
+						warn(
+							typeof params.pathMatch === "string",
+							"missing param for " + routeMsg + ": " + e.message
+						);
 					}
 					return "";
 				} finally {
@@ -999,9 +1077,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 				var parsedPath = parsePath(next.path || "");
 				var basePath = (current && current.path) || "/";
-				var path = parsedPath.path ? resolvePath(parsedPath.path, basePath, append || next.append) : basePath;
+				var path = parsedPath.path
+					? resolvePath(parsedPath.path, basePath, append || next.append)
+					: basePath;
 
-				var query = resolveQuery(parsedPath.query, next.query, router && router.options.parseQuery);
+				var query = resolveQuery(
+					parsedPath.query,
+					next.query,
+					router && router.options.parseQuery
+				);
 
 				var hash = next.hash || parsedPath.hash;
 				if (hash && hash.charAt(0) !== "#") {
@@ -1069,15 +1153,28 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					var globalActiveClass = router.options.linkActiveClass;
 					var globalExactActiveClass = router.options.linkExactActiveClass;
 					// Support global empty active class
-					var activeClassFallback = globalActiveClass == null ? "router-link-active" : globalActiveClass;
-					var exactActiveClassFallback = globalExactActiveClass == null ? "router-link-exact-active" : globalExactActiveClass;
-					var activeClass = this.activeClass == null ? activeClassFallback : this.activeClass;
-					var exactActiveClass = this.exactActiveClass == null ? exactActiveClassFallback : this.exactActiveClass;
+					var activeClassFallback =
+						globalActiveClass == null ? "router-link-active" : globalActiveClass;
+					var exactActiveClassFallback =
+						globalExactActiveClass == null
+							? "router-link-exact-active"
+							: globalExactActiveClass;
+					var activeClass =
+						this.activeClass == null ? activeClassFallback : this.activeClass;
+					var exactActiveClass =
+						this.exactActiveClass == null
+							? exactActiveClassFallback
+							: this.exactActiveClass;
 
-					var compareTarget = route.redirectedFrom ? createRoute(null, normalizeLocation(route.redirectedFrom), null, router) : route;
+					var compareTarget = route.redirectedFrom
+						? createRoute(null, normalizeLocation(route.redirectedFrom), null, router)
+						: route;
 
 					classes[exactActiveClass] = isSameRoute(current, compareTarget, this.exactPath);
-					classes[activeClass] = this.exact || this.exactPath ? classes[exactActiveClass] : isIncludedRoute(current, compareTarget);
+					classes[activeClass] =
+						this.exact || this.exactPath
+							? classes[exactActiveClass]
+							: isIncludedRoute(current, compareTarget);
 
 					var ariaCurrentValue = classes[exactActiveClass] ? this.ariaCurrentValue : null;
 
@@ -1128,7 +1225,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							{
 								warn(
 									false,
-									'<router-link> with to="' + this.to + "\" is trying to use a scoped slot but it didn't provide exactly one child. Wrapping the content with a span element."
+									'<router-link> with to="' +
+										this.to +
+										"\" is trying to use a scoped slot but it didn't provide exactly one child. Wrapping the content with a span element."
 								);
 							}
 							return scopedSlot.length === 0 ? h() : h("span", {}, scopedSlot);
@@ -1170,7 +1269,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							for (var event in aData.on) {
 								var handler$1 = aData.on[event];
 								if (event in on) {
-									aData.on[event] = Array.isArray(handler$1) ? handler$1 : [handler$1];
+									aData.on[event] = Array.isArray(handler$1)
+										? handler$1
+										: [handler$1];
 								}
 							}
 							// append new listeners for router-link
@@ -1293,7 +1394,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 				var strats = Vue.config.optionMergeStrategies;
 				// use the same hook merging strategy for route hooks
-				strats.beforeRouteEnter = strats.beforeRouteLeave = strats.beforeRouteUpdate = strats.created;
+				strats.beforeRouteEnter =
+					strats.beforeRouteLeave =
+					strats.beforeRouteUpdate =
+						strats.created;
 			}
 
 			/*  */
@@ -1336,7 +1440,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								return "- " + path;
 							})
 							.join("\n");
-						warn(false, "Non-nested routes must include a leading slash character. Fix the following routes: \n" + pathNames);
+						warn(
+							false,
+							"Non-nested routes must include a leading slash character. Fix the following routes: \n" +
+								pathNames
+						);
 					}
 				}
 
@@ -1352,7 +1460,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				var name = route.name;
 				{
 					assert(path != null, '"path" is required in a route configuration.');
-					assert(typeof route.component !== "string", 'route config "component" for path: ' + String(path || name) + " cannot be a " + "string id. Use an actual component instead.");
+					assert(
+						typeof route.component !== "string",
+						'route config "component" for path: ' +
+							String(path || name) +
+							" cannot be a " +
+							"string id. Use an actual component instead."
+					);
 
 					warn(
 						// eslint-disable-next-line no-control-regex
@@ -1378,7 +1492,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					components: route.components || {
 						default: route.component
 					},
-					alias: route.alias ? (typeof route.alias === "string" ? [route.alias] : route.alias) : [],
+					alias: route.alias
+						? typeof route.alias === "string"
+							? [route.alias]
+							: route.alias
+						: [],
 					instances: {},
 					enteredCbs: {},
 					name: name,
@@ -1387,7 +1505,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					redirect: route.redirect,
 					beforeEnter: route.beforeEnter,
 					meta: route.meta || {},
-					props: route.props == null ? {} : route.components ? route.props : { default: route.props }
+					props:
+						route.props == null
+							? {}
+							: route.components
+								? route.props
+								: { default: route.props }
 				};
 
 				if (route.children) {
@@ -1417,7 +1540,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						}
 					}
 					route.children.forEach(function (child) {
-						var childMatchAs = matchAs ? cleanPath(matchAs + "/" + child.path) : undefined;
+						var childMatchAs = matchAs
+							? cleanPath(matchAs + "/" + child.path)
+							: undefined;
 						addRouteRecord(pathList, pathMap, nameMap, child, record, childMatchAs);
 					});
 				}
@@ -1432,7 +1557,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					for (var i = 0; i < aliases.length; ++i) {
 						var alias = aliases[i];
 						if (alias === path) {
-							warn(false, 'Found an alias with the same value as the path: "' + path + '". You have to remove that alias. It will be ignored in development.');
+							warn(
+								false,
+								'Found an alias with the same value as the path: "' +
+									path +
+									'". You have to remove that alias. It will be ignored in development.'
+							);
 							// skip in dev to make it work
 							continue;
 						}
@@ -1456,7 +1586,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					if (!nameMap[name]) {
 						nameMap[name] = record;
 					} else if (!matchAs) {
-						warn(false, "Duplicate named routes definition: " + '{ name: "' + name + '", path: "' + record.path + '" }');
+						warn(
+							false,
+							"Duplicate named routes definition: " +
+								'{ name: "' +
+								name +
+								'", path: "' +
+								record.path +
+								'" }'
+						);
 					}
 				}
 			}
@@ -1466,7 +1604,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				{
 					var keys = Object.create(null);
 					regex.keys.forEach(function (key) {
-						warn(!keys[key.name], 'Duplicate param keys in route with path: "' + path + '"');
+						warn(
+							!keys[key.name],
+							'Duplicate param keys in route with path: "' + path + '"'
+						);
 						keys[key.name] = true;
 					});
 				}
@@ -1499,7 +1640,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 
 				function addRoute(parentOrRoute, route) {
-					var parent = typeof parentOrRoute !== "object" ? nameMap[parentOrRoute] : undefined;
+					var parent =
+						typeof parentOrRoute !== "object" ? nameMap[parentOrRoute] : undefined;
 					// $flow-disable-line
 					createRouteMap([route || parentOrRoute], pathList, pathMap, nameMap, parent);
 
@@ -1556,7 +1698,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							}
 						}
 
-						location.path = fillParams(record.path, location.params, 'named route "' + name + '"');
+						location.path = fillParams(
+							record.path,
+							location.params,
+							'named route "' + name + '"'
+						);
 						return _createRoute(record, location, redirectedFrom);
 					} else if (location.path) {
 						location.params = {};
@@ -1574,7 +1720,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 				function redirect(record, location) {
 					var originalRedirect = record.redirect;
-					var redirect = typeof originalRedirect === "function" ? originalRedirect(createRoute(record, location, null, router)) : originalRedirect;
+					var redirect =
+						typeof originalRedirect === "function"
+							? originalRedirect(createRoute(record, location, null, router))
+							: originalRedirect;
 
 					if (typeof redirect === "string") {
 						redirect = { path: redirect };
@@ -1601,7 +1750,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						// resolved named direct
 						var targetRecord = nameMap[name];
 						{
-							assert(targetRecord, 'redirect failed: named route "' + name + '" not found.');
+							assert(
+								targetRecord,
+								'redirect failed: named route "' + name + '" not found.'
+							);
 						}
 						return match(
 							{
@@ -1618,7 +1770,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						// 1. resolve relative redirect
 						var rawPath = resolveRecordPath(path, record);
 						// 2. resolve params
-						var resolvedPath = fillParams(rawPath, params, 'redirect route with path "' + rawPath + '"');
+						var resolvedPath = fillParams(
+							rawPath,
+							params,
+							'redirect route with path "' + rawPath + '"'
+						);
 						// 3. rematch with existing query and hash
 						return match(
 							{
@@ -1639,7 +1795,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 
 				function alias(record, location, matchAs) {
-					var aliasedPath = fillParams(matchAs, location.params, 'aliased route with path "' + matchAs + '"');
+					var aliasedPath = fillParams(
+						matchAs,
+						location.params,
+						'aliased route with path "' + matchAs + '"'
+					);
 					var aliasedMatch = match({
 						_normalized: true,
 						path: aliasedPath
@@ -1684,7 +1844,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					var key = regex.keys[i - 1];
 					if (key) {
 						// Fix #1994: using * with props: true generates a param named 0
-						params[key.name || "pathMatch"] = typeof m[i] === "string" ? decode(m[i]) : m[i];
+						params[key.name || "pathMatch"] =
+							typeof m[i] === "string" ? decode(m[i]) : m[i];
 					}
 				}
 
@@ -1698,7 +1859,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			/*  */
 
 			// use User Timing api (if present) for more accurate key precision
-			var Time = inBrowser && window.performance && window.performance.now ? window.performance : Date;
+			var Time =
+				inBrowser && window.performance && window.performance.now
+					? window.performance
+					: Date;
 
 			function genStateKey() {
 				return Time.now().toFixed(3);
@@ -1847,7 +2011,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						: document.querySelector(shouldScroll.selector);
 
 					if (el) {
-						var offset = shouldScroll.offset && typeof shouldScroll.offset === "object" ? shouldScroll.offset : {};
+						var offset =
+							shouldScroll.offset && typeof shouldScroll.offset === "object"
+								? shouldScroll.offset
+								: {};
 						offset = normalizeOffset(offset);
 						position = getElementPosition(el, offset);
 					} else if (isValidPosition(shouldScroll)) {
@@ -1923,22 +2090,54 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			};
 
 			function createNavigationRedirectedError(from, to) {
-				return createRouterError(from, to, NavigationFailureType.redirected, 'Redirected when going from "' + from.fullPath + '" to "' + stringifyRoute(to) + '" via a navigation guard.');
+				return createRouterError(
+					from,
+					to,
+					NavigationFailureType.redirected,
+					'Redirected when going from "' +
+						from.fullPath +
+						'" to "' +
+						stringifyRoute(to) +
+						'" via a navigation guard.'
+				);
 			}
 
 			function createNavigationDuplicatedError(from, to) {
-				var error = createRouterError(from, to, NavigationFailureType.duplicated, 'Avoided redundant navigation to current location: "' + from.fullPath + '".');
+				var error = createRouterError(
+					from,
+					to,
+					NavigationFailureType.duplicated,
+					'Avoided redundant navigation to current location: "' + from.fullPath + '".'
+				);
 				// backwards compatible with the first introduction of Errors
 				error.name = "NavigationDuplicated";
 				return error;
 			}
 
 			function createNavigationCancelledError(from, to) {
-				return createRouterError(from, to, NavigationFailureType.cancelled, 'Navigation cancelled from "' + from.fullPath + '" to "' + to.fullPath + '" with a new navigation.');
+				return createRouterError(
+					from,
+					to,
+					NavigationFailureType.cancelled,
+					'Navigation cancelled from "' +
+						from.fullPath +
+						'" to "' +
+						to.fullPath +
+						'" with a new navigation.'
+				);
 			}
 
 			function createNavigationAbortedError(from, to) {
-				return createRouterError(from, to, NavigationFailureType.aborted, 'Navigation aborted from "' + from.fullPath + '" to "' + to.fullPath + '" via a navigation guard.');
+				return createRouterError(
+					from,
+					to,
+					NavigationFailureType.aborted,
+					'Navigation aborted from "' +
+						from.fullPath +
+						'" to "' +
+						to.fullPath +
+						'" via a navigation guard.'
+				);
 			}
 
 			function createRouterError(from, to, type, message) {
@@ -1974,7 +2173,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			}
 
 			function isNavigationFailure(err, errorType) {
-				return isError(err) && err._isRouter && (errorType == null || err.type === errorType);
+				return (
+					isError(err) && err._isRouter && (errorType == null || err.type === errorType)
+				);
 			}
 
 			/*  */
@@ -2025,11 +2226,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								if (pending.count <= 0) {
 									next();
 								} */
-								Vue._HandleVueRouterAsyncComponentResolved({ resolvedDef, def, match, key, pending, next });
+								Vue._HandleVueRouterAsyncComponentResolved({
+									resolvedDef,
+									def,
+									match,
+									key,
+									pending,
+									next
+								});
 							});
 
 							var reject = once(function (reason) {
-								var msg = "Failed to resolve async component " + key + ": " + reason;
+								var msg =
+									"Failed to resolve async component " + key + ": " + reason;
 								warn(false, msg);
 								if (!error) {
 									error = isError(reason) ? reason : new Error(msg);
@@ -2178,7 +2387,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							// because it's triggered by the redirection instead
 							// https://github.com/vuejs/vue-router/issues/3225
 							// https://github.com/vuejs/vue-router/issues/3331
-							if (!isNavigationFailure(err, NavigationFailureType.redirected) || prev !== START) {
+							if (
+								!isNavigationFailure(err, NavigationFailureType.redirected) ||
+								prev !== START
+							) {
 								this$1$1.ready = true;
 								this$1$1.readyErrorCbs.forEach(function (cb) {
 									cb(err);
@@ -2189,7 +2401,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				);
 			};
 
-			History.prototype.confirmTransition = function confirmTransition(route, onComplete, onAbort) {
+			History.prototype.confirmTransition = function confirmTransition(
+				route,
+				onComplete,
+				onAbort
+			) {
 				var this$1$1 = this;
 
 				var current = this.current;
@@ -2260,7 +2476,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							} else if (isError(to)) {
 								this$1$1.ensureURL(true);
 								abort(to);
-							} else if (typeof to === "string" || (typeof to === "object" && (typeof to.path === "string" || typeof to.name === "string"))) {
+							} else if (
+								typeof to === "string" ||
+								(typeof to === "object" &&
+									(typeof to.path === "string" || typeof to.name === "string"))
+							) {
 								// next('/') or next({ path: '/' }) -> redirect
 								abort(createNavigationRedirectedError(current, route));
 								if (typeof to === "object" && to.replace) {
@@ -2395,9 +2615,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			}
 
 			function extractEnterGuards(activated) {
-				return extractGuards(activated, "beforeRouteEnter", function (guard, _, match, key) {
-					return bindEnterGuard(guard, match, key);
-				});
+				return extractGuards(
+					activated,
+					"beforeRouteEnter",
+					function (guard, _, match, key) {
+						return bindEnterGuard(guard, match, key);
+					}
+				);
 			}
 
 			function bindEnterGuard(guard, match, key) {
@@ -2521,7 +2745,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				// base="/a" shouldn't turn path="/app" into "/a/pp"
 				// https://github.com/vuejs/vue-router/issues/3555
 				// so we ensure the trailing slash in the base
-				if (base && (pathLowerCase === baseLowerCase || pathLowerCase.indexOf(cleanPath(baseLowerCase + "/")) === 0)) {
+				if (
+					base &&
+					(pathLowerCase === baseLowerCase ||
+						pathLowerCase.indexOf(cleanPath(baseLowerCase + "/")) === 0)
+				) {
 					path = path.slice(base.length);
 				}
 				return (path || "/") + window.location.search + window.location.hash;
@@ -2705,7 +2933,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					this.transitionTo(
 						location,
 						function (route) {
-							this$1$1.stack = this$1$1.stack.slice(0, this$1$1.index + 1).concat(route);
+							this$1$1.stack = this$1$1.stack
+								.slice(0, this$1$1.index + 1)
+								.concat(route);
 							this$1$1.index++;
 							onComplete && onComplete(route);
 						},
@@ -2713,7 +2943,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					);
 				};
 
-				AbstractHistory.prototype.replace = function replace(location, onComplete, onAbort) {
+				AbstractHistory.prototype.replace = function replace(
+					location,
+					onComplete,
+					onAbort
+				) {
 					var this$1$1 = this;
 
 					this.transitionTo(
@@ -2782,7 +3016,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 				var mode = options.mode || "hash";
 				PRIVATE_GLOBAL.VUE_ROUTER_MODE = mode;
-				this.fallback = mode === "history" && !supportsPushState && options.fallback !== false;
+				this.fallback =
+					mode === "history" && !supportsPushState && options.fallback !== false;
 				if (this.fallback) {
 					mode = "hash";
 				}
@@ -2820,7 +3055,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			VueRouter.prototype.init = function init(app /* Vue component instance */) {
 				var this$1$1 = this;
 
-				assert(install.installed, "not installed. Make sure to call `Vue.use(VueRouter)` " + "before creating root instance.");
+				assert(
+					install.installed,
+					"not installed. Make sure to call `Vue.use(VueRouter)` " +
+						"before creating root instance."
+				);
 
 				this.apps.push(app);
 
@@ -2867,7 +3106,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						history.setupListeners();
 						handleInitialScroll(routeOrError);
 					};
-					history.transitionTo(history.getCurrentLocation(), setupListeners, setupListeners);
+					history.transitionTo(
+						history.getCurrentLocation(),
+						setupListeners,
+						setupListeners
+					);
 				}
 
 				history.listen(function (route) {
@@ -2984,7 +3227,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			VueRouter.prototype.addRoutes = function addRoutes(routes) {
 				{
-					warn(false, "router.addRoutes() is deprecated and has been removed in Vue Router 4. Use router.addRoute() instead.");
+					warn(
+						false,
+						"router.addRoutes() is deprecated and has been removed in Vue Router 4. Use router.addRoute() instead."
+					);
 				}
 				this.matcher.addRoutes(routes);
 				if (this.history.current !== START) {

@@ -1,6 +1,10 @@
 <style lang="less"></style>
 <template>
-	<xBlock v-if="isShow" class="flex1 mt" :bodyClass="{ height100: true }" :style="{ height: '1px' }">
+	<xBlock
+		v-if="isShow"
+		class="flex1 mt"
+		:bodyClass="{ height100: true }"
+		:style="{ height: '1px' }">
 		<YapiNoteComponent />
 	</xBlock>
 </template>

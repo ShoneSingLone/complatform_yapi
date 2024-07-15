@@ -7,7 +7,10 @@
 					<xBtnArray :configs="oprBtnArray" />
 				</template>
 				<template #right>
-					<xAdvancedSearch mountTo="#AdvancedSearch" :collapse="isAdvancedSearchCollapse" @change="handleAdvancedSearchCollapse">
+					<xAdvancedSearch
+						mountTo="#AdvancedSearch"
+						:collapse="isAdvancedSearchCollapse"
+						@change="handleAdvancedSearchCollapse">
 						<xBlock class="mt">
 							<xForm>
 								<xItem :configs="formSearch.configName" />
@@ -16,12 +19,16 @@
 								<xItem :configs="formSearch.dateRange" />
 								<div class="flex end width100" span="2">
 									<xBtn @click="resetSearchForm">重置</xBtn>
-									<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+									<xBtn preset="primary" @click="getTableData({ page: 1 })"
+										>查询</xBtn
+									>
 								</div>
 							</xForm>
 						</xBlock>
 						<template #collapse>
-							<xInput v-model="formSearch.configName.value" placeholder="请输入参数名称" />
+							<xInput
+								v-model="formSearch.configName.value"
+								placeholder="请输入参数名称" />
 							<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
 						</template>
 					</xAdvancedSearch>
@@ -137,7 +144,8 @@ export default async function () {
 						{
 							label: i18n("系统内置"),
 							prop: "configType",
-							cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, dicts.sys_yes_no)
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, dicts.sys_yes_no)
 						},
 						{ label: i18n("备注"), prop: "remark" },
 						{ label: i18n("创建时间"), prop: "createTime" },
@@ -149,7 +157,8 @@ export default async function () {
 									children: [
 										{
 											label: i18n("修改"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:config:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:config:edit"]),
 											onClick: async () => {
 												_.$openModal({
 													title: i18n("修改参数"),
@@ -163,7 +172,8 @@ export default async function () {
 										},
 										{
 											label: i18n("删除"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:config:remove"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:config:remove"]),
 											onClick: async () => {
 												vm.doDelete(rowData);
 											}
@@ -188,7 +198,9 @@ export default async function () {
 			async doDelete(rowData) {
 				const configIds = rowData?.configId || this.cptSelectedconfigIdString;
 				try {
-					await _.$confirm_important('是否确认删除参数编号为"' + configIds + '"的数据项？');
+					await _.$confirm_important(
+						'是否确认删除参数编号为"' + configIds + '"的数据项？'
+					);
 					await _adminTools.api_config_delete(configIds);
 					_.$msgSuccess("删除成功");
 					this.getTableData();

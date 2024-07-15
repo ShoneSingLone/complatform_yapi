@@ -1,9 +1,18 @@
 <template>
 	<DocContentOfDemo class="demo-input">
 		<xMd :md="mdTips" />
-		<DemoAndCode title="日期和时间点" path="@/views/component/form/DateTimePicker/RiQiHeShiJianDian.vue" unfold />
-		<DemoAndCode title="日期和时间范围" path="@/views/component/form/DateTimePicker/RiQiHeShiJianFanWei.vue" unfold />
-		<DemoAndCode title="默认的起始与结束时刻" path="@/views/component/form/DateTimePicker/MoRenDeQiShiYuJieShuShiKe.vue" unfold />
+		<DemoAndCode
+			title="日期和时间点"
+			path="@/views/component/form/DateTimePicker/RiQiHeShiJianDian.vue"
+			unfold />
+		<DemoAndCode
+			title="日期和时间范围"
+			path="@/views/component/form/DateTimePicker/RiQiHeShiJianFanWei.vue"
+			unfold />
+		<DemoAndCode
+			title="默认的起始与结束时刻"
+			path="@/views/component/form/DateTimePicker/MoRenDeQiShiYuJieShuShiKe.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

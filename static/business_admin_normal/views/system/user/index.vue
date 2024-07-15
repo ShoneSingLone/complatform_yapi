@@ -12,7 +12,10 @@
 							<xBtnArray :configs="oprBtnArray" />
 						</template>
 						<template #right>
-							<xAdvancedSearch mountTo="#AdvancedSearch" :collapse="isAdvancedSearchCollapse" @change="handleAdvancedSearchCollapse">
+							<xAdvancedSearch
+								mountTo="#AdvancedSearch"
+								:collapse="isAdvancedSearchCollapse"
+								@change="handleAdvancedSearchCollapse">
 								<xBlock class="mt">
 									<xForm>
 										<xItem :configs="formSearch.userName" />
@@ -21,13 +24,21 @@
 										<xItem :configs="formSearch.dateRange" />
 										<div class="flex end width100" span="2">
 											<xBtn @click="resetSearchForm">重置</xBtn>
-											<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+											<xBtn
+												preset="primary"
+												@click="getTableData({ page: 1 })"
+												>查询</xBtn
+											>
 										</div>
 									</xForm>
 								</xBlock>
 								<template #collapse>
-									<xInput v-model="formSearch.userName.value" placeholder="请输入用户名称" />
-									<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+									<xInput
+										v-model="formSearch.userName.value"
+										placeholder="请输入用户名称" />
+									<xBtn preset="primary" @click="getTableData({ page: 1 })"
+										>查询</xBtn
+									>
 								</template>
 							</xAdvancedSearch>
 						</template>
@@ -53,7 +64,8 @@ export default async function () {
 		inject: ["APP"],
 		setup() {},
 		components: {
-			AdminDepartmentTree: () => _.$importVue("/common/admin/components/AdminDepartmentTree.vue")
+			AdminDepartmentTree: () =>
+				_.$importVue("/common/admin/components/AdminDepartmentTree.vue")
 		},
 		async mounted() {
 			this.getTableData();
@@ -171,7 +183,8 @@ export default async function () {
 									children: [
 										{
 											label: i18n("修改"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:user:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:user:edit"]),
 											onClick: async () => {
 												_.$openModal({
 													title: i18n("修改用户"),
@@ -185,14 +198,16 @@ export default async function () {
 										},
 										{
 											label: i18n("删除"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:user:remove"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:user:remove"]),
 											onClick: async () => {
 												vm.doDelete(rowData);
 											}
 										},
 										{
 											label: i18n("重置密码"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:user:resetPwd"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:user:resetPwd"]),
 											onClick: async () => {
 												_.$openModal({
 													title: i18n("重置密码"),
@@ -203,7 +218,8 @@ export default async function () {
 										},
 										{
 											label: i18n("分配角色"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:user:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:user:edit"]),
 											onClick: async () => {
 												_.$openModal(
 													{

@@ -57,11 +57,14 @@ export default async function () {
 			},
 			async upsertOne(row) {
 				const isUpdate = !!row;
-				const DialogTypeVueSFC = await _.$importVue("@/views/demo/demo/configList.upsert.vue", {
-					parent: this,
-					row,
-					isUpdate
-				});
+				const DialogTypeVueSFC = await _.$importVue(
+					"@/views/demo/demo/configList.upsert.vue",
+					{
+						parent: this,
+						row,
+						isUpdate
+					}
+				);
 				_.$openWindow_deprecated(isUpdate ? i18n("修改") : i18n("新增"), DialogTypeVueSFC);
 			}
 		},
@@ -177,7 +180,9 @@ export default async function () {
 														ids: [{ id: row.id, name: row.name }]
 													}
 												});
-												_.$msgSuccess(i18n("msgDeleteTaskDeliveredSuccess"));
+												_.$msgSuccess(
+													i18n("msgDeleteTaskDeliveredSuccess")
+												);
 												vm.getTableData({ current: 0 });
 											} catch (e) {
 												_.$msgError(e.message);
@@ -199,13 +204,18 @@ export default async function () {
 										}).then(async () => {
 											try {
 												_.$loading(true);
-												await _.$ajax.post(`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`, {
-													data: {
-														status: "1",
-														id: row.id
+												await _.$ajax.post(
+													`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`,
+													{
+														data: {
+															status: "1",
+															id: row.id
+														}
 													}
-												});
-												_.$msgSuccess(i18n("msgSetUnavailableStatusSuccess"));
+												);
+												_.$msgSuccess(
+													i18n("msgSetUnavailableStatusSuccess")
+												);
 												vm.getTableData({ current: 0 });
 											} catch (e) {
 												_.$msgError(e.message);
@@ -227,13 +237,18 @@ export default async function () {
 										}).then(async () => {
 											try {
 												_.$loading(true);
-												await _.$ajax.post(`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`, {
-													data: {
-														status: "0",
-														id: row.id
+												await _.$ajax.post(
+													`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`,
+													{
+														data: {
+															status: "0",
+															id: row.id
+														}
 													}
-												});
-												_.$msgSuccess(i18n("msgSetUnavailableStatusSuccess"));
+												);
+												_.$msgSuccess(
+													i18n("msgSetUnavailableStatusSuccess")
+												);
 												vm.getTableData({ current: 0 });
 											} catch (e) {
 												_.$msgError(e.message);

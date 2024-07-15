@@ -6,7 +6,11 @@
 		<xDrawer title="我是外面的 Drawer" :visible.sync="drawer" size="50%">
 			<div>
 				<xBtn @click="innerDrawer = true">打开里面的!</xBtn>
-				<xDrawer title="我是里面的" :append-to-body="true" :before-close="handleClose" :visible.sync="innerDrawer">
+				<xDrawer
+					title="我是里面的"
+					:append-to-body="true"
+					:before-close="handleClose"
+					:visible.sync="innerDrawer">
 					<p>_(:зゝ∠)_</p>
 				</xDrawer>
 			</div>
@@ -18,7 +22,10 @@ export default async function () {
 	return defineComponent({
 		data() {
 			return {
-				md: ["`Drawer` 组件也拥有多层嵌套的方法", "同样, 如果你需要嵌套多层 `Drawer` 请一定要设置 `append-to-body` 属性为 **true**"].join("\n"),
+				md: [
+					"`Drawer` 组件也拥有多层嵌套的方法",
+					"同样, 如果你需要嵌套多层 `Drawer` 请一定要设置 `append-to-body` 属性为 **true**"
+				].join("\n"),
 				drawer: false,
 				innerDrawer: false
 			};

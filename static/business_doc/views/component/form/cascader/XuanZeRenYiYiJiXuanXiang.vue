@@ -3,11 +3,17 @@
 		<xMd :md="md" class="mb" />
 		<div class="block">
 			<span class="demonstration">单选选择任意一级选项</span>
-			<xCascader :options="DemoCascader.options" :props="{ checkStrictly: true }" clearable></xCascader>
+			<xCascader
+				:options="DemoCascader.options"
+				:props="{ checkStrictly: true }"
+				clearable></xCascader>
 		</div>
 		<div class="block">
 			<span class="demonstration">多选选择任意一级选项</span>
-			<xCascader :options="DemoCascader.options" :props="{ multiple: true, checkStrictly: true }" clearable></xCascader>
+			<xCascader
+				:options="DemoCascader.options"
+				:props="{ multiple: true, checkStrictly: true }"
+				clearable></xCascader>
 		</div>
 	</div>
 </template>

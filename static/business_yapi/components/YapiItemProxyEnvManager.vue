@@ -2,7 +2,11 @@
 	<xDialog id="YapiItemProxyEnvManager">
 		<xForm col="2">
 			<xSelect placeholder="转发环境" span="full">
-				<xOption v-for="item in cptOptions" :key="item.value" :label="item.label" :value="item.value" />
+				<xOption
+					v-for="item in cptOptions"
+					:key="item.value"
+					:label="item.label"
+					:value="item.value" />
 			</xSelect>
 			<xMd :md="mdTips" />
 			<xItem :configs="form.editor" @save="btnOk.onClick" style="height: 500px" />

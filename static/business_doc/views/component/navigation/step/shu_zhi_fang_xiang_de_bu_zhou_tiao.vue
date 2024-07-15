@@ -3,9 +3,9 @@
 		<xMd :md="md" />
 		<div style="height: 300px">
 			<xSteps direction="vertical" :active="1">
-				<xStep title="步骤 1"/>
-				<xStep title="步骤 2"/>
-				<xStep title="步骤 3" description="这是一段很长很长很长的描述性文字"/>
+				<xStep title="步骤 1" />
+				<xStep title="步骤 2" />
+				<xStep title="步骤 3" description="这是一段很长很长很长的描述性文字" />
 			</xSteps>
 		</div>
 	</div>

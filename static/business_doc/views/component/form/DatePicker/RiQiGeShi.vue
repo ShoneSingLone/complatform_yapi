@@ -5,17 +5,34 @@
 			<div class="block">
 				<span class="demonstration">默认为 Date 对象</span>
 				<div class="demonstration">值：{{ value1 }}</div>
-				<xDatePicker v-model="value1" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日"> </xDatePicker>
+				<xDatePicker
+					v-model="value1"
+					type="date"
+					placeholder="选择日期"
+					format="yyyy 年 MM 月 dd 日">
+				</xDatePicker>
 			</div>
 			<div class="block">
 				<span class="demonstration">使用 value-format</span>
 				<div class="demonstration">值：{{ value2 }}</div>
-				<xDatePicker v-model="value2" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"> </xDatePicker>
+				<xDatePicker
+					v-model="value2"
+					type="date"
+					placeholder="选择日期"
+					format="yyyy 年 MM 月 dd 日"
+					value-format="yyyy-MM-dd">
+				</xDatePicker>
 			</div>
 			<div class="block">
 				<span class="demonstration">时间戳</span>
 				<div class="demonstration">值：{{ value3 }}</div>
-				<xDatePicker v-model="value3" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="timestamp"> </xDatePicker>
+				<xDatePicker
+					v-model="value3"
+					type="date"
+					placeholder="选择日期"
+					format="yyyy 年 MM 月 dd 日"
+					value-format="timestamp">
+				</xDatePicker>
 			</div>
 		</xForm>
 	</div>

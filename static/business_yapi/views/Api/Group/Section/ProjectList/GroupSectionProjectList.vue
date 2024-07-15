@@ -14,7 +14,9 @@
 		<div>
 			<GroupSectionProjectListPrivate />
 			<GroupSectionProjectListNormal />
-			<YapiPlaceholderView v-if="!APP.groupProjectList?.length" view="GroupSectionProjectList" />
+			<YapiPlaceholderView
+				v-if="!APP.groupProjectList?.length"
+				view="GroupSectionProjectList" />
 		</div>
 	</div>
 </template>
@@ -23,8 +25,14 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP", "GroupSection"],
 		components: {
-			GroupSectionProjectListPrivate: () => _.$importVue("@/views/Api/Group/Section/ProjectList/Private/GroupSectionProjectListPrivate.vue"),
-			GroupSectionProjectListNormal: () => _.$importVue("@/views/Api/Group/Section/ProjectList/Normal/GroupSectionProjectListNormal.vue")
+			GroupSectionProjectListPrivate: () =>
+				_.$importVue(
+					"@/views/Api/Group/Section/ProjectList/Private/GroupSectionProjectListPrivate.vue"
+				),
+			GroupSectionProjectListNormal: () =>
+				_.$importVue(
+					"@/views/Api/Group/Section/ProjectList/Normal/GroupSectionProjectListNormal.vue"
+				)
 		},
 		computed: {
 			isShow() {
@@ -40,7 +48,10 @@ export default async function () {
 						if (vm.GroupSection.canAddProject) {
 							return "";
 						} else {
-							return h("div", [h("div", [i18n(`您没有权限添加项目`)]), h("div", [i18n(`请联系该分组组长或管理员`)])]);
+							return h("div", [
+								h("div", [i18n(`您没有权限添加项目`)]),
+								h("div", [i18n(`请联系该分组组长或管理员`)])
+							]);
 						}
 					}
 				};

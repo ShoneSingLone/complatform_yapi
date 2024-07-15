@@ -7,7 +7,10 @@
 					<xBtnArray :configs="oprBtnArray" />
 				</template>
 				<template #right>
-					<xAdvancedSearch mountTo="#AdvancedSearch" :collapse="isAdvancedSearchCollapse" @change="handleAdvancedSearchCollapse">
+					<xAdvancedSearch
+						mountTo="#AdvancedSearch"
+						:collapse="isAdvancedSearchCollapse"
+						@change="handleAdvancedSearchCollapse">
 						<xBlock class="mt">
 							<xForm>
 								<xItem :configs="formSearch.noticeName" />
@@ -15,12 +18,16 @@
 								<xItem :configs="formSearch.noticeType" />
 								<div class="flex end width100" span="2">
 									<xBtn @click="resetSearchForm">重置</xBtn>
-									<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+									<xBtn preset="primary" @click="getTableData({ page: 1 })"
+										>查询</xBtn
+									>
 								</div>
 							</xForm>
 						</xBlock>
 						<template #collapse>
-							<xInput v-model="formSearch.noticeName.value" placeholder="请输入公告名称" />
+							<xInput
+								v-model="formSearch.noticeName.value"
+								placeholder="请输入公告名称" />
 							<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
 						</template>
 					</xAdvancedSearch>
@@ -119,8 +126,18 @@ export default async function () {
 						}),
 						{ label: i18n("序号"), prop: "noticeId" },
 						{ label: i18n("公告标题"), prop: "noticeTitle" },
-						{ label: i18n("公告类型"), prop: "noticeType", cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, dicts.sys_notice_type) },
-						{ label: i18n("状态"), prop: "status", cellRenderer: ({ cellData }) => _jsxFns.OptionsToLabel(cellData, dicts.sys_notice_status) },
+						{
+							label: i18n("公告类型"),
+							prop: "noticeType",
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, dicts.sys_notice_type)
+						},
+						{
+							label: i18n("状态"),
+							prop: "status",
+							cellRenderer: ({ cellData }) =>
+								_jsxFns.OptionsToLabel(cellData, dicts.sys_notice_status)
+						},
 						{
 							label: i18n("创建者"),
 							prop: "createBy"
@@ -134,7 +151,8 @@ export default async function () {
 									children: [
 										{
 											label: i18n("修改"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:notice:edit"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:notice:edit"]),
 											onClick: async () => {
 												_.$openModal({
 													title: i18n("修改公告"),
@@ -148,7 +166,8 @@ export default async function () {
 										},
 										{
 											label: i18n("删除"),
-											isHide: () => !vm.$auth.hasPermiOr(["system:notice:remove"]),
+											isHide: () =>
+												!vm.$auth.hasPermiOr(["system:notice:remove"]),
 											onClick: async () => {
 												vm.doDelete(rowData);
 											}
@@ -173,7 +192,9 @@ export default async function () {
 			async doDelete(rowData) {
 				const noticeIds = rowData?.noticeId || this.cptSelectednoticeIdString;
 				try {
-					await _.$confirm_important('是否确认删除公告编号为"' + noticeIds + '"的数据项？');
+					await _.$confirm_important(
+						'是否确认删除公告编号为"' + noticeIds + '"的数据项？'
+					);
 					await _adminTools.api_notice_delete(noticeIds);
 					_.$msg(i18n("删除成功"));
 					this.getTableData();

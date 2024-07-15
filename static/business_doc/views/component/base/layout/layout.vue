@@ -2,10 +2,22 @@
 	<DocContentOfDemo class="layout-demo">
 		<xMd :md="md" />
 		<DemoAndCode title="基础布局" path="@/views/component/base/layout/JiChuBuJu.vue" unfold />
-		<DemoAndCode title="分栏间隔" path="@/views/component/base/layout/FenLanJianGe.vue" unfold />
-		<DemoAndCode title="分栏偏移" path="@/views/component/base/layout/FenLanPianYi.vue" unfold />
-		<DemoAndCode title="对齐方式" path="@/views/component/base/layout/DuiQiFangShi.vue" unfold />
-		<DemoAndCode title="响应式布局" path="@/views/component/base/layout/XiangYingShiBuJu.vue" unfold />
+		<DemoAndCode
+			title="分栏间隔"
+			path="@/views/component/base/layout/FenLanJianGe.vue"
+			unfold />
+		<DemoAndCode
+			title="分栏偏移"
+			path="@/views/component/base/layout/FenLanPianYi.vue"
+			unfold />
+		<DemoAndCode
+			title="对齐方式"
+			path="@/views/component/base/layout/DuiQiFangShi.vue"
+			unfold />
+		<DemoAndCode
+			title="响应式布局"
+			path="@/views/component/base/layout/XiangYingShiBuJu.vue"
+			unfold />
 		<xMd :md="apiString" data-role="api" />
 	</DocContentOfDemo>
 </template>

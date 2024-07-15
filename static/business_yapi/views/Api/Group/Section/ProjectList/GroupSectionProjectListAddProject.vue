@@ -45,8 +45,21 @@ export default async function ({ onOk }) {
 			rules: [_rules.required()]
 		});
 
-		const basepath = defItem({ placeholder: "接口基本路径，默认是/", value: "", label: i18n("基本路径"), tips: "接口基本路径，默认是/" });
-		const desc = defItem({ placeholder: "描述", type: "textarea", value: "", label: i18n("描述"), rules: [_rules.required()], showCount: true, maxlength: 144 });
+		const basepath = defItem({
+			placeholder: "接口基本路径，默认是/",
+			value: "",
+			label: i18n("基本路径"),
+			tips: "接口基本路径，默认是/"
+		});
+		const desc = defItem({
+			placeholder: "描述",
+			type: "textarea",
+			value: "",
+			label: i18n("描述"),
+			rules: [_rules.required()],
+			showCount: true,
+			maxlength: 144
+		});
 		const project_type = defItem({
 			value: PUBLIC,
 			label: i18n("权限"),
@@ -73,7 +86,12 @@ export default async function ({ onOk }) {
 					{
 						content: item.content
 					},
-					[h("span", { class: "flex middle" }, [h("xIcon", { icon: item.icon }), h("span", { class: "ml4" }, item.label)])]
+					[
+						h("span", { class: "flex middle" }, [
+							h("xIcon", { icon: item.icon }),
+							h("span", { class: "ml4" }, item.label)
+						])
+					]
 				);
 			}
 		});
@@ -126,7 +144,14 @@ export default async function ({ onOk }) {
 						const { name, basepath, group_id, project_type, desc } = vm.cptFormData;
 						const group = _.find(vm.form.group_id.options, { value: group_id });
 						const group_name = group.label;
-						const { data } = await _api.yapi.project_add({ name, basepath, group_id, group_name, project_type, desc });
+						const { data } = await _api.yapi.project_add({
+							name,
+							basepath,
+							group_id,
+							group_name,
+							project_type,
+							desc
+						});
 						_.$msg(`添加成功`);
 						onOk();
 						vm.closeModal();
@@ -175,7 +200,11 @@ export default async function ({ onOk }) {
 										},
 										[
 											h("div", { staticClass: "card-danger-content" }, [
-												h("p", [i18n("分组一旦删除，将无法恢复数据，请慎重操作！")]),
+												h("p", [
+													i18n(
+														"分组一旦删除，将无法恢复数据，请慎重操作！"
+													)
+												]),
 												h("p", [i18n("只有超级管理员有权限删除分组。")])
 											]),
 											h("div", { staticClass: "flex end" }, [

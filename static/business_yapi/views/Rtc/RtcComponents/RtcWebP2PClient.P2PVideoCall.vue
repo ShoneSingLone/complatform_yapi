@@ -39,11 +39,23 @@ export default async function () {
 			//本地媒体流
 			this.localStream;
 			//RTCPeerConnection兼容性处理
-			RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection;
+			RTCPeerConnection =
+				window.RTCPeerConnection ||
+				window.mozRTCPeerConnection ||
+				window.webkitRTCPeerConnection ||
+				window.msRTCPeerConnection;
 			//RTCSessionDescription兼容性处理
-			RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription || window.msRTCSessionDescription;
+			RTCSessionDescription =
+				window.RTCSessionDescription ||
+				window.mozRTCSessionDescription ||
+				window.webkitRTCSessionDescription ||
+				window.msRTCSessionDescription;
 			//getUserMedia兼容性处理
-			navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia;
+			navigator.getUserMedia =
+				navigator.getUserMedia ||
+				navigator.mozGetUserMedia ||
+				navigator.webkitGetUserMedia ||
+				navigator.msGetUserMedia;
 			//ICE配置
 			configuration = { iceServers: [{ url: "stun:stun.l.google.com:19302" }] };
 			//访问TURN服务器
@@ -94,7 +106,13 @@ export default async function () {
 			this.socket.onmessage = e => {
 				//解析JSON消息
 				var parsedMessage = JSON.parse(e.data);
-				console.info("收到的消息: {\n type = " + parsedMessage.type + ", \n data = " + JSON.stringify(parsedMessage.data) + "\n}");
+				console.info(
+					"收到的消息: {\n type = " +
+						parsedMessage.type +
+						", \n data = " +
+						JSON.stringify(parsedMessage.data) +
+						"\n}"
+				);
 				//判断条件为消息类型
 				switch (parsedMessage.type) {
 					case "offer":
@@ -135,7 +153,10 @@ export default async function () {
 		getLocalStream = type => {
 			return new Promise((pResolve, pReject) => {
 				//设置约束条件
-				var constraints = { audio: true, video: type === "video" ? { width: 1280, height: 720 } : false };
+				var constraints = {
+					audio: true,
+					video: type === "video" ? { width: 1280, height: 720 } : false
+				};
 				//屏幕类型
 				if (type == "screen") {
 					//调用getDisplayMedia接口获取桌面流
@@ -414,7 +435,11 @@ export default async function () {
 			}
 			if (pc && data.description) {
 				//提议方设置远端描述信息SDP
-				pc.setRemoteDescription(new RTCSessionDescription(data.description), () => {}, this.logError);
+				pc.setRemoteDescription(
+					new RTCSessionDescription(data.description),
+					() => {},
+					this.logError
+				);
 			}
 		};
 		//接收到对方发过来的Candidate信息

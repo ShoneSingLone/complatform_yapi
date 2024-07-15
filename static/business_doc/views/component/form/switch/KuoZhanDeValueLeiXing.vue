@@ -2,7 +2,12 @@
 	<div>
 		<xMd :md="md" />
 		<xTooltip :content="'Switch value: ' + value" placement="top">
-			<xSwitch v-model="value" active-color="#13ce66" inactive-color="#ff4949" active-value="100" inactive-value="0" />
+			<xSwitch
+				v-model="value"
+				active-color="#13ce66"
+				inactive-color="#ff4949"
+				active-value="100"
+				inactive-value="0" />
 		</xTooltip>
 	</div>
 </template>
