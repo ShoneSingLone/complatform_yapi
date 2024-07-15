@@ -22,6 +22,21 @@ export default async function () {
 				stateAudio.AudioArray = (await _.$idb.get("AudioArray")) || [];
 			});
 
+			onMounted(() => {
+				navigator.mediaSession.setActionHandler("play", () => {
+					togglePlayOrPause();
+				});
+				navigator.mediaSession.setActionHandler("pause", () => {
+					togglePlayOrPause();
+				});
+				navigator.mediaSession.setActionHandler("previoustrack", () => {
+					palyPrevSong();
+				});
+				navigator.mediaSession.setActionHandler("nexttrack", () => {
+					playNextSong();
+				});
+			});
+
 			watch(
 				() => stateAudio.ended,
 				ended => {
@@ -164,6 +179,12 @@ export default async function () {
 				stateAudio.audio.src = Vue._common_utils.appendToken(
 					`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?uri=${uri}&id=${useId}`
 				);
+				navigator.mediaSession.metadata = new MediaMetadata({
+					title: "当前音乐标题",
+					artist: "作者名称",
+					album: "专辑名称",
+					artwork: { src: "当前音乐图片路径" }
+				});
 				await canPlay();
 				stateAudio.audio.play();
 				stateAudio.isPlaying = true;
