@@ -43,7 +43,9 @@ export default async function () {
 
 			["span", "offset", "pull", "push"].forEach(prop => {
 				if (this[prop] || this[prop] === 0) {
-					classList.push(prop !== "span" ? `el-col-${prop}-${this[prop]}` : `el-col-${this[prop]}`);
+					classList.push(
+						prop !== "span" ? `el-col-${prop}-${this[prop]}` : `el-col-${this[prop]}`
+					);
 				}
 			});
 
@@ -53,7 +55,11 @@ export default async function () {
 				} else if (typeof this[size] === "object") {
 					let props = this[size];
 					Object.keys(props).forEach(prop => {
-						classList.push(prop !== "span" ? `el-col-${size}-${prop}-${props[prop]}` : `el-col-${size}-${props[prop]}`);
+						classList.push(
+							prop !== "span"
+								? `el-col-${size}-${prop}-${props[prop]}`
+								: `el-col-${size}-${props[prop]}`
+						);
 					});
 				}
 			});

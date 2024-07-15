@@ -53,7 +53,12 @@
 <template>
 	<div class="x-mobile-tab-bar" :class="{ 'x-mobile-tab-bar_inline': inline }">
 		<slot>
-			<xMobileTab v-for="(item, index) in data" :label="item.label" :value="item.value" :icon="item.icon" :key="item.value || item.label" />
+			<xMobileTab
+				v-for="(item, index) in data"
+				:label="item.label"
+				:value="item.value"
+				:icon="item.icon"
+				:key="item.value || item.label" />
 		</slot>
 		<div v-if="showSlider" ref="slider" class="x-mobile-tab-bar-slider"></div>
 	</div>
@@ -75,7 +80,10 @@ export default async function () {
 
 	return defineComponent({
 		name: COMPONENT_NAME,
-		components: { xMobileTab: () => _.$importVue("/common/ui-x/components/navigation/xTabs/mobile/xMobileTab.vue") },
+		components: {
+			xMobileTab: () =>
+				_.$importVue("/common/ui-x/components/navigation/xTabs/mobile/xMobileTab.vue")
+		},
 		props: {
 			value: {
 				type: [String, Number],

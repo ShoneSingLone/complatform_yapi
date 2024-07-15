@@ -159,7 +159,8 @@ export default async function () {
 			}
 		},
 		render(h) {
-			const { inActivePath, inCheckedPath, isChecked, isLeaf, isDisabled, config, nodeId } = this;
+			const { inActivePath, inCheckedPath, isChecked, isLeaf, isDisabled, config, nodeId } =
+				this;
 			const { expandTrigger, checkStrictly, multiple } = config;
 			const disabled = !checkStrictly && isDisabled;
 			const events = {

@@ -13,12 +13,22 @@
 			<div class="el-picker-panel__body-wrapper">
 				<slot name="sidebar" class="el-picker-panel__sidebar"></slot>
 				<div class="el-picker-panel__sidebar" v-if="shortcuts">
-					<button type="button" class="el-picker-panel__shortcut" v-for="(shortcut, key) in shortcuts" :key="key" @click="handleShortcutClick(shortcut)">{{ shortcut.text }}</button>
+					<button
+						type="button"
+						class="el-picker-panel__shortcut"
+						v-for="(shortcut, key) in shortcuts"
+						:key="key"
+						@click="handleShortcutClick(shortcut)">
+						{{ shortcut.text }}
+					</button>
 				</div>
 				<div class="el-picker-panel__body">
 					<div class="el-picker-panel__content el-date-range-picker__content is-left">
 						<div class="el-date-range-picker__header">
-							<button type="button" @click="leftPrevYear" class="el-picker-panel__icon-btn el-icon-d-arrow-left"></button>
+							<button
+								type="button"
+								@click="leftPrevYear"
+								class="el-picker-panel__icon-btn el-icon-d-arrow-left"></button>
 							<button
 								type="button"
 								v-if="unlinkPanels"
@@ -49,7 +59,10 @@
 								:disabled="!enableYearArrow"
 								:class="{ 'is-disabled': !enableYearArrow }"
 								class="el-picker-panel__icon-btn el-icon-d-arrow-left"></button>
-							<button type="button" @click="rightNextYear" class="el-picker-panel__icon-btn el-icon-d-arrow-right"></button>
+							<button
+								type="button"
+								@click="rightNextYear"
+								class="el-picker-panel__icon-btn el-icon-d-arrow-right"></button>
 							<div>{{ rightLabel }}</div>
 						</div>
 						<BasicMonthTable
@@ -71,10 +84,11 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const [{ isDate, modifyWithTimeString, prevYear, nextYear, nextMonth }, Clickoutside] = await _.$importVue([
-		"/common/ui-x/components/form/xDatePicker/dateUtils.vue",
-		"/common/ui-x/directive/clickoutside.vue"
-	]);
+	const [{ isDate, modifyWithTimeString, prevYear, nextYear, nextMonth }, Clickoutside] =
+		await _.$importVue([
+			"/common/ui-x/components/form/xDatePicker/dateUtils.vue",
+			"/common/ui-x/directive/clickoutside.vue"
+		]);
 
 	const calcDefaultValue = defaultValue => {
 		if (Array.isArray(defaultValue)) {
@@ -89,7 +103,12 @@ export default async function () {
 		directives: { Clickoutside },
 		computed: {
 			btnDisabled() {
-				return !(this.minDate && this.maxDate && !this.selecting && this.isValidValue([this.minDate, this.maxDate]));
+				return !(
+					this.minDate &&
+					this.maxDate &&
+					!this.selecting &&
+					this.isValidValue([this.minDate, this.maxDate])
+				);
 			},
 
 			leftLabel() {
@@ -105,7 +124,9 @@ export default async function () {
 			},
 
 			rightYear() {
-				return this.rightDate.getFullYear() === this.leftDate.getFullYear() ? this.leftDate.getFullYear() + 1 : this.rightDate.getFullYear();
+				return this.rightDate.getFullYear() === this.leftDate.getFullYear()
+					? this.leftDate.getFullYear() + 1
+					: this.rightDate.getFullYear();
 			},
 
 			enableYearArrow() {
@@ -151,7 +172,8 @@ export default async function () {
 						if (this.unlinkPanels && this.maxDate) {
 							const minDateYear = this.minDate.getFullYear();
 							const maxDateYear = this.maxDate.getFullYear();
-							this.rightDate = minDateYear === maxDateYear ? nextYear(this.maxDate) : this.maxDate;
+							this.rightDate =
+								minDateYear === maxDateYear ? nextYear(this.maxDate) : this.maxDate;
 						} else {
 							this.rightDate = nextYear(this.leftDate);
 						}
@@ -166,7 +188,13 @@ export default async function () {
 				if (!Array.isArray(this.value)) {
 					const [left, right] = calcDefaultValue(val);
 					this.leftDate = left;
-					this.rightDate = val && val[1] && left.getFullYear() !== right.getFullYear() && this.unlinkPanels ? right : nextYear(this.leftDate);
+					this.rightDate =
+						val &&
+						val[1] &&
+						left.getFullYear() !== right.getFullYear() &&
+						this.unlinkPanels
+							? right
+							: nextYear(this.leftDate);
 				}
 			}
 		},
@@ -251,7 +279,9 @@ export default async function () {
 					isDate(value[0]) &&
 					isDate(value[1]) &&
 					value[0].getTime() <= value[1].getTime() &&
-					(typeof this.disabledDate === "function" ? !this.disabledDate(value[0]) && !this.disabledDate(value[1]) : true)
+					(typeof this.disabledDate === "function"
+						? !this.disabledDate(value[0]) && !this.disabledDate(value[1])
+						: true)
 				);
 			},
 
@@ -264,7 +294,10 @@ export default async function () {
 			}
 		},
 
-		components: { BasicMonthTable: () => _.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicMonthTable.vue") }
+		components: {
+			BasicMonthTable: () =>
+				_.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicMonthTable.vue")
+		}
 	});
 }
 </script>

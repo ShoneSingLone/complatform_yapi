@@ -21,7 +21,13 @@
 		:validateEvent="false"
 		ref="reference">
 		<i slot="prefix" class="el-input__icon" :class="triggerClass" @click="handleFocus"> </i>
-		<i slot="suffix" class="el-input__icon" @click="handleClickIcon" :class="[showClose ? '' + clearIcon : '']" v-if="haveTrigger"> </i>
+		<i
+			slot="suffix"
+			class="el-input__icon"
+			@click="handleClickIcon"
+			:class="[showClose ? '' + clearIcon : '']"
+			v-if="haveTrigger">
+		</i>
 	</xInput>
 	<div
 		class="el-date-editor el-range-editor el-input__inner"
@@ -61,16 +67,22 @@
 			@change="handleEndChange"
 			@focus="handleFocus"
 			class="el-range-input" />
-		<i @click="handleClickIcon" v-if="haveTrigger" :class="[showClose ? '' + clearIcon : '']" class="el-input__icon el-range__close-icon"> </i>
+		<i
+			@click="handleClickIcon"
+			v-if="haveTrigger"
+			:class="[showClose ? '' + clearIcon : '']"
+			class="el-input__icon el-range__close-icon">
+		</i>
 	</div>
 </template>
 <script lang="ts">
 export default async function () {
-	const [Popper, { formatDate, parseDate, isDateObject, getWeekNumber }, Clickoutside] = await _.$importVue([
-		"/common/libs/VuePopper/VuePopper.vue",
-		"/common/ui-x/components/form/xDatePicker/dateUtils.vue",
-		"/common/ui-x/directive/clickoutside.vue"
-	]);
+	const [Popper, { formatDate, parseDate, isDateObject, getWeekNumber }, Clickoutside] =
+		await _.$importVue([
+			"/common/libs/VuePopper/VuePopper.vue",
+			"/common/ui-x/components/form/xDatePicker/dateUtils.vue",
+			"/common/ui-x/directive/clickoutside.vue"
+		]);
 
 	const NewPopper = {
 		props: {
@@ -101,7 +113,22 @@ export default async function () {
 		year: "yyyy",
 		years: "yyyy"
 	};
-	const HAVE_TRIGGER_TYPES = ["date", "datetime", "time", "time-select", "week", "month", "year", "daterange", "monthrange", "timerange", "datetimerange", "dates", "months", "years"];
+	const HAVE_TRIGGER_TYPES = [
+		"date",
+		"datetime",
+		"time",
+		"time-select",
+		"week",
+		"month",
+		"year",
+		"daterange",
+		"monthrange",
+		"timerange",
+		"datetimerange",
+		"dates",
+		"months",
+		"years"
+	];
 	const DATE_FORMATTER = function (value, format) {
 		if (format === "timestamp") return value.getTime();
 		return formatDate(value, format);
@@ -155,7 +182,9 @@ export default async function () {
 				}
 				let date = formatDate(trueDate, format);
 
-				date = /WW/.test(date) ? date.replace(/WW/, week < 10 ? "0" + week : week) : date.replace(/W/, week);
+				date = /WW/.test(date)
+					? date.replace(/WW/, week < 10 ? "0" + week : week)
+					: date.replace(/W/, week);
 				return date;
 			},
 			parser(text, format) {
@@ -219,7 +248,9 @@ export default async function () {
 				return value.map(date => DATE_FORMATTER(date, format));
 			},
 			parser(value, format) {
-				return (typeof value === "string" ? value.split(", ") : value).map(date => (date instanceof Date ? date : DATE_PARSER(date, format)));
+				return (typeof value === "string" ? value.split(", ") : value).map(date =>
+					date instanceof Date ? date : DATE_PARSER(date, format)
+				);
 			}
 		},
 		months: {
@@ -227,7 +258,9 @@ export default async function () {
 				return value.map(date => DATE_FORMATTER(date, format));
 			},
 			parser(value, format) {
-				return (typeof value === "string" ? value.split(", ") : value).map(date => (date instanceof Date ? date : DATE_PARSER(date, format)));
+				return (typeof value === "string" ? value.split(", ") : value).map(date =>
+					date instanceof Date ? date : DATE_PARSER(date, format)
+				);
 			}
 		},
 		years: {
@@ -235,7 +268,9 @@ export default async function () {
 				return value.map(date => DATE_FORMATTER(date, format));
 			},
 			parser(value, format) {
-				return (typeof value === "string" ? value.split(", ") : value).map(date => (date instanceof Date ? date : DATE_PARSER(date, format)));
+				return (typeof value === "string" ? value.split(", ") : value).map(date =>
+					date instanceof Date ? date : DATE_PARSER(date, format)
+				);
 			}
 		}
 	};
@@ -254,7 +289,8 @@ export default async function () {
 
 	const formatAsFormatAndType = (value, customFormat, type) => {
 		if (!value) return null;
-		const formatter = (TYPE_VALUE_RESOLVER_MAP[type] || TYPE_VALUE_RESOLVER_MAP["default"]).formatter;
+		const formatter = (TYPE_VALUE_RESOLVER_MAP[type] || TYPE_VALUE_RESOLVER_MAP["default"])
+			.formatter;
 		const format = customFormat || DEFAULT_FORMATS[type];
 		return formatter(value, format);
 	};
@@ -299,7 +335,12 @@ export default async function () {
 
 	const validator = function (val) {
 		// either: String, Array of String, null / undefined
-		return val === null || val === undefined || isString(val) || (Array.isArray(val) && val.length === 2 && val.every(isString));
+		return (
+			val === null ||
+			val === undefined ||
+			isString(val) ||
+			(Array.isArray(val) && val.length === 2 && val.every(isString))
+		);
 	};
 
 	return defineComponent({
@@ -415,11 +456,23 @@ export default async function () {
 		computed: {
 			cptClassDatePickerInputInner() {
 				const { type, pickerSize, pickerDisabled, pickerVisible } = this;
-				return ["el-date-editor--" + type, pickerSize ? `el-range-editor--${pickerSize}` : "", pickerDisabled ? "is-disabled" : "", pickerVisible ? "is-active" : ""];
+				return [
+					"el-date-editor--" + type,
+					pickerSize ? `el-range-editor--${pickerSize}` : "",
+					pickerDisabled ? "is-disabled" : "",
+					pickerVisible ? "is-active" : ""
+				];
 			},
 			cptIsReadonly() {
 				const { editable, readonly, type } = this;
-				return !editable || readonly || type === "dates" || type === "week" || type === "years" || type === "months";
+				return (
+					!editable ||
+					readonly ||
+					type === "dates" ||
+					type === "week" ||
+					type === "years" ||
+					type === "months"
+				);
 			},
 			cptClassDatePickerInput() {
 				return `el-date-editor--${this.type}`;
@@ -457,7 +510,10 @@ export default async function () {
 			},
 
 			triggerClass() {
-				return this.prefixIcon || (this.type.indexOf("time") !== -1 ? "el-icon-time" : "el-icon-date");
+				return (
+					this.prefixIcon ||
+					(this.type.indexOf("time") !== -1 ? "el-icon-time" : "el-icon-date")
+				);
 			},
 
 			selectionMode() {
@@ -486,13 +542,23 @@ export default async function () {
 			},
 
 			displayValue() {
-				const formattedValue = formatAsFormatAndType(this.parsedValue, this.format, this.type, this.rangeSeparator);
+				const formattedValue = formatAsFormatAndType(
+					this.parsedValue,
+					this.format,
+					this.type,
+					this.rangeSeparator
+				);
 				if (Array.isArray(this.userInput)) {
-					return [this.userInput[0] || (formattedValue && formattedValue[0]) || "", this.userInput[1] || (formattedValue && formattedValue[1]) || ""];
+					return [
+						this.userInput[0] || (formattedValue && formattedValue[0]) || "",
+						this.userInput[1] || (formattedValue && formattedValue[1]) || ""
+					];
 				} else if (this.userInput !== null) {
 					return this.userInput;
 				} else if (formattedValue) {
-					return this.type === "dates" || this.type === "years" || this.type === "months" ? formattedValue.join(", ") : formattedValue;
+					return this.type === "dates" || this.type === "years" || this.type === "months"
+						? formattedValue.join(", ")
+						: formattedValue;
 				} else {
 					return "";
 				}
@@ -502,18 +568,29 @@ export default async function () {
 				if (!this.value) return this.value; // component value is not set
 				if (this.type === "time-select") return this.value; // time-select does not require parsing, this might change in next major version
 
-				const valueIsDateObject = isDateObject(this.value) || (Array.isArray(this.value) && this.value.every(isDateObject));
+				const valueIsDateObject =
+					isDateObject(this.value) ||
+					(Array.isArray(this.value) && this.value.every(isDateObject));
 				if (valueIsDateObject) {
 					return this.value;
 				}
 
 				if (this.valueFormat) {
-					return parseAsFormatAndType(this.value, this.valueFormat, this.type, this.rangeSeparator) || this.value;
+					return (
+						parseAsFormatAndType(
+							this.value,
+							this.valueFormat,
+							this.type,
+							this.rangeSeparator
+						) || this.value
+					);
 				}
 
 				// NOTE: deal with common but incorrect usage, should remove in next major version
 				// user might provide string / timestamp without value-format, coerce them into date (or array of date)
-				return Array.isArray(this.value) ? this.value.map(val => new Date(val)) : new Date(this.value);
+				return Array.isArray(this.value)
+					? this.value.map(val => new Date(val))
+					: new Date(this.value);
 			},
 
 			_elFormItemSize() {
@@ -577,18 +654,32 @@ export default async function () {
 
 			// {parse, formatTo} Value deals maps component value with internal Date
 			parseValue(value) {
-				const isParsed = isDateObject(value) || (Array.isArray(value) && value.every(isDateObject));
+				const isParsed =
+					isDateObject(value) || (Array.isArray(value) && value.every(isDateObject));
 				if (this.valueFormat && !isParsed) {
-					return parseAsFormatAndType(value, this.valueFormat, this.type, this.rangeSeparator) || value;
+					return (
+						parseAsFormatAndType(
+							value,
+							this.valueFormat,
+							this.type,
+							this.rangeSeparator
+						) || value
+					);
 				} else {
 					return value;
 				}
 			},
 
 			formatToValue(date) {
-				const isFormattable = isDateObject(date) || (Array.isArray(date) && date.every(isDateObject));
+				const isFormattable =
+					isDateObject(date) || (Array.isArray(date) && date.every(isDateObject));
 				if (this.valueFormat && isFormattable) {
-					return formatAsFormatAndType(date, this.valueFormat, this.type, this.rangeSeparator);
+					return formatAsFormatAndType(
+						date,
+						this.valueFormat,
+						this.type,
+						this.rangeSeparator
+					);
 				} else {
 					return date;
 				}
@@ -694,7 +785,13 @@ export default async function () {
 
 				if (this.type === "dates" || this.type === "years" || this.type === "months") {
 					// restore to former value
-					const oldValue = parseAsFormatAndType(this.valueOnOpen, this.valueFormat, this.type, this.rangeSeparator) || this.valueOnOpen;
+					const oldValue =
+						parseAsFormatAndType(
+							this.valueOnOpen,
+							this.valueFormat,
+							this.type,
+							this.rangeSeparator
+						) || this.valueOnOpen;
 					this.emitInput(oldValue);
 				}
 			},
@@ -744,7 +841,10 @@ export default async function () {
 
 				// Enter
 				if (keyCode === 13) {
-					if (this.userInput === "" || this.isValidValue(this.parseString(this.displayValue))) {
+					if (
+						this.userInput === "" ||
+						this.isValidValue(this.parseString(this.displayValue))
+					) {
 						this.handleChange();
 						this.pickerVisible = this.picker.visible = false;
 						this.blur();
@@ -823,7 +923,9 @@ export default async function () {
 						const format = DEFAULT_FORMATS.timerange;
 
 						ranges = Array.isArray(ranges) ? ranges : [ranges];
-						this.picker.selectableRange = ranges.map(range => parser(range, format, this.rangeSeparator));
+						this.picker.selectableRange = ranges.map(range =>
+							parser(range, format, this.rangeSeparator)
+						);
 					}
 
 					for (const option in options) {
@@ -842,7 +944,9 @@ export default async function () {
 					}
 				};
 				updateOptions();
-				this.unwatchPickerOptions = this.$watch("pickerOptions", () => updateOptions(), { deep: true });
+				this.unwatchPickerOptions = this.$watch("pickerOptions", () => updateOptions(), {
+					deep: true
+				});
 				this.$el.appendChild(this.picker.$el);
 				this.picker.resetView && this.picker.resetView();
 

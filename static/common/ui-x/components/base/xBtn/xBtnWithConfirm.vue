@@ -4,7 +4,9 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const xColActionAndMoreConfirmPanel = await _.$importVue("/common/ui-x/components/base/xBtn/xColActionAndMore.ConfirmPanel.vue");
+	const xColActionAndMoreConfirmPanel = await _.$importVue(
+		"/common/ui-x/components/base/xBtn/xColActionAndMore.ConfirmPanel.vue"
+	);
 
 	return defineComponent({
 		props: {

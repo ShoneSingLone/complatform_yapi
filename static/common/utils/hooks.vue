@@ -1,6 +1,7 @@
 <script lang="ts">
 export default async function hooks() {
-	const { addResizeListener, removeResizeListener } = await _.$importVue("/common/utils/utils.vue");
+	const { addResizeListener, removeResizeListener } =
+		await _.$importVue("/common/utils/utils.vue");
 
 	if (!Vue._hooks) {
 		Vue._hooks = {
@@ -113,14 +114,18 @@ export default async function hooks() {
 					for (let propName in definedProps) {
 						propName = _.kebabCase(propName); // compatible with camel case
 						if (props[propName]) {
-							console.warn(`[Element Migrating][${vm.$options.name}][Attribute]: ${props[propName]}`);
+							console.warn(
+								`[Element Migrating][${vm.$options.name}][Attribute]: ${props[propName]}`
+							);
 						}
 					}
 
 					for (let eventName in definedEvents) {
 						eventName = _.kebabCase(eventName); // compatible with camel case
 						if (events[eventName]) {
-							console.warn(`[Element Migrating][${vm.$options.name}][Event]: ${events[eventName]}`);
+							console.warn(
+								`[Element Migrating][${vm.$options.name}][Event]: ${events[eventName]}`
+							);
 						}
 					}
 				});
@@ -160,10 +165,12 @@ export default async function hooks() {
 					y: 0
 				});
 				function setContentRect(contentRect, values) {
-					["bottom", "height", "left", "right", "top", "width", "x", "y"].forEach(prop => {
-						const value = values[prop];
-						_.$val(contentRect, prop, value);
-					});
+					["bottom", "height", "left", "right", "top", "width", "x", "y"].forEach(
+						prop => {
+							const value = values[prop];
+							_.$val(contentRect, prop, value);
+						}
+					);
 				}
 				onMounted(() => {
 					const eleRect = vm.$refs[refName].getBoundingClientRect();

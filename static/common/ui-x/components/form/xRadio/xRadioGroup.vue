@@ -1,6 +1,10 @@
 <style lang="less"></style>
 <template>
-	<component :is="_elTag" class="el-radio-group xRadioGroup" role="radiogroup" @keydown="handleKeydown">
+	<component
+		:is="_elTag"
+		class="el-radio-group xRadioGroup"
+		role="radiogroup"
+		@keydown="handleKeydown">
 		<slot></slot>
 	</component>
 </template>

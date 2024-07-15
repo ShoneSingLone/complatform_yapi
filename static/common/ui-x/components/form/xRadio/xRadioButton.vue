@@ -2,7 +2,12 @@
 <template>
 	<label
 		class="el-radio-button xRadioButton"
-		:class="[size ? 'el-radio-button--' + size : '', { 'is-active': value === label }, { 'is-disabled': isDisabled }, { 'is-focus': focus }]"
+		:class="[
+			size ? 'el-radio-button--' + size : '',
+			{ 'is-active': value === label },
+			{ 'is-disabled': isDisabled },
+			{ 'is-focus': focus }
+		]"
 		role="radio"
 		:aria-checked="value === label"
 		:aria-disabled="isDisabled"
@@ -20,7 +25,10 @@
 			@focus="focus = true"
 			@blur="focus = false"
 			autocomplete="off" />
-		<span class="el-radio-button__inner" :style="value === label ? activeStyle : null" @keydown.stop>
+		<span
+			class="el-radio-button__inner"
+			:style="value === label ? activeStyle : null"
+			@keydown.stop>
 			<slot></slot>
 			<template v-if="!$slots.default">{{ label }}</template>
 		</span>
@@ -81,7 +89,11 @@ export default async function () {
 				return (this.elFormItem || {}).elFormItemSize;
 			},
 			size() {
-				return this._radioGroup.radioGroupSize || this._elFormItemSize || (this.$ELEMENT || {}).size;
+				return (
+					this._radioGroup.radioGroupSize ||
+					this._elFormItemSize ||
+					(this.$ELEMENT || {}).size
+				);
 			},
 			isDisabled() {
 				return this.disabled || this._radioGroup.disabled || (this.elForm || {}).disabled;

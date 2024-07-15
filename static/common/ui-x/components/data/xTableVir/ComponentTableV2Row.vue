@@ -6,12 +6,14 @@ export default async function () {
 		name: "ComponentTableV2Row",
 		props: tableV2RowProps,
 		setup(props, { expose, slots, attrs }) {
-			const { eventHandlers, isScrolling, measurable, measured, rowRef, onExpand } = useTableRow(props);
+			const { eventHandlers, isScrolling, measurable, measured, rowRef, onExpand } =
+				useTableRow(props);
 			expose({ onExpand });
 
 			return function () {
 				let $vSlots = this.$vSlots;
-				const { columns, columnsStyles, expandColumnKey, depth, rowData, rowIndex, style } = this.$vnode.data;
+				const { columns, columnsStyles, expandColumnKey, depth, rowData, rowIndex, style } =
+					this.$vnode.data;
 				let ColumnCells = columns.map((column, columnIndex) => {
 					const expandable = _.$isArrayFill(rowData.children);
 					const cellParams = {

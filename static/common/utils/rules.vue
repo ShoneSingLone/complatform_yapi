@@ -28,7 +28,8 @@ export default async function () {
 						if (!_.$isInput(val)) {
 							return;
 						}
-						const errorTips = "以小写字母开头,由小写字母，数字，中划线(-)组成，63个字符之内,且不能以中划线(-)结尾。";
+						const errorTips =
+							"以小写字母开头,由小写字母，数字，中划线(-)组成，63个字符之内,且不能以中划线(-)结尾。";
 
 						var urlRegex = _reg.serviceName();
 						if (urlRegex.test(val)) {
@@ -229,7 +230,8 @@ export default async function () {
 					name: "ipV4",
 					async validator({ val }) {
 						let msg = "";
-						const reg = /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\b/;
+						const reg =
+							/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\b/;
 						if (!reg.test(val)) {
 							msg = i18n("msgEnterTheCorrectIPv4Address");
 						}

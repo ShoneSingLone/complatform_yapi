@@ -1,6 +1,8 @@
 <script lang="ts">
 export default async function () {
-	const [Clickoutside] = await Promise.all([_.$importVue("/common/ui-x/directive/clickoutside.vue")]);
+	const [Clickoutside] = await Promise.all([
+		_.$importVue("/common/ui-x/directive/clickoutside.vue")
+	]);
 
 	return defineComponent({
 		name: "xDropdown",
@@ -198,11 +200,22 @@ export default async function () {
 					// 自定义
 					this.triggerElm.setAttribute("role", "button");
 					this.triggerElm.setAttribute("tabindex", this.tabindex);
-					this.triggerElm.setAttribute("class", (this.triggerElm.getAttribute("class") || "") + " el-dropdown-selfdefine"); // 控制
+					this.triggerElm.setAttribute(
+						"class",
+						(this.triggerElm.getAttribute("class") || "") + " el-dropdown-selfdefine"
+					); // 控制
 				}
 			},
 			async initEvent() {
-				let { trigger, show, hide, handleClick, splitButton, handleTriggerKeyDown, handleItemKeyDown } = this;
+				let {
+					trigger,
+					show,
+					hide,
+					handleClick,
+					splitButton,
+					handleTriggerKeyDown,
+					handleItemKeyDown
+				} = this;
 
 				/* 保证触发元素存在 */
 				this.triggerElm = await _.$ensure(() => {

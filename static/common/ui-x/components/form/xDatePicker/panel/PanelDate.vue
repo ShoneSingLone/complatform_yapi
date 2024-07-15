@@ -14,14 +14,28 @@
 			<div class="el-picker-panel__body-wrapper">
 				<slot name="sidebar" class="el-picker-panel__sidebar"></slot>
 				<div class="el-picker-panel__sidebar" v-if="shortcuts">
-					<button type="button" class="el-picker-panel__shortcut" v-for="(shortcut, key) in shortcuts" :key="key" @click="handleShortcutClick(shortcut)">{{ shortcut.text }}</button>
+					<button
+						type="button"
+						class="el-picker-panel__shortcut"
+						v-for="(shortcut, key) in shortcuts"
+						:key="key"
+						@click="handleShortcutClick(shortcut)">
+						{{ shortcut.text }}
+					</button>
 				</div>
 				<div class="el-picker-panel__body">
 					<div class="el-date-picker__time-header" v-if="showTime">
 						<span class="el-date-picker__editor-wrap">
-							<xInput :placeholder="i18n('el.datepicker.selectDate')" :value="visibleDate" size="small" @input="val => (userInputDate = val)" @change="handleVisibleDateChange" />
+							<xInput
+								:placeholder="i18n('el.datepicker.selectDate')"
+								:value="visibleDate"
+								size="small"
+								@input="val => (userInputDate = val)"
+								@change="handleVisibleDateChange" />
 						</span>
-						<span class="el-date-picker__editor-wrap" v-clickoutside="handleTimePickClose">
+						<span
+							class="el-date-picker__editor-wrap"
+							v-clickoutside="handleTimePickClose">
 							<xInput
 								ref="input"
 								@focus="timePickerVisible = true"
@@ -30,22 +44,52 @@
 								size="small"
 								@input="val => (userInputTime = val)"
 								@change="handleVisibleTimeChange" />
-							<PanelTime ref="timepicker" :time-arrow-control="arrowControl" @pick="handleTimePick" :visible="timePickerVisible" @mounted="proxyTimePickerDataProperties"> </PanelTime>
+							<PanelTime
+								ref="timepicker"
+								:time-arrow-control="arrowControl"
+								@pick="handleTimePick"
+								:visible="timePickerVisible"
+								@mounted="proxyTimePickerDataProperties">
+							</PanelTime>
 						</span>
 					</div>
-					<div class="el-date-picker__header" :class="{ 'el-date-picker__header--bordered': currentView === 'year' || currentView === 'month' }" v-show="currentView !== 'time'">
-						<button type="button" @click="prevYear" :aria-label="i18n('el.datepicker.prevYear')" class="el-picker-panel__icon-btn el-date-picker__prev-btn el-icon-d-arrow-left"></button>
+					<div
+						class="el-date-picker__header"
+						:class="{
+							'el-date-picker__header--bordered':
+								currentView === 'year' || currentView === 'month'
+						}"
+						v-show="currentView !== 'time'">
+						<button
+							type="button"
+							@click="prevYear"
+							:aria-label="i18n('el.datepicker.prevYear')"
+							class="el-picker-panel__icon-btn el-date-picker__prev-btn el-icon-d-arrow-left"></button>
 						<button
 							type="button"
 							@click="prevMonth"
 							v-show="currentView === 'date'"
 							:aria-label="i18n('el.datepicker.prevMonth')"
 							class="el-picker-panel__icon-btn el-date-picker__prev-btn el-icon-arrow-left"></button>
-						<span @click="showYearPicker" role="button" class="el-date-picker__header-label">{{ yearLabel }}</span>
-						<span @click="showMonthPicker" v-show="currentView === 'date'" role="button" class="el-date-picker__header-label" :class="{ active: currentView === 'month' }">{{
-							cptMonth
-						}}</span>
-						<button type="button" @click="nextYear" :aria-label="i18n('el.datepicker.nextYear')" class="el-picker-panel__icon-btn el-date-picker__next-btn el-icon-d-arrow-right"></button>
+						<span
+							@click="showYearPicker"
+							role="button"
+							class="el-date-picker__header-label"
+							>{{ yearLabel }}</span
+						>
+						<span
+							@click="showMonthPicker"
+							v-show="currentView === 'date'"
+							role="button"
+							class="el-date-picker__header-label"
+							:class="{ active: currentView === 'month' }"
+							>{{ cptMonth }}</span
+						>
+						<button
+							type="button"
+							@click="nextYear"
+							:aria-label="i18n('el.datepicker.nextYear')"
+							class="el-picker-panel__icon-btn el-date-picker__next-btn el-icon-d-arrow-right"></button>
 						<button
 							type="button"
 							@click="nextMonth"
@@ -88,8 +132,22 @@
 				</div>
 			</div>
 
-			<div class="el-picker-panel__footer" v-show="footerVisible && (currentView === 'date' || currentView === 'month' || currentView === 'year')">
-				<xBtn size="mini" preset="text" class="el-picker-panel__link-btn" @click="changeToNow" v-show="selectionMode !== 'dates' && selectionMode !== 'months' && selectionMode !== 'years'">
+			<div
+				class="el-picker-panel__footer"
+				v-show="
+					footerVisible &&
+					(currentView === 'date' || currentView === 'month' || currentView === 'year')
+				">
+				<xBtn
+					size="mini"
+					preset="text"
+					class="el-picker-panel__link-btn"
+					@click="changeToNow"
+					v-show="
+						selectionMode !== 'dates' &&
+						selectionMode !== 'months' &&
+						selectionMode !== 'years'
+					">
 					{{ i18n("el.datepicker.now") }}
 				</xBtn>
 				<xBtn plain size="mini" class="el-picker-panel__link-btn" @click="confirm">
@@ -122,7 +180,10 @@ export default async function () {
 			timeWithinRange
 		},
 		Clickoutside
-	] = await _.$importVue(["/common/ui-x/components/form/xDatePicker/dateUtils.vue", "/common/ui-x/directive/clickoutside.vue"]);
+	] = await _.$importVue([
+		"/common/ui-x/components/form/xDatePicker/dateUtils.vue",
+		"/common/ui-x/directive/clickoutside.vue"
+	]);
 
 	return defineComponent({
 		directives: { Clickoutside },
@@ -209,10 +270,16 @@ export default async function () {
 				if (!value) {
 					this.$emit("pick", value, ...args);
 				} else if (Array.isArray(value)) {
-					const dates = value.map(date => (this.showTime ? clearMilliseconds(date) : clearTime(date)));
+					const dates = value.map(date =>
+						this.showTime ? clearMilliseconds(date) : clearTime(date)
+					);
 					this.$emit("pick", dates, ...args);
 				} else {
-					this.$emit("pick", this.showTime ? clearMilliseconds(value) : clearTime(value), ...args);
+					this.$emit(
+						"pick",
+						this.showTime ? clearMilliseconds(value) : clearTime(value),
+						...args
+					);
 				}
 				this.userInputDate = null;
 				this.userInputTime = null;
@@ -271,7 +338,14 @@ export default async function () {
 
 			handleTimePick(value, visible, first) {
 				if (isDate(value)) {
-					const newDate = this.value ? modifyTime(this.value, value.getHours(), value.getMinutes(), value.getSeconds()) : modifyWithTimeString(this.getDefaultValue(), this.defaultTime);
+					const newDate = this.value
+						? modifyTime(
+								this.value,
+								value.getHours(),
+								value.getMinutes(),
+								value.getSeconds()
+							)
+						: modifyWithTimeString(this.getDefaultValue(), this.defaultTime);
 					this.date = newDate;
 					this.emit(this.date, true);
 				} else {
@@ -302,10 +376,22 @@ export default async function () {
 
 			handleDatePick(value) {
 				if (this.selectionMode === "day") {
-					let newDate = this.value ? modifyDate(this.value, value.getFullYear(), value.getMonth(), value.getDate()) : modifyWithTimeString(value, this.defaultTime);
+					let newDate = this.value
+						? modifyDate(
+								this.value,
+								value.getFullYear(),
+								value.getMonth(),
+								value.getDate()
+							)
+						: modifyWithTimeString(value, this.defaultTime);
 					// change default time while out of selectableRange
 					if (!this.checkDateWithinRange(newDate)) {
-						newDate = modifyDate(this.selectableRange[0][0], value.getFullYear(), value.getMonth(), value.getDate());
+						newDate = modifyDate(
+							this.selectableRange[0][0],
+							value.getFullYear(),
+							value.getMonth(),
+							value.getDate()
+						);
 					}
 					this.date = newDate;
 					this.emit(this.date, this.showTime);
@@ -333,19 +419,28 @@ export default async function () {
 			changeToNow() {
 				// NOTE: not a permanent solution
 				//       consider disable "now" button in the future
-				if ((!this.disabledDate || !this.disabledDate(new Date())) && this.checkDateWithinRange(new Date())) {
+				if (
+					(!this.disabledDate || !this.disabledDate(new Date())) &&
+					this.checkDateWithinRange(new Date())
+				) {
 					this.date = new Date();
 					this.emit(this.date);
 				}
 			},
 
 			confirm() {
-				if (this.selectionMode === "dates" || this.selectionMode === "months" || this.selectionMode === "years") {
+				if (
+					this.selectionMode === "dates" ||
+					this.selectionMode === "months" ||
+					this.selectionMode === "years"
+				) {
 					this.emit(this.value);
 				} else {
 					// value were emitted in handle{Date,Time}Pick, nothing to update here
 					// deal with the scenario where: user opens the picker, then confirm without doing anything
-					const value = this.value ? this.value : modifyWithTimeString(this.getDefaultValue(), this.defaultTime);
+					const value = this.value
+						? this.value
+						: modifyWithTimeString(this.getDefaultValue(), this.defaultTime);
 					this.date = new Date(value); // refresh date
 					this.emit(value);
 				}
@@ -379,7 +474,11 @@ export default async function () {
 						event.stopPropagation();
 						event.preventDefault();
 					}
-					if (keyCode === 13 && this.userInputDate === null && this.userInputTime === null) {
+					if (
+						keyCode === 13 &&
+						this.userInputDate === null &&
+						this.userInputTime === null
+					) {
 						// Enter
 						this.emit(this.date, false);
 					}
@@ -450,7 +549,12 @@ export default async function () {
 					if (typeof this.disabledDate === "function" && this.disabledDate(date)) {
 						return;
 					}
-					this.date = modifyTime(date, this.date.getHours(), this.date.getMinutes(), this.date.getSeconds());
+					this.date = modifyTime(
+						date,
+						this.date.getHours(),
+						this.date.getMinutes(),
+						this.date.getSeconds()
+					);
 					this.userInputDate = null;
 					this.resetView();
 					this.emit(this.date, true);
@@ -458,7 +562,12 @@ export default async function () {
 			},
 
 			isValidValue(value) {
-				return value && !isNaN(value) && (typeof this.disabledDate === "function" ? !this.disabledDate(value) : true) && this.checkDateWithinRange(value);
+				return (
+					value &&
+					!isNaN(value) &&
+					(typeof this.disabledDate === "function" ? !this.disabledDate(value) : true) &&
+					this.checkDateWithinRange(value)
+				);
 			},
 
 			getDefaultValue() {
@@ -468,15 +577,21 @@ export default async function () {
 			},
 
 			checkDateWithinRange(date) {
-				return this.selectableRange.length > 0 ? timeWithinRange(date, this.selectableRange, this.format || "HH:mm:ss") : true;
+				return this.selectableRange.length > 0
+					? timeWithinRange(date, this.selectableRange, this.format || "HH:mm:ss")
+					: true;
 			}
 		},
 
 		components: {
-			PanelTime: () => _.$importVue("/common/ui-x/components/form/xDatePicker/panel/PanelTime.vue"),
-			BasicDateTable: () => _.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicDateTable.vue"),
-			BasicMonthTable: () => _.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicMonthTable.vue"),
-			BasicYearTable: () => _.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicYearTable.vue")
+			PanelTime: () =>
+				_.$importVue("/common/ui-x/components/form/xDatePicker/panel/PanelTime.vue"),
+			BasicDateTable: () =>
+				_.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicDateTable.vue"),
+			BasicMonthTable: () =>
+				_.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicMonthTable.vue"),
+			BasicYearTable: () =>
+				_.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicYearTable.vue")
 		},
 
 		data() {
@@ -525,7 +640,12 @@ export default async function () {
 			},
 
 			footerVisible() {
-				return this.showTime || this.selectionMode === "dates" || this.selectionMode === "months" || this.selectionMode === "years";
+				return (
+					this.showTime ||
+					this.selectionMode === "dates" ||
+					this.selectionMode === "months" ||
+					this.selectionMode === "years"
+				);
 			},
 
 			visibleTime() {
@@ -549,7 +669,15 @@ export default async function () {
 				if (this.currentView === "year") {
 					const startYear = Math.floor(this.year / 10) * 10;
 					if (yearTranslation) {
-						return startYear + " " + yearTranslation + " - " + (startYear + 9) + " " + yearTranslation;
+						return (
+							startYear +
+							" " +
+							yearTranslation +
+							" - " +
+							(startYear + 9) +
+							" " +
+							yearTranslation
+						);
 					}
 					return startYear + " - " + (startYear + 9);
 				}

@@ -16,8 +16,16 @@
 </style>
 <template>
 	<transition name="el-drawer-fade" @after-enter="afterEnter" @after-leave="afterLeave">
-		<div class="el-drawer__wrapper xDrawer" tabindex="-1" v-show="visible" :style="cptDrawerWrapperStyle">
-			<div :class="cptDrawerContainerClass" @click.self="handleWrapperClick" role="document" tabindex="-1">
+		<div
+			class="el-drawer__wrapper xDrawer"
+			tabindex="-1"
+			v-show="visible"
+			:style="cptDrawerWrapperStyle">
+			<div
+				:class="cptDrawerContainerClass"
+				@click.self="handleWrapperClick"
+				role="document"
+				tabindex="-1">
 				<div
 					aria-modal="true"
 					aria-labelledby="el-drawer__title"
@@ -32,7 +40,12 @@
 						<slot name="title">
 							<span role="heading" :title="title">{{ title }}</span>
 						</slot>
-						<button :aria-label="cptAriaLabel" class="el-drawer__close-btn" type="button" v-if="showClose" @click="closeDrawer">
+						<button
+							:aria-label="cptAriaLabel"
+							class="el-drawer__close-btn"
+							type="button"
+							v-if="showClose"
+							@click="closeDrawer">
 							<i class="el-dialog__close el-icon el-icon-close"></i>
 						</button>
 					</header>

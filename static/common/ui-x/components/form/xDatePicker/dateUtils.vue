@@ -30,7 +30,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			function monthUpdate(arrName) {
 				return function (d, v, i18n) {
-					var index = i18n[arrName].indexOf(v.charAt(0).toUpperCase() + v.substr(1).toLowerCase());
+					var index = i18n[arrName].indexOf(
+						v.charAt(0).toUpperCase() + v.substr(1).toLowerCase()
+					);
 					if (~index) {
 						d.month = index;
 					}
@@ -46,8 +48,29 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return val;
 			}
 
-			var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-			var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+			var dayNames = [
+				"Sunday",
+				"Monday",
+				"Tuesday",
+				"Wednesday",
+				"Thursday",
+				"Friday",
+				"Saturday"
+			];
+			var monthNames = [
+				"January",
+				"February",
+				"March",
+				"April",
+				"May",
+				"June",
+				"July",
+				"August",
+				"September",
+				"October",
+				"November",
+				"December"
+			];
 			var monthNamesShort = shorten(monthNames, 3);
 			var dayNamesShort = shorten(dayNames, 3);
 			fecha.i18n = {
@@ -57,7 +80,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				monthNames: monthNames,
 				amPm: ["am", "pm"],
 				DoFn: function DoFn(D) {
-					return D + ["th", "st", "nd", "rd"][D % 10 > 3 ? 0 : ((D - (D % 10) !== 10) * D) % 10];
+					return (
+						D +
+						["th", "st", "nd", "rd"][D % 10 > 3 ? 0 : ((D - (D % 10) !== 10) * D) % 10]
+					);
 				}
 			};
 
@@ -138,11 +164,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					return dateObj.getHours() < 12 ? i18n.amPm[0] : i18n.amPm[1];
 				},
 				A: function (dateObj, i18n) {
-					return dateObj.getHours() < 12 ? i18n.amPm[0].toUpperCase() : i18n.amPm[1].toUpperCase();
+					return dateObj.getHours() < 12
+						? i18n.amPm[0].toUpperCase()
+						: i18n.amPm[1].toUpperCase();
 				},
 				ZZ: function (dateObj) {
 					var o = dateObj.getTimezoneOffset();
-					return (o > 0 ? "-" : "+") + pad(Math.floor(Math.abs(o) / 60) * 100 + (Math.abs(o) % 60), 4);
+					return (
+						(o > 0 ? "-" : "+") +
+						pad(Math.floor(Math.abs(o) / 60) * 100 + (Math.abs(o) % 60), 4)
+					);
 				}
 			};
 
@@ -277,7 +308,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					dateObj = new Date(dateObj);
 				}
 
-				if (Object.prototype.toString.call(dateObj) !== "[object Date]" || isNaN(dateObj.getTime())) {
+				if (
+					Object.prototype.toString.call(dateObj) !== "[object Date]" ||
+					isNaN(dateObj.getTime())
+				) {
 					throw new Error("Invalid Date in fecha.format");
 				}
 
@@ -292,7 +326,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				});
 				// Apply formatting rules
 				mask = mask.replace(token, function ($0) {
-					return $0 in formatFlags ? formatFlags[$0](dateObj, i18n) : $0.slice(1, $0.length - 1);
+					return $0 in formatFlags
+						? formatFlags[$0](dateObj, i18n)
+						: $0.slice(1, $0.length - 1);
 				});
 				// Inline literal values back into the formatted value
 				return mask.replace(/@@@/g, function () {
@@ -388,7 +424,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		})();
 
 		const weeks = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-		const months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+		const months = [
+			"jan",
+			"feb",
+			"mar",
+			"apr",
+			"may",
+			"jun",
+			"jul",
+			"aug",
+			"sep",
+			"oct",
+			"nov",
+			"dec"
+		];
 
 		const newArray = function (start, end) {
 			let result = [];
@@ -403,7 +452,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				dayNamesShort: weeks.map(week => i18n(`el.datepicker.weeks.${week}`)),
 				dayNames: weeks.map(week => i18n(`el.datepicker.weeks.${week}`)),
 				monthNamesShort: months.map(month => i18n(`el.datepicker.months.${month}`)),
-				monthNames: months.map((month, index) => i18n(`el.datepicker.month${Number(index) + 1}`)),
+				monthNames: months.map((month, index) =>
+					i18n(`el.datepicker.month${Number(index) + 1}`)
+				),
 				amPm: ["am", "pm"]
 			};
 		};
@@ -482,7 +533,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			const week1 = new Date(date.getFullYear(), 0, 4);
 			// Adjust to Thursday in week 1 and count number of weeks from date to week 1.
 			// Rounding should be fine for Daylight Saving Time. Its shift should never be more than 12 hours.
-			return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+			return (
+				1 +
+				Math.round(
+					((date.getTime() - week1.getTime()) / 86400000 -
+						3 +
+						((week1.getDay() + 6) % 7)) /
+						7
+				)
+			);
 		};
 
 		const getRangeHours = function (ranges) {
@@ -561,11 +620,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		};
 
 		const modifyDate = function (date, y, m, d) {
-			return new Date(y, m, d, date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+			return new Date(
+				y,
+				m,
+				d,
+				date.getHours(),
+				date.getMinutes(),
+				date.getSeconds(),
+				date.getMilliseconds()
+			);
 		};
 
 		const modifyTime = function (date, h, m, s) {
-			return new Date(date.getFullYear(), date.getMonth(), date.getDate(), h, m, s, date.getMilliseconds());
+			return new Date(
+				date.getFullYear(),
+				date.getMonth(),
+				date.getDate(),
+				h,
+				m,
+				s,
+				date.getMilliseconds()
+			);
 		};
 
 		const modifyWithTimeString = (date, time) => {
@@ -581,7 +656,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		};
 
 		const clearMilliseconds = function (date) {
-			return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), 0);
+			return new Date(
+				date.getFullYear(),
+				date.getMonth(),
+				date.getDate(),
+				date.getHours(),
+				date.getMinutes(),
+				date.getSeconds(),
+				0
+			);
 		};
 
 		const limitTimeRange = function (date, ranges, format = "HH:mm:ss") {
@@ -620,13 +703,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		const prevMonth = function (date) {
 			const year = date.getFullYear();
 			const month = date.getMonth();
-			return month === 0 ? changeYearMonthAndClampDate(date, year - 1, 11) : changeYearMonthAndClampDate(date, year, month - 1);
+			return month === 0
+				? changeYearMonthAndClampDate(date, year - 1, 11)
+				: changeYearMonthAndClampDate(date, year, month - 1);
 		};
 
 		const nextMonth = function (date) {
 			const year = date.getFullYear();
 			const month = date.getMonth();
-			return month === 11 ? changeYearMonthAndClampDate(date, year + 1, 0) : changeYearMonthAndClampDate(date, year, month + 1);
+			return month === 11
+				? changeYearMonthAndClampDate(date, year + 1, 0)
+				: changeYearMonthAndClampDate(date, year, month + 1);
 		};
 
 		const prevYear = function (date, amount = 1) {

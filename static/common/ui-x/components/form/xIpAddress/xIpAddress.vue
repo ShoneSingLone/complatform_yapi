@@ -15,13 +15,37 @@
 </style>
 <template>
 	<span class="xIpAddress flex middle">
-		<xInput :disabled="cptDisabledOne || disabled" :value="ipObj.one" maxlength="3" class="xIpAddress_content" @blur="handleBlur" @input="$event => handleChange('one', $event)" />
+		<xInput
+			:disabled="cptDisabledOne || disabled"
+			:value="ipObj.one"
+			maxlength="3"
+			class="xIpAddress_content"
+			@blur="handleBlur"
+			@input="$event => handleChange('one', $event)" />
 		<span class="cidr-point">·</span>
-		<xInput :disabled="cptDisabledTwo || disabled" :value="ipObj.two" maxlength="3" class="xIpAddress_content" @blur="handleBlur" @input="$event => handleChange('two', $event)" />
+		<xInput
+			:disabled="cptDisabledTwo || disabled"
+			:value="ipObj.two"
+			maxlength="3"
+			class="xIpAddress_content"
+			@blur="handleBlur"
+			@input="$event => handleChange('two', $event)" />
 		<span class="cidr-point">·</span>
-		<xInput :disabled="cptDisabledThree || disabled" :value="ipObj.three" maxlength="3" class="xIpAddress_content" @blur="handleBlur" @input="$event => handleChange('three', $event)" />
+		<xInput
+			:disabled="cptDisabledThree || disabled"
+			:value="ipObj.three"
+			maxlength="3"
+			class="xIpAddress_content"
+			@blur="handleBlur"
+			@input="$event => handleChange('three', $event)" />
 		<span class="cidr-point">·</span>
-		<xInput :disabled="cptDisabledFour || disabled" :value="ipObj.four" maxlength="3" class="xIpAddress_content" @blur="handleBlur" @input="$event => handleChange('four', $event)" />
+		<xInput
+			:disabled="cptDisabledFour || disabled"
+			:value="ipObj.four"
+			maxlength="3"
+			class="xIpAddress_content"
+			@blur="handleBlur"
+			@input="$event => handleChange('four', $event)" />
 	</span>
 </template>
 <script lang="ts">

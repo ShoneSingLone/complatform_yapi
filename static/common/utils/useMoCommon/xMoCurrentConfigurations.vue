@@ -18,7 +18,9 @@
 </style>
 <template>
 	<xBlock :header="i18n('当前配置')" class="xMoCurrentConfigurations">
-		<xForm col="1" style="width: var(--xMoCurrentConfigurations-width); --xItem-label-width: 80px">
+		<xForm
+			col="1"
+			style="width: var(--xMoCurrentConfigurations-width); --xItem-label-width: 80px">
 			<xItemDesc :item="itemConfigs" v-for="(itemConfigs, prop) in items" :key="prop" />
 			<!-- {{ items }} -->
 		</xForm>

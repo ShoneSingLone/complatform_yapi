@@ -48,7 +48,12 @@
 				noresize
 				tag="ul"
 				ref="seconds">
-				<li @click="handleClick('seconds', { value: key, disabled: false })" v-for="(second, key) in 60" class="el-time-spinner__item" :class="{ active: key === seconds }" :key="key">
+				<li
+					@click="handleClick('seconds', { value: key, disabled: false })"
+					v-for="(second, key) in 60"
+					class="el-time-spinner__item"
+					:class="{ active: key === seconds }"
+					:key="key">
 					{{ ("0" + key).slice(-2) }}
 				</li>
 			</xScrollbar>
@@ -58,8 +63,16 @@
 				<i v-repeat-click="decrease" class="el-time-spinner__arrow el-icon-arrow-up"></i>
 				<i v-repeat-click="increase" class="el-time-spinner__arrow el-icon-arrow-down"></i>
 				<ul class="el-time-spinner__list" ref="hours">
-					<li class="el-time-spinner__item" :class="{ active: hour === hours, disabled: hoursList[hour] }" v-for="(hour, key) in arrowHourList" :key="key">
-						{{ hour === undefined ? "" : ("0" + (amPmMode ? hour % 12 || 12 : hour)).slice(-2) + amPm(hour) }}
+					<li
+						class="el-time-spinner__item"
+						:class="{ active: hour === hours, disabled: hoursList[hour] }"
+						v-for="(hour, key) in arrowHourList"
+						:key="key">
+						{{
+							hour === undefined
+								? ""
+								: ("0" + (amPmMode ? hour % 12 || 12 : hour)).slice(-2) + amPm(hour)
+						}}
 					</li>
 				</ul>
 			</div>
@@ -67,16 +80,27 @@
 				<i v-repeat-click="decrease" class="el-time-spinner__arrow el-icon-arrow-up"></i>
 				<i v-repeat-click="increase" class="el-time-spinner__arrow el-icon-arrow-down"></i>
 				<ul class="el-time-spinner__list" ref="minutes">
-					<li class="el-time-spinner__item" :class="{ active: minute === minutes }" v-for="(minute, key) in arrowMinuteList" :key="key">
+					<li
+						class="el-time-spinner__item"
+						:class="{ active: minute === minutes }"
+						v-for="(minute, key) in arrowMinuteList"
+						:key="key">
 						{{ minute === undefined ? "" : ("0" + minute).slice(-2) }}
 					</li>
 				</ul>
 			</div>
-			<div @mouseenter="emitSelectRange('seconds')" class="el-time-spinner__wrapper is-arrow" v-if="showSeconds">
+			<div
+				@mouseenter="emitSelectRange('seconds')"
+				class="el-time-spinner__wrapper is-arrow"
+				v-if="showSeconds">
 				<i v-repeat-click="decrease" class="el-time-spinner__arrow el-icon-arrow-up"></i>
 				<i v-repeat-click="increase" class="el-time-spinner__arrow el-icon-arrow-down"></i>
 				<ul class="el-time-spinner__list" ref="seconds">
-					<li v-for="(second, key) in arrowSecondList" class="el-time-spinner__item" :class="{ active: second === seconds }" :key="key">
+					<li
+						v-for="(second, key) in arrowSecondList"
+						class="el-time-spinner__item"
+						:class="{ active: second === seconds }"
+						:key="key">
 						{{ second === undefined ? "" : ("0" + second).slice(-2) }}
 					</li>
 				</ul>
@@ -86,7 +110,9 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const [{ getRangeHours, getRangeMinutes, modifyTime }] = await _.$importVue(["/common/ui-x/components/form/xDatePicker/dateUtils.vue"]);
+	const [{ getRangeHours, getRangeMinutes, modifyTime }] = await _.$importVue([
+		"/common/ui-x/components/form/xDatePicker/dateUtils.vue"
+	]);
 
 	return defineComponent({
 		directives: {
@@ -124,15 +150,27 @@ export default async function () {
 			},
 			arrowHourList() {
 				const hours = this.hours;
-				return [hours > 0 ? hours - 1 : undefined, hours, hours < 23 ? hours + 1 : undefined];
+				return [
+					hours > 0 ? hours - 1 : undefined,
+					hours,
+					hours < 23 ? hours + 1 : undefined
+				];
 			},
 			arrowMinuteList() {
 				const minutes = this.minutes;
-				return [minutes > 0 ? minutes - 1 : undefined, minutes, minutes < 59 ? minutes + 1 : undefined];
+				return [
+					minutes > 0 ? minutes - 1 : undefined,
+					minutes,
+					minutes < 59 ? minutes + 1 : undefined
+				];
 			},
 			arrowSecondList() {
 				const seconds = this.seconds;
-				return [seconds > 0 ? seconds - 1 : undefined, seconds, seconds < 59 ? seconds + 1 : undefined];
+				return [
+					seconds > 0 ? seconds - 1 : undefined,
+					seconds,
+					seconds < 59 ? seconds + 1 : undefined
+				];
 			}
 		},
 
@@ -161,13 +199,22 @@ export default async function () {
 			modifyDateField(type, value) {
 				switch (type) {
 					case "hours":
-						this.$emit("change", modifyTime(this.date, value, this.minutes, this.seconds));
+						this.$emit(
+							"change",
+							modifyTime(this.date, value, this.minutes, this.seconds)
+						);
 						break;
 					case "minutes":
-						this.$emit("change", modifyTime(this.date, this.hours, value, this.seconds));
+						this.$emit(
+							"change",
+							modifyTime(this.date, this.hours, value, this.seconds)
+						);
 						break;
 					case "seconds":
-						this.$emit("change", modifyTime(this.date, this.hours, this.minutes, value));
+						this.$emit(
+							"change",
+							modifyTime(this.date, this.hours, this.minutes, value)
+						);
 						break;
 				}
 			},
@@ -206,7 +253,12 @@ export default async function () {
 
 			handleScroll(type) {
 				const value = Math.min(
-					Math.round((this.$refs[type].wrap.scrollTop - (this.scrollBarHeight(type) * 0.5 - 10) / this.typeItemHeight(type) + 3) / this.typeItemHeight(type)),
+					Math.round(
+						(this.$refs[type].wrap.scrollTop -
+							(this.scrollBarHeight(type) * 0.5 - 10) / this.typeItemHeight(type) +
+							3) /
+							this.typeItemHeight(type)
+					),
 					type === "hours" ? 23 : 59
 				);
 				this.modifyDateField(type, value);

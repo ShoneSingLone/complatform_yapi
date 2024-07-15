@@ -9,7 +9,10 @@ export default async function () {
 		name: "ElCascaderMenu",
 		inject: ["panel"],
 		components: {
-			xCascaderNode: () => _.$importVue("/common/ui-x/components/form/xCascader/xCascaderPanel/xCascaderNode.vue")
+			xCascaderNode: () =>
+				_.$importVue(
+					"/common/ui-x/components/form/xCascader/xCascaderPanel/xCascaderNode.vue"
+				)
 		},
 		props: {
 			nodes: {
@@ -53,7 +56,10 @@ export default async function () {
           <path style="pointer-events: auto;" fill="transparent" d="M${startX} ${bottom} L${offsetWidth} ${offsetHeight} V${bottom} Z" />
         `;
 				} else if (!hoverTimer) {
-					this.hoverTimer = setTimeout(this.clearHoverZone, this.panel.config.hoverThreshold);
+					this.hoverTimer = setTimeout(
+						this.clearHoverZone,
+						this.panel.config.hoverThreshold
+					);
 				}
 			},
 			clearHoverZone() {

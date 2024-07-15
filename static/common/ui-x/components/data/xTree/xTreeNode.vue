@@ -97,11 +97,22 @@
 		<div :class="ns.be('node', 'content')" :style="cptStyle">
 			<div
 				v-if="icon"
-				:class="[ns.is('leaf', !!node?.isLeaf), ns.is('hidden', hiddenExpandIcon), { expanded: !node?.isLeaf && expanded }, ns.be('node', 'expand-icon')]"
+				:class="[
+					ns.is('leaf', !!node?.isLeaf),
+					ns.is('hidden', hiddenExpandIcon),
+					{ expanded: !node?.isLeaf && expanded },
+					ns.be('node', 'expand-icon')
+				]"
 				@click.stop="handleExpandIconClick">
 				<xRender :render="icon" />
 			</div>
-			<xCheckbox v-if="showCheckbox" :value="checked" :indeterminate="indeterminate" :disabled="disabled" @change="handleCheckChange" @click.stop />
+			<xCheckbox
+				v-if="showCheckbox"
+				:value="checked"
+				:indeterminate="indeterminate"
+				:disabled="disabled"
+				@change="handleCheckChange"
+				@click.stop />
 			<xNodeContent :node="node" />
 		</div>
 		<div class="indicator top" />
@@ -112,7 +123,9 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const { itemSize, ON_NODE_CONTEXTMENU } = await _.$importVue("/common/ui-x/components/data/xTree/composables.vue");
+	const { itemSize, ON_NODE_CONTEXTMENU } = await _.$importVue(
+		"/common/ui-x/components/data/xTree/composables.vue"
+	);
 
 	return defineComponent({
 		name: "xTreeNode",
@@ -199,12 +212,23 @@ export default async function () {
 				return !!this.injectRootTree?.dragAndDrop;
 			},
 			cptTreeNodeClass() {
-				const { dropType, ns, expanded, current, disabled, checked, injectRootTree, node } = this;
+				const { dropType, ns, expanded, current, disabled, checked, injectRootTree, node } =
+					this;
 
-				const classArray = ["xTreeNode", ns.b("node"), ns.is("expanded", expanded), ns.is("current", current), ns.is("focusable", !disabled), ns.is("checked", !disabled && checked)];
+				const classArray = [
+					"xTreeNode",
+					ns.b("node"),
+					ns.is("expanded", expanded),
+					ns.is("current", current),
+					ns.is("focusable", !disabled),
+					ns.is("checked", !disabled && checked)
+				];
 
 				if (this.cptDraggable) {
-					return _.concat(classArray, [(injectRootTree.drag === node?.key && "dragged") || "", (injectRootTree.drop === node?.key && dropType) || ""]);
+					return _.concat(classArray, [
+						(injectRootTree.drag === node?.key && "dragged") || "",
+						(injectRootTree.drop === node?.key && dropType) || ""
+					]);
 				} else {
 					return classArray;
 				}

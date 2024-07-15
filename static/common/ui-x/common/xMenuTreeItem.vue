@@ -4,7 +4,16 @@ export default async function () {
 
 	return {
 		name: X_MENU_TREE_ITEM,
-		props: ["item", "clickItem", "renders", "active", "isDefaultOpen", "level", "folderIcon", "collapse"],
+		props: [
+			"item",
+			"clickItem",
+			"renders",
+			"active",
+			"isDefaultOpen",
+			"level",
+			"folderIcon",
+			"collapse"
+		],
 		setup(props, { slots }) {
 			const vm = this;
 
@@ -70,7 +79,24 @@ export default async function () {
 			}
 		},
 		render() {
-			let { $attrs, toggle, item, level, collapse, folderIcon, cptClassFolderIcon, scopeSlotsDefault, cpt_children, isFolder, isActive, state, active, clickItem, renders, $router } = this;
+			let {
+				$attrs,
+				toggle,
+				item,
+				level,
+				collapse,
+				folderIcon,
+				cptClassFolderIcon,
+				scopeSlotsDefault,
+				cpt_children,
+				isFolder,
+				isActive,
+				state,
+				active,
+				clickItem,
+				renders,
+				$router
+			} = this;
 			/* 缩进级别 */
 			level = Number(level || 0);
 			folderIcon = folderIcon || "xMenuTreeItemFolderIcon";
@@ -121,7 +147,11 @@ export default async function () {
 									}),
 									scopeSlotsDefault({ item }),
 									h("xGap", { attrs: { f: "" } }),
-									h("xIcon", { vIf: isFolder, class: cptClassFolderIcon, icon: folderIcon })
+									h("xIcon", {
+										vIf: isFolder,
+										class: cptClassFolderIcon,
+										icon: folderIcon
+									})
 									// h("xGap", { attrs: { f: "" } }),
 									// h("i", { vIf: isFolder, class: cptClassFolderIcon })
 								]

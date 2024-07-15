@@ -43,11 +43,18 @@ export default async function () {
 				immediate: true
 			}
 		);
-		const { isIndeterminate, isChecked, toggleCheckbox, getCheckedKeys, getCheckedNodes, getHalfCheckedKeys, getHalfCheckedNodes, setChecked, setCheckedKeys, checkedKeysSet } = useCheck(
-			props,
-			tree,
-			injectRootTree
-		);
+		const {
+			isIndeterminate,
+			isChecked,
+			toggleCheckbox,
+			getCheckedKeys,
+			getCheckedNodes,
+			getHalfCheckedKeys,
+			getHalfCheckedNodes,
+			setChecked,
+			setCheckedKeys,
+			checkedKeysSet
+		} = useCheck(props, tree, injectRootTree);
 		const { doFilter, hiddenNodeKeySet, isForceHiddenExpandIcon } = useFilter(props, tree);
 		const valueKey = computed(() => {
 			var _a2;
@@ -231,7 +238,10 @@ export default async function () {
 		function getCurrentNode() {
 			var _a2, _b;
 			if (!currentKey.value) return void 0;
-			return (_b = (_a2 = tree.value) == null ? void 0 : _a2.treeNodeMap.get(currentKey.value)) == null ? void 0 : _b.data;
+			return (_b =
+				(_a2 = tree.value) == null ? void 0 : _a2.treeNodeMap.get(currentKey.value)) == null
+				? void 0
+				: _b.data;
 		}
 		function getCurrentKey() {
 			return currentKey.value;

@@ -65,8 +65,14 @@
 			<a class="menu-text" @click="handleClick(item)" :href="item.href">{{ item.label }}</a>
 			<div class="menu-drop-wrapper" v-if="item.children">
 				<ul class="dropdown-menu">
-					<li v-for="subItem in item.children" class="dropdown-menu-item-menu-item" :key="subItem.value" @click="handleClickChild(item, subItem)">
-						<a class="dropdown-menu-item-menu-item-text" :href="item.href">{{ subItem.label }}</a>
+					<li
+						v-for="subItem in item.children"
+						class="dropdown-menu-item-menu-item"
+						:key="subItem.value"
+						@click="handleClickChild(item, subItem)">
+						<a class="dropdown-menu-item-menu-item-text" :href="item.href">{{
+							subItem.label
+						}}</a>
 					</li>
 				</ul>
 			</div>

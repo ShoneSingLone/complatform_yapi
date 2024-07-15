@@ -1,6 +1,12 @@
 <style lang="less"></style>
 <template>
-	<div class="el-autocomplete" v-clickoutside="close" aria-haspopup="listbox" role="combobox" :aria-expanded="suggestionVisible" :aria-owns="id">
+	<div
+		class="el-autocomplete"
+		v-clickoutside="close"
+		aria-haspopup="listbox"
+		role="combobox"
+		:aria-expanded="suggestionVisible"
+		:aria-owns="id">
 		<xInput
 			ref="input"
 			v-bind="[$props, $attrs]"
@@ -51,7 +57,10 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const [{ useFocus }, Clickoutside] = await Promise.all([_.$importVue("/common/utils/hooks.vue"), _.$importVue("/common/ui-x/directive/clickoutside.vue")]);
+	const [{ useFocus }, Clickoutside] = await Promise.all([
+		_.$importVue("/common/utils/hooks.vue"),
+		_.$importVue("/common/ui-x/directive/clickoutside.vue")
+	]);
 
 	return defineComponent({
 		name: "xAutocomplete",
@@ -139,7 +148,10 @@ export default async function () {
 			suggestionVisible(val) {
 				let $input = this.getInput();
 				if ($input) {
-					this.broadcast("xAutocompleteSuggestions", "visible", [val, $input.offsetWidth]);
+					this.broadcast("xAutocompleteSuggestions", "visible", [
+						val,
+						$input.offsetWidth
+					]);
 				}
 			}
 		},
@@ -166,7 +178,9 @@ export default async function () {
 						this.suggestions = suggestions;
 						this.highlightedIndex = this.highlightFirstItem ? 0 : -1;
 					} else {
-						console.error("[Element Error][Autocomplete]autocomplete suggestions must be an array");
+						console.error(
+							"[Element Error][Autocomplete]autocomplete suggestions must be an array"
+						);
 					}
 				});
 			},
@@ -201,7 +215,11 @@ export default async function () {
 				this.activated = false;
 			},
 			handleKeyEnter(e) {
-				if (this.suggestionVisible && this.highlightedIndex >= 0 && this.highlightedIndex < this.suggestions.length) {
+				if (
+					this.suggestionVisible &&
+					this.highlightedIndex >= 0 &&
+					this.highlightedIndex < this.suggestions.length
+				) {
 					e.preventDefault();
 					this.select(this.suggestions[this.highlightedIndex]);
 				} else if (this.selectWhenUnmatched) {
@@ -231,8 +249,12 @@ export default async function () {
 				if (index >= this.suggestions.length) {
 					index = this.suggestions.length - 1;
 				}
-				const suggestion = this.$refs.suggestions.$el.querySelector(".el-autocomplete-suggestion__wrap");
-				const suggestionList = suggestion.querySelectorAll(".el-autocomplete-suggestion__list li");
+				const suggestion = this.$refs.suggestions.$el.querySelector(
+					".el-autocomplete-suggestion__wrap"
+				);
+				const suggestionList = suggestion.querySelectorAll(
+					".el-autocomplete-suggestion__list li"
+				);
 
 				let highlightItem = suggestionList[index];
 				let scrollTop = suggestion.scrollTop;
@@ -246,7 +268,10 @@ export default async function () {
 				}
 				this.highlightedIndex = index;
 				let $input = this.getInput();
-				$input.setAttribute("aria-activedescendant", `${this.id}-item-${this.highlightedIndex}`);
+				$input.setAttribute(
+					"aria-activedescendant",
+					`${this.id}-item-${this.highlightedIndex}`
+				);
 			},
 			getInput() {
 				return this.$refs.input.getInput();
@@ -261,7 +286,10 @@ export default async function () {
 			$input.setAttribute("role", "textbox");
 			$input.setAttribute("aria-autocomplete", "list");
 			$input.setAttribute("aria-controls", "id");
-			$input.setAttribute("aria-activedescendant", `${this.id}-item-${this.highlightedIndex}`);
+			$input.setAttribute(
+				"aria-activedescendant",
+				`${this.id}-item-${this.highlightedIndex}`
+			);
 		},
 		beforeDestroy() {
 			this.$refs.suggestions.$destroy();

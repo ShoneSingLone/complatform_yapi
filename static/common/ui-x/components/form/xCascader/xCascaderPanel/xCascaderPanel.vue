@@ -1,7 +1,12 @@
 <style lang="less"></style>
 <template>
 	<div :class="cptCascaderPanelClass" @keydown="handleKeyDown">
-		<xCascaderMenu ref="menu" v-for="(menu, index) in menus" :index="index" :key="index" :nodes="menu"></xCascaderMenu>
+		<xCascaderMenu
+			ref="menu"
+			v-for="(menu, index) in menus"
+			:index="index"
+			:key="index"
+			:nodes="menu"></xCascaderMenu>
 	</div>
 </template>
 <script lang="ts">
@@ -72,7 +77,11 @@ export default async function () {
 			const { data, loaded, hasChildren, children } = this;
 			const { lazy, leaf: leafKey } = this.config;
 			if (lazy) {
-				const isLeaf = _.$isDef(data[leafKey]) ? data[leafKey] : loaded ? !children.length : false;
+				const isLeaf = _.$isDef(data[leafKey])
+					? data[leafKey]
+					: loaded
+						? !children.length
+						: false;
 				this.hasChildren = !isLeaf;
 				return isLeaf;
 			}
@@ -109,7 +118,9 @@ export default async function () {
 
 		isSameNode(checkedValue) {
 			const value = this.getValueByOption();
-			return this.config.multiple && Array.isArray(checkedValue) ? checkedValue.some(val => _.isEqual(val, value)) : _.isEqual(checkedValue, value);
+			return this.config.multiple && Array.isArray(checkedValue)
+				? checkedValue.some(val => _.isEqual(val, value))
+				: _.isEqual(checkedValue, value);
 		}
 
 		broadcast(event, ...args) {
@@ -142,7 +153,9 @@ export default async function () {
 		onChildCheck() {
 			const { children } = this;
 			const validChildren = children.filter(child => !child.isDisabled);
-			const checked = validChildren.length ? validChildren.every(child => child.checked) : false;
+			const checked = validChildren.length
+				? validChildren.every(child => child.checked)
+				: false;
 
 			this.setCheckState(checked);
 		}
@@ -216,7 +229,9 @@ export default async function () {
 		}
 
 		getNodeByValue(value) {
-			const nodes = this.getFlattedNodes(false, !this.config.lazy).filter(node => _.$valueEquals(node.path, value) || node.value === value);
+			const nodes = this.getFlattedNodes(false, !this.config.lazy).filter(
+				node => _.$valueEquals(node.path, value) || node.value === value
+			);
 			return nodes && nodes.length ? nodes[0] : null;
 		}
 	}
@@ -274,7 +289,10 @@ export default async function () {
 	return defineComponent({
 		name: "ElCascaderPanel",
 		components: {
-			xCascaderMenu: () => _.$importVue("/common/ui-x/components/form/xCascader/xCascaderPanel/xCascaderMenu.vue")
+			xCascaderMenu: () =>
+				_.$importVue(
+					"/common/ui-x/components/form/xCascader/xCascaderPanel/xCascaderMenu.vue"
+				)
 		},
 		props: {
 			value: {},
@@ -420,7 +438,9 @@ export default async function () {
 			},
 			calculateCheckedNodePaths() {
 				const { checkedValue, multiple } = this;
-				const checkedValues = multiple ? _.$coerceTruthyValueToArray(checkedValue) : [checkedValue];
+				const checkedValues = multiple
+					? _.$coerceTruthyValueToArray(checkedValue)
+					: [checkedValue];
 				this.checkedNodePaths = checkedValues.map(v => {
 					const checkedNode = this.getNodeByValue(v);
 					return checkedNode ? checkedNode.pathNodes : [];
@@ -441,14 +461,18 @@ export default async function () {
 					case KeyCode.left:
 						const preMenu = this.$refs.menu[getMenuIndex(target) - 1];
 						if (preMenu) {
-							const expandedNode = preMenu.$el.querySelector('.el-cascader-node[aria-expanded="true"]');
+							const expandedNode = preMenu.$el.querySelector(
+								'.el-cascader-node[aria-expanded="true"]'
+							);
 							focusNode(expandedNode);
 						}
 						break;
 					case KeyCode.right:
 						const nextMenu = this.$refs.menu[getMenuIndex(target) + 1];
 						if (nextMenu) {
-							const firstNode = nextMenu.$el.querySelector('.el-cascader-node[tabindex="-1"]');
+							const firstNode = nextMenu.$el.querySelector(
+								'.el-cascader-node[tabindex="-1"]'
+							);
 							focusNode(firstNode);
 						}
 						break;
@@ -509,7 +533,10 @@ export default async function () {
 						const valueKey = this.config.value;
 						const leafKey = this.config.leaf;
 
-						if (Array.isArray(dataList) && dataList.filter(item => item[valueKey] === nodeValue).length > 0) {
+						if (
+							Array.isArray(dataList) &&
+							dataList.filter(item => item[valueKey] === nodeValue).length > 0
+						) {
 							const checkedNode = this.store.getNodeByValue(nodeValue);
 
 							if (!checkedNode.data[leafKey]) {
@@ -533,14 +560,18 @@ export default async function () {
 			 * public methods
 			 */
 			calculateMultiCheckedValue() {
-				this.checkedValue = this.getCheckedNodes(this.leafOnly).map(node => node.getValueByOption());
+				this.checkedValue = this.getCheckedNodes(this.leafOnly).map(node =>
+					node.getValueByOption()
+				);
 			},
 			async scrollIntoView() {
 				_.each(this.$refs.menu, menu => {
 					const menuElement = menu.$el;
 					if (menuElement) {
 						const container = menuElement.querySelector(".el-scrollbar__wrap");
-						const activeNode = menuElement.querySelector(".el-cascader-node.is-active") || menuElement.querySelector(".el-cascader-node.in-active-path");
+						const activeNode =
+							menuElement.querySelector(".el-cascader-node.is-active") ||
+							menuElement.querySelector(".el-cascader-node.in-active-path");
 
 						if (container && activeNode) {
 							_.$scrollIntoView(container, activeNode);
@@ -561,7 +592,9 @@ export default async function () {
 					const nodes = this.getFlattedNodes(leafOnly);
 					return nodes.filter(node => node.checked);
 				} else {
-					return this.isEmptyValue(checkedValue) ? [] : [this.getNodeByValue(checkedValue)];
+					return this.isEmptyValue(checkedValue)
+						? []
+						: [this.getNodeByValue(checkedValue)];
 				}
 			},
 			clearCheckedNodes() {

@@ -3,7 +3,9 @@
 	<div class="el-step" :style="style" :class="cptClassStep">
 		<!-- icon & line -->
 		<div class="el-step__head" :class="cptClassStepHead">
-			<div class="el-step__line" :style="isLast ? '' : { marginRight: $parent.stepOffset + 'px' }">
+			<div
+				class="el-step__line"
+				:style="isLast ? '' : { marginRight: $parent.stepOffset + 'px' }">
 				<i class="el-step__line-inner" :style="lineStyle"></i>
 			</div>
 
@@ -12,7 +14,11 @@
 					<i v-if="icon" class="el-step__icon-inner" :class="[icon]"></i>
 					<div class="el-step__icon-inner" v-if="!icon && !isSimple">{{ index + 1 }}</div>
 				</slot>
-				<i v-else :class="['el-icon-' + (currentStatus === 'success' ? 'check' : 'close')]" class="el-step__icon-inner is-status"> </i>
+				<i
+					v-else
+					:class="['el-icon-' + (currentStatus === 'success' ? 'check' : 'close')]"
+					class="el-step__icon-inner is-status">
+				</i>
 			</div>
 		</div>
 		<!-- title & description -->
@@ -111,7 +117,12 @@ export default async function () {
 				const parent = this.$parent;
 				const len = parent.steps.length;
 
-				const space = typeof this.space === "number" ? this.space + "px" : this.space ? this.space : 100 / (len - (this.isCenter ? 0 : 1)) + "%";
+				const space =
+					typeof this.space === "number"
+						? this.space + "px"
+						: this.space
+							? this.space
+							: 100 / (len - (this.isCenter ? 0 : 1)) + "%";
 				style.flexBasis = space;
 				if (this.isVertical) return style;
 				if (this.isLast) {
@@ -152,7 +163,9 @@ export default async function () {
 				}
 
 				style.borderWidth = step && !this.isSimple ? "1px" : 0;
-				this.$parent.direction === "vertical" ? (style.height = step + "%") : (style.width = step + "%");
+				this.$parent.direction === "vertical"
+					? (style.height = step + "%")
+					: (style.width = step + "%");
 
 				this.lineStyle = style;
 			}

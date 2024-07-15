@@ -35,7 +35,13 @@ export default async function () {
 		render(h) {
 			let { type, tagSize, hit, effect } = this;
 			effect = effect || "empty";
-			const classes = ["el-tag", type ? `el-tag--${type}` : "", tagSize ? `el-tag--${tagSize}` : "", effect ? `el-tag--${effect}` : "", hit && "is-hit"];
+			const classes = [
+				"el-tag",
+				type ? `el-tag--${type}` : "",
+				tagSize ? `el-tag--${tagSize}` : "",
+				effect ? `el-tag--${effect}` : "",
+				hit && "is-hit"
+			];
 			const tagEl = h(
 				"span",
 				{
@@ -59,7 +65,9 @@ export default async function () {
 				]
 			);
 
-			return this.disableTransitions ? tagEl : h("transition", { props: { name: "el-zoom-in-center" } }, [tagEl]);
+			return this.disableTransitions
+				? tagEl
+				: h("transition", { props: { name: "el-zoom-in-center" } }, [tagEl]);
 		}
 	});
 }

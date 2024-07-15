@@ -117,7 +117,13 @@
 </style>
 <template>
 	<transition name="el-message-fade" @after-leave="handleAfterLeave">
-		<div :class="cptClass" :style="positionStyle" v-show="visible" @mouseenter="clearTimer" @mouseleave="startTimer" role="alert">
+		<div
+			:class="cptClass"
+			:style="positionStyle"
+			v-show="visible"
+			@mouseenter="clearTimer"
+			@mouseleave="startTimer"
+			role="alert">
 			<i :class="iconClass" v-if="iconClass"></i>
 			<i :class="typeClass" v-else></i>
 			<xRender :render="msgRender" />
@@ -156,10 +162,18 @@ export default async function () {
 		computed: {
 			cptClass() {
 				const { type, iconClass, center, showClose, customClass } = this;
-				return ["el-message", type && !iconClass ? `el-message--${type}` : "", center ? "is-center" : "", showClose ? "is-closable" : "", customClass];
+				return [
+					"el-message",
+					type && !iconClass ? `el-message--${type}` : "",
+					center ? "is-center" : "",
+					showClose ? "is-closable" : "",
+					customClass
+				];
 			},
 			typeClass() {
-				return this.type && !this.iconClass ? `el-message__icon el-icon-${typeMap[this.type]}` : "";
+				return this.type && !this.iconClass
+					? `el-message__icon el-icon-${typeMap[this.type]}`
+					: "";
 			},
 			positionStyle() {
 				return {

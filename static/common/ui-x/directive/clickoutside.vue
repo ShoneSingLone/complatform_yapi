@@ -28,14 +28,21 @@ export default async function () {
 				el.contains(mouseup.target) ||
 				el.contains(mousedown.target) ||
 				el === mouseup.target ||
-				(vnode.context.popperElm && (vnode.context.popperElm.contains(mouseup.target) || vnode.context.popperElm.contains(mousedown.target)))
+				(vnode.context.popperElm &&
+					(vnode.context.popperElm.contains(mouseup.target) ||
+						vnode.context.popperElm.contains(mousedown.target)))
 			)
 				return;
 
-			if (binding.expression && el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName && vnode.context[el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName]) {
+			if (
+				binding.expression &&
+				el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName &&
+				vnode.context[el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName]
+			) {
 				vnode.context[el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName]();
 			} else {
-				el[EVENT_CLICK_OUTSIDE_CONTEXT].bindingFn && el[EVENT_CLICK_OUTSIDE_CONTEXT].bindingFn();
+				el[EVENT_CLICK_OUTSIDE_CONTEXT].bindingFn &&
+					el[EVENT_CLICK_OUTSIDE_CONTEXT].bindingFn();
 			}
 		};
 	}
@@ -62,7 +69,11 @@ export default async function () {
 		},
 
 		update(el, binding, vnode) {
-			el[EVENT_CLICK_OUTSIDE_CONTEXT].documentHandler = createDocumentHandler(el, binding, vnode);
+			el[EVENT_CLICK_OUTSIDE_CONTEXT].documentHandler = createDocumentHandler(
+				el,
+				binding,
+				vnode
+			);
 			el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName = binding.expression;
 			el[EVENT_CLICK_OUTSIDE_CONTEXT].bindingFn = binding.value;
 		},
@@ -71,7 +82,10 @@ export default async function () {
 			let len = nodeList.length;
 
 			for (let i = 0; i < len; i++) {
-				if (nodeList[i][EVENT_CLICK_OUTSIDE_CONTEXT].id === el[EVENT_CLICK_OUTSIDE_CONTEXT].id) {
+				if (
+					nodeList[i][EVENT_CLICK_OUTSIDE_CONTEXT].id ===
+					el[EVENT_CLICK_OUTSIDE_CONTEXT].id
+				) {
 					nodeList.splice(i, 1);
 					break;
 				}

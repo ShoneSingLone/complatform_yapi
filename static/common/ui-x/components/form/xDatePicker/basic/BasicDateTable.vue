@@ -1,12 +1,24 @@
 <style lang="less"></style>
 <template>
-	<table cellspacing="0" cellpadding="0" class="el-date-table" @click="handleClick" @mousemove="handleMouseMove" :class="{ 'is-week-mode': selectionMode === 'week' }">
+	<table
+		cellspacing="0"
+		cellpadding="0"
+		class="el-date-table"
+		@click="handleClick"
+		@mousemove="handleMouseMove"
+		:class="{ 'is-week-mode': selectionMode === 'week' }">
 		<tbody>
 			<tr>
 				<th v-if="showWeekNumber">{{ i18n("el.datepicker.week") }}</th>
-				<th v-for="(week, key) in WEEKS" :key="key">{{ i18n("el.datepicker.weeks." + week) }}</th>
+				<th v-for="(week, key) in WEEKS" :key="key">
+					{{ i18n("el.datepicker.weeks." + week) }}
+				</th>
 			</tr>
-			<tr class="el-date-table__row" v-for="(row, key) in rows" :class="{ current: isWeekActive(row[1]) }" :key="key">
+			<tr
+				class="el-date-table__row"
+				v-for="(row, key) in rows"
+				:class="{ current: isWeekActive(row[1]) }"
+				:key="key">
 				<td v-for="(cell, key) in row" :class="getCellClasses(cell)" :key="key">
 					<div>
 						<span>
@@ -20,9 +32,18 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const [{ getFirstDayOfMonth, getDayCountOfMonth, getWeekNumber, getStartDateOfMonth, prevDate, nextDate, isDate, clearTime: _clearTime }] = await _.$importVue([
-		"/common/ui-x/components/form/xDatePicker/dateUtils.vue"
-	]);
+	const [
+		{
+			getFirstDayOfMonth,
+			getDayCountOfMonth,
+			getWeekNumber,
+			getStartDateOfMonth,
+			prevDate,
+			nextDate,
+			isDate,
+			clearTime: _clearTime
+		}
+	] = await _.$importVue(["/common/ui-x/components/form/xDatePicker/dateUtils.vue"]);
 
 	const WEEKS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 	const getDateTimestamp = function (time) {
@@ -117,7 +138,10 @@ export default async function () {
 				const date = new Date(this.year, this.month, 1);
 				let day = getFirstDayOfMonth(date); // day of first day
 				const dateCountOfMonth = getDayCountOfMonth(date.getFullYear(), date.getMonth());
-				const dateCountOfLastMonth = getDayCountOfMonth(date.getFullYear(), date.getMonth() === 0 ? 11 : date.getMonth() - 1);
+				const dateCountOfLastMonth = getDayCountOfMonth(
+					date.getFullYear(),
+					date.getMonth() === 0 ? 11 : date.getMonth() - 1
+				);
 
 				day = day === 0 ? 7 : day;
 
@@ -128,7 +152,8 @@ export default async function () {
 				const startDate = this.startDate;
 				const disabledDate = this.disabledDate;
 				const cellClassName = this.cellClassName;
-				const selectedDate = this.selectionMode === "dates" ? _.$coerceTruthyValueToArray(this.value) : [];
+				const selectedDate =
+					this.selectionMode === "dates" ? _.$coerceTruthyValueToArray(this.value) : [];
 				const now = getDateTimestamp(new Date());
 
 				for (let i = 0; i < 6; i++) {
@@ -136,21 +161,33 @@ export default async function () {
 
 					if (this.showWeekNumber) {
 						if (!row[0]) {
-							row[0] = { type: "week", text: getWeekNumber(nextDate(startDate, i * 7 + 1)) };
+							row[0] = {
+								type: "week",
+								text: getWeekNumber(nextDate(startDate, i * 7 + 1))
+							};
 						}
 					}
 
 					for (let j = 0; j < 7; j++) {
 						let cell = row[this.showWeekNumber ? j + 1 : j];
 						if (!cell) {
-							cell = { row: i, column: j, type: "normal", inRange: false, start: false, end: false };
+							cell = {
+								row: i,
+								column: j,
+								type: "normal",
+								inRange: false,
+								start: false,
+								end: false
+							};
 						}
 
 						cell.type = "normal";
 
 						const index = i * 7 + j;
 						const time = nextDate(startDate, index - offset).getTime();
-						cell.inRange = time >= getDateTimestamp(this.minDate) && time <= getDateTimestamp(this.maxDate);
+						cell.inRange =
+							time >= getDateTimestamp(this.minDate) &&
+							time <= getDateTimestamp(this.maxDate);
 						cell.start = this.minDate && time === getDateTimestamp(this.minDate);
 						cell.end = this.maxDate && time === getDateTimestamp(this.maxDate);
 						const isToday = time === now;
@@ -160,12 +197,17 @@ export default async function () {
 						}
 
 						if (i >= 0 && i <= 1) {
-							const numberOfDaysFromPreviousMonth = day + offset < 0 ? 7 + day + offset : day + offset;
+							const numberOfDaysFromPreviousMonth =
+								day + offset < 0 ? 7 + day + offset : day + offset;
 
 							if (j + i * 7 >= numberOfDaysFromPreviousMonth) {
 								cell.text = count++;
 							} else {
-								cell.text = dateCountOfLastMonth - (numberOfDaysFromPreviousMonth - (j % 7)) + 1 + i * 7;
+								cell.text =
+									dateCountOfLastMonth -
+									(numberOfDaysFromPreviousMonth - (j % 7)) +
+									1 +
+									i * 7;
 								cell.type = "prev-month";
 							}
 						} else {
@@ -178,9 +220,14 @@ export default async function () {
 						}
 
 						let cellDate = new Date(time);
-						cell.disabled = typeof disabledDate === "function" && disabledDate(cellDate);
-						cell.selected = _.find(selectedDate, date => date.getTime() === cellDate.getTime());
-						cell.customClass = typeof cellClassName === "function" && cellClassName(cellDate);
+						cell.disabled =
+							typeof disabledDate === "function" && disabledDate(cellDate);
+						cell.selected = _.find(
+							selectedDate,
+							date => date.getTime() === cellDate.getTime()
+						);
+						cell.customClass =
+							typeof cellClassName === "function" && cellClassName(cellDate);
 						this.$set(row, this.showWeekNumber ? j + 1 : j, cell);
 					}
 
@@ -229,12 +276,20 @@ export default async function () {
 		methods: {
 			cellMatchesDate(cell, date) {
 				const value = new Date(date);
-				return this.year === value.getFullYear() && this.month === value.getMonth() && Number(cell.text) === value.getDate();
+				return (
+					this.year === value.getFullYear() &&
+					this.month === value.getMonth() &&
+					Number(cell.text) === value.getDate()
+				);
 			},
 
 			getCellClasses(cell) {
 				const selectionMode = this.selectionMode;
-				const defaultValue = this.defaultValue ? (Array.isArray(this.defaultValue) ? this.defaultValue : [this.defaultValue]) : [];
+				const defaultValue = this.defaultValue
+					? Array.isArray(this.defaultValue)
+						? this.defaultValue
+						: [this.defaultValue]
+					: [];
 
 				let classes = [];
 				if ((cell.type === "normal" || cell.type === "today") && !cell.disabled) {
@@ -246,15 +301,27 @@ export default async function () {
 					classes.push(cell.type);
 				}
 
-				if (cell.type === "normal" && defaultValue.some(date => this.cellMatchesDate(cell, date))) {
+				if (
+					cell.type === "normal" &&
+					defaultValue.some(date => this.cellMatchesDate(cell, date))
+				) {
 					classes.push("default");
 				}
 
-				if (selectionMode === "day" && (cell.type === "normal" || cell.type === "today") && this.cellMatchesDate(cell, this.value)) {
+				if (
+					selectionMode === "day" &&
+					(cell.type === "normal" || cell.type === "today") &&
+					this.cellMatchesDate(cell, this.value)
+				) {
 					classes.push("current");
 				}
 
-				if (cell.inRange && (cell.type === "normal" || cell.type === "today" || this.selectionMode === "week")) {
+				if (
+					cell.inRange &&
+					(cell.type === "normal" ||
+						cell.type === "today" ||
+						this.selectionMode === "week")
+				) {
 					classes.push("in-range");
 
 					if (cell.start) {
@@ -282,7 +349,8 @@ export default async function () {
 			},
 
 			getDateOfCell(row, column) {
-				const offsetFromStart = row * 7 + (column - (this.showWeekNumber ? 1 : 0)) - this.offsetDay;
+				const offsetFromStart =
+					row * 7 + (column - (this.showWeekNumber ? 1 : 0)) - this.offsetDay;
 				return nextDate(this.startDate, offsetFromStart);
 			},
 
@@ -413,7 +481,9 @@ export default async function () {
 					});
 				} else if (this.selectionMode === "dates") {
 					const value = this.value || [];
-					const newValue = cell.selected ? removeFromArray(value, date => date.getTime() === newDate.getTime()) : [...value, newDate];
+					const newValue = cell.selected
+						? removeFromArray(value, date => date.getTime() === newDate.getTime())
+						: [...value, newDate];
 					this.$emit("pick", newValue);
 				}
 			}

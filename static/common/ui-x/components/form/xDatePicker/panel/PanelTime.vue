@@ -3,23 +3,41 @@
 	<transition name="el-zoom-in-top" @after-leave="$emit('dodestroy')">
 		<div v-show="visible" class="el-time-panel el-popper" :class="popperClass">
 			<div class="el-time-panel__content" :class="{ 'has-seconds': showSeconds }">
-				<BasicTimeSpinner ref="spinner" @change="handleChange" :arrow-control="useArrow" :show-seconds="showSeconds" :am-pm-mode="amPmMode" @select-range="setSelectionRange" :date="date">
+				<BasicTimeSpinner
+					ref="spinner"
+					@change="handleChange"
+					:arrow-control="useArrow"
+					:show-seconds="showSeconds"
+					:am-pm-mode="amPmMode"
+					@select-range="setSelectionRange"
+					:date="date">
 				</BasicTimeSpinner>
 			</div>
 			<div class="el-time-panel__footer">
-				<button type="button" class="el-time-panel__btn cancel" @click="handleCancel">{{ i18n("el.datepicker.cancel") }}</button>
-				<button type="button" class="el-time-panel__btn" :class="{ confirm: !disabled }" @click="handleConfirm()">{{ i18n("el.datepicker.confirm") }}</button>
+				<button type="button" class="el-time-panel__btn cancel" @click="handleCancel">
+					{{ i18n("el.datepicker.cancel") }}
+				</button>
+				<button
+					type="button"
+					class="el-time-panel__btn"
+					:class="{ confirm: !disabled }"
+					@click="handleConfirm()">
+					{{ i18n("el.datepicker.confirm") }}
+				</button>
 			</div>
 		</div>
 	</transition>
 </template>
 <script lang="ts">
 export default async function () {
-	const [{ limitTimeRange, isDate, clearMilliseconds, timeWithinRange }] = await _.$importVue(["/common/ui-x/components/form/xDatePicker/dateUtils.vue"]);
+	const [{ limitTimeRange, isDate, clearMilliseconds, timeWithinRange }] = await _.$importVue([
+		"/common/ui-x/components/form/xDatePicker/dateUtils.vue"
+	]);
 
 	return defineComponent({
 		components: {
-			BasicTimeSpinner: () => _.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicTimeSpinner.vue")
+			BasicTimeSpinner: () =>
+				_.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicTimeSpinner.vue")
 		},
 		props: {
 			visible: Boolean,
@@ -115,7 +133,9 @@ export default async function () {
 
 			handleConfirm(visible = false, first) {
 				if (first) return;
-				const date = clearMilliseconds(limitTimeRange(this.date, this.selectableRange, this.format));
+				const date = clearMilliseconds(
+					limitTimeRange(this.date, this.selectableRange, this.format)
+				);
 				this.$emit("pick", date, visible, first);
 			},
 

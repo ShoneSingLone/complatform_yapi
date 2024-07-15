@@ -22,17 +22,47 @@
 			:debounce="debounce"
 			:size="inputSize">
 		</xInputNumber>
-		<div class="el-slider__runway" :class="{ 'show-input': showInput, disabled: sliderDisabled }" :style="runwayStyle" @click="onSliderClick" ref="slider">
+		<div
+			class="el-slider__runway"
+			:class="{ 'show-input': showInput, disabled: sliderDisabled }"
+			:style="runwayStyle"
+			@click="onSliderClick"
+			ref="slider">
 			<div class="el-slider__bar" :style="barStyle"></div>
-			<xSliderButton :vertical="vertical" v-model="firstValue" :tooltip-class="tooltipClass" ref="button1"> </xSliderButton>
-			<xSliderButton :vertical="vertical" v-model="secondValue" :tooltip-class="tooltipClass" ref="button2" v-if="range"> </xSliderButton>
-			<div class="el-slider__stop" v-for="(item, key) in stops" :key="key" :style="getStopStyle(item)" v-if="showStops"></div>
+			<xSliderButton
+				:vertical="vertical"
+				v-model="firstValue"
+				:tooltip-class="tooltipClass"
+				ref="button1">
+			</xSliderButton>
+			<xSliderButton
+				:vertical="vertical"
+				v-model="secondValue"
+				:tooltip-class="tooltipClass"
+				ref="button2"
+				v-if="range">
+			</xSliderButton>
+			<div
+				class="el-slider__stop"
+				v-for="(item, key) in stops"
+				:key="key"
+				:style="getStopStyle(item)"
+				v-if="showStops"></div>
 			<template v-if="markList.length > 0">
 				<div>
-					<div v-for="(item, key) in markList" :style="getStopStyle(item.position)" class="el-slider__stop el-slider__marks-stop" :key="key"></div>
+					<div
+						v-for="(item, key) in markList"
+						:style="getStopStyle(item.position)"
+						class="el-slider__stop el-slider__marks-stop"
+						:key="key"></div>
 				</div>
 				<div class="el-slider__marks">
-					<xSliderMarker :mark="item.mark" v-for="(item, key) in markList" :key="key" :style="getStopStyle(item.position)"> </xSliderMarker>
+					<xSliderMarker
+						:mark="item.mark"
+						v-for="(item, key) in markList"
+						:key="key"
+						:style="getStopStyle(item.position)">
+					</xSliderMarker>
 				</div>
 			</template>
 		</div>
@@ -112,7 +142,8 @@ export default async function () {
 		},
 
 		components: {
-			xSliderButton: () => _.$importVue("/common/ui-x/components/form/xSlider/xSliderButton.vue"),
+			xSliderButton: () =>
+				_.$importVue("/common/ui-x/components/form/xSlider/xSliderButton.vue"),
 			xSliderMarker: {
 				name: "ElMarker",
 				props: {
@@ -144,7 +175,12 @@ export default async function () {
 
 		watch: {
 			value(val, oldVal) {
-				if (this.dragging || (Array.isArray(val) && Array.isArray(oldVal) && val.every((item, index) => item === oldVal[index]))) {
+				if (
+					this.dragging ||
+					(Array.isArray(val) &&
+						Array.isArray(oldVal) &&
+						val.every((item, index) => item === oldVal[index]))
+				) {
 					return;
 				}
 				this.setValues();
@@ -182,7 +218,9 @@ export default async function () {
 		methods: {
 			valueChanged() {
 				if (this.range) {
-					return ![this.minValue, this.maxValue].every((item, index) => item === this.oldValue[index]);
+					return ![this.minValue, this.maxValue].every(
+						(item, index) => item === this.oldValue[index]
+					);
 				} else {
 					return this.value !== this.oldValue;
 				}
@@ -206,7 +244,10 @@ export default async function () {
 						this.firstValue = val[0];
 						this.secondValue = val[1];
 						if (this.valueChanged()) {
-							this.dispatch("ElFormItem", "el.form.change", [this.minValue, this.maxValue]);
+							this.dispatch("ElFormItem", "el.form.change", [
+								this.minValue,
+								this.maxValue
+							]);
 							this.oldValue = val.slice();
 						}
 					}
@@ -245,7 +286,9 @@ export default async function () {
 				this.resetSize();
 				if (this.vertical) {
 					const sliderOffsetBottom = this.$refs.slider.getBoundingClientRect().bottom;
-					this.setPosition(((sliderOffsetBottom - event.clientY) / this.sliderSize) * 100);
+					this.setPosition(
+						((sliderOffsetBottom - event.clientY) / this.sliderSize) * 100
+					);
 				} else {
 					const sliderOffsetLeft = this.$refs.slider.getBoundingClientRect().left;
 					this.setPosition(((event.clientX - sliderOffsetLeft) / this.sliderSize) * 100);
@@ -255,7 +298,8 @@ export default async function () {
 
 			resetSize() {
 				if (this.$refs.slider) {
-					this.sliderSize = this.$refs.slider[`client${this.vertical ? "Height" : "Width"}`];
+					this.sliderSize =
+						this.$refs.slider[`client${this.vertical ? "Height" : "Width"}`];
 				}
 			},
 
@@ -274,7 +318,8 @@ export default async function () {
 			stops() {
 				if (!this.showStops || this.min > this.max) return [];
 				if (this.step === 0) {
-					process.env.NODE_ENV !== "production" && console.warn("[Element Warn][Slider]step should not be 0.");
+					process.env.NODE_ENV !== "production" &&
+						console.warn("[Element Warn][Slider]step should not be 0.");
 					return [];
 				}
 				const stopCount = (this.max - this.min) / this.step;
@@ -285,10 +330,15 @@ export default async function () {
 				}
 				if (this.range) {
 					return result.filter(step => {
-						return step < (100 * (this.minValue - this.min)) / (this.max - this.min) || step > (100 * (this.maxValue - this.min)) / (this.max - this.min);
+						return (
+							step < (100 * (this.minValue - this.min)) / (this.max - this.min) ||
+							step > (100 * (this.maxValue - this.min)) / (this.max - this.min)
+						);
 					});
 				} else {
-					return result.filter(step => step > (100 * (this.firstValue - this.min)) / (this.max - this.min));
+					return result.filter(
+						step => step > (100 * (this.firstValue - this.min)) / (this.max - this.min)
+					);
 				}
 			},
 
@@ -318,11 +368,15 @@ export default async function () {
 			},
 
 			barSize() {
-				return this.range ? `${(100 * (this.maxValue - this.minValue)) / (this.max - this.min)}%` : `${(100 * (this.firstValue - this.min)) / (this.max - this.min)}%`;
+				return this.range
+					? `${(100 * (this.maxValue - this.minValue)) / (this.max - this.min)}%`
+					: `${(100 * (this.firstValue - this.min)) / (this.max - this.min)}%`;
 			},
 
 			barStart() {
-				return this.range ? `${(100 * (this.minValue - this.min)) / (this.max - this.min)}%` : "0%";
+				return this.range
+					? `${(100 * (this.minValue - this.min)) / (this.max - this.min)}%`
+					: "0%";
 			},
 
 			precision() {
@@ -378,7 +432,10 @@ export default async function () {
 			this.$el.setAttribute("aria-valuetext", valuetext);
 
 			// label screen reader
-			this.$el.setAttribute("aria-label", this.label ? this.label : `slider between ${this.min} and ${this.max}`);
+			this.$el.setAttribute(
+				"aria-label",
+				this.label ? this.label : `slider between ${this.min} and ${this.max}`
+			);
 
 			this.resetSize();
 			window.addEventListener("resize", this.resetSize);

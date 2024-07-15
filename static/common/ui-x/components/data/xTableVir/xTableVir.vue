@@ -338,11 +338,14 @@
 
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
-	let xTableVir_emptyComponent = PRIVATE_GLOBAL.xTableVir_emptyComponent || "/common/ui-x/components/data/xTableVir/xTableEmptyRender.vue";
+	let xTableVir_emptyComponent =
+		PRIVATE_GLOBAL.xTableVir_emptyComponent ||
+		"/common/ui-x/components/data/xTableVir/xTableEmptyRender.vue";
 	const { emptyRender } = await _.$importVue(xTableVir_emptyComponent);
 	_.each(
 		{
-			ComponentTableV2HeaderRow: "/common/ui-x/components/data/xTableVir/ComponentTableV2HeaderRow.vue",
+			ComponentTableV2HeaderRow:
+				"/common/ui-x/components/data/xTableVir/ComponentTableV2HeaderRow.vue",
 			ComponentTableV2Grid: "/common/ui-x/components/data/xTableVir/ComponentTableV2Grid.vue",
 			ComponentTableV2Row: "/common/ui-x/components/data/xTableVir/ComponentTableV2Row.vue"
 		},
@@ -369,7 +372,9 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 	/* resolveDynamicComponent */
 	var _a;
 
-	isClient && ((_a = window == null ? false : window.navigator) == null ? false : _a.userAgent) && /iP(ad|hone|od)/.test(window.navigator.userAgent);
+	isClient &&
+		((_a = window == null ? false : window.navigator) == null ? false : _a.userAgent) &&
+		/iP(ad|hone|od)/.test(window.navigator.userAgent);
 
 	const _global = window;
 	const globalKey = "__vueuse_ssr_handlers__";
@@ -466,7 +471,9 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		if (value == null) {
 			return value === false ? undefinedTag : nullTag;
 		}
-		return symToStringTag && symToStringTag in Object(value) ? getRawTag(value) : _toString(value);
+		return symToStringTag && symToStringTag in Object(value)
+			? getRawTag(value)
+			: _toString(value);
 	}
 
 	function isObjectLike(value) {
@@ -518,7 +525,9 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 	var reTrimStart = /^\s+/;
 
 	function baseTrim(string) {
-		return string ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, "") : string;
+		return string
+			? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, "")
+			: string;
 	}
 
 	function isObject(value) {
@@ -548,7 +557,11 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		}
 		value = baseTrim(value);
 		var isBinary = reIsBinary.test(value);
-		return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
+		return isBinary || reIsOctal.test(value)
+			? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+			: reIsBadHex.test(value)
+				? NAN
+				: +value;
 	}
 
 	var asyncTag = "[object AsyncFunction]",
@@ -567,7 +580,9 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 	var coreJsData = root["__core-js_shared__"];
 	var coreJsData$1 = coreJsData;
 	var maskSrcKey = (function () {
-		var uid = /[^.]+$/.exec((coreJsData$1 && coreJsData$1.keys && coreJsData$1.keys.IE_PROTO) || "");
+		var uid = /[^.]+$/.exec(
+			(coreJsData$1 && coreJsData$1.keys && coreJsData$1.keys.IE_PROTO) || ""
+		);
 		return uid ? "Symbol(src)_1." + uid : "";
 	})();
 
@@ -632,10 +647,20 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 			return false;
 		}
 		var type = typeof value;
-		if (type == "number" || type == "symbol" || type == "boolean" || value == null || isSymbol(value)) {
+		if (
+			type == "number" ||
+			type == "symbol" ||
+			type == "boolean" ||
+			value == null ||
+			isSymbol(value)
+		) {
 			return true;
 		}
-		return reIsPlainProp.test(value) || !reIsDeepProp.test(value) || (object != null && value in Object(object));
+		return (
+			reIsPlainProp.test(value) ||
+			!reIsDeepProp.test(value) ||
+			(object != null && value in Object(object))
+		);
 	}
 
 	var nativeCreate = getNative(Object, "create");
@@ -778,7 +803,9 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 
 	function isKeyable(value) {
 		var type = typeof value;
-		return type == "string" || type == "number" || type == "symbol" || type == "boolean" ? value !== "__proto__" : value === null;
+		return type == "string" || type == "number" || type == "symbol" || type == "boolean"
+			? value !== "__proto__"
+			: value === null;
 	}
 
 	function getMapData(map, key) {
@@ -859,7 +886,8 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		return result;
 	}
 
-	var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+	var rePropName =
+		/[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
 	var reEscapeChar = /\\(\\)?/g;
 	var stringToPath = memoizeCapped(function (string) {
 		var result = [];
@@ -960,7 +988,12 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		function shouldInvoke(time) {
 			var timeSinceLastCall = time - lastCallTime,
 				timeSinceLastInvoke = time - lastInvokeTime;
-			return lastCallTime === false || timeSinceLastCall >= wait || timeSinceLastCall < 0 || (maxing && timeSinceLastInvoke >= maxWait);
+			return (
+				lastCallTime === false ||
+				timeSinceLastCall >= wait ||
+				timeSinceLastCall < 0 ||
+				(maxing && timeSinceLastInvoke >= maxWait)
+			);
 		}
 
 		function timerExpired() {
@@ -1230,7 +1263,8 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				currentPage: "page {pager}",
 				prevPages: "Previous {pager} pages",
 				nextPages: "Next {pager} pages",
-				deprecationWarning: "Deprecated usages detected, please refer to the el-pagination documentation for more details"
+				deprecationWarning:
+					"Deprecated usages detected, please refer to the el-pagination documentation for more details"
 			},
 			dialog: {
 				close: "Close this dialog"
@@ -1311,12 +1345,18 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 	};
 	const ID_INJECTION_KEY = Symbol("elIdInjection");
 	const useIdInjection = () => {
-		return getCurrentInstance() ? inject(ID_INJECTION_KEY, defaultIdInjection) : defaultIdInjection;
+		return getCurrentInstance()
+			? inject(ID_INJECTION_KEY, defaultIdInjection)
+			: defaultIdInjection;
 	};
 	const useId = deterministicId => {
 		const idInjection = useIdInjection();
 		const namespace = _xUtils.useGetDerivedNamespace();
-		const idRef = computed(() => unref(deterministicId) || `${namespace.value}-id-${idInjection.prefix}-${idInjection.current++}`);
+		const idRef = computed(
+			() =>
+				unref(deterministicId) ||
+				`${namespace.value}-id-${idInjection.prefix}-${idInjection.current++}`
+		);
 		return idRef;
 	};
 	buildProp({
@@ -1375,8 +1415,12 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		const visibleColumns = computed(() => {
 			return unref(columns2).filter(column => !column.hidden);
 		});
-		const fixedColumnsOnLeft = computed(() => unref(visibleColumns).filter(column => column.fixed === "left" || column.fixed === true));
-		const fixedColumnsOnRight = computed(() => unref(visibleColumns).filter(column => column.fixed === "right"));
+		const fixedColumnsOnLeft = computed(() =>
+			unref(visibleColumns).filter(column => column.fixed === "left" || column.fixed === true)
+		);
+		const fixedColumnsOnRight = computed(() =>
+			unref(visibleColumns).filter(column => column.fixed === "right")
+		);
 		const normalColumns = computed(() => unref(visibleColumns).filter(column => !column.fixed));
 		const mainColumns = computed(() => {
 			const ret = [];
@@ -1450,7 +1494,10 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		};
 	}
 
-	const useScrollbar = (props, { mainTableRef, leftTableRef, rightTableRef, onMaybeEndReached }) => {
+	const useScrollbar = (
+		props,
+		{ mainTableRef, leftTableRef, rightTableRef, onMaybeEndReached }
+	) => {
 		const scrollPos = ref({ scrollLeft: 0, scrollTop: 0 });
 
 		function doScroll(params) {
@@ -1595,7 +1642,11 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 					leftTableHeights.value[rowKey2] = height;
 				}
 			}
-			const maximumHeight = Math.max(...[leftTableHeights, rightTableHeights, mainTableHeights].map(records => records.value[rowKey2] || 0));
+			const maximumHeight = Math.max(
+				...[leftTableHeights, rightTableHeights, mainTableHeights].map(
+					records => records.value[rowKey2] || 0
+				)
+			);
 			if (unref(rowHeights)[rowKey2] !== maximumHeight) {
 				resetHeights(rowKey2, maximumHeight, rowIndex);
 				flushingRowHeights();
@@ -1636,9 +1687,15 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				while (_AllRows.length > 0) {
 					const item = _AllRows.shift();
 					array.push(item);
-					if (keysSet.has(item[rowKey]) && Array.isArray(item.children) && item.children.length > 0) {
+					if (
+						keysSet.has(item[rowKey]) &&
+						Array.isArray(item.children) &&
+						item.children.length > 0
+					) {
 						_AllRows = [...item.children, ..._AllRows];
-						item.children.forEach(child => (depths[child[rowKey]] = depths[item[rowKey]] + 1));
+						item.children.forEach(
+							child => (depths[child[rowKey]] = depths[item[rowKey]] + 1)
+						);
 					}
 				}
 				depthMap.value = depths;
@@ -1660,15 +1717,25 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 			depthMap
 		};
 	};
-	const useStyles = (props, { columnsTotalWidth, data, fixedColumnsOnLeft, fixedColumnsOnRight }) => {
+	const useStyles = (
+		props,
+		{ columnsTotalWidth, data, fixedColumnsOnLeft, fixedColumnsOnRight }
+	) => {
 		const bodyWidth = computed(() => {
 			const { fixed, width, vScrollbarSize } = props;
 			const ret = width - vScrollbarSize;
 			return fixed ? Math.max(Math.round(unref(columnsTotalWidth)), ret) : ret;
 		});
-		const headerWidth = computed(() => unref(bodyWidth) + (props.fixed ? props.vScrollbarSize : 0));
+		const headerWidth = computed(
+			() => unref(bodyWidth) + (props.fixed ? props.vScrollbarSize : 0)
+		);
 		const mainTableHeight = computed(() => {
-			const { height = 0, maxHeight = 0, footerHeight: footerHeight2, hScrollbarSize } = props;
+			const {
+				height = 0,
+				maxHeight = 0,
+				footerHeight: footerHeight2,
+				hScrollbarSize
+			} = props;
 			if (maxHeight > 0) {
 				const _fixedRowsHeight = unref(fixedRowsHeight);
 				const _rowsHeight = unref(rowsHeight);
@@ -1748,30 +1815,57 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 			mainColumns,
 			onColumnSorted
 		} = useColumns(props, toRef(props, "columns"), toRef(props, "fixed"));
-		const { scrollTo, scrollToLeft, scrollToTop, scrollToRow, onScroll, onVerticalScroll, scrollPos } = useScrollbar(props, {
+		const {
+			scrollTo,
+			scrollToLeft,
+			scrollToTop,
+			scrollToRow,
+			onScroll,
+			onVerticalScroll,
+			scrollPos
+		} = useScrollbar(props, {
 			mainTableRef,
 			leftTableRef,
 			rightTableRef,
 			onMaybeEndReached
 		});
-		const { expandedRowKeys, hoveringRowKey, lastRenderedRowIndex, isDynamic, isResetting, rowHeights, resetAfterIndex, onRowExpanded, onRowHeightChange, onRowHovered, onRowsRendered } = useRow(
-			props,
-			{ mainTableRef, leftTableRef, rightTableRef }
-		);
+		const {
+			expandedRowKeys,
+			hoveringRowKey,
+			lastRenderedRowIndex,
+			isDynamic,
+			isResetting,
+			rowHeights,
+			resetAfterIndex,
+			onRowExpanded,
+			onRowHeightChange,
+			onRowHovered,
+			onRowsRendered
+		} = useRow(props, { mainTableRef, leftTableRef, rightTableRef });
 		const { data, depthMap } = useData(props, {
 			expandedRowKeys,
 			lastRenderedRowIndex,
 			resetAfterIndex
 		});
-		const { bodyWidth, fixedTableHeight, mainTableHeight, leftTableWidth, rightTableWidth, headerWidth, rowsHeight, windowHeight, footerHeight, emptyStyle, rootStyle, headerHeight } = useStyles(
-			props,
-			{
-				columnsTotalWidth,
-				data,
-				fixedColumnsOnLeft,
-				fixedColumnsOnRight
-			}
-		);
+		const {
+			bodyWidth,
+			fixedTableHeight,
+			mainTableHeight,
+			leftTableWidth,
+			rightTableWidth,
+			headerWidth,
+			rowsHeight,
+			windowHeight,
+			footerHeight,
+			emptyStyle,
+			rootStyle,
+			headerHeight
+		} = useStyles(props, {
+			columnsTotalWidth,
+			data,
+			fixedColumnsOnLeft,
+			fixedColumnsOnRight
+		});
 		const isScrolling = shallowRef(false);
 		const containerRef = ref();
 		const showEmpty = computed(() => {
@@ -1792,7 +1886,10 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 			const _totalHeight = unref(rowsHeight);
 			const clientHeight = unref(windowHeight);
 			const heightUntilEnd = _totalHeight - (scrollTop + clientHeight) + props.hScrollbarSize;
-			if (unref(lastRenderedRowIndex) >= 0 && _totalHeight === scrollTop + unref(mainTableHeight) - unref(headerHeight)) {
+			if (
+				unref(lastRenderedRowIndex) >= 0 &&
+				_totalHeight === scrollTop + unref(mainTableHeight) - unref(headerHeight)
+			) {
 				onEndReached(heightUntilEnd);
 			}
 		}
@@ -1858,7 +1955,11 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		row: "lastVisitedRowIndex"
 	};
 	const getItemFromCache = (props, index, gridCache, type) => {
-		const [cachedItems, sizer, lastVisited] = [gridCache[type], props[ACCESS_SIZER_KEY_MAP[type]], gridCache[ACCESS_LAST_VISITED_KEY_MAP[type]]];
+		const [cachedItems, sizer, lastVisited] = [
+			gridCache[type],
+			props[ACCESS_SIZER_KEY_MAP[type]],
+			gridCache[ACCESS_LAST_VISITED_KEY_MAP[type]]
+		];
 		if (index > lastVisited) {
 			let offset = 0;
 			if (lastVisited >= 0) {
@@ -1968,7 +2069,16 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		);
 	};
 	var _sfc_staticRenderFns$2 = [];
-	var __component__$2 = _xUtils.normalizeComponent(_sfc_main$2, _sfc_render$2, _sfc_staticRenderFns$2, false, null, null, null, null);
+	var __component__$2 = _xUtils.normalizeComponent(
+		_sfc_main$2,
+		_sfc_render$2,
+		_sfc_staticRenderFns$2,
+		false,
+		null,
+		null,
+		null,
+		null
+	);
 	var Icon = __component__$2.exports;
 
 	const SortIcon = {
@@ -2195,14 +2305,21 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				rowIndex
 			};
 			const Cell = CellComponent(cellProps);
-			const kls = [ns.e("row-cell"), column.class, column.align === Alignment.CENTER && ns.is("align-center"), column.align === Alignment.RIGHT && ns.is("align-right")];
+			const kls = [
+				ns.e("row-cell"),
+				column.class,
+				column.align === Alignment.CENTER && ns.is("align-center"),
+				column.align === Alignment.RIGHT && ns.is("align-right")
+			];
 			/*vir table 树形数据*/
 			/* 如果有children就可以展开 */
 			const expandable = _.$isArrayFill(rowData.children);
 			const iconStyle = `margin-inline-start: ${depth * indentSize}px;`;
 			const isShowIcon = column.prop === "COL_EXPAND_ARROW";
 
-			let iconProps = { style: [iconStyle, `width: ${iconSize}px; height: ${iconSize}px;`].join(" ") };
+			let iconProps = {
+				style: [iconStyle, `width: ${iconSize}px; height: ${iconSize}px;`].join(" ")
+			};
 			if (expandable) {
 				const expanded = _.some(expandedRowKeys, key => {
 					return _.$isSame(rowData[rowKey], key);
@@ -2258,7 +2375,21 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 
 	const HeaderRenderer = {
 		functional: true,
-		render: (h, { data: { columns: columns2, columnsStyles, headerIndex, style, headerClass, headerProps, ns, $vSlots } }) => {
+		render: (
+			h,
+			{
+				data: {
+					columns: columns2,
+					columnsStyles,
+					headerIndex,
+					style,
+					headerClass,
+					headerProps,
+					ns,
+					$vSlots
+				}
+			}
+		) => {
 			const param = {
 				columns: columns2,
 				headerIndex
@@ -2616,8 +2747,13 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 								header: vmTable.$vSlots.header,
 								cell: cellProps => {
 									if (vmTable.$vSlots["header-cell"]) {
-										const HeaderCellRendererProps = merge_hFnProps([props2, tableHeaderProps]);
-										return h(HeaderCellRenderer, HeaderCellRendererProps, [vmTable.$vSlots["header-cell"](cellProps)]);
+										const HeaderCellRendererProps = merge_hFnProps([
+											props2,
+											tableHeaderProps
+										]);
+										return h(HeaderCellRenderer, HeaderCellRendererProps, [
+											vmTable.$vSlots["header-cell"](cellProps)
+										]);
 									} else {
 										const HeaderCellRendererProps = merge_hFnProps([
 											cellProps,
@@ -2646,7 +2782,9 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 
 												{
 													onRowExpanded,
-													style: columnsStyles.value[props_cell.column.key]
+													style: columnsStyles.value[
+														props_cell.column.key
+													]
 												}
 											]),
 											[vmTable.$vSlots.cell(props_cell)]
@@ -2659,7 +2797,9 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 												tableCellProps,
 												{
 													onRowExpanded,
-													style: columnsStyles.value[props_cell.column.key]
+													style: columnsStyles.value[
+														props_cell.column.key
+													]
 												}
 											])
 										);

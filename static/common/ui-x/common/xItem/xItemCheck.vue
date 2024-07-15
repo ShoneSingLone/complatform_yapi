@@ -236,7 +236,10 @@ export default async function () {
 						{
 							default: ({ width, height }) => {
 								if (width) {
-									const col = this.getCol(width, Math.ceil(width / this.minWidth));
+									const col = this.getCol(
+										width,
+										Math.ceil(width / this.minWidth)
+									);
 									if (this.col != col) {
 										this.col = col;
 									}

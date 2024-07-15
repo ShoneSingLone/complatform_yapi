@@ -80,16 +80,31 @@
 						<span class="xModel-title_prefixe"></span>
 						<xRender :render="cptTitle" />
 					</span>
-					<button v-if="isShowFullScreen" type="button" aria-label="Close" class="x-dialog__headerbtn fullscreen" @click="toggleFullScreen">
-						<i v-if="dialogClass.fullscreen" class="el-icon el-icon-copy-document" style="transform: rotate(180deg)"></i>
+					<button
+						v-if="isShowFullScreen"
+						type="button"
+						aria-label="Close"
+						class="x-dialog__headerbtn fullscreen"
+						@click="toggleFullScreen">
+						<i
+							v-if="dialogClass.fullscreen"
+							class="el-icon el-icon-copy-document"
+							style="transform: rotate(180deg)"></i>
 						<i v-else class="el-icon el-icon-full-screen"></i>
 					</button>
-					<button type="button" aria-label="Close" class="x-dialog__headerbtn close" @click="closeModal">
+					<button
+						type="button"
+						aria-label="Close"
+						class="x-dialog__headerbtn close"
+						@click="closeModal">
 						<!-- <i class="el-dialog__close el-icon el-icon-close"></i> -->
 						<xIcon :icon="cptCloseIcon" class="el-dialog__close" />
 					</button>
 				</div>
-				<ComponentContent ref="refContent" :closeModal="closeModal" @hook:mounted="setDialogOffset" />
+				<ComponentContent
+					ref="refContent"
+					:closeModal="closeModal"
+					@hook:mounted="setDialogOffset" />
 			</div>
 		</div>
 	</transition>
@@ -127,8 +142,16 @@ export default async function ({ options, modalConfigs }) {
 			useModal(this);
 			const { useAutoResize } = _xUtils;
 
-			const { height: refDialogRectHeight, width: refDialogRectWidth, sizer: refDialog } = useAutoResize(props);
-			const { height: refContentHeight, width: refContentWidth, sizer: refContent } = useAutoResize(props);
+			const {
+				height: refDialogRectHeight,
+				width: refDialogRectWidth,
+				sizer: refDialog
+			} = useAutoResize(props);
+			const {
+				height: refContentHeight,
+				width: refContentWidth,
+				sizer: refContent
+			} = useAutoResize(props);
 
 			const setDialogOffset = _.throttle(() => {
 				try {
@@ -170,7 +193,12 @@ export default async function ({ options, modalConfigs }) {
 
 			watch(
 				() => {
-					return [refDialogRectHeight.value, refDialogRectWidth.value, refContentHeight.value, refContentWidth.value];
+					return [
+						refDialogRectHeight.value,
+						refDialogRectWidth.value,
+						refContentHeight.value,
+						refContentWidth.value
+					];
 				},
 				rectArray => {
 					if (_.every(rectArray, val => !!val)) {

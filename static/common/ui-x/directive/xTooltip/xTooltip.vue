@@ -107,7 +107,10 @@ export default async function () {
 								role: "tooltip",
 								id: this.tooltipId,
 								"aria-hidden": this.disabled || !this.showPopper ? "true" : "false",
-								class: [`el-tooltip__popper is-${this.effect}`, this.isShowPopover ? this.popperClass : "display-none"]
+								class: [
+									`el-tooltip__popper is-${this.effect}`,
+									this.isShowPopover ? this.popperClass : "display-none"
+								]
 							},
 							[this.$slots.content || this.content]
 						)
@@ -246,7 +249,12 @@ export default async function () {
 
 		destroyed() {
 			if (this.referenceElm?.nodeType === 1) {
-				$(this.referenceElm).off("mouseenter", this.show).off("mouseleave", this.hide).off("focus", this.handleFocus).off("blur", this.handleBlur).off("click", this.removeFocusing);
+				$(this.referenceElm)
+					.off("mouseenter", this.show)
+					.off("mouseleave", this.hide)
+					.off("focus", this.handleFocus)
+					.off("blur", this.handleBlur)
+					.off("click", this.removeFocusing);
 			}
 		}
 	});

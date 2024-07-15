@@ -30,7 +30,15 @@ export default async function () {
 	return {
 		name: "xItem",
 		componentName: "xItem",
-		props: ["configs", "value", "payload", "readOnlyAs", /* 直接加在xItem上 */ "label", "rules", "disabled"],
+		props: [
+			"configs",
+			"value",
+			"payload",
+			"readOnlyAs",
+			/* 直接加在xItem上 */ "label",
+			"rules",
+			"disabled"
+		],
 		provide() {
 			const xItem = this;
 			return {
@@ -144,7 +152,10 @@ export default async function () {
 					return true;
 				}
 				if (_.isFunction(vm.cptConfigs?.disabled)) {
-					return vm.cptConfigs.disabled.call(vm.cptConfigs, { xItem: vm, val: vm.p_value });
+					return vm.cptConfigs.disabled.call(vm.cptConfigs, {
+						xItem: vm,
+						val: vm.p_value
+					});
 				} else {
 					return !!vm.cptConfigs?.disabled;
 				}
@@ -347,13 +358,25 @@ export default async function () {
 				}
 				_xItem_lazyLoadRender[renderName] = "";
 				const item = {
-					ItemAsWrapper: () => _.$importVue("/common/ui-x/common/xItem/controllerRender/xItemItemAsWrapper.vue"),
-					NormalRender: () => _.$importVue("/common/ui-x/common/xItem/controllerRender/xItemNormalRender.vue"),
-					ReadonlyAsRender: () => _.$importVue("/common/ui-x/common/xItem/controllerRender/xItemReadonlyAsRender.vue")
+					ItemAsWrapper: () =>
+						_.$importVue(
+							"/common/ui-x/common/xItem/controllerRender/xItemItemAsWrapper.vue"
+						),
+					NormalRender: () =>
+						_.$importVue(
+							"/common/ui-x/common/xItem/controllerRender/xItemNormalRender.vue"
+						),
+					ReadonlyAsRender: () =>
+						_.$importVue(
+							"/common/ui-x/common/xItem/controllerRender/xItemReadonlyAsRender.vue"
+						)
 				};
 				const getter = item[renderName];
 				const render = await getter();
-				console.log(renderName, `this.$root.broadcast("xItem", "xItemRenderUpdate", render);`);
+				console.log(
+					renderName,
+					`this.$root.broadcast("xItem", "xItemRenderUpdate", render);`
+				);
 				_xItem_lazyLoadRender[renderName] = render;
 				_.$single.win.trigger("X_ITEM_RENDER_UPDATE");
 			},
@@ -437,7 +460,8 @@ export default async function () {
 			},
 			setAttrs() {
 				const vm = this;
-				const clearable = vm.cptConfigs.clearable === undefined ? false : vm.cptConfigs.clearable;
+				const clearable =
+					vm.cptConfigs.clearable === undefined ? false : vm.cptConfigs.clearable;
 				this.p_attrs = {
 					...(vm.cptConfigs.attrs || {}),
 					clearable,

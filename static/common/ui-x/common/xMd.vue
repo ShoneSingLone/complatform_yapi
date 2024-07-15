@@ -10,7 +10,10 @@
 
 <script lang="ts">
 export default async function ({ code, PRIVATE_GLOBAL }) {
-	const [hljs, marked] = await Promise.all([_.$importVue("/common/libs/highlight.vue"), _.$importVue("/common/libs/marked.vue")]);
+	const [hljs, marked] = await Promise.all([
+		_.$importVue("/common/libs/highlight.vue"),
+		_.$importVue("/common/libs/marked.vue")
+	]);
 
 	if (!PRIVATE_GLOBAL.isSetXmarkdownListenner) {
 		$(document).on("click.xmarkdownmarkdownListenner", "[data-role=xMdItemImg]", function (e) {

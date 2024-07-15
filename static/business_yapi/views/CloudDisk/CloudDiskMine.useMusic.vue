@@ -30,6 +30,13 @@ export default async function () {
 				}
 			);
 
+			watch(
+				() => stateAudio.audioName,
+				audioName => {
+					_.$setDocTitle(audioName);
+				}
+			);
+
 			const Cpt_iconPlayModel = computed(() => {
 				return LOOP_TYPE_NAME_ARRAY[stateAudio.loopType];
 			});

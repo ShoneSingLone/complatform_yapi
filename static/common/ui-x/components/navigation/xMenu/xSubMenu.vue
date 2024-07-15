@@ -1,6 +1,10 @@
 <script lang="ts">
 export default async function () {
-	const [Popper, xMenuMixin, { Transition }] = await _.$importVue(["/common/libs/VuePopper/VuePopper.vue", "/common/ui-x/components/navigation/xMenu/xMenuMixin.vue", "/common/utils/hooks.vue"]);
+	const [Popper, xMenuMixin, { Transition }] = await _.$importVue([
+		"/common/libs/VuePopper/VuePopper.vue",
+		"/common/ui-x/components/navigation/xMenu/xMenuMixin.vue",
+		"/common/utils/hooks.vue"
+	]);
 
 	const poperMixins = {
 		props: {
@@ -76,7 +80,9 @@ export default async function () {
 		computed: {
 			// popper option
 			appendToBody() {
-				return this.popperAppendToBody === undefined ? this.isFirstLevel : this.popperAppendToBody;
+				return this.popperAppendToBody === undefined
+					? this.isFirstLevel
+					: this.popperAppendToBody;
 			},
 			menuTransitionName() {
 				return this.rootMenu.collapse ? "el-zoom-in-left" : "el-zoom-in-top";
@@ -128,7 +134,11 @@ export default async function () {
 					};
 				}
 				return {
-					borderBottomColor: this.active ? (this.rootMenu.activeTextColor ? this.activeTextColor : "") : "transparent",
+					borderBottomColor: this.active
+						? this.rootMenu.activeTextColor
+							? this.activeTextColor
+							: ""
+						: "transparent",
 					color: this.active ? this.activeTextColor : this.textColor
 				};
 			},
@@ -136,7 +146,9 @@ export default async function () {
 				let isFirstLevel = true;
 				let parent = this.$parent;
 				while (parent && parent !== this.rootMenu) {
-					if (["ElSubmenu", "ElMenuItemGroup"].indexOf(parent.$options.componentName) > -1) {
+					if (
+						["ElSubmenu", "ElMenuItemGroup"].indexOf(parent.$options.componentName) > -1
+					) {
 						isFirstLevel = false;
 						break;
 					} else {
@@ -168,17 +180,29 @@ export default async function () {
 			},
 			handleClick() {
 				const { rootMenu, disabled } = this;
-				if ((rootMenu.menuTrigger === "hover" && rootMenu.mode === "horizontal") || (rootMenu.collapse && rootMenu.mode === "vertical") || disabled) {
+				if (
+					(rootMenu.menuTrigger === "hover" && rootMenu.mode === "horizontal") ||
+					(rootMenu.collapse && rootMenu.mode === "vertical") ||
+					disabled
+				) {
 					return;
 				}
 				this.dispatch("ElMenu", "submenu-click", this);
 			},
 			handleMouseenter(event, showTimeout = this.showTimeout) {
-				if (!("ActiveXObject" in window) && event.type === "focus" && !event.relatedTarget) {
+				if (
+					!("ActiveXObject" in window) &&
+					event.type === "focus" &&
+					!event.relatedTarget
+				) {
 					return;
 				}
 				const { rootMenu, disabled } = this;
-				if ((rootMenu.menuTrigger === "click" && rootMenu.mode === "horizontal") || (!rootMenu.collapse && rootMenu.mode === "vertical") || disabled) {
+				if (
+					(rootMenu.menuTrigger === "click" && rootMenu.mode === "horizontal") ||
+					(!rootMenu.collapse && rootMenu.mode === "vertical") ||
+					disabled
+				) {
 					return;
 				}
 				this.dispatch("ElSubmenu", "mouse-enter-child");
@@ -192,7 +216,10 @@ export default async function () {
 			},
 			handleMouseleave(deepDispatch = false) {
 				const { rootMenu } = this;
-				if ((rootMenu.menuTrigger === "click" && rootMenu.mode === "horizontal") || (!rootMenu.collapse && rootMenu.mode === "vertical")) {
+				if (
+					(rootMenu.menuTrigger === "click" && rootMenu.mode === "horizontal") ||
+					(!rootMenu.collapse && rootMenu.mode === "vertical")
+				) {
 					return;
 				}
 				this.dispatch("ElSubmenu", "mouse-leave-child");
@@ -217,7 +244,10 @@ export default async function () {
 				title && (title.style.backgroundColor = this.rootMenu.backgroundColor || "");
 			},
 			updatePlacement() {
-				this.currentPlacement = this.mode === "horizontal" && this.isFirstLevel ? "bottom-start" : "right-start";
+				this.currentPlacement =
+					this.mode === "horizontal" && this.isFirstLevel
+						? "bottom-start"
+						: "right-start";
 			},
 			initPopper() {
 				this.referenceElm = this.$el;
@@ -246,7 +276,22 @@ export default async function () {
 			this.rootMenu.removeSubmenu(this);
 		},
 		render(h) {
-			const { active, opened, paddingStyle, titleStyle, backgroundColor, rootMenu, currentPlacement, menuTransitionName, mode, disabled, popperClass, $slots, $vSlots, isFirstLevel } = this;
+			const {
+				active,
+				opened,
+				paddingStyle,
+				titleStyle,
+				backgroundColor,
+				rootMenu,
+				currentPlacement,
+				menuTransitionName,
+				mode,
+				disabled,
+				popperClass,
+				$slots,
+				$vSlots,
+				isFirstLevel
+			} = this;
 
 			const children = (() => {
 				if ($slots.default) {
@@ -298,7 +343,11 @@ export default async function () {
 					children
 				})
 			});
-			const submenuTitleIcon = (rootMenu.mode === "horizontal" && isFirstLevel) || (rootMenu.mode === "vertical" && !rootMenu.collapse) ? "el-icon-arrow-down" : "el-icon-arrow-right";
+			const submenuTitleIcon =
+				(rootMenu.mode === "horizontal" && isFirstLevel) ||
+				(rootMenu.mode === "vertical" && !rootMenu.collapse)
+					? "el-icon-arrow-down"
+					: "el-icon-arrow-right";
 			return h("li", {
 				class: {
 					"el-submenu": true,

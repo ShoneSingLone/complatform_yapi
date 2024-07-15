@@ -1,12 +1,37 @@
 <style lang="less"></style>
 <template>
 	<xRender :render="itemRender" v-if="itemRender" />
-	<li v-else role="menuitem" tabindex="-1" :style="cptStyle" :class="cptClass" @click="handleClick" @mouseenter="onMouseEnter" @focus="onMouseEnter" @blur="onMouseLeave" @mouseleave="onMouseLeave">
-		<xTooltip v-if="parentMenu.$options.componentName === 'ElMenu' && rootMenu.collapse && $slots.title" effect="dark" placement="right">
+	<li
+		v-else
+		role="menuitem"
+		tabindex="-1"
+		:style="cptStyle"
+		:class="cptClass"
+		@click="handleClick"
+		@mouseenter="onMouseEnter"
+		@focus="onMouseEnter"
+		@blur="onMouseLeave"
+		@mouseleave="onMouseLeave">
+		<xTooltip
+			v-if="
+				parentMenu.$options.componentName === 'ElMenu' && rootMenu.collapse && $slots.title
+			"
+			effect="dark"
+			placement="right">
 			<div slot="content">
 				<slot name="title"></slot>
 			</div>
-			<div style="position: absolute; left: 0; top: 0; height: 100%; width: 100%; display: inline-block; box-sizing: border-box; padding: 0 20px">
+			<div
+				style="
+					position: absolute;
+					left: 0;
+					top: 0;
+					height: 100%;
+					width: 100%;
+					display: inline-block;
+					box-sizing: border-box;
+					padding: 0 20px;
+				">
 				<slot></slot>
 			</div>
 		</xTooltip>
@@ -18,7 +43,9 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const xMenuMixin = await _.$importVue("/common/ui-x/components/navigation/xMenu/xMenuMixin.vue");
+	const xMenuMixin = await _.$importVue(
+		"/common/ui-x/components/navigation/xMenu/xMenuMixin.vue"
+	);
 
 	return defineComponent({
 		name: "ElMenuItem",
@@ -42,7 +69,11 @@ export default async function () {
 		},
 		computed: {
 			cptStyle() {
-				return [this.paddingStyle, this.itemStyle, { backgroundColor: this.backgroundColor }];
+				return [
+					this.paddingStyle,
+					this.itemStyle,
+					{ backgroundColor: this.backgroundColor }
+				];
 			},
 			cptClass() {
 				return {
@@ -78,7 +109,11 @@ export default async function () {
 					color: this.active ? this.activeTextColor : this.textColor
 				};
 				if (this.mode === "horizontal" && !this.isNested) {
-					style.borderBottomColor = this.active ? (this.rootMenu.activeTextColor ? this.activeTextColor : "") : "transparent";
+					style.borderBottomColor = this.active
+						? this.rootMenu.activeTextColor
+							? this.activeTextColor
+							: ""
+						: "transparent";
 				}
 				return style;
 			},

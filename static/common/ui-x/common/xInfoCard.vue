@@ -10,8 +10,16 @@
 				<slot name="extra" />
 			</div>
 		</div>
-		<div class="el-descriptions__body el-descriptions__table is-bordered el-descriptions--small" :style="cellStyle" v-for="(layoutRow, index) in layout" :key="index">
-			<xInfoCardItem v-for="prop in layoutRow" :key="itemKey(prop)" :item="filterItemPropSpan(prop)" :unitWidth="unitWidth" />
+		<div
+			class="el-descriptions__body el-descriptions__table is-bordered el-descriptions--small"
+			:style="cellStyle"
+			v-for="(layoutRow, index) in layout"
+			:key="index">
+			<xInfoCardItem
+				v-for="prop in layoutRow"
+				:key="itemKey(prop)"
+				:item="filterItemPropSpan(prop)"
+				:unitWidth="unitWidth" />
 		</div>
 	</div>
 </template>

@@ -1,11 +1,30 @@
 <template>
-	<div class="el-select" :class="[selectSize ? 'el-select--' + selectSize : '']" @click.stop="toggleMenu" v-clickoutside="handleClose">
-		<div class="el-select__tags" v-if="multiple" ref="tags" :style="{ 'max-width': inputWidth - 32 + 'px', width: '100%' }">
+	<div
+		class="el-select"
+		:class="[selectSize ? 'el-select--' + selectSize : '']"
+		@click.stop="toggleMenu"
+		v-clickoutside="handleClose">
+		<div
+			class="el-select__tags"
+			v-if="multiple"
+			ref="tags"
+			:style="{ 'max-width': inputWidth - 32 + 'px', width: '100%' }">
 			<span v-if="collapseTags && selected.length">
-				<xTag :closable="!selectDisabled" :size="collapseTagSize" :hit="selected[0].hitState" type="info" @close="deleteTag($event, selected[0])" disable-transitions>
+				<xTag
+					:closable="!selectDisabled"
+					:size="collapseTagSize"
+					:hit="selected[0].hitState"
+					type="info"
+					@close="deleteTag($event, selected[0])"
+					disable-transitions>
 					<span class="el-select__tags-text">{{ selected[0].currentLabel }}</span>
 				</xTag>
-				<xTag v-if="selected.length > 1" :closable="false" :size="collapseTagSize" type="info" disable-transitions>
+				<xTag
+					v-if="selected.length > 1"
+					:closable="false"
+					:size="collapseTagSize"
+					type="info"
+					disable-transitions>
 					<span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
 				</xTag>
 			</span>
@@ -44,7 +63,11 @@
 				v-model="query"
 				@input="debouncedQueryChange"
 				v-if="filterable"
-				:style="{ 'flex-grow': '1', width: inputLength / (inputWidth - 32) + '%', 'max-width': inputWidth - 42 + 'px' }"
+				:style="{
+					'flex-grow': '1',
+					width: inputLength / (inputWidth - 32) + '%',
+					'max-width': inputWidth - 42 + 'px'
+				}"
 				ref="input" />
 		</div>
 		<div class="xSelect-middle-wrapper flex middle">
@@ -83,13 +106,21 @@
 					<slot name="prefix"></slot>
 				</template>
 				<template slot="suffix">
-					<i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
-					<i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick"></i>
+					<i
+						v-show="!showClose"
+						:class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
+					<i
+						v-if="showClose"
+						class="el-select__caret el-input__icon el-icon-circle-close"
+						@click="handleClearClick"></i>
 				</template>
 			</xInput>
 		</div>
 		<transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
-			<xSelectDropdown ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
+			<xSelectDropdown
+				ref="popper"
+				:append-to-body="popperAppendToBody"
+				v-show="visible && emptyText !== false">
 				<xScrollbar
 					tag="ul"
 					wrap-class="el-select-dropdown__wrap"
@@ -100,7 +131,11 @@
 					<xOption :value="query" created v-if="showNewOption"> </xOption>
 					<slot></slot>
 				</xScrollbar>
-				<template v-if="emptyText && (!allowCreate || loading || (allowCreate && options.length === 0))">
+				<template
+					v-if="
+						emptyText &&
+						(!allowCreate || loading || (allowCreate && options.length === 0))
+					">
 					<slot name="empty" v-if="$slots.empty"></slot>
 					<p class="el-select-dropdown__empty" v-else>
 						{{ emptyText }}
@@ -112,7 +147,12 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const [{ useFocus }, { addResizeListener, removeResizeListener }, Clickoutside, NavigationMixin] = await Promise.all([
+	const [
+		{ useFocus },
+		{ addResizeListener, removeResizeListener },
+		Clickoutside,
+		NavigationMixin
+	] = await Promise.all([
 		_.$importVue("/common/utils/hooks.vue"),
 		_.$importVue("/common/utils/utils.vue"),
 		_.$importVue("/common/ui-x/directive/clickoutside.vue"),
@@ -149,17 +189,28 @@ export default async function () {
 			},
 
 			readonly() {
-				return !this.filterable || this.multiple || (!_.$isIE() && !_.$isEdge() && !this.visible);
+				return (
+					!this.filterable ||
+					this.multiple ||
+					(!_.$isIE() && !_.$isEdge() && !this.visible)
+				);
 			},
 
 			showClose() {
-				let hasValue = this.multiple ? Array.isArray(this.value) && this.value.length > 0 : this.value !== undefined && this.value !== null && this.value !== "";
-				let criteria = this.clearable && !this.selectDisabled && this.inputHovering && hasValue;
+				let hasValue = this.multiple
+					? Array.isArray(this.value) && this.value.length > 0
+					: this.value !== undefined && this.value !== null && this.value !== "";
+				let criteria =
+					this.clearable && !this.selectDisabled && this.inputHovering && hasValue;
 				return criteria;
 			},
 
 			iconClass() {
-				return this.remote && this.filterable ? "" : this.visible ? "arrow-up is-reverse" : "arrow-up";
+				return this.remote && this.filterable
+					? ""
+					: this.visible
+						? "arrow-up is-reverse"
+						: "arrow-up";
 			},
 
 			duration() {
@@ -171,7 +222,12 @@ export default async function () {
 					return this.loadingText || i18n("el.select.loading");
 				} else {
 					if (this.remote && this.query === "" && this.options.length === 0) return false;
-					if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
+					if (
+						this.filterable &&
+						this.query &&
+						this.options.length > 0 &&
+						this.filteredOptionsCount === 0
+					) {
 						return this.noMatchText || i18n("el.select.noMatch");
 					}
 					if (this.options.length === 0) {
@@ -182,8 +238,12 @@ export default async function () {
 			},
 
 			showNewOption() {
-				let hasExistingOption = this.options.filter(option => !option.created).some(option => option.currentLabel === this.query);
-				return this.filterable && this.allowCreate && this.query !== "" && !hasExistingOption;
+				let hasExistingOption = this.options
+					.filter(option => !option.created)
+					.some(option => option.currentLabel === this.query);
+				return (
+					this.filterable && this.allowCreate && this.query !== "" && !hasExistingOption
+				);
 			},
 
 			selectSize() {
@@ -198,7 +258,9 @@ export default async function () {
 				return ["small", "mini"].indexOf(this.selectSize) > -1 ? "mini" : "small";
 			},
 			propPlaceholder() {
-				return typeof this.placeholder !== "undefined" ? this.placeholder : i18n("el.select.placeholder");
+				return typeof this.placeholder !== "undefined"
+					? this.placeholder
+					: i18n("el.select.placeholder");
 			}
 		},
 
@@ -218,7 +280,9 @@ export default async function () {
 				type: String,
 				validator(val) {
 					process.env.NODE_ENV !== "production" &&
-						console.warn("[Element Warn][Select]'auto-complete' property will be deprecated in next major version. please use 'autocomplete' instead.");
+						console.warn(
+							"[Element Warn][Select]'auto-complete' property will be deprecated in next major version. please use 'autocomplete' instead."
+						);
 					return true;
 				}
 			},
@@ -335,13 +399,22 @@ export default async function () {
 					this.menuVisibleOnFocus = false;
 					this.resetHoverIndex();
 					this.$nextTick(() => {
-						if (this.$refs.input && this.$refs.input.value === "" && this.selected.length === 0) {
+						if (
+							this.$refs.input &&
+							this.$refs.input.value === "" &&
+							this.selected.length === 0
+						) {
 							this.currentPlaceholder = this.cachedPlaceHolder;
 						}
 					});
 					if (!this.multiple) {
 						if (this.selected) {
-							if (this.filterable && this.allowCreate && this.createdSelected && this.createdLabel) {
+							if (
+								this.filterable &&
+								this.allowCreate &&
+								this.createdSelected &&
+								this.createdLabel
+							) {
 								this.selectedLabel = this.createdLabel;
 							} else {
 								this.selectedLabel = this.selected.currentLabel;
@@ -388,7 +461,11 @@ export default async function () {
 				if ([].indexOf.call(inputs, document.activeElement) === -1) {
 					this.setSelected();
 				}
-				if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
+				if (
+					this.defaultFirstOption &&
+					(this.filterable || this.remote) &&
+					this.filteredOptionsCount
+				) {
 					this.checkDefaultFirstOption();
 				}
 			}
@@ -412,7 +489,11 @@ export default async function () {
 			},
 			handleQueryChange(val) {
 				if (this.previousQuery === val || this.isOnComposition) return;
-				if (this.previousQuery === null && (typeof this.filterMethod === "function" || typeof this.remoteMethod === "function")) {
+				if (
+					this.previousQuery === null &&
+					(typeof this.filterMethod === "function" ||
+						typeof this.remoteMethod === "function")
+				) {
 					this.previousQuery = val;
 					return;
 				}
@@ -440,7 +521,11 @@ export default async function () {
 					this.broadcast("xOption", "queryChange", val);
 					this.broadcast("xOptionGroup", "queryChange");
 				}
-				if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
+				if (
+					this.defaultFirstOption &&
+					(this.filterable || this.remote) &&
+					this.filteredOptionsCount
+				) {
 					this.checkDefaultFirstOption();
 				}
 			},
@@ -466,13 +551,18 @@ export default async function () {
 
 			getOption(value) {
 				let option;
-				const isObject = Object.prototype.toString.call(value).toLowerCase() === "[object object]";
-				const isNull = Object.prototype.toString.call(value).toLowerCase() === "[object null]";
-				const isUndefined = Object.prototype.toString.call(value).toLowerCase() === "[object undefined]";
+				const isObject =
+					Object.prototype.toString.call(value).toLowerCase() === "[object object]";
+				const isNull =
+					Object.prototype.toString.call(value).toLowerCase() === "[object null]";
+				const isUndefined =
+					Object.prototype.toString.call(value).toLowerCase() === "[object undefined]";
 
 				for (let i = this.cachedOptions.length - 1; i >= 0; i--) {
 					const cachedOption = this.cachedOptions[i];
-					const isEqual = isObject ? _.$val(cachedOption.value, this.valueKey) === _.$val(value, this.valueKey) : cachedOption.value === value;
+					const isEqual = isObject
+						? _.$val(cachedOption.value, this.valueKey) === _.$val(value, this.valueKey)
+						: cachedOption.value === value;
 					if (isEqual) {
 						option = cachedOption;
 						break;
@@ -598,11 +688,20 @@ export default async function () {
 				this.$nextTick(() => {
 					if (!this.$refs.reference) return;
 					let inputChildNodes = this.$refs.reference.$el.childNodes;
-					let input = [].filter.call(inputChildNodes, item => item.tagName === "INPUT")[0];
+					let input = [].filter.call(
+						inputChildNodes,
+						item => item.tagName === "INPUT"
+					)[0];
 					const tags = this.$refs.tags;
 					const tagsHeight = tags ? Math.round(tags.getBoundingClientRect().height) : 0;
 					const sizeInMap = this.initialInputHeight;
-					input.style.minHeight = this.selected.length === 0 ? sizeInMap + "px" : Math.max(tags ? tagsHeight + (tagsHeight > sizeInMap ? 6 : 0) : 0, sizeInMap) + "px";
+					input.style.minHeight =
+						this.selected.length === 0
+							? sizeInMap + "px"
+							: Math.max(
+									tags ? tagsHeight + (tagsHeight > sizeInMap ? 6 : 0) : 0,
+									sizeInMap
+								) + "px";
 					if (this.visible && this.emptyText !== false) {
 						this.broadcast("xSelectDropdown", "updatePopper");
 					}
@@ -665,7 +764,8 @@ export default async function () {
 			},
 
 			getValueIndex(arr = [], value) {
-				const isObject = Object.prototype.toString.call(value).toLowerCase() === "[object object]";
+				const isObject =
+					Object.prototype.toString.call(value).toLowerCase() === "[object object]";
 				if (!isObject) {
 					return arr.indexOf(value);
 				} else {
@@ -786,7 +886,9 @@ export default async function () {
 			},
 
 			getValueKey(item) {
-				if (Object.prototype.toString.call(item.value).toLowerCase() !== "[object object]") {
+				if (
+					Object.prototype.toString.call(item.value).toLowerCase() !== "[object object]"
+				) {
 					return item.value;
 				} else {
 					return _.$val(item.value, this.valueKey);

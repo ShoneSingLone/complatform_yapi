@@ -21,13 +21,33 @@
 			@blur="handleBlur"
 			@input="handleInput">
 			<template slot="suffix">
-				<i v-if="clearBtnVisible" key="clear" class="el-input__icon el-icon-circle-close" @click.stop="handleClear"></i>
-				<i v-else key="arrow-down" :class="['el-input__icon', 'el-icon-arrow-down', dropDownVisible && 'is-reverse']" @click.stop="toggleDropDownVisible()"></i>
+				<i
+					v-if="clearBtnVisible"
+					key="clear"
+					class="el-input__icon el-icon-circle-close"
+					@click.stop="handleClear"></i>
+				<i
+					v-else
+					key="arrow-down"
+					:class="[
+						'el-input__icon',
+						'el-icon-arrow-down',
+						dropDownVisible && 'is-reverse'
+					]"
+					@click.stop="toggleDropDownVisible()"></i>
 			</template>
 		</xInput>
 
 		<div v-if="multiple" class="el-cascader__tags">
-			<xTag v-for="tag in presentTags" :key="tag.key" type="info" :size="tagSize" :hit="tag.hitState" :closable="tag.closable" disable-transitions @close="deleteTag(tag)">
+			<xTag
+				v-for="tag in presentTags"
+				:key="tag.key"
+				type="info"
+				:size="tagSize"
+				:hit="tag.hitState"
+				:closable="tag.closable"
+				disable-transitions
+				@close="deleteTag(tag)">
 				<span>{{ tag.text }}</span>
 			</xTag>
 			<input
@@ -42,7 +62,10 @@
 		</div>
 
 		<transition name="el-zoom-in-top" @after-leave="handleDropdownLeave">
-			<div v-show="dropDownVisible" ref="popper" :class="['el-popper', 'el-cascader__dropdown', popperClass]">
+			<div
+				v-show="dropDownVisible"
+				ref="popper"
+				:class="['el-popper', 'el-cascader__dropdown', popperClass]">
 				<xCascaderPanel
 					ref="panel"
 					v-show="!filtering"
@@ -83,11 +106,12 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const [Popper, { addResizeListener, removeResizeListener, KeyCode }, Clickoutside] = await _.$importVue([
-		"/common/libs/VuePopper/VuePopper.vue",
-		"/common/utils/utils.vue",
-		"/common/ui-x/directive/clickoutside.vue"
-	]);
+	const [Popper, { addResizeListener, removeResizeListener, KeyCode }, Clickoutside] =
+		await _.$importVue([
+			"/common/libs/VuePopper/VuePopper.vue",
+			"/common/utils/utils.vue",
+			"/common/ui-x/directive/clickoutside.vue"
+		]);
 
 	const InputSizeMap = {
 		medium: 36,
@@ -222,7 +246,9 @@ export default async function () {
 					return false;
 				}
 
-				return this.multiple ? !!this.checkedNodes.filter(node => !node.isDisabled).length : !!this.presentText;
+				return this.multiple
+					? !!this.checkedNodes.filter(node => !node.isDisabled).length
+					: !!this.presentText;
 			}
 		},
 
@@ -275,7 +301,8 @@ export default async function () {
 			await _.$ensure(() => this.$refs?.panel);
 			const { input } = this.$refs;
 			if (input && input.$el) {
-				this.inputInitialHeight = input.$el.offsetHeight || InputSizeMap[this.realSize] || 40;
+				this.inputInitialHeight =
+					input.$el.offsetHeight || InputSizeMap[this.realSize] || 40;
 			}
 
 			if (!(await this.isEmptyValue(this.value))) {
@@ -311,9 +338,12 @@ export default async function () {
 			getMigratingConfig() {
 				return {
 					props: {
-						"expand-trigger": "expand-trigger is removed, use `props.expandTrigger` instead.",
-						"change-on-select": "change-on-select is removed, use `props.checkStrictly` instead.",
-						"hover-threshold": "hover-threshold is removed, use `props.hoverThreshold` instead"
+						"expand-trigger":
+							"expand-trigger is removed, use `props.expandTrigger` instead.",
+						"change-on-select":
+							"change-on-select is removed, use `props.checkStrictly` instead.",
+						"hover-threshold":
+							"hover-threshold is removed, use `props.hoverThreshold` instead"
 					},
 					events: {
 						"active-item-change": "active-item-change is renamed to expand-change"
@@ -391,7 +421,9 @@ export default async function () {
 					let firstNode = null;
 
 					if (filtering && suggestionPanel) {
-						firstNode = suggestionPanel.$el.querySelector(".el-cascader__suggestion-item");
+						firstNode = suggestionPanel.$el.querySelector(
+							".el-cascader__suggestion-item"
+						);
 					} else {
 						const firstMenu = popper.querySelector(".el-cascader-menu");
 						firstNode = firstMenu.querySelector('.el-cascader-node[tabindex="-1"]');
@@ -564,7 +596,9 @@ export default async function () {
 				let suggestionPanelEl = null;
 
 				if (suggestionPanel && (suggestionPanelEl = suggestionPanel.$el)) {
-					const suggestionList = suggestionPanelEl.querySelector(".el-cascader__suggestion-list");
+					const suggestionList = suggestionPanelEl.querySelector(
+						".el-cascader__suggestion-list"
+					);
 					suggestionList.style.minWidth = inputInner.offsetWidth + "px";
 				}
 

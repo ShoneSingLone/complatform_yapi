@@ -30,7 +30,9 @@ export default async function () {
 				},
 				closePage(route) {
 					if (route) {
-						const { visitedViews } = storeTagsView.delView(rootApp.$router.currentRoute);
+						const { visitedViews } = storeTagsView.delView(
+							rootApp.$router.currentRoute
+						);
 						const latestView = _.last(visitedViews);
 						if (latestView) {
 							return rootApp.$router.push(latestView.fullPath);
@@ -83,7 +85,9 @@ export default async function () {
 				},
 				delIframeView(view) {
 					return new Promise(resolve => {
-						state.iframeViews = state.iframeViews.filter(item => item.path !== view.path);
+						state.iframeViews = state.iframeViews.filter(
+							item => item.path !== view.path
+						);
 						resolve([...state.iframeViews]);
 					});
 				}

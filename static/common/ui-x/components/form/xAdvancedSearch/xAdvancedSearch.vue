@@ -71,7 +71,10 @@ export default async function () {
 							$(vm.mountTo).hide();
 						},
 						render() {
-							const props = _.merge({ id: String(vm.mountTo).replace("#", "") }, vm.mountProps);
+							const props = _.merge(
+								{ id: String(vm.mountTo).replace("#", "") },
+								vm.mountProps
+							);
 							return h("div", props, vm.$slots.default);
 						}
 					});

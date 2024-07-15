@@ -53,14 +53,18 @@ export default async function () {
 								if (parentRoute) {
 									route.path = parentRoute.path + "/" + route.path;
 									if (_.$isArrayFill(route.children)) {
-										_flattenRoutes = _flattenRoutes.concat(flattenChildren(route.children, route));
+										_flattenRoutes = _flattenRoutes.concat(
+											flattenChildren(route.children, route)
+										);
 									}
 								} else if (_.$isArrayFill(route.children)) {
 									if (route.component === "ParentView") {
 										_.each(route.children, childRoute => {
 											childRoute.path = route.path + "/" + childRoute.path;
 											if (childRoute.children && childRoute.children.length) {
-												_flattenRoutes = _flattenRoutes.concat(flattenChildren(childRoute.children, childRoute));
+												_flattenRoutes = _flattenRoutes.concat(
+													flattenChildren(childRoute.children, childRoute)
+												);
 											}
 											_flattenRoutes.push(childRoute);
 										});
@@ -86,18 +90,22 @@ export default async function () {
 								// Layout ParentView 组件特殊处理
 								if (route.component === "Layout") {
 									route.componentFlag = "Layout";
-									route.component = () => _.$importVue("@/views/Layout/Layout.vue");
+									route.component = () =>
+										_.$importVue("@/views/Layout/Layout.vue");
 								} else if (route.component === "ParentView") {
 									route.componentFlag = "ParentView";
-									route.component = () => _.$importVue("@/views/Layout/ParentView.vue");
+									route.component = () =>
+										_.$importVue("@/views/Layout/ParentView.vue");
 								} else if (route.component === "InnerLink") {
 									route.componentFlag = "InnerLink";
-									route.component = () => _.$importVue("@/views/Layout/InnerLink.vue");
+									route.component = () =>
+										_.$importVue("@/views/Layout/InnerLink.vue");
 								} else {
 									const ROUTE_COMPONENT = route.component;
 									console.log("route.component", ROUTE_COMPONENT);
 									if (_.isString(ROUTE_COMPONENT)) {
-										route.component = () => _.$importVue(`@/views/${ROUTE_COMPONENT}.vue`);
+										route.component = () =>
+											_.$importVue(`@/views/${ROUTE_COMPONENT}.vue`);
 									} else if (_.isFunction(ROUTE_COMPONENT)) {
 									} else {
 										debugger;
@@ -120,7 +128,11 @@ export default async function () {
 						const res = await _api.adminNormal.getRouters();
 						const routes_append = filterRoutes(res.data);
 						const routes_dynamic = filterDynamicRoutes();
-						storePermission.appendRoutes([...routes_append, ...routes_dynamic, ROUTE_NOT_FOUD]);
+						storePermission.appendRoutes([
+							...routes_append,
+							...routes_dynamic,
+							ROUTE_NOT_FOUD
+						]);
 						/* 菜单用 */
 						storePermission.setRoutes_sidebar(state.routes);
 					} catch (error) {

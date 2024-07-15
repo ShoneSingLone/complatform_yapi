@@ -22,7 +22,10 @@ export default async function () {
 
 	(function (/* 弹窗 */) {
 		_.$openModal = async function (options, modalConfigs) {
-			const xModal = await _.$importVue("/common/ui-x/directive/xModal/xModal.vue", { options, modalConfigs });
+			const xModal = await _.$importVue("/common/ui-x/directive/xModal/xModal.vue", {
+				options,
+				modalConfigs
+			});
 			const PopupManager = await _.$importVue("/common/libs/VuePopper/popupManager.vue");
 			xModal.parent = options.parent || Vue.forceUpdate.getVM();
 			let instance = new Vue(xModal);
@@ -34,7 +37,10 @@ export default async function () {
 	})();
 	(function (/* xDrawer */) {
 		_.$openDrawer = async function (options) {
-			const [xDrawer, PopupManager] = await _.$importVue(["/common/ui-x/directive/xDrawer/xDrawer.vue", "/common/libs/VuePopper/popupManager.vue"]);
+			const [xDrawer, PopupManager] = await _.$importVue([
+				"/common/ui-x/directive/xDrawer/xDrawer.vue",
+				"/common/libs/VuePopper/popupManager.vue"
+			]);
 			xDrawer.parent = options.parent || Vue.forceUpdate.getVM();
 			const xDrawerComponent = Vue.extend(xDrawer);
 			let instance = new xDrawerComponent({
@@ -88,7 +94,9 @@ export default async function () {
 		};
 
 		_.$notify = async function (options) {
-			const xNotification = await getCurrentNotifyComponent(_xUtils.globalConfigs?.xNotification?.componentName);
+			const xNotification = await getCurrentNotifyComponent(
+				_xUtils.globalConfigs?.xNotification?.componentName
+			);
 			const PopupManager = await _.$importVue("/common/libs/VuePopper/popupManager.vue");
 
 			const NotificationConstructor = Vue.extend(xNotification);
@@ -159,7 +167,11 @@ export default async function () {
 				const removedHeight = instance.dom.offsetHeight;
 				for (let i = index; i < len - 1; i++) {
 					if (instances[i].position === position) {
-						instances[i].dom.style[instance.verticalProperty] = parseInt(instances[i].dom.style[instance.verticalProperty], 10) - removedHeight - 16 + "px";
+						instances[i].dom.style[instance.verticalProperty] =
+							parseInt(instances[i].dom.style[instance.verticalProperty], 10) -
+							removedHeight -
+							16 +
+							"px";
 					}
 				}
 			}
@@ -183,7 +195,9 @@ export default async function () {
 		};
 
 		_.$msg = async function (options) {
-			const xMsg = await getCurrentMessageComponent(_xUtils.globalConfigs?.xNotification?.componentName);
+			const xMsg = await getCurrentMessageComponent(
+				_xUtils.globalConfigs?.xNotification?.componentName
+			);
 			const PopupManager = await _.$importVue("/common/libs/VuePopper/popupManager.vue");
 
 			const MsgConstructor = Vue.extend(xMsg);

@@ -13,7 +13,9 @@
 </style>
 <script lang="ts">
 export default async function () {
-	const { useTree, itemSize, iconPropType } = await _.$importVue("/common/ui-x/components/data/xTree/composables.vue");
+	const { useTree, itemSize, iconPropType } = await _.$importVue(
+		"/common/ui-x/components/data/xTree/composables.vue"
+	);
 
 	return defineComponent({
 		props: _xUtils.buildProps({
@@ -227,7 +229,14 @@ export default async function () {
 				attrs: { "data-tree-resizer-id": vm._uid },
 				$vSlots: {
 					default: ({ width, height }) => {
-						const { ns, isNotEmpty, flattenTree, treeNodeSize, perfMode, defaultRender } = vm;
+						const {
+							ns,
+							isNotEmpty,
+							flattenTree,
+							treeNodeSize,
+							perfMode,
+							defaultRender
+						} = vm;
 						if (isNotEmpty && height) {
 							const listProps = {
 								class: [ns.b("virtual-list"), "position-relative"],

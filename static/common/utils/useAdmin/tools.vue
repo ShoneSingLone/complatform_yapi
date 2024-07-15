@@ -410,7 +410,11 @@ export default async function ({ rootApp }) {
 				if (value !== null && value !== "" && typeof value !== "undefined") {
 					if (typeof value === "object") {
 						for (const key of Object.keys(value)) {
-							if (value[key] !== null && value[key] !== "" && typeof value[key] !== "undefined") {
+							if (
+								value[key] !== null &&
+								value[key] !== "" &&
+								typeof value[key] !== "undefined"
+							) {
 								let params = propName + "[" + key + "]";
 								var subPart = encodeURIComponent(params) + "=";
 								result += subPart + encodeURIComponent(value[key]) + "&";
@@ -493,7 +497,12 @@ export default async function ({ rootApp }) {
 		// 添加日期范围
 		addDateRange(params, dateRange, propName) {
 			let search = params;
-			search.params = typeof search.params === "object" && search.params !== null && !Array.isArray(search.params) ? search.params : {};
+			search.params =
+				typeof search.params === "object" &&
+				search.params !== null &&
+				!Array.isArray(search.params)
+					? search.params
+					: {};
 			dateRange = Array.isArray(dateRange) ? dateRange : [];
 			if (typeof propName === "undefined") {
 				search.params["beginTime"] = dateRange[0];

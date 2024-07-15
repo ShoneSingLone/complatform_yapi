@@ -16,7 +16,11 @@
 		@keydown.right="onRightKeyDown"
 		@keydown.down.prevent="onLeftKeyDown"
 		@keydown.up.prevent="onRightKeyDown">
-		<xTooltip placement="top" ref="tooltip" :popper-class="tooltipClass" :disabled="!showTooltip">
+		<xTooltip
+			placement="top"
+			ref="tooltip"
+			:popper-class="tooltipClass"
+			:disabled="!showTooltip">
 			<span slot="content">{{ formatValue }}</span>
 			<div class="el-slider__button" :class="{ hover: hovering, dragging: dragging }"></div>
 		</xTooltip>
@@ -91,7 +95,9 @@ export default async function () {
 			},
 
 			wrapperStyle() {
-				return this.vertical ? { bottom: this.currentPosition } : { left: this.currentPosition };
+				return this.vertical
+					? { bottom: this.currentPosition }
+					: { left: this.currentPosition };
 			}
 		},
 
@@ -132,13 +138,15 @@ export default async function () {
 			},
 			onLeftKeyDown() {
 				if (this.disabled) return;
-				this.newPosition = parseFloat(this.currentPosition) - (this.step / (this.max - this.min)) * 100;
+				this.newPosition =
+					parseFloat(this.currentPosition) - (this.step / (this.max - this.min)) * 100;
 				this.setPosition(this.newPosition);
 				this.$parent.emitChange();
 			},
 			onRightKeyDown() {
 				if (this.disabled) return;
-				this.newPosition = parseFloat(this.currentPosition) + (this.step / (this.max - this.min)) * 100;
+				this.newPosition =
+					parseFloat(this.currentPosition) + (this.step / (this.max - this.min)) * 100;
 				this.setPosition(this.newPosition);
 				this.$parent.emitChange();
 			},

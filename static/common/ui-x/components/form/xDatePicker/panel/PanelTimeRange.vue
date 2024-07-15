@@ -1,10 +1,17 @@
 <template>
 	<transition name="el-zoom-in-top" @after-leave="$emit('dodestroy')">
-		<div v-show="visible" class="el-time-range-picker el-picker-panel el-popper" :class="popperClass">
+		<div
+			v-show="visible"
+			class="el-time-range-picker el-picker-panel el-popper"
+			:class="popperClass">
 			<div class="el-time-range-picker__content flex">
 				<div class="el-time-range-picker__cell">
-					<div class="el-time-range-picker__header">{{ i18n("el.datepicker.startTime") }}</div>
-					<div :class="{ 'has-seconds': showSeconds, 'is-arrow': arrowControl }" class="el-time-range-picker__body el-time-panel__content">
+					<div class="el-time-range-picker__header">
+						{{ i18n("el.datepicker.startTime") }}
+					</div>
+					<div
+						:class="{ 'has-seconds': showSeconds, 'is-arrow': arrowControl }"
+						class="el-time-range-picker__body el-time-panel__content">
 						<BasicTimeSpinner
 							ref="minSpinner"
 							:show-seconds="showSeconds"
@@ -17,8 +24,12 @@
 					</div>
 				</div>
 				<div class="el-time-range-picker__cell">
-					<div class="el-time-range-picker__header">{{ i18n("el.datepicker.endTime") }}</div>
-					<div :class="{ 'has-seconds': showSeconds, 'is-arrow': arrowControl }" class="el-time-range-picker__body el-time-panel__content">
+					<div class="el-time-range-picker__header">
+						{{ i18n("el.datepicker.endTime") }}
+					</div>
+					<div
+						:class="{ 'has-seconds': showSeconds, 'is-arrow': arrowControl }"
+						class="el-time-range-picker__body el-time-panel__content">
 						<BasicTimeSpinner
 							ref="maxSpinner"
 							:show-seconds="showSeconds"
@@ -32,8 +43,16 @@
 				</div>
 			</div>
 			<div class="el-time-panel__footer">
-				<button type="button" class="el-time-panel__btn cancel" @click="handleCancel()">{{ i18n("el.datepicker.cancel") }}</button>
-				<button type="button" class="el-time-panel__btn confirm" @click="handleConfirm()" :disabled="btnDisabled">{{ i18n("el.datepicker.confirm") }}</button>
+				<button type="button" class="el-time-panel__btn cancel" @click="handleCancel()">
+					{{ i18n("el.datepicker.cancel") }}
+				</button>
+				<button
+					type="button"
+					class="el-time-panel__btn confirm"
+					@click="handleConfirm()"
+					:disabled="btnDisabled">
+					{{ i18n("el.datepicker.confirm") }}
+				</button>
 			</div>
 		</div>
 	</transition>
@@ -41,7 +60,8 @@
 
 <script lang="ts">
 export default async function () {
-	const [{ parseDate, limitTimeRange, modifyDate, clearMilliseconds, timeWithinRange }] = await _.$importVue(["/common/ui-x/components/form/xDatePicker/dateUtils.vue"]);
+	const [{ parseDate, limitTimeRange, modifyDate, clearMilliseconds, timeWithinRange }] =
+		await _.$importVue(["/common/ui-x/components/form/xDatePicker/dateUtils.vue"]);
 
 	const MIN_TIME = parseDate("00:00:00", "HH:mm:ss");
 	const MAX_TIME = parseDate("23:59:59", "HH:mm:ss");
@@ -61,7 +81,8 @@ export default async function () {
 
 	return defineComponent({
 		components: {
-			BasicTimeSpinner: () => _.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicTimeSpinner.vue")
+			BasicTimeSpinner: () =>
+				_.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicTimeSpinner.vue")
 		},
 		computed: {
 			showSeconds() {
@@ -73,7 +94,9 @@ export default async function () {
 			},
 
 			spinner() {
-				return this.selectionRange[0] < this.offset ? this.$refs.minSpinner : this.$refs.maxSpinner;
+				return this.selectionRange[0] < this.offset
+					? this.$refs.minSpinner
+					: this.$refs.maxSpinner;
 			},
 
 			btnDisabled() {
@@ -149,8 +172,12 @@ export default async function () {
 
 			handleChange() {
 				if (this.isValidValue([this.minDate, this.maxDate])) {
-					this.$refs.minSpinner.selectableRange = [[minTimeOfDay(this.minDate), this.maxDate]];
-					this.$refs.maxSpinner.selectableRange = [[this.minDate, maxTimeOfDay(this.maxDate)]];
+					this.$refs.minSpinner.selectableRange = [
+						[minTimeOfDay(this.minDate), this.maxDate]
+					];
+					this.$refs.maxSpinner.selectableRange = [
+						[this.minDate, maxTimeOfDay(this.maxDate)]
+					];
 					this.$emit("pick", [this.minDate, this.maxDate], true);
 				}
 			},
@@ -195,7 +222,11 @@ export default async function () {
 			},
 
 			isValidValue(date) {
-				return Array.isArray(date) && timeWithinRange(this.minDate, this.$refs.minSpinner.selectableRange) && timeWithinRange(this.maxDate, this.$refs.maxSpinner.selectableRange);
+				return (
+					Array.isArray(date) &&
+					timeWithinRange(this.minDate, this.$refs.minSpinner.selectableRange) &&
+					timeWithinRange(this.maxDate, this.$refs.maxSpinner.selectableRange)
+				);
 			},
 
 			handleKeydown(event) {

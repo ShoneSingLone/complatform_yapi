@@ -14,7 +14,14 @@
 			<div class="el-picker-panel__body-wrapper">
 				<slot name="sidebar" class="el-picker-panel__sidebar"></slot>
 				<div class="el-picker-panel__sidebar" v-if="shortcuts">
-					<button type="button" class="el-picker-panel__shortcut" v-for="(shortcut, key) in shortcuts" :key="key" @click="handleShortcutClick(shortcut)">{{ shortcut.text }}</button>
+					<button
+						type="button"
+						class="el-picker-panel__shortcut"
+						v-for="(shortcut, key) in shortcuts"
+						:key="key"
+						@click="handleShortcutClick(shortcut)">
+						{{ shortcut.text }}
+					</button>
 				</div>
 				<div class="el-picker-panel__body">
 					<div class="el-date-range-picker__time-header" v-if="showTime">
@@ -30,7 +37,9 @@
 									@input="val => handleDateInput(val, 'min')"
 									@change="val => handleDateChange(val, 'min')" />
 							</span>
-							<span class="el-date-range-picker__time-picker-wrap" v-clickoutside="handleMinTimeClose">
+							<span
+								class="el-date-range-picker__time-picker-wrap"
+								v-clickoutside="handleMinTimeClose">
 								<xInput
 									size="small"
 									class="el-date-range-picker__editor"
@@ -62,7 +71,9 @@
 									@input="val => handleDateInput(val, 'max')"
 									@change="val => handleDateChange(val, 'max')" />
 							</span>
-							<span class="el-date-range-picker__time-picker-wrap" v-clickoutside="handleMaxTimeClose">
+							<span
+								class="el-date-range-picker__time-picker-wrap"
+								v-clickoutside="handleMaxTimeClose">
 								<xInput
 									size="small"
 									class="el-date-range-picker__editor"
@@ -85,8 +96,14 @@
 					</div>
 					<div class="el-picker-panel__content el-date-range-picker__content is-left">
 						<div class="el-date-range-picker__header">
-							<button type="button" @click="leftPrevYear" class="el-picker-panel__icon-btn el-icon-d-arrow-left"></button>
-							<button type="button" @click="leftPrevMonth" class="el-picker-panel__icon-btn el-icon-arrow-left"></button>
+							<button
+								type="button"
+								@click="leftPrevYear"
+								class="el-picker-panel__icon-btn el-icon-d-arrow-left"></button>
+							<button
+								type="button"
+								@click="leftPrevMonth"
+								class="el-picker-panel__icon-btn el-icon-arrow-left"></button>
 							<button
 								type="button"
 								@click="leftNextYear"
@@ -133,8 +150,14 @@
 								:disabled="!enableMonthArrow"
 								:class="{ 'is-disabled': !enableMonthArrow }"
 								class="el-picker-panel__icon-btn el-icon-arrow-left"></button>
-							<button type="button" @click="rightNextYear" class="el-picker-panel__icon-btn el-icon-d-arrow-right"></button>
-							<button type="button" @click="rightNextMonth" class="el-picker-panel__icon-btn el-icon-arrow-right"></button>
+							<button
+								type="button"
+								@click="rightNextYear"
+								class="el-picker-panel__icon-btn el-icon-d-arrow-right"></button>
+							<button
+								type="button"
+								@click="rightNextMonth"
+								class="el-picker-panel__icon-btn el-icon-arrow-right"></button>
 							<div>{{ rightLabel }}</div>
 						</div>
 						<BasicDateTable
@@ -154,10 +177,19 @@
 				</div>
 			</div>
 			<div class="el-picker-panel__footer" v-if="showTime">
-				<xBtn size="mini" preset="text" class="el-picker-panel__link-btn" @click="handleClear">
+				<xBtn
+					size="mini"
+					preset="text"
+					class="el-picker-panel__link-btn"
+					@click="handleClear">
 					{{ i18n("el.datepicker.clear") }}
 				</xBtn>
-				<xBtn plain size="mini" class="el-picker-panel__link-btn" :disabled="btnDisabled" @click="handleConfirm(false)">
+				<xBtn
+					plain
+					size="mini"
+					class="el-picker-panel__link-btn"
+					:disabled="btnDisabled"
+					@click="handleConfirm(false)">
 					{{ i18n("el.datepicker.confirm") }}
 				</xBtn>
 			</div>
@@ -166,8 +198,25 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const [Clickoutside, dateUtils] = await _.$importVue(["/common/ui-x/directive/clickoutside.vue", "/common/ui-x/components/form/xDatePicker/dateUtils.vue"]);
-	const { formatDate, parseDate, isDate, modifyDate, modifyTime, modifyWithTimeString, prevYear, nextYear, prevMonth, nextMonth, nextDate, extractDateFormat, extractTimeFormat } = dateUtils;
+	const [Clickoutside, dateUtils] = await _.$importVue([
+		"/common/ui-x/directive/clickoutside.vue",
+		"/common/ui-x/components/form/xDatePicker/dateUtils.vue"
+	]);
+	const {
+		formatDate,
+		parseDate,
+		isDate,
+		modifyDate,
+		modifyTime,
+		modifyWithTimeString,
+		prevYear,
+		nextYear,
+		prevMonth,
+		nextMonth,
+		nextDate,
+		extractDateFormat,
+		extractTimeFormat
+	} = dateUtils;
 
 	const calcDefaultValue = defaultValue => {
 		if (Array.isArray(defaultValue)) {
@@ -183,15 +232,32 @@ export default async function () {
 		directives: { Clickoutside },
 		computed: {
 			btnDisabled() {
-				return !(this.minDate && this.maxDate && !this.selecting && this.isValidValue([this.minDate, this.maxDate]));
+				return !(
+					this.minDate &&
+					this.maxDate &&
+					!this.selecting &&
+					this.isValidValue([this.minDate, this.maxDate])
+				);
 			},
 
 			leftLabel() {
-				return this.leftDate.getFullYear() + " " + this.i18n("el.datepicker.year") + " " + this.i18n(`el.datepicker.month${this.leftDate.getMonth() + 1}`);
+				return (
+					this.leftDate.getFullYear() +
+					" " +
+					this.i18n("el.datepicker.year") +
+					" " +
+					this.i18n(`el.datepicker.month${this.leftDate.getMonth() + 1}`)
+				);
 			},
 
 			rightLabel() {
-				return this.rightDate.getFullYear() + " " + this.i18n("el.datepicker.year") + " " + this.i18n(`el.datepicker.month${this.rightDate.getMonth() + 1}`);
+				return (
+					this.rightDate.getFullYear() +
+					" " +
+					this.i18n("el.datepicker.year") +
+					" " +
+					this.i18n(`el.datepicker.month${this.rightDate.getMonth() + 1}`)
+				);
 			},
 
 			leftYear() {
@@ -226,7 +292,8 @@ export default async function () {
 
 			maxVisibleDate() {
 				if (this.dateUserInput.max !== null) return this.dateUserInput.max;
-				if (this.maxDate || this.minDate) return formatDate(this.maxDate || this.minDate, this.dateFormat);
+				if (this.maxDate || this.minDate)
+					return formatDate(this.maxDate || this.minDate, this.dateFormat);
 				return "";
 			},
 
@@ -238,7 +305,8 @@ export default async function () {
 
 			maxVisibleTime() {
 				if (this.timeUserInput.max !== null) return this.timeUserInput.max;
-				if (this.maxDate || this.minDate) return formatDate(this.maxDate || this.minDate, this.timeFormat);
+				if (this.maxDate || this.minDate)
+					return formatDate(this.maxDate || this.minDate, this.timeFormat);
 				return "";
 			},
 
@@ -261,11 +329,21 @@ export default async function () {
 			enableMonthArrow() {
 				const nextMonth = (this.leftMonth + 1) % 12;
 				const yearOffset = this.leftMonth + 1 >= 12 ? 1 : 0;
-				return this.unlinkPanels && new Date(this.leftYear + yearOffset, nextMonth) < new Date(this.rightYear, this.rightMonth);
+				return (
+					this.unlinkPanels &&
+					new Date(this.leftYear + yearOffset, nextMonth) <
+						new Date(this.rightYear, this.rightMonth)
+				);
 			},
 
 			enableYearArrow() {
-				return this.unlinkPanels && this.rightYear * 12 + this.rightMonth - (this.leftYear * 12 + this.leftMonth + 1) >= 12;
+				return (
+					this.unlinkPanels &&
+					this.rightYear * 12 +
+						this.rightMonth -
+						(this.leftYear * 12 + this.leftMonth + 1) >=
+						12
+				);
 			}
 		},
 
@@ -314,7 +392,12 @@ export default async function () {
 				this.$nextTick(() => {
 					if (this.$refs.maxTimePicker && this.maxDate && this.maxDate < this.minDate) {
 						const format = "HH:mm:ss";
-						this.$refs.maxTimePicker.selectableRange = [[parseDate(formatDate(this.minDate, format), format), parseDate("23:59:59", format)]];
+						this.$refs.maxTimePicker.selectableRange = [
+							[
+								parseDate(formatDate(this.minDate, format), format),
+								parseDate("23:59:59", format)
+							]
+						];
 					}
 				});
 				if (val && this.$refs.minTimePicker) {
@@ -366,7 +449,10 @@ export default async function () {
 							const minDateMonth = this.minDate.getMonth();
 							const maxDateYear = this.maxDate.getFullYear();
 							const maxDateMonth = this.maxDate.getMonth();
-							this.rightDate = minDateYear === maxDateYear && minDateMonth === maxDateMonth ? nextMonth(this.maxDate) : this.maxDate;
+							this.rightDate =
+								minDateYear === maxDateYear && minDateMonth === maxDateMonth
+									? nextMonth(this.maxDate)
+									: this.maxDate;
 						} else {
 							this.rightDate = nextMonth(this.leftDate);
 						}
@@ -381,7 +467,8 @@ export default async function () {
 				if (!Array.isArray(this.value)) {
 					const [left, right] = calcDefaultValue(val);
 					this.leftDate = left;
-					this.rightDate = val && val[1] && this.unlinkPanels ? right : nextMonth(this.leftDate);
+					this.rightDate =
+						val && val[1] && this.unlinkPanels ? right : nextMonth(this.leftDate);
 				}
 			}
 		},
@@ -407,17 +494,30 @@ export default async function () {
 				const parsedValue = parseDate(value, this.dateFormat);
 
 				if (parsedValue) {
-					if (typeof this.disabledDate === "function" && this.disabledDate(new Date(parsedValue))) {
+					if (
+						typeof this.disabledDate === "function" &&
+						this.disabledDate(new Date(parsedValue))
+					) {
 						return;
 					}
 					if (type === "min") {
-						this.minDate = modifyDate(this.minDate || new Date(), parsedValue.getFullYear(), parsedValue.getMonth(), parsedValue.getDate());
+						this.minDate = modifyDate(
+							this.minDate || new Date(),
+							parsedValue.getFullYear(),
+							parsedValue.getMonth(),
+							parsedValue.getDate()
+						);
 						this.leftDate = new Date(parsedValue);
 						if (!this.unlinkPanels) {
 							this.rightDate = nextMonth(this.leftDate);
 						}
 					} else {
-						this.maxDate = modifyDate(this.maxDate || new Date(), parsedValue.getFullYear(), parsedValue.getMonth(), parsedValue.getDate());
+						this.maxDate = modifyDate(
+							this.maxDate || new Date(),
+							parsedValue.getFullYear(),
+							parsedValue.getMonth(),
+							parsedValue.getDate()
+						);
 						this.rightDate = new Date(parsedValue);
 						if (!this.unlinkPanels) {
 							this.leftDate = prevMonth(parsedValue);
@@ -430,12 +530,22 @@ export default async function () {
 				const parsedValue = parseDate(value, this.dateFormat);
 				if (parsedValue) {
 					if (type === "min") {
-						this.minDate = modifyDate(this.minDate, parsedValue.getFullYear(), parsedValue.getMonth(), parsedValue.getDate());
+						this.minDate = modifyDate(
+							this.minDate,
+							parsedValue.getFullYear(),
+							parsedValue.getMonth(),
+							parsedValue.getDate()
+						);
 						if (this.minDate > this.maxDate) {
 							this.maxDate = this.minDate;
 						}
 					} else {
-						this.maxDate = modifyDate(this.maxDate, parsedValue.getFullYear(), parsedValue.getMonth(), parsedValue.getDate());
+						this.maxDate = modifyDate(
+							this.maxDate,
+							parsedValue.getFullYear(),
+							parsedValue.getMonth(),
+							parsedValue.getDate()
+						);
 						if (this.maxDate < this.minDate) {
 							this.minDate = this.maxDate;
 						}
@@ -450,10 +560,20 @@ export default async function () {
 
 				if (parsedValue) {
 					if (type === "min") {
-						this.minDate = modifyTime(this.minDate, parsedValue.getHours(), parsedValue.getMinutes(), parsedValue.getSeconds());
+						this.minDate = modifyTime(
+							this.minDate,
+							parsedValue.getHours(),
+							parsedValue.getMinutes(),
+							parsedValue.getSeconds()
+						);
 						this.$nextTick(_ => this.$refs.minTimePicker.adjustSpinners());
 					} else {
-						this.maxDate = modifyTime(this.maxDate, parsedValue.getHours(), parsedValue.getMinutes(), parsedValue.getSeconds());
+						this.maxDate = modifyTime(
+							this.maxDate,
+							parsedValue.getHours(),
+							parsedValue.getMinutes(),
+							parsedValue.getSeconds()
+						);
 						this.$nextTick(_ => this.$refs.maxTimePicker.adjustSpinners());
 					}
 				}
@@ -463,14 +583,24 @@ export default async function () {
 				const parsedValue = parseDate(value, this.timeFormat);
 				if (parsedValue) {
 					if (type === "min") {
-						this.minDate = modifyTime(this.minDate, parsedValue.getHours(), parsedValue.getMinutes(), parsedValue.getSeconds());
+						this.minDate = modifyTime(
+							this.minDate,
+							parsedValue.getHours(),
+							parsedValue.getMinutes(),
+							parsedValue.getSeconds()
+						);
 						if (this.minDate > this.maxDate) {
 							this.maxDate = this.minDate;
 						}
 						this.$refs.minTimePicker.value = this.minDate;
 						this.minTimePickerVisible = false;
 					} else {
-						this.maxDate = modifyTime(this.maxDate, parsedValue.getHours(), parsedValue.getMinutes(), parsedValue.getSeconds());
+						this.maxDate = modifyTime(
+							this.maxDate,
+							parsedValue.getHours(),
+							parsedValue.getMinutes(),
+							parsedValue.getSeconds()
+						);
 						if (this.maxDate < this.minDate) {
 							this.minDate = this.maxDate;
 						}
@@ -510,14 +640,22 @@ export default async function () {
 			handleMinTimePick(value, visible, first) {
 				this.minDate = this.minDate || new Date();
 				if (value) {
-					this.minDate = modifyTime(this.minDate, value.getHours(), value.getMinutes(), value.getSeconds());
+					this.minDate = modifyTime(
+						this.minDate,
+						value.getHours(),
+						value.getMinutes(),
+						value.getSeconds()
+					);
 				}
 
 				if (!first) {
 					this.minTimePickerVisible = visible;
 				}
 
-				if (!this.maxDate || (this.maxDate && this.maxDate.getTime() < this.minDate.getTime())) {
+				if (
+					!this.maxDate ||
+					(this.maxDate && this.maxDate.getTime() < this.minDate.getTime())
+				) {
 					this.maxDate = new Date(this.minDate);
 				}
 			},
@@ -528,14 +666,23 @@ export default async function () {
 
 			handleMaxTimePick(value, visible, first) {
 				if (this.maxDate && value) {
-					this.maxDate = modifyTime(this.maxDate, value.getHours(), value.getMinutes(), value.getSeconds());
+					this.maxDate = modifyTime(
+						this.maxDate,
+						value.getHours(),
+						value.getMinutes(),
+						value.getSeconds()
+					);
 				}
 
 				if (!first) {
 					this.maxTimePickerVisible = visible;
 				}
 
-				if (this.maxDate && this.minDate && this.minDate.getTime() > this.maxDate.getTime()) {
+				if (
+					this.maxDate &&
+					this.minDate &&
+					this.minDate.getTime() > this.maxDate.getTime()
+				) {
 					this.minDate = new Date(this.maxDate);
 				}
 			},
@@ -609,7 +756,9 @@ export default async function () {
 					isDate(value[0]) &&
 					isDate(value[1]) &&
 					value[0].getTime() <= value[1].getTime() &&
-					(typeof this.disabledDate === "function" ? !this.disabledDate(value[0]) && !this.disabledDate(value[1]) : true)
+					(typeof this.disabledDate === "function"
+						? !this.disabledDate(value[0]) && !this.disabledDate(value[1])
+						: true)
 				);
 			},
 
@@ -624,8 +773,10 @@ export default async function () {
 		},
 
 		components: {
-			PanelTime: () => _.$importVue("/common/ui-x/components/form/xDatePicker/panel/PanelTime.vue"),
-			BasicDateTable: () => _.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicDateTable.vue")
+			PanelTime: () =>
+				_.$importVue("/common/ui-x/components/form/xDatePicker/panel/PanelTime.vue"),
+			BasicDateTable: () =>
+				_.$importVue("/common/ui-x/components/form/xDatePicker/basic/BasicDateTable.vue")
 		}
 	});
 }

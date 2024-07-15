@@ -45,7 +45,9 @@
 
 <script lang="ts">
 export default async function () {
-	const [{ isDate, range, nextDate, getDayCountOfYear }] = await _.$importVue(["/common/ui-x/components/form/xDatePicker/dateUtils.vue"]);
+	const [{ isDate, range, nextDate, getDayCountOfYear }] = await _.$importVue([
+		"/common/ui-x/components/form/xDatePicker/dateUtils.vue"
+	]);
 	const { hasClass } = _xUtils;
 
 	const datesInYear = year => {
@@ -79,8 +81,15 @@ export default async function () {
 				const style = {};
 				const today = new Date();
 
-				style.disabled = typeof this.disabledDate === "function" ? datesInYear(year).every(this.disabledDate) : false;
-				style.current = _.findIndex(_.$coerceTruthyValueToArray(this.value), date => date.getFullYear() === year) >= 0;
+				style.disabled =
+					typeof this.disabledDate === "function"
+						? datesInYear(year).every(this.disabledDate)
+						: false;
+				style.current =
+					_.findIndex(
+						_.$coerceTruthyValueToArray(this.value),
+						date => date.getFullYear() === year
+					) >= 0;
 				style.today = today.getFullYear() === year;
 				style.default = this.defaultValue && this.defaultValue.getFullYear() === year;
 
@@ -95,7 +104,10 @@ export default async function () {
 					if (this.selectionMode === "years") {
 						const value = this.value || [];
 						const idx = _.findIndex(value, date => date.getFullYear() === Number(year));
-						const newValue = idx > -1 ? [...value.slice(0, idx), ...value.slice(idx + 1)] : [...value, new Date(year)];
+						const newValue =
+							idx > -1
+								? [...value.slice(0, idx), ...value.slice(idx + 1)]
+								: [...value, new Date(year)];
 						this.$emit("pick", newValue);
 					} else {
 						this.$emit("pick", Number(year));

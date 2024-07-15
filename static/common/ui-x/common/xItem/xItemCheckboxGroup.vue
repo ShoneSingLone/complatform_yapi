@@ -1,7 +1,10 @@
 <template>
 	<xCheckboxGroup v-model="mixin_value" v-bind="$attrs" v-on="mixin_listeners">
 		<template v-if="isButton">
-			<xCheckboxButton v-for="option in selectOptions" :label="option.label" :key="option.value">
+			<xCheckboxButton
+				v-for="option in selectOptions"
+				:label="option.label"
+				:key="option.value">
 				{{ option.label }}
 			</xCheckboxButton>
 		</template>

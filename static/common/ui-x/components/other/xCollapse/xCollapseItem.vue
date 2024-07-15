@@ -1,7 +1,11 @@
 <style lang="less"></style>
 <template>
 	<div class="el-collapse-item" :class="{ 'is-active': isActive, 'is-disabled': disabled }">
-		<div role="tab" :aria-expanded="isActive" :aria-controls="id('content')" :aria-describedby="id('content')">
+		<div
+			role="tab"
+			:aria-expanded="isActive"
+			:aria-controls="id('content')"
+			:aria-describedby="id('content')">
 			<div
 				class="el-collapse-item__header"
 				@click="handleHeaderClick"
@@ -16,11 +20,20 @@
 				@focus="handleFocus"
 				@blur="focusing = false">
 				<slot name="title">{{ title }}</slot>
-				<i class="el-collapse-item__arrow el-icon-arrow-right" :class="{ 'is-active': isActive }"> </i>
+				<i
+					class="el-collapse-item__arrow el-icon-arrow-right"
+					:class="{ 'is-active': isActive }">
+				</i>
 			</div>
 		</div>
 		<xCollapseTransition>
-			<div class="el-collapse-item__wrap" v-show="isActive" role="tabpanel" :aria-hidden="!isActive" :aria-labelledby="id('head')" :id="id('content')">
+			<div
+				class="el-collapse-item__wrap"
+				v-show="isActive"
+				role="tabpanel"
+				:aria-hidden="!isActive"
+				:aria-labelledby="id('head')"
+				:id="id('content')">
 				<div class="el-collapse-item__content">
 					<slot></slot>
 				</div>

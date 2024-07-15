@@ -1,12 +1,24 @@
 <style lang="less"></style>
 <template>
-	<transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="$emit('dodestroy')">
-		<div ref="popper" v-show="visible" :style="{ width: width + 'px' }" :class="popperClass" class="el-picker-panel time-select el-popper">
+	<transition
+		name="el-zoom-in-top"
+		@before-enter="handleMenuEnter"
+		@after-leave="$emit('dodestroy')">
+		<div
+			ref="popper"
+			v-show="visible"
+			:style="{ width: width + 'px' }"
+			:class="popperClass"
+			class="el-picker-panel time-select el-popper">
 			<xScrollbar noresize wrap-class="el-picker-panel__content">
 				<div
 					class="time-select-item"
 					v-for="item in items"
-					:class="{ selected: value === item.value, disabled: item.disabled, default: item.value === defaultValue }"
+					:class="{
+						selected: value === item.value,
+						disabled: item.disabled,
+						default: item.value === defaultValue
+					}"
 					:disabled="item.disabled"
 					:key="item.value"
 					@click="handleClick(item)">
@@ -48,7 +60,11 @@ export default async function () {
 	};
 
 	const formatTime = function (time) {
-		return (time.hours < 10 ? "0" + time.hours : time.hours) + ":" + (time.minutes < 10 ? "0" + time.minutes : time.minutes);
+		return (
+			(time.hours < 10 ? "0" + time.hours : time.hours) +
+			":" +
+			(time.minutes < 10 ? "0" + time.minutes : time.minutes)
+		);
 	};
 
 	const nextTime = function (time, step) {
@@ -95,8 +111,12 @@ export default async function () {
 
 			handleMenuEnter() {
 				const selected = this.items.map(item => item.value).indexOf(this.value) !== -1;
-				const hasDefault = this.items.map(item => item.value).indexOf(this.defaultValue) !== -1;
-				const option = (selected && ".selected") || (hasDefault && ".default") || ".time-select-item:not(.disabled)";
+				const hasDefault =
+					this.items.map(item => item.value).indexOf(this.defaultValue) !== -1;
+				const option =
+					(selected && ".selected") ||
+					(hasDefault && ".default") ||
+					".time-select-item:not(.disabled)";
 				this.$nextTick(() => this.scrollToOption(option));
 			},
 
@@ -163,7 +183,9 @@ export default async function () {
 					while (compareTime(current, end) <= 0) {
 						result.push({
 							value: current,
-							disabled: compareTime(current, this.minTime || "-1:-1") <= 0 || compareTime(current, this.maxTime || "100:100") >= 0
+							disabled:
+								compareTime(current, this.minTime || "-1:-1") <= 0 ||
+								compareTime(current, this.maxTime || "100:100") >= 0
 						});
 						current = nextTime(current, step);
 					}

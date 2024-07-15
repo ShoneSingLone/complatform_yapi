@@ -2,7 +2,13 @@
 <template>
 	<label
 		class="xRadio el-radio"
-		:class="[border && radioSize ? 'el-radio--' + radioSize : '', { 'is-disabled': isDisabled }, { 'is-focus': focus }, { 'is-bordered': border }, { 'is-checked': model === label }]"
+		:class="[
+			border && radioSize ? 'el-radio--' + radioSize : '',
+			{ 'is-disabled': isDisabled },
+			{ 'is-focus': focus },
+			{ 'is-bordered': border },
+			{ 'is-checked': model === label }
+		]"
 		role="radio"
 		:aria-checked="model === label"
 		:aria-disabled="isDisabled"
@@ -92,11 +98,16 @@ export default async function () {
 				return (this.elFormItem || {}).elFormItemSize;
 			},
 			radioSize() {
-				const temRadioSize = this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
-				return this.isGroup ? this._radioGroup.radioGroupSize || temRadioSize : temRadioSize;
+				const temRadioSize =
+					this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
+				return this.isGroup
+					? this._radioGroup.radioGroupSize || temRadioSize
+					: temRadioSize;
 			},
 			isDisabled() {
-				return this.isGroup ? this._radioGroup.disabled || this.disabled || (this.elForm || {}).disabled : this.disabled || (this.elForm || {}).disabled;
+				return this.isGroup
+					? this._radioGroup.disabled || this.disabled || (this.elForm || {}).disabled
+					: this.disabled || (this.elForm || {}).disabled;
 			},
 			tabIndex() {
 				return this.isDisabled || (this.isGroup && this.model !== this.label) ? -1 : 0;

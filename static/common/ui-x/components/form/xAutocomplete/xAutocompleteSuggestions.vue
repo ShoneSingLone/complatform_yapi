@@ -1,8 +1,16 @@
 <style lang="less"></style>
 <template>
 	<transition name="el-zoom-in-top" @after-leave="handleAfterLeave">
-		<div v-show="showPopper" class="el-autocomplete-suggestion el-popper" :class="{ 'is-loading': !parent.hideLoading && parent.loading }" :style="{ width: dropdownWidth }" role="region">
-			<xScrollbar tag="ul" wrap-class="el-autocomplete-suggestion__wrap" view-class="el-autocomplete-suggestion__list">
+		<div
+			v-show="showPopper"
+			class="el-autocomplete-suggestion el-popper"
+			:class="{ 'is-loading': !parent.hideLoading && parent.loading }"
+			:style="{ width: dropdownWidth }"
+			role="region">
+			<xScrollbar
+				tag="ul"
+				wrap-class="el-autocomplete-suggestion__wrap"
+				view-class="el-autocomplete-suggestion__list">
 				<li v-if="!parent.hideLoading && parent.loading">
 					<i class="el-icon-loading" />
 				</li>
@@ -44,7 +52,9 @@ export default async function () {
 				this.dispatch("xAutocomplete", "item-click", item);
 			},
 			async initScrollList() {
-				this.referenceList = await _.$ensure(() => this.$el.querySelector(".el-autocomplete-suggestion__list"));
+				this.referenceList = await _.$ensure(() =>
+					this.$el.querySelector(".el-autocomplete-suggestion__list")
+				);
 				this.referenceList.setAttribute("role", "listbox");
 				this.referenceList.setAttribute("id", this.id);
 			}

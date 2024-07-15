@@ -70,7 +70,9 @@ export default async function () {
 			});
 
 			_.$single.shadowTemplate.append($popover);
-			PopoverComponent = PopoverComponent || (await _.$importVue("/common/ui-x/directive/xtips/xtipsDefaultPopover.vue"));
+			PopoverComponent =
+				PopoverComponent ||
+				(await _.$importVue("/common/ui-x/directive/xtips/xtipsDefaultPopover.vue"));
 			let _PopoverComponent = { ...PopoverComponent };
 			_PopoverComponent.parent = vmRefrence;
 
@@ -152,7 +154,11 @@ export default async function () {
 	_.$single.doc
 		/* click处理 */
 		.on(`click.${EVENT_UI_TARGET}` /* 左键单击 */, `[${SELECTOR_REFERENCE}]`, handleClick)
-		.on(`contextmenu.${EVENT_UI_TARGET}` /* 右键单击 */, `[${SELECTOR_REFERENCE}][data-trigger=rightClick]`, handleClick)
+		.on(
+			`contextmenu.${EVENT_UI_TARGET}` /* 右键单击 */,
+			`[${SELECTOR_REFERENCE}][data-trigger=rightClick]`,
+			handleClick
+		)
 		/* hover处理 */
 		.on(`mouseenter.${EVENT_UI_TARGET}`, `[${SELECTOR_REFERENCE}]`, handleEnterReference)
 		/* focus处理 */

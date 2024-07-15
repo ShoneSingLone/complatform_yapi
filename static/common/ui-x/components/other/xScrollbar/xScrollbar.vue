@@ -1,7 +1,10 @@
 <script lang="ts">
 export default async function () {
-	const { addResizeListener, removeResizeListener } = await _.$importVue("/common/utils/utils.vue");
-	const scrollbarWidth = await _.$importVue("/common/ui-x/components/other/xScrollbar/scrollbarWidth.vue");
+	const { addResizeListener, removeResizeListener } =
+		await _.$importVue("/common/utils/utils.vue");
+	const scrollbarWidth = await _.$importVue(
+		"/common/ui-x/components/other/xScrollbar/scrollbarWidth.vue"
+	);
 
 	return defineComponent({
 		name: "xScrollbar",
@@ -66,7 +69,11 @@ export default async function () {
 				this.tag,
 				{
 					ref: "wrap",
-					class: [this.wrapClass, "el-scrollbar__wrap", gutter ? "" : "el-scrollbar__wrap--hidden-default"],
+					class: [
+						this.wrapClass,
+						"el-scrollbar__wrap",
+						gutter ? "" : "el-scrollbar__wrap--hidden-default"
+					],
 					style,
 					onScroll: this.handleScroll
 				},

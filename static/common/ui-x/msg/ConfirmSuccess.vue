@@ -23,7 +23,11 @@ export default async function ({ row, callBack }) {
 		data() {
 			return {
 				form: {
-					name: { value: "", label: i18n("名称"), rules: [_rules.required(), _rules.lessThan(64)] }
+					name: {
+						value: "",
+						label: i18n("名称"),
+						rules: [_rules.required(), _rules.lessThan(64)]
+					}
 				}
 			};
 		},

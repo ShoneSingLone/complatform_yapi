@@ -62,8 +62,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						}
 						if (validator) valid || (valid = validator(val));
 						if (!valid && allowedValues.length > 0) {
-							const allowValuesText = [...new Set(allowedValues)].map(value => JSON.stringify(value)).join(", ");
-							warn(`Invalid prop: validation failed${key ? ` for prop "${key}"` : ""}. Expected one of [${allowValuesText}], got value ${JSON.stringify(val)}.`);
+							const allowValuesText = [...new Set(allowedValues)]
+								.map(value => JSON.stringify(value))
+								.join(", ");
+							warn(
+								`Invalid prop: validation failed${key ? ` for prop "${key}"` : ""}. Expected one of [${allowValuesText}], got value ${JSON.stringify(val)}.`
+							);
 						}
 						return valid;
 					}
@@ -90,13 +94,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	}
 
 	const buildProps = props => {
-		return fromPairs(Object.entries(props).map(([key, option]) => [key, buildProp(option, key)]));
+		return fromPairs(
+			Object.entries(props).map(([key, option]) => [key, buildProp(option, key)])
+		);
 	};
 	const definePropType = val => val;
 	const defaultNamespace = "el";
 	const namespaceContextKey = Symbol("namespaceContextKey");
 	const useGetDerivedNamespace = (namespaceOverrides = "") => {
-		const derivedNamespace = namespaceOverrides || inject(namespaceContextKey, ref(defaultNamespace));
+		const derivedNamespace =
+			namespaceOverrides || inject(namespaceContextKey, ref(defaultNamespace));
 		const namespace = computed(() => {
 			return unref(derivedNamespace) || defaultNamespace;
 		});
@@ -142,10 +149,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		const b = (blockSuffix = "") => _bem(namespace.value, block, blockSuffix, "", "");
 		const e = element => (element ? _bem(namespace.value, block, "", element, "") : "");
 		const m = modifier => (modifier ? _bem(namespace.value, block, "", "", modifier) : "");
-		const be = (blockSuffix, element) => (blockSuffix && element ? _bem(namespace.value, block, blockSuffix, element, "") : "");
-		const em = (element, modifier) => (element && modifier ? _bem(namespace.value, block, "", element, modifier) : "");
-		const bm = (blockSuffix, modifier) => (blockSuffix && modifier ? _bem(namespace.value, block, blockSuffix, "", modifier) : "");
-		const bem = (blockSuffix, element, modifier) => (blockSuffix && element && modifier ? _bem(namespace.value, block, blockSuffix, element, modifier) : "");
+		const be = (blockSuffix, element) =>
+			blockSuffix && element ? _bem(namespace.value, block, blockSuffix, element, "") : "";
+		const em = (element, modifier) =>
+			element && modifier ? _bem(namespace.value, block, "", element, modifier) : "";
+		const bm = (blockSuffix, modifier) =>
+			blockSuffix && modifier ? _bem(namespace.value, block, blockSuffix, "", modifier) : "";
+		const bem = (blockSuffix, element, modifier) =>
+			blockSuffix && element && modifier
+				? _bem(namespace.value, block, blockSuffix, element, modifier)
+				: "";
 		const is = (name, ...args) => {
 			const state = args.length >= 1 ? args[0] : true;
 			return name && state ? `${statePrefix}${name}` : "";
@@ -573,7 +586,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		const doMeasure = (isInit = false) => {
 			const $rowRef = unref(rowRef);
 			if (!$rowRef) return;
-			const { columns: columns2, onRowHeightChange, rowKey: rowKey2, rowIndex, style } = props;
+			const {
+				columns: columns2,
+				onRowHeightChange,
+				rowKey: rowKey2,
+				rowIndex,
+				style
+			} = props;
 			const { height } = $rowRef.getBoundingClientRect();
 			measured.value = true;
 			nextTick(() => {
@@ -680,7 +699,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			emits: [ITEM_RENDER_EVT, SCROLL_EVT],
 			components: {
 				/* 循环引用 => 异步加载 */
-				ComponentVirtualScrollBar: () => _.$importVue("/common/ui-x/components/data/xTableVir/ComponentVirtualScrollBar.vue")
+				ComponentVirtualScrollBar: () =>
+					_.$importVue(
+						"/common/ui-x/components/data/xTableVir/ComponentVirtualScrollBar.vue"
+					)
 			},
 			setup(props, { emit, expose, slots }) {
 				const ns = useNamespace("vl");
@@ -709,11 +731,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					if (totalColumn === 0 || totalRow === 0) {
 						return [0, 0, 0, 0];
 					}
-					const startIndex = getColumnStartIndexForOffset(props, scrollLeft, unref(cache2));
-					const stopIndex = getColumnStopIndexForStartIndex(props, startIndex, scrollLeft, unref(cache2));
-					const cacheBackward = !isScrolling || xAxisScrollDir === BACKWARD ? Math.max(1, columnCache) : 1;
-					const cacheForward = !isScrolling || xAxisScrollDir === FORWARD ? Math.max(1, columnCache) : 1;
-					return [Math.max(0, startIndex - cacheBackward), Math.max(0, Math.min(totalColumn - 1, stopIndex + cacheForward)), startIndex, stopIndex];
+					const startIndex = getColumnStartIndexForOffset(
+						props,
+						scrollLeft,
+						unref(cache2)
+					);
+					const stopIndex = getColumnStopIndexForStartIndex(
+						props,
+						startIndex,
+						scrollLeft,
+						unref(cache2)
+					);
+					const cacheBackward =
+						!isScrolling || xAxisScrollDir === BACKWARD ? Math.max(1, columnCache) : 1;
+					const cacheForward =
+						!isScrolling || xAxisScrollDir === FORWARD ? Math.max(1, columnCache) : 1;
+					return [
+						Math.max(0, startIndex - cacheBackward),
+						Math.max(0, Math.min(totalColumn - 1, stopIndex + cacheForward)),
+						startIndex,
+						stopIndex
+					];
 				});
 				const rowsToRender = computed(() => {
 					const { totalColumn, totalRow, rowCache } = props;
@@ -722,13 +760,29 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						return [0, 0, 0, 0];
 					}
 					const startIndex = getRowStartIndexForOffset(props, scrollTop, unref(cache2));
-					const stopIndex = getRowStopIndexForStartIndex(props, startIndex, scrollTop, unref(cache2));
-					const cacheBackward = !isScrolling || yAxisScrollDir === BACKWARD ? Math.max(1, rowCache) : 1;
-					const cacheForward = !isScrolling || yAxisScrollDir === FORWARD ? Math.max(1, rowCache) : 1;
-					return [Math.max(0, startIndex - cacheBackward), Math.max(0, Math.min(totalRow - 1, stopIndex + cacheForward)), startIndex, stopIndex];
+					const stopIndex = getRowStopIndexForStartIndex(
+						props,
+						startIndex,
+						scrollTop,
+						unref(cache2)
+					);
+					const cacheBackward =
+						!isScrolling || yAxisScrollDir === BACKWARD ? Math.max(1, rowCache) : 1;
+					const cacheForward =
+						!isScrolling || yAxisScrollDir === FORWARD ? Math.max(1, rowCache) : 1;
+					return [
+						Math.max(0, startIndex - cacheBackward),
+						Math.max(0, Math.min(totalRow - 1, stopIndex + cacheForward)),
+						startIndex,
+						stopIndex
+					];
 				});
-				const estimatedTotalHeight = computed(() => getEstimatedTotalHeight(props, unref(cache2)));
-				const estimatedTotalWidth = computed(() => getEstimatedTotalWidth(props, unref(cache2)));
+				const estimatedTotalHeight = computed(() =>
+					getEstimatedTotalHeight(props, unref(cache2))
+				);
+				const estimatedTotalWidth = computed(() =>
+					getEstimatedTotalWidth(props, unref(cache2))
+				);
 				const windowStyle = computed(() => [
 					{
 						position: "relative",
@@ -755,8 +809,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				const emitEvents = () => {
 					const { totalColumn, totalRow } = props;
 					if (totalColumn > 0 && totalRow > 0) {
-						const [columnCacheStart, columnCacheEnd, columnVisibleStart, columnVisibleEnd] = unref(columnsToRender);
-						const [rowCacheStart, rowCacheEnd, rowVisibleStart, rowVisibleEnd] = unref(rowsToRender);
+						const [
+							columnCacheStart,
+							columnCacheEnd,
+							columnVisibleStart,
+							columnVisibleEnd
+						] = unref(columnsToRender);
+						const [rowCacheStart, rowCacheEnd, rowVisibleStart, rowVisibleEnd] =
+							unref(rowsToRender);
 						emit(ITEM_RENDER_EVT, {
 							columnCacheStart,
 							columnCacheEnd,
@@ -768,7 +828,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							rowVisibleEnd
 						});
 					}
-					const { scrollLeft, scrollTop, updateRequested, xAxisScrollDir, yAxisScrollDir } = unref(states);
+					const {
+						scrollLeft,
+						scrollTop,
+						updateRequested,
+						xAxisScrollDir,
+						yAxisScrollDir
+					} = unref(states);
 					emit(SCROLL_EVT, {
 						xAxisScrollDir,
 						scrollLeft,
@@ -778,7 +844,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					});
 				};
 				const onScroll = e => {
-					const { clientHeight, clientWidth, scrollHeight, scrollLeft, scrollTop, scrollWidth } = e.currentTarget;
+					const {
+						clientHeight,
+						clientWidth,
+						scrollHeight,
+						scrollLeft,
+						scrollTop,
+						scrollWidth
+					} = e.currentTarget;
 					const _states = unref(states);
 					if (_states.scrollTop === scrollTop && _states.scrollLeft === scrollLeft) {
 						return;
@@ -824,9 +897,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				const { onWheel } = useGridWheel(
 					{
 						atXStartEdge: computed(() => states.value.scrollLeft <= 0),
-						atXEndEdge: computed(() => states.value.scrollLeft >= estimatedTotalWidth.value - unref(parsedWidth)),
+						atXEndEdge: computed(
+							() =>
+								states.value.scrollLeft >=
+								estimatedTotalWidth.value - unref(parsedWidth)
+						),
 						atYStartEdge: computed(() => states.value.scrollTop <= 0),
-						atYEndEdge: computed(() => states.value.scrollTop >= estimatedTotalHeight.value - unref(parsedHeight))
+						atYEndEdge: computed(
+							() =>
+								states.value.scrollTop >=
+								estimatedTotalHeight.value - unref(parsedHeight)
+						)
 					},
 					(x, y) => {
 						hScrollbar.value?.onMouseUp?.();
@@ -834,12 +915,21 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						const width = unref(parsedWidth);
 						const height = unref(parsedHeight);
 						scrollTo({
-							scrollLeft: Math.min(states.value.scrollLeft + x, estimatedTotalWidth.value - width),
-							scrollTop: Math.min(states.value.scrollTop + y, estimatedTotalHeight.value - height)
+							scrollLeft: Math.min(
+								states.value.scrollLeft + x,
+								estimatedTotalWidth.value - width
+							),
+							scrollTop: Math.min(
+								states.value.scrollTop + y,
+								estimatedTotalHeight.value - height
+							)
 						});
 					}
 				);
-				const scrollTo = ({ scrollLeft = states.value.scrollLeft, scrollTop = states.value.scrollTop }) => {
+				const scrollTo = ({
+					scrollLeft = states.value.scrollLeft,
+					scrollTop = states.value.scrollTop
+				}) => {
 					scrollLeft = Math.max(scrollLeft, 0);
 					scrollTop = Math.max(scrollTop, 0);
 					const _states = unref(states);
@@ -867,13 +957,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					const estimatedHeight = getEstimatedTotalHeight(props, _cache);
 					const estimatedWidth = getEstimatedTotalWidth(props, _cache);
 					scrollTo({
-						scrollLeft: getColumnOffset(props, columnIdx, alignment, _states.scrollLeft, _cache, estimatedWidth > props.width ? scrollBarWidth2 : 0),
-						scrollTop: getRowOffset(props, rowIndex, alignment, _states.scrollTop, _cache, estimatedHeight > props.height ? scrollBarWidth2 : 0)
+						scrollLeft: getColumnOffset(
+							props,
+							columnIdx,
+							alignment,
+							_states.scrollLeft,
+							_cache,
+							estimatedWidth > props.width ? scrollBarWidth2 : 0
+						),
+						scrollTop: getRowOffset(
+							props,
+							rowIndex,
+							alignment,
+							_states.scrollTop,
+							_cache,
+							estimatedHeight > props.height ? scrollBarWidth2 : 0
+						)
 					});
 				};
 				const getItemStyle = (rowIndex, columnIndex) => {
 					const { columnWidth, direction: direction2, rowHeight } = props;
-					const itemStyleCache = getItemStyleCache.value(clearCache && columnWidth, clearCache && rowHeight, clearCache && direction2);
+					const itemStyleCache = getItemStyleCache.value(
+						clearCache && columnWidth,
+						clearCache && rowHeight,
+						clearCache && direction2
+					);
 					const key = `${rowIndex},${columnIndex}`;
 					if (hasOwn(itemStyleCache, key)) {
 						return itemStyleCache[key];
@@ -931,7 +1039,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								}
 								default: {
 									const { clientWidth, scrollWidth } = windowElement;
-									windowElement.scrollLeft = scrollWidth - clientWidth - scrollLeft;
+									windowElement.scrollLeft =
+										scrollWidth - clientWidth - scrollLeft;
 									break;
 								}
 							}
@@ -954,7 +1063,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					resetAfter
 				});
 				const renderScrollbars = () => {
-					const { scrollbarAlwaysOn, scrollbarStartGap, scrollbarEndGap, totalColumn, totalRow } = props;
+					const {
+						scrollbarAlwaysOn,
+						scrollbarStartGap,
+						scrollbarEndGap,
+						totalColumn,
+						totalRow
+					} = props;
 					const width = unref(parsedWidth);
 					const height = unref(parsedHeight);
 					const estimatedWidth = unref(estimatedTotalWidth);
@@ -1011,7 +1126,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 											data,
 											rowIndex: row
 										}),
-										isScrolling: useIsScrolling ? unref(states).isScrolling : void 0,
+										isScrolling: useIsScrolling
+											? unref(states).isScrolling
+											: void 0,
 										style: getItemStyle(row, column),
 										rowIndex: row
 									};
@@ -1108,7 +1225,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				x = y;
 				y = 0;
 			}
-			if (hasReachedEdge(xOffset, yOffset) && hasReachedEdge(xOffset + x, yOffset + y)) return;
+			if (hasReachedEdge(xOffset, yOffset) && hasReachedEdge(xOffset + x, yOffset + y))
+				return;
 			xOffset += x;
 			yOffset += y;
 			e.preventDefault();
@@ -1227,7 +1345,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		});
 		return style;
 	};
-	const componentToSlot = ComponentLike => (isVNode(ComponentLike) ? props => h(ComponentLike, props) : ComponentLike);
+	const componentToSlot = ComponentLike =>
+		isVNode(ComponentLike) ? props => h(ComponentLike, props) : ComponentLike;
 
 	function castArray() {
 		if (!arguments.length) {
@@ -1417,7 +1536,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		onMounted(() => {
 			resizerStopper = useResizeObserver(sizer, ([entry]) => {
 				const { width, height } = entry.contentRect;
-				const { paddingLeft, paddingRight, paddingTop, paddingBottom } = getComputedStyle(entry.target);
+				const { paddingLeft, paddingRight, paddingTop, paddingBottom } = getComputedStyle(
+					entry.target
+				);
 				const left = Number.parseInt(paddingLeft) || 0;
 				const right = Number.parseInt(paddingRight) || 0;
 				const top = Number.parseInt(paddingTop) || 0;
@@ -1462,10 +1583,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	var __propIsEnum$f = Object.prototype.propertyIsEnumerable;
 	var __objRest = (source, exclude) => {
 		var target = {};
-		for (var prop in source) if (hasOwnProperty.call(source, prop) && exclude.indexOf(prop) < 0) target[prop] = source[prop];
+		for (var prop in source)
+			if (hasOwnProperty.call(source, prop) && exclude.indexOf(prop) < 0)
+				target[prop] = source[prop];
 		if (source != null && __getOwnPropSymbols$f)
 			for (var prop of __getOwnPropSymbols$f(source)) {
-				if (exclude.indexOf(prop) < 0 && __propIsEnum$f.call(source, prop)) target[prop] = source[prop];
+				if (exclude.indexOf(prop) < 0 && __propIsEnum$f.call(source, prop))
+					target[prop] = source[prop];
 			}
 		return target;
 	};
@@ -1542,7 +1666,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		};
 
 		aria.Utils.isFocusable = function (element) {
-			if (element.tabIndex > 0 || (element.tabIndex === 0 && element.getAttribute("tabIndex") !== null)) {
+			if (
+				element.tabIndex > 0 ||
+				(element.tabIndex === 0 && element.getAttribute("tabIndex") !== null)
+			) {
 				return true;
 			}
 
@@ -1722,7 +1849,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				try {
 					const style = element.style[key];
 					if (style) return style;
-					const computed = (_a2 = document.defaultView) == null ? void 0 : _a2.getComputedStyle(element, "");
+					const computed =
+						(_a2 = document.defaultView) == null
+							? void 0
+							: _a2.getComputedStyle(element, "");
 					return computed ? computed[key] : "";
 				} catch (e) {
 					return element.style[key];
@@ -1742,7 +1872,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				if (!isClient) return;
 				let parent = el;
 				while (parent) {
-					if ([window, document, document.documentElement].includes(parent)) return window;
+					if ([window, document, document.documentElement].includes(parent))
+						return window;
 					if (_xUtils.isScroll(parent, isVertical)) return parent;
 					parent = parent.parentNode;
 				}
@@ -1750,7 +1881,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 			throwError,
 			useElementBounding(target, options = {}) {
-				const { reset = true, windowResize = true, windowScroll = true, immediate = true } = options;
+				const {
+					reset = true,
+					windowResize = true,
+					windowScroll = true,
+					immediate = true
+				} = options;
 				const height = Vue.ref(0);
 				const bottom = Vue.ref(0);
 				const left = Vue.ref(0);
@@ -1791,7 +1927,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					() => unrefElement(target),
 					ele => !ele && update()
 				);
-				if (windowScroll) useEventListener("scroll", update, { capture: true, passive: true });
+				if (windowScroll)
+					useEventListener("scroll", update, { capture: true, passive: true });
 				if (windowResize) useEventListener("resize", update, { passive: true });
 				tryOnMounted(() => {
 					if (immediate) update();
@@ -1809,7 +1946,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				};
 			},
 			useWindowSize(options = {}) {
-				const { initialWidth = Infinity, initialHeight = Infinity, listenOrientation = true, includeScrollbar = true } = options;
+				const {
+					initialWidth = Infinity,
+					initialHeight = Infinity,
+					listenOrientation = true,
+					includeScrollbar = true
+				} = options;
 				const width = Vue.ref(initialWidth);
 				const height = Vue.ref(initialHeight);
 				const update = () => {
@@ -1826,11 +1968,22 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				update();
 				tryOnMounted(update);
 				useEventListener("resize", update, { passive: true });
-				if (listenOrientation) useEventListener("orientationchange", update, { passive: true });
+				if (listenOrientation)
+					useEventListener("orientationchange", update, { passive: true });
 				return { width, height };
 			},
-			normalizeComponent(scriptExports, render, staticRenderFns, functionalTemplate, injectStyles, scopeId, moduleIdentifier, shadowMode) {
-				var options = typeof scriptExports === "function" ? scriptExports.options : scriptExports;
+			normalizeComponent(
+				scriptExports,
+				render,
+				staticRenderFns,
+				functionalTemplate,
+				injectStyles,
+				scopeId,
+				moduleIdentifier,
+				shadowMode
+			) {
+				var options =
+					typeof scriptExports === "function" ? scriptExports.options : scriptExports;
 				if (render) {
 					options.render = render;
 					options.staticRenderFns = staticRenderFns;
@@ -1845,7 +1998,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				var hook;
 				if (moduleIdentifier) {
 					hook = function (context) {
-						context = context || (this.$vnode && this.$vnode.ssrContext) || (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext);
+						context =
+							context ||
+							(this.$vnode && this.$vnode.ssrContext) ||
+							(this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext);
 						if (!context && typeof __VUE_SSR_CONTEXT__ !== "undefined") {
 							context = __VUE_SSR_CONTEXT__;
 						}
@@ -1860,7 +2016,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				} else if (injectStyles) {
 					hook = shadowMode
 						? function () {
-								injectStyles.call(this, (options.functional ? this.parent : this).$root.$options.shadowRoot);
+								injectStyles.call(
+									this,
+									(options.functional ? this.parent : this).$root.$options
+										.shadowRoot
+								);
 							}
 						: injectStyles;
 				}

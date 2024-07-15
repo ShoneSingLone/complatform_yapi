@@ -140,7 +140,8 @@ export default async function () {
 						break;
 					case keys.up:
 						Utils.triggerEvent(event.currentTarget, "mouseenter");
-						this.submenu && this.submenu.gotoSubIndex(this.submenu.subMenuItems.length - 1);
+						this.submenu &&
+							this.submenu.gotoSubIndex(this.submenu.subMenuItems.length - 1);
 						prevDef = true;
 						break;
 					case keys.tab:
@@ -283,7 +284,8 @@ export default async function () {
 		data() {
 			return {
 				activeIndex: this.defaultActive,
-				openedMenus: this.defaultOpeneds && !this.collapse ? this.defaultOpeneds.slice(0) : [],
+				openedMenus:
+					this.defaultOpeneds && !this.collapse ? this.defaultOpeneds.slice(0) : [],
 				items: {},
 				submenus: {}
 			};
@@ -318,7 +320,10 @@ export default async function () {
 		},
 		methods: {
 			updateActiveIndex(val) {
-				const item = this.items[val] || this.items[this.activeIndex] || this.items[this.defaultActive];
+				const item =
+					this.items[val] ||
+					this.items[this.activeIndex] ||
+					this.items[this.defaultActive];
 				if (item) {
 					this.activeIndex = item.index;
 					this.initOpenedMenu();

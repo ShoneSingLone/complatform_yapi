@@ -87,7 +87,11 @@ export default async function () {
 				return this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
 			},
 			buttonDisabled() {
-				if (this.$options.propsData.hasOwnProperty("disabled") ? this.disabled : (this.elForm || {}).disabled) {
+				if (
+					this.$options.propsData.hasOwnProperty("disabled")
+						? this.disabled
+						: (this.elForm || {}).disabled
+				) {
 					return true;
 				}
 
@@ -124,7 +128,8 @@ export default async function () {
 			},
 			cptClassName() {
 				const vm = this;
-				const setClass = (prefix, value, defaultString = "") => (value ? `${prefix}${value}` : defaultString);
+				const setClass = (prefix, value, defaultString = "") =>
+					value ? `${prefix}${value}` : defaultString;
 				return [
 					"xBtn el-button",
 					vm?.configs?.class || "",
@@ -255,22 +260,33 @@ export default async function () {
 								content: this.cptDisabledTips
 							},
 							[
-								h("span", { class: ["flex", { middle: vm.cptIcon }], slot: "reference" }, [
-									(() => {
-										if (vm.cptLoading) {
-											return h("i", { class: ["el-icon-loading", { mr4: !!vChildren }] });
-										} else if (vm.cptIcon) {
-											if (/el-/.test(vm.cptIcon)) {
-												return h("i", { class: [vm.cptIcon, { mr4: !!vChildren }] });
+								h(
+									"span",
+									{ class: ["flex", { middle: vm.cptIcon }], slot: "reference" },
+									[
+										(() => {
+											if (vm.cptLoading) {
+												return h("i", {
+													class: ["el-icon-loading", { mr4: !!vChildren }]
+												});
+											} else if (vm.cptIcon) {
+												if (/el-/.test(vm.cptIcon)) {
+													return h("i", {
+														class: [vm.cptIcon, { mr4: !!vChildren }]
+													});
+												} else {
+													return h("xIcon", {
+														icon: vm.cptIcon,
+														class: [{ mr4: !!vChildren }]
+													});
+												}
 											} else {
-												return h("xIcon", { icon: vm.cptIcon, class: [{ mr4: !!vChildren }] });
+												return null;
 											}
-										} else {
-											return null;
-										}
-									})(),
-									vChildren
-								])
+										})(),
+										vChildren
+									]
+								)
 							]
 						)
 					]);
@@ -279,12 +295,19 @@ export default async function () {
 						h("span", { class: ["flex", { middle: vm.cptIcon }] }, [
 							(() => {
 								if (vm.cptLoading) {
-									return h("i", { class: ["el-icon-loading", { mr4: !!vChildren }] });
+									return h("i", {
+										class: ["el-icon-loading", { mr4: !!vChildren }]
+									});
 								} else if (vm.cptIcon) {
 									if (/el-/.test(vm.cptIcon)) {
-										return h("i", { class: [vm.cptIcon, { mr4: !!vChildren }] });
+										return h("i", {
+											class: [vm.cptIcon, { mr4: !!vChildren }]
+										});
 									} else {
-										return h("xIcon", { icon: vm.cptIcon, class: [{ mr4: !!vChildren }] });
+										return h("xIcon", {
+											icon: vm.cptIcon,
+											class: [{ mr4: !!vChildren }]
+										});
 									}
 								} else {
 									return null;

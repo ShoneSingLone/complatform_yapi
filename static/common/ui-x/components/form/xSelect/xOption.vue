@@ -1,5 +1,10 @@
 <template>
-	<li v-if="visible" @mouseenter="hoverItem" @click.stop="selectOptionClick" class="el-select-dropdown__item" :class="cptOptionClass">
+	<li
+		v-if="visible"
+		@mouseenter="hoverItem"
+		@click.stop="selectOptionClick"
+		class="el-select-dropdown__item"
+		:class="cptOptionClass">
 		<slot>
 			<span>{{ currentLabel }}</span>
 		</slot>
@@ -43,7 +48,9 @@ export default async function () {
 				};
 			},
 			isObject() {
-				return Object.prototype.toString.call(this.value).toLowerCase() === "[object object]";
+				return (
+					Object.prototype.toString.call(this.value).toLowerCase() === "[object object]"
+				);
 			},
 
 			currentLabel() {
@@ -64,7 +71,11 @@ export default async function () {
 
 			limitReached() {
 				if (this.select.multiple) {
-					return !this.itemSelected && (this.select.value || []).length >= this.select.multipleLimit && this.select.multipleLimit > 0;
+					return (
+						!this.itemSelected &&
+						(this.select.value || []).length >= this.select.multipleLimit &&
+						this.select.multipleLimit > 0
+					);
 				} else {
 					return false;
 				}
@@ -84,7 +95,12 @@ export default async function () {
 			value(val, oldVal) {
 				const { remote, valueKey } = this.select;
 				if (!this.created && !remote) {
-					if (valueKey && typeof val === "object" && typeof oldVal === "object" && val[valueKey] === oldVal[valueKey]) {
+					if (
+						valueKey &&
+						typeof val === "object" &&
+						typeof oldVal === "object" &&
+						val[valueKey] === oldVal[valueKey]
+					) {
 						return;
 					}
 					this.dispatch("xSelect", "setSelected");
@@ -133,7 +149,9 @@ export default async function () {
 			},
 
 			queryChange(query) {
-				this.visible = new RegExp(escapeRegexpString(query), "i").test(this.currentLabel) || this.created;
+				this.visible =
+					new RegExp(escapeRegexpString(query), "i").test(this.currentLabel) ||
+					this.created;
 				if (!this.visible) {
 					this.select.filteredOptionsCount--;
 				}

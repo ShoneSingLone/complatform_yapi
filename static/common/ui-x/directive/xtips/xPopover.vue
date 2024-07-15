@@ -1,7 +1,10 @@
 <style lang="less"></style>
 <template>
 	<span>
-		<transition :name="transition" @after-enter="handleAfterEnter" @after-leave="handleAfterLeave">
+		<transition
+			:name="transition"
+			@after-enter="handleAfterEnter"
+			@after-leave="handleAfterLeave">
 			<div
 				class="el-popover el-popper"
 				:class="[popperClass, content && 'el-popover--plain']"
@@ -149,7 +152,9 @@ export default async function () {
 					on(popper, "mouseleave", this.handleMouseLeave);
 				} else if (this.trigger === "focus") {
 					if (this.tabindex < 0) {
-						console.warn("[Element Warn][Popover]a negative taindex means that the element cannot be focused by tab key");
+						console.warn(
+							"[Element Warn][Popover]a negative taindex means that the element cannot be focused by tab key"
+						);
 					}
 					if (reference.querySelector("input, textarea")) {
 						on(reference, "focusin", this.doShow);
@@ -225,7 +230,15 @@ export default async function () {
 				if (!reference && this.$refs.wrapper.children) {
 					reference = this.referenceElm = this.$refs.wrapper.children[0];
 				}
-				if (!this.$el || !reference || this.$el.contains(e.target) || reference.contains(e.target) || !popper || popper.contains(e.target)) return;
+				if (
+					!this.$el ||
+					!reference ||
+					this.$el.contains(e.target) ||
+					reference.contains(e.target) ||
+					!popper ||
+					popper.contains(e.target)
+				)
+					return;
 				this.showPopper = false;
 			},
 			handleAfterEnter() {

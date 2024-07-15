@@ -34,7 +34,12 @@ export default async function () {
 			return h(
 				this.tag,
 				{
-					class: ["el-row xRow", this.justify !== "start" ? `is-justify-${this.justify}` : "", this.align ? `is-align-${this.align}` : "", { "el-row--flex": this.type === "flex" }],
+					class: [
+						"el-row xRow",
+						this.justify !== "start" ? `is-justify-${this.justify}` : "",
+						this.align ? `is-align-${this.align}` : "",
+						{ "el-row--flex": this.type === "flex" }
+					],
 					style: this.style
 				},
 				this.$slots.default

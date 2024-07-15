@@ -10,7 +10,9 @@ export default async function () {
 		props: ["configs", "type", "slotname", "row", "index"],
 		methods: {
 			getDisableByDisabledBy() {
-				return _.isFunction(this.disabledBy) ? this.disabledBy(this.row, this.index) : !!this.row[this.disabledBy];
+				return _.isFunction(this.disabledBy)
+					? this.disabledBy(this.row, this.index)
+					: !!this.row[this.disabledBy];
 			},
 			setSelectedRows(rows) {
 				this.configs.data.selected = rows;
@@ -62,7 +64,9 @@ export default async function () {
 							},
 							props: {
 								value: isSelectAll,
-								indeterminate: vm.configs.data.selected.length > 0 && vm.configs.data.selected.length < vm.configs.data.list.length
+								indeterminate:
+									vm.configs.data.selected.length > 0 &&
+									vm.configs.data.selected.length < vm.configs.data.list.length
 							},
 							on: {
 								change: () => {
@@ -70,27 +74,40 @@ export default async function () {
 									const handleSetDisabled = () => {
 										const canSelectRows = (() => {
 											if (_.isFunction(vm.disabledBy)) {
-												return vm.configs.data.list.filter((row, index) => !vm.disabledBy(row, index));
+												return vm.configs.data.list.filter(
+													(row, index) => !vm.disabledBy(row, index)
+												);
 											}
 											if (_.isString(vm.disabledBy)) {
-												return vm.configs.data.list.filter(row => !row[vm.disabledBy]);
+												return vm.configs.data.list.filter(
+													row => !row[vm.disabledBy]
+												);
 											}
 											return vm.configs.data.list;
 										})();
 
-										if (vm.configs.data.selected.length === canSelectRows.length) {
+										if (
+											vm.configs.data.selected.length === canSelectRows.length
+										) {
 											vm.setSelectedRows([]);
 										} else {
-											const currentSelectedRows = canSelectRows.map(row => row[vm.selectedBy]);
+											const currentSelectedRows = canSelectRows.map(
+												row => row[vm.selectedBy]
+											);
 											vm.setSelectedRows(currentSelectedRows);
 										}
 									};
 									/**/
 									const handleUnsetDisabled = () => {
-										if (vm.configs.data.selected.length === vm.configs.data.list.length) {
+										if (
+											vm.configs.data.selected.length ===
+											vm.configs.data.list.length
+										) {
 											vm.setSelectedRows([]);
 										} else {
-											const currentSelectedRows = vm.configs.data.list.map(row => row[vm.selectedBy]);
+											const currentSelectedRows = vm.configs.data.list.map(
+												row => row[vm.selectedBy]
+											);
 											vm.setSelectedRows(currentSelectedRows);
 										}
 									};

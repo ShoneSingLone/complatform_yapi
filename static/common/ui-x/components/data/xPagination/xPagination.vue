@@ -21,7 +21,8 @@ export default async function () {
 	return {
 		name: "xPagination",
 		components: {
-			PrivatePagination: () => _.$importVue("/common/ui-x/components/data/xPagination/PrivatePagination.vue")
+			PrivatePagination: () =>
+				_.$importVue("/common/ui-x/components/data/xPagination/PrivatePagination.vue")
 		},
 		model: {
 			prop: "value",

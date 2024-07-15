@@ -20,7 +20,11 @@
 			</div>
 		</div>
 		<div class="el-calendar__body" v-if="validatedRange.length === 0" key="no-range">
-			<xCalendarDateTable :date="date" :selected-day="realSelectedDay" :first-day-of-week="realFirstDayOfWeek" @pick="pickDay" />
+			<xCalendarDateTable
+				:date="date"
+				:selected-day="realSelectedDay"
+				:first-day-of-week="realFirstDayOfWeek"
+				@pick="pickDay" />
 		</div>
 		<div v-else class="el-calendar__body" key="has-range">
 			<xCalendarDateTable
@@ -153,10 +157,12 @@ export default async function () {
 				// if range exists, should render days in range.
 				if (this.isInRange) {
 					const [start, end] = this.range;
-					const currentMonthRange = rangeArr(end.getDate() - start.getDate() + 1).map((_, index) => ({
-						text: start.getDate() + index,
-						type: "current"
-					}));
+					const currentMonthRange = rangeArr(end.getDate() - start.getDate() + 1).map(
+						(_, index) => ({
+							text: start.getDate() + index,
+							type: "current"
+						})
+					);
 					let remaining = currentMonthRange.length % 7;
 					remaining = remaining === 0 ? 0 : 7 - remaining;
 					const nextMonthRange = rangeArr(remaining).map((_, index) => ({
@@ -168,7 +174,8 @@ export default async function () {
 					const date = this.date;
 					let firstDay = getFirstDayOfMonth(date);
 					firstDay = firstDay === 0 ? 7 : firstDay;
-					const firstDayOfWeek = typeof this.firstDayOfWeek === "number" ? this.firstDayOfWeek : 1;
+					const firstDayOfWeek =
+						typeof this.firstDayOfWeek === "number" ? this.firstDayOfWeek : 1;
 					const offset = (7 + firstDay - firstDayOfWeek) % 7;
 					const prevMonthDays = getPrevMonthLastDays(date, offset).map(day => ({
 						text: day,
@@ -227,7 +234,8 @@ export default async function () {
 								{
 									class: {
 										"el-calendar-table__row": true,
-										"el-calendar-table__row--hide-border": index === 0 && this.hideHeader
+										"el-calendar-table__row--hide-border":
+											index === 0 && this.hideHeader
 									},
 									children: row.map((cell, key) =>
 										h(
@@ -264,7 +272,15 @@ export default async function () {
 				type: Array,
 				validator(range) {
 					if (Array.isArray(range)) {
-						return range.length === 2 && range.every(item => typeof item === "string" || typeof item === "number" || item instanceof Date);
+						return (
+							range.length === 2 &&
+							range.every(
+								item =>
+									typeof item === "string" ||
+									typeof item === "number" ||
+									item instanceof Date
+							)
+						);
 					} else {
 						return true;
 					}
@@ -313,7 +329,11 @@ export default async function () {
 
 			rangeValidator(date, isStart) {
 				const firstDayOfWeek = this.realFirstDayOfWeek;
-				const expected = isStart ? firstDayOfWeek : firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+				const expected = isStart
+					? firstDayOfWeek
+					: firstDayOfWeek === 0
+						? 6
+						: firstDayOfWeek - 1;
 				const message = `${isStart ? "start" : "end"} of range should be ${weekDays[expected]}.`;
 				if (date.getDay() !== expected) {
 					console.warn("[ElementCalendar]", message, "Invalid range will be ignored.");
@@ -404,7 +424,9 @@ export default async function () {
 					let startDay = new Date(start.getFullYear(), start.getMonth() + 1, 1);
 					const lastDay = this.toDate(startDay.getTime() - oneDay);
 					if (!validateRangeInOneMonth(startDay, end)) {
-						console.warn("[ElementCalendar]start time and end time interval must not exceed two months");
+						console.warn(
+							"[ElementCalendar]start time and end time interval must not exceed two months"
+						);
 						return [];
 					}
 					// 第一个月的时间范围
