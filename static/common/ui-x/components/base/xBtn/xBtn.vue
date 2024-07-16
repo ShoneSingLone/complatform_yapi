@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	/* 定制颜色基本上就是 text hover，focus active disabled */
 	const { useProps } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 	return defineComponent({
@@ -84,7 +84,7 @@ export default async function () {
 				if (this.configs?.size) {
 					return this.configs.size;
 				}
-				return this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
 			},
 			buttonDisabled() {
 				if (

@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const { calcTextareaHeight } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 
 	return defineComponent({
@@ -217,7 +217,7 @@ export default async function () {
 				return _.merge({}, this.textareaCalcStyle, { resize: this.resize });
 			},
 			inputSize() {
-				return this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
 			},
 			inputDisabled() {
 				return this.disabled || (this.elForm || {}).disabled;

@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const { useProps } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 	const RULES = await _.$importVue("/common/utils/rules.vue");
 	const { EVENT_ARRAY } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
@@ -212,7 +212,7 @@ export default async function () {
 				if (_.$isInput(this.cptConfigs.isShowItemColon)) {
 					return this.cptConfigs.isShowItemColon;
 				} else {
-					return this.$xUiConfigs.xItem_isShowItemColon;
+					return PRIVATE_GLOBAL.x_item_is_show_item_colon;
 				}
 			},
 			cptStyle() {

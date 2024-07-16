@@ -110,7 +110,7 @@
 	</transition>
 </template>
 <script lang="ts">
-export default async function ({ options, modalConfigs }) {
+export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 	modalConfigs = modalConfigs || {};
 	function useModal(vm) {
 		onMounted(() => {
@@ -326,7 +326,7 @@ export default async function ({ options, modalConfigs }) {
 		},
 		computed: {
 			cptCloseIcon() {
-				return this.$xUiConfigs.xModal_closeIcon;
+				return PRIVATE_GLOBAL.x_modal_close_icon;
 			},
 			cptTitle() {
 				return options.title;

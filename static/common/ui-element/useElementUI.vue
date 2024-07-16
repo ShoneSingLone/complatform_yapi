@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function (options) {
+export default async function ({ PRIVATE_GLOBAL, ...options }) {
 	if (!window.ELEMENT) {
 		await _.$appendScript("/common/ui-element/index.min.js");
 		await _.$appendScript(`/common/ui-element/i18n/${options.I18N_LANGUAGE}.js`);
@@ -11,7 +11,6 @@ export default async function (options) {
 		ELEMENT.locale(LOCALE_MAP[window.I18N_LANGUAGE]);
 
 		Vue.prototype.$ELEMENT = options;
-		Vue.prototype.$xUiConfigs = options;
 	}
 	return window.ELEMENT;
 }

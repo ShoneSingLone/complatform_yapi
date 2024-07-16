@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	/* xPagination  后台是以0开始，注意current的加减*/
 	return {
 		name: "xPagination",
@@ -33,7 +33,7 @@ export default async function () {
 		data(vm) {
 			return {
 				pagination: {},
-				currentPaginationComponent: vm.$xUiConfigs.xPagination_paginationComponent
+				currentPaginationComponent: PRIVATE_GLOBAL.x_pagination_pagination_component
 			};
 		},
 		mounted() {
@@ -61,7 +61,7 @@ export default async function () {
 		},
 		computed: {
 			cptPaginationClass() {
-				let position = this.position || this.$xUiConfigs.xPagination_position;
+				let position = this.position || PRIVATE_GLOBAL.x_pagination_position;
 				return ["xPagination flex", position];
 			},
 			isShowElPagination() {

@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	return defineComponent({
 		name: "ElTag",
 		props: {
@@ -29,7 +29,7 @@ export default async function () {
 		},
 		computed: {
 			tagSize() {
-				return this.size || (this.$xUiConfigs || {}).size;
+				return this.size || PRIVATE_GLOBAL.x_ui_size;
 			}
 		},
 		render(h) {

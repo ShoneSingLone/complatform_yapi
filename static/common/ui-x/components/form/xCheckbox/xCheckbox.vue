@@ -53,7 +53,7 @@
 	</label>
 </template>
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	return defineComponent({
 		name: "ElCheckbox",
 		inject: {
@@ -154,7 +154,7 @@ export default async function () {
 
 			checkboxSize() {
 				const temCheckboxSize =
-					this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
+					this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
 				return this.isGroup
 					? this._checkboxGroup.checkboxGroupSize || temCheckboxSize
 					: temCheckboxSize;

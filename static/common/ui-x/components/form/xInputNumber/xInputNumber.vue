@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const { useFocus } = await _.$importVue("/common/utils/hooks.vue");
 
 	return defineComponent({
@@ -173,7 +173,7 @@ export default async function () {
 				return (this.elFormItem || {}).elFormItemSize;
 			},
 			inputNumberSize() {
-				return this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
 			},
 			inputNumberDisabled() {
 				return this.disabled || !!(this.elForm || {}).disabled;

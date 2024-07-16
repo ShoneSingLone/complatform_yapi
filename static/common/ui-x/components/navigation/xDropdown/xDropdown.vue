@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const [Clickoutside] = await Promise.all([
 		_.$importVue("/common/ui-x/directive/clickoutside.vue")
 	]);
@@ -68,7 +68,7 @@ export default async function () {
 
 		computed: {
 			dropdownSize() {
-				return this.size || (this.$xUiConfigs || {}).size;
+				return this.size || PRIVATE_GLOBAL.x_ui_size;
 			}
 		},
 

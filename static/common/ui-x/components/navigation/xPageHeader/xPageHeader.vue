@@ -13,7 +13,7 @@
 	</div>
 </template>
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	return defineComponent({
 		name: "ElPageHeader",
 		props: {
@@ -28,7 +28,7 @@ export default async function () {
 		},
 		computed: {
 			cptBackIcon() {
-				return this.backIcon || this.$xUiConfigs.xPageTitle_backIcon;
+				return this.backIcon || PRIVATE_GLOBAL.x_page_title_back_icon;
 			}
 		}
 	});

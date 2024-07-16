@@ -338,10 +338,10 @@
 
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
-	let xTableVir_emptyComponent =
-		PRIVATE_GLOBAL.xTableVir_emptyComponent ||
+	let x_table_vir_empty_component =
+		PRIVATE_GLOBAL.x_table_vir_empty_component ||
 		"/common/ui-x/components/data/xTableVir/xTableEmptyRender.vue";
-	const { emptyRender } = await _.$importVue(xTableVir_emptyComponent);
+	const { emptyRender } = await _.$importVue(x_table_vir_empty_component);
 	_.each(
 		{
 			ComponentTableV2HeaderRow:
@@ -3037,7 +3037,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				$vSlots: {
 					default: ({ width, height }) => {
 						const xTableVirProps = {
-							staticClass: ["xDataGrid_table", vm.$xUiConfigs.size].join(" "),
+							staticClass: ["xDataGrid_table", PRIVATE_GLOBAL.x_ui_size].join(" "),
 							attrs: { "data-table": vm._uid },
 							width,
 							height: this.getHeight(height),

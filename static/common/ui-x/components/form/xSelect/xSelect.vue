@@ -146,7 +146,7 @@
 	</div>
 </template>
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const [
 		{ useFocus },
 		{ addResizeListener, removeResizeListener },
@@ -247,7 +247,7 @@ export default async function () {
 			},
 
 			selectSize() {
-				return this.size || this._elFormItemSize || (this.$xUiConfigs || {}).size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
 			},
 
 			selectDisabled() {

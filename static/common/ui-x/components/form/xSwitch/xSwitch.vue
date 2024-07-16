@@ -175,7 +175,7 @@
 	</div>
 </template>
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const [{ useFocus }] = await Promise.all([_.$importVue("/common/utils/hooks.vue")]);
 
 	return defineComponent({
@@ -290,7 +290,7 @@ export default async function () {
 		},
 		mounted() {
 			/* istanbul ignore if */
-			this.coreWidth = this.width || this.$xUiConfigs.xSwitch_width;
+			this.coreWidth = this.width || PRIVATE_GLOBAL.x_switch_width;
 			if (this.activeColor || this.inactiveColor) {
 				this.setBackgroundColor();
 			}

@@ -4,28 +4,26 @@ export default async function ({
 	size,
 	zIndex,
 	bootstrap,
-	xTableVir_emptyComponent,
-	xSwitch_width,
-	xPageTitle_backIcon,
-	xItem_isShowItemColon,
-	xModal_closeIcon,
-	xPagination_paginationComponent,
-	xPagination_position
+	x_table_vir_empty_component,
+	x_switch_width,
+	x_page_title_back_icon,
+	x_item_is_show_item_colon,
+	x_modal_close_icon,
+	x_pagination_pagination_component,
+	x_pagination_position
 }) {
 	((/* ui 默认配置 */) => {
 		/* tableVir empty 的默认组件地址 */
-		PRIVATE_GLOBAL.xTableVir_emptyComponent = xTableVir_emptyComponent;
-
-		Vue.prototype.$xUiConfigs = _.merge({
-			size: size || "small",
-			zIndex: zIndex || 2e3,
-			xSwitch_width: xSwitch_width || 40,
-			xPageTitle_backIcon: xPageTitle_backIcon || "icon_back",
-			xItem_isShowItemColon: xItem_isShowItemColon || false,
-			xModal_closeIcon: xModal_closeIcon || "icon_close",
-			xPagination_paginationComponent: xPagination_paginationComponent || "PrivatePagination",
-			xPagination_position: xPagination_position || "end"
-		});
+		PRIVATE_GLOBAL.x_ui_size = size || "small";
+		PRIVATE_GLOBAL.x_ui_z_index = zIndex || 2e3;
+		PRIVATE_GLOBAL.x_table_vir_empty_component = x_table_vir_empty_component;
+		PRIVATE_GLOBAL.x_switch_width = x_switch_width || 40;
+		PRIVATE_GLOBAL.x_page_title_back_icon = x_page_title_back_icon || "icon_back";
+		PRIVATE_GLOBAL.x_item_is_show_item_colon = x_item_is_show_item_colon || false;
+		PRIVATE_GLOBAL.x_modal_close_icon = x_modal_close_icon || "icon_close";
+		PRIVATE_GLOBAL.x_pagination_pagination_component =
+			x_pagination_pagination_component || "PrivatePagination";
+		PRIVATE_GLOBAL.x_pagination_position = x_pagination_position || "end";
 	})();
 	/* @ts-ignore */
 	window._api = window._api || {};

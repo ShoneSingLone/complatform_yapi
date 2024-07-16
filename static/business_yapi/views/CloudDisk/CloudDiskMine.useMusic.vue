@@ -174,13 +174,20 @@ export default async function () {
 					`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?id=${_id}`
 				);
 				(async () => {
+					navigator.mediaSession.metadata = new MediaMetadata({
+						title: record.name,
+						artist: "",
+						album: "",
+						artwork: []
+					});
+
 					try {
 						const {
 							data: { title, artist, album, image }
 						} = await _api.yapi.audioDetail({
 							id: _id
 						});
-						/* 
+						/*
 						artwork 是一个包含多个图片对象的数组。每个图片对象具有 src（图片的链接）、sizes（图片尺寸）和 type（图片类型）属性。通过设置这些图片信息，可以在支持的环境中（如某些浏览器）显示与媒体相关的图片，例如专辑封面等。
 						*/
 						navigator.mediaSession.metadata = new MediaMetadata({
