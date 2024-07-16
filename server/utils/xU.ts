@@ -456,6 +456,9 @@ function schemaToJson(schema, options = {}) {
 }
 
 function $response(data, errcode = 0, message = "") {
+	if (errcode !== 0) {
+		xU.applog.error(message);
+	}
 	return {
 		errcode: errcode || 0,
 		message: message || "",

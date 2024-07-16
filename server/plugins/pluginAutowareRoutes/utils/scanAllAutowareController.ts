@@ -11,14 +11,19 @@ async function scanAllAutowareController(app) {
 		]);
 
 		const autoControllers = _n.reduce(
-			files.sort(),
+			xU._.sortBy(files, i => i),
 			(target, file) => {
-				const fileName = xU.path.basename(file);
-				const [_, controllerName] = String(fileName).match(/^(.*).ts/) || [];
-				if (controllerName) {
-					target.push([file, controllerName]);
+				try {
+					const fileName = xU.path.basename(file);
+					const [controllerName, ext] = String(fileName).split(".");
+					if (controllerName && ext === "ts") {
+						target.push([file, controllerName]);
+					}
+				} catch (error) {
+					xU.applog.error(error);
+				} finally {
+					return target;
 				}
-				return target;
 			},
 			[]
 		);
@@ -31,11 +36,11 @@ async function scanAllAutowareController(app) {
 					controllerName: controllerInfo[1]
 				});
 			} catch (error) {
-				console.error(error);
+				xU.applog.error(error);
 			}
 		}
 	} catch (error) {
-		console.error(error);
+		xU.applog.error(error);
 	}
 
 	return {

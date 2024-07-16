@@ -116,6 +116,11 @@ export default async function () {
 						data
 					});
 				},
+				audioDetail(data) {
+					return _.$ajax.get("/api/audio/detail", {
+						data
+					});
+				},
 				resourceCloudDiskShardUpload({ formData, callback }) {
 					return _.$ajax.upload({
 						url: "/api/resource/cloud_disk_shard_upload",

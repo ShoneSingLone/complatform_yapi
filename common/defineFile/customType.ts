@@ -958,6 +958,10 @@ Audio:{
 								
 
 								
+								getByMd5:(...args:any)=> Promise<any>;
+								
+
+								
 								save:(...args:any)=> Promise<any>;
 								 };
         }; 

@@ -113,7 +113,6 @@ function appAddRoutes(app, routes) {
 				} catch (err) {
 					ctx.body = xU.$response(null, 500, err.message);
 					xU.applog.error(err, route);
-
 					return true;
 				}
 			} else {

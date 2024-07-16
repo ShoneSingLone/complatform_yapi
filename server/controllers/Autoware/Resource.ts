@@ -1,3 +1,4 @@
+const { getAudioDetail } = require("./Audio.service");
 const mime = require("mime-types");
 const fs = require("fs");
 const path = require("path");
@@ -345,16 +346,8 @@ module.exports = {
 							if (stat.isFile()) {
 								const type = getType(targetPath);
 								if (isAudioType(type)) {
-									const record = await getAudioRecord({
-										filePath: targetPath,
-										id: dirpath,
-										size: stat.size,
-										type
-									});
-									ctx.body = xU.$response({
-										type: "audio",
-										record
-									});
+									const record = await getAudioDetail({});
+									ctx.body = xU.$response({ type: "audio", record });
 									return;
 								}
 							}
@@ -384,71 +377,37 @@ module.exports = {
 					const { headers, payload } = ctx;
 					const { id } = payload;
 					let resourcePath;
+					let resource;
 					try {
-						const resource = await orm.Resource.getResourceById(id);
+						resource = await orm.Resource.getResourceById(id);
 						resourcePath = resource.path;
 					} catch (error) {
-						ctx.body = xU.$response(
-							{
-								msg: "not found"
-							},
-							404,
-							"Not Found"
-						);
+						return (ctx.body = xU.$response(null, 404, "Not Found"));
 					}
-
-					const stat = await fs.promises.stat(resourcePath);
-					if (stat.isFile()) {
-						const type = getType(resourcePath);
-						if (isAudioType(type)) {
-							const record = await getAudioRecord({
-								filePath: resourcePath,
-								id,
-								size: stat.size,
-								type
-							});
-							const total = record.size;
-							try {
-								if (headers.range) {
-									const range = headers.range;
-									const parts = range.replace(/bytes=/, "").split("-");
-									const partialstart = parseInt(parts[0], 10);
-									const partialend = parseInt(parts[1], 10);
-
-									let start = partialstart;
-									const end = partialend ? partialend : total - 1;
-									const chunksize = end - start + 1;
-
-									ctx.status = 206;
-									ctx.set({
-										"Content-Range": "bytes " + start + "-" + end + "/" + total,
-										"Accept-Ranges": "bytes",
-										"Content-Length": chunksize,
-										"Content-Type": record.type || "audio/mp3"
-									});
-									ctx.body = fs.createReadStream(resourcePath, { start, end });
-								} else {
-									ctx.set({
-										"Content-Type": record.type || "audio/mp3",
-										"Accept-Ranges": "bytes",
-										"Content-Length": total
-									});
-									ctx.body = fs.createReadStream(resourcePath);
-								}
-							} catch (error) {
-								ctx.body = xU.$response(null, 400, error);
+					const type = getType(resourcePath);
+					if (isAudioType(type)) {
+						const { size: total, type } = await getAudioDetail({
+							resource,
+							uid: this.$uid
+						});
+						try {
+							if (headers.range) {
+								return RangeAudio({
+									headers,
+									total,
+									ctx,
+									type,
+									resourcePath
+								});
+							} else {
+								return StaticAudio(ctx, type, total, resourcePath);
 							}
-
-							return;
+						} catch (error) {
+							return (ctx.body = xU.$response(null, 400, error));
 						}
+					} else {
+						return (ctx.body = xU.$response(null, 404, "Not Found"));
 					}
-					ctx.body = xU.$response(
-						{
-							msg: "not found"
-						},
-						404,
-						"Not Found"
-					);
 				}
 			}
 		},
@@ -1031,6 +990,35 @@ module.exports = {
 	}
 };
 
+function StaticAudio(ctx, type, total, resourcePath) {
+	ctx.set({
+		"Content-Type": type || "audio/mp3",
+		"Accept-Ranges": "bytes",
+		"Content-Length": total
+	});
+	ctx.body = fs.createReadStream(resourcePath);
+}
+
+function RangeAudio({ headers, total, ctx, type, resourcePath }) {
+	const range = headers.range;
+	const parts = range.replace(/bytes=/, "").split("-");
+	const partialstart = parseInt(parts[0], 10);
+	const partialend = parseInt(parts[1], 10);
+
+	let start = partialstart;
+	const end = partialend ? partialend : total - 1;
+	const chunksize = end - start + 1;
+
+	ctx.status = 206;
+	ctx.set({
+		"Content-Range": "bytes " + start + "-" + end + "/" + total,
+		"Accept-Ranges": "bytes",
+		"Content-Length": chunksize,
+		"Content-Type": type || "audio/mp3"
+	});
+	ctx.body = fs.createReadStream(resourcePath, { start, end });
+}
+
 async function ifUploadAllChunckMergeIt({
 	fileHash,
 	chunkTotal,
@@ -1144,19 +1132,12 @@ async function asyncResolvePathFileOrDir(
 }
 
 function isAudioType(type) {
-	return ["audio/mpeg", "audio/x-flac", "audio/mp4"].includes(type);
+	return (
+		/^audio/.test(type) ||
+		["audio/mpeg", "audio/x-flac", "audio/mp4"].includes(type)
+	);
 }
 function isImageType(type) {}
 function isVideoType(type) {
 	return ["video/mp4"].includes(type);
-}
-
-async function getAudioRecord({ filePath, id, size, type }) {
-	const { parseFile } = await import("music-metadata");
-	const metadata = await parseFile(filePath);
-	const record = _n.merge(
-		{ dirpath: id, id: id, type, size, isPrivate: true },
-		metadata.common
-	);
-	return record;
 }

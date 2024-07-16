@@ -74,12 +74,15 @@ class ModelResource extends ModelBase {
 		}
 	}
 
-	getResourceById(_id) {
-		return this.model
-			.findOne({
-				_id
-			})
-			.exec();
+	getResourceById(_id, uploadBy = "") {
+		const params = {
+			_id
+		};
+
+		if (uploadBy) {
+			params.uploadBy = uploadBy;
+		}
+		return this.model.findOne(params).exec();
 	}
 	getResourceByName(name, fileId) {
 		const params = { name };

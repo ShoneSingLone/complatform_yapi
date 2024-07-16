@@ -128,13 +128,7 @@ export default async function () {
 					playAudio(record);
 
 					stateAudio.AudioArray = _.uniqBy(
-						[
-							...stateAudio.AudioArray,
-							..._.filter(resource, i => i.type === "audio").map(i => {
-								i.useId = i._id;
-								return i;
-							})
-						],
+						[...stateAudio.AudioArray, ..._.filter(resource, i => i.type === "audio")],
 						"_id"
 					);
 					_.$idb.set("AudioArray", stateAudio.AudioArray);
@@ -145,19 +139,19 @@ export default async function () {
 			}
 
 			async function playVideo(record) {
-				const { path, name, useId } = record;
+				const { path, _id } = record;
 				let uri = encodeURIComponent(JSON.stringify(path));
 
 				return _.$openModal({
 					title: "video player",
 					url: "@/views/explore/execTools/video/VideoPlayer.dialog.vue",
 					uri,
-					id: useId
+					id: _id
 				});
 			}
 
 			async function playAudio(record) {
-				const { path, name, useId } = record;
+				const { path, name, _id } = record;
 				stopSong();
 				function canPlay() {
 					return new Promise(resolve => {
@@ -177,14 +171,29 @@ export default async function () {
 				let uri = encodeURIComponent(JSON.stringify(path));
 				stateAudio.audioName = name;
 				stateAudio.audio.src = Vue._common_utils.appendToken(
-					`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?uri=${uri}&id=${useId}`
+					`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?id=${_id}`
 				);
-				navigator.mediaSession.metadata = new MediaMetadata({
-					title: "当前音乐标题",
-					artist: "作者名称",
-					album: "专辑名称",
-					artwork: { src: "当前音乐图片路径" }
-				});
+				(async () => {
+					try {
+						const {
+							data: { title, artist, album, image }
+						} = await _api.yapi.audioDetail({
+							id: _id
+						});
+						/* 
+						artwork 是一个包含多个图片对象的数组。每个图片对象具有 src（图片的链接）、sizes（图片尺寸）和 type（图片类型）属性。通过设置这些图片信息，可以在支持的环境中（如某些浏览器）显示与媒体相关的图片，例如专辑封面等。
+						*/
+						navigator.mediaSession.metadata = new MediaMetadata({
+							title,
+							artist,
+							album,
+							artwork: [{ src: image || "", sizes: "", type: "" }]
+						});
+					} catch (error) {
+						console.error(error);
+					} finally {
+					}
+				})();
 				await canPlay();
 				stateAudio.audio.play();
 				stateAudio.isPlaying = true;

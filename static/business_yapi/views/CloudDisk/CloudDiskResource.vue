@@ -378,7 +378,6 @@ export default async function () {
 					this.APP.pushDir(item);
 				}
 				if (["audio", "video"].includes(item.type)) {
-					item.useId = item._id;
 					this.APP.playMedia(item, { resource: this.resourceList });
 				}
 			},
