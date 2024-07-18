@@ -44,7 +44,17 @@
 			v-xtips="{ content: '资源访问', trigger: 'hover', placement: 'left' }">
 			<xIcon icon="_hamburger" />
 		</a>
+		<xGap r="4" />
+		<a
+			@click="deploy"
+			v-if="cptIsAdmin"
+			class="flex middle"
+			target="_blank"
+			v-xtips="{ content: '部署项目', trigger: 'hover', placement: 'left' }">
+			<xIcon icon="_hamburger" />
+		</a>
 		<xGap f />
+		{{ cptIsAdmin }}
 		<YapiToolUserBar />
 	</header>
 </template>
@@ -63,6 +73,9 @@ export default async function () {
 			return {};
 		},
 		computed: {
+			cptIsAdmin() {
+				return this.APP.user.role === "admin";
+			},
 			hoppscotchHref() {
 				return _.$aHashLink("/hoppscotch", {});
 			},
@@ -89,6 +102,29 @@ export default async function () {
 			}
 		},
 		methods: {
+			async deploy() {
+				const TRIGGER_EVENT_NAME = "PRIVATE_WS_MESSAGE";
+				let WS;
+				try {
+					WS = await _.$importVue("/common/libs/socket.io.vue", {
+						TRIGGER_EVENT_NAME
+					});
+
+					$(window).on(TRIGGER_EVENT_NAME, (event, { payload }) => {
+						if (payload?.data) {
+							_.$msg(payload.data);
+						}
+					});
+
+					WS.emit("all", { msg: "yo central, are you on the line?" });
+					await _.$sleep(1000 * 3);
+					await _.$ajax.get("/api/super_admin/deploy");
+				} catch (error) {
+					console.error(error);
+				} finally {
+					WS?.close && WS.close();
+				}
+			},
 			goToGroup() {
 				this.$router.push("/api/group");
 			}

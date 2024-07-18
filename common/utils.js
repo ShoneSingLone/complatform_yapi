@@ -4,6 +4,42 @@ const filter = require("./power-string").filter;
 const stringUtils = require("./power-string").utils;
 const json5 = require("json5");
 const Ajv = require("ajv");
+const iconv = require("iconv-lite");
+var exec = require("child_process").exec;
+
+const stdDecode = content => {
+	content = iconv.decode(content, "gbk");
+	return content.replace("\r", "").replace("\n", "");
+};
+
+function log(data, options = {}) {
+	data = stdDecode(data);
+	console.log(data);
+	if (options.log) {
+		options.log(data);
+	}
+	return data;
+}
+exports.log = log;
+
+function execCmd(cmd, options) {
+	let startTime = Date.now();
+	return new Promise((resolve, reject) => {
+		const result = exec(cmd, { maxBuffer: 1024 * 2000, encoding: "gbk" });
+		result.stdout.on("data", msg => log(msg, options));
+		result.stderr.on("data", msg => log(msg, options));
+		result.on("close", code => {
+			const msg = `🚀 exec ${cmd} spend time ${
+				(Date.now() - startTime) / 1000
+			}s`;
+			console.log(msg);
+			log(msg, options);
+			resolve();
+		});
+	});
+}
+
+exports.execCmd = execCmd;
 
 /**
  * 作用：解析规则串 key ，然后根据规则串的规则以及路径找到在 json 中对应的数据

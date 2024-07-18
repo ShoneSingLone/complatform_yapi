@@ -108,11 +108,12 @@ const HANDLER = {
 	logout: wsHandler.toAllClient
 };
 
-const middlewareWebsocket = () => async (ctx, next) => {
+const old_middlewareWebsocket = () => async (ctx, next) => {
 	console.log("app websocket", ctx.path);
 	const PATH_STRATEGY = new Map();
 
 	PATH_STRATEGY.set(`/ws`, async () => {
+		debugger;
 		/* 默认的root */
 		const vm = new ControllerBase(ctx);
 		await vm.checkLogin(ctx);
@@ -166,6 +167,31 @@ const middlewareWebsocket = () => async (ctx, next) => {
 	}
 };
 
+const middlewareWebsocket = () => async (ctx, next) => {
+	console.log("app websocket", ctx.path);
+	const PATH_STRATEGY = new Map();
+
+	PATH_STRATEGY.set(`/ws`, async () => {
+		debugger;
+		/* 默认的root */
+		const vm = new ControllerBase(ctx);
+		await vm.checkLogin(ctx);
+		if (vm.$user) {
+		}
+	});
+
+	try {
+		/* complatform项目使用 /ws/api前缀 */
+		const controller = PATH_STRATEGY.get(ctx.path);
+		if (controller) {
+			return controller();
+		}
+		return next();
+	} catch (error) {
+		xU.applog.error(error);
+	}
+};
+
 const koaRouter = require("koa-router");
 const { ControllerInterface } = require("server/controllers/interface");
 
@@ -193,7 +219,7 @@ function addPluginRouter(config) {
 	);
 }
 
-exports.appSetupWebsocket = function appSetupWebsocket(app) {
+exports.old_appSetupWebsocket = function appSetupWebsocket({ app, appSocket }) {
 	xU.createAction(
 		wsRouter,
 		"/api",
@@ -213,5 +239,51 @@ exports.appSetupWebsocket = function appSetupWebsocket(app) {
 				message: "No Fount."
 			})
 		);
+	});
+};
+
+exports.appSetupWebsocket = function appSetupWebsocket({ app, appSocket }) {
+	function msg(msg, ctx, payload = {}) {
+		return {
+			msg,
+			id: ctx.socket.id,
+			payload
+		};
+	}
+	/**
+	 * Socket middlewares
+	 */
+	appSocket.use(async function (ctx, next) {
+		const start = new Date();
+		await next();
+		const ms = new Date() - start;
+		console.log(`${ctx.event} WS ${ms}ms`, app);
+	});
+	/**
+	 * Socket handlers
+	 */
+	appSocket.on("connection", ctx => {
+		appSocket.broadcast("connections", msg("connection", ctx));
+		console.log(ctx === this);
+		ctx.socket.emit("connection", msg("self", ctx));
+	});
+
+	appSocket.on("disconnect", ctx => {
+		appSocket.broadcast("disconnect", msg("disconnect", ctx));
+	});
+	appSocket.on("all", ctx => {
+		appSocket.broadcast("message", msg("all", ctx));
+	});
+	appSocket.on("other", ctx => {
+		ctx.socket.broadcast("message", msg("other", ctx));
+		/* 回执 */
+		ctx.acknowledge(`send to other,callback with ctx.acknowledge`);
+	});
+	appSocket.on("self", ctx => {
+		try {
+			ctx.socket.emit("message", msg("other", ctx));
+		} catch (error) {
+			console.error(error);
+		}
 	});
 };

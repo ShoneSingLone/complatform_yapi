@@ -1171,6 +1171,13 @@ const xU = new Proxy(
 			}
 			return basepath;
 		},
+		socketMsg(msg, ctx, payload = {}) {
+			return {
+				msg,
+				id: ctx.socket.id,
+				payload
+			};
+		},
 		isInput(val) {
 			if (val) {
 				return true;

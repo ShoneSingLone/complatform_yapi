@@ -1,58 +1,67 @@
-const nodeID3 = require('../index.js')
+const nodeID3 = require("../index.js");
 //const fs = require('fs')
-
 
 //tags.image is the path to the image (only png/jpeg files allowed)
 const tags = {
-  title: "Tomorrow",
-  artist: "Kevin Penkin",
-  album: "asdfd",
-  APIC: "./example/mia_cover.jpg",
-  year: 2017,
-  comment: {
-    language: "eng",
-    text: "some text"
-  },
-  TRCK: "27",
-  TXXX: [{
-    description: "testtt.",
-    value: "ja moin."
-  }, {
-    description: "testtt2.",
-    value: "ja moin2."
-  }, {
-    description: "testtt3.",
-    value: "ja moin3."
-  }],
-  private: [{
-    ownerIdentifier: "AbC",
-    data: "asdoahwdiohawdaw"
-  }, {
-    ownerIdentifier: "AbCSSS",
-    data: Buffer.from([0x01, 0x02, 0x05])
-  }],
-  chapter: [{
-    elementID: "Hey!",
-    startTimeMs: 5000,
-    endTimeMs: 8000,
-    tags: {
-      title: "abcdef",
-      artist: "akshdas"
-    }
-  }, {
-    elementID: "Hey2!",
-    startTimeMs: 225000,
-    endTimeMs: 8465000,
-    tags: {
-      artist: "abcdef222"
-    }
-  }]
-}
+	title: "Tomorrow",
+	artist: "Kevin Penkin",
+	album: "asdfd",
+	APIC: "./example/mia_cover.jpg",
+	year: 2017,
+	comment: {
+		language: "eng",
+		text: "some text"
+	},
+	TRCK: "27",
+	TXXX: [
+		{
+			description: "testtt.",
+			value: "ja moin."
+		},
+		{
+			description: "testtt2.",
+			value: "ja moin2."
+		},
+		{
+			description: "testtt3.",
+			value: "ja moin3."
+		}
+	],
+	private: [
+		{
+			ownerIdentifier: "AbC",
+			data: "asdoahwdiohawdaw"
+		},
+		{
+			ownerIdentifier: "AbCSSS",
+			data: Buffer.from([0x01, 0x02, 0x05])
+		}
+	],
+	chapter: [
+		{
+			elementID: "Hey!",
+			startTimeMs: 5000,
+			endTimeMs: 8000,
+			tags: {
+				title: "abcdef",
+				artist: "akshdas"
+			}
+		},
+		{
+			elementID: "Hey2!",
+			startTimeMs: 225000,
+			endTimeMs: 8465000,
+			tags: {
+				artist: "abcdef222"
+			}
+		}
+	]
+};
 
-const success = nodeID3.write(tags, "./example/test.mp3")
-console.log(success)
+const success = nodeID3.write(tags, "./example/test.mp3");
+console.log(success);
 
-console.log(nodeID3.read("./example/test.mp3").chapter[0].tags)
+console.log(nodeID3.read("./example/test.mp3").chapter[0].tags);
 
 /*nodeID3.create(tags, function(frame) {
   console.log(frame)
@@ -76,7 +85,6 @@ console.log(nodeID3.read("./example/test.mp3").chapter[0].tags)
 */
 
 //console.log(nodeID3.read("./example/Kevin Penkin - Tomorrow.mp3"))
-
 
 /*console.log("READING\n\n")
 nodeID3.read("./example/Kevin Penkin - Tomorrow.mp3", function(err, tags) {

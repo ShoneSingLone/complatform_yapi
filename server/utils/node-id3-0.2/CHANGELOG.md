@@ -130,7 +130,7 @@
 
 ### Fixed
 
-- rename private var to _private
+- rename private var to \_private
 
 ## [0.1.15] - 2020-03-21
 

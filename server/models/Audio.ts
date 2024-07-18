@@ -43,7 +43,7 @@ class ModelAudio extends ModelBase {
 		if (audio) {
 			return audio;
 		}
-		
+
 		let follow = new this.model(data);
 		return follow.save();
 	}

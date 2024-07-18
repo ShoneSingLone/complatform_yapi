@@ -579,8 +579,8 @@ for (let ctrl in routerConfig) {
 	});
 }
 
-module.exports = async function (app) {
+module.exports = async function ({ app, appSocket }) {
 	app.use(router.routes());
 	app.use(router.allowedMethods());
-	appSetupWebsocket(app);
+	appSetupWebsocket({ app, appSocket });
 };
