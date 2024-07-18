@@ -11,7 +11,7 @@
 			<div>{{ _.$bytesToSize(cloudDiskSizeTotal) }}</div>
 			<div class="flex flex1 vertical overflow-auto">
 				<CloudDiskResourceAudioItem
-					v-for="(item, index) in APP.stateAudio.AudioArray"
+					v-for="(item, index) in APP.stateAudio.audioArray"
 					:key="index"
 					:item="item"
 					:checked="APP.selectedItems.includes(item._id)"
@@ -20,7 +20,7 @@
 			</div>
 		</div>
 		<div class="player-opr x-padding">
-			<span>{{ APP.stateAudio.audioName }}</span>
+			<span>{{ APP.stateAudio.currentAudio.name }}</span>
 			<MusicPlayerAudio />
 			<div class="flex middle">
 				<MusicPlayerVolume class="flex1" />

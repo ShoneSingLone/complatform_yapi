@@ -500,6 +500,12 @@ module.exports = {
 				description: "文件保存在服务器上",
 				request: {
 					query: {
+						name: {
+							required: true,
+							type: "string",
+							default: "",
+							description: "文件名；支持模糊查询"
+						},
 						fileId: {
 							required: true,
 							type: "number",
@@ -532,7 +538,8 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					let { fileId, orderby, type, isdir } = ctx.payload;
+					let { fileId, orderby, isdir, name } = ctx.payload;
+
 					isdir = isdir || xU.var.FILE_ALL;
 					const uploadBy = this.$uid;
 
@@ -541,13 +548,12 @@ module.exports = {
 						sort[orderby] = xU.var.DESC;
 					}
 
-					let condition = [{ uploadBy }, { fileId }];
-					/* 如果不是查全部,可以模糊查询 */
-					if (type && type !== "all") {
-						condition = [
-							{ uploadBy: new RegExp(uploadBy, "i") },
-							{ fileId: new RegExp(fileId, "i") }
-						];
+					let condition = [{ uploadBy }];
+
+					if (name) {
+						condition.push({ name: new RegExp(name, "ig") });
+					} else {
+						condition.push({ fileId });
 					}
 
 					if (isdir != xU.var.FILE_ALL) {

@@ -6,9 +6,10 @@ export default async function () {
 		useMusic() {
 			let intervalTimer;
 			const stateAudio = reactive({
-				AudioArray: [],
+				currentAudio: { name: "" },
+				currentAudioImg: "",
+				audioArray: [],
 				loopType: 0,
-				audioName: "",
 				isPlaying: false, //是否播放中
 				isPause: false, //是否暂停
 				audio: new Audio(),
@@ -18,8 +19,13 @@ export default async function () {
 				isMute: false, //是否静音
 				volume: 100
 			});
+
+			const cptAudioIndex = computed(() =>
+				_.findIndex(stateAudio.audioArray, { _id: stateAudio.currentAudio._id })
+			);
+
 			onBeforeMount(async () => {
-				stateAudio.AudioArray = (await _.$idb.get("AudioArray")) || [];
+				stateAudio.audioArray = (await _.$idb.get("audioArray")) || [];
 			});
 
 			onMounted(() => {
@@ -46,24 +52,32 @@ export default async function () {
 			);
 
 			watch(
-				() => stateAudio.audioName,
-				audioName => {
-					_.$setDocTitle(audioName);
+				() => stateAudio.currentAudio?.md5,
+				_.debounce(async md5 => {
+					try {
+						const { artwork } = await _.$idb.get(md5);
+						const { src } = _.first(artwork);
+						stateAudio.currentAudioImg = src;
+					} catch (error) {}
+				}, 1000)
+			);
+
+			watch(
+				() => stateAudio.currentAudio.name,
+				name => {
+					_.$setDocTitle(name || "");
 				}
 			);
 
-			const Cpt_iconPlayModel = computed(() => {
+			const cptIconPlayModel = computed(() => {
 				return LOOP_TYPE_NAME_ARRAY[stateAudio.loopType];
 			});
 
 			function handlePlayEnd() {
 				stopSong();
-				const currentSongIndex = _.findIndex(stateAudio.AudioArray, {
-					name: stateAudio.audioName
-				});
 
-				if (currentSongIndex > -1) {
-					playMethods[Cpt_iconPlayModel.value](currentSongIndex);
+				if (cptAudioIndex.value > -1) {
+					playMethods[cptIconPlayModel.value](cptAudioIndex.value);
 				}
 			}
 
@@ -82,14 +96,11 @@ export default async function () {
 			}
 
 			function palyPrevSong() {
-				const currentSongIndex = _.findIndex(stateAudio.AudioArray, {
-					name: stateAudio.audioName
-				});
-				if (currentSongIndex > -1) {
-					if (currentSongIndex === 0) {
-						playAudio(stateAudio.AudioArray[stateAudio.AudioArray.length - 1]);
+				if (cptAudioIndex.value > -1) {
+					if (cptAudioIndex.value === 0) {
+						playAudio(stateAudio.audioArray[stateAudio.audioArray.length - 1]);
 					} else {
-						playAudio(stateAudio.AudioArray[currentSongIndex - 1]);
+						playAudio(stateAudio.audioArray[cptAudioIndex.value - 1]);
 					}
 				}
 			}
@@ -100,7 +111,7 @@ export default async function () {
 				stateAudio.currentTime = 0;
 			}
 			function togglePlayOrPause() {
-				if (!stateAudio.audioName) return;
+				if (!stateAudio.currentAudio.name) return;
 				stateAudio.isPlaying = !stateAudio.isPlaying;
 				if (stateAudio.isPlaying) {
 					stateAudio.audio.play();
@@ -110,12 +121,9 @@ export default async function () {
 			}
 
 			function playNextSong() {
-				if (Cpt_iconPlayModel.value === "playSingleLoop") {
-					const currentSongIndex = _.findIndex(stateAudio.AudioArray, {
-						name: stateAudio.audioName
-					});
-					if (currentSongIndex > -1) {
-						playMethods.playLoop(currentSongIndex);
+				if (cptIconPlayModel.value === "playSingleLoop") {
+					if (cptAudioIndex.value > -1) {
+						playMethods.playLoop(cptAudioIndex.value);
 					}
 				} else {
 					handlePlayEnd();
@@ -127,11 +135,11 @@ export default async function () {
 				if (record.type === "audio") {
 					playAudio(record);
 
-					stateAudio.AudioArray = _.uniqBy(
-						[...stateAudio.AudioArray, ..._.filter(resource, i => i.type === "audio")],
+					stateAudio.audioArray = _.uniqBy(
+						[...stateAudio.audioArray, ..._.filter(resource, i => i.type === "audio")],
 						"_id"
 					);
-					_.$idb.set("AudioArray", stateAudio.AudioArray);
+					_.$idb.set("audioArray", stateAudio.audioArray);
 				}
 				if (record.type === "video") {
 					playVideo(record);
@@ -151,7 +159,9 @@ export default async function () {
 			}
 
 			async function playAudio(record) {
-				const { path, name, _id } = record;
+				const { name, _id } = record;
+				stateAudio.currentAudio = record;
+
 				stopSong();
 				function canPlay() {
 					return new Promise(resolve => {
@@ -168,8 +178,6 @@ export default async function () {
 						};
 					});
 				}
-				let uri = encodeURIComponent(JSON.stringify(path));
-				stateAudio.audioName = name;
 				stateAudio.audio.src = Vue._common_utils.appendToken(
 					`${window._URL_PREFIX_4_DEV || ""}/api/resource/audio?id=${_id}`
 				);
@@ -182,20 +190,25 @@ export default async function () {
 					});
 
 					try {
-						const {
-							data: { title, artist, album, image }
-						} = await _api.yapi.audioDetail({
-							id: _id
-						});
-						/*
-						artwork 是一个包含多个图片对象的数组。每个图片对象具有 src（图片的链接）、sizes（图片尺寸）和 type（图片类型）属性。通过设置这些图片信息，可以在支持的环境中（如某些浏览器）显示与媒体相关的图片，例如专辑封面等。
-						*/
-						navigator.mediaSession.metadata = new MediaMetadata({
-							title,
-							artist,
-							album,
-							artwork: [{ src: image || "", sizes: "", type: "" }]
-						});
+						let metaInfo = await _.$idb.get(record.md5);
+						if (!metaInfo) {
+							const {
+								data: { title, artist, album, image }
+							} = await _api.yapi.audioDetail({
+								id: _id
+							});
+							/*
+							artwork 是一个包含多个图片对象的数组。每个图片对象具有 src（图片的链接）、sizes（图片尺寸）和 type（图片类型）属性。通过设置这些图片信息，可以在支持的环境中（如某些浏览器）显示与媒体相关的图片，例如专辑封面等。
+							*/
+							metaInfo = {
+								title,
+								artist,
+								album,
+								artwork: [{ src: image || "", sizes: "", type: "" }]
+							};
+							await _.$idb.set(record.md5, metaInfo);
+						}
+						navigator.mediaSession.metadata = new MediaMetadata(metaInfo);
 					} catch (error) {
 						console.error(error);
 					} finally {
@@ -208,41 +221,41 @@ export default async function () {
 				stateAudio.audio.volume = audioVolume;
 			}
 			const playMethods = {
-				playLoop(currentSongIndex) {
-					const next = currentSongIndex + 1;
-					if (next > stateAudio.AudioArray.length - 1) {
-						playAudio(stateAudio.AudioArray[0]);
+				playLoop(cptAudioIndex) {
+					const next = cptAudioIndex + 1;
+					if (next > stateAudio.audioArray.length - 1) {
+						playAudio(stateAudio.audioArray[0]);
 					} else {
-						playAudio(stateAudio.AudioArray[next]);
+						playAudio(stateAudio.audioArray[next]);
 					}
 				},
-				playRandom(currentSongIndex) {
+				playRandom(cptAudioIndex) {
 					let next;
 					/* 如果只有一首，循环一首 */
-					if (stateAudio.AudioArray.length === 1) {
+					if (stateAudio.audioArray.length === 1) {
 						next = 0;
-						playAudio(stateAudio.AudioArray[0]);
+						playAudio(stateAudio.audioArray[0]);
 						return;
 					}
-					const max = stateAudio.AudioArray.length - 1;
+					const max = stateAudio.audioArray.length - 1;
 					const min = 0;
 					const getNext = () => Math.floor(Math.random() * (max - min + 1)) + min;
 					next = getNext();
-					while (next === currentSongIndex) {
+					while (next === cptAudioIndex) {
 						next = getNext();
 					}
-					playAudio(stateAudio.AudioArray[next]);
+					playAudio(stateAudio.audioArray[next]);
 				},
-				playOrder(currentSongIndex) {
-					const next = currentSongIndex + 1;
-					if (next > stateAudio.AudioArray.length - 1) {
+				playOrder(cptAudioIndex) {
+					const next = cptAudioIndex + 1;
+					if (next > stateAudio.audioArray.length - 1) {
 						stopSong();
 					} else {
-						playAudio(stateAudio.AudioArray[next]);
+						playAudio(stateAudio.audioArray[next]);
 					}
 				},
-				playSingleLoop(currentSongIndex) {
-					playAudio(stateAudio.AudioArray[currentSongIndex]);
+				playSingleLoop(cptAudioIndex) {
+					playAudio(stateAudio.audioArray[cptAudioIndex]);
 				}
 			};
 

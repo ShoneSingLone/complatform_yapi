@@ -55,8 +55,21 @@ export default async function () {
 			};
 		},
 		setup() {
+			const vm = this;
 			const { LOOP_TYPE_NAME_ARRAY, playAudio, playMedia, stateAudio, methodsMusicPlayer } =
 				useMusic(this);
+
+			onMounted(() => {
+				vm.$watch(
+					() => {
+						return vm.homeListSearchKey;
+					},
+					_.debounce(function () {
+						vm.getResourceArray();
+					}, 1000)
+				);
+			});
+
 			return {
 				LOOP_TYPE_NAME_ARRAY,
 				playAudio,
@@ -171,10 +184,73 @@ export default async function () {
 					cloudDiskSizeTotal: 0
 				},
 				listSortBy: "name",
+				/* resource 资源列表 */
+				resourceList: [],
 				selectedItems: []
 			};
 		},
 		methods: {
+			async getResourceArray() {
+				_.$loading(true);
+				try {
+					const params = {
+						fileId: this.fileId || 0,
+						orderby: this.listSortBy,
+						name: this.homeListSearchKey || ""
+					};
+					const { data } = await _api.yapi.resourceCloudDiskFileList(params);
+					this.mSetResources(data);
+				} catch (error) {
+					console.error(error);
+				} finally {
+					_.$loading(false);
+				}
+			},
+			mSetResources(resourceList) {
+				const vm = this;
+				const resource = _.groupBy(resourceList, "isdir");
+				const sort = resourceList =>
+					_.map(resourceList, item => {
+						let type = "none";
+
+						if (item.isdir) {
+							type = "dir";
+						} else if (
+							/^image/.test(item.type) ||
+							["image/jpeg", "image/png"].includes(item.type)
+						) {
+							type = "image";
+						} else if (/^video/.test(item.type)) {
+							type = "video";
+						} else if (/^audio/.test(item.type)) {
+							type = "audio";
+						} else {
+						}
+
+						return {
+							...item,
+							type
+						};
+					}).sort((a, b) => {
+						if (a.isdir === 1) {
+							return -1;
+						} else if (["name", "type"].includes(vm.sortBy)) {
+							try {
+								return a[vm.sortBy].localeCompare(b[vm.sortBy]);
+							} catch (error) {
+								return 0;
+							}
+						} else if (vm.sortBy === "add_time") {
+							return a.add_time - b.add_time;
+						} else {
+							return 0;
+						}
+					});
+				const dirs = sort(resource[1]);
+				const unDirs = sort(resource[0]);
+				this.resourceList = [...dirs, ...unDirs];
+				this.selectedItems = [];
+			},
 			async loadDirs() {
 				const { data } = await _api.yapi.resourceCloudDiskGetDirs();
 				const { TREE, NODES_OBJ: dirs } = _.$arrayToTree({

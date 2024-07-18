@@ -97,7 +97,7 @@ export default async function () {
 				}
 			);
 
-			const Cpt_iconPlayModel = computed(() => {
+			const cptIconPlayModel = computed(() => {
 				return LOOP_TYPE_NAME_ARRAY[stateAudio.loopType];
 			});
 
@@ -108,7 +108,7 @@ export default async function () {
 				});
 
 				if (currentSongIndex > -1) {
-					playMethods[Cpt_iconPlayModel.value](currentSongIndex);
+					playMethods[cptIconPlayModel.value](currentSongIndex);
 				}
 			}
 
@@ -155,7 +155,7 @@ export default async function () {
 			}
 
 			function playNextSong() {
-				if (Cpt_iconPlayModel.value === "playSingleLoop") {
+				if (cptIconPlayModel.value === "playSingleLoop") {
 					const currentSongIndex = _.findIndex(vm.cptResourceOnlyAudio, {
 						name: stateAudio.songId
 					});

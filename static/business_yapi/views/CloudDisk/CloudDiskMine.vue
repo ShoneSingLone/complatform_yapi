@@ -4,13 +4,54 @@
 	.audio-title {
 		text-wrap: nowrap;
 	}
+	.player-playlist {
+		background-color: white;
+	}
+
+	.player-opr {
+		position: relative;
+		background-image: var(--opr-background-image);
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+		backdrop-filter: blur(20px);
+		// backdrop-filter: brightness(60%);
+		// backdrop-filter: contrast(40%);
+		// backdrop-filter: drop-shadow(4px 4px 10px blue);
+		// backdrop-filter: grayscale(30%);
+		// backdrop-filter: hue-rotate(120deg);
+		// backdrop-filter: invert(70%);
+		// backdrop-filter: opacity(20%);
+		// backdrop-filter: sepia(90%);
+		// backdrop-filter: saturate(80%);
+
+		> .player-ctrl {
+			position: relative;
+			z-index: 1;
+		}
+
+		.player-opr_background {
+			display: block;
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			z-index: 0;
+			border-bottom: 1rem solid var(--border-color);
+			height: var(--header-height);
+			padding: 0 12rem 0 24rem;
+			top: 0;
+			background-color: rgba(255, 255, 255, 0.664);
+			backdrop-filter: blur(6px);
+		}
+	}
 }
 </style>
 <template>
-	<div class="CloudDiskMine flex1 flex vertical">
-		<div class="flex flex1 vertical overflow-auto">
+	<div class="CloudDiskMine flex1 flex vertical" :style="cptStylePlayerOpr">
+		<div class="player-playlist flex flex1 vertical overflow-auto">
 			<CloudDiskResourceAudioItem
-				v-for="(item, index) in APP.stateAudio.AudioArray"
+				v-for="(item, index) in APP.stateAudio.audioArray"
 				:key="index"
 				:item="item"
 				:checked="APP.selectedItems.includes(item._id)"
@@ -18,11 +59,12 @@
 				@preview="preview(item)" />
 		</div>
 		<div class="player-opr x-padding">
-			<div class="overflow-auto width100">
-				<span class="flex middle audio-title"> {{ APP.stateAudio.audioName }}</span>
+			<div class="player-opr_background" />
+			<div class="overflow-auto width100 player-ctrl">
+				<span class="flex middle audio-title"> {{ APP.stateAudio.currentAudio.name }}</span>
 			</div>
-			<MusicPlayerAudio />
-			<div class="flex middle">
+			<MusicPlayerAudio class="player-ctrl" />
+			<div class="flex middle player-ctrl">
 				<MusicPlayerVolume class="flex1" />
 				<MusicPlayerModel />
 				<xGap l="4" />
@@ -56,6 +98,14 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptStylePlayerOpr() {
+				if (!this.APP.stateAudio.currentAudioImg) {
+					return {};
+				}
+				return {
+					"--opr-background-image": `url(${this.APP.stateAudio.currentAudioImg})`
+				};
+			},
 			cloudDiskSizeUsed() {
 				return this.APP.user.cloudDiskSizeUsed || 0;
 			},

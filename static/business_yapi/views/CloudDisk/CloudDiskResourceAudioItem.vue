@@ -6,7 +6,8 @@
 	.resource-icon {
 		font-size: 32px;
 		padding: 8px;
-		svg {
+		svg,
+		img {
 			height: 32px;
 			width: 32px;
 		}
@@ -38,7 +39,7 @@
 		class="CloudDiskResourceAudioItem flex middle"
 		v-ripple="{ color: 'var(--el-color-primary)', duration: 300, delay: 300 }">
 		<div class="resource-icon flex middle center" @click="preview">
-			<xIcon :icon="cptIcon" />
+			<xIcon :icon="cptIcon" :img="cptImgUrl" />
 		</div>
 		<div class="resource-name-wrapper flex vertical flex1 pr">
 			<div class="resource-name">{{ item.name }}</div>
@@ -62,10 +63,24 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP"],
 		props: ["item", "checked"],
-		data() {
-			return {};
+		data(vm) {
+			vm.getImgUrl = _.debounce(async () => {
+				try {
+					const { artwork } = await _.$idb.get(this.item.md5);
+					const { src } = _.first(artwork);
+					vm.privateImgUrl = src;
+				} catch (error) {}
+			}, 1000);
+
+			return {
+				privateImgUrl: ""
+			};
 		},
 		computed: {
+			cptImgUrl() {
+				this.getImgUrl();
+				return this.privateImgUrl;
+			},
 			cptIsDir() {
 				return this.item.type === "dir";
 			},

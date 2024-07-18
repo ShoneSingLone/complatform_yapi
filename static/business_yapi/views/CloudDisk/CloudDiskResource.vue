@@ -24,7 +24,7 @@
 		</div>
 		<div class="flex flex1 vertical overflow-auto">
 			<CloudDiskResourceItem
-				v-for="(item, index) in resourceList"
+				v-for="(item, index) in APP.resourceList"
 				:key="index"
 				:item="item"
 				:checked="APP.selectedItems.includes(item._id)"
@@ -91,7 +91,6 @@ export default async function () {
 		data(vm) {
 			return {
 				chunkAndSizeArray: [],
-				resourceList: [],
 				sortBy: "name",
 				oprBtnArray: [
 					{
@@ -99,7 +98,7 @@ export default async function () {
 						preset: "text",
 						onClick() {
 							vm.sortBy = "name";
-							vm.mSetResources(vm.resourceList);
+							vm.mSetResources(vm.APP.resourceList);
 						}
 					},
 					{
@@ -107,7 +106,7 @@ export default async function () {
 						preset: "text",
 						onClick() {
 							vm.sortBy = "add_time";
-							vm.mSetResources(vm.resourceList);
+							vm.mSetResources(vm.APP.resourceList);
 						}
 					},
 					{
@@ -115,7 +114,7 @@ export default async function () {
 						preset: "text",
 						onClick() {
 							vm.sortBy = "type";
-							vm.mSetResources(vm.resourceList);
+							vm.mSetResources(vm.APP.resourceList);
 						}
 					}
 				]
@@ -132,7 +131,7 @@ export default async function () {
 							preset: "text",
 							onClick: () => {
 								if (_.$isSame(item.fileId, this.APP.fileId)) {
-									this.getResourceList();
+									this.APP.getResourceArray();
 								} else {
 									this.APP.popDir(index, item);
 								}
@@ -328,7 +327,7 @@ export default async function () {
 							fileId: this.APP.fileId
 						})
 						.then(res => {
-							this.getResourceList();
+							this.APP.getResourceArray();
 						});
 				}
 			},
@@ -342,7 +341,7 @@ export default async function () {
 					url: "@/views/CloudDisk/CloudDiskResource.move.dialog.vue",
 					parent: vm,
 					selected: vm.APP.selectedItems,
-					refreshList: vm.getResourceList
+					refreshList: vm.APP.getResourceArray
 				});
 				this.APP.selectedItems = [];
 				this.APP.isShowBMoreDrawer = false;
@@ -356,7 +355,7 @@ export default async function () {
 					if (vm.APP.selectedItems.length !== 1) {
 						return _.$msgError("只能选择一个文件");
 					}
-					item = _.find(vm.resourceList, { _id: vm.APP.selectedItems[0] });
+					item = _.find(vm.APP.resourceList, { _id: vm.APP.selectedItems[0] });
 					title = `重命名 ${item.name}`;
 				}
 				await _.$openModal({
@@ -366,7 +365,7 @@ export default async function () {
 					item,
 					parent: vm,
 					makeNewDir: vm.makeNewDir,
-					refreshList: vm.getResourceList
+					refreshList: vm.APP.getResourceArray
 				});
 				this.APP.isShowBMoreDrawer = false;
 			},
@@ -378,11 +377,11 @@ export default async function () {
 					this.APP.pushDir(item);
 				}
 				if (["audio", "video"].includes(item.type)) {
-					this.APP.playMedia(item, { resource: this.resourceList });
+					this.APP.playMedia(item, { resource: this.APP.resourceList });
 				}
 			},
 			preview_image(item) {
-				const urlList = _.filter(this.resourceList, { type: "image" }).map(item =>
+				const urlList = _.filter(this.APP.resourceList, { type: "image" }).map(item =>
 					Vue._common_utils.appendToken(
 						`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${item._id}`
 					)
@@ -407,79 +406,20 @@ export default async function () {
 						fileId: this.APP.fileId || 0,
 						name
 					});
-					this.getResourceList();
+					this.APP.getResourceArray();
 				} catch (error) {
 					_.$msgError(error);
 					console.error(error);
 				} finally {
 					_.$loading(false);
 				}
-			},
-			async getResourceList() {
-				_.$loading(true);
-				try {
-					const { data } = await _api.yapi.resourceCloudDiskFileList({
-						fileId: this.APP.fileId || 0,
-						orderby: this.APP.listSortBy
-					});
-					this.mSetResources(data);
-				} catch (error) {
-					console.error(error);
-				} finally {
-					_.$loading(false);
-				}
-			},
-			mSetResources(resourceList) {
-				const vm = this;
-				const resource = _.groupBy(resourceList, "isdir");
-				const sort = resourceList =>
-					_.map(resourceList, item => {
-						let type = "none";
-
-						if (item.isdir) {
-							type = "dir";
-						} else if (
-							/^image/.test(item.type) ||
-							["image/jpeg", "image/png"].includes(item.type)
-						) {
-							type = "image";
-						} else if (/^video/.test(item.type)) {
-							type = "video";
-						} else if (/^audio/.test(item.type)) {
-							type = "audio";
-						} else {
-						}
-
-						return {
-							...item,
-							type
-						};
-					}).sort((a, b) => {
-						if (a.isdir === 1) {
-							return -1;
-						} else if (["name", "type"].includes(vm.sortBy)) {
-							try {
-								return a[vm.sortBy].localeCompare(b[vm.sortBy]);
-							} catch (error) {
-								return 0;
-							}
-						} else if (vm.sortBy === "add_time") {
-							return a.add_time - b.add_time;
-						} else {
-							return 0;
-						}
-					});
-				const dirs = sort(resource[1]);
-				const unDirs = sort(resource[0]);
-				this.resourceList = [...dirs, ...unDirs];
-				this.APP.selectedItems = [];
 			}
 		},
 		watch: {
 			"APP.fileId": {
 				immediate: true,
 				handler() {
-					this.getResourceList();
+					this.APP.getResourceArray();
 				}
 			}
 		}
