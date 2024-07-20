@@ -44,10 +44,9 @@
 				<xTree
 					ref="refTree"
 					:contentRender="treeContentRender"
-					:data="inject_note.treeData"
+					:data="cptMenuTree"
 					:expandedKeys.sync="inject_note.expandedKeys"
 					:props="treeProps"
-					:filterHandler="treeFilterMethod"
 					:dragAndDrop="handleDragAndDrop" />
 			</div>
 		</div>
@@ -84,7 +83,9 @@ export default async function () {
 	/* 分组信息 */
 	return defineComponent({
 		inject: ["APP", "inject_note"],
-		mounted() {},
+		mounted() {
+			this.initExpandedKeys();
+		},
 		setup(props) {
 			const { stateStyle, resizeOptions } = (() => {
 				if (this.APP.isMobile) {
@@ -103,6 +104,22 @@ export default async function () {
 					children: "children"
 				}
 			};
+		},
+		computed: {
+			cptMenuTree() {
+				if (this.configsSearch.value) {
+					let newTree = [];
+					_.$traverse(this.inject_note.treeData, node => {
+						const isOk = new RegExp(this.configsSearch.value, "i").test(node.title);
+						if (isOk) {
+							newTree.push(node);
+						}
+					});
+					return newTree;
+				}
+
+				return this.inject_note.treeData;
+			}
 		},
 		watch: {
 			"inject_note.currentWiki": {
@@ -135,6 +152,27 @@ export default async function () {
 			};
 		},
 		methods: {
+			async initExpandedKeys() {
+				let id = await _.$ensure(() => this.inject_note?.currentWiki?._id);
+				const ALL_NODE_MAP = new Map();
+				_.$traverse(this.inject_note.treeData, node => {
+					ALL_NODE_MAP.set(node._id, node);
+				});
+				const expandedKeys = [];
+				let node;
+				while ((node = ALL_NODE_MAP.get(id))) {
+					if (node._id) {
+						expandedKeys.push(node._id);
+					}
+					if (node.p_id > -1) {
+						if (id === node.p_id) {
+							break;
+						}
+						id = node.p_id;
+					}
+				}
+				this.inject_note.expandedKeys = expandedKeys;
+			},
 			scrollToLocation() {},
 			async handleDragAndDrop({ drag, drop, type: dropType }) {
 				const { inject_note } = this;
@@ -190,9 +228,6 @@ export default async function () {
 				} catch (error) {
 					_.$msgError(error.message);
 				}
-			},
-			treeFilterMethod(query, node) {
-				return new RegExp(query, "i").test(node.title);
 			},
 			async addNewWiki(payload) {
 				const { node } = payload || {};

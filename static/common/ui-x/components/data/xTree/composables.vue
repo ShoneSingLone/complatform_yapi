@@ -154,6 +154,9 @@ export default async function () {
 			const keys2 = doFilter(query);
 			if (keys2) {
 				expandedKeySet.value = keys2;
+				debugger;
+				injectRootTree.updateByToggleExpand();
+
 			}
 		}
 		function getChildren(node) {
@@ -493,11 +496,11 @@ export default async function () {
 			const nodes = ((_a2 = tree.value) == null ? void 0 : _a2.treeNodes) || [];
 			const filter = props.filterHandler;
 			hiddenKeys.clear();
-			function traverse(nodes2) {
-				nodes2.forEach(node => {
+			function traverse(allNodeTree) {
+				_.each(allNodeTree, node => {
 					family.push(node);
-					if (filter == null ? void 0 : filter(query, node.data)) {
-						family.forEach(member => {
+					if (_.isFunction(filter) && filter(query, node.data)) {
+						_.each(family, member => {
 							expandKeySet.add(member.key);
 						});
 					} else if (node.isLeaf) {

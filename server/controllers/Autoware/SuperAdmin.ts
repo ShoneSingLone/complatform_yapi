@@ -37,12 +37,13 @@ module.exports = {
 						const { execCmd } = require("../../../common/utils");
 						await execCmd("npm run redeploy", {
 							log(data) {
-								ctx.app["/ws"].connections
-									.get(id)
-									.emit(
+								const socket = ctx.app["/ws"].connections.get(id);
+								if (socket) {
+									socket.emit(
 										"message",
 										xU.socketMsg("self", { socket: { id } }, { data })
 									);
+								}
 							}
 						});
 					} catch (error) {
