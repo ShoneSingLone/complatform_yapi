@@ -95,6 +95,10 @@ export default async function () {
 .xDialog {
 	--xDialog-padding: var(--ui-one);
 
+	&.as-div {
+		--xDialog-padding: 0;
+	}
+
 	&.xDialog-wrapper {
 		display: flex;
 		flex-flow: column nowrap;
@@ -140,6 +144,10 @@ export default async function () {
 		flex-flow: row nowrap;
 		justify-content: flex-end;
 		align-items: center;
+
+		&:empty {
+			display: none;
+		}
 	}
 }
 </style>

@@ -1,9 +1,10 @@
 <template>
-	<xDialog>
+	<xDialog class="as-div">
 		<div class="container width100">
-			<div class="terminal_toolbar">
+			<div class="terminal_toolbar flex">
+				<xGap f />
 				<div class="butt">
-					<button class="btn btn-color" @click="closeModal"></button>
+					<button class="btn btn-color" @click="closeModal">X</button>
 				</div>
 			</div>
 			<div class="terminal_body">
@@ -19,8 +20,8 @@
 </template>
 <script lang="ts">
 export default async function ({ row }) {
-	const isUpdate = !!row;
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
+
 	return defineComponent({
 		props: useDialogProps(),
 		async mounted() {

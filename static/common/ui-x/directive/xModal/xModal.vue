@@ -74,7 +74,7 @@
 	<transition name="viewer-fade">
 		<div class="el-dialog__wrapper" :style="cptWrapperStyle">
 			<div role="dialog" :class="dialogClass" :style="dialogStyle" ref="refDialog">
-				<div class="el-dialog__header">
+				<div class="el-dialog__header" v-if="!isHideHeader">
 					<div class="el-dialog__title-bar" v-xmove="moveOptions" />
 					<span class="el-dialog__title">
 						<span class="xModel-title_prefixe"></span>
@@ -112,6 +112,9 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 	modalConfigs = modalConfigs || {};
+	options = options || {};
+	
+	const isHideHeader = options.isHideHeader || false;
 	function useModal(vm) {
 		onMounted(() => {
 			vm.deviceSupportInstall();
@@ -222,6 +225,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			});
 
 			return {
+				isHideHeader,
 				toggleFullScreen() {
 					vm.dialogClass.fullscreen = !vm.dialogClass.fullscreen;
 					if (!vm.dialogClass.fullscreen) {

@@ -104,7 +104,8 @@ export default async function () {
 			async deploy() {
 				_.$openModal({
 					title: "Deploy Project",
-					url: "@/components/deploy/deploy.dialog.vue"
+					url: "@/components/deploy/deploy.dialog.vue",
+					isHideHeader: true
 				});
 			},
 			goToGroup() {
