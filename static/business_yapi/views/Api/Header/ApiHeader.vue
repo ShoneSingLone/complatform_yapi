@@ -106,23 +106,27 @@ export default async function () {
 				const TRIGGER_EVENT_NAME = "PRIVATE_WS_MESSAGE";
 				let WS;
 				try {
-					WS = await _.$importVue("/common/libs/socket.io.vue", {
-						TRIGGER_EVENT_NAME
+					const id = await new Promise(async resolve => {
+						WS = await _.$importVue("/common/libs/socket.io.vue", {
+						TRIGGER_EVENT_NAME,
+						onConnection({id}) {
+							resolve(id)
+						}
+					})
 					});
-
 					$(window).on(TRIGGER_EVENT_NAME, (event, { payload }) => {
 						if (payload?.data) {
 							_.$msg(payload.data);
 						}
 					});
-
 					WS.emit("all", { msg: "yo central, are you on the line?" });
 					await _.$sleep(1000 * 3);
-					await _.$ajax.get("/api/super_admin/deploy");
+					await _.$ajax.post("/api/super_admin/deploy",{data:{id}});
 				} catch (error) {
 					console.error(error);
 				} finally {
 					WS?.close && WS.close();
+					$(window).off(TRIGGER_EVENT_NAME);
 				}
 			},
 			goToGroup() {

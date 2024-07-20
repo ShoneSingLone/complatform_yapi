@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function ({ PRIVATE_GLOBAL, TRIGGER_EVENT_NAME }) {
+export default async function ({ PRIVATE_GLOBAL, TRIGGER_EVENT_NAME,onConnection }) {
 	if (!window.io) {
 		(function (f) {
 			if (typeof exports === "object" && typeof module !== "undefined") {
@@ -8649,8 +8649,8 @@ export default async function ({ PRIVATE_GLOBAL, TRIGGER_EVENT_NAME }) {
 	const { protocol, host } = location;
 	const websocketURL = `${protocol}//${host}/ws`;
 	var ws = window.io(websocketURL);
-	ws.on("connection", payload => {
-		debugger;
+	ws.on("connection", ({ id }) => {
+		onConnection({id})
 	});
 	ws.on("message", payload => {
 		$(window).trigger(TRIGGER_EVENT_NAME, payload);

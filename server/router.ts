@@ -9,10 +9,7 @@ const projectController = require("./controllers/project");
 const openController = require("./controllers/open");
 
 const wsRouter = koaRouter();
-const {
-	middlewareWebsocket,
-	appSetupWebsocket
-} = require("./middleware/websocket");
+const { appSetupWebsocket } = require("./middleware/websocket");
 
 let pluginsRouterPath = [];
 

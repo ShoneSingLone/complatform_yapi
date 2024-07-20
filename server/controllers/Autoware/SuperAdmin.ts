@@ -14,10 +14,20 @@ module.exports = {
 	paths: {
 		/* 获取音频 */
 		"/super_admin/deploy": {
-			get: {
+			post: {
 				summary: "部署",
 				description: "git pull && pnpm i && pm2 restart yapi",
+				request: {
+					body: {
+						id: {
+							description: "socketId",
+							type: "string"
+						}
+					}
+				},
 				async handler(ctx) {
+					let { id } = ctx.payload;
+
 					let body = xU.$response("部署中...");
 					if (this.$user?.role !== "admin") {
 						body = xU.$response(null, 401, "权限不足");
@@ -27,11 +37,12 @@ module.exports = {
 						const { execCmd } = require("../../../common/utils");
 						await execCmd("npm run redeploy", {
 							log(data) {
-								// ctx.app["/ws"].socket.emit(
-								ctx.app["/ws"].broadcast(
-									"message",
-									xU.socketMsg("self", ctx, { data })
-								);
+								ctx.app["/ws"].connections
+									.get(id)
+									.emit(
+										"message",
+										xU.socketMsg("self", { socket: { id } }, { data })
+									);
 							}
 						});
 					} catch (error) {

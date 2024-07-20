@@ -243,6 +243,8 @@ exports.old_appSetupWebsocket = function appSetupWebsocket({ app, appSocket }) {
 };
 
 exports.appSetupWebsocket = function appSetupWebsocket({ app, appSocket }) {
+	const socketConnections = new Map();
+	global.socketConnections = socketConnections;
 	function msg(msg, ctx, payload = {}) {
 		return {
 			msg,
@@ -263,12 +265,12 @@ exports.appSetupWebsocket = function appSetupWebsocket({ app, appSocket }) {
 	 * Socket handlers
 	 */
 	appSocket.on("connection", ctx => {
-		appSocket.broadcast("connections", msg("connection", ctx));
-		console.log(ctx === this);
+		socketConnections.set(ctx.socket.id, app);
 		ctx.socket.emit("connection", msg("self", ctx));
 	});
 
 	appSocket.on("disconnect", ctx => {
+		socketConnections.delete(ctx.socket.id);
 		appSocket.broadcast("disconnect", msg("disconnect", ctx));
 	});
 	appSocket.on("all", ctx => {
