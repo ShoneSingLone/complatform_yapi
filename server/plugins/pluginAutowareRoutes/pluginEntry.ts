@@ -66,29 +66,11 @@ function appAddRoutes(app, routes) {
 						);
 
 						const { request } = route;
+
 						if (request) {
 							xU._.each(request, query => {
 								xU._.each(query, (fieldInfo, field) => {
-									const { default: defaultValue, required, type } = fieldInfo;
-									const fieldValue = ctx.payload[field];
-									if (required) {
-										if (!xU.isInput(fieldValue)) {
-											if (defaultValue) {
-												ctx.payload[field] = defaultValue;
-											} else {
-												ctx.body = xU.$response(null, 500, `${field} required`);
-											}
-										}
-									}
-									/* 转换和校验 */
-									if (xU.isInput(fieldValue)) {
-										if (type === "number") {
-											ctx.payload[field] = Number(fieldValue);
-										} else if (type === "string") {
-											ctx.payload[field] = String(fieldValue);
-										} else if (type === "array") {
-										}
-									}
+									checkParamsAndParse({ info: fieldInfo, ctx, field });
 								});
 							});
 						}
@@ -137,3 +119,29 @@ module.exports = async function (app) {
 		appUseSwagger(app, swaggerJSON);
 	}
 };
+
+function checkParamsAndParse({ info, ctx, field }) {
+	const { default: defaultValue, required, type } = info;
+	const fieldValue = ctx.payload[field];
+
+	/* 校验必填项 */
+	if (required) {
+		if (!xU.isInput(fieldValue)) {
+			if (defaultValue) {
+				ctx.payload[field] = defaultValue;
+			} else {
+				ctx.body = xU.$response(null, 500, `${field} required`);
+			}
+		}
+	}
+
+	/* 转换和校验 */
+	if (xU.isInput(fieldValue)) {
+		if (type === "number") {
+			ctx.payload[field] = Number(fieldValue);
+		} else if (type === "string") {
+			ctx.payload[field] = String(fieldValue);
+		} else if (type === "array") {
+		}
+	}
+}

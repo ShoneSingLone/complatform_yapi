@@ -122,10 +122,16 @@ const getWikiDetail = {
 			const wiki = await orm.wiki.detail(_id);
 
 			const { belong_type, belong_id } = wiki;
-			const currentUid = this.$uid;
+			const { $uid: currentUid, $user } = this;
 
 			if (wiki) {
 				const isReturnWiki = await (async () => {
+					function isMember(members = []) {
+						// if ($user.role === "admin") { return true; }
+						return xU._.find(members, member =>
+							xU.isSame(currentUid, member.uid)
+						);
+					}
 					/**
 					 * 定义一个处理不同访问权限的 Wiki 的处理器映射。
 					 * 不同的处理器根据 belong_id 来确定当前资源的访问权限，
@@ -151,10 +157,7 @@ const getWikiDetail = {
 						 */
 						async project() {
 							const project = await orm.project.get(belong_id);
-							const member = xU._.find(project.members, member =>
-								xU.isSame(currentUid, member.uid)
-							);
-							return !!member;
+							return isMember(project.members);
 						},
 						/**
 						 * 判断群组资源是否可访问。
@@ -165,10 +168,7 @@ const getWikiDetail = {
 						 */
 						async group() {
 							const group = await orm.group.get(belong_id);
-							const member = xU._.find(group.members, member =>
-								xU.isSame(currentUid, member.uid)
-							);
-							return !!member;
+							return isMember(group.members);
 						},
 						/**
 						 * 所有资源均可以访问。

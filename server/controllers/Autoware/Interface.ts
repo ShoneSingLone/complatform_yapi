@@ -857,6 +857,66 @@ module.exports = {
 				handler: hander_interface_add
 			}
 		},
+		/**
+		 *
+		 * @param {Number}   id 接口id，不能为空
+		 */
+		"/interface/get": {
+			get: {
+				summary: "获取项目接口详情",
+				description: "获取项目接口详情",
+				request: {
+					query: {
+						id: {
+							required: true,
+							description: "接口ID",
+							type: "number"
+						},
+						project_id: {
+							description: "项目ID，如果是带有token的访问，一般可以不用",
+							type: "number"
+						}
+					}
+				},
+				async handler(ctx) {
+					let { id, project_id } = ctx.payload;
+					if (!id) {
+						return (ctx.body = xU.$response(null, 400, "接口id不能为空"));
+					}
+
+					try {
+						let result = await orm.interface.get(id);
+						if (this.$tokenAuth) {
+							if (project_id !== result.project_id) {
+								ctx.body = xU.$response(null, 400, "token有误");
+								return;
+							}
+						}
+						// console.log('result', result);
+						if (!result) {
+							return (ctx.body = xU.$response(null, 490, "不存在的"));
+						}
+						let userinfo = await orm.user.findById(result.uid);
+						let project = await orm.project.getBaseInfo(result.project_id);
+						if (project.project_type === "private") {
+							if (
+								(await this.checkAuth(project._id, "project", "view")) !== true
+							) {
+								return (ctx.body = xU.$response(null, 406, "没有权限"));
+							}
+						}
+						xU.emitHook("interface_get", result).then();
+						result = result.toObject();
+						if (userinfo) {
+							result.username = userinfo.username;
+						}
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
 		"/interface/up_cat": {
 			post: {
 				summary: "更新分类",

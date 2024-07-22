@@ -29,11 +29,11 @@ module.exports = {
 					let { id } = ctx.payload;
 
 					let body = xU.$response("部署中...");
-					if (this.$user?.role !== "admin") {
-						body = xU.$response(null, 401, "权限不足");
-						return;
-					}
 					try {
+						if (this.$user?.role !== "admin") {
+							body = xU.$response(null, 401, "权限不足");
+							return;
+						}
 						const { execCmd } = require("../../../common/utils");
 						await execCmd("npm run redeploy", {
 							log(data) {

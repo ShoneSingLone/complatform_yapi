@@ -154,7 +154,6 @@ export default async function () {
 			const keys2 = doFilter(query);
 			if (keys2) {
 				expandedKeySet.value = keys2;
-				debugger;
 				injectRootTree.updateByToggleExpand();
 
 			}

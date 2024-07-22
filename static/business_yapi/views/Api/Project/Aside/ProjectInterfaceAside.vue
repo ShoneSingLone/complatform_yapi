@@ -34,9 +34,8 @@
 				<xTree
 					ref="refTree"
 					:contentRender="treeContentRender"
-					:data="inject_project.cptAsideTreeData"
-					:props="treeProps"
-					:filterHandler="treeFilterMethod" />
+					:data="cptAsideTreeData"
+					:props="treeProps" />
 			</div>
 		</div>
 		<div class="resize_bar" icon="scroll" v-xmove="resizeOptions" />
@@ -85,6 +84,20 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptAsideTreeData() {
+				if (this.configsSearch.value) {
+					let newTree = [];
+					_.$traverse(this.inject_project.cptAsideTreeData, node => {
+						const isOk = new RegExp(this.configsSearch.value, "i").test(node.title);
+						if (isOk) {
+							newTree.push(node);
+						}
+					});
+					return newTree;
+				}
+
+				return this.inject_project.cptAsideTreeData;
+			},
 			cptInterfaceId() {
 				return this.$route.query.interfaceId;
 			}

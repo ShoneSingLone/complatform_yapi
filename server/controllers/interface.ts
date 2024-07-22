@@ -220,52 +220,6 @@ class ControllerInterface extends ControllerBase {
 		}
 	}
 
-	/**
-	 * 获取项目分组
-	 * @interface /interface/get
-	 * @method GET
-	 * @category interface
-	 * @foldnumber 10
-	 * @param {Number}   id 接口id，不能为空
-	 * @returns {Object}
-	 * @example ./api/interface/get.json
-	 */
-	async get(ctx) {
-		let params = ctx.params;
-		if (!params.id) {
-			return (ctx.body = xU.$response(null, 400, "接口id不能为空"));
-		}
-
-		try {
-			let result = await this.model.get(params.id);
-			if (this.$tokenAuth) {
-				if (params.project_id !== result.project_id) {
-					ctx.body = xU.$response(null, 400, "token有误");
-					return;
-				}
-			}
-			// console.log('result', result);
-			if (!result) {
-				return (ctx.body = xU.$response(null, 490, "不存在的"));
-			}
-			let userinfo = await orm.user.findById(result.uid);
-			let project = await orm.project.getBaseInfo(result.project_id);
-			if (project.project_type === "private") {
-				if ((await this.checkAuth(project._id, "project", "view")) !== true) {
-					return (ctx.body = xU.$response(null, 406, "没有权限"));
-				}
-			}
-			xU.emitHook("interface_get", result).then();
-			result = result.toObject();
-			if (userinfo) {
-				result.username = userinfo.username;
-			}
-			ctx.body = xU.$response(result);
-		} catch (e) {
-			ctx.body = xU.$response(null, 402, e.message);
-		}
-	}
-
 	async downloadCrx(ctx) {
 		let filename = "crossRequest.zip";
 		let dataBuffer = xU.fs.readFileSync(
