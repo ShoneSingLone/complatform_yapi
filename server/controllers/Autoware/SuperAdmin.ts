@@ -35,7 +35,7 @@ module.exports = {
 							return;
 						}
 						const { execCmd } = require("../../../common/utils");
-						await execCmd("npm run redeploy", {
+						const callback = {
 							log(data) {
 								const socket = ctx.app["/ws"].connections.get(id);
 								if (socket) {
@@ -45,7 +45,9 @@ module.exports = {
 									);
 								}
 							}
-						});
+						};
+						await execCmd("git reset --hard HEAD", callback);
+						await execCmd("npm run redeploy", callback);
 					} catch (error) {
 						xU.applog.error(error);
 						body = xU.$response(null, 401, "权限不足");

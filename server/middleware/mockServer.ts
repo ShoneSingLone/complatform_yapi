@@ -317,7 +317,8 @@ const middlewareMockServer = () => async (ctx, next) => {
 	try {
 		project = await orm.project.get(projectId);
 	} catch (e) {
-		return (ctx.body = xU.$response(null, 403, e.message));
+		console.error(e);
+		return (ctx.body = xU.$response(null, 404, "不存在的项目"));
 	}
 
 	if (!project) {

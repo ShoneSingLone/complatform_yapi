@@ -208,44 +208,6 @@ class groupController extends ControllerBase {
 	}
 
 	/**
-	 * 删除项目成员
-	 * @interface /group/del_member
-	 * @method POST
-	 * @category group
-	 * @foldnumber 10
-	 * @param {String} id 项目分组id
-	 * @param {String} member_uid 项目分组成员uid
-	 * @returns {Object}
-	 * @example
-	 */
-
-	async delMember(ctx) {
-		let params = ctx.params;
-		var check = await orm.group.checkMemberRepeat(params.id, params.member_uid);
-		if (check === 0) {
-			return (ctx.body = xU.$response(null, 400, "分组成员不存在"));
-		}
-		if ((await this.checkAuth(params.id, "group", "danger")) !== true) {
-			return (ctx.body = xU.$response(null, 405, "没有权限"));
-		}
-
-		let result = await orm.group.delMember(params.id, params.member_uid);
-		let username = this.getUsername();
-
-		let groupUserdata = await xU.getUserdata(params.member_uid, params.role);
-		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分组成员 <a href="/user/profile/${
-				params.member_uid
-			}">${groupUserdata ? groupUserdata.username : ""}</a>`,
-			type: "group",
-			uid: this.getUid(),
-			username: username,
-			typeid: params.id
-		});
-		ctx.body = xU.$response(result);
-	}
-
-	/**
 	 * 获取项目分组列表
 	 * @interface /group/list
 	 * @method get

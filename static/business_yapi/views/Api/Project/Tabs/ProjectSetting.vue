@@ -3,6 +3,7 @@
 		<xPageContent>
 			<xTabs v-model="cptProjectSettingTab">
 				<xTabPane label="项目配置" name="1"></xTabPane>
+				<xTabPane label="项目成员" name="项目成员"></xTabPane>
 				<xTabPane label="环境配置" name="2"> </xTabPane>
 				<xTabPane label="请求配置" name="3"> </xTabPane>
 				<xTabPane label="token配置" name="4"> </xTabPane>
@@ -10,8 +11,9 @@
 				<xTabPane label="Swagger自动同步" name="6"> </xTabPane>
 				<xTabPane label="数据导入导出" name="7"> </xTabPane>
 			</xTabs>
-			<div>
+			<div class="flex1 flex vertical">
 				<ProjectSettingPanelCommon v-if="cptProjectSettingTab === '1'" />
+				<ProjectSettingPanelMemberList v-if="cptProjectSettingTab === '项目成员'" />
 				<ProjectSettingPanelReqFrontendCode v-if="cptProjectSettingTab === '3'" />
 				<ProjectSettingPanelDataImportExport v-if="cptProjectSettingTab === '7'" />
 			</div>
@@ -29,6 +31,8 @@ export default async function () {
 		components: {
 			ProjectSettingPanelCommon: () =>
 				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue"),
+			ProjectSettingPanelMemberList: () =>
+				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelMemberList.vue"),
 			ProjectSettingPanelReqFrontendCode: () =>
 				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelReqFrontendCode.vue"),
 			ProjectSettingPanelDataImportExport: () =>

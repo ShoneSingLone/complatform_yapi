@@ -19,7 +19,10 @@ export default async function () {
 
 	const [, [VueRouter, routes]] = await Promise.all([
 		Promise.all([
-			_.$importVue("/common/ui-x/useXui.vue"),
+			_.$importVue("/common/ui-x/useXui.vue", {
+				size: "small",
+				I18N_LANGUAGE: window.I18N_LANGUAGE
+			}),
 			_.$importVue("/common/ui-element/useElementUI.NoJS.vue", {
 				size: "small",
 				I18N_LANGUAGE: window.I18N_LANGUAGE
@@ -88,7 +91,6 @@ export default async function () {
 						const res = await _api.yapi.userSearch({});
 						const { data: allUser } = res;
 						vm.allUser = allUser;
-
 						/* TODO: 跳转到首页 或者note应用*/
 						if (vm.$route.path === "/note") {
 							return;

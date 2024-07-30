@@ -11,7 +11,7 @@ const swagger_belong_type = {
 
 const swagger_belong_id = {
 	description: "该资源ID，所属类型题 为【group】【project】 需要提供对应的ID",
-	type: "string"
+	type: "number"
 };
 
 const postWikiUpsertOne = {
@@ -20,11 +20,11 @@ const postWikiUpsertOne = {
 		body: {
 			_id: {
 				description: "ID",
-				type: "string"
+				type: "number"
 			},
 			p_id: {
 				description: "该资源的PARENT_ID",
-				type: "string"
+				type: "number"
 			},
 			belong_type: swagger_belong_type,
 			belong_id: swagger_belong_id,
@@ -91,6 +91,8 @@ const getWikiMenu = {
 			if (belong_type === xU.var.PRIVATE) {
 				belong_id = this.$uid;
 			}
+
+			let queryConditions = {};
 
 			if (belong_id && belong_id !== "BELONG_ALL") {
 				queryConditions.belong_id = belong_id;
@@ -167,6 +169,10 @@ const getWikiDetail = {
 						 */
 						async group() {
 							const group = await orm.group.get(belong_id);
+							if (group.uid === $user._id) {
+								/* 分组属于当前访问者的个人空间 */
+								return true;
+							}
 							return isMember(group.members);
 						},
 						/**

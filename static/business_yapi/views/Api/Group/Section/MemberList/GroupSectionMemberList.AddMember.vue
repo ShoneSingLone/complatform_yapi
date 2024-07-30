@@ -64,18 +64,8 @@ export default async function ({ onOk }) {
 						const [atLestOne] = await _.$validateForm(vm.$el);
 						if (atLestOne) return;
 						const { role, member_uids } = vm.cptFormData;
-						const { data } = await _api.yapi.groupAddMember({
-							id: vm.APP.cptCurrentGroup._id,
-							member_uids,
-							role
-						});
-						const { add_members, exist_members } = data;
-						const addLength = add_members.length;
-						const existLength = exist_members.length;
-						_.$msg(`新增 ${addLength} 人， ${existLength} 人已存在`);
 						// 添加成功后重新获取分组成员列表
-						await onOk();
-						vm.closeModal();
+						await onOk({ role, member_uids, dialogVm: vm });
 					}
 				};
 			}

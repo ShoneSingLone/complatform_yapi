@@ -217,6 +217,21 @@ export default async function () {
 						data
 					});
 				},
+				project_add_member(data) {
+					return _.$ajax.post("/api/project/add_member", {
+						data
+					});
+				},
+				project_del_member(data) {
+					return _.$ajax.post("/api/project/del_member", {
+						data
+					});
+				},
+				project_change_member_role(data) {
+					return _.$ajax.post("/api/project/change_member_role", {
+						data
+					});
+				},
 				projectAddFollow(data) {
 					return _.$ajax.post("/api/follow/add", {
 						data
@@ -227,7 +242,7 @@ export default async function () {
 						data: { projectid }
 					});
 				},
-				groupDelMember(data) {
+				group_del_member(data) {
 					return _.$ajax.post("/api/group/del_member", {
 						data
 					});

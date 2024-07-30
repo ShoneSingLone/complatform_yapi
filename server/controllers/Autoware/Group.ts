@@ -224,6 +224,47 @@ module.exports = {
 				}
 			}
 		},
+		"/group/del_member": {
+			/*  */
+			post: {
+				summary: "删除分组成员",
+				description: "删除分组成员",
+				request: {
+					body: {
+						id: { required: true, description: "分组id", type: "number" },
+						member_uid: {
+							required: true,
+							description: "分组成员uid",
+							type: "number"
+						}
+					}
+				},
+				async handler(ctx) {
+					let { id: groupId, member_uid } = ctx.payload;
+					var check = await orm.group.checkMemberRepeat(groupId, member_uid);
+					if (check === 0) {
+						return (ctx.body = xU.$response(null, 400, "分组成员不存在"));
+					}
+					if ((await this.checkAuth(groupId, "group", "danger")) !== true) {
+						return (ctx.body = xU.$response(null, 405, "没有权限"));
+					}
+
+					let result = await orm.group.delMember(groupId, member_uid);
+					let username = this.getUsername();
+					let groupUserdata = await xU.getUserdata(member_uid);
+					xU.saveLog({
+						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分组成员 <a href="/user/profile/${member_uid}">${
+							groupUserdata ? groupUserdata.username : ""
+						}</a>`,
+						type: "group",
+						uid: this.getUid(),
+						username: username,
+						typeid: groupId
+					});
+					ctx.body = xU.$response(result);
+				}
+			}
+		},
 		/* 获取所有项目成员 */
 		"/group/get_member_list": {
 			get: {
