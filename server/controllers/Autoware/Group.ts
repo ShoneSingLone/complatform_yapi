@@ -240,8 +240,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					let { id } = ctx.payload;
-					let groupInst = orm.group;
-					let group = await groupInst.get(id);
+					let group = await orm.group.get(id);
 					ctx.body = xU.$response(group.members);
 				}
 			}

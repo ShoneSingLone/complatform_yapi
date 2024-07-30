@@ -91,7 +91,7 @@ export default async function () {
 						label: i18n("状态"),
 						options: dicts.sys_common_status
 					}),
-					dateRange: _adminTools.search_form_configs_text({ label: i18n("登录时间") })
+					dateRange: _adminTools.search_form_date_range({ label: i18n("登录时间") })
 				}),
 				configsTable: defTable({
 					isHideQuery: true,

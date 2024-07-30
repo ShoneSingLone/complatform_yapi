@@ -92,7 +92,7 @@ export default async function () {
 					operName: _adminTools.search_form_configs_text({ label: i18n("操作人员") }),
 					businessType: _adminTools.search_form_configs_text({ label: i18n("类型") }),
 					status: _adminTools.search_form_configs_text({ label: i18n("状态") }),
-					dateRange: _adminTools.search_form_configs_text({ label: i18n("操作时间") }),
+					dateRange: _adminTools.search_form_date_range({ label: i18n("操作时间") }),
 					operlogKey: _adminTools.search_form_configs_text({ label: i18n("公告键名") }),
 					operlogType: _adminTools.search_form_configs_select({
 						label: i18n("系统内置"),

@@ -87,7 +87,6 @@ const getWikiMenu = {
 	async handler(ctx) {
 		try {
 			let { belong_type, belong_id } = ctx.payload || {};
-			const queryConditions = { belong_type };
 
 			if (belong_type === xU.var.PRIVATE) {
 				belong_id = this.$uid;

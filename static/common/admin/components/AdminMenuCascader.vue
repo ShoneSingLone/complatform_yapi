@@ -59,7 +59,8 @@ export default async function () {
 						data,
 						id: "menuId",
 						label: "menuName",
-						value: "menuId"
+						value: "menuId",
+						rootId: 0
 					});
 					const root = {
 						menuId: 0,

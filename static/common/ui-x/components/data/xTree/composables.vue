@@ -155,7 +155,6 @@ export default async function () {
 			if (keys2) {
 				expandedKeySet.value = keys2;
 				injectRootTree.updateByToggleExpand();
-
 			}
 		}
 		function getChildren(node) {

@@ -86,8 +86,8 @@ export default async function () {
 						const res = await _api.yapi.userLogin(formData);
 						if (res?.data?.x_token) {
 							_.$lStorage.x_token = res?.data?.x_token;
+							const info = await this.APP.refreshUserInfo();
 							_.$msg("登录成功! ");
-							await this.APP.refreshUserInfo();
 						}
 					}
 				} catch (e) {

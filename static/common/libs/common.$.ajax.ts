@@ -35,7 +35,8 @@
 										"?" +
 										_.map(
 											options.query,
-											(value, key) => `${key}=${encodeURIComponent(value)}`
+											(value, key) =>
+												`${encodeURIComponent(key)}=${encodeURIComponent(value)}`
 										).join("&")
 									);
 								}
@@ -50,7 +51,8 @@
 					if (_.isPlainObject(options.data)) {
 						return _.map(
 							options.data,
-							(value, key) => `${key}=${encodeURIComponent(value)}`
+							(value, key) =>
+								`${encodeURIComponent(key)}=${encodeURIComponent(value)}`
 						).join("&");
 					}
 				}
@@ -155,7 +157,7 @@
 				// 	xhr.send(file);
 				// });
 			},
-			downloadOctetStream({ url, method, beforeSend, payload }) {
+			downloadOctetStream({ url, method, beforeSend, payload, resolveResult }) {
 				payload = payload || {};
 				method = method || "get";
 				beforeSend = beforeSend || (() => null);
@@ -176,46 +178,50 @@
 							error(...args) {
 								return reject(args);
 							},
-							success(result, state, xhr) {
+							async success(result, state, xhr) {
 								try {
-									//result:请求到的结果数据
-									//state:请求状态（success）
-									//xhr:XMLHttpRequest对象
-									// 从Response Headers中获取fileName
-									let header = xhr.getResponseHeader("content-disposition");
-									let fileName = header
-										.split(";")[1]
-										.split("=")[1]
-										.replace(/\"/g, "");
-									//获取下载文件的类型
-									let type = xhr.getResponseHeader("content-type");
-									//结果数据类型处理
-									let blob = new Blob([result], { type: "image/jpeg" });
-
-									//对于<a>标签，只有 Firefox 和 Chrome（内核）支持 download 属性
-									//IE10以上支持blob，但是依然不支持download
-									if ("download" in document.createElement("a")) {
-										//支持a标签download的浏览器
-										//通过创建a标签实现
-										let link = document.createElement("a");
-										//文件名
-										link.download = fileName;
-										link.style.display = "none";
-										link.href = URL.createObjectURL(blob);
-										document.body.appendChild(link);
-										link.click(); //执行下载
-										URL.revokeObjectURL(link.href); //释放url
-										document.body.removeChild(link); //释放标签
+									if (_.isFunction(resolveResult)) {
+										await resolveResult();
 									} else {
-										//不支持
-										if (window.navigator.msSaveOrOpenBlob) {
-											window.navigator.msSaveOrOpenBlob(blob, fileName);
+										//result:请求到的结果数据
+										//state:请求状态（success）
+										//xhr:XMLHttpRequest对象
+										// 从Response Headers中获取fileName
+										let header = xhr.getResponseHeader("content-disposition");
+										let fileName = header
+											.split(";")[1]
+											.split("=")[1]
+											.replace(/\"/g, "");
+										//获取下载文件的类型
+										let type = xhr.getResponseHeader("content-type");
+										//结果数据类型处理
+										let blob = new Blob([result], { type: "image/jpeg" });
+
+										//对于<a>标签，只有 Firefox 和 Chrome（内核）支持 download 属性
+										//IE10以上支持blob，但是依然不支持download
+										if ("download" in document.createElement("a")) {
+											//支持a标签download的浏览器
+											//通过创建a标签实现
+											let link = document.createElement("a");
+											//文件名
+											link.download = fileName;
+											link.style.display = "none";
+											link.href = URL.createObjectURL(blob);
+											document.body.appendChild(link);
+											link.click(); //执行下载
+											URL.revokeObjectURL(link.href); //释放url
+											document.body.removeChild(link); //释放标签
+										} else {
+											//不支持
+											if (window.navigator.msSaveOrOpenBlob) {
+												window.navigator.msSaveOrOpenBlob(blob, fileName);
+											}
 										}
 									}
 								} catch (error) {
 									console.error(error);
 								} finally {
-									resolve();
+									resolve(result);
 								}
 							}
 						})

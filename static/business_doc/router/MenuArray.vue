@@ -84,6 +84,11 @@ export default async function () {
 						},
 						{
 							icon: "icon_report",
+							label: i18n("xItemCronExpression"),
+							href: "/x-component/x-item-cron-expression"
+						},
+						{
+							icon: "icon_report",
 							label: i18n("xItemCidr"),
 							href: "/x-component/x-item-cidr"
 						},
@@ -165,6 +170,11 @@ export default async function () {
 					icon: "_icon_avatar",
 					label: i18n("Avatar") + i18n("头像"),
 					href: "/component/data/avatar"
+				},
+				{
+					icon: "_icon_affix",
+					label: `${i18n("Chart")} ${i18n("图表")}`,
+					href: "/component/data/chart"
 				},
 				{
 					icon: "_icon_affix",
@@ -285,11 +295,6 @@ export default async function () {
 					href: "/dev/rule"
 				}
 			]
-		},
-		{
-			icon: "_icon_project",
-			label: i18n("所有项目"),
-			href: "/all-project"
 		}
 	];
 }

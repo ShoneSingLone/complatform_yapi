@@ -222,6 +222,48 @@ export default async function ({ rootApp }) {
 			return _.$ajax.get(`/system/config/configKey/${configKey}`);
 		},
 		/* config */
+		/* job */
+		api_job_by_jobId(jobId) {
+			return _.$ajax.get(`/monitor/job/${this.parseStrEmpty(jobId)}`);
+		},
+		api_job_list(data) {
+			return _.$ajax.get("/monitor/job/list", {
+				data
+			});
+		},
+		api_job_new(data) {
+			return _.$ajax.post(`/monitor/job`, { data });
+		},
+
+		api_job_delete(jobIds) {
+			return _.$ajax.delete(`/monitor/job/${jobIds}`);
+		},
+		api_job_modify(data) {
+			return _.$ajax.put(`/monitor/job`, { data });
+		},
+		api_job_refresh_cache() {
+			return _.$ajax.delete(`/monitor/job/refreshCache`);
+		},
+		api_job_change_status(data) {
+			return _.$ajax.put(`/monitor/job/changeStatus`, { data });
+		},
+		api_job_run({ jobId, jobGroup }) {
+			return _.$ajax.put(`/monitor/job/run`, { data: { jobId, jobGroup } });
+		},
+		api_job_log_list(data) {
+			return _.$ajax.get(`/monitor/jobLog/list`, { data });
+		},
+		api_job_log_delete(logIds) {
+			return _.$ajax.delete(`/monitor/jobLog/${logIds}`);
+		},
+		api_job_log_clean() {
+			return _.$ajax.delete(`/monitor/jobLog/clean`);
+		},
+		/* 根据参数键名查询参数值 */
+		api_job_key(jobKey) {
+			return _.$ajax.get(`/monitor/job/jobKey/${jobKey}`);
+		},
+		/* job */
 		/* notice */
 		api_notice_by_noticeId(noticeId) {
 			return _.$ajax.get(`/system/notice/${this.parseStrEmpty(noticeId)}`);
@@ -316,8 +358,9 @@ export default async function ({ rootApp }) {
 					resetValue() {
 						this.value = "";
 					},
-					value: "",
-					placeholder: i18n("时间范围")
+					value: [],
+					placeholder: i18n("时间范围"),
+					itemType: "AdminXItemDaterange"
 				},
 				options
 			);

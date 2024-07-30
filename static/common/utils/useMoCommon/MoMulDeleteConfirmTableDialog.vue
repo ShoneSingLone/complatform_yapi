@@ -4,8 +4,11 @@
 			<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" />
 		</xBlock>
 		<template #footer>
-			<xBtn :configs="btnOk" />
-			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
+			<div class="flex center width100">
+				<xBtn :configs="btnOk" />
+				<xGap w="32" />
+				<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
+			</div>
 		</template>
 	</xDialog>
 </template>

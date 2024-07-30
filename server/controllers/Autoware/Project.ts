@@ -167,6 +167,7 @@ module.exports = {
 					}
 
 					basepath = this.handleBasepath(basepath);
+					const group = await orm.group.get(group_id);
 
 					if (!basepath) {
 						return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
@@ -176,7 +177,7 @@ module.exports = {
 						name: name,
 						desc: desc,
 						basepath: basepath,
-						members: [],
+						members: group.members || [],
 						project_type: project_type || "private",
 						uid: this.getUid(),
 						group_id: group_id,

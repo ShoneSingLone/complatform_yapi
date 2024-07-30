@@ -151,7 +151,7 @@ export default async function () {
 		},
 		computed: {
 			cptAvatarUrl() {
-				return this.APP.user.avatar || "@/assets/img/logo.png";
+				return _.$ajax.urlWrapper(this.APP.user.avatar) || "@/assets/img/logo.png";
 			}
 		}
 	});

@@ -197,7 +197,12 @@ export default async function () {
 				try {
 					_.$loading(true);
 					const { data } = await _adminTools.api_dept_list(this.cptSearchParams);
-					const { TREE } = _.$arrayToTree({ data, id: "deptId" });
+					const { TREE } = _.$arrayToTree({
+						data,
+						id: "deptId",
+						label: "deptName",
+						rootId: 0
+					});
 
 					_.$setTableData(this.configsTable, {
 						list: TREE

@@ -14,6 +14,7 @@ export default async function () {
 	};
 
 	return [
+		_.$newRoute("/all", "@/views/ViewAllProject.vue"),
 		_.$newRoute("/demo", ComponentRouterView, {
 			children: [_.$newRoute("/demo/config", "@/views/demo/demo/configList.vue")]
 		}),
@@ -23,7 +24,6 @@ export default async function () {
 				_.$newRoute("/guide/class", "@/views/common/css/ClassName.vue")
 			]
 		}),
-		_.$newRoute("/all-project", "@/views/ViewAllProject.vue"),
 		/* 指令 */
 		_.$newRoute("/directive", ComponentPageRouterView, {
 			children: [_.$newRoute("/directive/ripple", "@/views/directive/directive/ripple.vue")]
@@ -35,6 +35,10 @@ export default async function () {
 				_.$newRoute(
 					"/x-component/x-item-check",
 					"@/views/xComponent/DemoxItemCheck/DemoxItemCheck.vue"
+				),
+				_.$newRoute(
+					"/x-component/x-item-cron-expression",
+					"@/views/xComponent/DemoxItemCronExpression/DemoxItemCronExpression.vue"
 				),
 				_.$newRoute(
 					"/x-component/x-item-cidr",
@@ -117,6 +121,10 @@ export default async function () {
 				}),
 				_.$newRoute("/component/data", ComponentRouterView, {
 					children: [
+						_.$newRoute(
+							"/component/data/chart",
+							"@/views/component/data/chart/demo_chart.vue"
+						),
 						_.$newRoute("/component/data/icon", "@/views/component/data/icon/icon.vue"),
 						_.$newRoute(
 							"/component/data/avatar",
@@ -214,7 +222,7 @@ export default async function () {
 		{
 			/* 本来应该是NotFound，但是没有必要 */
 			path: "*",
-			redirect: "/all-project"
+			redirect: "/demo"
 		}
 	];
 }

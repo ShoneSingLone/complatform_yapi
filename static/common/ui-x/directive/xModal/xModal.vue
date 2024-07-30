@@ -17,7 +17,8 @@
 	> .el-dialog {
 		width: auto;
 		margin: auto;
-		border-radius: var(--border-radius--mini);
+		overflow: hidden;
+		border-radius: var(--xModel-dialog-border-radius, --border-radius--mini);
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 		box-sizing: border-box;
 		position: absolute;
@@ -113,7 +114,7 @@
 export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 	modalConfigs = modalConfigs || {};
 	options = options || {};
-	
+
 	const isHideHeader = options.isHideHeader || false;
 	function useModal(vm) {
 		onMounted(() => {

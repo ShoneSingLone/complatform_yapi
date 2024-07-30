@@ -19,6 +19,7 @@ export default async function () {
 		"components/base/xBtn/xBtnGroup",
 		"components/base/xBtn/xColActionAndMore",
 		/*  */
+		"components/data/xChart/xChart",
 		"components/data/xMenuTree/xMenuTree",
 		/*  */
 		"components/navigation/xMenu/xMenu",
@@ -112,6 +113,7 @@ export default async function () {
 		"common/xDialog",
 		"common/xForm",
 		"common/xFragment",
+		"common/xIcon",
 		"common/xIcon",
 		"common/xInfoCard",
 		"common/xInfoCardItem",

@@ -3,7 +3,7 @@ export default async function () {
 	if (!window._api.adminNormal) {
 		(function () {
 			_.$ajax.requestInjector = function (config) {
-				config.url = `/dev-api${config.url}`;
+				config.url = `${config.url}`;
 				// 是否需要设置 token
 				const isToken = _.isBoolean(config.headers?.isToken)
 					? config.headers?.isToken
@@ -47,7 +47,6 @@ export default async function () {
 						data
 					});
 				},
-				/*  */
 				listUser(data) {
 					return _.$ajax.get("/system/user/list", {
 						data

@@ -271,7 +271,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return `x_form_id_${this._uid}`;
 			},
 			cpt_label() {
-				return this.label || this.cptConfigs?.label;
+				if (_.isString(this.cptConfigs?.label)) {
+					return this.cptConfigs.label;
+				}
+				if (_.isFunction(this.cptConfigs?.label)) {
+					return this.cptConfigs.label();
+				}
+				return false;
 			},
 			cpt_isRequired() {
 				try {

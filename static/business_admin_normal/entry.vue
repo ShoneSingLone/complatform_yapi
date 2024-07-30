@@ -2,6 +2,7 @@
 export default async function () {
 	_.each(
 		{
+			AdminXItemDaterange: "/common/admin/components/AdminXItemDaterange.vue",
 			AdminDeptCascader: "/common/admin/components/AdminDeptCascader.vue",
 			AdminMenuCascader: "/common/admin/components/AdminMenuCascader.vue",
 			AdminMenuPermissionTree: "/common/admin/components/AdminMenuPermissionTree.vue",

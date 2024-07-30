@@ -3,7 +3,6 @@
 		<xCard>
 			<xForm col="1">
 				<xItem :configs="form.group_id" />
-				{{ form.name }}
 				<xItem :configs="form.name" />
 				<xItem :configs="form.basepath" />
 				<xItem :configs="form.desc" />

@@ -58,7 +58,8 @@ export default async function () {
 						data,
 						id: "deptId",
 						label: "deptName",
-						value: "deptId"
+						value: "deptId",
+						rootId: 0
 					});
 					this.CHILDREN_MAP = CHILDREN_MAP;
 					this.NODES_OBJ = NODES_OBJ;

@@ -36,12 +36,11 @@
 		let CHILDREN = children || "children";
 		let LABEL = label || "label";
 		let VALUE = value || "value";
-		let ROOT_ID = rootId || null;
+		let ROOT_ID = _.$isInput(rootId) ? rootId : null;
 
 		const CHILDREN_MAP = {};
 		const NODES_OBJ = {};
 		const TREE = [];
-
 		/* 收集数据，平铺 */
 		_.each(data, node => {
 			node.label = node[LABEL];
@@ -1117,31 +1116,34 @@
 	 * @param {*} wait time
 	 * @returns
 	 */
-	_.$asyncDebounce = (vm, fn, wait = 1000) => {
-		fn.queue = [];
-		fn.timmer = null;
-		return function (...args) {
-			console.log("_.$asyncDebounce 🚀:", fn.name, Date.now());
-			const vm = this;
-			fn.bindFn = fn.bind(vm);
-			if (fn.timmer) {
-				clearTimeout(fn.timmer);
+	_.$asyncDebounce = (vm, func, delay = 1000) => {
+		let timer;
+		let promise;
+		let _resolve, _reject;
+		return async function (...args) {
+			const runFn = () => {
+				return setTimeout(() => {
+					func.apply(vm, args).then(_resolve, _reject);
+				}, delay);
+			};
+
+			if (timer) {
+				/* 重新计时 */
+				clearTimeout(timer);
+				timer = runFn();
 			}
-			fn.timmer = setTimeout(async () => {
-				try {
-					const res = await fn.bindFn.apply(vm, args);
-					_.each(fn.queue, r => r(res));
-					fn.queue = [];
-				} catch (error) {
-					console.error(error);
-				} finally {
-					fn.queue = [];
-				}
-			}, wait);
-			return new Promise(resolve => {
-				fn.queue.push(resolve);
-			});
-		}.bind(vm);
+			if (promise) {
+				return promise;
+			} else {
+				promise = new Promise((resolve, reject) => {
+					_resolve = resolve;
+					_reject = reject;
+
+					timer = runFn();
+				});
+				return promise;
+			}
+		};
 	};
 	const windowConsole = window.console;
 	/**

@@ -98,7 +98,7 @@ export default async function () {
 						preset: "text",
 						onClick() {
 							vm.sortBy = "name";
-							vm.mSetResources(vm.APP.resourceList);
+							vm.APP.mSetResources(vm.APP.resourceList);
 						}
 					},
 					{
@@ -106,7 +106,7 @@ export default async function () {
 						preset: "text",
 						onClick() {
 							vm.sortBy = "add_time";
-							vm.mSetResources(vm.APP.resourceList);
+							vm.APP.mSetResources(vm.APP.resourceList);
 						}
 					},
 					{
@@ -114,7 +114,7 @@ export default async function () {
 						preset: "text",
 						onClick() {
 							vm.sortBy = "type";
-							vm.mSetResources(vm.APP.resourceList);
+							vm.APP.mSetResources(vm.APP.resourceList);
 						}
 					}
 				]

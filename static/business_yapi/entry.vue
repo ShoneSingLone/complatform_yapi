@@ -76,41 +76,39 @@ export default async function () {
 		data() {
 			const vm = this;
 
-			vm.refreshUserInfo = _.$asyncDebounce(
-				vm,
-				async function refreshUserInfo() {
-					try {
-						if (!vm.user.isLogin) {
-							const { data: userInfo } = await _api.yapi.userStatus();
-							vm._setUser(userInfo);
-						}
-
-						if (vm.user.isLogin) {
-							const { data: allUser } = await _api.yapi.userSearch({});
-							vm.allUser = allUser;
-
-							/* TODO: 跳转到首页 或者note应用*/
-							if (vm.$route.path === "/note") {
-								return;
-							}
-							await vm.ifUrlNoGroupIdGetAndAddIdToUrl();
-							if (vm.cptProjectId) {
-								await vm.updateGroupProjectList();
-							}
-							if (vm.$route.path === "/login") {
-								vm.$router.push("/api/group");
-							}
-						}
-						return true;
-					} catch (error) {
-						/* 未登录，跳转登录界面 */
-						vm.$router.push("/login");
-					} finally {
-						$("body").removeClass("x-loading");
+			vm.refreshUserInfo = _.$asyncDebounce(vm, async function refreshUserInfo() {
+				try {
+					if (!vm.user.isLogin) {
+						const res = await _api.yapi.userStatus();
+						const { data: userInfo } = res;
+						vm._setUser(userInfo);
 					}
-				},
-				10
-			);
+
+					if (vm.user.isLogin) {
+						const res = await _api.yapi.userSearch({});
+						const { data: allUser } = res;
+						vm.allUser = allUser;
+
+						/* TODO: 跳转到首页 或者note应用*/
+						if (vm.$route.path === "/note") {
+							return;
+						}
+						await vm.ifUrlNoGroupIdGetAndAddIdToUrl();
+						if (vm.cptProjectId) {
+							await vm.updateGroupProjectList();
+						}
+						if (vm.$route.path === "/login") {
+							vm.$router.push("/api/group");
+						}
+					}
+					return true;
+				} catch (error) {
+					/* 未登录，跳转登录界面 */
+					vm.$router.push("/login");
+				} finally {
+					$("body").removeClass("x-loading");
+				}
+			});
 
 			return {
 				isMobile: /Mobile/gi.test(window.navigator.userAgent),
@@ -285,10 +283,9 @@ export default async function () {
 		watch: {
 			"$route.path": {
 				immediate: true,
-				handler() {
-					this.refreshUserInfo().then(res => {
-						console.log("🚀 ~ this.refreshUserInfo ~ res:", res);
-					});
+				async handler() {
+					const res = await this.refreshUserInfo();
+					console.log("🚀 ~ this.refreshUserInfo ~ res:", res);
 				}
 			},
 			groupList: {
