@@ -576,6 +576,218 @@ module.exports = {
 					}
 				}
 			}
+		},
+		"/project/add_member": {
+			post: {
+				summary: "添加项目成员",
+				description: "",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目id",
+							type: "number"
+						},
+						member_uids: {
+							required: true,
+							description: "项目成员uid",
+							type: "array",
+							items: "number"
+						},
+						role: {
+							required: true,
+							description: "项目成员角色",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let { id: projectId, role, member_uids } = ctx.payload;
+						if ((await this.checkAuth(projectId, "project", "edit")) !== true) {
+							return (ctx.body = xU.$response(null, 405, "没有权限"));
+						}
+
+						role = ["owner", "dev", "guest"].find(v => v === role) || "dev";
+
+						let add_members = [];
+						let exist_members = [];
+						let no_members = [];
+
+						for (let i = 0, len = member_uids.length; i < len; i++) {
+							let member_uid = member_uids[i];
+							let check = await orm.project.checkMemberRepeat(
+								projectId,
+								member_uid
+							);
+							let userdata = await xU.getUserdata(member_uid, role);
+							if (check > 0) {
+								exist_members.push(userdata);
+							} else if (!userdata) {
+								no_members.push(member_uid);
+							} else {
+								add_members.push(userdata);
+							}
+						}
+
+						let result = await orm.project.addMember(projectId, add_members);
+						if (add_members.length) {
+							let members = add_members
+								.map(item => {
+									return `<a href = "/user/profile/${item.uid}">${item.username}</a>`;
+								})
+								.join("、");
+
+							let username = this.getUsername();
+							xU.saveLog({
+								content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了项目成员 ${members}`,
+								type: "project",
+								uid: this.getUid(),
+								username: username,
+								typeid: projectId
+							});
+						}
+						ctx.body = xU.$response({
+							result,
+							add_members,
+							exist_members,
+							no_members
+						});
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, String(err));
+					}
+				}
+			}
+		},
+		"/project/del_member": {
+			post: {
+				summary: "移除项目成员",
+				description: "",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目id",
+							type: "number"
+						},
+						member_uid: {
+							required: true,
+							description: "项目成员uid",
+							type: "number"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let { id: projectId, member_uid } = ctx.payload;
+						var check = await orm.project.checkMemberRepeat(
+							projectId,
+							member_uid
+						);
+						if (check === 0) {
+							return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
+						}
+
+						if (
+							(await this.checkAuth(projectId, "project", "danger")) !== true
+						) {
+							return (ctx.body = xU.$response(null, 405, "没有权限"));
+						}
+
+						let result = await orm.project.delMember(projectId, member_uid);
+						let username = this.getUsername();
+
+						orm.user.findById(member_uid).then(member => {
+							xU.saveLog({
+								content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了项目中的成员 <a href="/user/profile/${member_uid}">${
+									member ? member.username : ""
+								}</a>`,
+								type: "project",
+								typeid: projectId,
+								uid: this.getUid(),
+								username: username
+							});
+						});
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		"/project/change_member_role": {
+			post: {
+				summary: "修改项目成员角色",
+				description: "",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目id",
+							type: "number"
+						},
+						member_uid: {
+							required: true,
+							description: "项目成员uid",
+							type: "number"
+						},
+						role: {
+							required: true,
+							description: "项目成员角色",
+							type: "string",
+							enum: ["owner", "dev", "guest"]
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let params = ctx.request.body;
+						let { id: projectId, member_uid, role } = ctx.payload;
+
+						var check = await orm.project.checkMemberRepeat(
+							projectId,
+							member_uid
+						);
+						if (check === 0) {
+							return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
+						}
+						if (
+							(await this.checkAuth(projectId, "project", "danger")) !== true
+						) {
+							return (ctx.body = xU.$response(null, 405, "没有权限"));
+						}
+
+						role = ["owner", "dev", "guest"].find(v => v === role) || "dev";
+						let rolename = {
+							owner: "组长",
+							dev: "开发者",
+							guest: "访客"
+						};
+
+						let result = await orm.project.changeMemberRole(
+							projectId,
+							member_uid,
+							role
+						);
+
+						let username = this.getUsername();
+						orm.user.findById(member_uid).then(member => {
+							xU.saveLog({
+								content: `<a href="/user/profile/${this.getUid()}">${username}</a> 修改了项目中的成员 <a href="/user/profile/${member_uid}">${
+									member.username
+								}</a> 的角色为 "${rolename[role]}"`,
+								type: "project",
+								uid: this.getUid(),
+								username: username,
+								typeid: projectId
+							});
+						});
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
 		}
 	}
 };

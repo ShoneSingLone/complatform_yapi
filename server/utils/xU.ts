@@ -1034,6 +1034,7 @@ ${JSON.stringify(schema, null, 2)}`;
 async function getUserdata(uid, role) {
 	role = role || "dev";
 	let userData = await orm.user.findById(uid);
+
 	if (!userData) {
 		return null;
 	}

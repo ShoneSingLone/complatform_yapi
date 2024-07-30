@@ -163,7 +163,6 @@ export default async function ({ onOk }) {
 				this.fillFormData();
 			},
 			async fillFormData() {
-				debugger;
 				_.$fillBackData({
 					form: this.form,
 					data: {

@@ -1,7 +1,7 @@
 <template>
 	<div class="flex1 vertical mt" style="height: 1px; position: relative" v-if="isShow">
 		<div style="overflow: hidden; position: absolute; width: 100%; height: 100%">
-			<xTableVir :columns="columns" :data="APP.groupMemberList" v-if="isShow" />
+			<xTableVir :columns="columns" :data="cptProjectMembers" v-if="isShow" />
 		</div>
 	</div>
 </template>
@@ -32,7 +32,7 @@ export default async function () {
 						prop: `a`,
 						label: `b`,
 						headerCellRenderer() {
-							return h("span", [`成员 ${vm.APP.groupMemberList.length} 人`]);
+							return h("span", [`成员 ${vm.cptProjectMembers.length} 人`]);
 						},
 						cellRenderer: ({ rowData }) => {
 							return h("div", { staticClass: "flex middle", key: rowData.uid }, [
@@ -57,7 +57,7 @@ export default async function () {
 													canModifyAvatar:
 														rowData.uid === vm.APP.user._id,
 													onOk() {
-														vm.APP.updateGroupMemberList();
+														vm.APP.updateGroupProjectList();
 													}
 												}
 											);
@@ -128,8 +128,8 @@ export default async function () {
 					url: "@/views/Api/Group/Section/MemberList/GroupSectionMemberList.AddMember.vue",
 					parent: vm,
 					async onOk({ member_uids, role, dialogVm }) {
-						const { data } = await _api.yapi.groupAddMember({
-							id: vm.APP.cptCurrentGroup._id,
+						const { data } = await _api.yapi.project_add_member({
+							id: vm.APP.cptProject?._id,
 							member_uids,
 							role
 						});
@@ -137,26 +137,27 @@ export default async function () {
 						const addLength = add_members.length;
 						const existLength = exist_members.length;
 						_.$msg(`新增 ${addLength} 人， ${existLength} 人已存在`);
-						vm.APP.updateGroupMemberList();
+						vm.APP.updateGroupProjectList();
 						dialogVm.closeModal();
 					}
 				});
 			},
 			async removeMember(row) {
 				const vm = this;
-				const { data } = await _api.yapi.group_del_member({
-					id: vm.APP.cptCurrentGroup._id,
+				const { data } = await _api.yapi.project_del_member({
+					id: vm.APP.cptProject._id,
 					member_uid: row.uid
 				});
 				_.$msg(`移除成功`);
-				vm.APP.updateGroupMemberList();
+				vm.APP.updateGroupProjectList();
 			},
+
 			async changeMemberRole({ role, uid, index }) {
 				const groupId = this.APP.cptCurrentGroup._id;
 				_.$loading(true);
 				try {
 					if (role) {
-						await _api.yapi.groupChangeMemberRole({
+						await _api.yapi.project_change_member_role({
 							id: groupId,
 							member_uid: uid,
 							role
@@ -168,21 +169,27 @@ export default async function () {
 				} finally {
 					_.$loading(false);
 				}
-			}
-		},
-		computed: {
+			},
 			cptAvatarUrl(id) {
 				return Vue._common_utils.appendToken(
 					`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${id}`
 				);
+			}
+		},
+		computed: {
+			cptProjectMembers() {
+				return this.APP.cptProject?.members || [];
 			},
 			isShow() {
-				return this.$route.query.GroupViewTabName === Vue._yapi_var.TAB_KEY_MEMBER_LIST;
+				return true;
 			},
 			cptAuth() {
-				return [Vue._yapi_var.OWNER, Vue._yapi_var.ADMIN].includes(
-					this.APP.cptCurrentGroup?.role
-				);
+				if (this.APP.user?.role === Vue._yapi_var.ADMIN) {
+					return true;
+				}
+				return _.some(this.APP?.cptProject?.members, member => {
+					return member.uid === this.APP?.user?._id;
+				});
 			}
 		},
 		watch: {
@@ -191,7 +198,7 @@ export default async function () {
 				async handler(groupId) {
 					if (groupId) {
 						try {
-							this.APP.updateGroupMemberList();
+							this.APP.updateGroupProjectList();
 						} catch (error) {
 							_.$msgError(error);
 						}

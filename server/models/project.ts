@@ -211,13 +211,13 @@ class ModelProject extends ModelBase {
 
 	list(group_id) {
 		let params = { group_id: group_id };
-		return this.model
-			.find(params)
-			.select(
-				"_id uid name basepath switch_notice desc group_id project_type color icon env add_time up_time requestCode"
-			)
-			.sort({ _id: -1 })
-			.exec();
+		return (
+			this.model
+				.find(params)
+				// .select( "_id uid name basepath switch_notice desc group_id project_type color icon env add_time up_time requestCode" )
+				.sort({ _id: -1 })
+				.exec()
+		);
 	}
 
 	// 获取项目数量统计
