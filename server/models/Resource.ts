@@ -36,7 +36,6 @@ const schemaObj = {
 	basecode: String,
 	useFor: {
 		type: String,
-		default: 0,
 		enum: ["all", "CloudDisk", "wiki"]
 	}
 };
