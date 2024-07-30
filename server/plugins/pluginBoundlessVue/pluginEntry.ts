@@ -5,13 +5,15 @@ const mime = require("mime-types");
 
 const DIRS_ARRAY = fs.readdirSync(path.resolve(xU.var.APP_ROOT_DIR, "static"));
 
-const APP_NAME_ARRAY = DIRS_ARRAY.reduce((target, dirname) => {
+let APP_NAME_ARRAY = DIRS_ARRAY.reduce((target, dirname) => {
 	const [, appName] = String(dirname).match(/business_(.*)/) || [];
 	if (appName) {
 		target.push(appName);
 	}
 	return target;
 }, []);
+
+APP_NAME_ARRAY = APP_NAME_ARRAY.concat(["static"]);
 
 module.exports = async function (app) {
 	app.use(async (ctx, next) => {
