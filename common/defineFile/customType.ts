@@ -44,6 +44,7 @@ export type t_xU = LoDashStatic & {
 	storageCreator: Function;
 	dayjs: Function;
 	handleBasepath: Function;
+	socketMsg: Function;
 	isInput: Function;
 	isSame: Function;
 	autowareController: Function;
@@ -284,7 +285,7 @@ export type t_orm = {
 
 		countWithPublic: (...args: any) => Promise<any>;
 
-		listWithPaging: (...args: any) => Promise<any>;
+		paging: (...args: any) => Promise<any>;
 
 		listCount: (...args: any) => Promise<any>;
 

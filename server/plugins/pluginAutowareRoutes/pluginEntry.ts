@@ -127,7 +127,7 @@ function checkParamsAndParse({ info, ctx, field }) {
 	/* 校验必填项 */
 	if (required) {
 		if (!xU.isInput(fieldValue)) {
-			if (defaultValue) {
+			if (xU.isInput(defaultValue)) {
 				ctx.payload[field] = defaultValue;
 			} else {
 				ctx.body = xU.$response(null, 500, `${field} required`);

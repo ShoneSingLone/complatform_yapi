@@ -168,6 +168,9 @@ module.exports = {
 
 					basepath = this.handleBasepath(basepath);
 					const group = await orm.group.get(group_id);
+					if (!group) {
+						return (ctx.body = xU.$response(null, 404, "分组信息有误"));
+					}
 
 					if (!basepath) {
 						return (ctx.body = xU.$response(null, 401, "basepath格式有误"));
@@ -361,6 +364,45 @@ module.exports = {
 
 					ctx.body = xU.$response({
 						list: project_list
+					});
+				}
+			}
+		},
+		"/project/page": {
+			get: {
+				summary: "获取项目列表,以分页的方式",
+				description: "",
+				request: {
+					query: {
+						name: {
+							description: "项目名称",
+							type: "string"
+						},
+						page: {
+							required: true,
+							description: "当前页",
+							type: "number",
+							default: 1
+						},
+						size: {
+							required: true,
+							description: "每页数量",
+							type: "number",
+							default: 10
+						}
+					}
+				},
+				async handler(ctx) {
+					let { name, page, size } = ctx.payload;
+					const { list, total } = await orm.project.paging({
+						page,
+						size,
+						name
+					});
+
+					ctx.body = xU.$response({
+						list,
+						total
 					});
 				}
 			}

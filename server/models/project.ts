@@ -1,4 +1,5 @@
 const ModelBase = require("server/models/base");
+const { ObjectId } = require("mongodb");
 
 /**
  * @namespace {type} ModelProject
@@ -8,32 +9,6 @@ const ModelBase = require("server/models/base");
 class ModelProject extends ModelBase {
 	getName() {
 		return "project";
-	}
-
-	constructor() {
-		super();
-		this.handleEnvNullData = this.handleEnvNullData.bind(this);
-	}
-
-	getAuthList(uid) {
-		return this.model
-			.find({
-				$or: [
-					{
-						"members.uid": uid,
-						project_type: "private"
-					},
-					{
-						uid,
-						project_type: "private"
-					},
-					{
-						project_type: "public"
-					}
-				]
-			})
-			.select("group_id")
-			.exec();
 	}
 
 	getSchema() {
@@ -84,6 +59,32 @@ class ModelProject extends ModelBase {
 			is_json5: { type: Boolean, default: true },
 			tag: [{ name: String, desc: String }]
 		};
+	}
+
+	constructor() {
+		super();
+		this.handleEnvNullData = this.handleEnvNullData.bind(this);
+	}
+
+	getAuthList(uid) {
+		return this.model
+			.find({
+				$or: [
+					{
+						"members.uid": uid,
+						project_type: "private"
+					},
+					{
+						uid,
+						project_type: "private"
+					},
+					{
+						project_type: "public"
+					}
+				]
+			})
+			.select("group_id")
+			.exec();
 	}
 
 	updateMember(data) {
@@ -230,17 +231,34 @@ class ModelProject extends ModelBase {
 		return this.model.countDocuments(params);
 	}
 
-	listWithPaging(group_id, page, limit) {
-		page = parseInt(page);
-		limit = parseInt(limit);
-		return this.model
-			.find({
-				group_id: group_id
-			})
-			.sort({ _id: -1 })
-			.skip((page - 1) * limit)
-			.limit(limit)
-			.exec();
+	async paging({ group_id, page, size, name }) {
+		name = name || ".*";
+
+		const condition = {
+			group_id: { $ne: null },
+			$or: [
+				/* TODO: _id 作为字符串的模糊查询*/
+				{
+					name: { $regex: new RegExp(name, "i") }
+				}
+			]
+		};
+
+		if (xU.isInput(group_id)) {
+			condition.group_id = group_id;
+		}
+
+		return {
+			list: await this.model
+				.find(condition)
+				.sort({
+					group_id: -1
+				})
+				.skip((page - 1) * size)
+				.limit(size)
+				.exec(),
+			total: await this.model.countDocuments(condition)
+		};
 	}
 
 	listCount(group_id) {

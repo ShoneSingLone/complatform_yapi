@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const autoIncrement = require("mongoose-auto-increment");
+const autoIncrement = require("../plugins/pluginMongooseAutoIncrement/MongooseAutoIncrement");
 
 function dbModel(modelName, schema) {
 	if (!(schema instanceof Schema)) {

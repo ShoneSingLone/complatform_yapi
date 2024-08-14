@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const autoIncrement = require("mongoose-auto-increment");
+const autoIncrement = require("../plugins/pluginMongooseAutoIncrement/MongooseAutoIncrement");
 
 async function setMongooseAsync() {
 	return new Promise((resolve, reject) => {

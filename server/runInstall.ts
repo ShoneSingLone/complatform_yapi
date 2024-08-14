@@ -3,7 +3,6 @@
 	const path = require("path");
 	const mongoose = require("mongoose");
 	const fs = require("fs-extra");
-	const ModelUser = require("server/models/user");
 
 	function install() {
 		const fileExistURL = path.join(xU.var.APP_ROOT_DIR, "..", "yapi.installed");
@@ -21,6 +20,7 @@
 		let userInst = orm.user;
 		let passsalt = xU.randStr();
 		let result = userInst.save({
+			nickname: yapi_configs.adminAccount.indexOf("@"),
 			username: yapi_configs.adminAccount.substr(
 				0,
 				yapi_configs.adminAccount.indexOf("@")
