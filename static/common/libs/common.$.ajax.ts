@@ -69,7 +69,7 @@
 						type,
 						data,
 						contentType: "application/json",
-						success(response) {
+						success(response, state, xhr) {
 							response = responseInjector(response);
 							if (_.isPlainObject(response)) {
 								/* 兼容 */
@@ -89,7 +89,7 @@
 									}
 								}
 							}
-							return resolve(response);
+							return resolve(response, state, xhr);
 						},
 						error(response) {
 							response = responseInjector(response);
@@ -157,7 +157,14 @@
 				// 	xhr.send(file);
 				// });
 			},
-			downloadOctetStream({ url, method, beforeSend, payload, resolveResult }) {
+			downloadOctetStream({
+				url,
+				method,
+				beforeSend,
+				payload,
+				resolveResult,
+				fileType = "image/jpeg"
+			}) {
 				payload = payload || {};
 				method = method || "get";
 				beforeSend = beforeSend || (() => null);
@@ -180,13 +187,15 @@
 							},
 							async success(result, state, xhr) {
 								try {
+									/* const type = Object.prototype.toString.call(result); if (type === "[object Blob]") { debugger; resolve(result); } else */
 									if (_.isFunction(resolveResult)) {
-										await resolveResult();
+										await resolveResult(result, state, xhr);
 									} else {
 										//result:请求到的结果数据
 										//state:请求状态（success）
 										//xhr:XMLHttpRequest对象
 										// 从Response Headers中获取fileName
+										// TODO:xhr为null
 										let header = xhr.getResponseHeader("content-disposition");
 										let fileName = header
 											.split(";")[1]
@@ -195,7 +204,7 @@
 										//获取下载文件的类型
 										let type = xhr.getResponseHeader("content-type");
 										//结果数据类型处理
-										let blob = new Blob([result], { type: "image/jpeg" });
+										let blob = new Blob([result], { type: fileType });
 
 										//对于<a>标签，只有 Firefox 和 Chrome（内核）支持 download 属性
 										//IE10以上支持blob，但是依然不支持download

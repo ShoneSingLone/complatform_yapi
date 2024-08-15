@@ -1,10 +1,10 @@
 <style lang="less"></style>
 <template>
-	<xAutoResizer>
+	<xAutoResizer :onResize="onResize">
 		<template #default="{ width, height }">
 			<div
 				:key="_uid"
-				class="x-chart flex flex1 center middle"
+				class="x-chart flex flex1 center middle x-loading"
 				:width="width"
 				:height="height" />
 		</template>
@@ -43,26 +43,37 @@ export default async function () {
 		},
 		setup() {
 			const vm = this;
-
-			vm.updateOptions = _.debounce(async function () {
-				const echarts = await _.$appendScript(
-					"/common/libs/echarts/echarts.min.js",
-					"echarts"
-				);
+			vm.onResize = _.debounce(function () {
 				if (vm.myChart) {
-					vm.myChart.dispose();
+					vm.myChart.resize();
+					_.$execfnify(vm?.helper?.onResize, {
+						instance: vm.myChart,
+						chartVM: vm
+					});
 				}
-				await _.$ensure(() => vm.$el);
-				const options = vm.helper.initOptions(vm.$props);
-				vm.options = vm.helper.updateOptions(options, vm.dataset);
-				vm.myChart = markRaw(echarts.init(vm.$el));
-				if (vm?.helper?.afterInit) {
-					vm?.helper?.afterInit({ instance: vm.myChart });
+			}, 100);
+
+			vm.update = _.debounce(async function () {
+				if (!vm.myChart) {
+					const [echarts] = await Promise.all([
+						_.$appendScript("/common/libs/echarts/echarts.min.js", "echarts"),
+						_.$ensure(() => vm.$el)
+					]);
+					// vm.myChart.dispose();
+					vm.myChart = markRaw(echarts.init(vm.$el));
 				}
+
 				vm.myChart.showLoading();
+
+				const options = vm.helper.initOptions(vm.$props);
+
+				vm.options = vm.helper.updateOptions(options, vm.dataset);
+
+				await _.$execfnify(vm?.helper?.afterInit, { instance: vm.myChart });
+
 				vm.myChart.setOption(vm.options);
 				vm.myChart.hideLoading();
-			}, 300);
+			}, 500);
 			return { myChart: false };
 		},
 		computed: {
@@ -75,7 +86,7 @@ export default async function () {
 		},
 		watch: {
 			dataset() {
-				this.updateOptions();
+				this.update();
 			}
 		},
 		mounted() {
@@ -83,23 +94,7 @@ export default async function () {
 		},
 		methods: {
 			async init() {
-				this.observe();
-				this.updateOptions();
-			},
-			observe() {
-				//如果有变化了 那么就调用echart的resize方法改变大小
-				this.resizeObserver = new ResizeObserver(() => {
-					if (this.myChart) {
-						this.updateOptions();
-						if (this?.helper?.onResize) {
-							this.helper.onResize({
-								instance: this.myChart,
-								chartVM: this
-							});
-						}
-					}
-				});
-				this.resizeObserver.observe(this.$el);
+				this.update();
 			}
 		}
 	});

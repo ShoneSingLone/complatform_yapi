@@ -8,7 +8,7 @@
 			style="--xItem-wrapper-width: 424px; --xItem-label-width: 100px"
 			:configs="inject_project_interface_section.configsTable">
 			<template #left>
-				<xBtn :configs="oprBtnArray" />
+				<xBtnArray :configs="oprBtnArray" />
 			</template>
 			<!-- 名称或者路径 -->
 			<template #right>
@@ -73,18 +73,23 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptIsCheckedRow() {
+				return this.inject_project_interface_section.configsTable.data.set.size === 0;
+			},
 			oprBtnArray() {
-				return {
-					label: "切换代理",
-					disabled: () => {
-						return (
-							this.inject_project_interface_section.configsTable.data.set.size === 0
-						);
+				const vm = this;
+				return [
+					{
+						label: "切换代理",
+						disabled: () => vm.cptIsCheckedRow,
+						onClick: vm.changeProxy
 					},
-					onClick: () => {
-						return this.changeProxy();
+					{
+						label: "复制接口",
+						disabled: () => vm.cptIsCheckedRow,
+						onClick: vm.copyInterface
 					}
-				};
+				];
 			},
 			btnRest() {
 				return {
@@ -109,6 +114,16 @@ export default async function () {
 				_.$openModal({
 					title: i18n("切换代理"),
 					url: "@/components/YapiChangeProxyDialog.vue",
+					parent: this,
+					selected: Array.from(
+						this.inject_project_interface_section.configsTable.data.set
+					)
+				});
+			},
+			async copyInterface() {
+				_.$openModal({
+					title: i18n("复制接口到所选项目"),
+					url: "@/components/YapiCoypInterface.dialog.vue",
 					parent: this,
 					selected: Array.from(
 						this.inject_project_interface_section.configsTable.data.set

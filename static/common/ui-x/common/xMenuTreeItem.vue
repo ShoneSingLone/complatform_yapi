@@ -38,7 +38,7 @@ export default async function () {
 						return props.renders?.label.call(vm, { item: vm.item });
 					}
 
-					return h("div", { staticClass: "el-submenu__title-text" }, [vm.cpt_label]);
+					return h("div", { staticClass: "el-submenu__title-text" }, [vm.cptLabel]);
 				},
 				toggle() {
 					/* 如果折叠就不跳转 */
@@ -59,13 +59,13 @@ export default async function () {
 				}
 				return isActive;
 			},
-			cpt_label() {
+			cptLabel() {
 				return this.item?.label;
 			},
 			isFolder: function () {
 				return this.item?.children && this.item?.children.length;
 			},
-			cpt_children: function () {
+			cptChildren: function () {
 				return this.item?.children || [];
 			},
 			cptClassFolderIcon() {
@@ -88,7 +88,7 @@ export default async function () {
 				folderIcon,
 				cptClassFolderIcon,
 				scopeSlotsDefault,
-				cpt_children,
+				cptChildren,
 				isFolder,
 				isActive,
 				state,
@@ -161,7 +161,7 @@ export default async function () {
 					h(
 						"div",
 						{ vIf: isFolder && !collapse },
-						_.map(cpt_children, function (child, index) {
+						_.map(cptChildren, function (child, index) {
 							const treeProps = {
 								directives: [
 									{

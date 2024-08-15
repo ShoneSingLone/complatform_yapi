@@ -17,7 +17,9 @@ export default async function () {
 		name: "ComponentTableV2Grid",
 		props: tableV2GridProps,
 		setup(props, { expose }) {
-			const { ns } = inject(TableV2InjectionKey);
+			const TableV2_inject = inject(TableV2InjectionKey);
+			const { ns } = TableV2_inject;
+
 			const {
 				bodyRef,
 				fixedRowHeight,

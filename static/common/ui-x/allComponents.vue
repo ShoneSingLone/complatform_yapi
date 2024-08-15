@@ -144,6 +144,7 @@ export default async function () {
 		"common/xItem/xItemNameUrl",
 		"common/xItem/xItemRadioGroup",
 		"common/xItem/xItemSelect",
+		"common/xItem/xItemCascader",
 		"common/xItem/xItemSlider",
 		"common/xItem/xItemSwitch",
 		/* ******************* */

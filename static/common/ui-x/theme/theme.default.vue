@@ -481,7 +481,7 @@ body {
 	font-size: 13px;
 	padding: 0;
 	margin: 0;
-	background-color: var(--ui-embed-search-bg-hover) !important;
+	background-color: var(--body-bg-color, var(--ui-embed-search-bg-hover));
 }
 
 .opacity0 {
@@ -687,60 +687,82 @@ body,
 	flex-flow: column nowrap;
 }
 
-/* 美化滑动条 */
-div,
-ul,
-code,
-html,
-body,
-#app,
-.beautiful-scroll {
-	&::-webkit-scrollbar {
-		transition: 1s all ease;
-		width: 8px;
-		height: 8px;
-		background-color: white;
-		/* or add it to the track */
-	}
-	&::-webkit-scrollbar-thumb {
-		background: transparent;
-		// background: var(--ui-thumb-hover);
-		border-radius: var(--border-radius);
-		border: 1px solid white;
-		transition: all 120ms ease-out;
-	}
-	&:hover {
+/* x-app-body只用于body元素，唯一 */
+body.x-app-body {
+	position: relative;
+	height: 100%;
+	width: 100%;
+
+	/* 美化滑动条 */
+	div,
+	ul,
+	code,
+	html,
+	body,
+	#app,
+	.beautiful-scroll {
+		&::-webkit-scrollbar {
+			transition: 1s all ease;
+			width: 8px;
+			height: 8px;
+			background-color: white;
+			/* or add it to the track */
+		}
 		&::-webkit-scrollbar-thumb {
-			background: var(--ui-thumb-hover);
+			background: transparent;
+			// background: var(--ui-thumb-hover);
+			border-radius: var(--border-radius);
+			border: 1px solid white;
+			transition: all 120ms ease-out;
+		}
+		&:hover {
+			&::-webkit-scrollbar-thumb {
+				background: var(--ui-thumb-hover);
+			}
 		}
 	}
-}
 
-.warning-color {
-	color: var(--xAlert-error-light-color);
-}
-
-.x-disabled {
-	opacity: 0.5;
-	position: relative;
-	pointer-events: none;
-	&::before {
-		pointer-events: auto;
-		content: " ";
-		display: block;
-		top: 0;
-		bottom: 0;
-		right: 0;
-		left: 0;
-		position: absolute;
-		z-index: 9999999999;
+	/* div.app-wrapper */
+	.x-app-wrapper {
+		position: relative;
+		height: 100%;
+		width: 100%;
+		&.mobile.openSidebar {
+			position: fixed;
+			top: 0;
+		}
 	}
-}
 
-.x-white-border {
-	background-color: var(--color-white);
-	border-radius: var(--border-radius);
-	overflow: hidden;
+	.x-app-main {
+		width: 1px;
+	}
+
+	.warning-color {
+		color: var(--xAlert-error-light-color);
+	}
+
+	.x-white-border {
+		background-color: var(--color-white);
+		border-radius: var(--border-radius);
+		overflow: hidden;
+	}
+
+	.x-disabled {
+		opacity: 0.5;
+		position: relative;
+		pointer-events: none;
+		&::before {
+			pointer-events: auto;
+			content: " ";
+			display: block;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			position: absolute;
+			z-index: 9999999999;
+		}
+	}
 }
 
 /* ************************useXui_css_variable*********************** */
@@ -820,6 +842,7 @@ body,
 		.x-sidebar-menu,
 		.x-sidebar-menu-title {
 			overflow: hidden;
+			position: relative;
 		}
 
 		&.hide {

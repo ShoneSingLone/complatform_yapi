@@ -395,6 +395,7 @@ module.exports = {
 				async handler(ctx) {
 					let { name, page, size } = ctx.payload;
 					const { list, total } = await orm.project.paging({
+						uid: this.$uid,
 						page,
 						size,
 						name

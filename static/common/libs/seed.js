@@ -485,7 +485,7 @@
 			}
 
 			await _$asyncLoadOrderAppendScrips([
-				["/common/libs/jquery-3.7.0.min.js"],
+				["/common/libs/jquery-3.7.0.min.js", null, () => $("body").addClass("x-app-body")],
 				[
 					"/common/libs/lodash.js",
 					null,

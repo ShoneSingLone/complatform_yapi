@@ -5,7 +5,8 @@
 		</div>
 		<div class="oprations-tab_search">
 			<slot />
-			<xInquire v-if="isShowInquire" @click="configs.onQuery({ page: 1 })" />
+			<xBtn :configs="cptQueryBtnConfigs" />
+			<xBtn :configs="cptResetBtnConfigs" />
 			<slot name="right" />
 			<xTableFilter v-if="isShowFilter" :configs="configs" />
 		</div>
@@ -17,6 +18,37 @@ export default async function () {
 	return defineComponent({
 		props: ["configs"],
 		computed: {
+			cptQueryBtnConfigs() {
+				const vm = this;
+
+				return {
+					label: i18n("查询"),
+					preset: "primary",
+					isHide() {
+						return !vm.isShowInquire;
+					},
+					onClick() {
+						return vm.configs.onQuery({ page: 1 });
+					}
+				};
+			},
+			cptResetBtnConfigs() {
+				const vm = this;
+
+				return {
+					label: i18n("重置"),
+					isHide() {
+						return !vm.isShowReset;
+					},
+					onClick() {
+						_.$resetFormValues(vm.$el);
+						return vm.configs.onQuery({ page: 1 });
+					}
+				};
+			},
+			isShowReset() {
+				return !!this?.configs?.isShowReset;
+			},
 			isShowInquire() {
 				return !this?.configs?.isHideQuery;
 			},

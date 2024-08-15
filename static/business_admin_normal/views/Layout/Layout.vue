@@ -1,15 +1,4 @@
 <style lang="less">
-.app-wrapper {
-	position: relative;
-	height: 100%;
-	width: 100%;
-
-	&.mobile.openSidebar {
-		position: fixed;
-		top: 0;
-	}
-}
-
 .drawer-bg {
 	background: #000;
 	opacity: 0.3;
@@ -111,23 +100,27 @@ export default async function () {
 				return this.APP.sidebar;
 			},
 			cptWrapperClass() {
-				return {
-					"app-wrapper flex width100": true,
-					hideSidebar: this.cptSidebar.isCollapse,
-					openSidebar: !this.cptSidebar.isCollapse,
-					withoutAnimation: this.cptSidebar.withoutAnimation,
-					mobile: this.APP.isMobile
-				};
+				return [
+					"x-app-wrapper flex width100",
+					{
+						hideSidebar: this.cptSidebar.isCollapse,
+						openSidebar: !this.cptSidebar.isCollapse,
+						withoutAnimation: this.cptSidebar.withoutAnimation,
+						mobile: this.APP.isMobile
+					}
+				];
 			},
 			cptWrapperStyle() {
 				return { "--current-color": this.cptSettings.theme };
 			},
 			cptMainContainerClass() {
-				return {
-					"main-container flex vertical flex1": true,
-					hasTagsView: this.cptIsNeedTagsView,
-					sidebarHide: this.cptSidebar.hide
-				};
+				return [
+					"x-app-main flex vertical flex1",
+					{
+						hasTagsView: this.cptIsNeedTagsView,
+						sidebarHide: this.cptSidebar.hide
+					}
+				];
 			},
 			cptFixedHeaderClass() {
 				return { "fixed-header": this.cptIsFixedHeader };

@@ -18,7 +18,10 @@
 			path="@/views/component/data/virtualizedTable/DongTaiGaoDuHang.vue" />
 		<DemoAndCode
 			title="自定义空元素渲染器"
-			path="@/views/component/data/virtualizedTable/ZiDingYiKongYuanSuXuanRanQi.vue"
+			path="@/views/component/data/virtualizedTable/ZiDingYiKongYuanSuXuanRanQi.vue" />
+		<DemoAndCode
+			title="可展开的附加信息"
+			path="@/views/component/data/virtualizedTable/KeZhanKaiDeFuJiaXinXi.vue"
 			unfold />
 	</DocContentOfDemo>
 </template>

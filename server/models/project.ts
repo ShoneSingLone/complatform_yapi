@@ -231,10 +231,11 @@ class ModelProject extends ModelBase {
 		return this.model.countDocuments(params);
 	}
 
-	async paging({ group_id, page, size, name }) {
+	async paging({ group_id, page, size, name, uid }) {
 		name = name || ".*";
 
 		const condition = {
+			"members.uid": { $in: [uid] },
 			group_id: { $ne: null },
 			$or: [
 				/* TODO: _id 作为字符串的模糊查询*/

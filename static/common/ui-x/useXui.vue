@@ -97,10 +97,10 @@ export default async function ({
 		}
 	})();
 
-	function setDataTipsShowWhenHover() {
+	(function setDataTipsShowWhenHover() {
 		/*  ellipsis */
 		var inArea = {};
-		$(document).on("mouseenter.layer_tips", "[data-tips]", function (event) {
+		$(document).on("mouseenter.setDataTipsShowWhenHover", ".ellipsis", function (event) {
 			try {
 				var $ele = $(this);
 				var width = $ele.width();
@@ -110,33 +110,21 @@ export default async function ({
 				var widthChild = $child.width();
 				$child.remove();
 				if (width < widthChild - 2) {
-					const vlayerIndex = layer.tips(
-						`<div style="overflow: auto;">${$ele.text()}</div>`,
-						this,
-						{
-							tips: [1, "#fff"],
-							time: 1000 * 60 * 1
-						}
-					);
-					$ele.attr("data-tips", vlayerIndex);
+					if (!$ele.attr("title")) {
+						$ele.attr("title", $ele.text());
+					}
+				} else {
+					if ($ele.attr("title")) {
+						$ele.attr("title", "");
+					}
 				}
 			} catch (e) {
 				console.error(e);
 			}
 		});
 
-		$(document).on("mouseleave.layer_tips", "[data-tips]", function (event) {
-			try {
-				var $ele = $(this);
-				var vlayerIndex = Number($ele.attr("data-tips"));
-				if (vlayerIndex > -1) {
-					layer.close(vlayerIndex);
-				}
-			} catch (e) {
-				console.error(e);
-			}
-		});
-	}
+		$(document).on("mouseleave.setDataTipsShowWhenHover", ".ellipsis", function (event) {});
+	})();
 
 	(function xIconUseSvgInit() {
 		let $svgWrapper = $("#__SVG_SPRITE_NODE__");

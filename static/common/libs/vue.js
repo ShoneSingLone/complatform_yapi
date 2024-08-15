@@ -13071,6 +13071,7 @@
 	Vue.createEmptyVNode = createEmptyVNode;
 	Vue.hasOwnProperty = hasOwnProperty;
 	Vue.hasOwn = hasOwn;
+	Vue.toRawType = toRawType;
 	Vue._toString = _toString;
 	Vue._immediate = { immediate: true };
 	Vue.stringifyClass = stringifyClass;

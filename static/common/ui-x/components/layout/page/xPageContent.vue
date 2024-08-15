@@ -54,8 +54,8 @@
 			flex-flow: column nowrap;
 			height: 1px;
 			overflow: auto;
-			padding: var(--ui-one);
-			background: var(--el-color-white);
+			padding: var(--xPageContent-body-padding, var(--ui-one));
+			background: var(--page-body-bg, var(--el-color-white));
 		}
 	}
 

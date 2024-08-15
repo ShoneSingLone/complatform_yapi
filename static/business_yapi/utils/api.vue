@@ -187,6 +187,11 @@ export default async function () {
 					});
 				},
 				/* project */
+				project_page({ group_id, page, size, name }) {
+					return _.$ajax.get("/api/project/page", {
+						data: { group_id, page, size, name }
+					});
+				},
 				getProjectByGroupId(group_id) {
 					return _.$ajax.get("/api/project/list", {
 						data: { group_id }

@@ -145,8 +145,11 @@ export default async function ({ refreshTableData, listData }) {
 				}
 			},
 			async getJson() {
-				const files = await _.$openFileSelector();
-				let i18nString = await _.$readFileAsText(files[0]);
+				const [file] = await _.$openFileSelector();
+				if (!file) {
+					return;
+				}
+				let i18nString = await _.$readFileAsText(file);
 				this.form.content.value = i18nString;
 				const parseJson = new Function(`return ${i18nString}`);
 				return parseJson();

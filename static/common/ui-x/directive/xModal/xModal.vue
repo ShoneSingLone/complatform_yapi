@@ -97,7 +97,7 @@
 						type="button"
 						aria-label="Close"
 						class="x-dialog__headerbtn close"
-						@click="closeModal">
+						@click="closeModal({ isClickCloseIcon: true })">
 						<!-- <i class="el-dialog__close el-icon el-icon-close"></i> -->
 						<xIcon :icon="cptCloseIcon" class="el-dialog__close" />
 					</button>
@@ -219,10 +219,10 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			}, 18);
 
 			onMounted(() => {
-				_.$single.win.on("resize.xModal", setDialogOffset);
+				// _.$single.win.on("resize.xModal", setDialogOffset);
 			});
 			onBeforeUnmount(() => {
-				_.$single.win.off("resize.xModal", setDialogOffset);
+				// _.$single.win.off("resize.xModal", setDialogOffset);
 			});
 
 			return {
@@ -293,6 +293,14 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 				return _.$importVue(options.url, options);
 			}
 		},
+		// beforeDestroy() {
+		// 	debugger;
+		// 	/* 清理content组件 */
+		// 	if (this.$refs?.refContent) {
+		// 		debugger;
+		// 		this.$refs.refContent.$destroy();
+		// 	}
+		// },
 		data() {
 			return {
 				isShowFullScreen: _.isBoolean(modalConfigs.fullscreen),
@@ -313,17 +321,22 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 		},
 		methods: {
 			deviceSupportInstall() {},
-			async closeModal() {
+			async closeModal(options) {
+				options = options || {};
+				const { isClickCloseIcon } = options;
 				let isClose = true;
+
 				if (options.onCancel) {
 					isClose = await options.onCancel();
 				}
+
 				if (isClose) {
 					this.dialogStyle = {
 						...this.dialogStyle,
 						opacity: 0
 					};
 					setTimeout(() => {
+						this.isClickCloseIcon = isClickCloseIcon;
 						this.$destroy();
 					}, 300);
 				}

@@ -47,10 +47,14 @@ export default async function () {
 		computed: {
 			cptColumnsForShow() {
 				if (this.configs?.columns) {
-					return _.filter(this.configs?.columns, col => {
+					const columns = _.filter(this.configs?.columns, col => {
+						if (!col.label) {
+							return false;
+						}
 						const isCol = /COL_/.test(col.prop);
 						return !isCol;
 					});
+					return columns;
 				}
 
 				/* xTable colInfo 配置项*/

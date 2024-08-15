@@ -202,6 +202,26 @@ export default async function () {
 					trigger: ["change", "blur"]
 				};
 			},
+			Range: (min, max) => {
+				return {
+					async validator({ val }) {
+						try {
+							if (!_.$isInput(val)) return;
+							val = _.toNumber(val);
+							if (!_.$isNumber(val)) {
+								return `请输入${min}~${max}范围内的整数`;
+							}
+							if (!/^\d+$/.test(val) || val > max || val < min) {
+								return `请输入${min}~${max}范围内的整数`;
+							}
+							return "";
+						} catch (error) {
+							return `请输入${min}~${max}范围内的整数`;
+						}
+					},
+					trigger: ["change", "blur"]
+				};
+			},
 			portRange: (min, max) => {
 				return {
 					async validator({ val }) {
@@ -290,18 +310,6 @@ export default async function () {
 					name: "name",
 					async validator({ val }) {
 						if (/^[0-9a-zA-Z]{2,20}$/.test(val)) {
-							return "";
-						}
-						return msg;
-					},
-					trigger: ["change", "input", "blur"]
-				};
-			},
-			workloadName(msg = i18n("workloadName")) {
-				return {
-					name: "name",
-					async validator({ val }) {
-						if (_reg.workloadName().test(val)) {
 							return "";
 						}
 						return msg;

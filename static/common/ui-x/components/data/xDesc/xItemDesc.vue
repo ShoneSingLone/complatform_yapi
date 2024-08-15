@@ -2,7 +2,7 @@
 .xItemDesc-wrapper {
 	overflow: hidden;
 	width: var(--xItem-wrapper-width, 320px);
-	height: var(--xItem-wrapper-height);
+	min-height: var(--xItem-wrapper-height);
 	.xItemDesc-wrapper_label {
 		width: var(--xItem-label-width, 120px);
 	}

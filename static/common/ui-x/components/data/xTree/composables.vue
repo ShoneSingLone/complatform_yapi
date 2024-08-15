@@ -448,11 +448,20 @@ export default async function () {
 				const { treeNodeMap } = tree.value;
 				if (props.showCheckbox && treeNodeMap && keys2) {
 					try {
-						for (const key of keys2) {
-							const node = treeNodeMap.get(key);
-							if (node && !isChecked(node)) {
-								toggleCheckbox(node, true, false);
+						if (_.$isArrayFill(keys2)) {
+							for (const key of keys2) {
+								const node = treeNodeMap.get(key);
+								if (node && !isChecked(node)) {
+									toggleCheckbox(node, true, false);
+								}
 							}
+						} else {
+							/* 清空 */
+							treeNodeMap.forEach(node => {
+								if (node && isChecked(node)) {
+									toggleCheckbox(node, false, false);
+								}
+							});
 						}
 					} catch (error) {
 						// console.log(error);

@@ -1,7 +1,6 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
 	var _xUtils = {};
-	const DEFAULT_DYNAMIC_LIST_ITEM_SIZE = 50;
 	const ITEM_RENDER_EVT = "itemRendered";
 	const SCROLL_EVT = "scroll";
 	const FORWARD = "forward";
@@ -345,29 +344,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		visible: Boolean
 	});
 
-	const virtualizedGridProps = buildProps({
-		columnCache: cache,
-		columnWidth: itemSize,
-		estimatedColumnWidth: estimatedItemSize,
-		estimatedRowHeight: estimatedItemSize,
-		initScrollLeft: initScrollOffset,
-		initScrollTop: initScrollOffset,
-		itemKey: {
-			type: definePropType(Function),
-			default: ({ columnIndex, rowIndex }) => `${rowIndex}:${columnIndex}`
-		},
-		rowCache: cache,
-		rowHeight: itemSize,
-		totalColumn: total,
-		totalRow: total,
-		hScrollbarSize: scrollbarSize,
-		vScrollbarSize: scrollbarSize,
-		scrollbarStartGap: startGap,
-		scrollbarEndGap: endGap,
-		role: String,
-		...virtualizedProps
-	});
-
 	var requiredNumberType = {
 		type: Number,
 		required: true
@@ -399,6 +375,29 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		type: definePropType(Object),
 		required: true
 	};
+
+	const virtualizedGridProps = buildProps({
+		columnCache: cache,
+		columnWidth: itemSize,
+		estimatedColumnWidth: estimatedItemSize,
+		estimatedRowHeight: estimatedItemSize,
+		initScrollLeft: initScrollOffset,
+		initScrollTop: initScrollOffset,
+		itemKey: {
+			type: definePropType(Function),
+			default: ({ columnIndex, rowIndex }) => `${rowIndex}:${columnIndex}`
+		},
+		rowCache: cache,
+		rowHeight: itemSize,
+		totalColumn: total,
+		totalRow: total,
+		hScrollbarSize: scrollbarSize,
+		vScrollbarSize: scrollbarSize,
+		scrollbarStartGap: startGap,
+		scrollbarEndGap: endGap,
+		role: String,
+		...virtualizedProps
+	});
 
 	var tableV2RowProps = buildProps({
 		classV2: String,
@@ -676,533 +675,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		};
 	};
 
-	const createGrid = ({
-		name,
-		clearCache,
-		getColumnPosition,
-		getColumnStartIndexForOffset,
-		getColumnStopIndexForStartIndex,
-		getEstimatedTotalHeight,
-		getEstimatedTotalWidth,
-		getColumnOffset,
-		getRowOffset,
-		getRowPosition,
-		getRowStartIndexForOffset,
-		getRowStopIndexForStartIndex,
-		initCache,
-		injectToInstance,
-		validateProps
-	}) => {
-		return defineComponent({
-			name: name || "ElVirtualList",
-			props: virtualizedGridProps,
-			emits: [ITEM_RENDER_EVT, SCROLL_EVT],
-			components: {
-				/* 循环引用 => 异步加载 */
-				ComponentVirtualScrollBar: () =>
-					_.$importVue(
-						"/common/ui-x/components/data/xTableVir/ComponentVirtualScrollBar.vue"
-					)
-			},
-			setup(props, { emit, expose, slots }) {
-				const ns = useNamespace("vl");
-				validateProps(props);
-				const instance = getCurrentInstance();
-				const cache2 = ref(initCache(props, instance));
-				injectToInstance?.(instance, cache2);
-				const windowRef = ref();
-				const hScrollbar = ref();
-				const vScrollbar = ref();
-				const innerRef = ref(null);
-				const states = ref({
-					isScrolling: false,
-					scrollLeft: _.isNumber(props.initScrollLeft) ? props.initScrollLeft : 0,
-					scrollTop: _.isNumber(props.initScrollTop) ? props.initScrollTop : 0,
-					updateRequested: false,
-					xAxisScrollDir: FORWARD,
-					yAxisScrollDir: FORWARD
-				});
-				const getItemStyleCache = useCache();
-				const parsedHeight = computed(() => Number.parseInt(`${props.height}`, 10));
-				const parsedWidth = computed(() => Number.parseInt(`${props.width}`, 10));
-				const columnsToRender = computed(() => {
-					const { totalColumn, totalRow, columnCache } = props;
-					const { isScrolling, xAxisScrollDir, scrollLeft } = unref(states);
-					if (totalColumn === 0 || totalRow === 0) {
-						return [0, 0, 0, 0];
-					}
-					const startIndex = getColumnStartIndexForOffset(
-						props,
-						scrollLeft,
-						unref(cache2)
-					);
-					const stopIndex = getColumnStopIndexForStartIndex(
-						props,
-						startIndex,
-						scrollLeft,
-						unref(cache2)
-					);
-					const cacheBackward =
-						!isScrolling || xAxisScrollDir === BACKWARD ? Math.max(1, columnCache) : 1;
-					const cacheForward =
-						!isScrolling || xAxisScrollDir === FORWARD ? Math.max(1, columnCache) : 1;
-					return [
-						Math.max(0, startIndex - cacheBackward),
-						Math.max(0, Math.min(totalColumn - 1, stopIndex + cacheForward)),
-						startIndex,
-						stopIndex
-					];
-				});
-				const rowsToRender = computed(() => {
-					const { totalColumn, totalRow, rowCache } = props;
-					const { isScrolling, yAxisScrollDir, scrollTop } = unref(states);
-					if (totalColumn === 0 || totalRow === 0) {
-						return [0, 0, 0, 0];
-					}
-					const startIndex = getRowStartIndexForOffset(props, scrollTop, unref(cache2));
-					const stopIndex = getRowStopIndexForStartIndex(
-						props,
-						startIndex,
-						scrollTop,
-						unref(cache2)
-					);
-					const cacheBackward =
-						!isScrolling || yAxisScrollDir === BACKWARD ? Math.max(1, rowCache) : 1;
-					const cacheForward =
-						!isScrolling || yAxisScrollDir === FORWARD ? Math.max(1, rowCache) : 1;
-					return [
-						Math.max(0, startIndex - cacheBackward),
-						Math.max(0, Math.min(totalRow - 1, stopIndex + cacheForward)),
-						startIndex,
-						stopIndex
-					];
-				});
-				const estimatedTotalHeight = computed(() =>
-					getEstimatedTotalHeight(props, unref(cache2))
-				);
-				const estimatedTotalWidth = computed(() =>
-					getEstimatedTotalWidth(props, unref(cache2))
-				);
-				const windowStyle = computed(() => [
-					{
-						position: "relative",
-						overflow: "hidden",
-						WebkitOverflowScrolling: "touch",
-						willChange: "transform"
-					},
-					{
-						direction: props.direction,
-						height: _.isNumber(props.height) ? `${props.height}px` : props.height,
-						width: _.isNumber(props.width) ? `${props.width}px` : props.width
-					},
-					props.styleV2 ?? {}
-				]);
-				const innerStyle = computed(() => {
-					const width = `${unref(estimatedTotalWidth)}px`;
-					const height = `${unref(estimatedTotalHeight)}px`;
-					return {
-						height,
-						pointerEvents: unref(states).isScrolling ? "none" : void 0,
-						width
-					};
-				});
-				const emitEvents = () => {
-					const { totalColumn, totalRow } = props;
-					if (totalColumn > 0 && totalRow > 0) {
-						const [
-							columnCacheStart,
-							columnCacheEnd,
-							columnVisibleStart,
-							columnVisibleEnd
-						] = unref(columnsToRender);
-						const [rowCacheStart, rowCacheEnd, rowVisibleStart, rowVisibleEnd] =
-							unref(rowsToRender);
-						emit(ITEM_RENDER_EVT, {
-							columnCacheStart,
-							columnCacheEnd,
-							rowCacheStart,
-							rowCacheEnd,
-							columnVisibleStart,
-							columnVisibleEnd,
-							rowVisibleStart,
-							rowVisibleEnd
-						});
-					}
-					const {
-						scrollLeft,
-						scrollTop,
-						updateRequested,
-						xAxisScrollDir,
-						yAxisScrollDir
-					} = unref(states);
-					emit(SCROLL_EVT, {
-						xAxisScrollDir,
-						scrollLeft,
-						yAxisScrollDir,
-						scrollTop,
-						updateRequested
-					});
-				};
-				const onScroll = e => {
-					const {
-						clientHeight,
-						clientWidth,
-						scrollHeight,
-						scrollLeft,
-						scrollTop,
-						scrollWidth
-					} = e.currentTarget;
-					const _states = unref(states);
-					if (_states.scrollTop === scrollTop && _states.scrollLeft === scrollLeft) {
-						return;
-					}
-					let _scrollLeft = scrollLeft;
-					if (isRTL(props.direction)) {
-						switch (getRTLOffsetType()) {
-							case RTL_OFFSET_NAG:
-								_scrollLeft = -scrollLeft;
-								break;
-							case RTL_OFFSET_POS_DESC:
-								_scrollLeft = scrollWidth - clientWidth - scrollLeft;
-								break;
-						}
-					}
-					states.value = {
-						..._states,
-						isScrolling: true,
-						scrollLeft: _scrollLeft,
-						scrollTop: Math.max(0, Math.min(scrollTop, scrollHeight - clientHeight)),
-						updateRequested: true,
-						xAxisScrollDir: getScrollDir(_states.scrollLeft, _scrollLeft),
-						yAxisScrollDir: getScrollDir(_states.scrollTop, scrollTop)
-					};
-					nextTick(() => resetIsScrolling());
-					onUpdated();
-					emitEvents();
-				};
-				const onVerticalScroll = (distance, totalSteps) => {
-					const height = unref(parsedHeight);
-					const offset = ((estimatedTotalHeight.value - height) / totalSteps) * distance;
-					scrollTo({
-						scrollTop: Math.min(estimatedTotalHeight.value - height, offset)
-					});
-				};
-				const onHorizontalScroll = (distance, totalSteps) => {
-					const width = unref(parsedWidth);
-					const offset = ((estimatedTotalWidth.value - width) / totalSteps) * distance;
-					scrollTo({
-						scrollLeft: Math.min(estimatedTotalWidth.value - width, offset)
-					});
-				};
-				const { onWheel } = useGridWheel(
-					{
-						atXStartEdge: computed(() => states.value.scrollLeft <= 0),
-						atXEndEdge: computed(
-							() =>
-								states.value.scrollLeft >=
-								estimatedTotalWidth.value - unref(parsedWidth)
-						),
-						atYStartEdge: computed(() => states.value.scrollTop <= 0),
-						atYEndEdge: computed(
-							() =>
-								states.value.scrollTop >=
-								estimatedTotalHeight.value - unref(parsedHeight)
-						)
-					},
-					(x, y) => {
-						hScrollbar.value?.onMouseUp?.();
-						vScrollbar.value?.onMouseUp?.();
-						const width = unref(parsedWidth);
-						const height = unref(parsedHeight);
-						scrollTo({
-							scrollLeft: Math.min(
-								states.value.scrollLeft + x,
-								estimatedTotalWidth.value - width
-							),
-							scrollTop: Math.min(
-								states.value.scrollTop + y,
-								estimatedTotalHeight.value - height
-							)
-						});
-					}
-				);
-				const scrollTo = ({
-					scrollLeft = states.value.scrollLeft,
-					scrollTop = states.value.scrollTop
-				}) => {
-					scrollLeft = Math.max(scrollLeft, 0);
-					scrollTop = Math.max(scrollTop, 0);
-					const _states = unref(states);
-					if (scrollTop === _states.scrollTop && scrollLeft === _states.scrollLeft) {
-						return;
-					}
-					states.value = {
-						..._states,
-						xAxisScrollDir: getScrollDir(_states.scrollLeft, scrollLeft),
-						yAxisScrollDir: getScrollDir(_states.scrollTop, scrollTop),
-						scrollLeft,
-						scrollTop,
-						updateRequested: true
-					};
-					nextTick(() => resetIsScrolling());
-					onUpdated();
-					emitEvents();
-				};
-				const scrollToItem = (rowIndex = 0, columnIdx = 0, alignment = AUTO_ALIGNMENT) => {
-					const _states = unref(states);
-					columnIdx = Math.max(0, Math.min(columnIdx, props.totalColumn - 1));
-					rowIndex = Math.max(0, Math.min(rowIndex, props.totalRow - 1));
-					const scrollBarWidth2 = getScrollBarWidth(ns.namespace.value);
-					const _cache = unref(cache2);
-					const estimatedHeight = getEstimatedTotalHeight(props, _cache);
-					const estimatedWidth = getEstimatedTotalWidth(props, _cache);
-					scrollTo({
-						scrollLeft: getColumnOffset(
-							props,
-							columnIdx,
-							alignment,
-							_states.scrollLeft,
-							_cache,
-							estimatedWidth > props.width ? scrollBarWidth2 : 0
-						),
-						scrollTop: getRowOffset(
-							props,
-							rowIndex,
-							alignment,
-							_states.scrollTop,
-							_cache,
-							estimatedHeight > props.height ? scrollBarWidth2 : 0
-						)
-					});
-				};
-				const getItemStyle = (rowIndex, columnIndex) => {
-					const { columnWidth, direction: direction2, rowHeight } = props;
-					const itemStyleCache = getItemStyleCache.value(
-						clearCache && columnWidth,
-						clearCache && rowHeight,
-						clearCache && direction2
-					);
-					const key = `${rowIndex},${columnIndex}`;
-					if (hasOwn(itemStyleCache, key)) {
-						return itemStyleCache[key];
-					} else {
-						const [, left] = getColumnPosition(props, columnIndex, unref(cache2));
-						const _cache = unref(cache2);
-						const rtl = isRTL(direction2);
-						const [height, top] = getRowPosition(props, rowIndex, _cache);
-						const [width] = getColumnPosition(props, columnIndex, _cache);
-						itemStyleCache[key] = {
-							position: "absolute",
-							left: rtl ? void 0 : `${left}px`,
-							right: rtl ? `${left}px` : void 0,
-							top: `${top}px`,
-							height: `${height}px`,
-							width: `${width}px`
-						};
-						return itemStyleCache[key];
-					}
-				};
-				const resetIsScrolling = () => {
-					states.value.isScrolling = false;
-					nextTick(() => {
-						getItemStyleCache.value(-1, null, null);
-					});
-				};
-				onMounted(() => {
-					if (!isClient) return;
-					const { initScrollLeft, initScrollTop } = props;
-					const windowElement = unref(windowRef);
-					if (windowElement) {
-						if (_.isNumber(initScrollLeft)) {
-							windowElement.scrollLeft = initScrollLeft;
-						}
-						if (_.isNumber(initScrollTop)) {
-							windowElement.scrollTop = initScrollTop;
-						}
-					}
-					emitEvents();
-				});
-				const onUpdated = () => {
-					const { direction: direction2 } = props;
-					const { scrollLeft, scrollTop, updateRequested } = unref(states);
-					const windowElement = unref(windowRef);
-					if (updateRequested && windowElement) {
-						if (direction2 === RTL) {
-							switch (getRTLOffsetType()) {
-								case RTL_OFFSET_NAG: {
-									windowElement.scrollLeft = -scrollLeft;
-									break;
-								}
-								case RTL_OFFSET_POS_ASC: {
-									windowElement.scrollLeft = scrollLeft;
-									break;
-								}
-								default: {
-									const { clientWidth, scrollWidth } = windowElement;
-									windowElement.scrollLeft =
-										scrollWidth - clientWidth - scrollLeft;
-									break;
-								}
-							}
-						} else {
-							windowElement.scrollLeft = Math.max(0, scrollLeft);
-						}
-						windowElement.scrollTop = Math.max(0, scrollTop);
-					}
-				};
-				const { resetAfterColumnIndex, resetAfterRowIndex, resetAfter } = instance.proxy;
-				expose({
-					windowRef,
-					innerRef,
-					getItemStyleCache,
-					scrollTo,
-					scrollToItem,
-					states,
-					resetAfterColumnIndex,
-					resetAfterRowIndex,
-					resetAfter
-				});
-				const renderScrollbars = () => {
-					const {
-						scrollbarAlwaysOn,
-						scrollbarStartGap,
-						scrollbarEndGap,
-						totalColumn,
-						totalRow
-					} = props;
-					const width = unref(parsedWidth);
-					const height = unref(parsedHeight);
-					const estimatedWidth = unref(estimatedTotalWidth);
-					const estimatedHeight = unref(estimatedTotalHeight);
-					const { scrollLeft, scrollTop } = unref(states);
-					const horizontalScrollbar = h("ComponentVirtualScrollBar", {
-						ref: hScrollbar,
-						alwaysOn: scrollbarAlwaysOn,
-						startGap: scrollbarStartGap,
-						endGap: scrollbarEndGap,
-						class: ns.e("horizontal"),
-						clientSize: width,
-						layout: "horizontal",
-						onScroll: onHorizontalScroll,
-						ratio: (width * 100) / estimatedWidth,
-						scrollFrom: scrollLeft / (estimatedWidth - width),
-						total: totalRow,
-						visible: true
-					});
-					const verticalScrollbar = h("ComponentVirtualScrollBar", {
-						ref: vScrollbar,
-						alwaysOn: scrollbarAlwaysOn,
-						startGap: scrollbarStartGap,
-						endGap: scrollbarEndGap,
-						class: ns.e("vertical"),
-						clientSize: height,
-						layout: "vertical",
-						onScroll: onVerticalScroll,
-						ratio: (height * 100) / estimatedHeight,
-						scrollFrom: scrollTop / (estimatedHeight - height),
-						total: totalColumn,
-						visible: true
-					});
-					return {
-						horizontalScrollbar,
-						verticalScrollbar
-					};
-				};
-				const renderItems = () => {
-					const $vSlots = this.$vSlots;
-					const [columnStart, columnEnd] = unref(columnsToRender);
-					const [rowStart, rowEnd] = unref(rowsToRender);
-					const { data, totalColumn, totalRow, useIsScrolling, itemKey } = props;
-					const children = [];
-					if (totalRow > 0 && totalColumn > 0) {
-						for (let row = rowStart; row <= rowEnd; row++) {
-							for (let column = columnStart; column <= columnEnd; column++) {
-								if (_.isFunction($vSlots.default)) {
-									const params = {
-										columnIndex: column,
-										data,
-										key: itemKey({
-											columnIndex: column,
-											data,
-											rowIndex: row
-										}),
-										isScrolling: useIsScrolling
-											? unref(states).isScrolling
-											: void 0,
-										style: getItemStyle(row, column),
-										rowIndex: row
-									};
-									const child = $vSlots.default(params);
-									children.push(child);
-								}
-							}
-						}
-					}
-					return children;
-				};
-				const renderInner = () => {
-					const Inner = props.innerElement;
-					const children = renderItems();
-					return [
-						createEmptyVNode("renderInner: " + Inner),
-						h(
-							Inner,
-							{
-								style: unref(innerStyle),
-								ref: innerRef
-							},
-							(function () {
-								if (_.isString(Inner)) {
-									return children;
-								} else {
-									return { default: () => children };
-								}
-							})()
-						),
-						createEmptyVNode("renderInner: " + Inner)
-					];
-				};
-				const renderWindow = () => {
-					const Container = props.containerElement;
-					const { horizontalScrollbar, verticalScrollbar } = renderScrollbars();
-					const Inner = renderInner();
-					return h(
-						"div",
-						{
-							key: 0,
-							class: ns.e("wrapper"),
-							role: props.role
-						},
-						[
-							createEmptyVNode("renderWindow: " + Container),
-							h(
-								Container,
-								{
-									class: props.classV2,
-									style: unref(windowStyle),
-									onScroll,
-									onWheel,
-									ref: windowRef
-								},
-								(function () {
-									if (_.isString(Container)) {
-										return Inner;
-									} else {
-										return { default: () => Inner };
-									}
-								})()
-							),
-							createEmptyVNode("renderWindow: " + Container),
-							horizontalScrollbar,
-							verticalScrollbar
-						]
-					);
-				};
-				return renderWindow;
-			}
-		});
-	};
-
 	const useGridWheel = ({ atXEndEdge, atXStartEdge, atYEndEdge, atYStartEdge }, onWheelDelta) => {
 		let frameHandle = null;
 		let xOffset = 0;
@@ -1429,8 +901,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	}
 
 	function tryOnScopeDispose(fn) {
-		if (getCurrentScope()) {
-			onScopeDispose(fn);
+		if (Vue.getCurrentScope()) {
+			Vue.onScopeDispose(fn);
 			return true;
 		}
 		return false;
@@ -1569,14 +1041,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		columnsStyles,
 		headerIndex: Number,
 		styleV2: { type: definePropType(Object) }
-	});
-
-	const autoResizerProps = buildProps({
-		disableWidth: Boolean,
-		disableHeight: Boolean,
-		onResize: {
-			type: definePropType(Function)
-		}
 	});
 
 	var __getOwnPropSymbols$f = Object.getOwnPropertySymbols;
@@ -1782,7 +1246,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			unrefElement,
 			useEventListener,
 			useSupported,
-			autoResizerProps,
 			tableV2HeaderRowProps,
 			useResizeObserver,
 			useAutoResize,
@@ -1808,7 +1271,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			useNamespace,
 			isStringNumber,
 			addUnit,
-			createGrid,
 			noop,
 			ScrollbarDirKey,
 			renderThumbStyle,
@@ -1817,15 +1279,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			buildProp,
 			buildProps,
 			columns,
-			virtualizedScrollbarProps,
 			virtualizedGridProps,
+			virtualizedScrollbarProps,
 			tableV2HeaderProps,
 			tableV2GridProps,
 			tableV2Props,
 			/* ************** */
 			ITEM_RENDER_EVT,
 			SCROLLBAR_MIN_SIZE,
-			DEFAULT_DYNAMIC_LIST_ITEM_SIZE,
 			SCROLL_EVT,
 			FORWARD,
 			BACKWARD,
@@ -2051,14 +1512,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		/* @ts-ignore */
 		PRIVATE_GLOBAL._jsxFns = {
 			/* _jsxFns_jsxFns_jsxFns */
-			xTipsHover({ msg, placement }) {
+			xTipsHover({ msg, content, placement }) {
+				content =
+					content ||
+					function () {
+						return h("span", {}, msg);
+					};
 				placement = placement || "right-start";
 				return {
 					name: "xtips",
 					value: {
-						content() {
-							return h("span", {}, msg);
-						},
+						content,
 						trigger: "hover",
 						placement
 					}

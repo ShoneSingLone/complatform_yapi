@@ -273,7 +273,7 @@
 	/* @typescriptDeclare ()=>Promise<File[]> */
 	_.$openFileSelector = function () {
 		let lock = false;
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 			try {
 				// create input file
 				let el = document.createElement("input");
@@ -293,7 +293,7 @@
 
 				const handleCancel = _.debounce(() => {
 					if (!lock && el) {
-						reject(new Error("onblur"));
+						resolve([]);
 						$el.remove();
 						$el = null;
 						el = null;
@@ -671,7 +671,7 @@
 		window.defTable.colActions = ({ cellRenderer, width, fixed = "right" }) => {
 			const columnDefaultConfigs = {
 				prop: "COL_ACTIONS",
-				label: i18n("checkbox"),
+				label: i18n("COL_ACTIONS"),
 				fixed,
 				width,
 				headerCellRenderer(_props) {
@@ -992,12 +992,10 @@
 	 * @param {number} type {number} 0:默认YYYY-MM-DD HH:mm:ss 1:YYYY-MM-DD
 	 * @returns
 	 */
-	/* @typescriptDeclare (date:string|number, type?:number)=>string */
+	/* @typescriptDeclare (date?:string|number, type?:number)=>string */
 	_.$dateFormat = (date = null, type = 0) => {
 		let format = "YYYY-MM-DD HH:mm:ss";
-		if (!date) {
-			return "";
-		}
+		date = date || Date.now();
 		/* 如果是时间戳 */
 		if (typeof date === "number") {
 			if (String(date).length === 10) {
@@ -1009,7 +1007,6 @@
 				date = dayjs(date);
 			}
 		}
-		date = date || Date.now();
 		if (type === 1) {
 			format = "YYYY-MM-DD";
 		}
@@ -1077,6 +1074,19 @@
 			}
 		}
 		return false;
+	};
+
+	/**
+	 * 如果fn是可执行的函数，则执行：用call方法
+	 * @param fn
+	 * @param params
+	 * @returns
+	 */
+	/* @typescriptDeclare (fn: any, params: any) => any */
+	_.$execfnify = function (fn, params) {
+		if (_.isFunction(fn)) {
+			return fn.call(null, params);
+		}
 	};
 
 	/**
@@ -1248,7 +1258,7 @@
 					]);
 				};
 			}
-			return _.$openModal({
+			const modalVm = await _.$openModal({
 				title,
 				url: "/common/ui-x/msg/WindowConfirm.vue",
 				style: options.style,
@@ -1257,6 +1267,14 @@
 				content,
 				isDelete
 			});
+
+			modalVm.$on("hook:beforeDestroy", () => {
+				/* 如果点击关闭按钮，不会主动调用promise的终态 */
+				if (modalVm.isClickCloseIcon) {
+					reject();
+				}
+			});
+			return modalVm;
 		});
 	};
 
@@ -1817,12 +1835,13 @@
 		}
 	};
 
-	function getWrapperBy(selector) {
+	function xItemWrapperBy(selector) {
 		if (_.isString(selector)) {
 			return $(selector);
 		}
-
+		/* const type = Vue.toRawType(xItemFormConfigsArray); if (/^HTML/.test(type)) { } */
 		if (selector.innerHTML) {
+			/* 如果是HTML元素，则获取Vue实例的configs */
 			return $(selector);
 		}
 
@@ -1834,18 +1853,30 @@
 		}
 	}
 
-	function getTargetBy(selector) {
-		let $wrapper = getWrapperBy(selector);
+	function xItemConfigsBy(selector) {
+		const vmConfigsArray = [];
+		const $domArray = xItemDomBy(selector);
+		for (const dom of $domArray) {
+			const { formItemId } = dom.dataset;
+			if (formItemId) {
+				const vm = Vue._X_ITEM_VM_S[formItemId];
+				if (vm) {
+					vmConfigsArray.push(vm.configs);
+				}
+			}
+		}
+		return vmConfigsArray;
+	}
 
+	function xItemDomBy(selector) {
+		let $wrapper = xItemWrapperBy(selector);
 		const $target = (function () {
 			let $target = $wrapper.find(`[data-form-item-id^=x_form_id_]`);
-
 			if ($target.length === 0) {
 				return $wrapper;
 			}
 			return $target;
 		})();
-
 		return $target;
 	}
 
@@ -1868,7 +1899,7 @@
 	 */
 	/* @typescriptDeclare (selector:string)=>Promise<[msg,vm][]> */
 	_.$validateForm = async selector => {
-		const $target = getTargetBy(selector);
+		const $target = xItemDomBy(selector);
 		const errorArray = [];
 		for (const dom of $target) {
 			const { formItemId } = dom.dataset;
@@ -1909,8 +1940,8 @@
 	 */
 	/* @typescriptDeclare (selector:string, attrs:object)=>void */
 	_.$modifyItemsAttrs = async (selector, attrs) => {
-		const $target = getTargetBy(selector);
-		for (const dom of $target) {
+		const $doms = xItemDomBy(selector);
+		for (const dom of $doms) {
 			const { formItemId } = dom.dataset || {};
 			const vm = Vue._X_ITEM_VM_S?.[formItemId || "________No"];
 			_.each(attrs, (val, key) => {
@@ -1947,7 +1978,7 @@
 	_.$getCellItemVm = (rowIndex, colProp, selector) => {
 		let vm = {};
 		try {
-			let $wrapper = getWrapperBy(selector);
+			let $wrapper = xItemWrapperBy(selector);
 			const itemSelector = `.el-table__body-wrapper [data-row-index=${rowIndex}][data-col-prop=${colProp}]`;
 			const targetDom = $wrapper.find(itemSelector);
 			const { formItemId } = targetDom?.[0].dataset || {};
@@ -2008,12 +2039,16 @@
 
 		/**
 		 * 重置表单的值，前提是configs里面有resetValue
-		 * @param xItemFormConfigs
+		 * @param xItemFormConfigsArray
 		 */
-		_.$resetFormValues = function (xItemFormConfigs) {
-			_.each(xItemFormConfigs, configs => {
+		_.$resetFormValues = function (xItemFormConfigsArray) {
+			xItemFormConfigsArray = xItemConfigsBy(xItemFormConfigsArray);
+
+			_.each(xItemFormConfigsArray, configs => {
 				if (_.isFunction(configs.resetValue)) {
 					configs.resetValue();
+				} else if (Vue.hasOwn(configs, "value") && Vue.hasOwn(configs, "resetValue")) {
+					configs.value = _.cloneDeep(configs.resetValue);
 				}
 			});
 		};

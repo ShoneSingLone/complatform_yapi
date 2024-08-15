@@ -1945,39 +1945,6 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		};
 	}
 
-	const { max, floor } = Math;
-	const ACCESS_SIZER_KEY_MAP = {
-		column: "columnWidth",
-		row: "rowHeight"
-	};
-	const ACCESS_LAST_VISITED_KEY_MAP = {
-		column: "lastVisitedColumnIndex",
-		row: "lastVisitedRowIndex"
-	};
-	const getItemFromCache = (props, index, gridCache, type) => {
-		const [cachedItems, sizer, lastVisited] = [
-			gridCache[type],
-			props[ACCESS_SIZER_KEY_MAP[type]],
-			gridCache[ACCESS_LAST_VISITED_KEY_MAP[type]]
-		];
-		if (index > lastVisited) {
-			let offset = 0;
-			if (lastVisited >= 0) {
-				const item = cachedItems[lastVisited];
-				offset = item.offset + item.size;
-			}
-			for (let i = lastVisited + 1; i <= index; i++) {
-				const size = sizer(i);
-				cachedItems[i] = {
-					offset,
-					size
-				};
-				offset += size;
-			}
-			gridCache[ACCESS_LAST_VISITED_KEY_MAP[type]] = index;
-		}
-		return cachedItems[index];
-	};
 	const TableV2Cell = {
 		displayName: "ElTableV2Cell",
 		inheritAttrs: false,
@@ -2190,17 +2157,14 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 			const depth = depthMap[_rowKey] || 0;
 			const canExpand = Boolean(expandColumnKey2);
 			const isFixedRow = rowIndex < 0;
-			const kls = [
-				ns.e("row"),
-				rowKls,
-				{
-					[ns.e(`row-depth-${depth}`)]: canExpand && rowIndex >= 0,
-					[ns.is("expanded")]: canExpand && expandedRowKeys.includes(_rowKey),
-					[ns.is("hovered")]: !isScrolling && _rowKey === hoveringRowKey,
-					[ns.is("fixed")]: !depth && isFixedRow,
-					[ns.is("customized")]: Boolean($vSlots.row)
-				}
-			];
+			const rowStyle = {
+				[ns.e(`row-depth-${depth}`)]: canExpand && rowIndex >= 0,
+				[ns.is("expanded")]: canExpand && expandedRowKeys.includes(_rowKey),
+				[ns.is("hovered")]: !isScrolling && _rowKey === hoveringRowKey,
+				[ns.is("fixed")]: !depth && isFixedRow,
+				[ns.is("customized")]: Boolean($vSlots.row)
+			};
+			const rowClassName = [ns.e("row"), rowKls, rowStyle];
 
 			const onRowHover = hasFixedColumns ? onRowHovered : () => null;
 
@@ -2209,7 +2173,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 					...additionalProps,
 					columns: columns2,
 					columnsStyles,
-					class: kls,
+					class: rowClassName,
 					depth,
 					expandColumnKey: expandColumnKey2,
 					estimatedRowHeight: isFixedRow ? false : estimatedRowHeight,
@@ -2243,6 +2207,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				columnIndex,
 				depth,
 				expandIconProps,
+				expandColumnKey,
 				isScrolling,
 				rowData,
 				rowIndex,
@@ -2311,48 +2276,56 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				column.align === Alignment.CENTER && ns.is("align-center"),
 				column.align === Alignment.RIGHT && ns.is("align-right")
 			];
-			/*vir table 树形数据*/
-			/* 如果有children就可以展开 */
-			const expandable = _.$isArrayFill(rowData.children);
+			const expandable = (() => {
+				/*vir table 树形数据*/
+				/* 如果有children就可以展开 */
+				return _.$isArrayFill(rowData.children);
+			})();
 			const iconStyle = `margin-inline-start: ${depth * indentSize}px;`;
 			const isShowIcon = column.prop === "COL_EXPAND_ARROW";
 
 			let iconProps = {
 				style: [iconStyle, `width: ${iconSize}px; height: ${iconSize}px;`].join(" ")
 			};
-			if (expandable) {
-				const expanded = _.some(expandedRowKeys, key => {
-					return _.$isSame(rowData[rowKey], key);
-				});
-
-				iconProps = merge_hFnProps([
-					iconProps,
-					{
-						class: {
-							[ns.e("expand-icon")]: true,
-							"el-icon el-icon-arrow-right ": isShowIcon,
-							"el-table__expand-icon--expanded": expanded
-						},
-						attrs: {
-							size: iconSize,
-							expanded: expanded,
-							expandable: true
-						},
-						onClick() {
-							isShowIcon &&
-								expandable &&
-								onRowExpanded({
-									expanded: !expanded,
-									rowData,
-									rowIndex,
-									rowKey: rowData[rowKey]
+			let IconOrPlaceholder = isShowIcon
+				? h(
+						"i",
+						(() => {
+							if (expandable) {
+								const expanded = _.some(expandedRowKeys, key => {
+									return _.$isSame(rowData[rowKey], key);
 								});
-						}
-					}
-				]);
-			}
 
-			let IconOrPlaceholder = isShowIcon ? h("i", iconProps) : null;
+								iconProps = merge_hFnProps([
+									iconProps,
+									{
+										class: {
+											[ns.e("expand-icon")]: true,
+											"el-icon el-icon-arrow-right ": isShowIcon,
+											"el-table__expand-icon--expanded": expanded
+										},
+										attrs: {
+											size: iconSize,
+											expanded: expanded,
+											expandable: true
+										},
+										onClick() {
+											isShowIcon &&
+												expandable &&
+												onRowExpanded({
+													expanded: !expanded,
+													rowData,
+													rowIndex,
+													rowKey: rowData[rowKey]
+												});
+										}
+									}
+								]);
+							}
+							return iconProps;
+						})()
+					)
+				: null;
 
 			return h(
 				"div",
@@ -2639,7 +2612,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 					headerWidth: unref(headerWidth),
 					height: unref(mainTableHeight),
 					mainTableRef,
-					rowKey: rowKey,
+					rowKey,
 					rowHeight,
 					scrollbarAlwaysOn,
 					scrollbarStartGap: 2,
@@ -2664,7 +2637,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 					headerWidth: leftColumnsWidth,
 					headerHeight,
 					height: _fixedTableHeight,
-					rowKey: rowKey,
+					rowKey,
 					scrollbarAlwaysOn,
 					scrollbarStartGap: 2,
 					scrollbarEndGap: vScrollbarSize,
@@ -2738,6 +2711,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 					headerCellProps,
 					onColumnSorted
 				};
+				const xTableVirWrapper = injectVm(this, "xTableVirWrapper");
 
 				const tableSlots = {
 					header: props2 => {
@@ -2771,7 +2745,8 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 					row: props => {
 						return h(RowRenderer, merge_hFnProps([props, tableRowProps]), [
 							{
-								row: vmTable.$vSlots.row,
+								/* expand */
+								row: xTableVirWrapper.$attrs.slotsRow,
 								cell: props_cell => {
 									if (vmTable.$vSlots.cell) {
 										return h(
@@ -2976,7 +2951,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 								return column;
 							}
 						})();
-						if (_column) {
+						if (_column && _column.prop) {
 							columnsForShow.push(_column);
 						}
 						return columnsForShow;
@@ -3043,8 +3018,19 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 							height: this.getHeight(height),
 							fixed: true,
 							...this.$attrs,
-							columns: this.columnAutoWidth({ width, height })
+							columns: this.columnAutoWidth({ width, height }),
+							$vSlots__old: {
+								row: props => {
+									debugger;
+									if (this.$attrs.slotsRow) {
+										return this.$attrs.slotsRow(props);
+									} else {
+										return null;
+									}
+								}
+							}
 						};
+
 						const divProps = {
 							staticClass: "xDataGrid_mask",
 							attrs: { "data-table-mask": vm._uid }

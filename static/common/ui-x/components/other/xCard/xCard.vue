@@ -33,7 +33,7 @@ export default async function () {
 				}
 			},
 			cptBodyClass() {
-				return _.merge({ "el-card__body flex1": true }, this.bodyClass || {});
+				return ["el-card__body flex1", this.bodyClass || {}];
 			}
 		}
 	});

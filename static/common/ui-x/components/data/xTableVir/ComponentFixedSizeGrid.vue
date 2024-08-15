@@ -1,13 +1,11 @@
 <script lang="ts">
 export default async function () {
-	const {
-		createGrid,
-		AUTO_ALIGNMENT,
-		SMART_ALIGNMENT,
-		START_ALIGNMENT,
-		CENTERED_ALIGNMENT,
-		END_ALIGNMENT
-	} = _xUtils;
+	const { AUTO_ALIGNMENT, SMART_ALIGNMENT, START_ALIGNMENT, CENTERED_ALIGNMENT, END_ALIGNMENT } =
+		_xUtils;
+
+	const [{ createGrid }] = await _.$importVue([
+		"/common/ui-x/components/data/xVirtualList/xBuildList.vue"
+	]);
 
 	return createGrid({
 		name: "ComponentFixedSizeGrid",

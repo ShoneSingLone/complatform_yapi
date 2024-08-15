@@ -1,278 +1,159 @@
+<style lang="less"></style>
 <template>
-	<div class="x-page-view">
-		<xPageTitle title="标题使用i18n的key" />
-		<xPageContent>
+	<div class="x-page-view" style="height: 800px">
+		<xPageTitle title="这里是标题，可以直接使用i18n的key" />
+		<xPageContent style="padding-top: 0">
 			<xTablebar :configs="configsTable">
 				<template #left>
 					<xBtnArray :configs="oprBtnArray" />
 				</template>
-				<xItem :configs="c_search.siteId" />
-				<xItem :configs="c_search.azId" />
-				<xItem :configs="c_search.queryName" />
+				<xItem :configs="searchForm.name" />
+				<xItem :configs="searchForm.id" />
 			</xTablebar>
-			<xTable :configs="configsTable" />
+			<div class="x-page-content-middle mt8">
+				<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" />
+			</div>
 			<xPagination :configs="configsTable" />
 		</xPageContent>
+		<xCard>
+			<xMd :md="doc" />
+		</xCard>
 	</div>
 </template>
-
 <script lang="ts">
 export default async function () {
-	return {
+	return defineComponent({
 		inject: ["APP"],
-		beforeDestroy() {},
-		components: {},
-		async mounted() {
+		mounted() {
 			this.getTableData();
 		},
+		data(vm) {
+			return {
+				doc: `
+- 列过滤按钮默认\`true\`
+- 查询按钮默认\`true\`
+- 重置按钮默认\`false\`，\`isShowReset:true\` 显示重置按钮
+- xItem 的 configs 需要配置 \`value\`**(不可使用\`v-model\`形式)**
+- xItem 的 configs 需要配置 \`resetValue\`
+  - \`resetValue\` 可以是Function
+    - this指向当前configs
+	- 例如：this.value = Date.now(),每次重置的值会刷新
+`,
+				searchForm: defItems({
+					name: {
+						value: "",
+						resetValue: "resetValue",
+						clearable: true,
+						placeholder: i18n("请输入prop")
+					},
+					id: {
+						value: "",
+						resetValue() {
+							this.value = Date.now();
+						},
+						clearable: true,
+						placeholder: i18n("请输入prop")
+					}
+				}),
+				oprBtnArray: [
+					{
+						label: "新增",
+						icon: "add",
+						onClick() {
+							return _.$openModal({
+								title: "新增",
+								url: "@/views/template/list/JiBenLieBiao.dialog.vue",
+								parent: vm,
+								onOk() {
+									console.log("1");
+								}
+							});
+						}
+					}
+				],
+
+				configsTable: defTable({
+					isHideQuery: false,
+					isHideFilter: false,
+					isShowReset: true,
+					onQuery(pagination) {
+						return vm.getTableData(pagination);
+					},
+					data: {
+						set: new Set(),
+						list: []
+					},
+					pagination: {
+						page: 1,
+						total: 0,
+						size: 10
+					},
+					columns: [
+						defTable.colSingle({
+							by: "id",
+							getConfigs: () => vm.configsTable
+						}),
+						{ prop: "accessTime", label: "访问时间" },
+						{ prop: "clientId", label: "客户端IP" },
+						{ prop: "clientMac", label: "客户端MAC" },
+						{ prop: "interfaceUrl", label: "URL" },
+						defTable.colActions({
+							width: 210,
+							cellRenderer({ rowData }) {
+								return _jsxFns.ActionAndMore({
+									children: [
+										{
+											label: "查看",
+											onClick() {
+												vm.handleDetail(rowData);
+											}
+										},
+										{
+											label: "编辑",
+											icon: "_icon_btn_view",
+											onClick() {
+												vm.$router.push({
+													path: "/dept/edit",
+													query: { id: rowData.id }
+												});
+											}
+										},
+										{
+											label: "删除",
+											icon: "_delete",
+											async onClick() {}
+										}
+									]
+								});
+							}
+						})
+					]
+				})
+			};
+		},
+		computed: {
+			selected() {
+				const selectedIds = Array.from(this.configsTable.data.set);
+				if (_.$isArrayFill(selectedIds)) {
+					const [selectedId] = selectedIds;
+					const selected = _.find(this.configsTable.data.list, { id: selectedId });
+					return selected;
+				}
+				return {};
+			}
+		},
 		methods: {
-			async getTableData(pagination = {}) {
+			async getTableData(pagination) {
 				try {
 					_.$loading(true);
-					const { page, size } = _.$setPagination(this.configsTable, pagination);
-					const queryData = {
-						limit: size,
-						start: page
-					};
-
-					const { siteId, azId, queryName } = this.searchParams;
-					siteId && (queryData.siteId = siteId);
-					azId && (queryData.azId = azId);
-					queryName && (queryData.name = queryName);
-
-					const res = await _.$ajax.get(`******`, {
-						data: queryData
-					});
-					const { images, total } = res;
-
-					_.$setTableData(this.configsTable, {
-						list: images,
-						total
-					});
+					_.$setTableData(this.configsTable, { list: [{}], total: 1 });
 				} catch (error) {
 					_.$msgError(error);
 				} finally {
 					_.$loading(false);
 				}
-			},
-			async upsertOne(row) {
-				const DialogTypeVueSFC = await _.$importVue("@/DialogTypeVueSFC.vue", {
-					parent: this,
-					row
-				});
-				_.$openWindow_deprecated(i18n("modifyImageInfo"), DialogTypeVueSFC);
-			}
-		},
-		watch: {},
-		data() {
-			const vm = this;
-			return {
-				oprBtnArray: [
-					{
-						label: i18n("新增"),
-						onClick() {
-							vm.open();
-						}
-					},
-					{
-						label: i18n("删除"),
-						preset: "danger",
-						disabled() {
-							return true;
-						},
-						onClick() {
-							vm.open();
-						}
-					}
-				],
-				c_search: {
-					siteId: {
-						value: "",
-						clearable: false,
-						itemType: "xItemSelect",
-						options: _opts.normal
-					},
-					azId: {
-						value: "",
-						clearable: false,
-						itemType: "xItemSelect",
-						options: _opts.normal
-					},
-					queryName: {
-						value: "",
-						placeholder: i18n("msgEnterTheNameOfTheQuery")
-					}
-				},
-				configsTable: {
-					isHideFilter: false,
-					isHideQuery: false,
-					onQuery(pagination) {
-						vm.getTableData(pagination);
-					},
-					pagination: {
-						page: 0,
-						total: 0,
-						size: 10
-					},
-					data: {
-						list: []
-					},
-					colInfo: {
-						/* COL_SINGLE: {selectedBy:"id"}, */
-						id: { label: i18n("id"), isShow: false },
-						name: { label: i18n("name"), isShow: true },
-						status: {
-							label: i18n("status"),
-							isShow: true,
-							xCellText() {
-								return {
-									setLabel({ row, label }) {
-										if (row.status == "1") {
-											label = i18n("available");
-										} else {
-											label = i18n("unavailable");
-										}
-										return label;
-									}
-								};
-							}
-						},
-						arch: { label: i18n("arch"), isShow: true },
-						osType: { label: i18n("osType"), isShow: true },
-						cpu: { label: i18n("cpu"), isShow: true },
-						memory: { label: i18n("memory"), isShow: true },
-						disk: { label: i18n("disk"), isShow: true },
-						mac: { label: i18n("mac"), isShow: false },
-						description: { label: i18n("description"), isShow: true },
-						createTime: {
-							label: i18n("creationTime"),
-							isShow: true,
-							xCellText() {
-								return {
-									setLabel({ row }) {
-										return _.$dateFormat(row.createTime);
-									}
-								};
-							}
-						},
-						COL_ACTIONS: {
-							btnList: [
-								{
-									label: i18n("modify"),
-									onClick({ row }) {
-										vm.upsertOne(row);
-									}
-								},
-								{
-									label: i18n("delete"),
-									onClick({ row }) {
-										_.$confirm_important({
-											content: `${i18n("msgSureDelete")}${i18n("QOS规格")}${row.name}?`
-										}).then(async () => {
-											try {
-												_.$loading(true);
-												await _.$ajax.post(`xxxxxx`, {
-													data: {
-														ids: [{ id: row.id, name: row.name }]
-													}
-												});
-												_.$msgSuccess(
-													i18n("msgDeleteTaskDeliveredSuccess")
-												);
-												vm.getTableData({ current: 0 });
-											} catch (e) {
-												_.$msgError(e.message);
-											} finally {
-												_.$loading(false);
-											}
-										});
-									}
-								},
-								{
-									label: i18n("makeAvailable"),
-									isHide({ row }) {
-										return row.status == 可用;
-									},
-									onClick({ row }) {
-										_.$confirm({
-											title: i18n("updateStatus"),
-											content: i18n("msgSetImageToAvailable")
-										}).then(async () => {
-											try {
-												_.$loading(true);
-												await _.$ajax.post(
-													`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`,
-													{
-														data: {
-															status: "1",
-															id: row.id
-														}
-													}
-												);
-												_.$msgSuccess(
-													i18n("msgSetUnavailableStatusSuccess")
-												);
-												vm.getTableData({ current: 0 });
-											} catch (e) {
-												_.$msgError(e.message);
-											} finally {
-												_.$loading(false);
-											}
-										});
-									}
-								},
-								{
-									label: i18n("makeUnavailable"),
-									isHide({ row }) {
-										return row.status != 可用;
-									},
-									onClick({ row }) {
-										_.$confirm({
-											title: i18n("updateStatus"),
-											content: i18n("msgSetImageToAvailable")
-										}).then(async () => {
-											try {
-												_.$loading(true);
-												await _.$ajax.post(
-													`xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`,
-													{
-														data: {
-															status: "0",
-															id: row.id
-														}
-													}
-												);
-												_.$msgSuccess(
-													i18n("msgSetUnavailableStatusSuccess")
-												);
-												vm.getTableData({ current: 0 });
-											} catch (e) {
-												_.$msgError(e.message);
-											} finally {
-												_.$loading(false);
-											}
-										});
-									}
-								},
-								{
-									label: i18n("configTenantPermissions"),
-									onClick({ row }) {
-										modifyTenant({ row, resType: "IMAGE" });
-									}
-								}
-							]
-						}
-					}
-				}
-			};
-		},
-		computed: {
-			searchParams() {
-				return _.$pickFormValues(this.c_search);
 			}
 		}
-	};
+	});
 }
 </script>
-
-<style lang="less"></style>

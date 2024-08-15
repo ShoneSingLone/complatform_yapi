@@ -2,7 +2,13 @@
 export default async function () {
 	return defineComponent({
 		name: "xAutoResizer",
-		props: _xUtils.autoResizerProps,
+		props: _xUtils.buildProps({
+			disableWidth: Boolean,
+			disableHeight: Boolean,
+			onResize: {
+				type: _xUtils.definePropType(Function)
+			}
+		}),
 		setup(props, context) {
 			const { slots } = context;
 			const ns = _xUtils.useNamespace("auto-resizer");

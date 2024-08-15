@@ -192,6 +192,9 @@ export default async function () {
 					return formData;
 				};
 				const [file] = await _.$openFileSelector();
+				if (!file) {
+					return;
+				}
 				/* 检测文件是否上传过 */
 				const md5 = await _.$md5(file);
 				const { name } = file;

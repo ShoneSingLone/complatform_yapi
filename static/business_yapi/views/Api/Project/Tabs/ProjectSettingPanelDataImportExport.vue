@@ -136,8 +136,11 @@ export default async function () {
 						if (vm.cptIsImportFile) {
 							try {
 								/* 读取本地文件 */
-								const files = await _.$openFileSelector();
-								json = await _.$readFileAsText(files[0]);
+								const [file] = await _.$openFileSelector();
+								if (!file) {
+									return;
+								}
+								json = await _.$readFileAsText(file);
 								res = await _api.yapi.getSwaggerDataByUrl({
 									type: vm.cptParams.curImportType,
 									json

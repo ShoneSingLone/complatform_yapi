@@ -107,7 +107,9 @@ export default async function () {
 								},
 								["*"]
 							),
-							h("span", { staticClass: "xItem_label-text" }, [vm.cpt_label]),
+							h("span", { staticClass: "xItem_label-text" }, [
+								"X_ITEM_LABEL_IS_EMPTY" === vm.cpt_label ? "" : vm.cpt_label
+							]),
 							h(
 								"xTooltip",
 								{
