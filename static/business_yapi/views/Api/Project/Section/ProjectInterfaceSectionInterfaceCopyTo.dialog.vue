@@ -11,6 +11,7 @@
 export default async function ({ row }) {
 	const isUpdate = !!row;
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
+
 	return defineComponent({
 		props: useDialogProps(),
 		mounted() {

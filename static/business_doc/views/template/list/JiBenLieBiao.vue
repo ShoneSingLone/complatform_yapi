@@ -96,37 +96,7 @@ export default async function () {
 						{ prop: "accessTime", label: "访问时间" },
 						{ prop: "clientId", label: "客户端IP" },
 						{ prop: "clientMac", label: "客户端MAC" },
-						{ prop: "interfaceUrl", label: "URL" },
-						defTable.colActions({
-							width: 210,
-							cellRenderer({ rowData }) {
-								return _jsxFns.ActionAndMore({
-									children: [
-										{
-											label: "查看",
-											onClick() {
-												vm.handleDetail(rowData);
-											}
-										},
-										{
-											label: "编辑",
-											icon: "_icon_btn_view",
-											onClick() {
-												vm.$router.push({
-													path: "/dept/edit",
-													query: { id: rowData.id }
-												});
-											}
-										},
-										{
-											label: "删除",
-											icon: "_delete",
-											async onClick() {}
-										}
-									]
-								});
-							}
-						})
+						{ prop: "interfaceUrl", label: "URL" }
 					]
 				})
 			};

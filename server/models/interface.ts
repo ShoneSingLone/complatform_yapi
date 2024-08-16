@@ -151,6 +151,16 @@ class ModelInterface extends ModelBase {
 			.exec();
 	}
 
+	getByIds(ids) {
+		return this.model
+			.find({
+				_id: {
+					$in: ids
+				}
+			})
+			.exec();
+	}
+
 	getBaseinfo(id) {
 		return this.model
 			.findOne({

@@ -2,7 +2,7 @@ const nodeID3 = require("../../utils/node-id3-0.2");
 const fs = require("fs");
 const { getType } = require("mime");
 
-async function insertAudio({ resource }) {
+async function upsertInterface({ resource }) {
 	const stat = await fs.promises.stat(resource.path);
 	const audioMeta = nodeID3.read(resource.path);
 	const audioInfo = {
@@ -35,9 +35,9 @@ module.exports = {
 	async getAudioDetail({ resource }) {
 		let audioDetail = await orm.Audio.getByMd5(resource.md5);
 		if (!audioDetail) {
-			audioDetail = await insertAudio({ resource });
+			audioDetail = await upsertInterface({ resource });
 		}
 		return audioDetail;
 	},
-	insertAudio
+	insertAudio: upsertInterface
 };

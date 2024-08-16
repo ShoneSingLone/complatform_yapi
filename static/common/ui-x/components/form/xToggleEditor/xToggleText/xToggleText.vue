@@ -1,8 +1,8 @@
 <style lang="less"></style>
 <template>
-	<div class="flex middle">
+	<div class="flex middle xToggleText">
 		<div class="mr8" v-if="isEdit">
-			<xInput v-model="newValue" />
+			<xItem v-model="newValue" :configs="cptInputConfigs" />
 		</div>
 		<div class="mr8" v-else>{{ value }}</div>
 		<div class="pointer">
@@ -19,13 +19,25 @@
 <script lang="ts">
 export default async function () {
 	return defineComponent({
-		props: ["value"],
+		props: ["value", "maxlength"],
 
 		data() {
 			return {
 				newValue: "",
 				isEdit: false
 			};
+		},
+		computed: {
+			cptInputConfigs() {
+				if (this.maxlength) {
+					return {
+						attrs: {
+							maxlength: this.maxlength
+						}
+					};
+				}
+				return {};
+			}
 		},
 		methods: {
 			cancel() {

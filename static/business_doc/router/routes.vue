@@ -16,7 +16,11 @@ export default async function () {
 	return [
 		_.$newRoute("/all", "@/views/ViewAllProject.vue"),
 		_.$newRoute("/demo", ComponentRouterView, {
-			children: [_.$newRoute("/demo/config", "@/views/demo/demo/configList.vue")]
+			redirect: "/demo/config",
+			children: [
+				_.$newRoute("/demo/config", "@/views/demo/demo/configList.vue"),
+				_.$newRoute("/demo/error", "@/views/demo/demo/ViewError.vue"),
+			]
 		}),
 		_.$newRoute("/guide", ComponentPageRouterView, {
 			children: [

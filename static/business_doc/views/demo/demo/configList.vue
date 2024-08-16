@@ -60,12 +60,17 @@ export default async function () {
 				oprBtnArrayRight: [
 					{
 						label: "全部导出",
-						icon: "_add",
+						icon: "advanced_search",
 						onClick() {
 							vm.handleGetXdsAuditLogExcel();
 						}
 					},
-					{ label: "生成报表", icon: "_edit", onClick() {} }
+					{
+						label: "删除",
+						disabled: () => !vm.cptIsSelected,
+						icon: "delete",
+						onClick() {}
+					}
 				],
 				formSearch: defItems({
 					// accessTime: { label: "访问时间", value: "" },
@@ -212,6 +217,10 @@ export default async function () {
 						size: 10
 					},
 					columns: [
+						defTable.colMultiple({
+							by: "id",
+							getConfigs: () => vm.configsTable
+						}),
 						{
 							prop: "no",
 							label: "序号",
@@ -229,20 +238,44 @@ export default async function () {
 						{ prop: "serverPort", label: "端口号" },
 						{ prop: "databaseIp", label: "数据库IP" },
 						{ prop: "databaseMac", label: "数据库MAC" },
-						{ prop: "databaseInstance", label: "数据库实例" }
+						{ prop: "databaseInstance", label: "数据库实例" },
+						defTable.colActions({
+							width: 210,
+							cellRenderer({ rowData }) {
+								return _jsxFns.ActionAndMore({
+									children: [
+										{
+											label: "查看",
+											onClick() {
+												vm.handleDetail(rowData);
+											}
+										},
+										{
+											label: "编辑",
+											icon: "edit",
+											onClick() {
+												vm.$router.push({
+													path: "/dept/edit",
+													query: { id: rowData.id }
+												});
+											}
+										},
+										{
+											label: "删除",
+											icon: "confirm_delete",
+											async onClick() {}
+										}
+									]
+								});
+							}
+						})
 					]
 				})
 			};
 		},
 		computed: {
-			selected() {
-				const selectedIds = Array.from(this.configsTable.data.set);
-				if (_.$isArrayFill(selectedIds)) {
-					const [selectedId] = selectedIds;
-					const selected = _.find(this.configsTable.data.list, { id: selectedId });
-					return selected;
-				}
-				return {};
+			cptIsSelected() {
+				return this.configsTable.data.set.size > 0;
 			}
 		},
 		methods: {
@@ -257,9 +290,7 @@ export default async function () {
 			async getTableData(pagination) {
 				try {
 					_.$loading(true);
-					const { page, size } = _.$setPagination(this.configsTable, pagination);
-					const formSearch = _.$pickFormValues(this.formSearch);
-					// _.$setTableData(this.configsTable, { list, total });
+					_.$setTableData(this.configsTable, { list: [{}], total: 1 });
 				} catch (error) {
 					_.$msgError(error);
 				} finally {

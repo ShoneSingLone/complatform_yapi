@@ -5,11 +5,8 @@ export default async function () {
 			icon: "icon_report",
 			label: i18n("Demo"),
 			children: [
-				{
-					icon: "icon_report",
-					label: i18n("配置信息"),
-					href: "/demo/config"
-				},
+				{ icon: "icon_report", label: i18n("基础列表"), href: "/demo/config" },
+				{ icon: "icon_report", label: i18n("错误信息提示页"), href: "/demo/error" },
 				{
 					icon: "icon_report",
 					label: i18n("列表"),

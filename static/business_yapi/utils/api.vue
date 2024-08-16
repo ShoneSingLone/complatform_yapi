@@ -23,6 +23,23 @@ export default async function () {
 			};
 
 			window._api.yapi = {
+				async system_dicts(typeObject = {}) {
+					const typeArray = Object.keys(typeObject);
+					const _this = window._api.yapi;
+					_this.typesCache = _this.typesCache || {};
+					const needRequest = [];
+					_.each(typeArray, type => {
+						if (!_this.typesCache[type]) {
+							needRequest.push(type);
+						}
+					});
+					const { data } = await _.$ajax.post("/api/system/dicts", {
+						data: { types: needRequest }
+					});
+					_this.typesCache = _.merge(_this.typesCache, data);
+					return _this.typesCache;
+				},
+
 				i18nTranslate(data) {
 					return _.$ajax.post("/api/i18n/translate", {
 						data
@@ -165,6 +182,11 @@ export default async function () {
 				},
 				interface_usecase_upsert(data) {
 					return _.$ajax.post("/api/usecase/upsert", {
+						data
+					});
+				},
+				interface_copy_to_project(data) {
+					return _.$ajax.post("/api/interface/copy_to_project", {
 						data
 					});
 				},

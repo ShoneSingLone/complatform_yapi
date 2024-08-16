@@ -54,7 +54,9 @@ export default async function () {
 				searchKey: "",
 				currMenu: {},
 				isLoading: false,
-				darkMode: false
+				darkMode: false,
+				appErrorTitle: "无权访问",
+				appErrorTips: "具体信息根据具体需要填写"
 			};
 		},
 		render(h) {

@@ -351,7 +351,7 @@ class ModelProject extends ModelBase {
 		);
 	}
 
-	search(keyword) {
+	search(keyword = "") {
 		return this.model
 			.find({
 				name: new RegExp(keyword, "ig")

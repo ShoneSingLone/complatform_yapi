@@ -3,6 +3,12 @@ const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
 const mergeJsonSchema = require("../../../common/mergeJsonSchema");
 const { parse: urlParse } = require("url");
+const {
+	upsertInterface,
+	handleHeaders,
+	autoAddTag,
+	interface_add_cat
+} = require("./Interface.service");
 
 function diffHTML(html) {
 	if (html.length === 0) {
@@ -15,214 +21,6 @@ function diffHTML(html) {
   <div>${item.content}</div>
 </div>`;
 	});
-}
-
-async function autoAddTag(params) {
-	//检查是否提交了目前不存在的tag
-	let tags = params.tag;
-	if (tags && Array.isArray(tags) && tags.length > 0) {
-		if (!params.project_id) return;
-		let projectData = await orm.project.get(params.project_id);
-		let tagsInProject = projectData.tag;
-		let needUpdate = false;
-		if (
-			tagsInProject &&
-			Array.isArray(tagsInProject) &&
-			tagsInProject.length > 0
-		) {
-			tags.forEach(tag => {
-				if (
-					!xU._.find(tagsInProject, item => {
-						return item.name === tag;
-					})
-				) {
-					//tag不存在
-					needUpdate = true;
-					tagsInProject.push({
-						name: tag,
-						desc: tag
-					});
-				}
-			});
-		} else {
-			needUpdate = true;
-			tagsInProject = [];
-			tags.forEach(tag => {
-				tagsInProject.push({
-					name: tag,
-					desc: tag
-				});
-			});
-		}
-		if (needUpdate) {
-			//需要更新tag
-			let data = {
-				tag: tagsInProject,
-				up_time: xU.time()
-			};
-			await orm.project.up(params.project_id, data);
-		}
-	}
-}
-
-function handleHeaders(values) {
-	let isfile = false,
-		isHaveContentType = false;
-	if (values.req_body_type === "form") {
-		values.req_body_form.forEach(item => {
-			if (item.type === "file") {
-				isfile = true;
-			}
-		});
-
-		values.req_headers.map(item => {
-			if (item.name === "Content-Type") {
-				item.value = isfile
-					? "multipart/form-data"
-					: "application/x-www-form-urlencoded";
-				isHaveContentType = true;
-			}
-		});
-		if (isHaveContentType === false) {
-			values.req_headers.unshift({
-				name: "Content-Type",
-				value: isfile
-					? "multipart/form-data"
-					: "application/x-www-form-urlencoded"
-			});
-		}
-	} else if (values.req_body_type === "json") {
-		values.req_headers
-			? values.req_headers.map(item => {
-					if (item.name === "Content-Type") {
-						item.value = "application/json";
-						isHaveContentType = true;
-					}
-			  })
-			: [];
-		if (isHaveContentType === false) {
-			values.req_headers = values.req_headers || [];
-			values.req_headers.unshift({
-				name: "Content-Type",
-				value: "application/json"
-			});
-		}
-	}
-}
-
-async function hander_interface_add(ctx) {
-	let { payload } = ctx;
-
-	if (!this.$tokenAuth) {
-		let auth = await this.checkAuth(payload.project_id, "project", "edit");
-
-		if (!auth) {
-			return (ctx.body = xU.$response(null, 40033, "没有权限"));
-		}
-	}
-	payload.method = payload.method || "GET";
-
-	payload.res_body_is_json_schema = payload.res_body_is_json_schema || false;
-	payload.req_body_is_json_schema = payload.req_body_is_json_schema || false;
-
-	payload.method = payload.method.toUpperCase();
-	payload.req_params = payload.req_params || [];
-	payload.res_body_type = payload.res_body_type
-		? payload.res_body_type.toLowerCase()
-		: "backup";
-
-	let http_path = urlParse(payload.path, true);
-
-	http_path.pathname = this.handleBasepath(http_path.pathname);
-	if (!xU.verifyPath(http_path.pathname)) {
-		return (ctx.body = xU.$response(
-			null,
-			400,
-			"path第一位必需为 /, 只允许由 字母数字-/_:.! 组成"
-		));
-	}
-
-	handleHeaders(payload);
-
-	payload.query_path = {};
-	payload.query_path.path = http_path.pathname;
-	payload.query_path.params = [];
-	xU._.each(http_path.query, (value, name) => {
-		payload.query_path.params.push({
-			name: name,
-			value: value
-		});
-	});
-
-	let count = await orm.interface.count(
-		payload.project_id,
-		payload.path,
-		payload.method
-	);
-
-	if (count > 0) {
-		return (ctx.body = xU.$response(
-			null,
-			40022,
-			"已存在的接口:" + payload.path + "[" + payload.method + "]"
-		));
-	}
-
-	let data = Object.assign(payload, {
-		uid: this.getUid(),
-		add_time: xU.time(),
-		up_time: xU.time()
-	});
-
-	xU.handleVarPath(payload.path, payload.req_params);
-
-	if (payload.req_params.length > 0) {
-		data.type = "var";
-		data.req_params = payload.req_params;
-	} else {
-		data.type = "static";
-	}
-
-	// 新建接口的人成为项目dev  如果不存在的话
-	// 命令行导入时无法获知导入接口人的信息，其uid 为 999999
-	let uid = this.getUid();
-
-	if (this.getRole() !== "admin" && uid !== 999999) {
-		let userdata = await xU.getUserdata(uid, "dev");
-		// 检查一下是否有这个人
-		let check = await orm.project.checkMemberRepeat(payload.project_id, uid);
-		if (check === 0 && userdata) {
-			await orm.project.addMember(payload.project_id, [userdata]);
-		}
-	}
-
-	let result = await orm.interface.save(data);
-	xU.emitHook("interface_add", result).then();
-	orm.interfaceCategory.get(payload.catid).then(cate => {
-		let username = this.getUsername();
-		let title = `<a href="/user/profile/${this.getUid()}">${username}</a> 为分类 <a href="/project/${
-			payload.project_id
-		}/interface/api/cat_${payload.catid}">${
-			cate.name
-		}</a> 添加了接口 <a href="/project/${payload.project_id}/interface/api/${
-			result._id
-		}">${data.title}</a> `;
-
-		xU.saveLog({
-			content: title,
-			type: "project",
-			uid: this.getUid(),
-			username: username,
-			typeid: payload.project_id
-		});
-		orm.project
-			.up(payload.project_id, { up_time: new Date().getTime() })
-			.then();
-	});
-
-	await autoAddTag(payload);
-
-	ctx.body = xU.$response(result);
 }
 
 const interfaceUpsertRequest = {
@@ -760,11 +558,87 @@ module.exports = {
 				}
 			}
 		},
+		"/interface/copy_to_project": {
+			post: {
+				summary: `复制所选接口到指定项目`,
+				description: "复制所选接口到指定项目",
+				request: {
+					body: {
+						projectId: {
+							required: true,
+							description: "项目id，不能为空",
+							type: "number"
+						},
+						interfaceIds: {
+							required: true,
+							description: "接口id数组，不能为空",
+							type: "array",
+							items: {
+								type: "number"
+							}
+						}
+					}
+				},
+				async handler(ctx) {
+					let { projectId, interfaceIds } = ctx.payload;
+					interfaceIds = interfaceIds || [];
+					ctx.body = xU.$response("success");
+					/* 获取对应项目的所有分类 */
+					const category = await orm.interfaceCategory.list(projectId);
+					let categoryPublic = xU._.find(category, { name: "复用接口" });
+					if (!categoryPublic) {
+						categoryPublic = await interface_add_cat.call(this, {
+							payload: {
+								name: "复用接口",
+								project_id: projectId,
+								desc: "复用接口"
+							}
+						});
+					}
+					/* 获取对应项目的所有接口 */
+					const projectInterfaceList = await orm.interface.list(
+						projectId,
+						"_id title path"
+					);
+					/* 获取所选接口的详细信息 */
+					const interfaceList = await orm.interface.getByIds(interfaceIds);
+					/* 过滤需要复制的接口，（已存在的不需要复制） */
+					const needInsertInterfaceList = xU._.reduce(
+						interfaceList,
+						(_needInsertInterfaceList, interface) => {
+							interface = interface.toObject();
+							const { title, path } = interface;
+							const isExist = xU._.find(projectInterfaceList, {
+								title,
+								path
+							});
+							/* 如果不存在 */
+							if (!isExist) {
+								/* 修改接口所属项目id */
+								interface.project_id = projectId;
+								/* 默认放在公共分类下 */
+								interface.catid = categoryPublic._id;
+								/* 删除自己的id */
+								delete interface._id;
+								delete interface.id;
+								_needInsertInterfaceList.push(interface);
+							}
+							return _needInsertInterfaceList;
+						},
+						[]
+					);
 
+					await Promise.all(
+						xU._.map(needInsertInterfaceList, interface => {
+							return upsertInterface.call(this, { payload: interface });
+						})
+					);
+				}
+			}
+		},
 		"/interface/upsert": {
 			post: {
-				summary: `保存接口数据，如果接口存在则更新数据，如果接口不存在则添加数据
-会用path和name来判断是否已经添加`,
+				summary: `保存接口数据，如果接口存在则更新数据，如果接口不存在则添加数据会用path和name来判断是否已经添加`,
 				description: "更新分类",
 				request: interfaceUpsertRequest,
 				async handler(ctx) {
@@ -840,7 +714,7 @@ module.exports = {
 						let validResult = xU.validateParams(SCHEMA_MAP.add, payload);
 						if (validResult.valid) {
 							const data = { payload };
-							await hander_interface_add.call(this, data);
+							await upsertInterface.call(this, data);
 						} else {
 							return (ctx.body = xU.$response(null, 400, validResult.message));
 						}
@@ -854,7 +728,7 @@ module.exports = {
 				summary: "添加项目接口",
 				description: "添加项目接口",
 				request: interfaceUpsertRequest,
-				handler: hander_interface_add
+				handler: upsertInterface
 			}
 		},
 		/**
@@ -966,7 +840,10 @@ module.exports = {
 						}
 					}
 				},
-				handler: handler_interface_add_cat
+				async handler(ctx) {
+					const response = await interface_add_cat.call(this, ctx);
+					return (ctx.body = response);
+				}
 			}
 		}
 	}
@@ -1002,61 +879,5 @@ async function hander_interface_up_cat(ctx) {
 		ctx.body = xU.$response(result);
 	} catch (e) {
 		ctx.body = xU.$response(null, 400, e.message);
-	}
-}
-
-async function handler_interface_add_cat(ctx) {
-	try {
-		let params = ctx.request.body;
-		params = xU.ensureParamsType(params, {
-			name: "string",
-			project_id: "number",
-			desc: "string"
-		});
-
-		if (!params.project_id) {
-			return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
-		}
-		if (!this.$tokenAuth) {
-			let auth = await this.checkAuth(params.project_id, "project", "edit");
-			if (!auth) {
-				return (ctx.body = xU.$response(null, 400, "没有权限"));
-			}
-		}
-
-		if (!params.name) {
-			return (ctx.body = xU.$response(null, 400, "名称不能为空"));
-		}
-
-		const res = await orm.interfaceCategory.search({
-			project_id: params.project_id,
-			name: params.name
-		});
-		if (res?.length) {
-			return (ctx.body = xU.$response(null, 400, "名称已存在"));
-		}
-
-		let result = await orm.interfaceCategory.save({
-			name: params.name,
-			project_id: params.project_id,
-			desc: params.desc,
-			uid: this.getUid(),
-			add_time: xU.time(),
-			up_time: xU.time()
-		});
-
-		let username = this.getUsername();
-		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了分类  <a href="/project/${
-				params.project_id
-			}/interface/api/cat_${result._id}">${params.name}</a>`,
-			type: "project",
-			uid: this.getUid(),
-			username: username,
-			typeid: params.project_id
-		});
-		ctx.body = xU.$response(result);
-	} catch (e) {
-		ctx.body = xU.$response(null, 402, e.message);
 	}
 }

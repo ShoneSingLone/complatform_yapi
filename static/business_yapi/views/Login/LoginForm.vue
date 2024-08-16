@@ -87,7 +87,7 @@ export default async function () {
 						if (res?.data?.x_token) {
 							_.$lStorage.x_token = res?.data?.x_token;
 							const info = await this.APP.refreshUserInfo();
-							debugger;
+							console.log("🚀 ~ login ~ info:", info);
 							_.$msg("登录成功! ");
 						}
 					}

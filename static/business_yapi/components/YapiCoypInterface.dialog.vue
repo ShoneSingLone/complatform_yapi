@@ -16,9 +16,16 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ refreshTableData, listData }) {
+export default async function ({ selected: interfaceIds }) {
 	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
+	let dicts = {
+		group: null,
+		project: null
+	};
+
+	dicts = await _api.yapi.system_dicts(dicts);
+
 	return defineComponent({
 		inject: ["APP"],
 		props: useDialogProps(),
@@ -41,7 +48,7 @@ export default async function ({ refreshTableData, listData }) {
 					isShowReset: true,
 					data: {
 						set: new Set(),
-						list: listData || []
+						list: []
 					},
 					columns: [
 						defTable.colSingle({
@@ -54,7 +61,13 @@ export default async function ({ refreshTableData, listData }) {
 							label: i18n("ID"),
 							prop: "_id"
 						},
-						{ label: i18n("分组"), prop: "group_id" },
+						{
+							label: i18n("分组"),
+							prop: "group_id",
+							cellRenderer({ rowData, cellData }) {
+								return _.$val2L(cellData, dicts.group);
+							}
+						},
 						{ label: i18n("名称"), prop: "name" },
 						{ label: i18n("描述"), prop: "desc" }
 					],
@@ -88,8 +101,14 @@ export default async function ({ refreshTableData, listData }) {
 				return {
 					label: i18n("确定"),
 					preset: "blue",
+					disabled: () => !vm.configsTable.data.set.size,
 					async onClick() {
-						refreshTableData();
+						const [projectId] = Array.from(vm.configsTable.data.set);
+						await _api.yapi.interface_copy_to_project({
+							interfaceIds,
+							projectId
+						});
+						_.$msg("复制成功");
 						vm.closeModal();
 					}
 				};
