@@ -19,7 +19,7 @@ export default async function () {
 			redirect: "/demo/config",
 			children: [
 				_.$newRoute("/demo/config", "@/views/demo/demo/configList.vue"),
-				_.$newRoute("/demo/error", "@/views/demo/demo/ViewError.vue"),
+				_.$newRoute("/demo/error", "@/views/demo/demo/ViewError.vue")
 			]
 		}),
 		_.$newRoute("/guide", ComponentPageRouterView, {
