@@ -68,7 +68,6 @@ const interfaceUpsertRequest = {
 			}
 		},
 		req_body_type: {
-			required: true,
 			description: "请求方式",
 			type: "string",
 			enum: ["form", "json", "text", "xml"]
@@ -115,15 +114,14 @@ const interfaceUpsertRequest = {
 			}
 		},
 		req_body_other: {
-			required: true,
 			description: "非form类型的请求参数可保存到此字段",
 			type: "string"
 		},
 		/* 响应 */
 		res_body_type: {
-			required: true,
 			description: "响应方式",
 			type: "string",
+			default: "json",
 			enum: ["json", "text", "xml"]
 		},
 		res_body: {
@@ -728,7 +726,10 @@ module.exports = {
 				summary: "添加项目接口",
 				description: "添加项目接口",
 				request: interfaceUpsertRequest,
-				handler: upsertInterface
+				async handler(ctx) {
+					const response = await upsertInterface.call(this, ctx);
+					return (ctx.body = response);
+				}
 			}
 		},
 		/**

@@ -3,6 +3,8 @@ const { parse: urlParse } = require("url");
 async function upsertInterface(ctx) {
 	let { payload } = ctx;
 
+	let response = xU.$response(null, 404, "not found");
+
 	if (!this.$tokenAuth) {
 		let auth = await this.checkAuth(payload.project_id, "project", "edit");
 
@@ -113,6 +115,7 @@ async function upsertInterface(ctx) {
 	await autoAddTag(payload);
 
 	response = xU.$response(result);
+	return response;
 }
 
 async function autoAddTag(params) {

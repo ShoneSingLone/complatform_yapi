@@ -1836,21 +1836,26 @@
 	};
 
 	function xItemWrapperBy(selector) {
-		if (_.isString(selector)) {
-			return $(selector);
-		}
-		/* const type = Vue.toRawType(xItemFormConfigsArray); if (/^HTML/.test(type)) { } */
-		if (selector.innerHTML) {
-			/* 如果是HTML元素，则获取Vue实例的configs */
-			return $(selector);
-		}
+		const $wrapper = (() => {
+			if (_.isString(selector)) {
+				return $(selector);
+			}
+			/* const type = Vue.toRawType(xItemFormConfigsArray); if (/^HTML/.test(type)) { } */
+			if (selector.outerHTML) {
+				/* 如果是HTML元素，则获取Vue实例的configs */
+				return $(selector);
+			}
 
-		if (selector.$el) {
-			return $(selector.$el);
-		}
+			if (selector.$el) {
+				return $(selector.$el);
+			}
+		})();
+
 		if (!$wrapper || $wrapper.length == 0) {
 			throw new Error("selector不是可用的dom元素");
 		}
+
+		return $wrapper;
 	}
 
 	function xItemConfigsBy(selector) {

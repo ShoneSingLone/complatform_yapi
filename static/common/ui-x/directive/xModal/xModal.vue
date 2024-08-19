@@ -102,10 +102,13 @@
 						<xIcon :icon="cptCloseIcon" class="el-dialog__close" />
 					</button>
 				</div>
-				<ComponentContent
-					ref="refContent"
-					:closeModal="closeModal"
-					@hook:mounted="setDialogOffset" />
+				<transition name="slide">
+					<component
+						:is="ContentComponent"
+						ref="refContent"
+						:closeModal="closeModal"
+						@hook:mounted="setDialogOffset" />
+				</transition>
 			</div>
 		</div>
 	</transition>
@@ -140,6 +143,9 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			return {
 				inject_modal: this
 			};
+		},
+		async mounted() {
+			this.ContentComponent = await _.$importVue(options.url, options);
 		},
 		setup(props) {
 			const vm = this;
@@ -285,14 +291,6 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 				}
 			};
 		},
-		components: {
-			ComponentContent: () => {
-				if (options._VueCtor) {
-					return Promise.resolve(options._VueCtor);
-				}
-				return _.$importVue(options.url, options);
-			}
-		},
 		// beforeDestroy() {
 		// 	debugger;
 		// 	/* 清理content组件 */
@@ -303,6 +301,8 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 		// },
 		data() {
 			return {
+				// ContentComponent: defineComponent({ template: `<div class="el-skeleton is-animated flex vertical x-padding" style="min-width: 200px;"><div class="el-skeleton__item el-skeleton__p is-first"></div><div class="el-skeleton__item el-skeleton__p el-skeleton__paragraph is-last mt"></div></div>` }),
+				ContentComponent: "",
 				isShowFullScreen: _.isBoolean(modalConfigs.fullscreen),
 				viewerZIndex: 0,
 				left: 0,
@@ -357,7 +357,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 		},
 		watch: {
 			"dialogClass.fullscreen"() {
-				/* 
+				/*
 				this.dialogStyle.opacity = 0;
 				setTimeout(() => {
 					this.dialogStyle.opacity = 1;
