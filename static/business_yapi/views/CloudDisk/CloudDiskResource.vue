@@ -212,7 +212,6 @@ export default async function () {
 					md5,
 					chunkTotal: this.chunkAndSizeArray.length
 				});
-				debugger;
 				const {
 					data: { chunks: uploadedChunkArray, file: isMergeFile }
 				} = await _api.yapi.resourceCloudDiskCheckChunks({
@@ -376,7 +375,6 @@ export default async function () {
 					url: _.$ajax.urlWrapper(`/api/resource/get`),
 					payload: { id: item._id },
 					resolveResult(result, state, xhr) {
-						debugger;
 						let blob = new Blob([result], { type: result.type });
 						//支持a标签download的浏览器
 						//通过创建a标签实现
