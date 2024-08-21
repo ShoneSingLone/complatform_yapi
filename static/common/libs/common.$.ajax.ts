@@ -17,7 +17,6 @@
 			responseInjector = responseInjector || normal;
 
 			let { type, url, options, success: resolve, error: reject } = API_OPTIONS;
-
 			options = options || {};
 			reject = reject || (() => null);
 
@@ -182,6 +181,7 @@
 							dataType: "binary",
 							/* 需要发送的数据 */
 							data: payload,
+							options: payload,
 							error(...args) {
 								return reject(args);
 							},
@@ -204,7 +204,7 @@
 										//获取下载文件的类型
 										let type = xhr.getResponseHeader("content-type");
 										//结果数据类型处理
-										let blob = new Blob([result], { type: fileType });
+										let blob = new Blob([resfult], { type: fileType });
 
 										//对于<a>标签，只有 Firefox 和 Chrome（内核）支持 download 属性
 										//IE10以上支持blob，但是依然不支持download

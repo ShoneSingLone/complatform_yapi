@@ -573,7 +573,7 @@ module.exports = {
 		"/resource/cloud_disk_rename": {
 			put: {
 				summary: "重命名",
-				description: "创建文件夹",
+				description: "文件重命名",
 				request: {
 					body: {
 						name: {
@@ -598,7 +598,13 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						const { name, id } = ctx.payload;
-						let result = await orm.Resource.update(id, { name });
+						const resource = await orm.Resource.getResourceById(id);
+						/* 重命名也同时改变文件类型 */
+						let result = await orm.Resource.update(id, {
+							name,
+							ext: xU.path.extname(name),
+							type: getType(name)
+						});
 						ctx.body = xU.$response(result);
 					} catch (e) {
 						xU.applog.error(e.message);
@@ -1052,29 +1058,36 @@ async function ifUploadAllChunckMergeIt({
 				fs.appendFileSync(file_merged_path, chunck);
 			}
 
-			const resSaveResource = await orm.Resource.updateOneByMd5(fileHash, {
-				name: fileName,
-				ext: xU.path.extname(fileName),
-				size: xU._.reduce(
-					chunks,
-					(total, chunk) => {
-						total += Number(chunk.chunkSize);
-						return total;
-					},
-					0
-				),
-				type: getType(file_merged_path),
-				useFor: "CloudDisk",
-				md5: fileHash,
-				path: String(file_merged_path),
-				uploadBy: $uid,
-				add_time: xU.time(),
-				isdir: 0,
-				fileId
-			});
-			/*合成成功后清理 */
-			await orm.ResourceChunk.delChunksByFileHash(fileHash);
-			await _n.asyncRmDir(dirPathChuncks);
+			let resSaveResource = {};
+			try {
+				resSaveResource = await orm.Resource.updateOneByMd5(fileHash, {
+					name: fileName,
+					ext: xU.path.extname(fileName) || "unknown",
+					size: xU._.reduce(
+						chunks,
+						(total, chunk) => {
+							total += Number(chunk.chunkSize);
+							return total;
+						},
+						0
+					),
+					type: getType(file_merged_path) || "unknown",
+					useFor: "CloudDisk",
+					md5: fileHash,
+					path: String(file_merged_path),
+					uploadBy: $uid,
+					add_time: xU.time(),
+					isdir: 0,
+					fileId
+				});
+
+				/*合成成功后清理 */
+				await orm.ResourceChunk.delChunksByFileHash(fileHash);
+				await _n.asyncRmDir(dirPathChuncks);
+			} catch (error) {
+				resSaveResource = { msg: error.message };
+				console.error(error);
+			}
 			return resSaveResource;
 		} catch (error) {
 			return false;

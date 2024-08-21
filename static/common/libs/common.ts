@@ -270,8 +270,12 @@
 	 * 打开文件选择器
 	 * @returns
 	 */
-	/* @typescriptDeclare ()=>Promise<File[]> */
-	_.$openFileSelector = function () {
+	/* @typescriptDeclare (options:{accept?:string,multiple?:boolean})=>Promise<File[]> */
+	_.$openFileSelector = function (options = {}) {
+		let { accept, multiple } = options;
+		accept = accept || "*";
+		multiple = multiple || false;
+
 		let lock = false;
 		return new Promise(resolve => {
 			try {
@@ -279,6 +283,10 @@
 				let el = document.createElement("input");
 				el.style.display = "none";
 				el.setAttribute("type", "file");
+				el.setAttribute("accept", accept);
+				if (multiple) {
+					el.setAttribute("multiple", multiple);
+				}
 				document.body.appendChild(el);
 
 				let $el = $(el);
@@ -2144,7 +2152,7 @@
 		};
 
 		/*  */
-		_.$getIpInRangeAndUseable = function (ipOld, cidr, used) {
+		_.$getIpInRangeAndUseable = function (ipOld, cidr, used = []) {
 			const range = _.$calculateCidrRange(cidr);
 			const isIpOldInRange = _.$isIp4InCidr(ipOld)(cidr);
 			if (isIpOldInRange) {

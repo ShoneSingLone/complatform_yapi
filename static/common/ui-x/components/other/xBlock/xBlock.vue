@@ -97,10 +97,16 @@ export default async function () {
 	&.bg-is-gray {
 		background: var(--el-fill-color-light);
 	}
-
 	.el-card__body {
 		.el-card {
 			margin-top: var(--ui-one);
+		}
+	}
+	&.body-height-100 {
+		.el-card__body {
+			height: 100%;
+			display: flex;
+			flex-flow: column;
 		}
 	}
 

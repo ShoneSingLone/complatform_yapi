@@ -170,17 +170,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 		computed: {
 			cptInputClass() {
-				const {
+				let {
 					type,
 					inputSize,
 					inputDisabled,
 					inputExceed,
 					$scopedSlots,
+					$vSlots,
 					prefixIcon,
 					suffixIcon,
 					clearable,
 					showPassword
 				} = this;
+				/* input prepend append */
+				$scopedSlots = _.merge($scopedSlots, $vSlots);
 				return [
 					"xInput",
 					type === "textarea" ? "el-textarea" : "el-input",

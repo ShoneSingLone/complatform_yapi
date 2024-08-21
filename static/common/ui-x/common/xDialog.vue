@@ -11,6 +11,7 @@
 
 <script lang="ts">
 export default async function () {
+	/* --xDialog-wrapper-width */
 	return {
 		props: ["title"],
 		inject: {

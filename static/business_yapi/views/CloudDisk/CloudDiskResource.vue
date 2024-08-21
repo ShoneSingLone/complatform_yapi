@@ -75,6 +75,14 @@
 					<xIcon icon="_icon_rename" />
 					<span class="ml8">重命名</span>
 				</div>
+				<div class="flex middle mt" @click="openFileAs">
+					<xIcon icon="_icon_rename" />
+					<span class="ml8">打开方式</span>
+				</div>
+				<div class="flex middle mt" @click="downloadFile">
+					<xIcon icon="_icon_rename" />
+					<span class="ml8">下载</span>
+				</div>
 			</div>
 		</xDrawer>
 	</div>
@@ -204,6 +212,7 @@ export default async function () {
 					md5,
 					chunkTotal: this.chunkAndSizeArray.length
 				});
+				debugger;
 				const {
 					data: { chunks: uploadedChunkArray, file: isMergeFile }
 				} = await _api.yapi.resourceCloudDiskCheckChunks({
@@ -348,6 +357,40 @@ export default async function () {
 				});
 				this.APP.selectedItems = [];
 				this.APP.isShowBMoreDrawer = false;
+			},
+			async openFileAs() {
+				const vm = this;
+				if (vm.APP.selectedItems.length !== 1) {
+					return _.$msgError("只能选择一个文件");
+				}
+				let item = _.find(vm.APP.resourceList, { _id: vm.APP.selectedItems[0] });
+				this.APP.playMedia(item, { resource: this.APP.resourceList });
+			},
+			async downloadFile() {
+				const vm = this;
+				if (vm.APP.selectedItems.length !== 1) {
+					return _.$msgError("只能选择一个文件");
+				}
+				let item = _.find(vm.APP.resourceList, { _id: vm.APP.selectedItems[0] });
+				return _.$ajax.downloadOctetStream({
+					url: _.$ajax.urlWrapper(`/api/resource/get`),
+					payload: { id: item._id },
+					resolveResult(result, state, xhr) {
+						debugger;
+						let blob = new Blob([result], { type: result.type });
+						//支持a标签download的浏览器
+						//通过创建a标签实现
+						let link = document.createElement("a");
+						//文件名
+						link.download = item.name;
+						link.style.display = "none";
+						link.href = URL.createObjectURL(blob);
+						document.body.appendChild(link);
+						link.click(); //执行下载
+						URL.revokeObjectURL(link.href); //释放url
+						document.body.removeChild(link); //释放标签
+					}
+				});
 			},
 			async openUpsertNewDirDialog(action = "") {
 				const vm = this;

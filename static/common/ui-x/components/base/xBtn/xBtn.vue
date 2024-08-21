@@ -335,6 +335,10 @@ a.el-button {
 	color: #606266;
 	-webkit-appearance: none;
 	text-align: center;
+	/* 列表当中 jsxFn link 左对齐 */
+	&.text-align-left {
+		text-align: left;
+	}
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	outline: 0;

@@ -37,6 +37,14 @@ export default async function () {
 			children: [
 				_.$newRoute("/x-component/x-item", "@/views/xComponent/DemoxItem/DemoxItem.vue"),
 				_.$newRoute(
+					"/x-component/x-item-input",
+					"@/views/xComponent/DemoxItemInput/DemoxItemInput.vue"
+				),
+				_.$newRoute(
+					"/x-component/x-item-switch",
+					"@/views/xComponent/DemoxItemSwitch/DemoxItemSwitch.vue"
+				),
+				_.$newRoute(
 					"/x-component/x-item-check",
 					"@/views/xComponent/DemoxItemCheck/DemoxItemCheck.vue"
 				),

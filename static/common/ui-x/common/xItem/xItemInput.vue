@@ -33,6 +33,46 @@ export default async function () {
 				attrs.rows = 4;
 			}
 
+			if (vm.configs?.inputType === "select_input") {
+				const inputProps = _.merge(
+					{
+						$vSlots: {
+							prepend() {
+								return h("xItem", {
+									configs: {
+										itemType: "xItemSelect",
+										options: vm.configs.selectOptions || {},
+										value: vm.configs.selectValue || {},
+										onEmitValue({ val }) {
+											vm.configs.selectValue = val;
+											vm.$emit("configschange", vm.configs);
+											if (_.isFunction(vm.configs.onSelectChange)) {
+												vm.configs.onSelectChange({ val });
+											} else {
+												vm.xItem.$emit("selectChange", val);
+											}
+										}
+									},
+									style: `--xItem-wrapper-width:106px`
+								});
+							}
+						}
+					},
+					merge_hFnProps([
+						{
+							attrs,
+							on: vm.mixin_listeners,
+							/* configs,value */
+							onInput(val) {
+								vm.mixin_value = val;
+							}
+						},
+						this?.$vnode?.data
+					])
+				);
+				return h(tag, inputProps);
+			}
+
 			return h(
 				tag,
 				merge_hFnProps([

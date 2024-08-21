@@ -145,7 +145,12 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			};
 		},
 		async mounted() {
-			this.ContentComponent = await _.$importVue(options.url, options);
+			/* 兼容废弃代码 */
+			if (options._VueCtor) {
+				this.ContentComponent = options._VueCtor;
+			} else {
+				this.ContentComponent = await _.$importVue(options.url, options);
+			}
 		},
 		setup(props) {
 			const vm = this;
@@ -301,6 +306,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 		// },
 		data() {
 			return {
+				/* TODO: 动画闪烁 */
 				// ContentComponent: defineComponent({ template: `<div class="el-skeleton is-animated flex vertical x-padding" style="min-width: 200px;"><div class="el-skeleton__item el-skeleton__p is-first"></div><div class="el-skeleton__item el-skeleton__p el-skeleton__paragraph is-last mt"></div></div>` }),
 				ContentComponent: "",
 				isShowFullScreen: _.isBoolean(modalConfigs.fullscreen),

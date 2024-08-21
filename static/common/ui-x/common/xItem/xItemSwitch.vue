@@ -1,6 +1,6 @@
 <template>
 	<div class="flex">
-		<xSwitch v-model="mixin_value" v-bind="$attrs" v-on="mixin_listeners"> </xSwitch>
+		<xSwitch v-model="mixin_value" v-bind="cptAttrs" v-on="mixin_listeners"> </xSwitch>
 		<xGap f />
 	</div>
 </template>
@@ -12,8 +12,11 @@ export default async function () {
 		mixins: [mixins],
 		props: ["value", "options", "configs"],
 		computed: {
-			selectOptions() {
-				return this.options || this?.configs?.options || [];
+			cptAttrs() {
+				return {
+					...this.configs,
+					...this.$attrs
+				};
 			}
 		}
 	};

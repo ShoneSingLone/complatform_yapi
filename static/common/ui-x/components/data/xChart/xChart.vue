@@ -6,7 +6,11 @@
 				:key="_uid"
 				class="x-chart flex flex1 center middle x-loading"
 				:width="width"
-				:height="height" />
+				:height="height"
+				:style="{
+					width: width + 'px',
+					height: height + 'px'
+				}" />
 		</template>
 	</xAutoResizer>
 </template>

@@ -76,6 +76,16 @@ export default async function () {
 					children: [
 						{
 							icon: "icon_report",
+							label: i18n("xItemSwitch"),
+							href: "/x-component/x-item-switch"
+						},
+						{
+							icon: "icon_report",
+							label: i18n("xItemInput"),
+							href: "/x-component/x-item-input"
+						},
+						{
+							icon: "icon_report",
 							label: i18n("xItemCheck"),
 							href: "/x-component/x-item-check"
 						},
