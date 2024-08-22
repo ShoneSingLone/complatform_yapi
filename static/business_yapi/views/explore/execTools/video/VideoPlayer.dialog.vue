@@ -21,8 +21,9 @@ export default async function ({ uri, id }) {
 				return "";
 			},
 			videoSrc() {
+				// return `https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4`;
 				return Vue._common_utils.appendToken(
-					`${window._URL_PREFIX_4_DEV || ""}/api/resource/video?uri=${uri}&id=${id}`
+					_.$ajax.urlWrapper(`/api/resource/video?id=${id}`)
 				);
 			}
 		}

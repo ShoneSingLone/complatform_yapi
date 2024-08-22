@@ -71,6 +71,7 @@ async function loadHtmlEntry({ ctx, app, fileURI }) {
 	const docPath = path.resolve(xU.var.APP_ROOT_DIR, "static", fileURI);
 	const indexHtmlString = await fs.promises.readFile(docPath, "utf-8");
 	const $ = cheerio.load(indexHtmlString);
+	/* 添加版本号:每次重启服务 */
 	$("#src-root").attr("data-app-version", app._version);
 	$("#src-root").attr("src", "./common/libs/seed.js");
 	return $;

@@ -445,7 +445,7 @@ module.exports = {
 						await fs.promises.access(resourcePath, fs.constants.R_OK);
 
 						// 设置响应头，包括Content-Type和Content-Length（可选）
-						const contentType = getType(resourcePath);
+						const contentType = getType(resourcePath) || "video/mp4";
 						ctx.set("Content-Type", contentType);
 
 						const total = await new Promise((resolve, reject) => {
@@ -598,13 +598,7 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						const { name, id } = ctx.payload;
-						const resource = await orm.Resource.getResourceById(id);
-						/* 重命名也同时改变文件类型 */
-						let result = await orm.Resource.update(id, {
-							name,
-							ext: xU.path.extname(name),
-							type: getType(name)
-						});
+						let result = await orm.Resource.update(id, { name });
 						ctx.body = xU.$response(result);
 					} catch (e) {
 						xU.applog.error(e.message);

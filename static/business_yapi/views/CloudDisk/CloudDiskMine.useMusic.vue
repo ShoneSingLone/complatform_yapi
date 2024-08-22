@@ -134,14 +134,12 @@ export default async function () {
 				resource = resource || [];
 				if (record.type === "audio") {
 					playAudio(record);
-
 					stateAudio.audioArray = _.uniqBy(
 						[...stateAudio.audioArray, ..._.filter(resource, i => i.type === "audio")],
 						"_id"
 					);
 					_.$idb.set("audioArray", stateAudio.audioArray);
-				}
-				if (record.type === "video") {
+				} else if (record.type === "video") {
 					playVideo(record);
 				}
 			}
@@ -149,7 +147,6 @@ export default async function () {
 			async function playVideo(record) {
 				const { path, _id } = record;
 				let uri = encodeURIComponent(JSON.stringify(path));
-
 				return _.$openModal({
 					title: "video player",
 					url: "@/views/explore/execTools/video/VideoPlayer.dialog.vue",

@@ -61,7 +61,7 @@
 			direction="btt"
 			size="190px"
 			class="CloudDiskResource-drawer">
-			<div class="flex vertical x-padding height100">
+			<div class="flex vertical x-padding">
 				<div class="flex middle">
 					<xIcon icon="_icon_sort_by" />
 					<span class="ml8 mr">排序</span>
@@ -75,12 +75,13 @@
 					<xIcon icon="_icon_rename" />
 					<span class="ml8">重命名</span>
 				</div>
-				<div class="flex middle mt" @click="openFileAs">
-					<xIcon icon="_icon_rename" />
-					<span class="ml8">打开方式</span>
+				<div class="flex middle mt">
+					<xIcon icon="_icon_open_as" />
+					<span class="ml8 mr">打开方式</span>
+					<xBtnArray :configs="oprBtnArray_openAs" />
 				</div>
 				<div class="flex middle mt" @click="downloadFile">
-					<xIcon icon="_icon_rename" />
+					<xIcon icon="_icon_download" />
 					<span class="ml8">下载</span>
 				</div>
 			</div>
@@ -123,6 +124,36 @@ export default async function () {
 						onClick() {
 							vm.sortBy = "type";
 							vm.APP.mSetResources(vm.APP.resourceList);
+						}
+					}
+				],
+				oprBtnArray_openAs: [
+					{
+						label: i18n("audio"),
+						preset: "text",
+						onClick() {
+							return vm.openFileAs("audio");
+						}
+					},
+					{
+						label: i18n("video"),
+						preset: "text",
+						onClick() {
+							return vm.openFileAs("video");
+						}
+					},
+					{
+						label: i18n("image"),
+						preset: "text",
+						onClick() {
+							return vm.openFileAs("image");
+						}
+					},
+					{
+						label: i18n("doc"),
+						preset: "text",
+						onClick() {
+							return vm.openFileAs("doc");
 						}
 					}
 				]
@@ -357,12 +388,13 @@ export default async function () {
 				this.APP.selectedItems = [];
 				this.APP.isShowBMoreDrawer = false;
 			},
-			async openFileAs() {
+			async openFileAs(type) {
 				const vm = this;
 				if (vm.APP.selectedItems.length !== 1) {
 					return _.$msgError("只能选择一个文件");
 				}
 				let item = _.find(vm.APP.resourceList, { _id: vm.APP.selectedItems[0] });
+				item.type = type;
 				this.APP.playMedia(item, { resource: this.APP.resourceList });
 			},
 			async downloadFile() {
