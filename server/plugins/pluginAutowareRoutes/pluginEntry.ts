@@ -71,9 +71,10 @@ function appAddRoutes(app, routes) {
 							xU._.each(request, (query, queryName) => {
 								xU._.each(query, (fieldInfo, field) => {
 									if (queryName === "formData") {
-										field = `fields.${field}`;
+										return;
+									} else {
+										checkParamsAndParse({ info: fieldInfo, ctx, field });
 									}
-									checkParamsAndParse({ info: fieldInfo, ctx, field });
 								});
 							});
 						}

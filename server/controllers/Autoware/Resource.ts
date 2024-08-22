@@ -860,7 +860,6 @@ module.exports = {
 							default: 0,
 							description: "目录id"
 						},
-						file: { description: "上传的文件 cloud_disk_shard_upload", required: true, type: "file" },
 						fileHash: {
 							description: "文件名称",
 							required: true,
