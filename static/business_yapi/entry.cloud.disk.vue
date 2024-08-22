@@ -225,7 +225,6 @@ export default async function () {
 						} else if (/^audio/.test(item.type)) {
 							type = "audio";
 						} else {
-							
 						}
 
 						return {

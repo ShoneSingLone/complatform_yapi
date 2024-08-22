@@ -1,5 +1,6 @@
 <script lang="ts">
 export default async function () {
+	/* body-height-100 */
 	return {
 		props: {
 			bodyClass: {

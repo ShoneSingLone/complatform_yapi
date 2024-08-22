@@ -272,6 +272,7 @@
 	 */
 	/* @typescriptDeclare (options:{accept?:string,multiple?:boolean})=>Promise<File[]> */
 	_.$openFileSelector = function (options = {}) {
+		/* 可选文件的过滤 */
 		let { accept, multiple } = options;
 		accept = accept || "*";
 		multiple = multiple || false;

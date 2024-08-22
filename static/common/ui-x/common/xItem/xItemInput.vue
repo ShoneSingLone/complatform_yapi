@@ -33,6 +33,7 @@ export default async function () {
 				attrs.rows = 4;
 			}
 
+			/* 前面是下拉的形式 */
 			if (vm.configs?.inputType === "select_input") {
 				const inputProps = _.merge(
 					{
