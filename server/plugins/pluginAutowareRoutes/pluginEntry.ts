@@ -68,8 +68,11 @@ function appAddRoutes(app, routes) {
 						const { request } = route;
 
 						if (request) {
-							xU._.each(request, query => {
+							xU._.each(request, (query, queryName) => {
 								xU._.each(query, (fieldInfo, field) => {
+									if (queryName === "formData") {
+										field = `fields.${field}`;
+									}
 									checkParamsAndParse({ info: fieldInfo, ctx, field });
 								});
 							});
@@ -122,13 +125,13 @@ module.exports = async function (app) {
 
 function checkParamsAndParse({ info, ctx, field }) {
 	const { default: defaultValue, required, type } = info;
-	const fieldValue = ctx.payload[field];
+	const fieldValue = xU._.get(ctx.payload, field);
 
 	/* 校验必填项 */
 	if (required) {
 		if (!xU.isInput(fieldValue)) {
 			if (xU.isInput(defaultValue)) {
-				ctx.payload[field] = defaultValue;
+				xU._.set(ctx.payload, field, defaultValue);
 			} else {
 				ctx.body = xU.$response(null, 500, `${field} required`);
 			}
