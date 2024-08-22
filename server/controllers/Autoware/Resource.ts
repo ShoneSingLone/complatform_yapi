@@ -1,5 +1,6 @@
 const { getAudioDetail } = require("./Audio.service");
 const mime = require("mime-types");
+const dayjs = require("dayjs");
 const fs = require("fs");
 const path = require("path");
 const { _n } = require("@ventose/utils-node");
@@ -1039,7 +1040,13 @@ async function ifUploadAllChunckMergeIt({
 		try {
 			/* 可以合并chuncks */
 			//创建合并后的文件夹
-			let file_merged_path = path.join(TARGET_PREFIX, "user", $uid, "merged");
+			let file_merged_path = path.join(
+				TARGET_PREFIX,
+				"user",
+				$uid,
+				"merged",
+				dayjs().format("YYYYMMDD")
+			);
 			await _n.asyncSafeMakeDir(file_merged_path);
 			file_merged_path = path.resolve(file_merged_path, fileName);
 			//创建储存文件

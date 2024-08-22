@@ -41,9 +41,9 @@
 			<xIcon :icon="cptIcon" />
 		</div>
 		<div class="resource-name-wrapper flex vertical flex1 pr">
-			<div class="resource-name"><span class="mr8">{{ item._id}}</span>{{ item.name }}</div>
+			<div class="resource-name">{{ item.name }}</div>
 			<div class="flex">
-				<div class="resource-update-date">{{ cptDate }}</div>
+				<div class="resource-update-date flex middle">{{ cptDate }}<xGap l="8" />{{ item._id }}</div>
 				<xGap f />
 				<div class="resource-update-date" v-if="!cptIsDir">{{ cptSize }}</div>
 			</div>
