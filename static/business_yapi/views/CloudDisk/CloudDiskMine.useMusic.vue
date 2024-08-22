@@ -148,9 +148,9 @@ export default async function () {
 				const { path, _id } = record;
 				let uri = encodeURIComponent(JSON.stringify(path));
 				return _.$openModal({
-					title: "video player",
+					title: `${record.name}`,
 					url: "@/views/explore/execTools/video/VideoPlayer.dialog.vue",
-					uri,
+					item: record,
 					id: _id
 				});
 			}

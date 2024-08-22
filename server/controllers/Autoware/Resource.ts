@@ -427,17 +427,19 @@ module.exports = {
 					const { headers, payload } = ctx;
 					const { id } = payload;
 					let resourcePath = [];
+					let response_not_found = xU.$response(
+						{
+							msg: "not found"
+						},
+						404,
+						"Not Found"
+					);
+
 					try {
 						const resource = await orm.Resource.getResourceById(id);
 						resourcePath = resource.path;
 					} catch (error) {
-						ctx.body = xU.$response(
-							{
-								msg: "not found"
-							},
-							404,
-							"Not Found"
-						);
+						ctx.body = response_not_found;
 					}
 
 					try {
@@ -487,7 +489,7 @@ module.exports = {
 							ctx.body = fs.createReadStream(resourcePath);
 						}
 					} catch (error) {
-						ctx.body = xU.$response(null, 400, error);
+						ctx.body = response_not_found;
 					}
 
 					return;
