@@ -173,6 +173,7 @@ export default async function () {
 				};
 			},
 			mixins: {
+				/* xItem,value,configs,mixin_attrs,mixin_value,mixin_listeners */
 				inject: {
 					xItem: {
 						default: {}
@@ -182,7 +183,14 @@ export default async function () {
 					prop: "value",
 					event: "change"
 				},
+				props: ["value", "configs"],
 				computed: {
+					mixin_attrs() {
+						return {
+							...this.configs,
+							...this.$attrs
+						};
+					},
 					mixin_value: {
 						get() {
 							return this.value;

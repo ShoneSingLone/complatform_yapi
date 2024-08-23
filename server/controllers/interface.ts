@@ -292,58 +292,6 @@ class ControllerInterface extends ControllerBase {
 		});
 	}
 
-	/**
-	 * 删除接口
-	 * @interface /interface/del
-	 * @method GET
-	 * @category interface
-	 * @foldnumber 10
-	 * @param {Number}   id 接口id，不能为空
-	 * @returns {Object}
-	 * @example ./api/interface/del.json
-	 */
-
-	async del(ctx) {
-		try {
-			let id = ctx.request.body.id;
-
-			if (!id) {
-				return (ctx.body = xU.$response(null, 400, "接口id不能为空"));
-			}
-
-			let data = await this.model.get(id);
-
-			if (data.uid != this.getUid()) {
-				let auth = await this.checkAuth(data.project_id, "project", "danger");
-				if (!auth) {
-					return (ctx.body = xU.$response(null, 400, "没有权限"));
-				}
-			}
-
-			// let inter = await this.model.get(id);
-			let result = await this.model.del(id);
-			xU.emitHook("interface_del", id).then();
-			await this.modelCase.delByInterfaceId(id);
-			let username = this.getUsername();
-			this.modelInterfaceCategory.get(data.catid).then(cate => {
-				xU.saveLog({
-					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 <a href="/project/${
-						cate.project_id
-					}/interface/api/cat_${data.catid}">${cate.name}</a> 下的接口 "${
-						data.title
-					}"`,
-					type: "project",
-					uid: this.getUid(),
-					username: username,
-					typeid: cate.project_id
-				});
-			});
-			orm.project.up(data.project_id, { up_time: new Date().getTime() }).then();
-			ctx.body = xU.$response(result);
-		} catch (err) {
-			ctx.body = xU.$response(null, 402, err.message);
-		}
-	}
 	// 处理编辑冲突
 	async solveConflict(ctx) {
 		try {

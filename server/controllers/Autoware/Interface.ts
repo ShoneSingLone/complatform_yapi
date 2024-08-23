@@ -636,8 +636,9 @@ module.exports = {
 		},
 		"/interface/upsert": {
 			post: {
-				summary: `保存接口数据，如果接口存在则更新数据，如果接口不存在则添加数据会用path和name来判断是否已经添加`,
-				description: "更新分类",
+				summary: `更新接口`,
+				description:
+					"保存接口数据，如果接口存在则更新数据，如果接口不存在则添加数据会用path和method来判断是否已经添加",
 				request: interfaceUpsertRequest,
 				async handler(ctx) {
 					let payload = ctx.payload;
@@ -788,6 +789,99 @@ module.exports = {
 						ctx.body = xU.$response(result);
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		"/interface/del": {
+			post: {
+				summary: "删除接口",
+				description: "获取项目接口详情",
+				request: {
+					body: {
+						ids: {
+							required: true,
+							description: "接口ID 数组",
+							type: "array",
+							items: {
+								type: "number"
+							}
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let { ids } = ctx.payload;
+
+						let selectedInterfaceArray = await orm.interface.getByIds(ids);
+
+						const isForbidden = await (async () => {
+							let interface;
+							let index = 0;
+							while ((interface = selectedInterfaceArray[index])) {
+								if (interface.uid != this.getUid()) {
+									let auth = await this.checkAuth(
+										interface.project_id,
+										"project",
+										"danger"
+									);
+
+									if (!auth) {
+										return true;
+									}
+								}
+								index++;
+							}
+							return false;
+						})();
+
+						if (isForbidden) {
+							return (ctx.body = xU.$response(null, 400, "没有权限"));
+						}
+
+						const result = await (async () => {
+							let interface;
+							let index = 0;
+							let count = 0;
+							while ((interface = selectedInterfaceArray[index])) {
+								try {
+									const id = interface._id;
+									await orm.interface.del([id]);
+									xU.emitHook("interface_del", id).then();
+									await orm.interfaceCase.delByInterfaceId(id);
+									let username = this.getUsername();
+									const category = await orm.interfaceCategory.get(
+										interface.catid
+									);
+
+									xU.saveLog({
+										content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 <a href="/project/${
+											category.project_id
+										}/interface/api/cat_${interface.catid}">${
+											category.name
+										}</a> 下的接口 "${interface.title}"`,
+										type: "project",
+										uid: this.getUid(),
+										username: username,
+										typeid: category.project_id
+									});
+									await orm.project.up(interface.project_id, {
+										up_time: new Date().getTime()
+									});
+									count++;
+									index++;
+								} catch (error) {
+									console.log("🚀 ~ await ~ error:", error);
+								}
+							}
+							return {
+								success: count
+							};
+						})();
+
+						ctx.body = xU.$response(result);
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, err.message);
 					}
 				}
 			}

@@ -1,25 +1,16 @@
 <template>
 	<div class="flex">
-		<xSwitch v-model="mixin_value" v-bind="cptAttrs" v-on="mixin_listeners"> </xSwitch>
+		<xSwitch v-model="mixin_value" v-bind="mixin_attrs" v-on="mixin_listeners" />
 		<xGap f />
 	</div>
 </template>
 
 <script lang="ts">
 export default async function () {
-	const { mixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
-	return {
-		mixins: [mixins],
-		props: ["value", "options", "configs"],
-		computed: {
-			cptAttrs() {
-				return {
-					...this.configs,
-					...this.$attrs
-				};
-			}
-		}
-	};
+	const { mixins: ItemMixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
+	return defineComponent({
+		mixins: [ItemMixins]
+	});
 }
 </script>
 

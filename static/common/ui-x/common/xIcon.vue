@@ -119,11 +119,7 @@ export default async function () {
 				}
 			},
 			cptIconUrl() {
-				let url = `/common/assets/svg/${this.cptIconName}.svg`;
-				if (/^_/.test(this.cptIconName)) {
-					const iconName = String(this.cptIconName).replace(/^_/, "");
-					url = `@/assets/svg/${iconName}.svg`;
-				}
+				const url = _.$resolveSvgIcon(this.cptIconName);
 				return _.$resolvePath(url);
 			},
 			cptColor() {

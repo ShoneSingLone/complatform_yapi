@@ -150,8 +150,16 @@ export default async function () {
 			 * 要求控件必填，提示信息默认i18n("必填项")
 			 * @param defaultMsg 自定义的提示信息
 			 */
-			required: defaultMsg => {
-				defaultMsg = defaultMsg === undefined ? i18n("必填项") : defaultMsg;
+			required: (args = {}) => {
+				let defaultMsg = i18n("必填项");
+				/* 兼容老的用法 */
+				if (_.isString(args)) {
+					defaultMsg = args;
+				} else if (_.isObject(args) && args.msg) {
+					/* 新的用Object，解构 */
+					defaultMsg = args.msg;
+				}
+
 				return {
 					name: "required",
 					async validator({ val }) {

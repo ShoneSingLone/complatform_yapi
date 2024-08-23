@@ -323,9 +323,11 @@ class ModelInterface extends ModelBase {
 		return this.model.find(option).select().sort({ title: 1 }).exec();
 	}
 
-	del(id) {
+	del(ids) {
 		return this.model.remove({
-			_id: id
+			_id: {
+				$in: ids
+			}
 		});
 	}
 

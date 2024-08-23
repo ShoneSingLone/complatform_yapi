@@ -1,6 +1,7 @@
 (async function useIdbKeyVal() {
+	const ResolvePathCache = {};
 	const isDev = !!localStorage.isDev;
-	var camelizeRE = /\/|\.|_|-(\w)/g;
+	const camelizeRE = /\/|\.|_|-(\w)/g;
 	/**
 	 * document.getElementById
 	 * @param {*} id
@@ -123,7 +124,7 @@
 			alert("miss APP_NAME");
 		}
 
-		LOADING_IMAGE_NAME = loadingImg || "x-loading";
+
 		window.SRC_ROOT_PATH = srcRoot || "";
 		window.APP_NAME = appName || "";
 		window.APP_ENTRY_NAME = appEntryName || "entry";
@@ -137,6 +138,7 @@
 		}
 		localStorage["X-Language"] = I18N_LANGUAGE;
 		window.I18N_LANGUAGE = I18N_LANGUAGE;
+		LOADING_IMAGE_NAME = $resolvePath($resolveSvgIcon(loadingImg || "x-loading"));
 	})();
 
 	function execXHR(url) {
@@ -253,6 +255,16 @@
 
 	/*  */
 
+	function $resolveSvgIcon(cptIconName) {
+		let url = `/common/assets/svg/${cptIconName}.svg`;
+		if (/^_/.test(cptIconName)) {
+			const iconName = String(cptIconName).replace(/^_/, "");
+			url = `@/assets/svg/${iconName}.svg`;
+		}
+		return url;
+	}
+
+
 	/**
 	 * 依赖全局变量SRC_ROOT_PATH
 	 * 返回静态资源路径
@@ -262,7 +274,7 @@
 	/* @typescriptDeclare (url: string)=>string */
 	function $resolvePath(url) {
 		let lodash = window._;
-		let resolvedURL = $resolvePath.cache[url];
+		let resolvedURL = ResolvePathCache[url];
 		if (resolvedURL) {
 			return resolvedURL;
 		}
@@ -270,7 +282,7 @@
 		try {
 			if (lodash?.THIS_FILE_URL) {
 				let parentURL = last(lodash.THIS_FILE_URL);
-				const parentResolvedURL = $resolvePath.cache[parentURL];
+				const parentResolvedURL = ResolvePathCache[parentURL];
 				if (parentResolvedURL) {
 					parentURL = parentResolvedURL.split("/");
 					if (/^\.\//.test(url)) {
@@ -296,10 +308,9 @@
 			/* common 通用 */
 			resolvedURL = `${SRC_ROOT_PATH}${url}`;
 		}
-		$resolvePath.cache[url] = resolvedURL;
+		ResolvePathCache[url] = resolvedURL;
 		return resolvedURL;
 	}
-	$resolvePath.cache = {};
 
 	/**
 	 * @description 加载纯文本,包括vue js css html,
@@ -497,6 +508,7 @@
 						_.$appendStyle = $appendStyle;
 						_.$resolveCssAssetsPath = $resolveCssAssetsPath;
 						_.$idb = $idb;
+						_.$resolveSvgIcon = $resolveSvgIcon;
 						_.$resolvePath = $resolvePath;
 						_.$loadText = _$loadText;
 						_.$asyncLoadOrderAppendScrips = _$asyncLoadOrderAppendScrips;
@@ -533,25 +545,23 @@
 			/* 在计算rem之后添加样式，否则会有闪烁 */
 			$appendStyle(
 				"xLoadingStyle",
-				$resolveCssAssetsPath(`
-			html, body, #app { height: 100%; width: 100%; }
-	
-			@keyframes spin {
-				from {
-					transform: rotate(0deg);
-				}
-				to {
-					transform: rotate(360deg);
-				}
-			}
-	
-			.spin {animation: spin 2s linear infinite;}
-	
-			.x-loading { min-height: 48px; position: relative; // filter: blur(1px); overflow: hidden; pointer-events: none; }
-			
-			.x-loading::before { animation: spin 2s linear infinite;pointer-events: none; content: " "; display: block; top: 0; bottom: 0; right: 0; left: 0; position: absolute; background: url(/common/assets/svg/${LOADING_IMAGE_NAME}.svg) center/32px no-repeat; z-index: 9999999999; }
-			`)
-			);
+				`html, body, #app { height: 100%; width: 100%; }
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.spin {animation: spin 2s linear infinite;}
+
+.x-loading { min-height: 48px; position: relative; // filter: blur(1px); overflow: hidden; pointer-events: none; }
+
+.x-loading::before { animation: spin 2s linear infinite;pointer-events: none; content: " "; display: block; top: 0; bottom: 0; right: 0; left: 0; position: absolute; background: url(${LOADING_IMAGE_NAME}) center/32px no-repeat; z-index: 9999999999; }
+`			);
 		})();
 
 		await (async function setI18nFunction() {

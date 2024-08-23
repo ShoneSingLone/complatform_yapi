@@ -88,6 +88,12 @@ export default async function () {
 						label: "复制接口",
 						disabled: () => vm.cptIsCheckedRow,
 						onClick: vm.copyInterface
+					},
+					{
+						label: "删除",
+						icon: "delete",
+						disabled: () => vm.cptIsCheckedRow,
+						onClick: vm.deleteInterface
 					}
 				];
 			},
@@ -119,6 +125,21 @@ export default async function () {
 						this.inject_project_interface_section.configsTable.data.set
 					)
 				});
+			},
+			async deleteInterface() {
+				try {
+					await _.$confirm_important("是否删除当前选择的接口？");
+					_.$loading(true);
+					const res = await _api.yapi.interface_del_by_ids(
+						Array.from(this.inject_project_interface_section.configsTable.data.set)
+					);
+					this.inject_project.getInterfaceList();
+				} catch (error) {
+					_.$msgError(error);
+					console.error(error);
+				} finally {
+					_.$loading(false);
+				}
 			},
 			async copyInterface() {
 				_.$openModal({

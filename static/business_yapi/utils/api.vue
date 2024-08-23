@@ -155,6 +155,13 @@ export default async function () {
 						data
 					});
 				},
+				interface_del_by_ids(ids) {
+					return _.$ajax.post("/api/interface/del", {
+						data: {
+							ids
+						}
+					});
+				},
 				interface_up(data) {
 					return _.$ajax.post("/api/interface/up", {
 						data
