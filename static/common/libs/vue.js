@@ -2857,6 +2857,7 @@
 	function createAsyncPlaceholder(factory, data, context, children, tag) {
 		/* 占位 */
 		var node = h("AsyncPlaceholder", {
+			key: _.$genId("AsyncPlaceholder"),
 			tag: tag,
 			context: context,
 			data: data,

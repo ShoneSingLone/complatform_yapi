@@ -208,6 +208,19 @@ export default async function () {
 				};
 			}
 			options = _.merge({}, options);
+
+			const { message } = options;
+
+			/* 如果页面当中有完全一样的提示信息，则不显示重复信息 */
+			const isDuplicateMessage = _.some(
+				instances,
+				instance => message === $(instance.$el).find(".el-message__content").text()
+			);
+
+			if (isDuplicateMessage) {
+				return;
+			}
+
 			const userOnClose = options.onClose;
 			const id = "message_" + seed++;
 
@@ -229,6 +242,8 @@ export default async function () {
 			instance.visible = true;
 			instance.$el.style.zIndex = PopupManager.nextZIndex();
 			instances.push(instance);
+			instance.$on("hook:beforeDestroy", () => {});
+
 			return instance;
 		};
 		["success", "warning", "info", "error"].forEach(type => {

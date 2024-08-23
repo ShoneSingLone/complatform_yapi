@@ -124,7 +124,6 @@
 			alert("miss APP_NAME");
 		}
 
-
 		window.SRC_ROOT_PATH = srcRoot || "";
 		window.APP_NAME = appName || "";
 		window.APP_ENTRY_NAME = appEntryName || "entry";
@@ -263,7 +262,6 @@
 		}
 		return url;
 	}
-
 
 	/**
 	 * 依赖全局变量SRC_ROOT_PATH
@@ -561,7 +559,8 @@
 .x-loading { min-height: 48px; position: relative; // filter: blur(1px); overflow: hidden; pointer-events: none; }
 
 .x-loading::before { animation: spin 2s linear infinite;pointer-events: none; content: " "; display: block; top: 0; bottom: 0; right: 0; left: 0; position: absolute; background: url(${LOADING_IMAGE_NAME}) center/32px no-repeat; z-index: 9999999999; }
-`			);
+`
+			);
 		})();
 
 		await (async function setI18nFunction() {
