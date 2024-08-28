@@ -141,10 +141,9 @@ class ModelProject extends ModelBase {
 	}
 
 	get(id) {
+		const _id = Number(id);
 		return this.model
-			.findOne({
-				_id: Number(id)
-			})
+			.findOne({ _id })
 			.exec()
 			.then(data => {
 				return this.handleEnvNullData(data);

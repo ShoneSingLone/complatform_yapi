@@ -6,7 +6,7 @@ const { customCookies } = require("../utils/customCookies");
 
 const Mock = require("mockjs");
 const { ObjectId } = require("mongodb");
-const { getResponseThroghProxy } = require("./requestProxy");
+const { execProxyRequest } = require("./requestProxy");
 
 /**
  * @description 如果是成功的响应，需要备一个份
@@ -86,16 +86,18 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, projectId }) {
 		return [path, proxyHOST, proxyPORT];
 	})();
 
-	let body = xU.$response(null, 500, "代理失败");
 	let response;
+	let body = xU.$response(null, 500, "setResponseByRunProxy 代理失败");
+	
 	try {
-		response = await getResponseThroghProxy({
+		const ResponseThroghProxyOptions = {
 			ctx,
 			path,
 			headers,
 			host: proxyHOST,
 			port: proxyPORT
-		});
+		};
+		response = await execProxyRequest(ResponseThroghProxyOptions);
 	} catch (error) {
 		console.error(error);
 		/* 返回的原始数据 */
@@ -120,18 +122,23 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, projectId }) {
 				}
 				ctx.set(prop, value);
 			});
+
 			try {
+				/* yapi 接口请求参数 */
 				ctx.set(
 					"httpRequestOptions",
 					JSON.stringify(response.httpRequestOptions)
 				);
-			} catch (error) {}
+			} catch (error) {
+				console.error(error);
+			}
 		}
 	} catch (error) {
 		body = xU.$response(null, 555, `错误来自yapi服务器： ${error.message}`);
+	} finally {
+		ctx.body = body || {};
+		return ctx.body;
 	}
-	ctx.body = body || {};
-	return ctx.body;
 }
 
 /**

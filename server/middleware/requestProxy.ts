@@ -3,7 +3,7 @@ var https = require("https");
 var _ = require("lodash");
 var fs = require("fs");
 
-exports.getResponseThroghProxy = function ({ ctx, headers, path, host, port }) {
+exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 	host = host === "undefined" ? "" : host;
 	port = port === "undefined" ? "" : port;
 
@@ -116,7 +116,7 @@ exports.getResponseThroghProxy = function ({ ctx, headers, path, host, port }) {
 				resolve({
 					httpRequestOptions: httpRequestOptions.headers,
 					headers: response.headers,
-					body: Buffer.concat(chunks, totallength)
+					body: Buffer.concat(chunks, totallength).toString()
 				});
 			};
 			response.on("data", handleResponseOnData);
@@ -128,40 +128,41 @@ exports.getResponseThroghProxy = function ({ ctx, headers, path, host, port }) {
 
 			const isUseOtherHostProxy = host && port;
 
-			const httpRequest = (() => {
+			const HTTP_REQUEST = (() => {
+				let options;
+
 				if (isUseOtherHostProxy) {
 					/* 开启了代理 (maybe局域网，可达)*/
 					return http.request(
 						{ host, port, path, method, headers },
 						onResponse
 					);
-				} else if (protocol === "https:") {
-					const httpRequest = https.request(
-						new URL(path),
-						{
-							method,
-							headers,
-							rejectUnauthorized: false
-						},
-						onResponse
-					);
-					return httpRequest;
-				} else {
-					/* http */
-					return http.request(
-						httpRequestOptions,
-						{ method, headers },
+				}
+
+				const isUseHttps = protocol === "https:";
+				if (isUseHttps) {
+					options = {
+						method,
+						headers,
+						rejectUnauthorized: false
+					};
+					return https.request(
+						"https://192.168.3.166:8093/rest/vdun/v1.0/hub/list",
+						options,
 						onResponse
 					);
 				}
+				/* default use http */
+				options = { method, headers };
+				return http.request(httpRequestOptions, options, onResponse);
 			})();
 
-			httpRequest.on("error", error => {
+			HTTP_REQUEST.on("error", error => {
 				xU.applog.error(error);
-				resolve({ headers, body: { error, code: "Y-API_server_500" } });
+				resolve({ headers, body: { error, code: "Y_API_SERVER_500" } });
 			});
 
-			return httpRequest;
+			return HTTP_REQUEST;
 		}
 	});
 };
