@@ -49,7 +49,7 @@ module.exports = {
 											data.project = xU._.map(allItems, item => {
 												return {
 													value: item._id,
-													label: item.name 
+													label: item.name
 												};
 											});
 										}

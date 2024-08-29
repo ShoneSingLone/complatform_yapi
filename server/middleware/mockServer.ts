@@ -87,8 +87,8 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, projectId }) {
 	})();
 
 	let response;
-	let body = xU.$response(null, 500, "setResponseByRunProxy 代理失败");
-	
+	let body = xU.$response(null, 500, `ResponseByRunProxy=>${path}`);
+
 	try {
 		const ResponseThroghProxyOptions = {
 			ctx,

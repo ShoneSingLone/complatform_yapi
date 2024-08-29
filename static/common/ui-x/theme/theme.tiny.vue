@@ -510,6 +510,11 @@ export default async function () {}
 			background-color: var(--xAlert-error-light-bg-color);
 		}
 	}
+
+	.el-input-group__append,
+	.el-input-group__prepend {
+		background-color: transparent;
+	}
 }
 
 /* *************** */

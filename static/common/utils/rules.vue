@@ -4,6 +4,18 @@ export default async function () {
 
 	if (!window._rules) {
 		window._rules = {
+			validator(validatorFn, options = {}) {
+				validatorFn = validatorFn || (() => "");
+				return _.merge(
+					{
+						name: "custom_validator",
+						validator: validatorFn,
+						trigger: ["change", "blur"]
+					},
+					options
+				);
+			},
+
 			mobilePhone() {
 				return {
 					name: "mobilePhone",

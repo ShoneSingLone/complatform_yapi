@@ -2,9 +2,7 @@ var http = require("http");
 var https = require("https");
 
 // const _url = new URL('http://10.143.133.190:18036/vdc/api/1.0/cloudDesktop/list/1/10');
-const _url = new URL(
-	"https://192.168.3.166:8093/rest/vdun/v1.0/hub/list"
-);
+const _url = new URL("https://192.168.3.166:8093/rest/vdun/v1.0/hub/list");
 // const _url = new URL('https://192.168.3.166:8093//rest/vdun/v1.0/license/validate');
 console.log(_url);
 

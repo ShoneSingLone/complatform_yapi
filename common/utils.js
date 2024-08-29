@@ -29,7 +29,9 @@ function execCmd(cmd, options) {
 		result.stdout.on("data", msg => log(msg, options));
 		result.stderr.on("data", msg => log(msg, options));
 		result.on("close", code => {
-			const msg = `==============:exec ${cmd} spend time ${(Date.now() - startTime) / 1000}s`;
+			const msg = `==============:exec ${cmd} spend time ${
+				(Date.now() - startTime) / 1000
+			}s`;
 			log(msg, options);
 			resolve();
 		});

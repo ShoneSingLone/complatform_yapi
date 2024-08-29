@@ -163,20 +163,30 @@ ${httprequestoptions}
 					if (!res.errcode) {
 						const { data } = res;
 						if (data.length > 0) {
-							this.form.editor.value = data[0].usecaseCode;
+							await this.setFormEditorValue(data[0].usecaseCode);
 							this.currentUseCase = data[0];
 						} else {
-							this.form.editor.value = `async function run() {
+							await this.setFormEditorValue(`async function run() {
 	return await axios({
 			method: "${_.lowerCase(reqMethod)}",
 			url: "${mockHref}"
 		});
-}`;
+}`);
 						}
 					}
 				} catch (error) {
 					_.$msgError(error);
 				}
+			},
+			setFormEditorValue(value) {
+				this.form.editor.value = value;
+				return;
+				/* return new Promise(resolve => {
+					this.$nextTick(() => {
+						this.form.editor.value = value;
+						resolve(this.form.editor.value);
+					});
+				}); */
 			},
 			async run() {
 				let response = "pending";

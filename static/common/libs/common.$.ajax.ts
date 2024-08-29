@@ -23,25 +23,20 @@
 
 			const data = (isUseBodyParams => {
 				if (isUseBodyParams) {
+					/* 如果用post=> data 放在body上，query放在url上 */
 					if (options.query) {
-						url = (() => {
-							if (options.query) {
-								if (_.isString(options.query)) {
-									return url + "?" + options.query;
-								}
-								if (_.isPlainObject(options.query)) {
-									return (
-										url +
-										"?" +
-										_.map(
-											options.query,
-											(value, key) =>
-												`${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-										).join("&")
-									);
-								}
+						const setURL = () => {
+							if (_.isString(options.query)) {
+								return `${url}?${options.query}`;
+							} else if (_.isPlainObject(options.query)) {
+								const queryString = _.map(options.query, (value, key) => {
+									return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+								}).join("&");
+								return `${url}?${queryString}`;
 							}
-						})();
+							return url;
+						};
+						url = setURL();
 					}
 					return JSON.stringify(options.data || {});
 				} else {
@@ -60,47 +55,57 @@
 
 			const headers = _.merge({ "X-Language": localStorage["X-Language"] }, options.headers);
 			const errorCodeArray = [400, 401, 402, 403, 404, 405, 500, 555];
-			const configs = requestInjector(
-				_.merge(
-					{
-						headers,
-						dataType: "json",
-						url,
-						type,
-						data,
-						contentType: "application/json",
-						success(response, state, xhr) {
-							response = responseInjector(response);
-							if (_.isPlainObject(response)) {
-								/* 兼容 */
-								const errcode = response?.errcode || response?.code;
 
-								if (errcode) {
-									if (errorCodeArray.includes(errcode)) {
-										reject(response.body || response);
-										return;
-									}
-								}
-								if (response?.status) {
-									if (errorCodeArray.includes(response.status)) {
-										const { body, message } = response || {};
-										reject(body || message);
-										return;
-									}
-								}
-							}
-							return resolve(response, state, xhr);
-						},
-						error(response) {
-							response = responseInjector(response);
-							return reject(response);
+			const success = function (response, state, xhr) {
+				response = responseInjector(response);
+				if (_.isPlainObject(response)) {
+					/* 兼容 */
+					const errcode = response?.errcode || response?.code;
+
+					if (errcode) {
+						if (errorCodeArray.includes(errcode)) {
+							reject(response.body || response);
+							return;
 						}
-					},
-					_.omit(API_OPTIONS, ["success", "error"])
-				)
+					}
+					if (response?.status) {
+						if (errorCodeArray.includes(response.status)) {
+							const { body, message } = response || {};
+							reject(body || message);
+							return;
+						}
+					}
+				}
+				return resolve(response, state, xhr);
+			};
+			const error = function (response) {
+				response = responseInjector(response);
+				return reject(response);
+			};
+
+			const baseOptions = {
+				headers,
+				type,
+				data,
+				dataType: "json",
+				contentType: "application/json",
+				/* 不会被覆盖的参数 */
+				url: urlWrapper(url),
+				success,
+				error
+			};
+
+			const configs = requestInjector(
+				/* url 使用处理过后的 */
+				_.merge(baseOptions, _.omit(API_OPTIONS, ["success", "error", "url"]))
 			);
+
 			return configs;
 		}
+
+		const optionsWrapper = options => {
+			return configs.call($ajax, options);
+		};
 
 		const urlWrapper = url => {
 			return `${window._URL_PREFIX_4_DEV || ""}${url}`;
@@ -111,10 +116,10 @@
 				method = method || "post";
 				callback = callback || (() => null);
 				return new Promise((resolve, reject) => {
-					const options = configs.call($ajax, {
+					const options = optionsWrapper({
 						type: method,
 						options: {},
-						url: urlWrapper(url),
+						url,
 						success: resolve,
 						error: reject
 					});
@@ -172,8 +177,8 @@
 				// 其他类型(例如二进制流)将被作为String返回，无法触发浏览器的下载处理机制和程序。
 				return new Promise((resolve, reject) => {
 					$.ajax(
-						configs.call($ajax, {
-							url: url,
+						optionsWrapper({
+							url,
 							method,
 							beforeSend,
 							xhrFields: {
@@ -188,7 +193,6 @@
 							},
 							async success(result, state, xhr) {
 								try {
-									/* const type = Object.prototype.toString.call(result); if (type === "[object Blob]") { debugger; resolve(result); } else */
 									if (_.isFunction(resolveResult)) {
 										await resolveResult(result, state, xhr);
 									} else {
@@ -241,10 +245,10 @@
 			post: (url, options = {}) => {
 				return new Promise((resolve, reject) => {
 					$.ajax(
-						configs.call($ajax, {
+						optionsWrapper({
 							type: "POST",
-							url: urlWrapper(url),
 							options,
+							url,
 							success: resolve,
 							error: reject
 						})
@@ -254,9 +258,9 @@
 			get: (url, options = {}) => {
 				return new Promise((resolve, reject) => {
 					$.ajax(
-						configs.call($ajax, {
+						optionsWrapper({
 							type: "GET",
-							url: urlWrapper(url),
+							url,
 							options,
 							timeout: 1000 * 60,
 							success: resolve,
@@ -268,9 +272,9 @@
 			put: (url, options = {}) => {
 				return new Promise((resolve, reject) => {
 					$.ajax(
-						configs.call($ajax, {
+						optionsWrapper({
 							type: "put",
-							url: urlWrapper(url),
+							url,
 							options,
 							success: resolve,
 							error: reject
@@ -281,9 +285,9 @@
 			delete: (url, options = {}) => {
 				return new Promise((resolve, reject) => {
 					$.ajax(
-						configs.call($ajax, {
+						optionsWrapper({
 							type: "delete",
-							url: urlWrapper(url),
+							url,
 							options,
 							success: resolve,
 							error: reject

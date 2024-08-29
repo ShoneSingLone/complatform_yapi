@@ -76,7 +76,7 @@
 	</div>
 </template>
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const [Popper, { formatDate, parseDate, isDateObject, getWeekNumber }, Clickoutside] =
 		await _.$importVue([
 			"/common/libs/VuePopper/VuePopper.vue",
@@ -598,7 +598,7 @@ export default async function () {
 			},
 
 			pickerSize() {
-				return this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
 			},
 
 			pickerDisabled() {

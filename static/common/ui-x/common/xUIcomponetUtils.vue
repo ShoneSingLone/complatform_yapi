@@ -1511,6 +1511,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	(function () {
 		/* @ts-ignore */
 		PRIVATE_GLOBAL._jsxFns = {
+			DivItemMsgWrapper: tip => h("div", [tip]),
+			DivMsgRow: tip => h("div", { class: "mt4" }, [tip]),
 			/* _jsxFns_jsxFns_jsxFns */
 			xTipsHover({ msg, content, placement }) {
 				content =

@@ -7,9 +7,9 @@ export default async function () {
 	const { mixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 	const theme = ["vs", "vs-dark", "hc-black", "hc-light"];
 	return defineComponent({
+		inject: ["APP"],
 		mixins: [mixins],
-		inject: ["APP", "xItem"],
-		props: ["value", "options", "configs"],
+		props: ["options"],
 		async mounted() {
 			const vm = this;
 			const container = this.$refs.refMonacoContainer;
@@ -18,6 +18,7 @@ export default async function () {
 				"require"
 			);
 			require.config({ paths: { vs: "//repo.bfw.wiki/bfwrepo/js/monaco-editor" } });
+
 			require(["vs/editor/editor.main"], function () {
 				const { monaco } = window;
 				vm.raw$editor = monaco.editor.create(container, {
@@ -33,21 +34,30 @@ export default async function () {
 				});
 				vm.$nextTick(() => {
 					vm.raw$editor.getAction("editor.action.formatDocument").run();
-					vm.raw$editor.onDidChangeModelContent(vm.syncData);
-
+					vm.raw$editor.onDidChangeModelContent(data =>
+						vm.setEditorValue({
+							data,
+							direction: "bottomToUp"
+						})
+					);
 					$(vm.$refs.refMonacoContainer).removeClass("x-loading");
 				});
 			});
 		},
 		methods: {
-			syncData() {
+			setEditorValue(options = {}) {
+				if (!this.raw$editor?.getValue) {
+					return;
+				}
 				try {
-					const newCode = this.raw$editor.getValue();
-
-					if (newCode !== this.mixin_value) {
-						this.mixin_value = newCode;
-					} else if (this.mixin_value && !newCode) {
-						this.raw$editor.setValue(this.mixin_value);
+					const currentEditorContent = this.raw$editor.getValue();
+					if (!_.isEqual(currentEditorContent, this.value)) {
+						const { direction } = options || {};
+						if (direction === "bottomToUp") {
+							this.mixin_value = currentEditorContent;
+						} else {
+							this.raw$editor.setValue(this.value);
+						}
 					}
 				} catch (error) {
 					console.error(error);
@@ -55,8 +65,11 @@ export default async function () {
 			}
 		},
 		watch: {
-			value() {
-				this.syncData();
+			value: {
+				immediate: true,
+				handler() {
+					this.setEditorValue();
+				}
 			}
 		}
 	});

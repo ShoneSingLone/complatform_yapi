@@ -196,7 +196,7 @@ export default async function () {
 							return this.value;
 						},
 						set(val) {
-							if (this.value === val) {
+							if (_.isEqual(this.value, val)) {
 								return;
 							}
 							return this.$emit("change", val);

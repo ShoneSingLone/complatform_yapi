@@ -28,7 +28,7 @@ export default async function () {
 			/* 监听配置项变化 */
 			onConfigschange: configs => {
 				_.each(configs, (value, prop) => {
-					this.configs[prop] = value;
+					vm.$set(vm.configs, prop, value);
 				});
 			},
 			onChange: val => {
