@@ -504,7 +504,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		height: 32px;
 		line-height: 32px;
 		> * {
-			margin: 0 -20px;
+			margin: auto;
 		}
 	}
 }

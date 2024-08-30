@@ -1508,17 +1508,29 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	})();
 	/*****************************************/
 
+	const useH = tag => {
+		return (innerContent, props = {}) => {
+			if (!_.isArray(innerContent)) {
+				innerContent = [innerContent];
+			}
+			return h(tag, props, innerContent);
+		};
+	};
+
+	/* _jsxFns_jsxFns_jsxFns */
 	(function () {
+		const div = useH("div");
+		const span = useH("span");
+
+		PRIVATE_GLOBAL.div = div;
+		PRIVATE_GLOBAL.span = span;
 		/* @ts-ignore */
 		PRIVATE_GLOBAL._jsxFns = {
-			DivItemMsgWrapper: tip => h("div", [tip]),
-			DivMsgRow: tip => h("div", { class: "mt4" }, [tip]),
-			/* _jsxFns_jsxFns_jsxFns */
 			xTipsHover({ msg, content, placement }) {
 				content =
 					content ||
 					function () {
-						return h("span", {}, msg);
+						return span(msg);
 					};
 				placement = placement || "right-start";
 				return {
@@ -1551,11 +1563,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 			TipsDelete(tipsString) {
 				return h("div", [
-					h("span", {
+					span("", {
 						staticClass: "el-icon-warning",
 						style: "color:var(--ti-base-color-error-3)"
 					}),
-					h("span", { staticClass: "ml4" }, [tipsString])
+					span(tipsString, { staticClass: "ml4" })
 				]);
 			},
 			Link(props) {

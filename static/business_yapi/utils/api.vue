@@ -7,16 +7,16 @@ export default async function () {
 				return req;
 			};
 			_.$ajax.responseInjector = function (response) {
-				if (response.errcode == 40011) {
+				if (response?.errcode == 40011) {
 					/* 登录过期 */
 					_.$msgError("登录过期，请重新登录");
 					_.$yapiRouter.push("/login");
-				} else if (response.errcode === 10001) {
+				} else if (response?.errcode === 10001) {
 					_.$msg.error("登录已失效，请重新登录");
 					_.$router.push("/login");
 				}
 
-				if (response.errcode !== 0) {
+				if (response?.errcode !== 0) {
 				}
 
 				return response;

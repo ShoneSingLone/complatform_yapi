@@ -1575,7 +1575,11 @@
 				const innerCode = [
 					`console.info("${resolvedURL}");`,
 					isShowTemplate ? `(()=>\`${templateSourceCode}\`)();` : ``,
-					`try{const ${_.camelCase(resolvedURL)} = ${scritpSourceCode};return ${_.camelCase(resolvedURL)}.call({THIS_FILE_URL:"${resolvedURL}"},payload);}catch(e){console.error(e)}`
+					`try{const ${_.camelCase(
+						resolvedURL
+					)} = ${scritpSourceCode};return ${_.camelCase(
+						resolvedURL
+					)}.call({THIS_FILE_URL:"${resolvedURL}"},payload);}catch(e){console.error(e)}`
 				].join("\n");
 				let scfObjAsyncFn;
 				let component = {};
@@ -1861,6 +1865,7 @@
 		})();
 
 		if (!$wrapper || $wrapper.length == 0) {
+			console.log(selector);
 			throw new Error("selector不是可用的dom元素");
 		}
 

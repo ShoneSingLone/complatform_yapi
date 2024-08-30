@@ -115,8 +115,8 @@ class ModelProject extends ModelBase {
 		let isFix = false;
 		if (Array.isArray(data.env)) {
 			data.env = data.env.map(item => {
-				item.global = item.global.filter(g => {
-					if (!g || typeof g !== "object") {
+				item.global = item.global.filter(global_value => {
+					if (!global_value || typeof global_value !== "object") {
 						isFix = true;
 						return false;
 					}
