@@ -117,7 +117,7 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 				resolve({
 					httpRequestOptions: httpRequestOptions.headers,
 					headers: response.headers,
-					body: Buffer.concat(chunks, totallength).toString()
+					body: Buffer.concat(chunks, totallength)
 				});
 			};
 			response.on("data", handleResponseOnData);
@@ -131,6 +131,7 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 
 			const HTTP_REQUEST = (() => {
 				let options;
+
 				try {
 					/* content-length 为0 导致400 */
 					if (!Number(headers["content-length"])) {
@@ -177,14 +178,19 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 					return http.request(httpRequestOptions, options, onResponse);
 				} catch (error) {
 					console.error(error);
-					console.log(
-						"🚀 ~ execHttpRequest ~ httpRequestOptions:",
-						httpRequestOptions
-					);
-					console.log("🚀 ~ execHttpRequest ~ options:", options);
 				} finally {
-					// console.log( "🚀 ~ execHttpRequest ~ httpRequestOptions:", httpRequestOptions );
-					// console.log("🚀 ~ execHttpRequest ~ options:", options);
+					const console_log_when_debugger = () => {
+						console.log(
+							"🚀 ~ execHttpRequest ~ httpRequestOptions:",
+							httpRequestOptions
+						);
+						console.log(
+							"🚀 ~ execHttpRequest ~ headers:",
+							JSON.stringify(options.headers, null, 2)
+						);
+					};
+
+					// console_log_when_debugger();
 				}
 			})();
 
