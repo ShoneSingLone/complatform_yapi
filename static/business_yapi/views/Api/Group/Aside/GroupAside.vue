@@ -83,6 +83,7 @@ export default async function () {
 						groupList,
 						"notInGroup"
 					);
+					debugger;
 					const { owner, member } = _.groupBy(inGroup, "role");
 					let { true: privateSpace, undefined: otherOwner } = _.groupBy(
 						owner,

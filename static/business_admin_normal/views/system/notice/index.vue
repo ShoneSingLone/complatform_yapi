@@ -130,13 +130,13 @@ export default async function () {
 							label: i18n("公告类型"),
 							prop: "noticeType",
 							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_notice_type)
+								hVal2Tag(cellData, dicts.sys_notice_type)
 						},
 						{
 							label: i18n("状态"),
 							prop: "status",
 							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_notice_status)
+								hVal2Tag(cellData, dicts.sys_notice_status)
 						},
 						{
 							label: i18n("创建者"),
@@ -146,7 +146,7 @@ export default async function () {
 						defTable.colActions({
 							width: 200,
 							cellRenderer({ rowData }) {
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

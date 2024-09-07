@@ -242,7 +242,7 @@ export default async function () {
 						defTable.colActions({
 							width: 210,
 							cellRenderer({ rowData }) {
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									children: [
 										{
 											label: "查看",

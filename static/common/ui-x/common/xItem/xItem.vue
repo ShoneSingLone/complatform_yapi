@@ -19,12 +19,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	xTableCol disabled
 	*/
 	/* cptConfigs {
-  label:string
-  disabled:boolean||function
-  isHide:boolean||function
-  itemType?:默认xItemInput，
-  once:function 挂载的时候调用一次
-  onEmitValue:function value每次变动后触发
+  	label:string
+  	disabled:boolean||function
+  	isHide:boolean||function
+  	itemType?:默认xItemInput，
+  	once:function 挂载的时候调用一次
+  	onEmitValue:function value每次变动后触发
   } */
 
 	return {
@@ -98,7 +98,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						}
 						return vm.CONFIGS_ONLY_AS_WRAPPER;
 					} else {
-						alert("xItem configs ether not set or not a function");
+						console.error("xItem configs either not set or not a function.", vm);
 						return {};
 					}
 				},
@@ -236,7 +236,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						if (this.cptConfigs.THIS_CONFIGS_ONLY_FOR_LABEL) {
 							return "";
 						}
-						console.error("eigther v-model or cptConfigs has value property");
+						console.error(
+							"xItem configs either v-model or cptConfigs has value property.",
+							this
+						);
 					})();
 				},
 				set(val) {

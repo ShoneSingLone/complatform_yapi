@@ -47,10 +47,7 @@ export default async function ({ row, onClick }) {
 						itemSlots: {
 							beforeController() {
 								return h("div", { class: "mr" }, [
-									_jsxFns.OptionsToLabel(
-										vm.form.noticeType.value,
-										dicts.sys_notice_type
-									),
+									hVal2Tag(vm.form.noticeType.value, dicts.sys_notice_type),
 									h("xGap", { f: true })
 								]);
 							}

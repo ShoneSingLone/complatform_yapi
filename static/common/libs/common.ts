@@ -1218,23 +1218,7 @@
 		} else {
 			closeLoading(selector);
 		}
-
-		try {
-			throw new Error();
-		} catch (error) {
-			try {
-				const msg = error.stack
-					.split("\n")
-					.map(row => {
-						const res = /at (.[^\(\[]*) \(/.exec(row);
-						if (res && res[1]) {
-							return res[1];
-						}
-					})
-					.filter(row => !!row);
-				console.log(isLoading ? "open x-loading" : "close x-loading", msg.join("\n=>"));
-			} catch (error) {}
-		}
+		/* try { throw new Error(); } catch (error) { try { const msg = error.stack .split("\n") .map(row => { const res = /at (.[^\(\[]*) \(/.exec(row); if (res && res[1]) { return res[1]; } }) .filter(row => !!row); console.log(isLoading ? "open x-loading" : "close x-loading", msg.join("\n=>")); } catch (error) {} } */
 	};
 
 	/**
@@ -1395,9 +1379,9 @@
 	})();
 
 	(() => {
-		const logEnsure = _.debounce(function () {
-			console.log("🚀:", "$ensure", _.$ensure.collection);
-		}, 1000);
+		const logEnsure = _.throttle(function (fnString, count) {
+			console.log("🚀:ensure", count, "\n", fnString);
+		}, 1000 * 2);
 
 		/**
 		 *
@@ -1406,37 +1390,36 @@
 		 * @returns
 		 */
 		/* @typescriptDeclare (fnGetValue:(()=>Promise<any>)|(()=>any), duration?:number) =>Promise<any> */
-		_.$ensure = async (fnGetValue, duration = 0) => {
+		_.$ensure = async (fnGetValue, duration = 0, gap = 64) => {
 			var fnString = fnGetValue.toString();
-			_.$ensure.collection.add(fnString);
-			logEnsure();
 			return new Promise(async (resolve, reject) => {
-				var timer;
+				let timer,
+					exeCount = 0;
+
+				/*如果超时*/
 				if (duration) {
-					timer = setTimeout(() => {
-						reject(new Error("enSure fail"));
-					}, duration);
-				}
-				let exeFnGetValue = async function () {
-					const value = await fnGetValue();
-					if (!!value) {
-						exeFnGetValue = null;
+					setTimeout(() => {
 						if (timer) {
 							clearTimeout(timer);
 						}
+						logEnsure(fnString, exeCount);
+						reject(new Error("ensure timeout"));
+					}, duration);
+				}
+
+				(async function exeFnGetValue() {
+					const value = await fnGetValue();
+					/*始终执行一次*/
+					logEnsure(fnString, ++exeCount);
+					if (!!value) {
+						timer && clearTimeout(timer);
 						resolve(value);
-						_.$ensure.collection.delete(fnString);
-						logEnsure();
-						return;
 					} else {
-						setTimeout(exeFnGetValue, 64);
+						timer = setTimeout(exeFnGetValue, gap);
 					}
-				};
-				exeFnGetValue.count = 1;
-				exeFnGetValue();
+				})();
 			});
 		};
-		_.$ensure.collection = new Set();
 	})();
 
 	/**
@@ -2137,7 +2120,6 @@
 			} else {
 				console.error("getSelectedItemFrom miss options or value");
 			}
-			debugger;
 			return { value: "", label: "", labelKey: "" };
 		};
 

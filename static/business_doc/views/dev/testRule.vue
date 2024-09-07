@@ -14,7 +14,16 @@ export default async function () {
 		inject: ["APP"],
 		beforeDestroy() {},
 		components: {},
-		async mounted() {},
+		async mounted() {
+			_.$ensure(
+				() => {
+					console.log("try");
+					return false;
+				},
+				1000 * 10,
+				1000 * 1
+			);
+		},
 		methods: {},
 		watch: {},
 		data() {

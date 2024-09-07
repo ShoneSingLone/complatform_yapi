@@ -147,7 +147,7 @@ export default async function () {
 							label: i18n("字典类型"),
 							prop: "dictType",
 							cellRenderer: ({ cellData, rowData }) => {
-								return _jsxFns.Link({
+								return hLink({
 									label: cellData,
 									onClick(e) {
 										e.stopPropagation();
@@ -163,7 +163,7 @@ export default async function () {
 							label: i18n("状态"),
 							prop: "status",
 							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_normal_disable)
+								hVal2Tag(cellData, dicts.sys_normal_disable)
 						},
 						{
 							label: i18n("备注"),
@@ -173,7 +173,7 @@ export default async function () {
 						defTable.colActions({
 							width: 200,
 							cellRenderer({ rowData }) {
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

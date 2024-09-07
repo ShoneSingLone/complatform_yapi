@@ -116,8 +116,7 @@ export default async function ({ row }) {
 						{
 							label: i18n("状态"),
 							prop: "status",
-							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, sys_normal_disable)
+							cellRenderer: ({ cellData }) => hVal2Tag(cellData, sys_normal_disable)
 						},
 						{
 							label: i18n("创建时间"),
@@ -132,7 +131,7 @@ export default async function ({ row }) {
 									return null;
 								}
 
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

@@ -284,7 +284,7 @@ export default async function () {
 						defTable.colActions({
 							width: 80,
 							cellRenderer({ rowData }) {
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

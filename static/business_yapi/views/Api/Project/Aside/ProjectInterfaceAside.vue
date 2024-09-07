@@ -121,9 +121,8 @@ export default async function () {
 			/* 菜单 */
 			treeContentRender({ node, data: menuInfo }) {
 				const vm = this;
-				const { title, _id, categoryId, menuType } = menuInfo;
-				const isCurrent = _.$isSame(_id, this.cptInterfaceId);
-				const itemClass = `ProjectInterfaceAside-node-item flex middle asideTreeItem${isCurrent ? " is-current" : ""}`;
+				const { title, _id, menuType } = menuInfo;
+				const itemClass = `ProjectInterfaceAside-node-item flex middle asideTreeItem id-${_id}`;
 				const iconName = (() => {
 					const strategy = {
 						all: "allCategory",
@@ -202,8 +201,15 @@ export default async function () {
 		watch: {
 			cptInterfaceId: {
 				immediate: true,
-				handler(interfaceId) {
-					if (interfaceId) {
+				async handler(_id) {
+					if (_id) {
+						await _.$sleep(100);
+						$(".is-current").removeClass("is-current");
+						await _.$sleep(100);
+						$(`[data-key=${_id}]`).addClass("is-current");
+						const $target = $(`.ProjectInterfaceAside-node-item.id-${_id}`);
+						$target.addClass("is-current");
+						$target.parents(".ProjectInterfaceAside-node-item").addClass("is-current");
 					}
 				}
 			}

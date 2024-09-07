@@ -148,7 +148,7 @@ export default async function () {
 							label: i18n("状态"),
 							prop: "status",
 							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_job_status),
+								hVal2Tag(cellData, dicts.sys_job_status),
 							cellRenderer({ cellData, rowData }) {
 								return h("xSwitch", {
 									value: cellData,
@@ -164,7 +164,7 @@ export default async function () {
 						defTable.colActions({
 							width: 200,
 							cellRenderer({ rowData }) {
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

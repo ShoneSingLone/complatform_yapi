@@ -76,7 +76,7 @@ export default async function () {
 			handleTabClick(tab, tabName, event) {
 				if (tab.disabled) return;
 				this.setCurrentName(tabName);
-				this.$emit("tab-click", tab, event);
+				this.$emit("tab-click", { tab, event, tabName });
 			},
 			handleTabRemove(pane, ev) {
 				if (pane.disabled) return;

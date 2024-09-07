@@ -119,7 +119,7 @@ export default async function () {
 							label: i18n("登录状态"),
 							prop: "status",
 							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_common_status)
+								hVal2Tag(cellData, dicts.sys_common_status)
 						},
 						{ label: i18n("操作信息"), prop: "msg" },
 						{ label: i18n("登录日期"), prop: "loginTime" },
@@ -127,7 +127,7 @@ export default async function () {
 							width: 100,
 							cellRenderer({ rowData }) {
 								const isLevel0 = rowData.deptId === 100;
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

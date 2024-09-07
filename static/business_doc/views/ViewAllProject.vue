@@ -158,7 +158,7 @@ export default async function () {
 							prop: "name",
 							cellRenderer({ rowData }) {
 								if (rowData.parent) {
-									return _jsxFns.Link({
+									return hLink({
 										label: rowData.name,
 										target: "_blank",
 										href: vm.genALinkHref(rowData.parent, rowData.name)
@@ -241,12 +241,12 @@ export default async function () {
 							width: 220,
 							cellRenderer({ rowData }) {
 								if (rowData.parent) {
-									return _jsxFns.ActionAndMore({
+									return hBtnWithMore({
 										col: 3,
 										children: []
 									});
 								} else {
-									return _jsxFns.ActionAndMore({
+									return hBtnWithMore({
 										col: 3,
 										children: [
 											{

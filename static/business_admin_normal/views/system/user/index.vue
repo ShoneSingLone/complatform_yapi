@@ -156,7 +156,7 @@ export default async function () {
 							cellRenderer({ cellData, rowData }) {
 								const userIsAdmin = rowData.userId === 1;
 								if (userIsAdmin) {
-									return _jsxFns.OptionsToLabel(cellData, sys_normal_disable);
+									return hVal2Tag(cellData, sys_normal_disable);
 									// return h("span", { class: "text-gray" }, i18n("超级管理员"));
 								}
 
@@ -178,7 +178,7 @@ export default async function () {
 									return null;
 								}
 
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

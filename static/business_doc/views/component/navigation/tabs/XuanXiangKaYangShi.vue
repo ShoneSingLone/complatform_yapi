@@ -19,7 +19,7 @@ export default async function () {
 			};
 		},
 		methods: {
-			handleClick(tab, event) {
+			handleClick({ tab, event }) {
 				console.log(tab, event);
 			}
 		}

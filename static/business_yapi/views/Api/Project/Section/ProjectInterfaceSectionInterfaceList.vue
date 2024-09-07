@@ -90,6 +90,11 @@ export default async function () {
 						onClick: vm.copyInterface
 					},
 					{
+						label: "重置备份",
+						disabled: () => vm.cptIsCheckedRow,
+						onClick: vm.resetBackupData
+					},
+					{
 						label: "删除",
 						icon: "delete",
 						disabled: () => vm.cptIsCheckedRow,
@@ -120,6 +125,16 @@ export default async function () {
 				_.$openModal({
 					title: i18n("切换代理"),
 					url: "@/components/YapiChangeProxyDialog.vue",
+					parent: this,
+					selected: Array.from(
+						this.inject_project_interface_section.configsTable.data.set
+					)
+				});
+			},
+			async resetBackupData() {
+				_.$openModal({
+					title: i18n("重置备份"),
+					url: "@/components/YapiResetBackupData.dialog.vue",
 					parent: this,
 					selected: Array.from(
 						this.inject_project_interface_section.configsTable.data.set

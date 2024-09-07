@@ -38,7 +38,7 @@
 <script lang="ts">
 export default async function () {
 	return defineComponent({
-		inject: ["APP", "inject_interface_section_interface_detail"],
+		inject: ["APP", "inject_interface_section_interface_detail", "inject_project"],
 		data() {
 			return {
 				sourceReqHeaders: [],
@@ -119,17 +119,8 @@ ${resBackupJson}
 			},
 			cptDescItems() {
 				const vm = this;
-				const { title, uid, up_time, path, tag, isProxy, witchEnv, method } = this.cptInfo;
-				console.log(
-					"🚀 ~ cptDescItems ~  title, uid, up_time, path, tag, isProxy, witchEnv :",
-					title,
-					uid,
-					up_time,
-					path,
-					tag,
-					isProxy,
-					witchEnv
-				);
+				const { title, uid, up_time, path, tag, isProxy, witchEnv, method, catid } =
+					this.cptInfo || {};
 
 				/* @ts-ignore */
 				const { protocol, hostname, port } = location;
@@ -141,6 +132,23 @@ ${resBackupJson}
 
 				return [
 					{ label: i18n("接口名称"), value: title || "--" },
+					{
+						label: i18n("分类"),
+						xItemRender() {
+							return h("xBtn", {
+								configs: {
+									preset: "text",
+									label: _.$val2L(catid, vm.inject_project.allCategory),
+									onClick() {
+										vm.APP.routerUpsertQuery({
+											interfaceId: catid,
+											interfaceType: "category"
+										});
+									}
+								}
+							});
+						}
+					},
 					{
 						label: i18n("维护人"),
 						value: uid || "--",

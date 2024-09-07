@@ -42,7 +42,7 @@ export default async function () {
 						defTable.colActions({
 							width: 120,
 							cellRenderer({ rowData }) {
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										/* { label: i18n("快速添加规则") }, { label: i18n("添加规则") }, */

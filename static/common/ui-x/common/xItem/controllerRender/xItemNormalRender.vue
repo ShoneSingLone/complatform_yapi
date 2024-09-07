@@ -58,7 +58,7 @@ export default async function () {
 		if (_.isString(vm.cptDisabled)) {
 			/* @ts-ignore */
 			controllerWrapperProps.directives = [
-				_jsxFns.xTipsHover({ msg: vm.cptDisabled, placement: "top" })
+				hTipsHover({ msg: vm.cptDisabled, placement: "top" })
 			];
 		}
 

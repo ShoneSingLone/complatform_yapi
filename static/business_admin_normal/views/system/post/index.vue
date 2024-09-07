@@ -129,7 +129,7 @@ export default async function () {
 							label: i18n("状态"),
 							prop: "status",
 							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_normal_disable)
+								hVal2Tag(cellData, dicts.sys_normal_disable)
 						},
 						{ label: i18n("创建时间"), prop: "createTime" },
 						defTable.colActions({
@@ -140,7 +140,7 @@ export default async function () {
 									return null;
 								}
 
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

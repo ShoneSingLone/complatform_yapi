@@ -25,6 +25,7 @@ export default async function ({
 			x_pagination_pagination_component || "PrivatePagination";
 		PRIVATE_GLOBAL.x_pagination_position = x_pagination_position || "end";
 	})();
+
 	/* @ts-ignore */
 	window._api = window._api || {};
 	/* @ts-ignore */
@@ -150,6 +151,84 @@ export default async function ({
 		await setThemeCss();
 
 		$(window).on("xUiThemeChange", setThemeCss);
+	})();
+
+	(function (/* common h render  */) {
+		const useH = tag => {
+			return (innerContent, props = {}) => {
+				if (!_.isArray(innerContent)) {
+					innerContent = [innerContent];
+				}
+				return h(tag, props, innerContent);
+			};
+		};
+
+		const hDiv = useH("div");
+		const hSpan = useH("span");
+
+		PRIVATE_GLOBAL.hDiv = hDiv;
+		PRIVATE_GLOBAL.hSpan = hSpan;
+
+		PRIVATE_GLOBAL.hTipsHover = ({ msg, content, placement }) => {
+			content =
+				content ||
+				function () {
+					return hSpan(msg);
+				};
+			placement = placement || "right-start";
+			return {
+				name: "xtips",
+				value: {
+					content,
+					trigger: "hover",
+					placement
+				}
+			};
+		};
+
+		PRIVATE_GLOBAL.hVal2Tag = (value, options) => {
+			let item = { label: value, type: "" };
+			item =
+				_.find(options, item => {
+					return _.$isSame(item.value, value);
+				}) || item;
+			if (item.type) {
+				return h("xTag", { type: item.type }, [item.label]);
+			} else if (item.listClass) {
+				return h("xTag", { type: item.listClass }, [item.label]);
+			}
+			return h("div", {}, [item.label]);
+		};
+
+		PRIVATE_GLOBAL.hEllipsis = content => {
+			return h("div", { staticClass: "ellipsis", attrs: { title: content } }, [content]);
+		};
+
+		PRIVATE_GLOBAL.hBtnWithMore = props => {
+			return h("xColActionAndMore", props);
+		};
+
+		PRIVATE_GLOBAL.hTipsDel = tipsString => {
+			return h("div", [
+				hSpan("", {
+					staticClass: "el-icon-warning",
+					style: "color:var(--ti-base-color-error-3)"
+				}),
+				hSpan(tipsString, { staticClass: "ml4" })
+			]);
+		};
+
+		PRIVATE_GLOBAL.hLink = props => {
+			return h(
+				"a",
+				_.merge({}, props, {
+					props,
+					attrs: props,
+					class: "el-button el-button--text el-button--small ellipsis cell-link text-align-left"
+				}),
+				[props.label]
+			);
+		};
 	})();
 }
 </script>

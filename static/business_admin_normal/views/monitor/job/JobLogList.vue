@@ -138,14 +138,13 @@ export default async function () {
 						{
 							label: i18n("执行状态"),
 							prop: "status",
-							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_job_status)
+							cellRenderer: ({ cellData }) => hVal2Tag(cellData, dicts.sys_job_status)
 						},
 						{ label: i18n("执行时间"), prop: "createTime" },
 						defTable.colActions({
 							width: 200,
 							cellRenderer({ rowData }) {
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

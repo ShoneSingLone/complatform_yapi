@@ -144,15 +144,14 @@ export default async function () {
 						{
 							label: i18n("系统内置"),
 							prop: "configType",
-							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_yes_no)
+							cellRenderer: ({ cellData }) => hVal2Tag(cellData, dicts.sys_yes_no)
 						},
 						{ label: i18n("备注"), prop: "remark" },
 						{ label: i18n("创建时间"), prop: "createTime" },
 						defTable.colActions({
 							width: 200,
 							cellRenderer({ rowData }) {
-								return _jsxFns.ActionAndMore({
+								return hBtnWithMore({
 									col: 3,
 									children: [
 										{

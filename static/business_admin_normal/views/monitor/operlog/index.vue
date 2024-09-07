@@ -120,8 +120,7 @@ export default async function () {
 						{
 							label: i18n("操作类型"),
 							prop: "businessType",
-							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_oper_type)
+							cellRenderer: ({ cellData }) => hVal2Tag(cellData, dicts.sys_oper_type)
 						},
 						{ label: i18n("操作人员"), prop: "operName" },
 						{ label: i18n("操作地址"), prop: "operIp" },
@@ -130,7 +129,7 @@ export default async function () {
 							label: i18n("操作状态"),
 							prop: "status",
 							cellRenderer: ({ cellData }) =>
-								_jsxFns.OptionsToLabel(cellData, dicts.sys_common_status)
+								hVal2Tag(cellData, dicts.sys_common_status)
 						},
 						{ label: i18n("操作日期"), prop: "operTime" },
 						{ label: i18n("消耗时间"), prop: "costTime" }

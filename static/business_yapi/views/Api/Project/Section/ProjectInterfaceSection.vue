@@ -49,7 +49,7 @@ export default async function () {
 				prop: "title",
 				label: i18n("接口名称"),
 				cellRenderer({ rowData }) {
-					return _jsxFns.Link({
+					return hLink({
 						label: rowData.title,
 						title: rowData.title,
 						style: "text-align:left;",
