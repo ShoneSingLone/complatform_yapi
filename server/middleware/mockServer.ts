@@ -7,7 +7,6 @@ const { customCookies } = require("../utils/customCookies");
 const Mock = require("mockjs");
 const { ObjectId } = require("mongodb");
 const { execProxyRequest } = require("./requestProxy");
-
 /**
  * @description 如果是成功的响应，需要备一个份
  * @param {any} {
@@ -25,6 +24,8 @@ async function ifSuccessfulStoreResponse({
 	if (ctx.status != 200 || ["text/html"].includes(ctx.type)) {
 		return;
 	}
+
+	/* 'application/json' */
 	const data = {};
 	try {
 		let res;
@@ -410,6 +411,8 @@ const middlewareMockServer = () => async (ctx, next) => {
 					return handleCorsRequest(ctx);
 				}
 
+				/* 返回标准404响应 */
+				ctx.status = 404;
 				return (ctx.body = xU.$response(
 					null,
 					404,

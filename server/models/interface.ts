@@ -128,6 +128,7 @@ class ModelInterface extends ModelBase {
 			},
 			res_body: String,
 			resBackupJson: String,
+			resBackupCtxBody: Buffer,
 			res_body_is_json_schema: { type: Boolean, default: false },
 			custom_field_value: String,
 			field2: String,
@@ -195,7 +196,7 @@ class ModelInterface extends ModelBase {
 		select =
 			select ||
 			BASE_SELECT.join(" ") +
-				" edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
+				" edit_uid status add_time up_time type query_path req_query req_headers req_params req_body_type req_body_form req_body_other res_body_type resBackupJson resBackupCtxBody custom_field_value res_body res_body_is_json_schema req_body_is_json_schema";
 		return this.model
 			.find({
 				project_id: project_id,
@@ -263,7 +264,7 @@ class ModelInterface extends ModelBase {
 	}
 
 	listByCatid(catid, select) {
-		const SELF_SELECT = `resBackupJson edit_uid status add_time up_time index tag`;
+		const SELF_SELECT = `resBackupJson resBackupCtxBody edit_uid status add_time up_time index tag`;
 		select = select || BASE_SELECT.join(" ") + " " + SELF_SELECT;
 		return (
 			this.model

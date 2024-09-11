@@ -5,9 +5,10 @@
 			style="--xItem-wrapper-width: 300px; --xItem-label-width: 80px">
 			<xItem :configs="searchForm.name" />
 		</xTablebar>
-		<div style="height: 500px">
+		<div style="height: 500px;" >
 			<xTableVir class="mt" :columns="configsTable.columns" :data="configsTable.data.list" />
 		</div>
+		<xGap t="8"/>
 		<xPagination :configs="configsTable" />
 		<template #footer>
 			<xBtn :configs="btnOk" />

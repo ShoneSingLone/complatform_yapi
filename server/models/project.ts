@@ -27,10 +27,16 @@ class ModelProject extends ModelBase {
 			members: [
 				{
 					uid: Number,
-					role: { type: String, enum: ["owner", "dev"] },
+					role: {
+						type: String,
+						enum: ["owner", "dev"]
+					},
 					username: String,
 					email: String,
-					email_notice: { type: Boolean, default: true }
+					email_notice: {
+						type: Boolean,
+						default: true
+					}
 				}
 			],
 			env: [
@@ -248,17 +254,29 @@ class ModelProject extends ModelBase {
 			condition.group_id = group_id;
 		}
 
-		return {
-			list: await this.model
-				.find(condition)
-				.sort({
-					group_id: -1
-				})
-				.skip((page - 1) * size)
-				.limit(size)
-				.exec(),
-			total: await this.model.countDocuments(condition)
-		};
+		if (page === 0 && size === -1) {
+			return {
+				list: await this.model
+					.find(condition)
+					.sort({
+						group_id: -1
+					})
+					.exec(),
+				total: await this.model.countDocuments(condition)
+			};
+		} else {
+			return {
+				list: await this.model
+					.find(condition)
+					.sort({
+						group_id: -1
+					})
+					.skip((page - 1) * size)
+					.limit(size)
+					.exec(),
+				total: await this.model.countDocuments(condition)
+			};
+		}
 	}
 
 	listCount(group_id) {

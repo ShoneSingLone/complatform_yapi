@@ -144,8 +144,9 @@ function checkParamsAndParse({ info, ctx, field }) {
 		if (type === "number") {
 			ctx.payload[field] = Number(fieldValue);
 		} else if (type === "string") {
-			ctx.payload[field] = String(fieldValue);
+			ctx.payload[field] = String(fieldValue || "");
 		} else if (type === "array") {
+			/* TODO: */
 		}
 	}
 }

@@ -129,6 +129,10 @@ const interfaceUpsertRequest = {
 			description:
 				"响应信息，可填写任意字符串，如果res_body_type是json,则会调用mock功能"
 		},
+		resBackupJson: {
+			type: "string",
+			description: "备份数据的json字符串"
+		},
 		desc: {
 			type: "string",
 			description: "header描述"
@@ -389,7 +393,6 @@ module.exports = {
 						params.method = params.method || "GET";
 						params.method = params.method.toUpperCase();
 					}
-
 					let id = params.id;
 					params.message = params.message || "";
 					params.message = params.message.replace(/\n/g, "<br>");
@@ -470,6 +473,7 @@ module.exports = {
 							data.req_params = [];
 						}
 					}
+
 					let result = await orm.interface.up(id, data);
 					let username = this.getUsername();
 					let CurrentInterfaceData = await orm.interface.get(id);

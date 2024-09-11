@@ -1,11 +1,3 @@
-const ModelUser = require("server/models/user");
-const ModelInterface = require("server/models/interface");
-const ModelInterfaceCategory = require("server/models/interfaceCategory");
-const ModelInterfaceCase = require("server/models/interfaceCase");
-const ModelFollow = require("../models/follow");
-const ModelGroup = require("server/models/group");
-const ModelProject = require("server/models/project");
-
 const url = require("url");
 const ControllerBase = require("./base");
 const jsondiffpatch = require("jsondiffpatch");
