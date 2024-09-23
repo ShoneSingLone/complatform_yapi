@@ -169,16 +169,20 @@ export default async function () {
 		name: "xtips",
 		/* @ts-ignore */
 		inserted(ele, binding, vnode) {
+			const configs = binding.value;
 			/* v-xtips绑定在dom元素上 */
 			let vm = vnode.componentInstance || vnode.context;
-			const refId = _.$genId(X_TIPS_REF);
-			setOptions(refId, binding.value);
-			REFRENCE_MAP.set(refId, vm);
+			if (_.isFunction(binding.value.onUpdated) && vm) {
+				binding.value.onUpdated(vm);
+			}
 
+			const refId = _.$genId(X_TIPS_REF);
+			setOptions(refId, configs);
+			REFRENCE_MAP.set(refId, vm);
 			$(ele)
 				.addClass(CLASS_NAME_REFERENCE)
 				.attr({ [SELECTOR_REFERENCE]: refId })
-				.data("oldValue", { ...binding.value });
+				.data("oldValue", { ...configs });
 		},
 		componentUpdated(ele, binding) {
 			const { refId, $popover, vmPopover, $ele } = usePops(ele);

@@ -13,11 +13,7 @@
 				<div
 					class="pointer"
 					@click="() => Group.openGroupUpsertDialog()"
-					v-xtips="{
-						content: '添加分组',
-						placement: 'right',
-						style: '--min-width:unset;'
-					}">
+					v-xtips="cptGroupTips">
 					<!-- 添加分组 -->
 					<xIcon icon="_add" class="icon-opreation_click" />
 				</div>
@@ -83,7 +79,6 @@ export default async function () {
 						groupList,
 						"notInGroup"
 					);
-					debugger;
 					const { owner, member } = _.groupBy(inGroup, "role");
 					let { true: privateSpace, undefined: otherOwner } = _.groupBy(
 						owner,
@@ -174,6 +169,15 @@ export default async function () {
 					return;
 				}
 				this.$router.push({ path: "/api/group", query: { groupId } });
+			}
+		},
+		computed: {
+			cptGroupTips() {
+				return {
+					content: "添加分组",
+					placement: "right",
+					style: "--min-width:unset;"
+				};
 			}
 		},
 		watch: {

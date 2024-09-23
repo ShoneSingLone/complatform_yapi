@@ -59,7 +59,7 @@ export default async function () {
 							}
 						}
 					},
-					merge_hFnProps([
+					mergeProps4h([
 						{
 							attrs,
 							on: vm.mixin_listeners,
@@ -76,7 +76,7 @@ export default async function () {
 
 			return h(
 				tag,
-				merge_hFnProps([
+				mergeProps4h([
 					{
 						attrs,
 						on: vm.mixin_listeners,

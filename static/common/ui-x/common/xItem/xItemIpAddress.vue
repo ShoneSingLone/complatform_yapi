@@ -10,7 +10,7 @@ export default async function () {
 
 			return h(
 				"xIpAddress",
-				merge_hFnProps([
+				mergeProps4h([
 					{
 						attrs: vm.$attrs,
 						on: vm.mixin_listeners

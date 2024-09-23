@@ -9,7 +9,7 @@ export default async function () {
 		render() {
 			const vm = this;
 
-			const cascaderProps = merge_hFnProps([
+			const cascaderProps = mergeProps4h([
 				{
 					on: vm.mixin_listeners,
 					/* configs,value */

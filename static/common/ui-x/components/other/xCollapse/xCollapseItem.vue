@@ -105,7 +105,7 @@ export default async function () {
 					}
 				}, 50);
 			},
-			handleHeaderClick() {
+			handleHeaderClick($event) {
 				if (this.disabled) return;
 				this.dispatch("xCollapse", "item-click", this);
 				this.focusing = false;

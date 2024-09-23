@@ -20,12 +20,10 @@ export default async function () {
 		computed: {
 			style() {
 				const ret = {};
-
 				if (this.gutter) {
 					ret.marginLeft = `-${this.gutter / 2}px`;
 					ret.marginRight = ret.marginLeft;
 				}
-
 				return ret;
 			}
 		},

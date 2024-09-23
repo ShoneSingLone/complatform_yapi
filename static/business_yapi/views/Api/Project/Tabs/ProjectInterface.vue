@@ -15,7 +15,7 @@
 <template>
 	<section class="flex1" v-if="isShow" id="ViewProjectInterface">
 		<div class="ViewProjectInterfaceResizeWrapper flex">
-			<ProjectInterfaceAside />
+			<!-- <ProjectInterfaceAside /> -->
 			<ProjectInterfaceSection />
 		</div>
 	</section>

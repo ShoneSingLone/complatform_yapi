@@ -706,7 +706,15 @@
 	// used for static nodes and slot nodes because they may be reused across
 	// multiple renders, cloning them avoids errors when DOM manipulations rely
 	// on their elm reference.
-	function cloneVNode(vnode) {
+	function cloneVNode(vnode, extraProps) {
+		if (!vnode) {
+			return createEmptyVNode();
+		}
+		if (extraProps) {
+			if (extraProps.style && vnode?.data?.style) {
+				vnode.data.style = _.merge(vnode.data.style, extraProps.style);
+			}
+		}
 		var cloned = new VNode(
 			vnode.tag,
 			vnode.data,
@@ -1933,7 +1941,7 @@
 				};
 
 				if (isDomProp(hyphenateKey)) {
-					props.attrs = merge_hFnProps([{}, props.attrs, { [hyphenateKey]: fn }]);
+					props.attrs = mergeProps4h([{}, props.attrs, { [hyphenateKey]: fn }]);
 					return;
 				}
 
@@ -1948,7 +1956,7 @@
 					}
 				}
 			});
-			props.on = merge_hFnProps([{}, props.on || {}, newOn]);
+			props.on = mergeProps4h([{}, props.on || {}, newOn]);
 		}
 		return props || {};
 	}
@@ -3507,6 +3515,10 @@
 		return vm;
 	}
 	function updateChildComponent(vm, propsData, listeners, parentVnode, renderChildren) {
+		if (!vm) {
+			return;
+		}
+
 		{
 			isUpdatingChildComponent = true;
 		}
@@ -3516,7 +3528,7 @@
 		// dynamic slot names). Static scoped slots compiled from template has the
 		// "$stable" marker.
 		var newScopedSlots = parentVnode.data.scopedSlots;
-		var oldScopedSlots = vm.$scopedSlots;
+		var oldScopedSlots = vm.$scopedSlots || {};
 		var hasDynamicScopedSlot = !!(
 			(newScopedSlots && !newScopedSlots.$stable) ||
 			(oldScopedSlots !== emptyObject && !oldScopedSlots.$stable) ||
@@ -6208,8 +6220,10 @@
 			observe(value);
 			toggleObserving(prevShouldObserve);
 		}
-		{
-			assertProp(prop, key, value, vm, absent);
+
+		const _value = assertProp(prop, key, value, vm, absent);
+		if (_.isNumber(_value)) {
+			return _value;
 		}
 		return value;
 	}
@@ -6249,6 +6263,7 @@
 	}
 	/**
 	 * Assert whether a prop is valid.
+	 * 如果是原始类型，会尝试转换
 	 */
 	function assertProp(prop, name, value, vm, absent) {
 		if (prop.required && absent) {
@@ -6266,9 +6281,16 @@
 				type = [type];
 			}
 			for (var i = 0; i < type.length && !valid; i++) {
-				var assertedType = assertType(value, type[i], vm);
+				const currentType = type[i];
+				var assertedType = assertType(value, currentType, vm);
 				expectedTypes.push(assertedType.expectedType || "");
 				valid = assertedType.valid;
+				if (!valid && _.isEqual(currentType, Number)) {
+					const _value = _.toNumber(value);
+					if (!_.isNaN(_value)) {
+						return _value;
+					}
+				}
 			}
 		}
 		var haveExpectedTypes = expectedTypes.some(function (t) {
@@ -7311,11 +7333,11 @@
 				nodeOps.appendChild(vnode.elm, nodeOps.createTextNode(String(vnode.text)));
 			}
 		}
-		function isPatchable(vnode) {
-			while (vnode.componentInstance) {
+		function isPatchable(vnode = {}) {
+			while (vnode?.componentInstance) {
 				vnode = vnode.componentInstance._vnode;
 			}
-			return isDef(vnode.tag);
+			return isDef(vnode?.tag);
 		}
 		function invokeCreateHooks(vnode, insertedVnodeQueue) {
 			for (var i_2 = 0; i_2 < cbs.create.length; ++i_2) {
@@ -8083,12 +8105,12 @@
 		}
 		var cls = genClassForVnode(vnode);
 		// handle transition classes
-		var transitionClass = el._transitionClasses;
+		var transitionClass = el?._transitionClasses;
 		if (isDef(transitionClass)) {
 			cls = concat(cls, stringifyClass(transitionClass));
 		}
 		// set the class
-		if (cls !== el._prevClass) {
+		if (el && cls !== el?._prevClass) {
 			elSetAttribute(el, "class", cls);
 			el._prevClass = cls;
 		}
@@ -12946,7 +12968,7 @@
 	extend(Vue, vca);
 	Vue.effect = effect;
 
-	function merge_hFnProps(propsArray) {
+	function mergeProps4h(propsArray) {
 		var normalMerge = ["attrs", "props", "domProps"];
 		var toArrayMerge = ["class", "style", "directives"];
 		var functionalMerge = ["on", "nativeOn"];
@@ -13046,8 +13068,12 @@
 	}
 
 	function elSetAttribute(el, key, value) {
-		if (!["function", "object"].includes(typeof value)) {
-			el.setAttribute(key, value);
+		if (el?.setAttribute) {
+			if (!["function", "object"].includes(typeof value)) {
+				el.setAttribute(key, value);
+			}
+		} else {
+			debugger;
 		}
 	}
 
@@ -13067,8 +13093,9 @@
 	Vue.effect = effect;
 	Vue.camelize = camelize;
 	Vue.compile = compileToFunctions;
+	Vue.cloneVNode = cloneVNode;
 	Vue.isVNode = vm => !!vm?.TYPE_IS_VNODE;
-	Vue.merge_hFnProps = merge_hFnProps;
+	Vue.mergeProps4h = mergeProps4h;
 	Vue.createEmptyVNode = createEmptyVNode;
 	Vue.hasOwnProperty = hasOwnProperty;
 	Vue.hasOwn = hasOwn;
@@ -13117,7 +13144,8 @@
 				console.error(error);
 			}
 		})();
-		return _.$isInput(val) ? val : false;
+
+		return val;
 	};
 
 	Vue.prototype.dispatch = dispatch;

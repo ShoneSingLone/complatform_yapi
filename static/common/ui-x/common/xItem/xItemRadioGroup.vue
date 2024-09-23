@@ -28,7 +28,7 @@ export default async function () {
 				return this.options || this.configs?.options || [];
 			},
 			cptGroupProps() {
-				return merge_hFnProps([
+				return mergeProps4h([
 					{ attrs: this.$attrs },
 					{
 						staticClass: "xItemRadioGroup",

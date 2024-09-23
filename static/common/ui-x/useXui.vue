@@ -167,6 +167,8 @@ export default async function ({
 		const hSpan = useH("span");
 
 		PRIVATE_GLOBAL.hDiv = hDiv;
+		PRIVATE_GLOBAL.hTableExpandRow = children =>
+			hDiv(children, { class: "x-table-vir-expand-row" });
 		PRIVATE_GLOBAL.hSpan = hSpan;
 
 		PRIVATE_GLOBAL.hTipsHover = ({ msg, content, placement }) => {
@@ -229,6 +231,51 @@ export default async function ({
 				[props.label]
 			);
 		};
+
+		((/* xTableVir相关 */) => {
+			function xTableVirModifyCellsHeight({ mergeProp, columns, cells, rowData, calStyle }) {
+				if (_.isEmpty(columns)) {
+					return cells;
+				}
+				const mergeIndex = _.findIndex(columns, { prop: mergeProp });
+				const rowSpanProp = `${mergeProp}_row_span`;
+
+				if (_.isNumber(rowData[rowSpanProp])) {
+					const rowSpan = rowData[rowSpanProp];
+
+					cells[mergeIndex] = cloneVNode(cells[mergeIndex], {
+						style: calStyle({ rowSpan })
+					});
+				}
+				return cells;
+			}
+
+			function setCurrentRowSpan({ rows, mergeProp }) {
+				const allRowSpan = rows.length;
+				return _.map(rows, (row, index) => {
+					/* @ts-ignore */
+					const rowSpan = allRowSpan - index;
+					row[`${mergeProp}_row_span`] = rowSpan;
+					return row;
+				});
+			}
+
+			function xTableVirNewGroupSortedRows({ groupedRowObj, mergeProp, sortBy }) {
+				sortBy = sortBy || Number;
+				const keys = _.sortBy(Object.keys(groupedRowObj), sortBy);
+				/*  */
+				let dataGroupSorted = [];
+				_.each(keys, key => {
+					let currentArray = groupedRowObj[key];
+					currentArray = setCurrentRowSpan({ rows: currentArray, mergeProp });
+					dataGroupSorted = dataGroupSorted.concat(currentArray);
+				});
+				return dataGroupSorted;
+			}
+
+			PRIVATE_GLOBAL.xTableVirNewGroupSortedRows = xTableVirNewGroupSortedRows;
+			PRIVATE_GLOBAL.xTableVirModifyCellsHeight = xTableVirModifyCellsHeight;
+		})();
 	})();
 }
 </script>

@@ -11,6 +11,12 @@
 	position: relative;
 	//outline: 1px solid red;
 
+	.x-table-vir-expand-row {
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
 	.el-table-v2__header-cell {
 		// outline: 1px solid blue;
 		position: relative;
@@ -337,7 +343,7 @@
 </style>
 
 <script lang="ts">
-export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
+export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 	let x_table_vir_empty_component =
 		PRIVATE_GLOBAL.x_table_vir_empty_component ||
 		"/common/ui-x/components/data/xTableVir/xTableEmptyRender.vue";
@@ -1049,6 +1055,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 
 		debounced.cancel = cancel;
 		debounced.flush = flush;
+		debugger;
 		return debounced;
 	}
 
@@ -1359,11 +1366,19 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		}
 
 		function onScroll(params) {
-			scrollTo(params);
-			props.onScroll?.(params);
+			if (_.isEqual(this.ON_SCROLL_PARAMS, params)) {
+				return;
+			} else {
+				this.ON_SCROLL_PARAMS = params;
+				scrollTo(params);
+				props.onScroll?.(params);
+			}
 		}
 
 		function onVerticalScroll({ scrollTop }) {
+			if (_.isNaN(scrollTop)) {
+				return;
+			}
 			const { scrollTop: currentScrollTop } = unref(scrollPos);
 			if (scrollTop !== currentScrollTop) scrollToTop(scrollTop);
 		}
@@ -1432,13 +1447,13 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 			props.onExpandedRowsChange?.(_expandedRowKeys);
 		}
 
-		const flushingRowHeights = debounce(() => {
+		const flushingRowHeights = _.debounce(() => {
 			isResetting.value = true;
 			rowHeights.value = {
-				...unref(rowHeights),
-				...unref(pendingRowHeights)
+				...rowHeights.value,
+				...pendingRowHeights.value
 			};
-			resetAfterIndex(unref(resetIndex), false);
+			resetAfterIndex(resetIndex.value, false);
 			pendingRowHeights.value = {};
 			resetIndex.value = null;
 			mainTableRef.value?.forceUpdate();
@@ -1448,43 +1463,44 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 			isResetting.value = false;
 		}, 0);
 
+		window.flushingRowHeights = flushingRowHeights;
+
 		function resetAfterIndex(index, forceUpdate = false) {
 			if (!unref(isDynamic)) return;
-			[mainTableRef, leftTableRef, rightTableRef].forEach(tableRef => {
-				const table = unref(tableRef);
-				if (table) table.resetAfterRowIndex(index, forceUpdate);
+			_.each([mainTableRef, leftTableRef, rightTableRef], ({ value: refTable }) => {
+				if (refTable) {
+					refTable.resetAfterRowIndex(index, forceUpdate);
+				}
 			});
 		}
 
-		function resetHeights(rowKey2, height, rowIdx) {
+		function resetHeights(rowKey, height, rowIdx) {
 			const resetIdx = unref(resetIndex);
-			if (resetIdx === null) {
+			if (resetIdx === null || resetIdx > rowIdx) {
 				resetIndex.value = rowIdx;
-			} else {
-				if (resetIdx > rowIdx) {
-					resetIndex.value = rowIdx;
-				}
 			}
-			pendingRowHeights.value[rowKey2] = height;
+			pendingRowHeights.value[rowKey] = height;
 		}
 
-		function onRowHeightChange({ rowKey: rowKey2, height, rowIndex }, fixedDir) {
+		function onRowHeightChange({ rowKey, height, rowIndex }, fixedDir) {
 			if (!fixedDir) {
-				mainTableHeights.value[rowKey2] = height;
+				mainTableHeights.value[rowKey] = height;
 			} else {
 				if (fixedDir === FixedDir.RIGHT) {
-					rightTableHeights.value[rowKey2] = height;
+					rightTableHeights.value[rowKey] = height;
 				} else {
-					leftTableHeights.value[rowKey2] = height;
+					leftTableHeights.value[rowKey] = height;
 				}
 			}
 			const maximumHeight = Math.max(
 				...[leftTableHeights, rightTableHeights, mainTableHeights].map(
-					records => records.value[rowKey2] || 0
+					records => records.value[rowKey] || 0
 				)
 			);
-			if (unref(rowHeights)[rowKey2] !== maximumHeight) {
-				resetHeights(rowKey2, maximumHeight, rowIndex);
+			const _rowHeights = rowHeights.value;
+
+			if (_rowHeights[rowKey] !== maximumHeight) {
+				resetHeights(rowKey, maximumHeight, rowIndex);
 				flushingRowHeights();
 			}
 		}
@@ -1678,6 +1694,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 			onRowHovered,
 			onRowsRendered
 		} = useRow(props, { mainTableRef, leftTableRef, rightTableRef });
+		inject_xTableVir.rowHeights = rowHeights;
 		const { data, depthMap } = useData(props, {
 			expandedRowKeys,
 			lastRenderedRowIndex,
@@ -1711,8 +1728,50 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 
 		function getRowHeight(rowIndex) {
 			const { estimatedRowHeight, rowHeight, rowKey: rowKey2 } = props;
-			if (!estimatedRowHeight) return rowHeight;
-			return unref(rowHeights)[unref(data)[rowIndex][rowKey2]] || estimatedRowHeight;
+			if (!estimatedRowHeight) {
+				return rowHeight;
+			}
+			const selector = `[data-role=table-main_body] [data-row-index=${rowIndex}]`;
+			const $el = $(inject_xTableVir.$el).find(selector);
+
+			const height = (() => {
+				if ($el.length) {
+					if (rowHeights.value[data.value[rowIndex][rowKey2]]) {
+						return rowHeights.value[data.value[rowIndex][rowKey2]];
+					}
+					const ALL_HEIGHT = _.map($el, row => {
+						const $row = $(row);
+						/* 普通的动态列高 */
+						let $cell = $row.find(`[role=cell]`);
+						if ($cell.length) {
+							const height = _.max(
+								_.map($cell.children(), child => $(child).height())
+							);
+							return height || estimatedRowHeight;
+						} else {
+							/* 展开行 */
+							$cell = $row.find(`.x-table-vir-expand-row`);
+							if ($cell.length === 1) {
+								const height = $cell.height();
+								return height || estimatedRowHeight;
+							}
+						}
+
+						return estimatedRowHeight;
+					});
+					const max = _.max([...ALL_HEIGHT, estimatedRowHeight]);
+					if (max !== estimatedRowHeight) {
+						rowHeights.value[data.value[rowIndex][rowKey2]] = max;
+					}
+					return max;
+				} else {
+					const _rowHeights = rowHeights.value;
+					const _data = data.value;
+					return _rowHeights[_data[rowIndex][rowKey2]] || estimatedRowHeight;
+				}
+			})();
+			console.log("TODO: getRowHeight", rowIndex, height);
+			return height;
 		}
 
 		function onMaybeEndReached() {
@@ -1906,7 +1965,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		render: (h, { data: { mainTableRef, $vSlots, ...rest } }) => {
 			return h(
 				"ComponentTableV2Grid",
-				merge_hFnProps([
+				mergeProps4h([
 					{
 						ref: mainTableRef
 					},
@@ -1923,9 +1982,10 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 			if (!rest?.columns.length) return;
 			return h(
 				"ComponentTableV2Grid",
-				merge_hFnProps([
+				mergeProps4h([
 					{
-						ref: leftTableRef
+						ref: leftTableRef,
+						class: "x-table-vir-fixed-left"
 					},
 					rest
 				]),
@@ -1939,9 +1999,10 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 		render: (h, { data: { rightTableRef, $vSlots, ...rest } }) => {
 			return h(
 				"ComponentTableV2Grid",
-				merge_hFnProps([
+				mergeProps4h([
 					{
-						ref: rightTableRef
+						ref: rightTableRef,
+						class: "x-table-vir-fixed-right"
 					},
 					rest
 				]),
@@ -2004,7 +2065,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 
 			const onRowHover = hasFixedColumns ? onRowHovered : () => null;
 
-			const _rowProps = merge_hFnProps([
+			const _rowProps = mergeProps4h([
 				{
 					...additionalProps,
 					columns: columns2,
@@ -2027,7 +2088,6 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 					}
 				}
 			]);
-
 			return h("ComponentTableV2Row", _rowProps, [$vSlots]);
 		}
 	};
@@ -2075,7 +2135,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				if (slots?.default) {
 					return slots.default;
 				}
-				return props => h(TableV2Cell, merge_hFnProps([{}, props]));
+				return props => h(TableV2Cell, mergeProps4h([{}, props]));
 			})();
 
 			/* 从rowData获取cell数据，可以使用 xxx.xxx.x的字符串方法 */
@@ -2106,7 +2166,9 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				rowIndex
 			};
 			const Cell = CellComponent(cellProps);
+
 			const kls = [
+				/* el-table-v2__row-cell */
 				ns.e("row-cell"),
 				column.class,
 				column.align === Alignment.CENTER && ns.is("align-center"),
@@ -2117,6 +2179,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				/* 如果有children就可以展开 */
 				return _.$isArrayFill(rowData.children);
 			})();
+
 			const iconStyle = `margin-inline-start: ${depth * indentSize}px;`;
 			const isShowIcon = column.prop === "COL_EXPAND_ARROW";
 
@@ -2132,7 +2195,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 									return _.$isSame(rowData[rowKey], key);
 								});
 
-								iconProps = merge_hFnProps([
+								iconProps = mergeProps4h([
 									iconProps,
 									{
 										class: {
@@ -2146,14 +2209,27 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 											expandable: true
 										},
 										onClick() {
-											isShowIcon &&
-												expandable &&
+											if (isShowIcon && expandable) {
+												const inject_xTableVir = injectVm(
+													this._original,
+													"xTableVirWrapper"
+												);
+												if (inject_xTableVir.updateTableByScroll) {
+													setTimeout(() => {
+														inject_xTableVir.rowHeights.value = {};
+														inject_xTableVir.$nextTick(() => {
+															inject_xTableVir.updateTableByScroll();
+														});
+													}, 64);
+												}
+
 												onRowExpanded({
 													expanded: !expanded,
 													rowData,
 													rowIndex,
 													rowKey: rowData[rowKey]
 												});
+											}
 										}
 									}
 								]);
@@ -2165,7 +2241,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 
 			return h(
 				"div",
-				merge_hFnProps([
+				mergeProps4h([
 					{
 						class: kls,
 						style: cellStyle
@@ -2551,13 +2627,13 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 
 				const tableSlots = {
 					header: props2 => {
-						const HeaderRendererProps = merge_hFnProps([props2, tableHeaderProps]);
+						const HeaderRendererProps = mergeProps4h([props2, tableHeaderProps]);
 						return h(HeaderRenderer, HeaderRendererProps, [
 							{
 								header: vmTable.$vSlots.header,
 								cell: cellProps => {
 									if (vmTable.$vSlots["header-cell"]) {
-										const HeaderCellRendererProps = merge_hFnProps([
+										const HeaderCellRendererProps = mergeProps4h([
 											props2,
 											tableHeaderProps
 										]);
@@ -2565,7 +2641,7 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 											vmTable.$vSlots["header-cell"](cellProps)
 										]);
 									} else {
-										const HeaderCellRendererProps = merge_hFnProps([
+										const HeaderCellRendererProps = mergeProps4h([
 											cellProps,
 											tableHeaderCellProps,
 											{
@@ -2579,43 +2655,48 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 						]);
 					},
 					row: props => {
-						return h(RowRenderer, merge_hFnProps([props, tableRowProps]), [
+						const rowRender = (() => {
+							if (xTableVirWrapper.$attrs?.slotsRow) {
+								return args => {
+									/* { cells, columns, depth, isScrolling, rowData, rowIndex, style } */
+									return xTableVirWrapper.$attrs.slotsRow.call(null, args);
+								};
+							} else {
+								return null;
+							}
+						})();
+
+						const cellRender = cellProps => {
+							const propsCell = mergeProps4h([
+								cellProps,
+								tableCellProps,
+								{
+									onRowExpanded,
+									style: columnsStyles.value[cellProps.column.key]
+								}
+							]);
+
+							const hCustomCell = slotsCell => {
+								return h(CellRenderer, propsCell, ["slotsCell(cellProps)"]);
+							};
+
+							const hDefaultCell = () => {
+								return h(CellRenderer, propsCell);
+							};
+
+							/* 如果有自定义 */
+							if (xTableVirWrapper.$attrs?.slotsCell) {
+								return hCustomCell(xTableVirWrapper.$attrs?.slotsCell);
+							} else {
+								return hDefaultCell();
+							}
+						};
+
+						return h(RowRenderer, mergeProps4h([props, tableRowProps]), [
 							{
 								/* expand */
-								row: xTableVirWrapper.$attrs.slotsRow,
-								cell: props_cell => {
-									if (vmTable.$vSlots.cell) {
-										return h(
-											CellRenderer,
-											merge_hFnProps([
-												props_cell,
-												tableCellProps,
-
-												{
-													onRowExpanded,
-													style: columnsStyles.value[
-														props_cell.column.key
-													]
-												}
-											]),
-											[vmTable.$vSlots.cell(props_cell)]
-										);
-									} else {
-										return h(
-											CellRenderer,
-											merge_hFnProps([
-												props_cell,
-												tableCellProps,
-												{
-													onRowExpanded,
-													style: columnsStyles.value[
-														props_cell.column.key
-													]
-												}
-											])
-										);
-									}
-								}
+								row: rowRender,
+								cell: cellRender
 							}
 						]);
 					}
@@ -2766,6 +2847,24 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 				delete vmCollection[vm._uid];
 			});
 		},
+		watch: {
+			"$attrs.data": {
+				immediate: true,
+				handler(data) {
+					if (!data.length) {
+						return;
+					}
+					this.$nextTick(async () => {
+						await _.$ensure(() => {
+							const selector = `[data-role=table-main_body]`;
+							const $el = $(this.$el).find(selector);
+							return $el.length;
+						});
+						this.updateTableByScroll && this.updateTableByScroll();
+					});
+				}
+			}
+		},
 		methods: {
 			columnAutoWidth({ width, height }) {
 				if (!width) {
@@ -2857,7 +2956,6 @@ export default async function ({ PRIVATE_GLOBAL, merge_hFnProps }) {
 							columns: this.columnAutoWidth({ width, height }),
 							$vSlots__old: {
 								row: props => {
-									debugger;
 									if (this.$attrs.slotsRow) {
 										return this.$attrs.slotsRow(props);
 									} else {

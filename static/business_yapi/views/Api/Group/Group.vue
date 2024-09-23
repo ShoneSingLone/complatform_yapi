@@ -1,6 +1,6 @@
 <template>
-	<section id="ViewGroup" v-xloading="!APP.cptGroupId">
-		<GroupAside />
+	<section id="ViewGroup">
+		<!-- <GroupAside /> -->
 		<GroupSection />
 	</section>
 </template>

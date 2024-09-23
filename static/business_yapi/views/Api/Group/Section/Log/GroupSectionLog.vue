@@ -114,7 +114,7 @@ export default async function () {
 		watch: {
 			"APP.cptGroupId": {
 				immediate: true,
-				async handler(groupId) {
+				async handler(groupId, oldGroupId) {
 					if (groupId) {
 						try {
 							this.configsTable.pagination.current = 1;

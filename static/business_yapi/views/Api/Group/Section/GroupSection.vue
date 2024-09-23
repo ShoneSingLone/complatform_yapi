@@ -1,24 +1,21 @@
 <template>
 	<section id="GroupSection" class="x-page-view">
 		<xPageContent>
-			<xBlock class="mb group-desc-wrapper">
-				<xCollapse>
-					<xCollapseItem>
-						<template #title>
-							<span class="group-name">
-								{{ cptGroupName }}
-							</span>
-						</template>
-						<xMd :md="cptGroupDesc" />
-					</xCollapseItem>
-				</xCollapse>
-				<xBtn :configs="btnEditGroup" class="edit-group-desc ml" />
-			</xBlock>
-			<xRender :render="renderSwitchBtnGroup" />
-			<GroupSectionProjectList />
-			<GroupSectionMemberList />
-			<GroupSectionLog />
-			<GroupSectionWiki />
+			<xAutoResizer :onResize="setSize">
+				<div class="flex">
+					<GroupSectionProjectList :style="cptListStyle" />
+					<div :style="cptDetailStyle">
+						<xBlock class="mb group-desc-wrapper" :bodyClass="{ 'flex middle': true }">
+							<xRender :render="renderSwitchBtnGroup" />
+							<xGap f />
+							<xIcon icon="close" @click="closeGroupDetail" class="pointer" />
+						</xBlock>
+						<GroupSectionMemberList />
+						<GroupSectionLog />
+						<GroupSectionWiki />
+					</div>
+				</div>
+			</xAutoResizer>
 		</xPageContent>
 	</section>
 </template>
@@ -47,6 +44,78 @@ export default async function () {
 			const GroupSection = this;
 			return {
 				GroupSection
+			};
+		},
+		setup() {
+			const size = ref({ width: 0, height: 0 });
+			this.setSize = ({ width, height }) => {
+				this.size = {
+					width,
+					height
+				};
+			};
+
+			const cptIsShowGroupInfo = computed(() => {
+				return _.$isInput(this.$route.query.groupId);
+			});
+
+			const cptListStyle = computed(() => {
+				const {
+					size: { width, height },
+					cptIsShowGroupInfo
+				} = this;
+				const style = {
+					width: width + "px",
+					height: height + "px",
+					zIndex: 1,
+					transition: `all 0.3s ease-in`
+				};
+				if (cptIsShowGroupInfo) {
+					style.transform = `translate(-50px, -50px)`;
+				}
+
+				return style;
+			});
+
+			const cptDetailStyle = computed(() => {
+				const {
+					size: { width, height },
+					cptIsShowGroupInfo
+				} = this;
+
+				const style = {
+					transition: `all 0.3s ease-in`,
+					zIndex: 2,
+					position: "absolute",
+					transform: `translate(120%, 0)`,
+					width: `${width}px`,
+					height: `${height}px`,
+					background: `var(--page-body-bg, var(--el-color-white))`,
+					padding: `var(--ui-one)`,
+					"box-shadow": `var(--el-box-shadow)`
+				};
+
+				if (cptIsShowGroupInfo) {
+					return _.merge(style, {
+						transform: `translate(0, 0)`
+					});
+				}
+
+				return style;
+			});
+
+			this.selectGroup = async groupId => {
+				if (!groupId) {
+					return;
+				}
+				this.$router.push({ path: "/api/group", query: { groupId } });
+			};
+
+			return {
+				size,
+				cptListStyle,
+				cptDetailStyle,
+				cptIsShowGroupInfo
 			};
 		},
 		data() {
@@ -106,6 +175,12 @@ export default async function () {
 			}
 		},
 		methods: {
+			closeGroupDetail() {
+				this.$router.push({
+					path: this.$route.path,
+					query: _.omit(this.$route.query, ["groupId"])
+				});
+			},
 			openGroupUpsertDialog() {
 				this.Group.openGroupUpsertDialog(this.APP.cptCurrentGroup);
 			},

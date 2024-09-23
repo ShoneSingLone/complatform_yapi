@@ -17,7 +17,7 @@
 export default async function ({ onOk }) {
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 
-	return {
+	return defineComponent({
 		inject: ["APP"],
 		props: useDialogProps(),
 		mounted() {
@@ -35,7 +35,9 @@ export default async function ({ onOk }) {
 					}),
 					role: defItem({
 						value: "dev",
-						itemType: "xItemSelect",
+						itemType: "xItemRadioGroup",
+						minWidth: 80,
+						isButton: true,
 						label: i18n("权限"),
 						options: [
 							{ label: "组长", value: Vue._yapi_var.OWNER },
@@ -148,7 +150,7 @@ export default async function ({ onOk }) {
 				return null;
 			}
 		}
-	};
+	});
 }
 </script>
 

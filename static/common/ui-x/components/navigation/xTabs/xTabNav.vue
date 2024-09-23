@@ -33,6 +33,13 @@ export default async function () {
 			};
 		},
 		computed: {
+			renderHeaderOpr() {
+				if (this.rootTabs?.slotHeaderOpr) {
+					return this.rootTabs.slotHeaderOpr;
+				} else {
+					return () => null;
+				}
+			},
 			navStyle() {
 				const dir = ["top", "bottom"].indexOf(this.rootTabs.tabPosition) !== -1 ? "X" : "Y";
 				return {
@@ -314,7 +321,7 @@ export default async function () {
 					h(
 						"div",
 						{
-							class: ["el-tabs__nav-scroll"],
+							staticClass: `el-tabs__nav-scroll is-${this.rootTabs.tabPosition}`,
 							ref: "navScroll"
 						},
 						[
@@ -341,7 +348,8 @@ export default async function () {
 									}),
 									tabs
 								]
-							)
+							),
+							hDiv([this.renderHeaderOpr()], { class: "flex1" })
 						]
 					)
 				]

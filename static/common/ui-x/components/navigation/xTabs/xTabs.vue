@@ -17,7 +17,8 @@ export default async function () {
 				default: "top"
 			},
 			beforeLeave: Function,
-			stretch: Boolean
+			stretch: Boolean,
+			slotHeaderOpr: Function
 		},
 
 		provide() {
@@ -159,13 +160,11 @@ export default async function () {
 				},
 				ref: "nav"
 			};
-			const header = h(
-				"div",
-				{
-					class: ["el-tabs__header", `is-${tabPosition}`]
-				},
-				[newButton, h("xTabNav", navData)]
-			);
+
+			const header = hDiv([newButton, h("xTabNav", navData)], {
+				class: ["el-tabs__header", `is-${tabPosition}`]
+			});
+
 			const panels = h(
 				"div",
 				{
@@ -203,4 +202,14 @@ export default async function () {
 	});
 }
 </script>
-<style lang="less"></style>
+<style lang="less">
+.el-tabs__nav-scroll {
+	&.is-top {
+		display: flex;
+	}
+	&.is-left {
+		display: flex;
+		flex-direction: column;
+	}
+}
+</style>

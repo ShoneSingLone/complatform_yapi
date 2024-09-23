@@ -44,7 +44,6 @@ export default async function () {
 			});
 			return {
 				download() {
-					debugger;
 					_.$ajax.downloadOctetStream({ url: "/rest/vdun/v1.0/node/downNodeAgent" });
 				}
 			};

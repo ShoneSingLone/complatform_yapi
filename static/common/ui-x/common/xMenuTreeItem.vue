@@ -104,7 +104,7 @@ export default async function () {
 
 			return h(
 				"div",
-				merge_hFnProps([
+				mergeProps4h([
 					$attrs,
 					{ attrs: $attrs },
 					{

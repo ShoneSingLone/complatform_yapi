@@ -8,38 +8,38 @@ export default async function () {
 			"payload"
 		],
 		render() {
-			let tips = "";
+			let log_message = "";
 			try {
-				let cellAny = this.render;
-				if (_.isFunction(cellAny)) {
-					tips = "isFunction";
-					cellAny = cellAny.call(this.$parent, this.payload);
+				let cell_any_type = this.render;
+				if (_.isFunction(cell_any_type)) {
+					log_message = "isFunction";
+					cell_any_type = cell_any_type.call(this.$parent, this.payload);
 				}
 
-				if (_.isString(cellAny)) {
-					tips = "isString";
-					return this.createTextVNode(cellAny);
+				if (_.isString(cell_any_type)) {
+					log_message = "isString";
+					return this.createTextVNode(cell_any_type);
 				}
 
-				if (_.isArray(cellAny)) {
-					tips = "isArray";
-					return h("xFragment", cellAny);
+				if (_.isArray(cell_any_type)) {
+					log_message = "isArray";
+					return h("xFragment", cell_any_type);
 				}
-				if (cellAny?.TYPE_IS_VNODE) {
-					tips = "TYPE_IS_VNODE";
-					return cellAny;
+				if (cell_any_type?.TYPE_IS_VNODE) {
+					log_message = "TYPE_IS_VNODE";
+					return cell_any_type;
 				}
-				if (cellAny === undefined) {
-					tips = "undefined";
+				if (cell_any_type === undefined) {
+					log_message = "undefined";
 					return;
 				}
-				if (_.$isInput(cellAny)) {
-					tips = "isInput";
-					return this.createTextVNode(cellAny);
+				if (_.$isInput(cell_any_type)) {
+					log_message = "isInput";
+					return this.createTextVNode(cell_any_type);
 				}
-				return this.createTextVNode(cellAny || "");
+				return this.createTextVNode(cell_any_type || "");
 			} catch (error) {
-				console.warn(`${tips} => ${error.message}`);
+				console.warn(`${log_message} => ${error.message}`);
 				return null;
 			}
 		}

@@ -8,8 +8,8 @@
 			:data="configsTable.data.list"
 			:height="500"
 			:expandedRowKeys.sync="configsTable.data.expandedRowKeys"
-			:estimated-row-height="50"
-			:slotsRow="customizedRender"
+			:estimated-row-height="100"
+			:slotsRow="customRowRender"
 			:expandColumnKey="'detail'" />
 	</div>
 </template>
@@ -22,16 +22,18 @@ export default async function () {
 		data() {
 			const vm = this;
 			return {
-				md: `使用动态高度渲染，您也可以在表格中显示详细的视图。`,
+				md: `使用动态高度渲染，您也可以在表格中显示详细的视图。
+> 有【动态高度行】一样的性能弊端，行高尽量设置高一点，使可视区域内的行数尽量少，这样可以减少计算量`,
 				selected: {},
 				configsTable: defTable({
 					onQuery() {
-						const list = _.map(new Array(20), (i, rowIndex) => {
+						const list = _.map(new Array(2000), (i, rowIndex) => {
 							return {
 								id: rowIndex,
 								column1: `row_${rowIndex + 1}`,
 								column2: `row_${rowIndex + 1}`,
 								column3: `row_${rowIndex + 1}`,
+								/* children关键字用于子级数据 */
 								children: _.map(new Array(1), (i, subRowIndex) => {
 									return {
 										parentId: rowIndex,
@@ -39,6 +41,7 @@ export default async function () {
 										column1: `sub_row_${rowIndex + 1}_${subRowIndex + 1}`,
 										column2: `sub_row_${rowIndex + 1}_${subRowIndex + 1}`,
 										column3: `sub_row_${rowIndex + 1}_${subRowIndex + 1}`,
+										/* 特定字段用于展示 */
 										detail: true
 									};
 								})
@@ -52,7 +55,7 @@ export default async function () {
 					},
 					data: {
 						list: [],
-						expandedRowKeys: [0]
+						expandedRowKeys: [0, 1]
 					},
 					columns: [
 						defTable.colExpandArrow({
@@ -66,10 +69,22 @@ export default async function () {
 			};
 		},
 		methods: {
-			customizedRender(props) {
-				const { cells, rowIndex, rowData } = props;
+			customCellRenderer({ rowData, column }) {
+				return hDiv(rowData[column.prop] + "asdfasdfas", { style: { width: "100px" } });
+			},
+			customRowRender(props) {
+				const { cells, rowData } = props;
 				if (rowData.detail) {
-					return h("div", [JSON.stringify(rowData)]);
+					/* 带有特定样式类div作为 wrapper */
+					return hTableExpandRow([
+						hDiv(JSON.stringify(rowData)),
+						hDiv(JSON.stringify(rowData)),
+						hDiv(JSON.stringify(rowData)),
+						hDiv(JSON.stringify(rowData)),
+						hDiv(JSON.stringify(rowData)),
+						hDiv(JSON.stringify(rowData)),
+						hDiv(JSON.stringify(rowData))
+					]);
 				} else {
 					return cells;
 				}

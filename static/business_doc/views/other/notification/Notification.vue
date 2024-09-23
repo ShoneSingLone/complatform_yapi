@@ -21,13 +21,7 @@
 			unfold />
 		<xMd :md="apiString" data-role="api" />
 
-		<p>
-			/* const DialogTypeVueSFC = await
-			_.$importVue("/common/utils/useMoCommon/MoMulDeleteConfirmTableDialog.vue", { parent:
-			vm, tableConfigs: defTable({ data: { list: Array.from(vm.configsTable.data.set) },
-			columns: vm.configsTable.columns }), onEnsure({ dialogVm }) {} });
-			_.$openWindow_deprecated(i18n("删除密钥对"), DialogTypeVueSFC); */
-		</p>
+		<p>asdfasdf</p>
 	</DocContentOfDemo>
 </template>
 

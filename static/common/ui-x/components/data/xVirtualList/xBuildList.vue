@@ -17,22 +17,20 @@ export default async function () {
 			props[ACCESS_SIZER_KEY_MAP[type]],
 			gridCache[ACCESS_LAST_VISITED_KEY_MAP[type]]
 		];
-		if (index > lastVisited) {
-			let offset = 0;
-			if (lastVisited >= 0) {
-				const item = cachedItems[lastVisited];
-				offset = item.offset + item.size;
-			}
-			for (let i = lastVisited + 1; i <= index; i++) {
-				const size = sizer(i);
-				cachedItems[i] = {
-					offset,
-					size
-				};
-				offset += size;
-			}
-			gridCache[ACCESS_LAST_VISITED_KEY_MAP[type]] = index;
+
+		let offset = 0;
+		if (lastVisited >= 0) {
+			const item = cachedItems[lastVisited];
+			offset = item.offset + item.size;
 		}
+		for (let i = lastVisited + 1; i <= index; i++) {
+			console.log("🚀 ~ getItemFromCache ~ i:", i);
+			/* getColumnWidth getRowHeight*/
+			const size = sizer(i);
+			cachedItems[i] = { offset, size };
+			offset += size;
+		}
+		gridCache[ACCESS_LAST_VISITED_KEY_MAP[type]] = index;
 		return cachedItems[index];
 	};
 
@@ -69,6 +67,7 @@ export default async function () {
 		alignment,
 		scrollOffset
 	) => {
+		debugger;
 		const size = isHorizontal(layout2) ? width : height;
 		const lastItemOffset = Math.max(0, total2 * itemSize2 - size);
 		const maxOffset = Math.min(lastItemOffset, index * itemSize2);
@@ -609,6 +608,27 @@ export default async function () {
 				const instance = getCurrentInstance();
 				const cache2 = ref(initCache(props, instance));
 				injectToInstance?.(instance, cache2);
+				const inject_xTableVir = inject("inject_xTableVir");
+				inject_xTableVir.updateTableByScroll = _.debounce(() => {
+					const pos = {
+						scrollLeft: states.value.scrollLeft,
+						scrollTop: states.value.scrollTop,
+						isForce: true
+					};
+
+					const _pos = {
+						...pos
+					};
+
+					pos.scrollLeft++;
+					pos.scrollTop++;
+
+					scrollTo(pos);
+					setTimeout(() => {
+						scrollTo(_pos);
+					}, 18);
+				}, 18);
+
 				const windowRef = ref();
 				const hScrollbar = ref();
 				const vScrollbar = ref();
@@ -694,7 +714,7 @@ export default async function () {
 						height: _.isNumber(props.height) ? `${props.height}px` : props.height,
 						width: _.isNumber(props.width) ? `${props.width}px` : props.width
 					},
-					props.styleV2 ?? {}
+					props.styleV2 || {}
 				]);
 				const innerStyle = computed(() => {
 					const width = `${unref(estimatedTotalWidth)}px`;
@@ -827,12 +847,17 @@ export default async function () {
 				);
 				const scrollTo = ({
 					scrollLeft = states.value.scrollLeft,
-					scrollTop = states.value.scrollTop
+					scrollTop = states.value.scrollTop,
+					isForce = false
 				}) => {
 					scrollLeft = Math.max(scrollLeft, 0);
 					scrollTop = Math.max(scrollTop, 0);
 					const _states = unref(states);
-					if (scrollTop === _states.scrollTop && scrollLeft === _states.scrollLeft) {
+					if (
+						!isForce &&
+						scrollTop === _states.scrollTop &&
+						scrollLeft === _states.scrollLeft
+					) {
 						return;
 					}
 					states.value = {
@@ -855,6 +880,7 @@ export default async function () {
 					const _cache = unref(cache2);
 					const estimatedHeight = getEstimatedTotalHeight(props, _cache);
 					const estimatedWidth = getEstimatedTotalWidth(props, _cache);
+
 					scrollTo({
 						scrollLeft: getColumnOffset(
 							props,
@@ -876,6 +902,7 @@ export default async function () {
 				};
 				const getItemStyle = (rowIndex, columnIndex) => {
 					const { columnWidth, direction: direction2, rowHeight } = props;
+
 					const itemStyleCache = getItemStyleCache.value(
 						clearCache && columnWidth,
 						clearCache && rowHeight,
@@ -1050,7 +1077,7 @@ export default async function () {
 								style: unref(innerStyle),
 								ref: innerRef
 							},
-							(function () {
+							(() => {
 								if (_.isString(Inner)) {
 									return children;
 								} else {
@@ -1065,15 +1092,15 @@ export default async function () {
 					const Container = props.containerElement;
 					const { horizontalScrollbar, verticalScrollbar } = renderScrollbars();
 					const Inner = renderInner();
+
 					return h(
 						"div",
 						{
 							key: 0,
-							class: ns.e("wrapper"),
+							class: `${ns.e("wrapper")} render-window-${Container}`,
 							role: props.role
 						},
 						[
-							createEmptyVNode("renderWindow: " + Container),
 							h(
 								Container,
 								{
@@ -1083,7 +1110,7 @@ export default async function () {
 									onWheel,
 									ref: windowRef
 								},
-								(function () {
+								(() => {
 									if (_.isString(Container)) {
 										return Inner;
 									} else {
@@ -1091,7 +1118,6 @@ export default async function () {
 									}
 								})()
 							),
-							createEmptyVNode("renderWindow: " + Container),
 							horizontalScrollbar,
 							verticalScrollbar
 						]

@@ -56,7 +56,7 @@ export default async function ({ row }) {
 										const res = await _adminTools.api_role_auth_user_select_all(
 											{ roleId: row.roleId, userIds: userIds }
 										);
-										debugger;
+
 										vm.getTableData({ page: 1 });
 										_.$msg("取消授权成功");
 										this.getTableData();

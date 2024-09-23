@@ -84,7 +84,7 @@ export default async function () {
 
 						this.configs.i18nMany = () => {
 							const item = _.$getSelectedItemFrom(this.configs);
-							debugger;
+
 							return [];
 						};
 

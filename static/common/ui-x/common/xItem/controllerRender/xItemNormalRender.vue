@@ -157,7 +157,7 @@ export default async function () {
 				]
 			),
 			/* 信息提示 */
-			h("div", { vIf: vm.calMsg(), staticClass: "xItem-msg" }, [vm.calMsg()])
+			h("div", { vIf: vm.calMsg(), staticClass: "xItem-msg mt4" }, [vm.calMsg()])
 		]);
 	};
 }

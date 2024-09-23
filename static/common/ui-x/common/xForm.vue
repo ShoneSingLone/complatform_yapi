@@ -103,7 +103,7 @@ export default async function () {
 
 		> .xItem-wrapper,
 		> .xItemDesc-wrapper {
-			--xItem-wrapper-width: 100%;
+			--xItem-wrapper-width: var(--xForm-xItem-wrapper-width, 100%);
 		}
 	}
 

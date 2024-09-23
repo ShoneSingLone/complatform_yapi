@@ -23,9 +23,7 @@ export default async function () {
 				},
 				data,
 				md: `基础的树形结构展示`,
-				handleDragAndDrop({ drag, drop, type }) {
-					debugger;
-				}
+				handleDragAndDrop({ drag, drop, type }) {}
 			};
 		},
 		data() {

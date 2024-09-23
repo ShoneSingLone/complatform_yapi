@@ -569,6 +569,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 		.xItem_controller {
 			width: var(--xItem-controller-width, unset);
+			height: var(--xItem-controller-height, unset);
 			flex: var(--xItem-controller-flex, 1);
 			display: flex;
 			flex-flow: row nowrap;

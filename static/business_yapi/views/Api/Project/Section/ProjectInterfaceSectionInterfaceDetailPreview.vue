@@ -128,7 +128,7 @@ ${resBackupJson}
 					/\/\//g,
 					"/"
 				);
-				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${this.APP.cptProject._id}${apiURL}`;
+				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${this.APP?.cptProject?._id}${apiURL}`;
 
 				return [
 					{ label: i18n("接口名称"), value: title || "--" },
@@ -215,7 +215,7 @@ ${resBackupJson}
 											_.$msg("复制成功");
 										} catch (error) {
 											console.error(error);
-											debugger;
+
 											_.$msgError("复制失败");
 										}
 									}
@@ -243,7 +243,7 @@ ${resBackupJson}
 						span: "full",
 						xItemRender: () => {
 							if (isProxy) {
-								const env = _.find(this.APP.cptProject.env, { _id: witchEnv });
+								const env = _.find(this.APP?.cptProject?.env, { _id: witchEnv });
 								return h("div", [
 									h("xTag", { class: "mr" }, [env.name]),
 									h("span", [env.domain])

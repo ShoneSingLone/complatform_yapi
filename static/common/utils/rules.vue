@@ -198,7 +198,8 @@ export default async function () {
 							return i18n("请输入Email");
 						}
 						return "";
-					}
+					},
+					trigger: ["change", "blur"]
 				};
 			},
 			/**

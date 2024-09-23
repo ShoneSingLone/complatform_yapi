@@ -59,7 +59,9 @@
 		<div class="x-page-content-middle mt8 flex horizon">
 			<xTableVir
 				:columns="inject_project_interface_section.configsTable.columns"
-				:data="inject_project_interface_section.configsTable.data.list" />
+				:data="inject_project_interface_section.configsTable.data.list"
+				:slotsRow="customRowRender"
+				:rowHeight="rowHeight" />
 		</div>
 	</div>
 </template>
@@ -69,6 +71,7 @@ export default async function () {
 		inject: ["APP", "inject_project", "inject_project_interface_section"],
 		data() {
 			return {
+				rowHeight: 50,
 				isAdvancedSearchCollapse: true
 			};
 		},
@@ -112,6 +115,26 @@ export default async function () {
 			}
 		},
 		methods: {
+			customRowRender({ cells, columns, depth, isScrolling, rowData, rowIndex, style }) {
+				const { rowHeight } = this;
+				return xTableVirModifyCellsHeight({
+					columns,
+					cells,
+					rowData,
+					rowHeight,
+					mergeProp: "catid",
+					calStyle({ rowSpan }) {
+						return {
+							backgroundColor: "#f8f8f8",
+							border: "var(--el-table-border)",
+							height: `${rowSpan * rowHeight}px`,
+							alignSelf: "flex-start",
+							zIndex: rowSpan
+						};
+					}
+				});
+			},
+
 			handleAdvancedSearchCollapse(collapse) {
 				this.isAdvancedSearchCollapse = collapse;
 				if (collapse) {

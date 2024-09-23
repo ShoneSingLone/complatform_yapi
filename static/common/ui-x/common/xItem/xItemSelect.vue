@@ -17,7 +17,7 @@ export default async function () {
 				attrs = _xUtils.globalConfigs.xItemSelect.defaultProps(vm, vm.$attrs);
 			}
 
-			const selectProps = merge_hFnProps([
+			const selectProps = mergeProps4h([
 				{
 					attrs,
 					on: vm.mixin_listeners,

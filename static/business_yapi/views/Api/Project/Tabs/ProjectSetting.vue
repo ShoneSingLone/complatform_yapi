@@ -2,14 +2,14 @@
 	<div class="x-page-view flex1" v-if="isShow" id="ProjectSetting">
 		<xPageContent>
 			<xTabs v-model="cptProjectSettingTab">
-				<xTabPane label="项目配置" name="1"></xTabPane>
-				<xTabPane label="项目成员" name="项目成员"></xTabPane>
-				<xTabPane label="环境配置" name="2"> </xTabPane>
-				<xTabPane label="请求配置" name="3"> </xTabPane>
-				<xTabPane label="token配置" name="4"> </xTabPane>
-				<xTabPane label="全局mock脚本" name="5"> </xTabPane>
-				<xTabPane label="Swagger自动同步" name="6"> </xTabPane>
-				<xTabPane label="数据导入导出" name="7"> </xTabPane>
+				<xTabPane label="项目配置" name="1" />
+				<xTabPane label="项目成员" name="项目成员" />
+				<xTabPane label="环境配置" name="2" />
+				<xTabPane label="请求配置" name="3" />
+				<xTabPane label="token配置" name="4" />
+				<xTabPane label="全局mock脚本" name="5" />
+				<xTabPane label="Swagger自动同步" name="6" />
+				<xTabPane label="数据导入导出" name="7" />
 			</xTabs>
 			<div class="flex1 flex vertical">
 				<ProjectSettingPanelCommon v-if="cptProjectSettingTab === '1'" />

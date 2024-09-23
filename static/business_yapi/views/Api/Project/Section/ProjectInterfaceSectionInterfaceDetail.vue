@@ -1,6 +1,6 @@
 <template>
-	<div class="x-page-view flex1" id="ProjectSetting">
-		<xTabs v-model="cptProjectInterfaceTab">
+	<div class="x-page-view flex1" id="ProjectInterfaceSectionInterfaceDetail">
+		<xTabs v-model="cptProjectInterfaceTab" :slotHeaderOpr="renderCloseIcon">
 			<xTabPane label="预览" name="1"> </xTabPane>
 			<xTabPane label="编辑" name="2"> </xTabPane>
 		</xTabs>
@@ -53,6 +53,27 @@ export default async function () {
 			}
 		},
 		methods: {
+			renderCloseIcon() {
+				const vm = this;
+				return hDiv(
+					h("xIcon", {
+						icon: "close",
+						class: "pointer",
+						onClick() {
+							const { path, query } = vm.$route;
+							vm.$router.push({
+								path,
+								query: {
+									..._.omit(query, ["interfaceId", "interfaceType"])
+								}
+							});
+						}
+					}),
+					{
+						class: "flex middle height100 width100 end"
+					}
+				);
+			},
 			async updateInterface() {
 				_.$loading(true);
 				$(".flash-when").addClass("loading");
@@ -85,4 +106,10 @@ export default async function () {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+#ProjectInterfaceSectionInterfaceDetail {
+	background: var(--page-body-bg, var(--el-color-white));
+	padding: var(--ui-one);
+	box-shadow: var(--el-box-shadow);
+}
+</style>

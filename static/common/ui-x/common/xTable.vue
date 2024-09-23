@@ -341,7 +341,7 @@ export default async function () {
 				return this.configs?.data || this.data;
 			},
 			cptxAutoResizerProps() {
-				return merge_hFnProps([
+				return mergeProps4h([
 					{
 						class: "xTableWrapper",
 						attrs: { "data-table-resizer-id": this._uid }
@@ -353,7 +353,7 @@ export default async function () {
 				]);
 			},
 			cptTableProps() {
-				const props = merge_hFnProps([
+				const props = mergeProps4h([
 					{
 						class: "xTable",
 						ref: "xTable",

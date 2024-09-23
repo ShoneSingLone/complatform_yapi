@@ -26,13 +26,12 @@ export default async function () {
 				return "iframe" + index;
 			},
 			iframeUrl(item) {
-				debugger;
 				const url = item.meta.link;
 				const query = item.query;
 				const params = _.map(query, (value, key) => {
 					return `${key}=${value}`;
 				}).join("$");
-				debugger;
+
 				if (params.length > 2) {
 					return url + "?" + params;
 				}

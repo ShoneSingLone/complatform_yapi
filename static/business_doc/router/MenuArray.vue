@@ -19,7 +19,7 @@ export default async function () {
 			label: i18n("指南"),
 			children: [
 				{
-					icon: "icon_report",
+					icon: "_icon_i18n",
 					label: i18n("国际化"),
 					href: "/guide/i18n"
 				},
@@ -35,15 +35,15 @@ export default async function () {
 			label: i18n("命令式"),
 			children: [
 				{
-					icon: "icon_report",
+					icon: "_icon_ripple",
 					label: i18n("水波纹"),
 					href: "/directive/ripple"
 				},
 				{ icon: "icon_report", label: i18n("layer"), href: "/other/layer" },
-				{ icon: "icon_report", label: i18n("move"), href: "/other/move" },
-				{ icon: "icon_report", label: i18n("Popover"), href: "/other/popover" },
+				{ icon: "_icon_move", label: i18n("move"), href: "/other/move" },
+				{ icon: "_icon_popover", label: i18n("Popover"), href: "/other/popover" },
 				{
-					icon: "icon_report",
+					icon: "_icon_tooltip",
 					label: `${i18n("Tooltip")} ${i18n("文字提示")}`,
 					href: "/other/tooltip"
 				},
@@ -68,7 +68,7 @@ export default async function () {
 			icon: "_icon_combine",
 			label: i18n("聚合类"),
 			children: [
-				{ href: "/x-component/x-form", icon: "icon_report", label: i18n("xForm") },
+				{ href: "/x-component/x-form", icon: "_icon_form", label: i18n("xForm") },
 				{
 					href: "/x-component/x-item",
 					icon: "icon_report",
@@ -117,23 +117,27 @@ export default async function () {
 					label: `${i18n("Layout")} ${i18n("布局")}`,
 					href: "/component/base/layout"
 				},
-				{ icon: "icon_report", label: i18n("button"), href: "/component/base/button" },
+				{ icon: "_icon_btn", label: i18n("button"), href: "/component/base/button" },
 				{
 					icon: "icon_report",
 					label: `${i18n("AdvancedSearch")} ${i18n("高级搜索按钮")}`,
 					href: "/component/form/advanced-search"
 				},
-				{ icon: "icon_report", label: i18n("input"), href: "/component/form/input" },
+				{ icon: "_icon_item_input", label: i18n("input"), href: "/component/form/input" },
 				{
-					icon: "icon_report",
+					icon: "_icon_item_input_number",
 					label: i18n("inputNumber"),
 					href: "/component/form/input-number"
 				},
-				{ icon: "icon_report", label: i18n("checkbox"), href: "/component/form/checkbox" },
-				{ icon: "icon_report", label: i18n("radio"), href: "/component/form/radio" },
+				{
+					icon: "_icon_item_checkbox",
+					label: i18n("checkbox"),
+					href: "/component/form/checkbox"
+				},
+				{ icon: "_icon_item_radio", label: i18n("radio"), href: "/component/form/radio" },
 				{ icon: "_icon_switch", label: i18n("switch"), href: "/component/form/switch" },
 				{
-					icon: "_icon_selector",
+					icon: "_icon_slider",
 					label: `${i18n("Slider")} ${i18n("滑块")}`,
 					href: "/component/form/slider"
 				},

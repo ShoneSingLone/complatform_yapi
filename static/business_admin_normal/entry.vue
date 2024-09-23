@@ -2,11 +2,12 @@
 export default async function () {
 	_.each(
 		{
-			AdminXItemDaterange: "/common/admin/components/AdminXItemDaterange.vue",
-			AdminDeptCascader: "/common/admin/components/AdminDeptCascader.vue",
-			AdminMenuCascader: "/common/admin/components/AdminMenuCascader.vue",
-			AdminMenuPermissionTree: "/common/admin/components/AdminMenuPermissionTree.vue",
-			AdminIconSelector: "/common/admin/components/AdminIconSelector/AdminIconSelector.vue"
+			AdminXItemDaterange: "/common/type_admin/components/AdminXItemDaterange.vue",
+			AdminDeptCascader: "/common/type_admin/components/AdminDeptCascader.vue",
+			AdminMenuCascader: "/common/type_admin/components/AdminMenuCascader.vue",
+			AdminMenuPermissionTree: "/common/type_admin/components/AdminMenuPermissionTree.vue",
+			AdminIconSelector:
+				"/common/type_admin/components/AdminIconSelector/AdminIconSelector.vue"
 		},
 		(componentURL, name) => Vue.component(name, () => _.$importVue(componentURL))
 	);
@@ -21,7 +22,7 @@ export default async function () {
 	] = await Promise.all([
 		Promise.all([
 			_.$importVue("/common/ui-x/useXui.vue"),
-			_.$importVue("/common/utils/useAdmin/tools.vue"),
+			_.$importVue("/common/type_admin/use_admin/tools.vue"),
 			_.$importVue("/common/ui-element/useElementUI.NoJS.vue", {
 				// _.$importVue("/common/ui-element/useElementUI.vue", {
 				size: "small",
@@ -31,8 +32,8 @@ export default async function () {
 		_.$importVue([
 			"@/router/routes.vue",
 			/* admin 相关 */
-			"/common/utils/useAdmin/store/tagsView.vue",
-			"/common/utils/useAdmin/store/permission.vue",
+			"/common/type_admin/use_admin/store/tagsView.vue",
+			"/common/type_admin/use_admin/store/permission.vue",
 			/* admin 相关 */
 			/*常量*/
 			"@/utils/var.vue",

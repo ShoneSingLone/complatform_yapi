@@ -65,7 +65,7 @@ export default async function () {
 		setup() {},
 		components: {
 			AdminDepartmentTree: () =>
-				_.$importVue("/common/admin/components/AdminDepartmentTree.vue")
+				_.$importVue("/common/type_admin/components/AdminDepartmentTree.vue")
 		},
 		async mounted() {
 			this.getTableData();

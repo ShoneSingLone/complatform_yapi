@@ -11,17 +11,15 @@ export default async function () {
 	Vue.prototype.$t = Vue.prototype.i18n;
 	/* app entry  */
 	function setRemBase() {
-		debugger;
 		const wWidth = $(window).width();
 		const rate = wWidth / 375;
 		const unit = (16 * rate) / 16;
 		$("html").css("font-size", unit + "px");
 	}
-	debugger;
+
 	$(window)
 		.on("resize", setRemBase)
 		.on("orientationchange", function () {
-			debugger;
 			// 这个时候屏幕的尺寸数据还没有变化
 			let orientation = window.orientation;
 			switch (orientation) {
@@ -35,7 +33,6 @@ export default async function () {
 		});
 	// 监听屏幕转动
 	window.addEventListener("orientationchange", function () {
-		debugger;
 		// 这个时候屏幕的尺寸数据还没有变化
 		let orientation = window.orientation;
 		switch (orientation) {

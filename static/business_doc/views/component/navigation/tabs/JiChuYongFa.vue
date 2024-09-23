@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<xMd :md="md" />
-		<xTabs v-model="activeName" @tabClick="handleClick">
+		<xTabs v-model="activeName" @tabClick="handleClick" :slotHeaderOpr="renderCloseIcon">
 			<xTabPane label="用户管理" name="first">用户管理</xTabPane>
 			<xTabPane label="配置管理" name="second">配置管理</xTabPane>
 			<xTabPane label="角色管理" name="third">角色管理</xTabPane>
@@ -19,6 +19,11 @@ export default async function () {
 			};
 		},
 		methods: {
+			renderCloseIcon() {
+				return hDiv(h("xIcon", { icon: "close" }), {
+					class: "flex middle height100 width100 end"
+				});
+			},
 			handleClick(tab, event) {
 				console.log(tab, event);
 			}

@@ -1,6 +1,6 @@
 <style lang="less"></style>
 <template>
-	<xDialog>
+	<xDialog style="height: 400px">
 		<xForm ref="form" :style="labelStyle" col="1">
 			<xItem :configs="form.isProxy" />
 			<xItem :configs="form.witchEnv" v-if="form.isProxy.value" />

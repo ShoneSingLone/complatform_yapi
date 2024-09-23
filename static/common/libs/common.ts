@@ -312,6 +312,7 @@
 
 				el.click();
 			} catch (error) {
+				resolve([]);
 				console.error(error);
 			}
 		});
@@ -1848,7 +1849,6 @@
 		})();
 
 		if (!$wrapper || $wrapper.length == 0) {
-			console.log(selector);
 			throw new Error("selector不是可用的dom元素");
 		}
 
@@ -1873,11 +1873,15 @@
 	function xItemDomBy(selector) {
 		let $wrapper = xItemWrapperBy(selector);
 		const $target = (function () {
-			let $target = $wrapper.find(`[data-form-item-id^=x_form_id_]`);
-			if ($target.length === 0) {
-				return $wrapper;
+			if ($wrapper) {
+				let $target = $wrapper.find(`[data-form-item-id^=x_form_id_]`);
+				if ($target.length === 0) {
+					return $wrapper;
+				}
+				return $target;
+			} else {
+				return [];
 			}
-			return $target;
 		})();
 		return $target;
 	}
@@ -1981,10 +1985,12 @@
 		let vm = {};
 		try {
 			let $wrapper = xItemWrapperBy(selector);
-			const itemSelector = `.el-table__body-wrapper [data-row-index=${rowIndex}][data-col-prop=${colProp}]`;
-			const targetDom = $wrapper.find(itemSelector);
-			const { formItemId } = targetDom?.[0].dataset || {};
-			vm = Vue._X_ITEM_VM_S?.[formItemId || "________No"] || {};
+			if ($wrapper) {
+				const itemSelector = `.el-table__body-wrapper [data-row-index=${rowIndex}][data-col-prop=${colProp}]`;
+				const targetDom = $wrapper.find(itemSelector);
+				const { formItemId } = targetDom?.[0].dataset || {};
+				vm = Vue._X_ITEM_VM_S?.[formItemId || "________No"] || {};
+			}
 		} catch (error) {
 		} finally {
 			return vm;

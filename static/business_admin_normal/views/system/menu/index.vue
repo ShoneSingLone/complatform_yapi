@@ -181,7 +181,6 @@ export default async function () {
 					}
 					this.getTableData();
 				} catch (error) {
-					debugger;
 					if (error) {
 						_.$msgError(error?.msg || error);
 					}

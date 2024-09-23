@@ -21,7 +21,10 @@
 			path="@/views/component/data/virtualizedTable/ZiDingYiKongYuanSuXuanRanQi.vue" />
 		<DemoAndCode
 			title="可展开的附加信息"
-			path="@/views/component/data/virtualizedTable/KeZhanKaiDeFuJiaXinXi.vue"
+			path="@/views/component/data/virtualizedTable/KeZhanKaiDeFuJiaXinXi.vue" />
+		<DemoAndCode
+			title="纵跨行"
+			path="@/views/component/data/virtualizedTable/ZongKuaHang.vue"
 			unfold />
 	</DocContentOfDemo>
 </template>

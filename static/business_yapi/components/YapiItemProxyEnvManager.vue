@@ -67,7 +67,6 @@ export default async function ({}) {
 						};
 					});
 				} catch (error) {
-					debugger;
 					return [];
 				}
 			},

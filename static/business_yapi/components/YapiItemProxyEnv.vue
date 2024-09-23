@@ -37,13 +37,12 @@ export default async function () {
 
 			return h(
 				"xSelect",
-				merge_hFnProps([
+				mergeProps4h([
 					{
 						attrs,
 						on: vm.mixin_listeners,
 						/* configs,value */
 						onChange(val) {
-							debugger;
 							vm.mixin_value = val;
 						}
 					},

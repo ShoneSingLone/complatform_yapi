@@ -12,7 +12,7 @@ export default async function () {
 		}
 	] = await _.$importVue(["/common/ui-x/components/data/xVirtualList/xBuildList.vue"]);
 
-	const DynamicSizeGrid = createGrid({
+	const options = {
 		name: "ElDynamicSizeGrid",
 		getColumnPosition: (props, idx, cache2) => {
 			const item = getItemFromCache(props, idx, cache2, "column");
@@ -22,12 +22,23 @@ export default async function () {
 			const item = getItemFromCache(props, idx, cache2, "row");
 			return [item.size, item.offset];
 		},
-		getColumnOffset: (props, columnIndex, alignment, scrollLeft, cache2, scrollBarWidth2) =>
-			getOffset(props, columnIndex, alignment, scrollLeft, cache2, "column", scrollBarWidth2),
-		getRowOffset: (props, rowIndex, alignment, scrollTop, cache2, scrollBarWidth2) =>
-			getOffset(props, rowIndex, alignment, scrollTop, cache2, "row", scrollBarWidth2),
-		getColumnStartIndexForOffset: (props, scrollLeft, cache2) =>
-			findItem(props, cache2, scrollLeft, "column"),
+		getColumnOffset: (props, columnIndex, alignment, scrollLeft, cache2, scrollBarWidth2) => {
+			return getOffset(
+				props,
+				columnIndex,
+				alignment,
+				scrollLeft,
+				cache2,
+				"column",
+				scrollBarWidth2
+			);
+		},
+		getRowOffset: (props, rowIndex, alignment, scrollTop, cache2, scrollBarWidth2) => {
+			return getOffset(props, rowIndex, alignment, scrollTop, cache2, "row", scrollBarWidth2);
+		},
+		getColumnStartIndexForOffset: (props, scrollLeft, cache2) => {
+			return findItem(props, cache2, scrollLeft, "column");
+		},
 		getColumnStopIndexForStartIndex: (props, startIndex, scrollLeft, cache2) => {
 			const item = getItemFromCache(props, startIndex, cache2, "column");
 			const maxOffset = scrollLeft + props.width;
@@ -41,8 +52,9 @@ export default async function () {
 		},
 		getEstimatedTotalHeight,
 		getEstimatedTotalWidth,
-		getRowStartIndexForOffset: (props, scrollTop, cache2) =>
-			findItem(props, cache2, scrollTop, "row"),
+		getRowStartIndexForOffset: (props, scrollTop, cache2) => {
+			return findItem(props, cache2, scrollTop, "row");
+		},
 		getRowStopIndexForStartIndex: (props, startIndex, scrollTop, cache2) => {
 			const { totalRow, height } = props;
 			const item = getItemFromCache(props, startIndex, cache2, "row");
@@ -77,20 +89,10 @@ export default async function () {
 				if (forceUpdate) (_b = instance.proxy) == null ? void 0 : _b.$forceUpdate();
 			};
 			const resetAfterColumnIndex = (columnIndex, forceUpdate) => {
-				resetAfter(
-					{
-						columnIndex
-					},
-					forceUpdate
-				);
+				resetAfter({ columnIndex }, forceUpdate);
 			};
 			const resetAfterRowIndex = (rowIndex, forceUpdate) => {
-				resetAfter(
-					{
-						rowIndex
-					},
-					forceUpdate
-				);
+				resetAfter({ rowIndex }, forceUpdate);
 			};
 			Object.assign(instance.proxy, {
 				resetAfterColumnIndex,
@@ -113,8 +115,11 @@ export default async function () {
 			return cache2;
 		},
 		clearCache: false,
-		validateProps: ({ columnWidth, rowHeight }) => {}
-	});
+		validateProps: ({ columnWidth, rowHeight }) => {
+			return;
+		}
+	};
+	const DynamicSizeGrid = createGrid(options);
 	return DynamicSizeGrid;
 }
 </script>

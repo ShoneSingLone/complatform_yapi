@@ -15,7 +15,9 @@
 				:id="tooltipId"
 				:aria-hidden="disabled || !showPopper ? 'true' : 'false'">
 				<div class="el-popover__title" v-if="title" v-text="title"></div>
-				<slot>{{ content }}</slot>
+				<slot>
+					<xRender :render="content" />
+				</slot>
 			</div>
 		</transition>
 		<span class="el-popover__reference-wrapper" ref="wrapper">
@@ -78,7 +80,10 @@ export default async function () {
 			},
 			title: String,
 			disabled: Boolean,
-			content: String,
+			content: {
+				type: [String, Object]
+				// validator: value => { debugger; return typeof value === "string" || isVNode(value); }
+			},
 			reference: {},
 			popperClass: String,
 			width: {},

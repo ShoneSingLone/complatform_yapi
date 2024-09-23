@@ -23,7 +23,9 @@ export default async function () {
 					state.routes_sidebar = CONSTANT_ROUTES.concat(routes);
 				},
 				async generateRoutes() {
-					const auth = await _.$importVue("/common/utils/useAdmin/auth.vue", { rootApp });
+					const auth = await _.$importVue("/common/type_admin/use_admin/auth.vue", {
+						rootApp
+					});
 
 					const { permission: storePermission } = rootApp;
 

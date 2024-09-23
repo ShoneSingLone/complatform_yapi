@@ -8,10 +8,14 @@
 </style>
 
 <template>
-	<section id="ProjectInterfaceSection" class="x-page-view flex1 flash-when">
+	<section id="ProjectInterfaceSection" class="x-page-view flex1">
 		<xPageContent>
-			<ProjectInterfaceSectionInterfaceDetail v-if="cptInterfaceType === 'interface'" />
-			<ProjectInterfaceSectionInterfaceList v-else />
+			<xAutoResizer :onResize="setSize">
+				<div class="flex">
+					<ProjectInterfaceSectionInterfaceList :style="cptListStyle" />
+					<ProjectInterfaceSectionInterfaceDetail :style="cptDetailStyle" />
+				</div>
+			</xAutoResizer>
 		</xPageContent>
 	</section>
 </template>
@@ -159,11 +163,11 @@ export default async function () {
 			};
 
 			return {
+				size: {},
 				data: [],
 				configsTable: defTable({
 					isHideQuery: true,
 					onQuery() {
-						debugger;
 						vm.filterList();
 					},
 					data: {
@@ -292,7 +296,7 @@ export default async function () {
 						options() {
 							return _.concat(
 								[{ label: "未设置", value: "unset" }],
-								_.map(vm.APP.cptProject.env, row => {
+								_.map(vm.APP?.cptProject?.env, row => {
 									return {
 										value: row._id,
 										label: row.name
@@ -308,12 +312,47 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptListStyle({ size: { width, height }, cptIsShowDetail }) {
+				const style = {
+					width: width + "px",
+					height: height + "px",
+					zIndex: 1,
+					transition: `all 0.3s ease-in`
+				};
+				if (cptIsShowDetail) {
+					style.transform = `translate(-50px, -50px)`;
+				}
+
+				return style;
+			},
+			cptDetailStyle({ size: { width, height }, cptIsShowDetail }) {
+				const style = {
+					transition: `all 0.3s ease-in`,
+					zIndex: 2,
+					position: "absolute",
+					transform: `translate(120%, 0)`,
+					width: `${width}px`,
+					height: `${height}px`,
+					position: "absolute"
+				};
+
+				if (cptIsShowDetail) {
+					return _.merge(style, {
+						transform: `translate(0, 0)`
+					});
+				}
+
+				return style;
+			},
+			cptIsShowDetail() {
+				return this.cptInterfaceType === "interface";
+			},
 			cptInterfaceType() {
 				return this.$route.query.interfaceType;
 			},
 			cptEnvObject() {
 				return _.reduce(
-					this.APP.cptProject.env,
+					this.APP?.cptProject?.env,
 					(target, e) => {
 						target[e._id] = e;
 						return target;
@@ -331,6 +370,12 @@ export default async function () {
 			}
 		},
 		methods: {
+			setSize({ width, height }) {
+				this.size = {
+					width,
+					height
+				};
+			},
 			resetFilter() {
 				_.$setFormValues(this.form, {
 					path: "",
@@ -393,7 +438,6 @@ export default async function () {
 					}
 					return _allInterface;
 				})();
-
 				_.$setTableData(this.configsTable, { list: configsTableDataList });
 			}
 		}

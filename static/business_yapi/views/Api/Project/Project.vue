@@ -103,6 +103,12 @@ export default async function () {
 						},
 						[]
 					);
+					const needMergeColumnProp = "catid";
+					const groupedRowObj = _.groupBy(vm.allInterface, needMergeColumnProp);
+					vm.allInterface = xTableVirNewGroupSortedRows({
+						groupedRowObj,
+						mergeProp: needMergeColumnProp
+					});
 					const _allTags = _.reduce(
 						vm.allInterface,
 						(allTags, i) => {

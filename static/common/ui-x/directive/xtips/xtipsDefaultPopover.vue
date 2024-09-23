@@ -1,16 +1,15 @@
 <template>
 	<transition :name="transition" @after-enter="handleAfterEnter" @after-leave="handleAfterLeave">
 		<div
-			class="el-popover el-popper x-xtips"
-			:class="[popperClass, content && 'el-popover--plain']"
+			v-show="cptIsShow"
 			ref="popper"
-			v-show="!disabled && showPopper"
-			:style="cptStyle"
 			role="tooltip"
+			:class="cptClass"
+			:style="cptStyle"
 			:id="tooltipId"
 			:aria-hidden="disabled || !showPopper ? 'true' : 'false'">
-			<div class="el-popover__title" v-if="title" v-text="title"></div>
-			<div ref="refRender">
+			<div v-if="title" class="el-popover__title" v-text="title"></div>
+			<div :style="cptRefRenderWrapperStyle" ref="refRender">
 				<xRender :render="content" />
 			</div>
 		</div>
@@ -75,6 +74,21 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptRefRenderWrapperStyle() {
+				return {};
+			},
+			cptIsShow({ disabled, showPopper }) {
+				return !disabled && showPopper;
+			},
+			cptClass({ popperClass, content }) {
+				return [
+					popperClass,
+					{
+						"el-popover el-popper x-xtips": true,
+						"el-popover--plain": !!content
+					}
+				];
+			},
 			tooltipId() {
 				return `el-popover-${this.refId}`;
 			},
@@ -272,23 +286,26 @@ export default async function () {
 			},
 
 			resetTransformOrigin() {
-				if (!this.transformOrigin) return;
-				let placementMap = {
-					top: "bottom",
-					bottom: "top",
-					left: "right",
-					right: "left"
-				};
-				let placement = this.popperJS._popper.getAttribute("x-placement").split("-")[0];
-				let origin = placementMap[placement];
-				this.popperJS._popper.style.transformOrigin =
-					typeof this.transformOrigin === "string"
-						? this.transformOrigin
-						: ["top", "bottom"].indexOf(placement) > -1
-							? `center ${origin}`
-							: `${origin} center`;
+				if (this.transformOrigin) {
+					let placementMap = {
+						top: "bottom",
+						bottom: "top",
+						left: "right",
+						right: "left"
+					};
+					let placement = this.popperJS._popper.getAttribute("x-placement").split("-")[0];
+					let origin = placementMap[placement];
+					this.popperJS._popper.style.transformOrigin = (() => {
+						if (_.isString(this.transformOrigin)) {
+							return this.transformOrigin;
+						} else if (["top", "bottom"].indexOf(placement) > -1) {
+							return `center ${origin}`;
+						} else {
+							return `${origin} center`;
+						}
+					})();
+				}
 			},
-
 			appendArrow(element) {
 				let hash;
 				if (this.appended) {

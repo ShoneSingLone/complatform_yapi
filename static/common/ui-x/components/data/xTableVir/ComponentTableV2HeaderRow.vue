@@ -9,7 +9,8 @@ export default async function () {
 			return function () {
 				let $vSlots = this.$vSlots;
 				const { columns, columnsStyles, headerIndex, style } = props;
-				let Cells = columns.map((column, columnIndex) => {
+
+				let Cells = _.map(columns, (column, columnIndex) => {
 					return $vSlots.cell({
 						columns: columns,
 						column,

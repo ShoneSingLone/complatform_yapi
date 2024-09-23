@@ -14,7 +14,7 @@ export default async function () {
 				let $vSlots = this.$vSlots;
 				const { columns, columnsStyles, expandColumnKey, depth, rowData, rowIndex, style } =
 					this.$vnode.data;
-				let ColumnCells = columns.map((column, columnIndex) => {
+				let ColumnCells = _.map(columns, (column, columnIndex) => {
 					const expandable = _.$isArrayFill(rowData.children);
 					const cellParams = {
 						column,
@@ -62,9 +62,9 @@ export default async function () {
 				if (unref(measurable)) {
 					const { height, ...exceptHeightStyle } = style || {};
 					const _measured = unref(measured);
-					return h(
-						"div",
-						merge_hFnProps([
+					return hDiv(
+						ColumnCells,
+						mergeProps4h([
 							{
 								ref: rowRef,
 								class: props.classV2,
@@ -73,13 +73,13 @@ export default async function () {
 							},
 							attrs,
 							unref(eventHandlers)
-						]),
-						[ColumnCells]
+						])
 					);
 				}
-				return h(
-					"div",
-					merge_hFnProps([
+
+				return hDiv(
+					ColumnCells,
+					mergeProps4h([
 						attrs,
 						{
 							ref: rowRef,
@@ -88,8 +88,7 @@ export default async function () {
 							attrs
 						},
 						unref(eventHandlers)
-					]),
-					[ColumnCells]
+					])
 				);
 			};
 		}

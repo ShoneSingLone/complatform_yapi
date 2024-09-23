@@ -14,9 +14,7 @@ export default async function ({ row }) {
 
 	return defineComponent({
 		props: useDialogProps(),
-		mounted() {
-			debugger;
-		},
+		mounted() {},
 		data() {
 			return {
 				form: {
