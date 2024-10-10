@@ -398,7 +398,8 @@ module.exports = {
 						uid: this.$uid,
 						page,
 						size,
-						name
+						name,
+						isAdmin: this.$user.role === "admin"
 					});
 
 					ctx.body = xU.$response({

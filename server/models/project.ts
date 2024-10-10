@@ -236,7 +236,7 @@ class ModelProject extends ModelBase {
 		return this.model.countDocuments(params);
 	}
 
-	async paging({ group_id, page, size, name, uid }) {
+	async paging({ group_id, page, size, name, uid, isAdmin }) {
 		name = name || ".*";
 
 		const condition = {
@@ -249,12 +249,17 @@ class ModelProject extends ModelBase {
 				}
 			]
 		};
+		if (isAdmin) {
+			/* 管理员可以查看所有项目 */
+			delete condition["members.uid"];
+		}
 
 		if (xU.isInput(group_id)) {
 			condition.group_id = group_id;
 		}
 
 		if (page === 0 && size === -1) {
+			/* 查询所有 */
 			return {
 				list: await this.model
 					.find(condition)
@@ -265,6 +270,7 @@ class ModelProject extends ModelBase {
 				total: await this.model.countDocuments(condition)
 			};
 		} else {
+			/* 分页查询 */
 			return {
 				list: await this.model
 					.find(condition)

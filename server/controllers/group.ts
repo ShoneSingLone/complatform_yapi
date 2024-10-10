@@ -315,39 +315,6 @@ class groupController extends ControllerBase {
 		let result = await orm.group.del(id);
 		ctx.body = xU.$response(result);
 	}
-
-	/**
-	 * 更新项目分组
-	 * @interface /group/up
-	 * @method post
-	 * @param {String} id 项目分组id
-	 * @param {String} group_name 项目分组名称
-	 * @param {String} group_desc 项目分组描述
-	 * @category group
-	 * @foldnumber 10
-	 * @returns {Object}
-	 * @example ./api/group/up.json
-	 */
-	async up(ctx) {
-		let params = ctx.params;
-
-		if ((await this.checkAuth(params.id, "group", "danger")) !== true) {
-			return (ctx.body = xU.$response(null, 405, "没有权限"));
-		}
-
-		let result = await orm.group.up(params.id, params);
-		let username = this.getUsername();
-		xU.saveLog({
-			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了 <a href="/group/${
-				params.id
-			}">${params.group_name}</a> 分组`,
-			type: "group",
-			uid: this.getUid(),
-			username: username,
-			typeid: params.id
-		});
-		ctx.body = xU.$response(result);
-	}
 }
 
 module.exports = groupController;

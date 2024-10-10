@@ -224,6 +224,68 @@ module.exports = {
 				}
 			}
 		},
+		/* 更新项目分组 */
+		"/group/up": {
+			post: {
+				summary: "更新项目分组",
+				description: "更新项目分组",
+				request: {
+					body: {
+						group_id: {
+							required: true,
+							description: "分组ID",
+							type: "number"
+						},
+						group_name: {
+							required: true,
+							description: "分组名称",
+							type: "string"
+						},
+						group_desc: {
+							required: false,
+							description: "分组描述"
+						},
+						custom_field1: {
+							required: true,
+							description: "分组描述",
+							type: "object",
+							properties: {
+								enable: {
+									type: "boolean",
+									description: "是否启用自定义字段"
+								},
+								name: {
+									type: "string",
+									description: "自定义字段"
+								}
+							}
+						}
+					}
+				},
+				async handler(ctx) {
+					let { group_id, group_name, group_desc, custom_field1 } = ctx.payload;
+
+					if ((await this.checkAuth(group_id, "group", "danger")) !== true) {
+						return (ctx.body = xU.$response(null, 405, "没有权限"));
+					}
+
+					let result = await orm.group.up(group_id, {
+						group_name,
+						group_desc,
+						custom_field1
+					});
+					let username = this.getUsername();
+					xU.saveLog({
+						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了 <a href="/group/${group_id}">${group_name}</a> 分组`,
+						type: "group",
+						typeid: group_id,
+						uid: this.getUid(),
+						username: username
+					});
+					ctx.body = xU.$response(result);
+				}
+			}
+		},
 		"/group/del_member": {
 			/*  */
 			post: {
