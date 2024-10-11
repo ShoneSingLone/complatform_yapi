@@ -39,7 +39,8 @@
 	},
 	"license": "MIT",
 	"dependencies": {
-		"iconv-lite": "0.6.2"
+		"iconv-lite": "0.6.2",
+		"node-id3": "file:"
 	},
 	"devDependencies": {
 		"chai": "^4.2.0",
