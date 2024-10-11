@@ -9,7 +9,7 @@ async function upsertInterface(ctx) {
 		let auth = await this.checkAuth(payload.project_id, "project", "edit");
 
 		if (!auth) {
-			return (response = xU.$response(null, 40033, "没有权限"));
+			return (response = xU.$response(null, 40033, "no auth upsert interface"));
 		}
 	}
 	payload.method = payload.method || "GET";
@@ -39,6 +39,7 @@ async function upsertInterface(ctx) {
 	payload.query_path = {};
 	payload.query_path.path = http_path.pathname;
 	payload.query_path.params = [];
+
 	xU._.each(http_path.query, (value, name) => {
 		payload.query_path.params.push({
 			name: name,
@@ -52,7 +53,7 @@ async function upsertInterface(ctx) {
 		payload.method
 	);
 
-	if (count > 0) {
+	if (count) {
 		return (response = xU.$response(
 			null,
 			40022,
@@ -225,12 +226,12 @@ async function interface_add_cat({ payload }) {
 			return (response = xU.$response(null, 400, "名称不能为空"));
 		}
 
-		const res = await orm.interfaceCategory.search({
+		const categoryArray = await orm.interfaceCategory.search({
 			project_id: payload.project_id,
 			name: payload.name
 		});
 
-		if (res?.length) {
+		if (categoryArray?.length) {
 			return (response = xU.$response(null, 400, "名称已存在"));
 		}
 
