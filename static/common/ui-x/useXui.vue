@@ -31,6 +31,141 @@ export default async function ({
 	/* @ts-ignore */
 	window._opts = window._opts || {};
 
+	(function (/* common h render  */) {
+		const useH = tag => (props, innerContent) => h(tag, props, innerContent);
+
+		const hDiv = useH("div");
+		PRIVATE_GLOBAL.hDiv = hDiv;
+
+		const hSpan = useH("span");
+		PRIVATE_GLOBAL.hSpan = hSpan;
+
+		const hxBtn = useH("xBtn");
+		PRIVATE_GLOBAL.hxBtn = hxBtn;
+
+		const hxIcon = useH("xIcon");
+		PRIVATE_GLOBAL.hxIcon = hxIcon;
+
+		const hxTag = useH("xTag");
+		PRIVATE_GLOBAL.hxTag = hxTag;
+
+		const hxItem = useH("xItem");
+		PRIVATE_GLOBAL.hxItem = hxItem;
+
+		PRIVATE_GLOBAL.hTableExpandRow = children =>
+			hDiv({ class: "x-table-vir-expand-row" }, children);
+
+		PRIVATE_GLOBAL.hTipsHover = ({ msg, content, placement }) => {
+			content =
+				content ||
+				function () {
+					return hSpan(msg);
+				};
+			placement = placement || "right-start";
+			return {
+				name: "xtips",
+				value: {
+					content,
+					trigger: "hover",
+					placement
+				}
+			};
+		};
+
+		PRIVATE_GLOBAL.hVal2Tag = (value, options) => {
+			let item = { label: value, type: "" };
+			item =
+				_.find(options, item => {
+					return _.$isSame(item.value, value);
+				}) || item;
+			if (item.type) {
+				return h("xTag", { type: item.type }, [item.label]);
+			} else if (item.listClass) {
+				return h("xTag", { type: item.listClass }, [item.label]);
+			}
+			return hDiv({}, [item.label]);
+		};
+
+		PRIVATE_GLOBAL.hEllipsis = content => {
+			return hDiv({ staticClass: "ellipsis", attrs: { title: content } }, [content]);
+		};
+
+		PRIVATE_GLOBAL.hBtnWithMore = props => {
+			return h("xColActionAndMore", props);
+		};
+
+		PRIVATE_GLOBAL.hTipsDel = tipsString => {
+			return hDiv([
+				hSpan({
+					staticClass: "el-icon-warning",
+					style: "color:var(--ti-base-color-error-3)"
+				}),
+				hSpan({ staticClass: "ml4" }, tipsString)
+			]);
+		};
+
+		PRIVATE_GLOBAL.hLink = props => {
+			return h(
+				"a",
+				mergeProps4h([
+					{},
+					props,
+					{
+						props,
+						attrs: props,
+						class: "el-button el-button--text el-button--small ellipsis cell-link text-align-left"
+					}
+				]),
+				[props.label]
+			);
+		};
+
+		((/* xTableVir相关 */) => {
+			function xTableVirModifyCellsHeight({ mergeProp, columns, cells, rowData, calStyle }) {
+				if (_.isEmpty(columns)) {
+					return cells;
+				}
+				const mergeIndex = _.findIndex(columns, { prop: mergeProp });
+				const rowSpanProp = `${mergeProp}_row_span`;
+
+				if (_.isNumber(rowData[rowSpanProp])) {
+					const rowSpan = rowData[rowSpanProp];
+
+					cells[mergeIndex] = cloneVNode(cells[mergeIndex], {
+						style: calStyle({ rowSpan })
+					});
+				}
+				return cells;
+			}
+
+			function setCurrentRowSpan({ rows, mergeProp }) {
+				const allRowSpan = rows.length;
+				return _.map(rows, (row, index) => {
+					/* @ts-ignore */
+					const rowSpan = allRowSpan - index;
+					row[`${mergeProp}_row_span`] = rowSpan;
+					return row;
+				});
+			}
+
+			function xTableVirNewGroupSortedRows({ groupedRowObj, mergeProp, sortBy }) {
+				sortBy = sortBy || Number;
+				const keys = _.sortBy(Object.keys(groupedRowObj), sortBy);
+				/*  */
+				let dataGroupSorted = [];
+				_.each(keys, key => {
+					let currentArray = groupedRowObj[key];
+					currentArray = setCurrentRowSpan({ rows: currentArray, mergeProp });
+					dataGroupSorted = dataGroupSorted.concat(currentArray);
+				});
+				return dataGroupSorted;
+			}
+
+			PRIVATE_GLOBAL.xTableVirNewGroupSortedRows = xTableVirNewGroupSortedRows;
+			PRIVATE_GLOBAL.xTableVirModifyCellsHeight = xTableVirModifyCellsHeight;
+		})();
+	})();
+
 	/* 全局 _xUtils */
 	await _.$importVue("/common/ui-x/common/xUIcomponetUtils.vue");
 	/* 基础工具类 */
@@ -151,131 +286,6 @@ export default async function ({
 		await setThemeCss();
 
 		$(window).on("xUiThemeChange", setThemeCss);
-	})();
-
-	(function (/* common h render  */) {
-		const useH = tag => {
-			return (innerContent, props = {}) => {
-				if (!_.isArray(innerContent)) {
-					innerContent = [innerContent];
-				}
-				return h(tag, props, innerContent);
-			};
-		};
-
-		const hDiv = useH("div");
-		const hSpan = useH("span");
-
-		PRIVATE_GLOBAL.hDiv = hDiv;
-		PRIVATE_GLOBAL.hTableExpandRow = children =>
-			hDiv(children, { class: "x-table-vir-expand-row" });
-		PRIVATE_GLOBAL.hSpan = hSpan;
-
-		PRIVATE_GLOBAL.hTipsHover = ({ msg, content, placement }) => {
-			content =
-				content ||
-				function () {
-					return hSpan(msg);
-				};
-			placement = placement || "right-start";
-			return {
-				name: "xtips",
-				value: {
-					content,
-					trigger: "hover",
-					placement
-				}
-			};
-		};
-
-		PRIVATE_GLOBAL.hVal2Tag = (value, options) => {
-			let item = { label: value, type: "" };
-			item =
-				_.find(options, item => {
-					return _.$isSame(item.value, value);
-				}) || item;
-			if (item.type) {
-				return h("xTag", { type: item.type }, [item.label]);
-			} else if (item.listClass) {
-				return h("xTag", { type: item.listClass }, [item.label]);
-			}
-			return h("div", {}, [item.label]);
-		};
-
-		PRIVATE_GLOBAL.hEllipsis = content => {
-			return h("div", { staticClass: "ellipsis", attrs: { title: content } }, [content]);
-		};
-
-		PRIVATE_GLOBAL.hBtnWithMore = props => {
-			return h("xColActionAndMore", props);
-		};
-
-		PRIVATE_GLOBAL.hTipsDel = tipsString => {
-			return h("div", [
-				hSpan("", {
-					staticClass: "el-icon-warning",
-					style: "color:var(--ti-base-color-error-3)"
-				}),
-				hSpan(tipsString, { staticClass: "ml4" })
-			]);
-		};
-
-		PRIVATE_GLOBAL.hLink = props => {
-			return h(
-				"a",
-				_.merge({}, props, {
-					props,
-					attrs: props,
-					class: "el-button el-button--text el-button--small ellipsis cell-link text-align-left"
-				}),
-				[props.label]
-			);
-		};
-
-		((/* xTableVir相关 */) => {
-			function xTableVirModifyCellsHeight({ mergeProp, columns, cells, rowData, calStyle }) {
-				if (_.isEmpty(columns)) {
-					return cells;
-				}
-				const mergeIndex = _.findIndex(columns, { prop: mergeProp });
-				const rowSpanProp = `${mergeProp}_row_span`;
-
-				if (_.isNumber(rowData[rowSpanProp])) {
-					const rowSpan = rowData[rowSpanProp];
-
-					cells[mergeIndex] = cloneVNode(cells[mergeIndex], {
-						style: calStyle({ rowSpan })
-					});
-				}
-				return cells;
-			}
-
-			function setCurrentRowSpan({ rows, mergeProp }) {
-				const allRowSpan = rows.length;
-				return _.map(rows, (row, index) => {
-					/* @ts-ignore */
-					const rowSpan = allRowSpan - index;
-					row[`${mergeProp}_row_span`] = rowSpan;
-					return row;
-				});
-			}
-
-			function xTableVirNewGroupSortedRows({ groupedRowObj, mergeProp, sortBy }) {
-				sortBy = sortBy || Number;
-				const keys = _.sortBy(Object.keys(groupedRowObj), sortBy);
-				/*  */
-				let dataGroupSorted = [];
-				_.each(keys, key => {
-					let currentArray = groupedRowObj[key];
-					currentArray = setCurrentRowSpan({ rows: currentArray, mergeProp });
-					dataGroupSorted = dataGroupSorted.concat(currentArray);
-				});
-				return dataGroupSorted;
-			}
-
-			PRIVATE_GLOBAL.xTableVirNewGroupSortedRows = xTableVirNewGroupSortedRows;
-			PRIVATE_GLOBAL.xTableVirModifyCellsHeight = xTableVirModifyCellsHeight;
-		})();
 	})();
 }
 </script>

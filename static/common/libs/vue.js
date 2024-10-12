@@ -702,6 +702,8 @@
 		return new VNode(undefined, undefined, undefined, String(val));
 	}
 
+	const isVNode = vm => !!vm?.TYPE_IS_VNODE;
+
 	// optimized shallow clone
 	// used for static nodes and slot nodes because they may be reused across
 	// multiple renders, cloning them avoids errors when DOM manipulations rely
@@ -1913,12 +1915,6 @@
 	// wrapper function for providing a more flexible interface
 	// without getting yelled at by flow
 	function _createElement(context, tag, props, children, normalizationType, alwaysNormalize) {
-		/* 如果没有prop可以不填，判断你为数组或者原始值为children */
-		if (isArray(props) || isPrimitive(props)) {
-			normalizationType = children;
-			children = props;
-			props = undefined;
-		}
 		if (isTrue(alwaysNormalize)) {
 			normalizationType = ALWAYS_NORMALIZE;
 		}
@@ -1961,14 +1957,63 @@
 		return props || {};
 	}
 
-	function __createElement(context, tag, props = {}, children = [], normalizationType) {
-		if (!children.length && props?.children) {
-			if (_.isArray(props.children)) {
-				children = props.children;
-			} else {
-				children = [props.children];
+	/** 在 _createElement 如果没有第三个参数children，props可能是props，也可能是children,
+	 * 如果是对象且不是vnode则为props，
+	 * 如果是数组则为children
+	 */
+	function __createElement(context, tag, props, children, normalizationType) {
+		((/* ensure children */) => {
+			function setProperties(_children, _props = undefined) {
+				normalizationType = children;
+				children = _children;
+				props = _props;
 			}
-		}
+
+			function updateChildren(valMayChildren, _props) {
+				if (isArray(valMayChildren)) {
+					setProperties(valMayChildren, _props);
+				} else if (isVNode(valMayChildren)) {
+					/* 使这些props成为children */
+					setProperties([valMayChildren], _props);
+				} else if (isPrimitive(valMayChildren)) {
+					/* 使这些props成为children */
+					setProperties([createTextVNode(valMayChildren)], _props);
+				}
+			}
+			/* 第三个参数作为循环的key */
+			if (_.$isInput(children) && isPrimitive(children) && props?.children) {
+				props.key = children;
+				updateChildren(props.children, props);
+			}
+
+			/* 如果还是没有children，则尝试从props中获取children */
+			if (!_.$isInput(children) && props?.children) {
+				children = props.children;
+			}
+
+			/* 如果没有props可以不填，判断第二个参数是否为children */
+			updateChildren(props);
+
+			if (_.$isInput(children)) {
+				if (!_.isArray(children)) {
+					children = [children];
+				}
+			}
+
+			/* 如果还是没有children，则尝试从props中获取children */
+			if (!_.$isInput(children) && props?.children) {
+				updateChildren(props.children, props);
+			}
+
+			if (isArray(children)) {
+				children = _.map(children, child => {
+					if (isPrimitive(child)) {
+						return createTextVNode(child);
+					}
+					return child;
+				});
+			}
+		})();
 
 		if (hasOwn(props, "vIf") && !props.vIf) {
 			return null;
@@ -4131,17 +4176,19 @@
 	 * 1 onClick onChange 可以直接用，
 	 * 2 vIf 可以用
 	 */
-	function h(type, props, children) {
+	function h(type, propsOrChildren, children) {
 		if (!currentInstance) {
 			warnMsgVm(
 				"globally imported h() can only be invoked when there is an active " +
 					"component instance, e.g. synchronously in a component's render or setup function."
 			);
 		}
-		return _createElement(currentInstance, type, props, children, 2, true);
+
+		return _createElement(currentInstance, type, propsOrChildren, children, 2, true);
 	}
 
 	function handleError(err, vm, info) {
+		err = err || new Error();
 		// Deactivate deps tracking while processing error handler to avoid possible infinite rendering.
 		// See: https://github.com/vuejs/vuex/issues/1505
 		pushTarget();
@@ -7192,6 +7239,9 @@
 			ownerArray,
 			index
 		) {
+			if (!isVNode(vnode)) {
+				vnode = createEmptyVNode();
+			}
 			if (isDef(vnode.elm) && isDef(ownerArray)) {
 				// This vnode was used in a previous render!
 				// now it's used as a new node, overwriting its elm would cause
@@ -7389,8 +7439,11 @@
 			}
 		}
 		function invokeDestroyHook(vnode) {
+			if (!vnode) {
+				return;
+			}
 			var i, j;
-			var data = vnode.data;
+			var data = vnode?.data;
 			if (isDef(data)) {
 				if (isDef((i = data.hook)) && isDef((i = i.destroy))) i(vnode);
 				for (i = 0; i < cbs.destroy.length; ++i) cbs.destroy[i](vnode);
@@ -7557,7 +7610,7 @@
 			var seenKeys = {};
 			for (var i_4 = 0; i_4 < children.length; i_4++) {
 				var vnode = children[i_4];
-				var key = vnode.key;
+				var key = vnode?.key;
 				if (isDef(key)) {
 					if (seenKeys[key]) {
 						warnMsgVm(
@@ -13094,7 +13147,7 @@
 	Vue.camelize = camelize;
 	Vue.compile = compileToFunctions;
 	Vue.cloneVNode = cloneVNode;
-	Vue.isVNode = vm => !!vm?.TYPE_IS_VNODE;
+	Vue.isVNode = isVNode;
 	Vue.mergeProps4h = mergeProps4h;
 	Vue.createEmptyVNode = createEmptyVNode;
 	Vue.hasOwnProperty = hasOwnProperty;

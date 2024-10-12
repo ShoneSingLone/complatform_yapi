@@ -35,7 +35,7 @@ export default async function ({ mockHref, reqMethod, interfaceId, projectId }) 
 				form: defItems({
 					editor: {
 						type: "textarea",
-						itemType: "YapiItemMonaco",
+						itemType: "xItemMonaco",
 						language: "javascript",
 						value: ``
 					}

@@ -6,21 +6,20 @@
 </style>
 <template>
 	<div v-if="isShow" id="ProjectInterfaceSectionInterfaceDetailEditor" class="flex1">
-		<xBlock header="基本信息">
+		<xCard>
 			<xForm col="3" style="--xItem-label-width: 140px">
 				<xItem :configs="form.title" v-model="formData.title" span="full" />
 				<xItem :configs="form.path" v-model="formData.path" span="full" />
-				<xItem :configs="form.pathParams" v-model="formData.req_params" span="full" />
-				<xItem :configs="form.isProxy" v-model="formData.isProxy" />
-				<xItem :configs="form.witchEnv" v-model="formData.witchEnv" />
+				<xItem :configs="form.pathParams" v-model="cptFormDataReqParams" span="full" />
+				<xItem :configs="form.isProxy" v-model="formData.isProxy" span="full" />
 				<xItem :configs="form.res_body_type" v-model="formData.res_body_type" span="full" />
 				<xItem
 					:configs="form.resBackupJson"
-					v-model="formData.resBackupJson"
+					v-model="cptFormDataResBackupJson"
 					span="full"
-					style="--YapiItemMonaco-height: 300px" />
+					style="--xItemMonaco-height: 300px" />
 			</xForm>
-		</xBlock>
+		</xCard>
 		<xGap t />
 		<div class="flex middle">
 			<xGap f />
@@ -33,7 +32,7 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP", "inject_project", "inject_interface_section_interface_detail"],
 		props: {
-			detailInfo: {
+			interfaceInfo: {
 				type: Object,
 				default() {
 					return {};
@@ -47,7 +46,7 @@ export default async function () {
 				formData: {},
 				xItemInterface: {
 					label: "接口信息",
-					itemType: "YapiItemMonaco"
+					itemType: "xItemMonaco"
 				},
 				form: defItems({
 					method: {
@@ -71,7 +70,7 @@ export default async function () {
 
 						$vSlots: {
 							prepend() {
-								return h("xItem", {
+								return hxItem({
 									configs: vm.form.method,
 									value: vm.formData.method,
 									onChange(val) {
@@ -85,49 +84,56 @@ export default async function () {
 						}
 					},
 					pathParams: {
-						label: i18n("路径参数"),
-						value: [],
-						isHide() {
-							return !_.$isArrayFill(this.value);
-						},
 						itemType: "YapiItemPathParams",
+						label: i18n("路径参数"),
+						isHide() {
+							return !vm.cptFormDataReqParams.length;
+						},
 						once() {
+							/* 当path发生改变，重新分析路径里面的参数项 */
 							vm.$watch(
 								"formData.path",
 								val => {
-									let queue = [];
+									let reqParams = [];
 									let insertParams = name => {
 										if (!name) return;
 										let findExist = _.find(vm.formData.req_params, {
 											name: name
 										});
 										if (findExist) {
-											queue.push(findExist);
+											reqParams.push(findExist);
 										} else {
-											queue.push({ name: name, desc: "" });
+											reqParams.push({ name: name, desc: "", example: "" });
 										}
 									};
-									/* /:id */
-									if (val && val.indexOf(":") !== -1) {
-										let paths = val.split("/"),
-											name,
-											i;
-										for (i = 1; i < paths.length; i++) {
-											if (paths[i][0] === ":") {
-												name = paths[i].substr(1);
-												insertParams(name);
+
+									const type1 = () => {
+										/* /:id */
+										if (val && val.indexOf(":") !== -1) {
+											let paths = val.split("/"),
+												name,
+												i;
+											for (i = 1; i < paths.length; i++) {
+												if (paths[i][0] === ":") {
+													name = paths[i].substr(1);
+													insertParams(name);
+												}
 											}
 										}
-									}
+									};
+									const type2 = () => {
+										/* /{id} */
+										if (val && val.length > 3) {
+											val.replace(/\{(.+?)\}/g, function (str, match) {
+												insertParams(match);
+											});
+										}
+									};
 
-									/* /{id} */
-									if (val && val.length > 3) {
-										val.replace(/\{(.+?)\}/g, function (str, match) {
-											insertParams(match);
-										});
-									}
+									type1();
+									type2();
 
-									this.value = queue;
+									vm.cptFormDataReqParams = reqParams;
 								},
 								{ immediate: true }
 							);
@@ -137,9 +143,28 @@ export default async function () {
 					status: { label: i18n("status") },
 					updatetime: { label: i18n("updatetime") },
 					tag: { label: i18n("Tag") },
-					isProxy: { label: i18n("是否开启转发"), itemType: "xItemSwitch" },
+					isProxy: {
+						label: i18n("启用Proxy"),
+						itemType: "xItemSwitch",
+						itemSlots: {
+							afterController() {
+								if (vm.formData.isProxy) {
+									return hxItem({
+										style: "--xItem-label-width:80px",
+										configs: vm.form.witchEnv,
+										value: vm.formData.witchEnv,
+										onChange(val) {
+											vm.formData.witchEnv = val;
+										}
+									});
+								} else {
+									return hDiv({ style: "height:32px" });
+								}
+							}
+						}
+					},
 					witchEnv: {
-						label: i18n("转发环境"),
+						label: i18n("转发到"),
 						itemType: "YapiItemProxyEnv"
 					},
 					res_body_type: {
@@ -157,12 +182,30 @@ export default async function () {
 					},
 					resBackupJson: {
 						label: i18n("备份数据"),
-						itemType: "YapiItemMonaco"
+						itemType: "xItemMonaco"
 					}
 				})
 			};
 		},
 		computed: {
+			cptFormDataResBackupJson: {
+				get() {
+					return this.formData.resBackupJson || "";
+				},
+				set(req_params) {
+					this.formData.resBackupJson = req_params;
+					return true;
+				}
+			},
+			cptFormDataReqParams: {
+				get() {
+					return this.formData.req_params || [];
+				},
+				set(req_params) {
+					this.formData.req_params = req_params;
+					return true;
+				}
+			},
 			btnUpdate() {
 				return {
 					label: "更新",
@@ -197,17 +240,17 @@ export default async function () {
 		},
 		watch: {
 			"APP.cptInterfaceId": {
+				immediate: true,
 				handler(val) {
 					this.isShow = false;
 					this.formData = {
-						...this.detailInfo
+						...this.interfaceInfo
 					};
 
 					this.$nextTick(() => {
 						this.isShow = true;
 					});
-				},
-				immediate: true
+				}
 			}
 		}
 	});

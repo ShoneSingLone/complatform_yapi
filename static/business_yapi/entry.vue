@@ -6,7 +6,7 @@ export default async function () {
 		{
 			TuiEditor: "@/components/TuiEditor/TuiEditor.vue",
 			YapiApiRequestBodyPreviewer: "@/components/YapiApiRequestBodyPreviewer.vue",
-			YapiItemMonaco: "@/components/YapiItemMonaco.vue",
+			xItemMonaco: "@/components/xItemMonaco.vue",
 			YapiItemProxyEnv: "@/components/YapiItemProxyEnv.vue",
 			YapiItemAvatar: "@/components/YapiItemAvatar.vue",
 			YapiItemUac: "@/components/YapiItemUac.vue",
@@ -406,7 +406,7 @@ html.x-yapi-app {
 	--base-nav-height: 70px;
 	--xPageTitle-padding: 0;
 	--dialog-bg-color: var(--el-button-hover-bg-color);
-	--active-color: #5bcfad;
+	--active-color: var(--el-color-primary);
 	--active-color-bg: #e8f2f1;
 	--unactive-color: #6c787d;
 	--unactive-color-bg: #d8d8d8;

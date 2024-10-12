@@ -1416,6 +1416,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 		const mainTableHeights = shallowRef({});
 		const rightTableHeights = shallowRef({});
 		const isDynamic = computed(() => _.isNumber(props.estimatedRowHeight));
+		inject_xTableVir.isDynamic = isDynamic.value;
 
 		function onRowsRendered(params) {
 			props.onRowsRendered?.(params);
@@ -2120,7 +2121,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 
 			const cellStyle = enforceUnit(style);
 			if (column.placeholderSign === placeholderSign) {
-				return h("div", {
+				return hDiv({
 					class: ns.em("row-cell", "placeholder"),
 					style: cellStyle
 				});
@@ -2304,7 +2305,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 			const { column, ns, style, onColumnSorted } = props;
 			const cellStyle = enforceUnit(style);
 			if (column.placeholderSign === placeholderSign) {
-				return h("div", {
+				return hDiv({
 					class: ns.em("header-row-cell", "placeholder"),
 					style: cellStyle
 				});
@@ -2356,7 +2357,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 			if (column.sortable) {
 				cellWrapperProps.onClick = onColumnSorted;
 			}
-			return h("div", cellWrapperProps, [
+			return hDiv(cellWrapperProps, [
 				Cell,
 				h(SortIcon, {
 					vIf: sortable,
@@ -2388,7 +2389,6 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 		functional: true,
 		render(h, { data: props, slots, scopedSlots }, vm) {
 			const inject_xTableVir = injectVm(vm, "xTableVirWrapper");
-
 			let emptyChild = (() => {
 				if (inject_xTableVir?.$scopedSlots?.empty) {
 					return inject_xTableVir.$scopedSlots.empty();
@@ -2396,16 +2396,19 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 				return emptyRender();
 			})();
 
+			const style = { position: "relative", width: "100%", padding: "16px" };
+
+			if (props.headerHeight && props.mainTableHeight) {
+				const { headerHeight, mainTableHeight } = props;
+				style.top = `${headerHeight}px`;
+				style.height = `${mainTableHeight - headerHeight}px`;
+			}
+
 			return h(
 				"div",
 				{
 					class: props.class,
-					style: {
-						top: "50%",
-						transform: "translateY(-50%)",
-						position: "relative",
-						width: "100%"
-					}
+					style
 				},
 				[emptyChild]
 			);
@@ -2716,7 +2719,6 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 					class: ns.e("footer"),
 					style: unref(footerHeight)
 				};
-
 				return h(
 					"div",
 					{
@@ -2743,7 +2745,9 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 							{
 								vIf: showEmpty.value,
 								class: ns.e("empty"),
-								style: unref(emptyStyle)
+								style: unref(emptyStyle),
+								headerHeight,
+								mainTableHeight: unref(mainTableHeight)
 							},
 							[{ default: vmTable.$vSlots.empty }]
 						),
@@ -2971,8 +2975,8 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 						};
 
 						/* 拖动列宽 */
-						const vDomLine = h("div", { staticClass: "xDataGrid_mask-line" }, []);
-						return [h(xTableVir, xTableVirProps), h("div", divProps, [vDomLine])];
+						const vDomLine = hDiv({ staticClass: "xDataGrid_mask-line" }, []);
+						return [h(xTableVir, xTableVirProps), hDiv(divProps, [vDomLine])];
 					}
 				}
 			});

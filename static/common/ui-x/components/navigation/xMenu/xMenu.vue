@@ -178,23 +178,20 @@ export default async function () {
 
 	return defineComponent({
 		name: "ElMenu",
-		render(h) {
-			const component = h(
-				"ul",
-				{
-					role: "menubar",
-					style: {
-						backgroundColor: this.backgroundColor || ""
-					},
-					class: {
-						"el-menu--horizontal": this.mode === "horizontal",
-						"el-menu--collapse": this.collapse,
-						"el-menu": true
-					},
-					children: this.$slots.default
+		render() {
+			const component = h("ul", {
+				role: "menubar",
+				style: {
+					backgroundColor: this.backgroundColor || ""
 				},
-				+this.collapse
-			);
+				class: {
+					"el-menu--horizontal": this.mode === "horizontal",
+					"el-menu--collapse": this.collapse,
+					"el-menu": true
+				},
+				children: this.$slots.default
+			});
+
 			if (this.collapseTransition) {
 				return h("el-menu-collapse-transition", {
 					children: component

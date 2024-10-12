@@ -157,7 +157,7 @@ export default async function () {
 								const userIsAdmin = rowData.userId === 1;
 								if (userIsAdmin) {
 									return hVal2Tag(cellData, sys_normal_disable);
-									// return h("span", { class: "text-gray" }, i18n("超级管理员"));
+									// return hSpan( { class: "text-gray" }, i18n("超级管理员"));
 								}
 
 								return h("xSwitch", {

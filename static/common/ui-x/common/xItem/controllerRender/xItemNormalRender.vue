@@ -83,7 +83,7 @@ export default async function () {
 			);
 		}
 
-		return h("div", xItemWrapperProps, [
+		return hDiv(xItemWrapperProps, [
 			h(
 				"div",
 				{
@@ -107,7 +107,7 @@ export default async function () {
 								},
 								["*"]
 							),
-							h("span", { staticClass: "xItem_label-text" }, [
+							hSpan({ staticClass: "xItem_label-text" }, [
 								"X_ITEM_LABEL_IS_EMPTY" === vm.cpt_label ? "" : vm.cpt_label
 							]),
 							h(
@@ -136,7 +136,7 @@ export default async function () {
 						]
 					),
 					/* controller */
-					h("div", controllerWrapperProps, controllerChildren),
+					hDiv(controllerWrapperProps, controllerChildren),
 
 					/* 校验错误提示 */
 					h(
@@ -157,7 +157,7 @@ export default async function () {
 				]
 			),
 			/* 信息提示 */
-			h("div", { vIf: vm.calMsg(), staticClass: "xItem-msg mt4" }, [vm.calMsg()])
+			hDiv({ vIf: vm.calMsg(), staticClass: "xItem-msg mt4" }, [vm.calMsg()])
 		]);
 	};
 }

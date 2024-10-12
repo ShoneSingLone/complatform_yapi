@@ -102,7 +102,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return false;
 			},
 			cptDisabledTips() {
-				// return h("div", { style: { color: "red" } }, [123]);
+				// return hDiv( { style: { color: "red" } }, [123]);
 				if (this.cptDisabled) {
 					if (_.isString(this.cptDisabled) || this.cptDisabled.TYPE_IS_VNODE) {
 						return this.cptDisabled;
@@ -168,7 +168,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 			calChildren() {
 				if (_.isFunction(this.$vSlots?.default)) {
-					return h("span", this.$vSlots.default());
+					return hSpan(this.$vSlots.default());
 				}
 				if (this.$vSlots?.TYPE_IS_VNODE) {
 					return this.$vSlots;
@@ -204,17 +204,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					return;
 				}
 				try {
+					this.privateLoading = true;
 					if (_.isFunction(this.$listeners.click)) {
-						this.privateLoading = true;
 						await this.$listeners.click.apply(this, args);
 					} else if (_.isFunction(this.configs?.onClick)) {
-						this.privateLoading = true;
-						await this.configs.onClick();
+						await this.configs.onClick.apply(this, args);
 					}
 				} catch (error) {
 					console.error(error);
 				} finally {
-					this.privateLoading && (this.privateLoading = false);
+					this.privateLoading = false;
 				}
 			}
 		},
@@ -250,7 +249,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				/* vNode的变动不会触发render重新执行 template的slot优先级最高*/
 				const vChildren = this.$slots.default || vm.calChildren();
 				if (this.cptDisabledTips) {
-					// buttonProps.attrs = { title: this.cptDisabledTips };
 					return h(vm.type || "button", buttonProps, [
 						h(
 							"xPopover",
@@ -292,7 +290,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					]);
 				} else {
 					return h(vm.type || "button", buttonProps, [
-						h("span", { class: ["flex", { middle: vm.cptIcon }] }, [
+						hSpan({ class: ["flex", { middle: vm.cptIcon }] }, [
 							(() => {
 								if (vm.cptLoading) {
 									return h("i", {

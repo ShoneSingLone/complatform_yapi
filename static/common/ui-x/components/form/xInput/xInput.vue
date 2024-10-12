@@ -309,7 +309,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							[vNode]
 						);
 					} else {
-						return h("div", { staticClass: "x-iniput__prepend" }, [vNode]);
+						return hDiv({ staticClass: "x-iniput__prepend" }, [vNode]);
 					}
 				}
 				return null;
@@ -510,23 +510,29 @@ export default async function ({ PRIVATE_GLOBAL }) {
 }
 
 .xItem-wrapper[data-form-item-type="xItemInput"] {
-	.xItem_controller.is-error {
-		.el-input-group--prepend {
-			border: 1px solid var(--el-color-error);
-			border-radius: var(--border-radius);
-			.el-input-group__append,
-			.el-input-group__prepend {
-				border: unset;
-			}
-
-			.el-input-group__prepend-sub {
-				border: 1px solid transparent;
-				// border-color: var(--el-color-error);
-				+ .el-input__inner {
+	.xItem_controller {
+		&.is-error {
+			.el-input-group--prepend {
+				border: 1px solid var(--el-color-error);
+				border-radius: var(--border-radius);
+				.el-input-group__append,
+				.el-input-group__prepend {
 					border: unset;
-					border-left: 1px solid #dcdfe6;
+				}
+
+				.el-input-group__prepend-sub {
+					border: 1px solid transparent;
+					// border-color: var(--el-color-error);
+					+ .el-input__inner {
+						border: unset;
+						border-left: 1px solid #dcdfe6;
+					}
 				}
 			}
+		}
+
+		> .xInput {
+			flex: 1;
 		}
 	}
 }

@@ -60,12 +60,12 @@ export default async function ({ row, onClick }) {
 						label: "调用方法",
 						rules: [_rules.required()],
 						tips: () =>
-							h("div", [
-								h("div", [`Bean调用示例：ryTask.ryParams('ry')`]),
-								h("div", [
+							hDiv([
+								hDiv([`Bean调用示例：ryTask.ryParams('ry')`]),
+								hDiv([
 									`Class类调用示例：com.ruoyi.quartz.task.RyTask.ryParams('ry')`
 								]),
-								h("div", [`参数说明：支持字符串，布尔类型，长整型，浮点型，整型`])
+								hDiv([`参数说明：支持字符串，布尔类型，长整型，浮点型，整型`])
 							])
 					},
 					cronExpression: { value: "", label: "cron表达式", rules: [_rules.required()] },

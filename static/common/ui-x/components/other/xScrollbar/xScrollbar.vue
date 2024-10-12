@@ -103,7 +103,7 @@ export default async function () {
 					)
 				];
 			}
-			return h("div", { class: "el-scrollbar" }, nodes);
+			return hDiv({ class: "el-scrollbar" }, nodes);
 		},
 
 		methods: {

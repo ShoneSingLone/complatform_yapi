@@ -250,6 +250,11 @@ export default async function () {
 					href: "/other/affix"
 				},
 				{
+					icon: "_icon_progress",
+					label: `${i18n("Progress")} ${i18n("进度条")}`,
+					href: "/other/progress"
+				},
+				{
 					icon: "_icon_affix",
 					label: `${i18n("Alert")} ${i18n("警告")}`,
 					href: "/other/alert"

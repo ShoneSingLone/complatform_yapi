@@ -38,7 +38,7 @@ export default async function () {
 						return props.renders?.label.call(vm, { item: vm.item });
 					}
 
-					return h("div", { staticClass: "el-submenu__title-text" }, [vm.cptLabel]);
+					return hDiv({ staticClass: "el-submenu__title-text" }, [vm.cptLabel]);
 				},
 				toggle() {
 					/* 如果折叠就不跳转 */
@@ -106,7 +106,9 @@ export default async function () {
 				"div",
 				mergeProps4h([
 					$attrs,
-					{ attrs: $attrs },
+					{
+						attrs: $attrs
+					},
 					{
 						class: {
 							"xMenuTreeItem el-menu": true,
@@ -114,7 +116,11 @@ export default async function () {
 							open: state.isOpen,
 							collapse: collapse
 						},
-						attrs: { role: "menubar", "data-nest-level": level }
+						attrs: {
+							role: "menubar",
+							"data-nest-level": level,
+							"data-href-key": _.camelCase(item.href)
+						}
 					}
 				]),
 				[

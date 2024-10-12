@@ -52,7 +52,7 @@ export default async function () {
 						label = renderOption.call(vm.configs, item);
 					}
 
-					return h("div", {}, [
+					return hDiv({}, [
 						h(
 							"xRadio",
 							{
@@ -99,7 +99,7 @@ export default async function () {
 						if (item.value === this.value) {
 							props.preset = "blue";
 						}
-						return h("xBtn", props, [item.label]);
+						return hxBtn(props, [item.label]);
 					})
 				);
 			}

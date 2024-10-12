@@ -51,7 +51,7 @@ export default async function ({}) {
 					editor: {
 						label: "",
 						type: "textarea",
-						itemType: "YapiItemMonaco",
+						itemType: "xItemMonaco",
 						value: JSON.stringify(this.APP.cptProject.env || "", null, 2)
 					}
 				})

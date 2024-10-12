@@ -2,7 +2,7 @@
 export default async function () {
 	return {
 		emptyRender() {
-			return h("div", { staticClass: "flex vertical middle center" }, [
+			return hDiv({ staticClass: "flex vertical middle center flex1-overflow-auto" }, [
 				h(
 					"xIcon",
 					{
@@ -11,7 +11,7 @@ export default async function () {
 					},
 					[]
 				),
-				h("span", { staticClass: "el-table__empty-text flex center" }, [i18n("暂无数据")])
+				hSpan({ staticClass: "el-table__empty-text flex center" }, [i18n("暂无数据")])
 			]);
 		}
 	};

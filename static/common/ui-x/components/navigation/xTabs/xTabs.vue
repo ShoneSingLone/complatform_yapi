@@ -161,9 +161,12 @@ export default async function () {
 				ref: "nav"
 			};
 
-			const header = hDiv([newButton, h("xTabNav", navData)], {
-				class: ["el-tabs__header", `is-${tabPosition}`]
-			});
+			const header = hDiv(
+				{
+					class: ["el-tabs__header", `is-${tabPosition}`]
+				},
+				[newButton, h("xTabNav", navData)]
+			);
 
 			const panels = h(
 				"div",

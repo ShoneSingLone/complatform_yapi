@@ -52,6 +52,7 @@ export default async function () {
 			const title = {
 				prop: "title",
 				label: i18n("接口名称"),
+				width: 300,
 				cellRenderer({ rowData }) {
 					return hLink({
 						label: rowData.title,
@@ -98,7 +99,7 @@ export default async function () {
 									);
 								}
 							});
-							return h("div", childrenVnod);
+							return hDiv(childrenVnod);
 						}
 					}
 					return rowData.path;
@@ -123,7 +124,7 @@ export default async function () {
 						const vDom_witchEnv = h("xTag", { class: "ml" }, [
 							vm.cptEnvObject[rowData.witchEnv]?.name || "--"
 						]);
-						return h("div", [vDom_yes, vDom_witchEnv]);
+						return hDiv([vDom_yes, vDom_witchEnv]);
 					} else {
 						return h("xTag", { type: "info" }, ["否"]);
 					}
@@ -186,7 +187,7 @@ export default async function () {
 							label: "序号",
 							width: 60,
 							cellRenderer({ rowIndex }) {
-								return h("div", { style: "width:100%;text-align:right;" }, [
+								return hDiv({ style: "width:100%;text-align:right;" }, [
 									rowIndex + 1
 								]);
 							}

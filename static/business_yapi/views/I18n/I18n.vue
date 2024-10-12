@@ -260,7 +260,7 @@ export default async function () {
 							prop: "_id",
 							width: 60,
 							cellRenderer({ rowData, rowIndex }) {
-								return h("div", { attrs: { title: rowData.desc } }, [rowIndex + 1]);
+								return hDiv({ attrs: { title: rowData.desc } }, [rowIndex + 1]);
 							}
 						},
 						{ label: i18n("ID"), prop: "_id", isShow: false },

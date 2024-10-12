@@ -39,7 +39,7 @@ export default async function () {
 					{
 						$vSlots: {
 							prepend() {
-								return h("xItem", {
+								return hxItem({
 									configs: {
 										itemType: "xItemSelect",
 										options: vm.configs.selectOptions || {},

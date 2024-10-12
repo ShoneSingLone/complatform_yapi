@@ -254,13 +254,13 @@ export default async function () {
 				style: "position:relative;height:100%;width:100%;z-index:1;padding:var(--note-normal-padding,var(--ui-one));"
 			};
 
-			return h("div", { class: "flex1-overflow-auto" }, [
+			return hDiv({ class: "flex1-overflow-auto" }, [
 				/*viewer html*/
-				h("div", viewerProps, [
-					h("div", { ref: "refViewer", staticClass: "toastui-viewer-contents" })
+				hDiv(viewerProps, [
+					hDiv({ ref: "refViewer", staticClass: "toastui-viewer-contents" })
 				]),
 				/*tuiEdior*/
-				h("div", {
+				hDiv({
 					id: vm._uid,
 					ref: "container",
 					class: { flex1: true, "display-none": vm.readonly },

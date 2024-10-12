@@ -19,15 +19,14 @@
 								<xItem :configs="formSearch.dateRange" />
 								<div class="flex end width100" span="2">
 									<xBtn @click="resetSearchForm">重置</xBtn>
-									<xBtn preset="primary" @click="getTableData({ page: 1 })"
-										>查询</xBtn
+									<xBtn :configs="cptBtnQuery" />
 									>
 								</div>
 							</xForm>
 						</xBlock>
 						<template #collapse>
 							<xItem :configs="formSearch.userName" />
-							<xBtn preset="primary" @click="getTableData({ page: 1 })">查询</xBtn>
+							<xBtn :configs="cptBtnQuery" />
 						</template>
 					</xAdvancedSearch>
 				</template>
@@ -161,6 +160,16 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptBtnQuery() {
+				const vm = this;
+				return {
+					label: i18n("查询"),
+					preset: "primary",
+					onClick() {
+						vm.getTableData({ page: 1 });
+					}
+				};
+			},
 			cptSearchParams() {
 				return _.$pickFormValues(this.formSearch);
 			},

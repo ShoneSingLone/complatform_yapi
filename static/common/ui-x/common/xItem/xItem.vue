@@ -347,7 +347,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			calMsg() {
 				/* msg之前一直是计算属性，但是msg可用作为render函数，里面的组件可能是懒加载，懒加载完成后触发update，由于计算属性的缓存机制无法更新，所以改用方法tips */
 				if (_.isString(this.cptConfigs?.msg) && this.cptConfigs?.msg) {
-					return h("div", { staticClass: "xItem-msg-content" }, [this.cptConfigs.msg]);
+					return hDiv({ staticClass: "xItem-msg-content" }, [this.cptConfigs.msg]);
 				}
 				if (_.isFunction(this.cptConfigs?.msg)) {
 					return this.cptConfigs.msg.call(this.cptConfigs, { xItem: this });
@@ -534,8 +534,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			}
 
 			/* 骨架 */
-			return h("div", { staticClass: "el-skeleton is-animated " }, [
-				h("div", {
+			return hDiv({ staticClass: "el-skeleton is-animated " }, [
+				hDiv({
 					staticClass: "el-skeleton__item el-skeleton__p el-skeleton__paragraph"
 				})
 			]);

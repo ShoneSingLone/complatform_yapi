@@ -100,8 +100,8 @@ export default async function hooks() {
 					}
 				});
 			},
-			useDialogProps() {
-				return ["closeModal", "$layerMax", "$layerMin", "$layerRestore"];
+			useDialogProps(otherProps = []) {
+				return ["closeModal", "$layerMax", "$layerMin", "$layerRestore"].concat(otherProps);
 			},
 			useMigrating({ vm }) {
 				onMounted(() => {

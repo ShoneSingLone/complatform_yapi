@@ -177,7 +177,7 @@ export default async function () {
 						data
 					});
 				},
-				interfaceAddCat(data) {
+				interface_add_cat(data) {
 					return _.$ajax.post("/api/interface/add_cat", {
 						data
 					});

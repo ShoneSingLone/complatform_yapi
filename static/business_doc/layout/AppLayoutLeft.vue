@@ -70,9 +70,9 @@ export default async function () {
 						staticClass: "flex middle"
 					},
 					[
-						h("span", { staticClass: "mr" }, [node.label]),
-						h("span", { staticClass: "mr" }, [node._munu_level]),
-						h("span", { staticClass: "mr" }, [node._munu_id])
+						hSpan({ staticClass: "mr" }, [node.label]),
+						hSpan({ staticClass: "mr" }, [node._munu_level]),
+						hSpan({ staticClass: "mr" }, [node._munu_id])
 					]
 				);
 			},
@@ -164,7 +164,7 @@ export default async function () {
 							return item.label;
 							const labelArray = item.label.split(" ");
 							return _.map(labelArray, label => {
-								return h("div", { class: "menu-item-label" }, [label]);
+								return hDiv({ class: "menu-item-label" }, [label]);
 							});
 						})();
 
@@ -182,7 +182,7 @@ export default async function () {
 								label
 							);
 						}
-						return h("span", {}, label);
+						return hSpan({}, label);
 					}
 				}
 			};

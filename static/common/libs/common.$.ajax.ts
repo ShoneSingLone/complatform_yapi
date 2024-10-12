@@ -135,7 +135,6 @@
 							xhr.upload.addEventListener(
 								"progress",
 								event => {
-									console.log("🚀 ~ xhr ~ event:", event);
 									callback("onprogress", event);
 								},
 								false
@@ -168,6 +167,7 @@
 				beforeSend,
 				payload,
 				resolveResult,
+				onProgress,
 				fileType = "image/jpeg"
 			}) {
 				payload = payload || {};
@@ -202,10 +202,20 @@
 										// 从Response Headers中获取fileName
 										// TODO:xhr为null
 										let header = xhr.getResponseHeader("content-disposition");
-										let fileName = header
-											.split(";")[1]
-											.split("=")[1]
-											.replace(/\"/g, "");
+
+										let fileName = (() => {
+											const kvStrArray = header.split(";");
+											const kvObject = _.reduce(
+												kvStrArray,
+												(keyVal, keyvalString) => {
+													const [key, val] = keyvalString.split("=");
+													keyVal[_.toLower(key)] = val;
+													return keyVal;
+												},
+												{}
+											);
+											return kvObject["filename"];
+										})();
 										//获取下载文件的类型
 										let type = xhr.getResponseHeader("content-type");
 										//结果数据类型处理
@@ -219,6 +229,7 @@
 											let link = document.createElement("a");
 											//文件名
 											link.download = fileName;
+											link.target = "_blank";
 											link.style.display = "none";
 											link.href = URL.createObjectURL(blob);
 											document.body.appendChild(link);
@@ -237,6 +248,17 @@
 								} finally {
 									resolve(result);
 								}
+							},
+							xhr() {
+								var xhr = new window.XMLHttpRequest();
+
+								if (_.isFunction(onProgress)) {
+									xhr.addEventListener("progress", function (event) {
+										onProgress(event);
+									});
+								}
+
+								return xhr;
 							}
 						})
 					);

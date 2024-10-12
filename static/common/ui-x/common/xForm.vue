@@ -53,7 +53,7 @@ export default async function () {
 							};
 						})();
 
-						return h("div", { class: "xFormItem grid-column" + span + classString }, [
+						return hDiv({ class: "xFormItem grid-column" + span + classString }, [
 							h("Transition", {}, [slotVNode])
 						]);
 					}
@@ -71,7 +71,7 @@ export default async function () {
 					props
 				};
 
-				return h("div", formProps, itemChildren);
+				return hDiv(formProps, itemChildren);
 			};
 		}
 	};

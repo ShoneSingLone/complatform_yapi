@@ -14,7 +14,7 @@
 				v-if="type || iconClass">
 			</i>
 			<div class="el-notification__group" :class="{ 'is-with-icon': typeClass || iconClass }">
-				<h2 class="el-notification__title" v-text="title"></h2>
+				<h2 class="el-notification__title" v-if="isShowTitle">{{ title }}</h2>
 				<div class="el-notification__content" v-show="message">
 					<p v-if="dangerouslyUseHTMLString" v-html="message"></p>
 					<xRender v-else :render="message" />
@@ -37,6 +37,7 @@ export default async function () {
 	};
 
 	return defineComponent({
+		componentName: "xNotification",
 		data() {
 			return {
 				visible: false,
@@ -58,6 +59,12 @@ export default async function () {
 		},
 
 		computed: {
+			isShowTitle() {
+				if (_.isBoolean(this.title) && !this.title) {
+					return false;
+				}
+				return true;
+			},
 			wrapperClass() {
 				return this.type ? `xNotification ${this.type}` : "xNotification";
 			},

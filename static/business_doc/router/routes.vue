@@ -2,7 +2,7 @@
 export default async function () {
 	const ComponentPageRouterView = {
 		render(h) {
-			return h("div", { class: "x-page-view Demo-view" }, [
+			return hDiv({ class: "x-page-view Demo-view" }, [
 				h("xPageContent", [h("router-view")])
 			]);
 		}
@@ -208,6 +208,7 @@ export default async function () {
 				_.$newRoute("/other/message", "@/views/other/message/DemoMessage.vue"),
 				_.$newRoute("/other/notification", "@/views/other/notification/Notification.vue"),
 				_.$newRoute("/other/alert", "@/views/other/alert/DemoAlert.vue"),
+				_.$newRoute("/other/progress", "@/views/other/progress/DemoProgress.vue"),
 				_.$newRoute("/other/collapse", "@/views/other/collapse/DemoCollapse.vue"),
 				_.$newRoute("/other/layer", "@/views/other/layer/layer.vue"),
 				_.$newRoute("/other/move", "@/views/other/move/move.vue"),

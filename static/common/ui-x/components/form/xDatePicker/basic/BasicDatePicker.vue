@@ -895,7 +895,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				this.picker.resetView && this.picker.resetView();
 
 				this.$nextTick(() => {
-					this.picker.adjustSpinners && this.picker.adjustSpinners();
+					this.picker?.adjustSpinners && this.picker.adjustSpinners();
 				});
 			},
 

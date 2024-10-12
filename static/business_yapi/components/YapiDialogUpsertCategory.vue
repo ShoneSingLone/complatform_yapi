@@ -96,7 +96,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList, all
 							desc
 						});
 					} else {
-						await _api.yapi.interfaceAddCat({
+						await _api.yapi.interface_add_cat({
 							project_id,
 							name,
 							desc

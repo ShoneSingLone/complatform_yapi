@@ -1,7 +1,7 @@
 <template>
 	<div class="el-card xCard flex vertical" :class="cptClassName">
 		<div class="el-card__header" v-if="$slots.header || header">
-			<slot name="header">{{ header }}</slot>
+			<xRender :render="$slots.header || header" />
 		</div>
 		<div :class="cptBodyClass" :style="bodyStyle">
 			<slot></slot>

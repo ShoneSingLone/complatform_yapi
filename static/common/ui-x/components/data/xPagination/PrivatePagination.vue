@@ -52,7 +52,7 @@ export default async function () {
 			if (this.hideOnSinglePage && (!this.internalPageCount || this.internalPageCount === 1))
 				return null;
 
-			let template = h("div", {
+			let template = hDiv({
 				class: [
 					"el-pagination flex middle center",
 					{ "is-background": this.background, "el-pagination--small": this.small }
@@ -77,7 +77,7 @@ export default async function () {
 				total: h("total", {})
 			};
 			const components = layout.split(",").map(item => item.trim());
-			const rightWrapper = h("div", {
+			const rightWrapper = hDiv({
 				class: "el-pagination__rightwrapper"
 			});
 			let haveRightWrapper = false;
@@ -114,7 +114,7 @@ export default async function () {
 						},
 						[
 							this.$parent.prevText
-								? h("span", [this.$parent.prevText])
+								? hSpan([this.$parent.prevText])
 								: h("i", {
 										class: "el-icon el-icon-arrow-left"
 									})
@@ -138,7 +138,7 @@ export default async function () {
 						},
 						[
 							this.$parent.nextText
-								? h("span", [this.$parent.nextText])
+								? hSpan([this.$parent.nextText])
 								: h("i", {
 										class: "el-icon el-icon-arrow-right"
 									})
@@ -260,7 +260,7 @@ export default async function () {
 			Total: {
 				render(h) {
 					if (_.isNumber(this.$parent.total)) {
-						return h("span", {
+						return hSpan({
 							class: "el-pagination__total",
 							children: i18n("el.pagination.total", {
 								total: this.$parent.total

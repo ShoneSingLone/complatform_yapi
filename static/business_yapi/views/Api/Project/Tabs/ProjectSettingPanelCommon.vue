@@ -88,11 +88,9 @@ export default async function () {
 						value: p.proxyHostPort || "",
 						label: "代理服务器地址",
 						tips: () =>
-							h("div", [
-								h("div", [
-									"如果请求需要使用VPN，则需要有一台开启VPN的PC作为代理机。"
-								]),
-								h("div", [
+							hDiv([
+								hDiv(["如果请求需要使用VPN，则需要有一台开启VPN的PC作为代理机。"]),
+								hDiv([
 									"利用",
 									h(
 										"a",
@@ -146,7 +144,7 @@ export default async function () {
 									"xAlert",
 									{ type: "error", showIcon: true, closable: false },
 									[
-										h("div", { class: "flex vertical" }, [
+										hDiv({ class: "flex vertical" }, [
 											h(
 												"div",
 												{
@@ -173,7 +171,7 @@ export default async function () {
 									await vm.APP.updateGroupList();
 									vm.$router.push({
 										path: "/api/group",
-										query: _.pick(vm.$route.query, ["groupId"])
+										query: {}
 									});
 									_.$msg("删除成功");
 								} else {

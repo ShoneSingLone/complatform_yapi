@@ -32,10 +32,10 @@ export default async function () {
 						prop: `a`,
 						label: `b`,
 						headerCellRenderer() {
-							return h("span", [`成员 ${vm.cptProjectMembers.length} 人`]);
+							return hSpan([`成员 ${vm.cptProjectMembers.length} 人`]);
 						},
 						cellRenderer: ({ rowData }) => {
-							return h("div", { staticClass: "flex middle", key: rowData.uid }, [
+							return hDiv({ staticClass: "flex middle", key: rowData.uid }, [
 								h("xItem", {
 									staticClass: "mr4 ml4",
 									configs: {
@@ -74,7 +74,7 @@ export default async function () {
 						label: `b`,
 						width: 200,
 						headerCellRenderer() {
-							return h("xBtn", {
+							return hxBtn({
 								vIf: vm.cptAuth,
 								configs: {
 									label: "添加成员",
@@ -86,14 +86,14 @@ export default async function () {
 						},
 						cellRenderer({ rowData, rowIndex }) {
 							if (vm.cptAuth) {
-								return h("div", { staticClass: "flex middle width100" }, [
+								return hDiv({ staticClass: "flex middle width100" }, [
 									h("xItem", {
 										configs: vm.item_role,
 										value: rowData.role,
 										payload: { rowIndex, rowData },
 										class: "mr8"
 									}),
-									h("xBtn", {
+									hxBtn({
 										configs: {
 											icon: "el-icon-delete",
 											preset: "danger",
@@ -111,7 +111,7 @@ export default async function () {
 								};
 								// 非管理员可以看到权限 但无法修改
 
-								return h("div", { staticClass: "flex middle width100" }, [
+								return hDiv({ staticClass: "flex middle width100" }, [
 									ROLE_MAP[rowData.role]
 								]);
 							}

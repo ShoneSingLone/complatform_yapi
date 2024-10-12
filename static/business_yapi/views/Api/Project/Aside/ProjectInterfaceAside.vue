@@ -157,7 +157,7 @@ export default async function () {
 					},
 					[
 						h("xIcon", { icon: `_${iconName}` }),
-						h("div", { staticClass: "node-name ml4" }, [title]),
+						hDiv({ staticClass: "node-name ml4" }, [title]),
 						h("xIcon", updateIconPorps),
 						h("xIcon", insertIconPorps)
 					]

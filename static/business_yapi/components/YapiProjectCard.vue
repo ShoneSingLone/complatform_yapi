@@ -90,11 +90,11 @@ export default async function () {
 							})
 						}
 					},
-					[h("div", { class: "ui-logo", style: this.iconStyle })]
+					[hDiv({ class: "ui-logo", style: this.iconStyle })]
 				);
 			},
 			title() {
-				return h("div", { staticClass: "ui-title flex middle center" }, [
+				return hDiv({ staticClass: "ui-title flex middle center" }, [
 					this.projectData.name || this.projectData.projectname
 				]);
 			}

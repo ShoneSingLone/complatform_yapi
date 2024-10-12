@@ -770,9 +770,8 @@ body.x-app-body {
 .xTable {
 	.empty {
 		width: 300px;
-		height: 150px;
-		padding: 40px;
-		padding-bottom: 20px;
+		height: 100%;
+		max-height: 150px;
 	}
 }
 
