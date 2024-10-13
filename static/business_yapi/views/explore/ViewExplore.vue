@@ -183,7 +183,8 @@ export default async function () {
 				return _.$openModal({
 					title: "video player",
 					url: "@/views/explore/execTools/video/VideoPlayer.dialog.vue",
-					uri
+					uri,
+					item: record
 				});
 			}
 

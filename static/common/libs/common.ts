@@ -2120,9 +2120,12 @@
 				const item = _.find(options, { value });
 				if (item) {
 					return item;
+				} else {
+					console.error("getSelectedItemFrom miss options or value");
 				}
+			} else {
+				console.error("getSelectedItemFrom miss options or value");
 			}
-			console.error("getSelectedItemFrom miss options or value");
 			return { value: "", label: "", labelKey: "" };
 		};
 

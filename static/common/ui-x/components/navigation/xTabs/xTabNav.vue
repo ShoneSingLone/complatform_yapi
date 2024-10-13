@@ -349,7 +349,7 @@ export default async function () {
 									tabs
 								]
 							),
-							hDiv([this.renderHeaderOpr()], { class: "flex1" })
+							hDiv({ class: "flex1" }, [this.renderHeaderOpr()])
 						]
 					)
 				]

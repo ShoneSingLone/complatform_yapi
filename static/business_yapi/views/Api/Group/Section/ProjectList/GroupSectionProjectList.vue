@@ -78,18 +78,12 @@ export default async function () {
 						options: [],
 						placeholder: i18n("分组"),
 						once() {
-							vm.$watch(
-								() => [vm.APP.groupList],
-								([groupList = []]) => {
-									this.options = _.map(groupList, row => {
-										return {
-											label: row.group_name,
-											value: row._id
-										};
-									});
-								},
-								{ immediate: true }
-							);
+							this.options = _.map(vm.APP.groupList, row => {
+								return {
+									label: row.group_name,
+									value: row._id
+								};
+							});
 						}
 					}
 				}),
@@ -114,53 +108,20 @@ export default async function () {
 					async onQuery() {
 						_.$loading(true);
 						try {
-							let {
+							const {
 								data: { list, total }
 							} = await _api.yapi.project_page({ page: 0, size: -1 });
 
-							const group_at_least_one_project = new Set();
-
-							list = _.reduce(
-								list,
-								(_list, row) => {
-									const groupItem = _.find(vm.APP.groupList, {
-										_id: row.group_id
-									});
-									if (groupItem) {
-										group_at_least_one_project.add(groupItem._id);
-										/* 全局的grouplist 拼接行数据 */
-										_list.push({
-											...row,
-											group_desc: groupItem?.group_desc || "",
-											group_name: groupItem?.group_name || ""
-										});
-									}
-									return _list;
-								},
-								[]
-							);
-							list = _.reduce(
-								vm.APP.groupList,
-								(_list, groupItem) => {
-									if (!group_at_least_one_project.has(groupItem._id)) {
-										group_at_least_one_project.add(groupItem._id);
-										console.log(
-											"🚀 ~ onQuery ~ groupItem._id:",
-											Array.from(group_at_least_one_project),
-											groupItem._id
-										);
-										_list.push({
-											group_id: groupItem._id,
-											group_desc: groupItem.group_desc || "",
-											group_name: groupItem.group_name || ""
-										});
-									}
-									return _list;
-								},
-								list
-							);
 							_.$setTableData(vm.configsTable, {
-								list,
+								list: _.map(list, row => {
+									const item = _.find(vm.APP.groupList, { _id: row.group_id });
+									/* 全局的grouplist 拼接行数据 */
+									return {
+										...row,
+										group_desc: item?.group_desc || "",
+										group_name: item?.group_name || ""
+									};
+								}),
 								total
 							});
 						} catch (error) {
@@ -221,9 +182,6 @@ export default async function () {
 							prop: "name",
 							label: "项目",
 							cellRenderer({ rowData }) {
-								if (!rowData._id) {
-									return null;
-								}
 								return hDiv({ class: "flex middle" }, [
 									hxItem({
 										style: "--xItem-wrapper-width:32px",
