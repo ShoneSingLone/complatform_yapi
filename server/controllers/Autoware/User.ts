@@ -58,15 +58,15 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 400, "密码不能为空"));
 					}
 
-					let result = await userInst.findByEmail(email);
+					let userInfo = await userInst.findByEmail(email);
 
-					if (!result) {
+					if (!userInfo) {
 						return (ctx.body = xU.$response(null, 404, "该用户不存在"));
 					}
-					const saltPwd = xU.$saltIt(password, result.passsalt);
-					if (saltPwd === result.password) {
-						this.$user = result;
-						const { _id: uid, passsalt } = result;
+					const saltPwd = xU.$saltIt(password, userInfo.passsalt);
+					if (saltPwd === userInfo.password) {
+						this.$user = userInfo;
+						const { _id: uid, passsalt } = userInfo;
 						const TOKEN = jwt.sign({ uid }, passsalt);
 						const COOKIES_OPTIONS = {
 							expires: xU.expireDate(7),
@@ -79,13 +79,13 @@ module.exports = {
 						ctx.body = xU.$response(
 							{
 								uid,
-								username: result.username,
-								role: result.role,
-								email: result.email,
-								add_time: result.add_time,
-								up_time: result.up_time,
+								username: userInfo.username,
+								role: userInfo.role,
+								email: userInfo.email,
+								add_time: userInfo.add_time,
+								up_time: userInfo.up_time,
 								type: "site",
-								study: result.study,
+								study: userInfo.study,
 								x_token: {
 									_yapi_token: TOKEN,
 									_yapi_uid: uid

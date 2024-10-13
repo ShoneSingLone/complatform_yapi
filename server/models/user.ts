@@ -93,7 +93,9 @@ class ModelUser extends ModelBase {
 	}
 
 	findByEmail(email) {
-		return this.model.findOne({ email: email });
+		return this.model.findOne({
+			$or: [{ email: new RegExp(email, "i") }]
+		});
 	}
 
 	findById(id) {

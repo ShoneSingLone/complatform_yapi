@@ -371,26 +371,50 @@ module.exports = {
 						id: {
 							description: "资源id",
 							type: "number"
+						},
+						uri: {
+							description: "资源uri;资源管理器，直接读取磁盘文件",
+							type: "string"
 						}
 					}
 				},
 				async handler(ctx) {
 					const { headers, payload } = ctx;
-					const { id } = payload;
+					const { id, uri } = payload;
 					let resourcePath;
 					let resource;
-					try {
-						resource = await orm.Resource.getResourceById(id);
-						resourcePath = resource.path;
-					} catch (error) {
-						return (ctx.body = xU.$response(null, 404, "Not Found"));
+
+					const rootDirName = path.resolve(yapi_configs.RESOURCE_ASSETS_REMOTE);
+					if (uri) {
+						try {
+							resourcePath = path.resolve.apply(path, [
+								rootDirName,
+								...JSON.parse(uri)
+							]);
+						} catch (error) {
+							return (ctx.body = xU.$response(null, 404, "Not Found"));
+						}
+					} else {
+						try {
+							resource = await orm.Resource.getResourceById(id);
+							resourcePath = resource.path;
+						} catch (error) {
+							return (ctx.body = xU.$response(null, 404, "Not Found"));
+						}
 					}
 					const type = getType(resourcePath);
+					let total;
 					if (isAudioType(type)) {
-						const { size: total, type } = await getAudioDetail({
-							resource,
-							uid: this.$uid
-						});
+						if (resource) {
+							const { size, type } = await getAudioDetail({
+								resource,
+								uid: this.$uid
+							});
+							total = size;
+						} else {
+							const stat = await fs.promises.stat(resourcePath);
+							total = stat.size;
+						}
 						try {
 							if (headers.range) {
 								return RangeAudio({
