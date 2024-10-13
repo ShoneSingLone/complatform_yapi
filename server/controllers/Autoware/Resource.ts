@@ -384,9 +384,11 @@ module.exports = {
 					let resourcePath;
 					let resource;
 
-					const rootDirName = path.resolve(yapi_configs.RESOURCE_ASSETS_REMOTE);
 					if (uri) {
 						try {
+							const rootDirName = path.resolve(
+								yapi_configs.RESOURCE_ASSETS_REMOTE
+							);
 							resourcePath = path.resolve.apply(path, [
 								rootDirName,
 								...JSON.parse(uri)
@@ -445,12 +447,16 @@ module.exports = {
 						id: {
 							description: "资源id",
 							type: "number"
+						},
+						uri: {
+							description: "资源uri;资源管理器，直接读取磁盘文件",
+							type: "string"
 						}
 					}
 				},
 				async handler(ctx) {
 					const { headers, payload } = ctx;
-					const { id } = payload;
+					const { id, uri } = payload;
 					let resourcePath = [];
 					let response_not_found = xU.$response(
 						{
@@ -460,11 +466,25 @@ module.exports = {
 						"Not Found"
 					);
 
-					try {
-						const resource = await orm.Resource.getResourceById(id);
-						resourcePath = resource.path;
-					} catch (error) {
-						ctx.body = response_not_found;
+					if (id) {
+						try {
+							const resource = await orm.Resource.getResourceById(id);
+							resourcePath = resource.path;
+						} catch (error) {
+							ctx.body = response_not_found;
+						}
+					} else if (uri) {
+						try {
+							const rootDirName = path.resolve(
+								yapi_configs.RESOURCE_ASSETS_REMOTE
+							);
+							resourcePath = path.resolve.apply(path, [
+								rootDirName,
+								...JSON.parse(uri)
+							]);
+						} catch (error) {
+							ctx.body = response_not_found;
+						}
 					}
 
 					try {
