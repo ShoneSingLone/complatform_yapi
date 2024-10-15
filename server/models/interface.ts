@@ -74,7 +74,7 @@ class ModelInterface extends ModelBase {
 					value: String,
 					example: String,
 					desc: String,
-					required: true
+					required: Boolean
 				}
 			],
 			/* 路径参数 例如：/user/{id}*/
@@ -89,6 +89,7 @@ class ModelInterface extends ModelBase {
 			req_query: [
 				{
 					name: String,
+					/* 参数类型 */
 					value: String,
 					example: String,
 					desc: String
@@ -98,7 +99,6 @@ class ModelInterface extends ModelBase {
 				type: String,
 				enum: ["form", "json", "text", "file", "raw"]
 			},
-			req_body_is_json_schema: { type: Boolean, default: false },
 			req_body_form: [
 				{
 					name: String,
@@ -108,7 +108,10 @@ class ModelInterface extends ModelBase {
 					desc: String
 				}
 			],
+			req_body_is_json_schema: { type: Boolean, default: false },
+			/* 配合json_schema: true则读取req_body_other字段 */
 			req_body_other: String,
+			/* 响应部分 */
 			res_body_type: {
 				type: String,
 				enum: ["json", "text", "xml", "raw", "json-schema", "backup", "file"]

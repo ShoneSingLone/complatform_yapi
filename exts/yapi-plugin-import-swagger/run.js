@@ -245,6 +245,8 @@ function handleSwagger(data, originTags = []) {
 			}
 			let defaultParam = {
 				name: param.name,
+				value: param.type,
+				example: String(param.enum || ""),
 				desc: param.description,
 				required: param.required ? "1" : "0"
 			};
