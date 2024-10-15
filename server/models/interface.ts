@@ -68,38 +68,30 @@ class ModelInterface extends ModelBase {
 					}
 				]
 			},
-			req_query: [
-				{
-					name: String,
-					value: String,
-					example: String,
-					desc: String,
-					required: {
-						type: String,
-						enum: ["1", "0"],
-						default: "1"
-					}
-				}
-			],
 			req_headers: [
 				{
 					name: String,
 					value: String,
 					example: String,
 					desc: String,
-					required: {
-						type: String,
-						enum: ["1", "0"],
-						default: "1"
-					}
+					required: true
 				}
 			],
-			/* 路径参数 */
+			/* 路径参数 例如：/user/{id}*/
 			req_params: [
 				{
 					name: String,
 					desc: String,
 					example: String
+				}
+			],
+			/* url search的参数，?id=xxxx&name=xxxx */
+			req_query: [
+				{
+					name: String,
+					value: String,
+					example: String,
+					desc: String
 				}
 			],
 			req_body_type: {
@@ -113,12 +105,7 @@ class ModelInterface extends ModelBase {
 					type: { type: String, enum: ["text", "file"] },
 					example: String,
 					value: String,
-					desc: String,
-					required: {
-						type: String,
-						enum: ["1", "0"],
-						default: "1"
-					}
+					desc: String
 				}
 			],
 			req_body_other: String,
