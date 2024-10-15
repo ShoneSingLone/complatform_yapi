@@ -45,12 +45,13 @@ export default async function () {
 				)
 		},
 		setup() {
+			const cptProjectInterfaceTab = useTabName({
+				vm: this,
+				propName: "project_interface_tab",
+				defaultName: "1"
+			});
 			return {
-				cptProjectInterfaceTab: useTabName({
-					vm: this,
-					propName: "project_interface_tab",
-					defaultName: "preview"
-				})
+				cptProjectInterfaceTab
 			};
 		},
 		data() {

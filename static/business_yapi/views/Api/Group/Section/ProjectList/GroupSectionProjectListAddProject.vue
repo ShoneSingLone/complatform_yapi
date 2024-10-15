@@ -30,23 +30,22 @@ export default async function ({ onOk }) {
 			options: [],
 			once() {
 				vm.$watch(
-					() => [vm.APP?.user?.role, vm.APP.groupList],
-					([role, groupList]) => {
-						debugger;
+					() => vm.APP?.user?.role,
+					role => {
 						this.options = _.reduce(
-							groupList,
-							(target, groupItem) => {
+							vm.APP.groupList,
+							(target, currentGroup) => {
 								const isShow = (() => {
 									const isGroupRoleAuth = [ADMIN, OWNER].includes(
-										groupItem?.role
+										currentGroup?.role
 									);
 									return isGroupRoleAuth || [ADMIN, OWNER].includes(role);
 								})();
 
 								if (isShow) {
 									target.push({
-										label: groupItem.group_name,
-										value: String(groupItem._id)
+										label: currentGroup.group_name,
+										value: String(currentGroup._id)
 									});
 								}
 								return target;
@@ -57,27 +56,7 @@ export default async function ({ onOk }) {
 					{ immediate: true }
 				);
 			},
-			rules: [_rules.required("请选择项目所属的分组")],
-			itemSlots: {
-				afterController() {
-					return hxBtn({
-						class: "ml",
-						configs: {
-							label: "新建分组",
-							preset: "preset",
-							onClick() {
-								return _.$openModal({
-									title: i18n("添加分组"),
-									url: "@/views/Api/Group/Group.Upsert.vue",
-									onOk() {
-										vm.APP.updateGroupList();
-									}
-								});
-							}
-						}
-					});
-				}
-			}
+			rules: [_rules.required("请选择项目所属的分组")]
 		});
 
 		const name = defItem({
