@@ -245,7 +245,13 @@ function handleSwagger(data, originTags = []) {
 			}
 			let defaultParam = {
 				name: param.name,
-				value: param.type,
+				value: (() => {
+					if (param.type === 'integer') {
+						return number;
+					} else {
+						return param.type;
+					}
+				})(),
 				example: String(param.enum || ""),
 				desc: param.description,
 				required: param.required ? "1" : "0"
@@ -289,9 +295,24 @@ function isJson(json) {
 		return false;
 	}
 }
-
+function propertiyToArray(jsonData) {
+	if (jsonData.type === "object") {
+		jsonData.properties = Object.keys(jsonData.properties).map(propname => {
+			let item = jsonData.properties[propname];
+			item = propertiyToArray(item);
+			return {
+				...item,
+				propname,
+			};
+		});
+	} else if (jsonData.type === "array") {
+		jsonData.items = propertiyToArray(jsonData.items);
+	}
+	return jsonData;
+}
 function handleBodyPamras(data, api) {
-	api.req_body_other = JSON.stringify(data, null, 2);
+	/* 方便编辑 */
+	api.req_body_other = JSON.stringify(propertiyToArray(data), null, 2);
 	if (isJson(api.req_body_other)) {
 		api.req_body_type = "json";
 		api.req_body_is_json_schema = true;
