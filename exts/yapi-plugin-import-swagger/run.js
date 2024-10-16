@@ -296,22 +296,24 @@ function isJson(json) {
 	}
 }
 function propertiyToArray(jsonData) {
-	if (jsonData.type === "object") {
-		jsonData.properties = Object.keys(jsonData.properties).map(propname => {
-			let item = jsonData.properties[propname];
+	/* 将 properties对象 转为数组 方便编辑的时候固定顺序 */
+	if (jsonData.type === "object" && _.isPlainObject(jsonData.properties)) {
+		const _properties = _.map(jsonData.properties, (item, propname) => {
 			item = propertiyToArray(item);
 			return {
 				...item,
 				propname,
 			};
 		});
-	} else if (jsonData.type === "array") {
+		jsonData.properties = _properties;
+	} else if (jsonData.type === "array" && _.isArray(jsonData.items)) {
 		jsonData.items = propertiyToArray(jsonData.items);
 	}
 	return jsonData;
 }
 function handleBodyPamras(data, api) {
 	/* 方便编辑 */
+	/* $$ref 是已经转换过，$ref是还没有转换 */
 	api.req_body_other = JSON.stringify(propertiyToArray(data), null, 2);
 	if (isJson(api.req_body_other)) {
 		api.req_body_type = "json";
