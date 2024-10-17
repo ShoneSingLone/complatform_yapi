@@ -21,8 +21,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList }) {
 	return defineComponent({
 		inject: ["APP", "inject_project"],
 		props: useDialogProps(),
-		data() {
-			const vm = this;
+		data(vm) {
 			return {
 				form: {
 					apiMethod: {
@@ -43,6 +42,26 @@ export default async function ({ categoryInfo, project_id, getInterfaceList }) {
 								this.value = categoryInfo?._id;
 							} else {
 								this.value = _.first(this.options).value;
+							}
+						},
+						itemSlots: {
+							afterController() {
+								return hxBtn({
+									class: "ml",
+									configs: {
+										label: i18n("添加分类"),
+										preset: "blue",
+										icon: "el-icon-plus",
+										async onClick() {
+											return _.$openModal({
+												title: "添加分类",
+												url: "@/components/YapiDialogUpsertCategory.vue",
+												project_id: vm.APP.cptProjectId,
+												allCategory: vm.inject_project.allCategory
+											});
+										}
+									}
+								});
 							}
 						}
 					},

@@ -306,8 +306,9 @@ function propertiyToArray(jsonData) {
 			};
 		});
 		jsonData.properties = _properties;
-	} else if (jsonData.type === "array" && _.isArray(jsonData.items)) {
+	} else if (jsonData.type === "array") {
 		jsonData.items = propertiyToArray(jsonData.items);
+		jsonData.items.propname = jsonData.items.xml?.name || "";
 	}
 	return jsonData;
 }

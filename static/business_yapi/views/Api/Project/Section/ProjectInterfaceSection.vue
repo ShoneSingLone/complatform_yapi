@@ -54,16 +54,19 @@ export default async function () {
 				label: i18n("接口名称"),
 				width: 300,
 				cellRenderer({ rowData }) {
-					return hLink({
-						label: rowData.title,
-						title: rowData.title,
-						style: "text-align:left;",
-						href: _.$aHashLink("/api/project", {
-							...vm.$route.query,
-							interfaceType: "interface",
-							interfaceId: rowData._id
-						})
-					});
+					return hDiv([
+						hLink({
+							label: `${rowData.title}`,
+							title: rowData.title,
+							style: "text-align:left;",
+							href: _.$aHashLink("/api/project", {
+								...vm.$route.query,
+								interfaceType: "interface",
+								interfaceId: rowData._id
+							})
+						}),
+						hDiv({ class: "data-list-id-number" }, [`${rowData._id}`])
+					]);
 				}
 			};
 

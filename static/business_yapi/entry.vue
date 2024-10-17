@@ -7,6 +7,7 @@ export default async function () {
 			TuiEditor: "@/components/TuiEditor/TuiEditor.vue",
 			YapiApiRequestBodyPreviewer: "@/components/YapiApiRequestBodyPreviewer.vue",
 			xItemMonaco: "@/components/xItemMonaco.vue",
+			yapiItemReqBodyParams: "@/components/yapiItemReqBodyParams.vue",
 			YapiItemProxyEnv: "@/components/YapiItemProxyEnv.vue",
 			YapiItemAvatar: "@/components/YapiItemAvatar.vue",
 			YapiItemUac: "@/components/YapiItemUac.vue",

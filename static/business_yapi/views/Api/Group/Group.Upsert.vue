@@ -38,6 +38,12 @@ export default async function ({ groupInfo, onOk }) {
 			const vm = this;
 			return {
 				isUpdate,
+				confirmGroupName: defItem({
+					value: "",
+					label: i18n("再次输入分组名称"),
+					placeholder: i18n("输入分组名称"),
+					rules: [_rules.validator(({ val }) => {}, { name: "required" })]
+				}),
 				form: {
 					newGroupName: defItem({
 						value: "",
@@ -232,7 +238,55 @@ export default async function ({ groupInfo, onOk }) {
 														preset: "danger",
 														label: "删除分组",
 														id: "delete-group-btn",
-														onClick: vm.showDeleteGroupConfirm
+														onClick() {
+															return _.$openModal({
+																title: i18n("再次确认删除操作"),
+																url: "/common/ui-x/msg/WindowConfirm.vue",
+																content: () => {
+																	return hDiv([
+																		hxItem({
+																			configs:
+																				vm.confirmGroupName
+																		})
+																	]);
+																},
+																renderFooter(vmConfirmWindow) {
+																	return () => {
+																		return h(
+																			"div",
+																			{
+																				style: `border-top: 1px solid var(--el-border-color);padding-top:var(--ui-one);width:100%;text-align:center;`
+																			},
+																			[
+																				hxBtn({
+																					staticClass:
+																						"mr",
+																					configs: {
+																						label: "删除",
+																						onClick() {
+																							return _.$api.yapi.groupDeleteGroup(
+																								groupInfo.id
+																							);
+																						}
+																					}
+																				}),
+																				hxBtn({
+																					configs: {
+																						label: i18n(
+																							"取消"
+																						),
+																						preset: "primary",
+																						onClick() {
+																							vmConfirmWindow.closeModal();
+																						}
+																					}
+																				})
+																			]
+																		);
+																	};
+																}
+															});
+														}
 													}
 												})
 											])

@@ -45,13 +45,12 @@ export default async function () {
 				)
 		},
 		setup() {
-			const cptProjectInterfaceTab = useTabName({
-				vm: this,
-				propName: "project_interface_tab",
-				defaultName: "1"
-			});
 			return {
-				cptProjectInterfaceTab
+				cptProjectInterfaceTab: useTabName({
+					vm: this,
+					propName: "project_interface_tab",
+					defaultName: "preview"
+				})
 			};
 		},
 		data() {
@@ -90,10 +89,13 @@ export default async function () {
 				_.$loading(true);
 				$(".flash-when").addClass("loading");
 				try {
-					let { data: interfaceInfo } = await _api.yapi.interface_get_by_id({
-						id: this.APP.cptInterfaceId
-					});
-					this.interfaceInfo = interfaceInfo;
+					const id = this.APP.cptInterfaceId;
+					if (id) {
+						let { data: interfaceInfo } = await _api.yapi.interface_get_by_id({ id });
+						this.interfaceInfo = interfaceInfo;
+					} else {
+						this.interfaceInfo = false;
+					}
 				} catch (error) {
 					_.$msgError(error);
 				} finally {
@@ -107,10 +109,8 @@ export default async function () {
 		watch: {
 			"APP.cptInterfaceId": {
 				immediate: true,
-				handler(id) {
-					if (id) {
-						this.updateInterface();
-					}
+				handler() {
+					this.updateInterface();
 				}
 			}
 		}

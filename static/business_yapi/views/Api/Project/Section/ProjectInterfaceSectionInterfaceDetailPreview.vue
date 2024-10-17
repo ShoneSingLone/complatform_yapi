@@ -55,13 +55,16 @@
 		<xCard header="请求">
 			<xCard header="ReqHeaders">
 				<xForm col="1" style="--xItem-label-width: 100px">
+					<!-- cptHeadersParams:{{ cptHeadersParams }} -->
 					<YapiApiRequestBodyPreviewer :item="cptHeadersParams" />
 				</xForm>
 			</xCard>
 			<xGap t />
 			<xCard header="ReqBody">
 				<xForm col="1" style="--xItem-label-width: 100px">
-					<YapiApiRequestBodyPreviewer :item="sourceReqBodyOther" />
+					<!-- sourceReqBodyOther:{{ sourceReqBodyOther }} -->
+					<PanelReqBodyJson :value="req_body_other" :readonly="true" />
+					<!-- <YapiApiRequestBodyPreviewer :item="sourceReqBodyOther" /> -->
 				</xForm>
 			</xCard>
 		</xCard>
@@ -78,8 +81,12 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP", "inject_interface_section_interface_detail", "inject_project"],
 		props: ["interfaceInfo"],
+		components: {
+			PanelReqBodyJson: () => _.$importVue("@/components/PanelReqBodyJson.vue")
+		},
 		data() {
 			return {
+				req_body_other: "",
 				sourceReqHeaders: [],
 				sourceReqBodyOther: {},
 				form: defItems({
@@ -329,7 +336,10 @@ export default async function () {
 							if (!source?.req_body_other) {
 								return;
 							}
-							this.sourceReqBodyOther = JSON.parse(source.req_body_other);
+							if (source.req_body_type === "json") {
+								this.sourceReqBodyOther = JSON.parse(source.req_body_other);
+								this.req_body_other = source.req_body_other;
+							}
 							this.form.source.value = JSON.stringify(source, null, 2);
 						} catch (error) {
 							_.$msgError(error);

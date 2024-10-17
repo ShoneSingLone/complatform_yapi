@@ -1915,6 +1915,12 @@
 	// wrapper function for providing a more flexible interface
 	// without getting yelled at by flow
 	function _createElement(context, tag, props, children, normalizationType, alwaysNormalize) {
+		/* 如果没有prop可以不填，判断你为数组或者原始值为children */
+		if (isArray(props) || isPrimitive(props)) {
+			normalizationType = children;
+			children = props;
+			props = undefined;
+		}
 		if (isTrue(alwaysNormalize)) {
 			normalizationType = ALWAYS_NORMALIZE;
 		}
@@ -4188,6 +4194,7 @@
 	}
 
 	function handleError(err, vm, info) {
+		err = err || new Error();
 		// Deactivate deps tracking while processing error handler to avoid possible infinite rendering.
 		// See: https://github.com/vuejs/vuex/issues/1505
 		pushTarget();

@@ -189,7 +189,7 @@
 	 * 用"xx.xx.xx"的字符串，安全get、set对象的值，如果是vue2，则用$set保证响应
 	 */
 	/* @typescriptDeclare (item: object, prop: string, val?: any)=> any */
-	function $val(item, prop, val) {
+	function $val(item, prop, val, options = {}) {
 		item = item || {};
 		const isVue2 = item._isVue;
 		const fnVue$set = item.$set;
@@ -226,6 +226,34 @@
 				}
 			}
 		};
+		const delVal = () => {
+			while ((key = propArray.shift())) {
+				/* 如果是最后一项，就赋值后退出 */
+				if (propArray.length === 0) {
+					if (isVue2) {
+						fnVue$set(nextItem, key, val);
+					} else {
+						if (Array.isArray(nextItem)) {
+							nextItem.splice(key, 1);
+						} else {
+							delete nextItem[key];
+						}
+					}
+					return;
+				} else {
+					/* 继续循环，如果中间有undefined，添加中间项 */
+					const _nextItem = nextItem[key];
+					if (!_nextItem) {
+						if (isVue2) {
+							fnVue$set(nextItem, key, {});
+						} else {
+							nextItem[key] = {};
+						}
+					}
+					nextItem = nextItem[key];
+				}
+			}
+		};
 
 		const getVal = () => {
 			while ((key = propArray.shift())) {
@@ -246,6 +274,8 @@
 		/* 如果有输入 */
 		if (val !== undefined) {
 			setVal(isVue2, key, propArray, nextItem, val);
+		} if (val == undefined && options?.delete) {
+			delVal(isVue2, key, propArray, nextItem, val);
 		} else {
 			return getVal(isVue2, key, propArray, nextItem);
 		}

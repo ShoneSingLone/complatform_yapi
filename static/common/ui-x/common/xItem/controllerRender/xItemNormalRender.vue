@@ -6,20 +6,23 @@ export default async function () {
 
 		const xItem_controllerProps = {
 			...CONFIGS,
-			readonly: CONFIGS.readonly,
+			readonly: vm.cptReadonly,
 			disabled: vm.cptDisabled,
 			attrs: {
 				...vm.cpt_bindProps.attrs,
+				readonly: vm.cptReadonly,
 				disabled: vm.cptDisabled,
 				queryData: vm.cptDepdata
 			},
 			props: {
 				...vm.cpt_bindProps.props,
+				readonly: vm.cptReadonly,
 				disabled: vm.cptDisabled,
 				queryData: vm.cptDepdata
 			},
 			configs: {
 				...CONFIGS,
+				readonly: vm.cptReadonly,
 				disabled: vm.cptDisabled,
 				options: vm.cpt_options
 			},

@@ -71,7 +71,7 @@ export default async function () {
 		inject: ["APP", "inject_project", "inject_project_interface_section"],
 		data() {
 			return {
-				rowHeight: 50,
+				rowHeight: 100,
 				isAdvancedSearchCollapse: true
 			};
 		},
@@ -82,6 +82,10 @@ export default async function () {
 			oprBtnArray() {
 				const vm = this;
 				return [
+					{
+						label: "添加接口",
+						onClick: vm.addInterface
+					},
 					{
 						label: "切换代理",
 						disabled: () => vm.cptIsCheckedRow,
@@ -143,6 +147,15 @@ export default async function () {
 			},
 			resetSearchForm() {
 				_.$resetFormValues(this.inject_project_interface_section.form);
+			},
+			async addInterface() {
+				return _.$openModal({
+					title: "添加接口",
+					url: "@/components/YapiDialogUpsertInterface.vue",
+					parent: this,
+					project_id: this.APP.cptProjectId,
+					getInterfaceList: this.inject_project.getInterfaceList
+				});
 			},
 			async changeProxy() {
 				_.$openModal({

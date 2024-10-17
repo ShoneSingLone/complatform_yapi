@@ -141,7 +141,7 @@
 	/* @typescriptDeclare (tree:any[],handler:any,options?:{children:string})=>void */
 	_.$traverse = function (tree, handler, options, propString = "") {
 		const childrenName = options?.children || "children";
-		if (_.$isArrayFill(tree)) {
+		if (!_.isEmpty(tree)) {
 			let len = tree.length - 1;
 			let i = len;
 
@@ -154,7 +154,7 @@
 				} else {
 					const index = _.findIndex(tree, node);
 					if (~index) {
-						if (_.$isArrayFill(node[childrenName])) {
+						if (!_.isEmpty(node[childrenName])) {
 							node[childrenName] = _.$traverse(
 								node[childrenName],
 								handler,
@@ -2120,12 +2120,9 @@
 				const item = _.find(options, { value });
 				if (item) {
 					return item;
-				} else {
-					console.error("getSelectedItemFrom miss options or value");
 				}
-			} else {
-				console.error("getSelectedItemFrom miss options or value");
 			}
+			console.error("getSelectedItemFrom miss options or value");
 			return { value: "", label: "", labelKey: "" };
 		};
 

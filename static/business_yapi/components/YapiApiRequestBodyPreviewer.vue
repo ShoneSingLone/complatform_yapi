@@ -17,7 +17,7 @@ export default async function () {
 				}
 			},
 			propName: {
-				type: String
+				type: [String, Number]
 			}
 		},
 		inject: {

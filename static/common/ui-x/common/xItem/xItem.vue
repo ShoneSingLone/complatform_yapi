@@ -31,6 +31,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		name: "xItem",
 		componentName: "xItem",
 		props: [
+			"readonly",
 			"configs",
 			"value",
 			"payload",
@@ -160,6 +161,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					return !!vm.cptConfigs?.disabled;
 				}
 			});
+			let cptReadonly = computed(() => {
+				if (this.readonly) {
+					return true;
+				}
+				if (_.isFunction(vm.cptConfigs?.readonly)) {
+					return vm.cptConfigs.readonly.call(vm.cptConfigs, {
+						xItem: vm,
+						val: vm.p_value
+					});
+				} else {
+					return !!vm.cptConfigs?.readonly;
+				}
+			});
 
 			onMounted(() => {
 				Vue._X_ITEM_VM_S[this.cpt_id] = this;
@@ -201,6 +215,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				refItemLabel: sizer,
 				privateState,
 				cptDisabled,
+				cptReadonly,
 				cpt_options,
 				cptDepdata,
 				cptPlaceholder,
@@ -508,7 +523,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		render() {
 			if (!this.cptConfigs) debugger;
 
-			/* 只读模式 */
+			/* TODO:只读模式 */
 			if (this.readOnlyAs) {
 				if (_xItem_lazyLoadRender.ReadonlyAsRender) {
 					return _xItem_lazyLoadRender.ReadonlyAsRender.call(this);

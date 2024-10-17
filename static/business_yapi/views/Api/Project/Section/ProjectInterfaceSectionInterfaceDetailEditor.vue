@@ -6,12 +6,36 @@
 </style>
 <template>
 	<div v-if="isShow" id="ProjectInterfaceSectionInterfaceDetailEditor" class="flex1">
-		<xCard>
-			<xForm col="3" style="--xItem-label-width: 140px">
+		<xCard style="--xItem-label-width: 140px">
+			<xForm col="3">
 				<xItem :configs="form.title" v-model="formData.title" span="full" />
 				<xItem :configs="form.path" v-model="formData.path" span="full" />
 				<xItem :configs="form.pathParams" v-model="cptFormDataReqParams" span="full" />
+			</xForm>
+			<xGap t />
+			<xForm col="3">
+				<!-- <div>formData.req_body_type:{{ formData.req_body_type }}</div> -->
+				<!-- <div>formData.req_body_form:{{ formData.req_body_form }}</div> -->
+				<!-- <pre>
+					<code>
+						<div>formData.req_body_other:{{ formData.req_body_other }}</div>
+					</code>
+				</pre> -->
+				<xItem
+					:configs="form.req_body_params"
+					v-model="formData.req_body_params"
+					:reqQuery.sync="formData.req_query"
+					:reqBodyType.sync="formData.req_body_type"
+					:reqBodyForm.sync="formData.req_body_form"
+					:reqBodyOther.sync="formData.req_body_other"
+					span="full" />
+			</xForm>
+			<xGap t />
+			<xForm col="3">
 				<xItem :configs="form.isProxy" v-model="formData.isProxy" span="full" />
+			</xForm>
+			<xDivider>响应参数</xDivider>
+			<xForm col="3">
 				<xItem :configs="form.res_body_type" v-model="formData.res_body_type" span="full" />
 				<xItem
 					:configs="form.resBackupJson"
@@ -23,7 +47,7 @@
 		<xGap t />
 		<div class="flex middle">
 			<xGap f />
-			<xBtn :configs="btnUpdate" />
+			<xBtn :configs="cptBtnUpdate" />
 		</div>
 	</div>
 </template>
@@ -42,6 +66,7 @@ export default async function () {
 		data() {
 			const vm = this;
 			return {
+				activeNames: ["response", "request"],
 				isShow: true,
 				formData: {},
 				xItemInterface: {
@@ -139,6 +164,10 @@ export default async function () {
 							);
 						}
 					},
+					req_body_params: {
+						label: i18n("请求参数"),
+						itemType: "yapiItemReqBodyParams"
+					},
 					uid: { label: i18n("uid") },
 					status: { label: i18n("status") },
 					updatetime: { label: i18n("updatetime") },
@@ -206,13 +235,11 @@ export default async function () {
 					return true;
 				}
 			},
-			btnUpdate() {
+			cptBtnUpdate() {
 				return {
 					label: "更新",
 					preset: "blue",
-					onClick: () => {
-						return this.onSubmit();
-					}
+					onClick: () => this.onSubmit()
 				};
 			}
 		},
@@ -243,12 +270,14 @@ export default async function () {
 				immediate: true,
 				handler(val) {
 					this.isShow = false;
-					this.formData = {
-						...this.interfaceInfo
-					};
-
 					this.$nextTick(() => {
-						this.isShow = true;
+						this.formData = {
+							...this.interfaceInfo
+						};
+						console.log("🚀 ~ this.$nextTick ~ this.formData:", this.formData);
+						this.$nextTick(() => {
+							this.isShow = true;
+						});
 					});
 				}
 			}
