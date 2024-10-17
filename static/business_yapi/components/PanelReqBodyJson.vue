@@ -159,12 +159,18 @@ export default async function () {
 					enum: "",
 					example: "",
 					required: [],
-					properties: {}
+					properties: []
 				};
 
 				const parent = _.$val(this.cptReqBodyJson, `${parentProp}`);
 				if (parent?.type === "object") {
-					parent.properties = parent.properties || [];
+					parent.properties = (() => {
+						if (_.isArray(parent.properties)) {
+							return parent.properties;
+						} else {
+							return [];
+						}
+					})();
 					parent.properties.push(newItem);
 				}
 				if (parent?.type === "array") {
@@ -226,18 +232,18 @@ export default async function () {
 								hxItem({
 									readonly: vm.cptReadonly,
 									value: isRoot ? "root" : item.propname || "",
-									placeholder: "属性名称",
 									configs: {
+										placeholder: "属性名称",
 										rules: [
 											_rules.required(),
 											_rules.validator(({ val: propname }) => {
-												const items = _.filter(
-													vm.cptReqBodyJson[parentProp],
-													{
-														propname
-													}
-												);
-
+												const _parentProp = parentProp.split(".");
+												_parentProp.pop();
+												const paremtItem =
+													vm.cptReqBodyJson[_parentProp.join(".")];
+												const items = _.filter(paremtItem, {
+													propname
+												});
 												if (items.length > 1) {
 													return "参数名重复";
 												}

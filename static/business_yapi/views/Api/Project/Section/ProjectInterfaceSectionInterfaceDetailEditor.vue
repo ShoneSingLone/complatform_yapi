@@ -10,7 +10,11 @@
 			<xForm col="3">
 				<xItem :configs="form.title" v-model="formData.title" span="full" />
 				<xItem :configs="form.path" v-model="formData.path" span="full" />
-				<xItem :configs="form.pathParams" v-model="cptFormDataReqParams" span="full" />
+				<xItem
+					:configs="form.pathParams"
+					v-model="cptFormDataReqParams"
+					span="full"
+					class="mt" />
 			</xForm>
 			<xGap t />
 			<xForm col="3">
