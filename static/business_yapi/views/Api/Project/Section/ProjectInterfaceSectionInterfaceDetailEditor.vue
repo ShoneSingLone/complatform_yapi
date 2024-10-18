@@ -20,11 +20,11 @@
 			<xForm col="3">
 				<!-- <div>formData.req_body_type:{{ formData.req_body_type }}</div> -->
 				<!-- <div>formData.req_body_form:{{ formData.req_body_form }}</div> -->
-				<pre>
+				<!-- <pre>
 					<code>
 						<div>formData.req_body_other:{{ formData.req_body_other }}</div>
 					</code>
-				</pre>
+				</pre> -->
 				<xItem
 					:configs="form.req_body_params"
 					v-model="formData.req_body_params"
