@@ -180,7 +180,7 @@ export default async function () {
 				this.cptReqBodyJson = { ...this.cptReqBodyJson };
 			},
 
-			gen_row({ item, level = 1, parentProp = "", index }) {
+			gen_row({ item, level = 1, parentProp = "", index, isArryItem = false }) {
 				const GAP = 16 * level;
 				const isRoot = level === 1;
 
@@ -193,6 +193,7 @@ export default async function () {
 						}
 					},
 					this.gen_row_cells({
+						isArryItem,
 						GAP,
 						level,
 						isRoot,
@@ -201,7 +202,7 @@ export default async function () {
 					})
 				);
 			},
-			gen_row_cells({ GAP, isRoot, item, parentProp, level }) {
+			gen_row_cells({ GAP, isRoot, item, parentProp, level, isArryItem = false }) {
 				const vm = this;
 
 				return [
@@ -226,49 +227,99 @@ export default async function () {
 						hDiv(
 							{
 								class: "flex middle",
-								style: { width: `${CELL_WIDTH - GAP}px` }
+								style: {
+									width: `${CELL_WIDTH - GAP}px`
+								}
 							},
-							[
-								hxItem({
-									readonly: vm.cptReadonly,
-									value: isRoot ? "root" : item.propname || "",
-									configs: {
-										placeholder: "属性名称",
-										rules: [
-											_rules.required(),
-											_rules.validator(({ val: propname }) => {
-												const _parentProp = parentProp.split(".");
-												_parentProp.pop();
-												const paremtItem =
-													vm.cptReqBodyJson[_parentProp.join(".")];
-												const items = _.filter(paremtItem, {
-													propname
-												});
-												if (items.length > 1) {
-													return "参数名重复";
-												}
-												return "";
+							(() => {
+								if (isArryItem) {
+									return [
+										hSpan(
+											{
+												class: "flex1",
+												style: `width:1px;padding-left:15px;`
+											},
+											[item.propname]
+										)
+									];
+								} else {
+									return [
+										hxItem({
+											class: "flex1",
+											style: `width:1px;`,
+											readonly: vm.cptReadonly,
+											value: isRoot ? "root" : item.propname || "",
+											configs: {
+												placeholder: "属性名称",
+												rules: [
+													_rules.required(),
+													_rules.validator(({ val: propname }) => {
+														const _parentProp = parentProp.split(".");
+														_parentProp.pop();
+														const paremtItem =
+															vm.cptReqBodyJson[
+																_parentProp.join(".")
+															];
+														const items = _.filter(paremtItem, {
+															propname
+														});
+														if (items.length > 1) {
+															return "参数名重复";
+														}
+														return "";
+													})
+												]
+											},
+											onChange: vm.genFnOnChange({
+												item,
+												parentProp,
+												prop: "propname"
 											})
-										]
-									},
-									onChange: vm.genFnOnChange({
-										item,
-										parentProp,
-										prop: "propname"
-									})
-								}),
-								hxIcon({
-									icon: "_add",
-									class: "pointer",
-									vIf:
-										!vm.cptReadonly &&
-										((isRoot && item.type == "object") ||
-											item.type == "object"),
-									onClick() {
-										vm.addNewProperty(parentProp);
-									}
-								})
-							]
+										}),
+										hxIcon({
+											style: "width:32px",
+											icon: "_add",
+											class: "pointer",
+											vIf:
+												!vm.cptReadonly &&
+												((isRoot && item.type == "object") ||
+													item.type == "object"),
+											onClick() {
+												vm.addNewProperty(parentProp);
+											}
+										}),
+										(() => {
+											if (vm.cptReadonly) {
+												if (!!item.required) {
+													return h(
+														"span",
+														{
+															style: "width:48px;color:red"
+														},
+														["*"]
+													);
+												}
+											} else {
+												return h("xSwitch", {
+													directives: [
+														hTipsHover({
+															msg: "必填",
+															placement: "left"
+														})
+													],
+													style: "width:48px",
+													value: !!item.required,
+													onChange: vm.genFnOnChange({
+														item,
+														parentProp,
+														prop: "required"
+													})
+												});
+											}
+										})()
+									];
+								}
+							})()
 						),
 						hxItem({
 							readonly: vm.cptReadonly,
@@ -315,6 +366,19 @@ export default async function () {
 					]),
 					(() => {
 						if (item.type === "object") {
+							if (_.isPlainObject(item.properties)) {
+								const itemProperties = _.map(
+									item.properties,
+									(propertie, propname) => {
+										return {
+											...propertie,
+											propname
+										};
+									}
+								);
+								item.properties = itemProperties;
+							}
+
 							return h(
 								"ul",
 								{ class: isRoot ? "PanelReqBodyJson-root" : "" },
@@ -329,8 +393,13 @@ export default async function () {
 							);
 						}
 						if (item.type === "array") {
+							item.items = item.items || {
+								type: "string"
+							};
+							item.items.propname = `${item.propname}_item`;
 							return this.gen_row({
-								item: item.items || { type: "string" },
+								isArryItem: true,
+								item: item.items,
 								level: level + 1,
 								parentProp: newPropString([parentProp, "items"])
 							});

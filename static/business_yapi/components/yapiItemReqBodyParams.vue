@@ -8,6 +8,11 @@
 			<xTabPane label="Body" name="second">
 				<xItem :configs="form.configs_type" v-model="cptReqBodyType" />
 				<!-- cptReqBodyForm:{{ cptReqBodyForm }} -->
+				<!-- <pre>
+					<code>
+						{{ cptReqBodyOther }}
+					</code>
+				 </pre> -->
 				<PanelReqBodyForm v-if="cptReqBodyType === 'form'" v-model="cptReqBodyForm" />
 				<PanelReqBodyUrlencoded
 					v-if="cptReqBodyType === 'x-www-form-urlencoded'"
