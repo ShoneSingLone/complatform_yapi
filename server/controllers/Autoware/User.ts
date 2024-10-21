@@ -25,6 +25,144 @@ module.exports = {
 		description: "用户信息"
 	},
 	paths: {
+		"/user/update": {
+			post: {
+				auth: true,
+				summary: "用户角色,只有管理员有权限修改",
+				description: "",
+				request: {
+					body: {
+						uid: {
+							required: true,
+							description: "用户ID",
+							type: "string"
+						},
+						role: {
+							description: "角色",
+							type: "string"
+						},
+						username: {
+							description: "用户名",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					//更新用户信息
+					try {
+						let params = ctx.payload;
+
+						params = xU.ensureParamsType(params, {
+							username: "string"
+						});
+
+						if (this.getRole() !== "admin" && params.uid != this.getUid()) {
+							return (ctx.body = xU.$response(null, 401, "没有权限"));
+						}
+
+						let userInst = orm.user;
+						let uid = params.uid;
+
+						if (!uid) {
+							return (ctx.body = xU.$response(null, 400, "uid不能为空"));
+						}
+
+						let targetUser = await userInst.findById(uid);
+
+						if (!targetUser) {
+							return (ctx.body = xU.$response(null, 400, "uid不存在"));
+						}
+
+						let member = {
+							uid: uid,
+							username: params.username || targetUser.username,
+							up_time: xU.time()
+						};
+
+						let groupInst = orm.group;
+						await groupInst.updateMember(member);
+						await orm.project.updateMember(member);
+
+						let result = await userInst.update(uid, member);
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		"/user/change_password": {
+			post: {
+				auth: true,
+				summary: "修改用户密码",
+				description: "",
+				request: {
+					body: {
+						uid: {
+							required: true,
+							description: "email名称，不能为空",
+							type: "string"
+						},
+						old_password: {
+							required: true,
+							description: "旧密码, 非admin用户必须传",
+							type: "string"
+						},
+						password: {
+							required: true,
+							description: "新密码，不能为空",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let { uid, password, old_password } = ctx.payload;
+					let userInst = orm.user;
+
+					if (!uid) {
+						return (ctx.body = xU.$response(null, 400, "uid不能为空"));
+					}
+
+					if (!password) {
+						return (ctx.body = xU.$response(null, 400, "密码不能为空"));
+					}
+
+					let userWhoWillBeModifyPwd = await userInst.findById(uid);
+					if (this.getRole() !== "admin" && uid != this.getUid()) {
+						return (ctx.body = xU.$response(null, 402, "没有权限"));
+					}
+
+					if (
+						this.getRole() !== "admin" ||
+						userWhoWillBeModifyPwd.role === "admin"
+					) {
+						if (!old_password) {
+							return (ctx.body = xU.$response(null, 400, "旧密码不能为空"));
+						}
+
+						if (
+							xU.$saltIt(old_password, userWhoWillBeModifyPwd.passsalt) !==
+							userWhoWillBeModifyPwd.password
+						) {
+							return (ctx.body = xU.$response(null, 402, "旧密码错误"));
+						}
+					}
+
+					let passsalt = xU.randStr();
+					let data = {
+						up_time: xU.time(),
+						password: xU.$saltIt(password, passsalt),
+						passsalt: passsalt
+					};
+					try {
+						let result = await userInst.update(uid, data);
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 401, e.message);
+					}
+				}
+			}
+		},
 		"/user/login": {
 			post: {
 				auth: true,
@@ -551,7 +689,7 @@ module.exports = {
 						let { basecode, uid, usedBy } = ctx.payload;
 						const currentUserUid = this.getUid();
 						/* 如果没有usedBy，则默认是用户头像 ，用户头像只能由用户自己修改*/
-						if (!usedBy && uid !== currentUserUid) {
+						if (!usedBy && uid !== String(currentUserUid)) {
 							return (ctx.body = xU.$response(null, 403, "没有权限"));
 						}
 						usedBy = usedBy || "user";
@@ -585,8 +723,7 @@ module.exports = {
 							));
 						}
 
-						let avatarInst = orm.avatar;
-						let result = await avatarInst.upsert({
+						let result = await orm.avatar.upsert({
 							uid,
 							basecode,
 							type,

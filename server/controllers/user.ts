@@ -132,58 +132,6 @@ class userController extends ControllerBase {
 	}
 
 	/**
-	 * 修改用户密码
-	 * @interface /user/change_password
-	 * @method POST
-	 * @category user
-	 * @param {Number} uid 用户ID
-	 * @param {Number} [old_password] 旧密码, 非admin用户必须传
-	 * @param {Number} password 新密码
-	 * @return {Object}
-	 * @example ./api/user/change_password.json
-	 */
-	async changePassword(ctx) {
-		let params = ctx.request.body;
-		let userInst = orm.user;
-
-		if (!params.uid) {
-			return (ctx.body = xU.$response(null, 400, "uid不能为空"));
-		}
-
-		if (!params.password) {
-			return (ctx.body = xU.$response(null, 400, "密码不能为空"));
-		}
-
-		let user = await userInst.findById(params.uid);
-		if (this.getRole() !== "admin" && params.uid != this.getUid()) {
-			return (ctx.body = xU.$response(null, 402, "没有权限"));
-		}
-
-		if (this.getRole() !== "admin" || user.role === "admin") {
-			if (!params.old_password) {
-				return (ctx.body = xU.$response(null, 400, "旧密码不能为空"));
-			}
-
-			if (xU.$saltIt(params.old_password, user.passsalt) !== user.password) {
-				return (ctx.body = xU.$response(null, 402, "旧密码错误"));
-			}
-		}
-
-		let passsalt = xU.randStr();
-		let data = {
-			up_time: xU.time(),
-			password: xU.$saltIt(params.password, passsalt),
-			passsalt: passsalt
-		};
-		try {
-			let result = await userInst.update(params.uid, data);
-			ctx.body = xU.$response(result);
-		} catch (e) {
-			ctx.body = xU.$response(null, 401, e.message);
-		}
-	}
-
-	/**
 	 * 获取用户列表
 	 * @interface /user/list
 	 * @method GET
@@ -208,76 +156,6 @@ class userController extends ControllerBase {
 			}));
 		} catch (e) {
 			return (ctx.body = xU.$response(null, 402, e.message));
-		}
-	}
-
-	/**
-	 * 更新用户个人信息
-	 * @interface /user/update
-	 * @method POST
-	 * @param uid  用户uid
-	 * @param [role] 用户角色,只有管理员有权限修改
-	 * @param [username] String
-	 * @param [email] String
-	 * @category user
-	 * @foldnumber 10
-	 * @returns {Object}
-	 * @example
-	 */
-	async update(ctx) {
-		//更新用户信息
-		try {
-			let params = ctx.request.body;
-
-			params = xU.ensureParamsType(params, {
-				username: "string",
-				email: "string"
-			});
-
-			if (this.getRole() !== "admin" && params.uid != this.getUid()) {
-				return (ctx.body = xU.$response(null, 401, "没有权限"));
-			}
-
-			let userInst = orm.user;
-			let id = params.uid;
-
-			if (!id) {
-				return (ctx.body = xU.$response(null, 400, "uid不能为空"));
-			}
-
-			let userData = await userInst.findById(id);
-			if (!userData) {
-				return (ctx.body = xU.$response(null, 400, "uid不存在"));
-			}
-
-			let data = {
-				up_time: xU.time()
-			};
-
-			params.username && (data.username = params.username);
-			params.email && (data.email = params.email);
-
-			if (data.email) {
-				var count = await userInst.count(data.email); //然后检查是否已经存在该用户
-				if (count > 0) {
-					return (ctx.body = xU.$response(null, 401, "该email已经注册"));
-				}
-			}
-
-			let member = {
-				uid: id,
-				username: data.username || userData.username,
-				email: data.email || userData.email
-			};
-			let groupInst = orm.group;
-			await groupInst.updateMember(member);
-
-			await orm.project.updateMember(member);
-
-			let result = await userInst.update(id, data);
-			ctx.body = xU.$response(result);
-		} catch (e) {
-			ctx.body = xU.$response(null, 402, e.message);
 		}
 	}
 
