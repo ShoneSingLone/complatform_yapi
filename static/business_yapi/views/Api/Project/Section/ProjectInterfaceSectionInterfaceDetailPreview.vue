@@ -50,6 +50,11 @@
 				<xItemDesc :item="cptDescItems.备份response" class="backup-response" />
 				<xItemDesc :item="cptDescItems.useProxy" span="full" />
 			</xForm>
+			<!-- <pre>
+				<code>
+					{{ interfaceInfo }}
+				</code>
+			</pre> -->
 		</xCard>
 		<xGap t />
 		<xCard header="请求">
@@ -69,6 +74,9 @@
 			</xCard>
 		</xCard>
 		<xGap t />
+		<xCard header="描述">
+			<TuiEditor :value="{ md: interfaceInfo.desc }" :asRender="true" style="height: 400px" />
+		</xCard>
 		<!-- <xCard header="源数据">
 	<xForm col="1" style="--xItem-label-width: 100px">
 		<xItem :configs="form.source" />

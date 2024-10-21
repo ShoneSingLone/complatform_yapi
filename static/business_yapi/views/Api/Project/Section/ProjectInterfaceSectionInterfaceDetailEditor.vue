@@ -1,56 +1,72 @@
 <style lang="less">
 #ProjectInterfaceSectionInterfaceDetailEditor {
-	height: 100%;
-	overflow: auto;
+	height: 1px;
+	overflow: hidden;
 }
 </style>
 <template>
-	<div v-if="isShow" id="ProjectInterfaceSectionInterfaceDetailEditor" class="flex1">
-		<xCard style="--xItem-label-width: 140px">
-			<xForm col="3">
-				<xItem :configs="form.title" v-model="formData.title" span="full" />
-				<xItem :configs="form.path" v-model="formData.path" span="full" />
-				<xItem
-					:configs="form.pathParams"
-					v-model="cptFormDataReqParams"
-					span="full"
-					class="mt" />
-			</xForm>
-			<xGap t />
-			<xForm col="3">
-				<!-- <div>formData.req_body_type:{{ formData.req_body_type }}</div> -->
-				<!-- <div>formData.req_body_form:{{ formData.req_body_form }}</div> -->
-				<!-- <pre>
+	<div
+		v-if="isShow"
+		id="ProjectInterfaceSectionInterfaceDetailEditor"
+		class="flex flex1 vertical">
+		<div class="flex1 height100 overflow-auto">
+			<xCard style="--xItem-label-width: 140px">
+				<xForm col="3">
+					<xItem :configs="form.title" v-model="formData.title" span="full" />
+					<xItem :configs="form.path" v-model="formData.path" span="full" />
+					<xItem
+						:configs="form.pathParams"
+						v-model="cptFormDataReqParams"
+						span="full"
+						class="mt" />
+				</xForm>
+				<xGap t />
+				<xForm col="3">
+					<!-- {{ formData }} -->
+					<!-- <div>formData.req_body_type:{{ formData.req_body_type }}</div> -->
+					<!-- <div>formData.req_body_form:{{ formData.req_body_form }}</div> -->
+					<!-- <pre>
 					<code>
 						<div>formData.req_body_other:{{ formData.req_body_other }}</div>
 					</code>
 				</pre> -->
-				<xItem
-					:configs="form.req_body_params"
-					v-model="formData.req_body_params"
-					:reqQuery.sync="formData.req_query"
-					:reqBodyType.sync="formData.req_body_type"
-					:reqBodyForm.sync="formData.req_body_form"
-					:reqBodyOther.sync="formData.req_body_other"
-					span="full" />
-			</xForm>
+					<xItem
+						:configs="form.req_body_params"
+						v-model="formData.req_body_params"
+						:reqQuery.sync="formData.req_query"
+						:reqBodyType.sync="formData.req_body_type"
+						:reqBodyForm.sync="formData.req_body_form"
+						:reqBodyOther.sync="formData.req_body_other"
+						span="full" />
+				</xForm>
+				<xGap t />
+				<xForm col="3">
+					<xItem :configs="form.isProxy" v-model="formData.isProxy" span="full" />
+				</xForm>
+				<xDivider>响应参数</xDivider>
+				<xForm col="3">
+					<xItem
+						:configs="form.res_body_type"
+						v-model="formData.res_body_type"
+						span="full" />
+					<xItem
+						:configs="form.resBackupJson"
+						v-model="cptFormDataResBackupJson"
+						span="full"
+						style="--xItemMonaco-height: 300px" />
+				</xForm>
+			</xCard>
 			<xGap t />
-			<xForm col="3">
-				<xItem :configs="form.isProxy" v-model="formData.isProxy" span="full" />
-			</xForm>
-			<xDivider>响应参数</xDivider>
-			<xForm col="3">
-				<xItem :configs="form.res_body_type" v-model="formData.res_body_type" span="full" />
-				<xItem
-					:configs="form.resBackupJson"
-					v-model="cptFormDataResBackupJson"
-					span="full"
-					style="--xItemMonaco-height: 300px" />
-			</xForm>
-		</xCard>
+			<xCard header="描述">
+				<TuiEditor
+					:value="{ md: formData.desc || '' }"
+					:asRender="false"
+					style="height: 400px"
+					@change="onMarkdownChange" />
+			</xCard>
+		</div>
 		<xGap t />
-		<div class="flex middle">
-			<xGap f />
+		<div class="flex middle center">
 			<xBtn :configs="cptBtnUpdate" />
 		</div>
 	</div>
@@ -248,6 +264,9 @@ export default async function () {
 			}
 		},
 		methods: {
+			onMarkdownChange({ md }) {
+				this.formData.desc = md;
+			},
 			async onSubmit() {
 				const [atLeastOne] = await _.$validateForm(this.$el);
 				if (atLeastOne) {
