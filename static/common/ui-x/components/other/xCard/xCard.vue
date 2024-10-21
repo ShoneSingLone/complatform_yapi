@@ -1,6 +1,6 @@
 <template>
 	<div class="el-card xCard flex vertical" :class="cptClassName">
-		<div class="el-card__header" v-if="$slots.header || header">
+		<div class="el-card__header width100" v-if="$slots.header || header">
 			<xRender :render="$slots.header || header" />
 		</div>
 		<div :class="cptBodyClass" :style="bodyStyle">

@@ -246,7 +246,7 @@ function handleSwagger(data, originTags = []) {
 			let defaultParam = {
 				name: param.name,
 				value: (() => {
-					if (param.type === 'integer') {
+					if (param.type === "integer") {
 						return number;
 					} else {
 						return param.type;
@@ -302,7 +302,7 @@ function propertiyToArray(jsonData) {
 			item = propertiyToArray(item);
 			return {
 				...item,
-				propname,
+				propname
 			};
 		});
 		jsonData.properties = _properties;

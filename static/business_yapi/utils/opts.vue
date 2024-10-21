@@ -40,7 +40,11 @@ export default async function () {
 				value: prop,
 				color: item.color,
 				type: item.type
-			}))
+			})),
+			role: [
+				{ label: "管理员", value: "admin" },
+				{ label: "会员", value: "member" }
+			]
 		};
 	}
 	return window._opts.yapi;

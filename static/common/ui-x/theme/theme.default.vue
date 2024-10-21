@@ -317,6 +317,7 @@ each(@list, {
 	.gapFn(l; left; @gap);
 }
 
+.loopGapFn(0);
 .loopGapFn(4);
 .loopGapFn(5);
 .loopGapFn(8);

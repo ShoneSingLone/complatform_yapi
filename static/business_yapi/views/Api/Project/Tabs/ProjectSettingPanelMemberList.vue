@@ -49,19 +49,16 @@ export default async function () {
 									{
 										staticClass: "pointer",
 										async onClick() {
-											const Component = await _.$importVue(
-												"@/views/User/UserProfile.Dialog.vue",
-												{
-													parent: vm,
-													userId: rowData.uid,
-													canModifyAvatar:
-														rowData.uid === vm.APP.user._id,
-													onOk() {
-														vm.APP.updateGroupProjectList();
-													}
+											return _.$openModal({
+												title: i18n("个人中心"),
+												url: "@/views/User/UserProfile.Dialog.vue",
+												parent: vm,
+												userId: rowData.uid,
+												canModifyAvatar: rowData.uid === vm.APP.user._id,
+												onOk() {
+													vm.APP.updateGroupProjectList();
 												}
-											);
-											_.$openWindow_deprecated(i18n("个人中心"), Component);
+											});
 										}
 									},
 									[rowData.username]

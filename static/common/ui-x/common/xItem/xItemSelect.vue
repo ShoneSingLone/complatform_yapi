@@ -48,8 +48,8 @@ export default async function () {
 			})();
 
 			if (vm.cptReadonly) {
-				const label = _.find(vm.selectOptions, { value: vm.mixin_value });
-				return hDiv([label?.value || vm.mixin_value]);
+				const item = _.find(vm.selectOptions, { value: vm.mixin_value });
+				return hDiv([item?.label || vm.mixin_value]);
 			}
 
 			return h("xSelect", selectProps, children);

@@ -2,7 +2,7 @@
 	<div class="flex middle">
 		<xDropdown class="flex middle">
 			<div style="--xItem-wrapper-width: 32px">
-				<xItem :configs="cptAvatar" />
+				<xItem :configs="cptAvatar" readonly="true" />
 			</div>
 			<xDropdownMenu slot="dropdown">
 				<xDropdownItem>
@@ -47,15 +47,17 @@ export default async function () {
 		methods: {
 			async showUserProfileDialog() {
 				const vm = this;
-				const Component = await _.$importVue("@/views/User/UserProfile.Dialog.vue", {
-					parent: this,
-					userId: this.APP.user._id,
+				_.$openModal({
+					title: i18n("个人中心"),
+					url: "@/views/User/UserProfile.Dialog.vue",
+
+					parent: vm,
+					userId: vm.APP.user._id,
 					canModifyAvatar: true,
 					onOk() {
 						vm.APP.updateGroupMemberList();
 					}
 				});
-				_.$openWindow_deprecated(i18n("个人中心"), Component);
 			}
 		}
 	});

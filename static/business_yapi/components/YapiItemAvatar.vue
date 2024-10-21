@@ -1,12 +1,6 @@
 <template>
 	<div class="avatar-uploader flex middle" v-bind="$attrs">
-		<xAvatar :src="cptAvatarUrl" @click.native="handleClick" />
-		<input
-			type="file"
-			accept="image/*"
-			ref="uploader"
-			style="display: none"
-			@change="handleChange" />
+		<xAvatar :src="cptAvatarUrl" @click.native="handleClick" :class="cptClassAvatar" />
 	</div>
 </template>
 
@@ -30,8 +24,16 @@ export default async function () {
 			this.$on("updateAvatar", this.updateAvatar);
 		},
 		computed: {
+			cptClassAvatar() {
+				return {
+					pointer: !this.cptDisabled,
+					asdfasdfasdf: true
+				};
+			},
 			cptDisabled() {
-				return this.$attrs.disabled || this.configs.disabled || false;
+				return (
+					this.$attrs.readonly || this.$attrs.disabled || this.configs.disabled || false
+				);
 			},
 			cptUsedBy() {
 				return this.configs.usedBy || "";
@@ -62,25 +64,17 @@ export default async function () {
 					this.imageUrl = imageUrl;
 				}
 			},
-			handleClick: _.debounce(function (event) {
-				if (this.$attrs.readonly) {
+			handleClick: _.debounce(async function (event) {
+				if (this.cptDisabled) {
 					return;
 				}
 				event.stopPropagation();
 				event.preventDefault();
-				if (this.cptDisabled) {
-					return;
-				}
-				$(this.$refs.uploader).click();
-			}, 300),
-			async handleChange(event) {
-				if (this.cptDisabled) {
-					return;
-				}
+				const [file] = await _.$openFileSelector({ accept: "image/*" });
 				try {
-					if (event.target.files[0]) {
+					if (file) {
 						// Get this url from response in real world.
-						const basecode = await getBase64(_.first(event.target.files));
+						const basecode = await getBase64(file);
 						this.imageUrl = basecode;
 						await this.uploadAvatar(basecode);
 						this.syncAllItem(this.imageUrl);
@@ -88,7 +82,7 @@ export default async function () {
 				} catch (error) {
 					_.$msgError(error);
 				}
-			},
+			}, 300),
 			async uploadAvatar(basecode) {
 				_.$loading(true);
 				try {
