@@ -26,7 +26,9 @@
 		<div class="xPageTitle__left flex middle pointer" @click="back">
 			<i class="el-icon-back mr"></i>
 			<div class="xPageTitle__title">
-				<slot name="title">{{ cptTitle }}</slot>
+				<slot name="title">
+					<xRender :render="cptTitle" :payload="title" />
+				</slot>
 			</div>
 		</div>
 		<div class="xPageTitle__content" v-if="content">
@@ -35,7 +37,7 @@
 	</div>
 	<div class="flex middle xPageTitle" v-else>
 		<slot name="title">
-			<span class="title-text mr4">{{ cptTitle }}</span>
+			<span class="title-text mr4"> <xRender :render="cptTitle" :payload="title" /> </span>
 			<xIcon icon="tips" v-if="tips" v-xtips="cptTips" />
 		</slot>
 		<span class="flex1"> </span>
@@ -46,12 +48,15 @@
 <script lang="ts">
 export default async function () {
 	return {
-		props: ["title", "tips", "back", "content"],
+		props: ["title", "tips", "back", "content", "breadcrumb"],
 		computed: {
 			cptTips() {
 				return { content: this.tips, width: 200, trigger: "hover", placement: "right-end" };
 			},
 			cptTitle() {
+				if (_.isFunction(this.breadcrumb)) {
+					return this.breadcrumb;
+				}
 				return this.title;
 			}
 		}

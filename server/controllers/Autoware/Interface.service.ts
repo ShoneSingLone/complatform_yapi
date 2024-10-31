@@ -212,6 +212,7 @@ function handleHeaders(values) {
 	}
 }
 
+// @ts-ignore
 async function interface_add_cat({ payload }) {
 	let response = xU.$response(null, 404, "not found");
 	try {

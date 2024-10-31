@@ -101,6 +101,7 @@ export default async function () {
 			level = Number(level || 0);
 			folderIcon = folderIcon || "xMenuTreeItemFolderIcon";
 			collapse = !!collapse;
+			const vm = this;
 
 			return h(
 				"div",
@@ -141,7 +142,11 @@ export default async function () {
 											if (item.DO_NOT_TO) {
 												return;
 											}
-											$router.push({ path: item.href });
+											if (_.isFunction(item.beforePush)) {
+												return item.beforePush.call(vm, item);
+											} else {
+												$router.push({ path: item.href });
+											}
 										}
 									}
 								},

@@ -216,7 +216,6 @@
 											);
 											return kvObject["filename"];
 										})();
-										debugger;
 										//获取下载文件的类型
 										let type = xhr.getResponseHeader("content-type");
 										//结果数据类型处理

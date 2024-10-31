@@ -21,6 +21,11 @@
 </template>
 <script lang="ts">
 export default async function () {
+	const USE_BACKUP = "启用";
+	const UNUSE_BACKUP = "未启用";
+	const NO_BACKUP = "无备份数据";
+	const HAS_BACKUP = "备份数据";
+
 	return defineComponent({
 		inject: ["APP", "inject_project"],
 		components: {
@@ -34,9 +39,7 @@ export default async function () {
 		provide() {
 			return { inject_project_interface_section: this };
 		},
-		data() {
-			const vm = this;
-
+		data(vm) {
 			const catid = {
 				prop: "catid",
 				label: i18n("接口分类"),
@@ -143,12 +146,12 @@ export default async function () {
 					const isUseBackup = h(
 						"xTag",
 						{ type: "success", vIf: rowData.res_body_type === "backup" },
-						["是"]
+						[USE_BACKUP]
 					);
 					const hasBackupData = h(
 						"xTag",
 						{ type: "warning", class: "ml8", vIf: !rowData.isSetBackupData },
-						["无备份数据"]
+						[NO_BACKUP]
 					);
 
 					return [isUseBackup, hasBackupData];
@@ -283,10 +286,13 @@ export default async function () {
 						clearable: true,
 						itemType: "xItemSelect",
 						multiple: true,
-						options: _.map(["是", "否", "无备份数据"], label => ({
-							label,
-							value: label
-						})),
+						options: _.map(
+							[USE_BACKUP, UNUSE_BACKUP, NO_BACKUP, HAS_BACKUP],
+							label => ({
+								label,
+								value: label
+							})
+						),
 						onEmitValue() {
 							vm.filterList();
 						}
@@ -408,16 +414,45 @@ export default async function () {
 								} else if (prop == "tag") {
 									return _.some(i.tag, tag => search.includes(tag));
 								} else if (prop == "isUseBackup") {
-									if (search.includes("是")) {
-										return i.res_body_type === "backup";
+									const _Use = search.includes(USE_BACKUP);
+									const _Unuse = search.includes(UNUSE_BACKUP);
+									const _Use_One = _Use || _Unuse;
+									const _Use_All = _Use && _Unuse;
+
+									const _HasBackup = search.includes(HAS_BACKUP);
+									const _NoneBackup = search.includes(NO_BACKUP);
+									const _Backup_One = _NoneBackup || _HasBackup;
+									const _Backup_All = _NoneBackup && _HasBackup;
+
+									const isUse = _.isEqual(i.res_body_type, "backup");
+									const isUnUse = !_.isEqual(i.res_body_type, "backup");
+									const isNoBackup = !i.isSetBackupData;
+									const isHasBackup = !!i.isSetBackupData;
+
+									const isUseOne = (_Use && isUse) || (_Unuse && isUnUse);
+									const isBackupOne =
+										(_HasBackup && isHasBackup) || (_NoneBackup && isNoBackup);
+
+									if (_Use_All && _Backup_All) {
+										/* 四个全选，都可以 */
+										return true;
 									}
-									if (search.includes("否")) {
-										return i.res_body_type !== "backup";
+									if (_Use_One && _Backup_All) {
+										/* 只看是否启用 */
+										return isUseOne;
 									}
-									if (search.includes("无备份数据")) {
-										if (!i.isSetBackupData) {
-											return true;
-										}
+									if (_Use_All && _Backup_One) {
+										/* 只看是否有备份数据 */
+										return isBackupOne;
+									}
+									if (_Use_One && _Backup_One) {
+										return isUseOne && isBackupOne;
+									}
+									if (_Use_One && isUseOne) {
+										return true;
+									}
+									if (_Backup_One && isBackupOne) {
+										return true;
 									}
 									return false;
 								} else if (prop == "witchEnv") {

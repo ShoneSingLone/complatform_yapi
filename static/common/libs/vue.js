@@ -7046,13 +7046,13 @@
 		node.appendChild(child);
 	}
 	function parentNode(node) {
-		return node.parentNode;
+		return node?.parentNode;
 	}
 	function nextSibling(node) {
-		return node.nextSibling;
+		return node?.nextSibling;
 	}
 	function tagName(node) {
-		return node.tagName;
+		return node?.tagName;
 	}
 	function setTextContent(node, text) {
 		node.textContent = text;

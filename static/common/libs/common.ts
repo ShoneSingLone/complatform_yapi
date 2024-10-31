@@ -358,13 +358,6 @@
 	})();
 
 	/**
-	 * 获取对象的值
-	 */
-	/*@typescriptDeclare (obj:object,key:string)=>string */
-	_.$handleSetFormValue = (obj, key) => {
-		return obj[`${key}`] || "";
-	};
-	/**
 	 * //将空字符串转换为null
 	 * @param str
 	 * @return {null|*}
@@ -2124,6 +2117,21 @@
 			}
 			console.error("getSelectedItemFrom miss options or value");
 			return { value: "", label: "", labelKey: "" };
+		};
+
+		/**
+		 * 只要value不是undefined，就返回value，否则用默认值
+		 * @param value
+		 * @param defaultValue
+		 * @returns
+		 */
+		/* @typescriptDeclare (value: any, defaultValue: any) => any */
+		_.$valOrDefault = function (value, defaultValue) {
+			if (value === undefined) {
+				return defaultValue;
+			} else {
+				return value;
+			}
 		};
 
 		/**

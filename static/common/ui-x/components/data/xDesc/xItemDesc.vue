@@ -60,6 +60,12 @@ export default async function () {
 				if (_.isBoolean(this.item.isHide)) {
 					return !this.item.isHide;
 				}
+				if (_.isFunction(this.item.isHideWhenDesc)) {
+					return !this.item.isHideWhenDesc();
+				}
+				if (_.isBoolean(this.item.isHideWhenDesc)) {
+					return !this.item.isHideWhenDesc;
+				}
 				return true;
 			},
 			cptIsEmpty() {

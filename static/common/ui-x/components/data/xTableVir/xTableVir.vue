@@ -1055,7 +1055,6 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 
 		debounced.cancel = cancel;
 		debounced.flush = flush;
-		debugger;
 		return debounced;
 	}
 

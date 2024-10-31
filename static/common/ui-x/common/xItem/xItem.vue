@@ -162,7 +162,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 			});
 			let cptReadonly = computed(() => {
-				if (this.readonly) {
+				if (vm.readonly || vm.cptConfigs?.attrs?.readonly) {
 					return true;
 				}
 				if (_.isFunction(vm.cptConfigs?.readonly)) {

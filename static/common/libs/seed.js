@@ -274,7 +274,8 @@
 		/* 如果有输入 */
 		if (val !== undefined) {
 			setVal(isVue2, key, propArray, nextItem, val);
-		} if (val == undefined && options?.delete) {
+		}
+		if (val == undefined && options?.delete) {
 			delVal(isVue2, key, propArray, nextItem, val);
 		} else {
 			return getVal(isVue2, key, propArray, nextItem);
