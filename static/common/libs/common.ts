@@ -78,7 +78,7 @@
 		tableConfigs.columns.splice(index, 1, item);
 	};
 
-	/* @ts-ignore */
+	/* @ts-ignore @declared*/
 	_.$pickFromArray = function (columns, propsArray, prop = "prop") {
 		/* @ts-ignore */
 		if (!_.$isArrayFill(propsArray) || !_.$isArrayFill(columns)) {
@@ -423,13 +423,14 @@
 	};
 
 	/**
-	 * 浅-判断对象值是否相同
+	 * 判断对象值是否相同,将Function转为字符串比较
+	 * 执行深比较来确定两个值是否相等。对于对象和数组，它会递归地比较它们的属性和元素，而不仅仅是检查引用是否相同。
 	 * @param {*} a
 	 * @param {*} b
 	 * @returns
 	 */
 	/* @typescriptDeclare (a:object,b:object)=>boolean */
-	_.$eqObj = (a, b) => {
+	_.$isEqualByObjVal = (a, b) => {
 		if (Object.keys(a).length !== Object.keys(b).length) {
 			return false;
 		}
@@ -440,7 +441,7 @@
 				if (_a !== _b) {
 					return false;
 				}
-			} else if (!_.eq(a[key], b[key])) {
+			} else if (!_.isEqual(a[key], b[key])) {
 				return false;
 			}
 		}
@@ -472,12 +473,6 @@
 			}
 			return options;
 		};
-
-		function SetAddAll(targetSet, sourceSet) {
-			for (const item of sourceSet) {
-				targetSet.add(item);
-			}
-		}
 
 		/* ((((((((((((((((((((((coltypes))))))))))))))))))))))  */
 		window.defTable.colExpandArrow = (options = {}) => {

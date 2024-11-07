@@ -2853,7 +2853,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 		watch: {
 			"$attrs.data": {
 				immediate: true,
-				handler(data) {
+				handler(data = []) {
 					if (!data.length) {
 						return;
 					}

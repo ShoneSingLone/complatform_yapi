@@ -359,9 +359,11 @@ each(@list, {
 
 .flex {
 	display: flex;
+
 	&.inline {
 		display: inline-flex;
 	}
+
 	&.like-float {
 		flex-flow: row wrap;
 
@@ -373,24 +375,31 @@ each(@list, {
 			margin-top: 0;
 		}
 	}
+
 	&.vertical {
 		flex-flow: column nowrap;
+
 		&.start {
 			align-items: flex-start;
 		}
 	}
+
 	&.horizon {
 		flex-flow: row nowrap;
 	}
+
 	&.between {
 		justify-content: space-between;
 	}
+
 	&.start {
 		justify-content: flex-start;
 	}
+
 	&.end {
 		justify-content: flex-end;
 	}
+
 	&.center {
 		justify-content: center;
 	}
@@ -407,6 +416,7 @@ each(@list, {
 		align-items: baseline;
 	}
 }
+
 *,
 *:after,
 *:before {
@@ -429,6 +439,7 @@ a[disabled] {
 .color-secondary {
 	color: var(--el-text-color-secondary);
 }
+
 .dialog-content-wrapper {
 	border: 1px solid var(--el-border-color-lighter);
 	padding: var(--ui-one);
@@ -436,6 +447,7 @@ a[disabled] {
 	display: flex;
 	flex-flow: column nowrap;
 }
+
 .dev {
 	outline: 1px solid red;
 }
@@ -455,9 +467,11 @@ a[disabled] {
 .text-align-center {
 	text-align: center;
 }
+
 .text-align-left {
 	text-align: left;
 }
+
 .text-align-right {
 	text-align: left;
 }
@@ -524,6 +538,7 @@ a:active {
 
 svg.pointer {
 	color: var(--el-color-primary);
+
 	&:focus,
 	&:hover,
 	&:active {
@@ -572,6 +587,7 @@ svg.pointer {
 .height100 {
 	height: 100%;
 }
+
 .height1px {
 	height: 1px;
 }
@@ -619,18 +635,23 @@ svg.pointer {
 	&.row45 {
 		grid-template-rows: 4fr 5fr;
 	}
+
 	&.row55 {
 		grid-template-columns: 50% 50%;
 	}
+
 	&.row514 {
 		grid-template-columns: 50% 10% 40%;
 	}
+
 	&.row64 {
 		grid-template-columns: 60% 40%;
 	}
+
 	&.row73 {
 		grid-template-columns: 70% 30%;
 	}
+
 	&.row37 {
 		grid-template-columns: 30% 70%;
 	}
@@ -648,6 +669,7 @@ svg.pointer {
 .fade-leave-active {
 	transition: opacity 0.5s;
 }
+
 .fade-enter,
 .fade-leave-to {
 	opacity: 0;
@@ -657,6 +679,7 @@ svg.pointer {
 .fade-short-leave-active {
 	transition: opacity 0.5s;
 }
+
 .fade-short-enter,
 .fade-short-leave-to {
 	opacity: 0.8;
@@ -666,9 +689,11 @@ svg.pointer {
 	transition: all 0.4s 0.3s ease;
 	position: absolute;
 }
+
 .slide-fade-leave-active {
 	transition: all 0.3s cubic-bezier(1, 0.5, 0.3, 1);
 }
+
 .slide-fade-enter,
 .slide-fade-leave-to {
 	transform: translateX(10px);
@@ -695,6 +720,7 @@ body.x-app-body {
 	width: 100%;
 
 	/* 美化滑动条 */
+
 	div,
 	ul,
 	code,
@@ -709,6 +735,7 @@ body.x-app-body {
 			background-color: white;
 			/* or add it to the track */
 		}
+
 		&::-webkit-scrollbar-thumb {
 			background: transparent;
 			// background: var(--ui-thumb-hover);
@@ -716,6 +743,7 @@ body.x-app-body {
 			border: 1px solid white;
 			transition: all 120ms ease-out;
 		}
+
 		&:hover {
 			&::-webkit-scrollbar-thumb {
 				background: var(--ui-thumb-hover);
@@ -724,10 +752,12 @@ body.x-app-body {
 	}
 
 	/* div.app-wrapper */
+
 	.x-app-wrapper {
 		position: relative;
 		height: 100%;
 		width: 100%;
+
 		&.mobile.openSidebar {
 			position: fixed;
 			top: 0;
@@ -752,6 +782,7 @@ body.x-app-body {
 		opacity: 0.5;
 		position: relative;
 		pointer-events: none;
+
 		&::before {
 			pointer-events: auto;
 			content: " ";
@@ -803,6 +834,7 @@ body.x-app-body {
 	height: 1px;
 	position: relative;
 	min-width: 800px;
+
 	.xDataGrid.el-auto-resizer {
 		position: absolute;
 		top: 0;
@@ -856,6 +888,7 @@ body.x-app-body {
 
 		.log-title-wrapper {
 			position: relative;
+
 			> .xIcon {
 				width: 48px;
 				height: 48px;
@@ -870,6 +903,7 @@ body.x-app-body {
 				background: var(--el-color-white);
 				text-align: left;
 			}
+
 			&::before {
 				content: " ";
 				display: block;

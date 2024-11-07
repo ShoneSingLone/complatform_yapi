@@ -118,6 +118,7 @@ export default async function () {
 				};
 			}
 		},
+		watch: {},
 		methods: {
 			customRowRender({ cells, columns, depth, isScrolling, rowData, rowIndex, style }) {
 				const { rowHeight } = this;

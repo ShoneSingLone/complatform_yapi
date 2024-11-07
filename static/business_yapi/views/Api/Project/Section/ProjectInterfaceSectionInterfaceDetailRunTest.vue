@@ -17,10 +17,10 @@
 			<xItem :configs="form.editor" style="height: 150px; --xItem-wrapper-width: 100%" />
 		</xCard>
 		<xGap t />
-		<div class="flex1 height100 overflow-auto">
+		<div class="flex1 height100 overflow-auto" v-xloading="cptIsLoading">
 			<xCollapse :value="'Response'">
 				<xCollapseItem title="Response" name="Response" v-if="cptCode_response">
-					<xMd :md="cptCode_response" />
+					<xMd :md="cptCode_response" @click.native="copyResponse" id="refCopyResponse" />
 				</xCollapseItem>
 				<xCollapseItem
 					title="Response Headers"
@@ -107,10 +107,13 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptIsLoading() {
+				return _.isEqual(this.response, "pending");
+			},
 			cptCode_response() {
 				let response = "";
 				try {
-					if (this.response) {
+					if (this.response && !this.cptIsLoading) {
 						response = JSON.stringify(
 							_.omit(this.response, ["headers", "config"]),
 							null,
@@ -186,6 +189,11 @@ export default async function () {
 			}
 		},
 		methods: {
+			copyResponse() {
+				return _.$copyToClipboard($("#refCopyResponse").text())
+					.then(() => _.$msg("复制成功"))
+					.catch(error => _.$msgError(error));
+			},
 			setFormEditorValue(value) {
 				this.form.editor.value = value;
 			},

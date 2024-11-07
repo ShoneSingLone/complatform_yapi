@@ -48,6 +48,7 @@ export default async function () {
 					const label = _.find(vm.inject_project.allCategory, {
 						_id: rowData.catid
 					}).name;
+
 					return label;
 				}
 			};
@@ -225,9 +226,14 @@ export default async function () {
 						itemType: "xItemSelect",
 						multiple: true,
 						once() {
+							/* 切换视图之后不重置查询条件 */
+							/*
 							vm.$watch(
 								() => [vm.$route.query.interfaceType, vm.$route.query.interfaceId],
-								([interfaceType, interfaceId]) => {
+								(
+									[interfaceType, interfaceId],
+									[oldInterfaceType, oldInterfaceId]
+								) => {
 									if (interfaceType === "category") {
 										this.value = [Number(interfaceId)];
 									} else {
@@ -238,6 +244,7 @@ export default async function () {
 									immediate: true
 								}
 							);
+						 */
 						},
 						options() {
 							return _.map(vm.inject_project.allCategory, row => {

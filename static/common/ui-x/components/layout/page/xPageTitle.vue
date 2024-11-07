@@ -25,7 +25,7 @@
 	<div class="xPageTitle back" v-if="back">
 		<div class="xPageTitle__left flex middle pointer" @click="back">
 			<i class="el-icon-back mr"></i>
-			<div class="xPageTitle__title">
+			<div class="xPageTitle__title flex middle">
 				<slot name="title">
 					<xRender :render="cptTitle" :payload="title" />
 				</slot>
