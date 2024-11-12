@@ -2081,6 +2081,9 @@
 					if (configs.value !== undefined) {
 						_params[prop] = configs.value;
 					}
+					if (configs.selectValue !== undefined) {
+						_params[`${prop}_selectValue`] = configs.s;
+					}
 					return _params;
 				},
 				{}

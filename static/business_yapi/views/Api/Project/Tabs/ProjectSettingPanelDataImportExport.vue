@@ -195,7 +195,7 @@ export default async function () {
 						parent: this,
 						domainData: resToMerge.data,
 						originData,
-						allCategory: this.inject_project.allCategory,
+						all_category: this.inject_project.all_category,
 						dataSync: this.cptParams.dataSync
 					});
 				}

@@ -220,7 +220,7 @@ export default async function () {
 							return hxBtn({
 								configs: {
 									preset: "text",
-									label: _.$val2L(catid, vm.inject_project.allCategory),
+									label: _.$val2L(catid, vm.inject_project.all_category),
 									onClick() {
 										vm.APP.routerUpsertQuery({
 											interfaceId: catid,

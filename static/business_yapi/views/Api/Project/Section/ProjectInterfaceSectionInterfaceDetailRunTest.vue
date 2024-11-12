@@ -276,7 +276,7 @@ export default async function () {
 					const formData = this.formData;
 					const { data } = await _api.yapi.interface_up(formData);
 					if (data) {
-						this.inject_project.getInterfaceList();
+						this.inject_project.get_interface_list();
 						this.inject_interface_section_interface_detail.updateInterface();
 					}
 					_.$msg("修改成功");

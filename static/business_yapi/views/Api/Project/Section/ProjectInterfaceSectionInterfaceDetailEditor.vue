@@ -9,7 +9,7 @@
 		v-if="isShow"
 		id="ProjectInterfaceSectionInterfaceDetailEditor"
 		class="flex flex1 vertical">
-		<div class="flex1 height100 overflow-auto">
+		<div class="flex1 height100 overflow-auto" ref="refWrapper">
 			<xCard style="--xItem-label-width: 140px">
 				<xForm col="3">
 					<xItem :configs="form.title" v-model="formData.title" span="full" />
@@ -82,6 +82,10 @@ export default async function () {
 					return {};
 				}
 			}
+		},
+		async mounted() {
+			await _.$ensure(() => this.$refs.refWrapper);
+			this.$refs.refWrapper.scrollTop = 0;
 		},
 		data() {
 			const vm = this;
@@ -277,7 +281,7 @@ export default async function () {
 					const formData = this.formData;
 					const { data } = await _api.yapi.interface_up(formData);
 					if (data) {
-						this.inject_project.getInterfaceList();
+						this.inject_project.get_interface_list();
 						this.inject_interface_section_interface_detail.updateInterface();
 					}
 					_.$msg("修改成功");

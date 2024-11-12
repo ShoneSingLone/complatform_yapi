@@ -168,6 +168,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		name: "xSelect",
 		componentName: "xSelect",
 		inject: {
+			xItem: { default: {} },
 			elForm: {
 				default: ""
 			},
@@ -918,6 +919,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		},
 
 		mounted() {
+			if (_.isFunction(this.xItem?.cptConfigs?.refInnerComponent)) {
+				this.xItem.cptConfigs.refInnerComponent({ vm: this });
+			}
 			if (this.multiple && Array.isArray(this.value) && this.value.length > 0) {
 				this.currentPlaceholder = "";
 			}

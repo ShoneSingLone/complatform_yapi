@@ -2392,7 +2392,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 				if (inject_xTableVir?.$scopedSlots?.empty) {
 					return inject_xTableVir.$scopedSlots.empty();
 				}
-				return emptyRender();
+				return emptyRender({ inject_xTableVir });
 			})();
 
 			const style = { position: "relative", width: "100%", padding: "16px" };

@@ -5,6 +5,7 @@ export default async function ({
 	zIndex,
 	bootstrap,
 	x_table_vir_empty_component,
+	x_table_vir_empty_component_icon,
 	x_switch_width,
 	x_page_title_back_icon,
 	x_item_is_show_item_colon,
@@ -17,6 +18,8 @@ export default async function ({
 		PRIVATE_GLOBAL.x_ui_size = size || "small";
 		PRIVATE_GLOBAL.x_ui_z_index = zIndex || 2e3;
 		PRIVATE_GLOBAL.x_table_vir_empty_component = x_table_vir_empty_component;
+		PRIVATE_GLOBAL.x_table_vir_empty_component_icon =
+			x_table_vir_empty_component_icon || "icon_no_data";
 		PRIVATE_GLOBAL.x_switch_width = x_switch_width || 40;
 		PRIVATE_GLOBAL.x_page_title_back_icon = x_page_title_back_icon || "icon_back";
 		PRIVATE_GLOBAL.x_item_is_show_item_colon = x_item_is_show_item_colon || false;
@@ -71,7 +74,26 @@ export default async function ({
 				}
 			};
 		};
+		PRIVATE_GLOBAL.hVmSingleNode = (vm, prop, vNode) => {
+			vm.____hVmSingleNode = vm.____hVmSingleNode || {};
 
+			const vmProp = vm.____hVmSingleNode;
+			if (!vmProp[prop]) {
+				console.log("🚀 ~ hVmSingleNode ~ vm[prop]:", vmProp[prop]);
+				const ID = _.$genId("hVmSingleNode");
+				console.log("🚀 ~ hVmSingleNode ~ ID:", ID);
+				vmProp[prop] = h({
+					template: `<span id="${ID}"/>`,
+					mounted() {
+						new Vue({
+							el: `#${ID}`,
+							render: () => vNode
+						});
+					}
+				});
+			}
+			return vmProp[prop];
+		};
 		PRIVATE_GLOBAL.hVal2Tag = (value, options) => {
 			let item = { label: value, type: "" };
 			item =

@@ -22,7 +22,8 @@ export default async function () {
 		Promise.all([
 			_.$importVue("/common/ui-x/useXui.vue", {
 				size: "small",
-				I18N_LANGUAGE: window.I18N_LANGUAGE
+				I18N_LANGUAGE: window.I18N_LANGUAGE,
+				x_table_vir_empty_component_icon: "_no_data"
 			}),
 			_.$importVue("/common/ui-element/useElementUI.NoJS.vue", {
 				size: "small",

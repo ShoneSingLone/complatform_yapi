@@ -5,7 +5,21 @@
 			<xTabPane label="编辑" name="editor"> </xTabPane>
 			<xTabPane label="测试" name="run_test"> </xTabPane>
 		</xTabs>
-		<Transition>
+		<!--
+		dialog-fade
+		msgbox-fade
+		fade-in-linear
+		el-fade-in-linear
+		el-fade-in
+		el-zoom-in-center
+		el-zoom-in-top
+		el-zoom-in-bottom
+		el-zoom-in-left
+		el-list
+		viewer-fade
+		el-drawer-fade
+		-->
+		<Transition name="el-zoom-in-left">
 			<ProjectInterfaceSectionInterfaceDetailPreview
 				v-if="cptProjectInterfaceTab === 'preview'"
 				:interfaceInfo="interfaceInfo" />
@@ -58,11 +72,7 @@ export default async function () {
 				interfaceInfo: false
 			};
 		},
-		computed: {
-			isShow() {
-				return this.inject_project.cptTabName === "设置";
-			}
-		},
+		computed: {},
 		methods: {
 			renderCloseIcon() {
 				const vm = this;

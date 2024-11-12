@@ -12,47 +12,12 @@
 			</template>
 			<!-- 名称或者路径 -->
 			<template #right>
-				<xAdvancedSearch
-					mountTo="#AdvancedSearch"
-					:collapse="isAdvancedSearchCollapse"
-					@change="handleAdvancedSearchCollapse">
-					<xBlock class="mt">
-						<xForm>
-							<xItem :configs="inject_project_interface_section.form.path" />
-							<xItem :configs="inject_project_interface_section.form.catid" />
-							<xItem :configs="inject_project_interface_section.form.method" />
-							<xItem :configs="inject_project_interface_section.form.tag" />
-							<xItem :configs="inject_project_interface_section.form.isUseBackup" />
-							<xItem :configs="inject_project_interface_section.form.witchEnv" />
-							<div class="flex end width100" span="2">
-								<xBtn :configs="btnRest" class="ml4" />
-								<xBtn
-									preset="primary"
-									@click="
-										inject_project_interface_section.configsTable.onQuery({
-											page: 1
-										})
-									"
-									>查询</xBtn
-								>
-							</div>
-						</xForm>
-					</xBlock>
-					<template #collapse>
-						<div class="flex middle mr8">
-							<xItem :configs="inject_project_interface_section.form.path" />
-							<xBtn
-								preset="primary"
-								@click="
-									inject_project_interface_section.configsTable.onQuery({
-										page: 1
-									})
-								"
-								>查询</xBtn
-							>
-						</div>
-					</template>
-				</xAdvancedSearch>
+				<xItem :configs="inject_project_interface_section.form.path" />
+				<xBtn
+					preset="primary"
+					@click="inject_project_interface_section.configsTable.onQuery({ page: 1 })"
+					>查询</xBtn
+				>
 			</template>
 		</xTablebar>
 		<div id="AdvancedSearch"></div>
@@ -103,7 +68,7 @@ export default async function () {
 					},
 					{
 						label: "删除",
-						icon: "delete",
+						preset: "danger",
 						disabled: () => vm.cptIsCheckedRow,
 						onClick: vm.deleteInterface
 					}
@@ -155,7 +120,7 @@ export default async function () {
 					url: "@/components/YapiDialogUpsertInterface.vue",
 					parent: this,
 					project_id: this.APP.cptProjectId,
-					getInterfaceList: this.inject_project.getInterfaceList
+					get_interface_list: this.inject_project.get_interface_list
 				});
 			},
 			async changeProxy() {
@@ -185,7 +150,7 @@ export default async function () {
 					const res = await _api.yapi.interface_del_by_ids(
 						Array.from(this.inject_project_interface_section.configsTable.data.set)
 					);
-					this.inject_project.getInterfaceList();
+					this.inject_project.get_interface_list();
 				} catch (error) {
 					_.$msgError(error);
 					console.error(error);

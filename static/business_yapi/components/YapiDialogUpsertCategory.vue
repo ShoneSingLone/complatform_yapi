@@ -13,7 +13,7 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ categoryInfo, project_id, getInterfaceList, allCategory }) {
+export default async function ({ categoryInfo, project_id, get_interface_list, all_category }) {
 	const isUpdate = !!categoryInfo;
 	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
@@ -34,7 +34,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList, all
 							{
 								validator({ val }) {
 									if (
-										_.some(allCategory, cat => {
+										_.some(all_category, cat => {
 											return _.$isSame(cat.name, val);
 										})
 									) {
@@ -102,7 +102,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList, all
 							desc
 						});
 					}
-					await getInterfaceList();
+					await get_interface_list();
 					this.closeModal();
 					_.$msg(isUpdate ? "修改分类成功" : "添加分类成功");
 				} catch (error) {

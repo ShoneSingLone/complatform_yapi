@@ -865,7 +865,16 @@ body.x-app-body {
 		}
 	}
 
+	.x-sidebar-icon-wrapper {
+		transition: all 0.3s ease;
+		opacity: 1;
+		&.hide {
+			opacity: 0;
+		}
+	}
+
 	aside.x-sidebar-menu-wrapper {
+		transition: all 0.3s ease;
 		position: relative;
 		height: 1px;
 		flex: 1;
@@ -882,7 +891,8 @@ body.x-app-body {
 			.xIcon.icon_console + .title,
 			.log-title-wrapper,
 			.x-sidebar-menu {
-				display: none;
+				opacity: 0;
+				// display: none;
 			}
 		}
 

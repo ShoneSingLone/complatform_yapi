@@ -15,7 +15,7 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ categoryInfo, project_id, getInterfaceList }) {
+export default async function ({ categoryInfo, project_id, get_interface_list }) {
 	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
@@ -36,7 +36,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList }) {
 						options: [],
 						itemType: "xItemSelect",
 						once() {
-							this.options = vm.inject_project.allCategory;
+							this.options = vm.inject_project.all_category;
 							/* 默认在点击的分类下添加新接口 */
 							if (categoryInfo?._id) {
 								this.value = categoryInfo?._id;
@@ -57,7 +57,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList }) {
 												title: "添加分类",
 												url: "@/components/YapiDialogUpsertCategory.vue",
 												project_id: vm.APP.cptProjectId,
-												allCategory: vm.inject_project.allCategory
+												all_category: vm.inject_project.all_category
 											});
 										}
 									}
@@ -121,7 +121,7 @@ export default async function ({ categoryInfo, project_id, getInterfaceList }) {
 					if (res.errcode) {
 						throw new Error(res.message);
 					}
-					await getInterfaceList();
+					await get_interface_list();
 					this.closeModal();
 					_.$msg("添加接口成功");
 				} catch (error) {

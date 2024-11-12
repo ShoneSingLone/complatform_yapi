@@ -20,7 +20,7 @@
 	</section>
 </template>
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	const USE_BACKUP = "启用";
 	const UNUSE_BACKUP = "未启用";
 	const NO_BACKUP = "无备份数据";
@@ -40,22 +40,48 @@ export default async function () {
 			return { inject_project_interface_section: this };
 		},
 		data(vm) {
+			const genReferenceContent = (title, item) => {
+				const { value } = item;
+				const { length } = value || [];
+				return hDiv({ class: "flex middle width100" }, [
+					hDiv(title),
+					hxTag(
+						{
+							vIf: length,
+							class: "ml4 mr4",
+							closable: true,
+							onClose() {
+								item.value = [];
+							}
+						},
+						[length]
+					),
+					// hxIcon({ icon: "arrow_triangle-right" })
+					hxIcon({ icon: "_icon_filter" })
+				]);
+			};
 			const catid = {
 				prop: "catid",
-				label: i18n("接口分类"),
+				label: i18n("分类"),
 				width: 150,
+				headerCellRenderer() {
+					return genHeaderCellVNode({
+						propName: "CatIdheaderCell",
+						formProp: "catid",
+						label: "接口分类"
+					});
+				},
 				cellRenderer({ rowData }) {
-					const label = _.find(vm.inject_project.allCategory, {
+					const label = _.find(vm.inject_project.all_category, {
 						_id: rowData.catid
 					}).name;
-
 					return label;
 				}
 			};
 
 			const title = {
 				prop: "title",
-				label: i18n("接口名称"),
+				label: i18n("名称"),
 				width: 300,
 				cellRenderer({ rowData }) {
 					return hDiv([
@@ -66,7 +92,8 @@ export default async function () {
 							href: _.$aHashLink("/api/project", {
 								...vm.$route.query,
 								interfaceType: "interface",
-								interfaceId: rowData._id
+								interfaceId: rowData._id,
+								project_interface_tab: "preview"
 							})
 						}),
 						hDiv({ class: "data-list-id-number" }, [`${rowData._id}`])
@@ -77,13 +104,33 @@ export default async function () {
 			const method = {
 				prop: "method",
 				label: i18n("请求方法"),
-				width: 100
+				width: 150,
+				headerCellRenderer() {
+					return genHeaderCellVNode({
+						propName: "MethodheaderCell",
+						formProp: "method",
+						label: "请求方法"
+					});
+				},
+				cellRenderer({ cellData }) {
+					const item = _.find(_opts.yapi.httpMethod, { value: cellData });
+					if (item) {
+						return hxTag(
+							{
+								type: item.type,
+								color: item.color,
+								textColor: item.textColor
+							},
+							[item.label]
+						);
+					}
+				}
 			};
 
 			const path = {
 				prop: "path",
 				width: 300,
-				label: i18n("接口路径"),
+				label: i18n("路径"),
 				cellRenderer: params => {
 					const { rowData } = params;
 					const { value: search } = vm.form.path;
@@ -91,22 +138,24 @@ export default async function () {
 					if (search) {
 						const other = String(rowData.path).split(search);
 						if (other.length > 1) {
-							const childrenVnod = [];
-							_.each(other, (content, index) => {
-								childrenVnod.push(content);
-								if (index !== other.length - 1) {
-									childrenVnod.push(
-										h(
-											"span",
-											{
-												staticClass: `highlight-path`
-											},
-											[search]
-										)
-									);
-								}
-							});
-							return hDiv(childrenVnod);
+							return ((/* 设置高亮 */) => {
+								const childrenVnod = [];
+								_.each(other, (content, index) => {
+									childrenVnod.push(content);
+									if (index !== other.length - 1) {
+										childrenVnod.push(
+											h(
+												"span",
+												{
+													staticClass: `highlight-path`
+												},
+												[search]
+											)
+										);
+									}
+								});
+								return hDiv(childrenVnod);
+							})();
 						}
 					}
 					return rowData.path;
@@ -123,6 +172,13 @@ export default async function () {
 				prop: "isProxy",
 				label: i18n("转发"),
 				width: 150,
+				headerCellRenderer() {
+					return genHeaderCellVNode({
+						propName: "ProxyHeaderCell",
+						formProp: "witchEnv",
+						label: "转发环境"
+					});
+				},
 				cellRenderer: params => {
 					const { rowData } = params;
 
@@ -141,6 +197,13 @@ export default async function () {
 				prop: "isUseBackup",
 				label: i18n("启用备份数据"),
 				width: 160,
+				headerCellRenderer() {
+					return genHeaderCellVNode({
+						propName: "BackupHeaderCell",
+						formProp: "isUseBackup",
+						label: "备份数据"
+					});
+				},
 				cellRenderer: params => {
 					const { rowData } = params;
 
@@ -167,7 +230,14 @@ export default async function () {
 			const tag = {
 				prop: "tag",
 				label: i18n("Tags"),
-				width: 250
+				width: 250,
+				headerCellRenderer() {
+					return genHeaderCellVNode({
+						propName: "TagsHeaderCell",
+						formProp: "tag",
+						label: "Tags"
+					});
+				}
 			};
 
 			return {
@@ -200,8 +270,8 @@ export default async function () {
 							}
 						},
 						catid,
-						title,
 						method,
+						title,
 						path,
 						status,
 						maintainer,
@@ -220,34 +290,15 @@ export default async function () {
 						}
 					},
 					catid: {
-						label: "分类",
+						// label: "分类",
 						value: [],
 						clearable: true,
 						itemType: "xItemSelect",
 						multiple: true,
+						options: [],
 						once() {
-							/* 切换视图之后不重置查询条件 */
-							/*
-							vm.$watch(
-								() => [vm.$route.query.interfaceType, vm.$route.query.interfaceId],
-								(
-									[interfaceType, interfaceId],
-									[oldInterfaceType, oldInterfaceId]
-								) => {
-									if (interfaceType === "category") {
-										this.value = [Number(interfaceId)];
-									} else {
-										this.value = [];
-									}
-								},
-								{
-									immediate: true
-								}
-							);
-						 */
-						},
-						options() {
-							return _.map(vm.inject_project.allCategory, row => {
+							/* this.options在wrapper中并不是响应式数据 */
+							vm.form.catid.options = _.map(vm.inject_project.all_category, row => {
 								return {
 									value: row._id,
 									label: row.name
@@ -259,24 +310,48 @@ export default async function () {
 						}
 					},
 					method: {
-						label: "方法",
+						// label: "方法",
 						value: "",
 						clearable: true,
 						itemType: "xItemSelect",
 						multiple: true,
 						options: _opts.yapi.httpMethod,
+						optonsRender({ vm, options }) {
+							return _.map(options, (item, key) => {
+								return h(
+									"xOption",
+									{
+										key: item.value || item.label,
+										value: item.value,
+										label: item.label,
+										disabled: item.disabled || false
+									},
+									[
+										hxTag(
+											{
+												type: item.type,
+												color: item.color,
+												textColor: item.textColor
+											},
+											[item.label]
+										)
+									]
+								);
+							});
+						},
 						onEmitValue() {
 							vm.filterList();
 						}
 					},
 					tag: {
-						label: "Tags",
+						// label: "Tags",
 						value: [],
 						clearable: true,
 						itemType: "xItemSelect",
 						multiple: true,
-						options() {
-							return _.map(vm.inject_project.allTags, label => {
+						options: [],
+						once() {
+							vm.form.tag.options = _.map(vm.inject_project.all_tags, label => {
 								return {
 									value: label,
 									label
@@ -288,7 +363,7 @@ export default async function () {
 						}
 					},
 					isUseBackup: {
-						label: "备份数据",
+						// label: "备份数据",
 						value: [],
 						clearable: true,
 						itemType: "xItemSelect",
@@ -305,13 +380,14 @@ export default async function () {
 						}
 					},
 					witchEnv: {
-						label: "转发环境",
+						// label: "转发环境",
 						value: [],
 						clearable: true,
 						itemType: "xItemSelect",
 						multiple: true,
-						options() {
-							return _.concat(
+						options: [],
+						once() {
+							vm.form.witchEnv.options = _.concat(
 								[{ label: "未设置", value: "unset" }],
 								_.map(vm.APP?.cptProject?.env, row => {
 									return {
@@ -327,6 +403,46 @@ export default async function () {
 					}
 				})
 			};
+
+			function genHeaderCellVNode({ propName, formProp, label }) {
+				return hVmSingleNode(
+					vm,
+					propName,
+					h(
+						"xPopover",
+						{
+							placement: "bottom",
+							onShow() {
+								/* 点击item，立即展示下拉项 */
+								vm[`${propName}_xSelectVm`].visible = true;
+							}
+						},
+						[
+							{
+								default() {
+									return hxItem({
+										configs: {
+											...vm.form[formProp],
+											refInnerComponent({ vm: xSelectVm }) {
+												/* mounted之后保留句柄 */
+												vm[`${propName}_xSelectVm`] = xSelectVm;
+											},
+											onEmitValue({ val }) {
+												vm.form[formProp].value = val;
+												vm.filterList();
+											}
+										},
+										value: vm.form[formProp].value || []
+									});
+								},
+								reference() {
+									return genReferenceContent(label, vm.form[formProp]);
+								}
+							}
+						]
+					)
+				);
+			}
 		},
 		computed: {
 			cptListStyle({ size: { width, height }, cptIsShowDetail }) {
@@ -379,7 +495,7 @@ export default async function () {
 			}
 		},
 		watch: {
-			"inject_project.allInterface": {
+			"inject_project.all_interface": {
 				immediate: true,
 				handler() {
 					this.filterList();
@@ -405,7 +521,8 @@ export default async function () {
 			filterList() {
 				let configsTableDataList = (() => {
 					const filterForm = _.$pickFormValues(this.form);
-					let _allInterface = _.cloneDeep(this.inject_project.allInterface);
+
+					let _allInterface = _.cloneDeep(this.inject_project.all_interface);
 					let paramKeys = Object.keys(filterForm);
 					let prop;
 					while ((prop = paramKeys.pop())) {
@@ -482,6 +599,16 @@ export default async function () {
 							});
 						}
 					}
+
+					const NEED_MERGE_COLUMN_PROP = "catid";
+
+					const GroupedRowObj = _.groupBy(_allInterface, NEED_MERGE_COLUMN_PROP);
+
+					_allInterface = xTableVirNewGroupSortedRows({
+						groupedRowObj: GroupedRowObj,
+						mergeProp: NEED_MERGE_COLUMN_PROP
+					});
+
 					return _allInterface;
 				})();
 				_.$setTableData(this.configsTable, { list: configsTableDataList });

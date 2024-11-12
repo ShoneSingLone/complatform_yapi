@@ -86,11 +86,11 @@ export default async function ({ domainData, originData, dataSync }) {
 			async ensureAllCategoryExist({ cats, apis }) {
 				try {
 					const vm = this;
-					let catsObj = { ...vm.inject_project.allCategory };
+					let catsObj = { ...vm.inject_project.all_category };
 					cats = cats || [];
 					for (const cat of cats) {
 						const findCat = _.find(
-							vm.inject_project.allCategory,
+							vm.inject_project.all_category,
 							c => c.name === cat.name
 						);
 						if (findCat) {
@@ -116,7 +116,7 @@ export default async function ({ domainData, originData, dataSync }) {
 						}
 					}
 
-					await vm.inject_project.getInterfaceList();
+					await vm.inject_project.get_interface_list();
 					return catsObj;
 				} catch (error) {
 					_.$msgError(error);
@@ -148,10 +148,10 @@ export default async function ({ domainData, originData, dataSync }) {
 							let interfaceInfo = Object.assign(api, {
 								project_id: projectId
 							});
-							const category = _.find(vm.inject_project.allCategory, {
+							const category = _.find(vm.inject_project.all_category, {
 								name: interfaceInfo.catname
 							});
-							const undefinedCategory = _.find(vm.inject_project.allCategory, {
+							const undefinedCategory = _.find(vm.inject_project.all_category, {
 								title: "公共分类"
 							});
 							(function () {
@@ -200,7 +200,7 @@ export default async function ({ domainData, originData, dataSync }) {
 				} catch (error) {
 					_.$msgError(error);
 				} finally {
-					await vm.inject_project.getInterfaceList();
+					await vm.inject_project.get_interface_list();
 					_.$loading(false);
 				}
 			}

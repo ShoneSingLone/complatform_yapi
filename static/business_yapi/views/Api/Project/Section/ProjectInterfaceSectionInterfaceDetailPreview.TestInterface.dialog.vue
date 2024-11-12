@@ -131,7 +131,7 @@ ${httprequestoptions}
 						resBackupJson: JSON.stringify(this.response.data, null, 2)
 					});
 					if (data) {
-						this.inject_project.getInterfaceList();
+						this.inject_project.get_interface_list();
 						this.inject_interface_section_interface_detail.updateInterface();
 					}
 
