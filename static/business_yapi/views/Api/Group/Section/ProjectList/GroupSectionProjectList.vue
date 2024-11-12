@@ -181,7 +181,8 @@ export default async function () {
 								return hDiv({ class: "flex vertical width100" }, [
 									hDiv({ class: "flex middle width100" }, [
 										hLink({
-											label: `${rowData.group_name}-${rowIndex}`,
+											label: `${rowData.group_name}`,
+											// label: `${rowData.group_name}-${rowIndex}`,
 											href: _.$aHashLink("/api/group", {
 												groupId: rowData.group_id
 											})
@@ -216,7 +217,7 @@ export default async function () {
 											}
 										})
 									]),
-									hDiv({ class: "data-list-id-number" }, [`${rowData._id}`])
+									hDiv({ class: "data-list-id-number" }, [`${rowData._id || "--"}`])
 								]);
 							}
 						},

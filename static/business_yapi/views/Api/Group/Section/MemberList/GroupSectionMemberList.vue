@@ -50,6 +50,7 @@ export default async function () {
 								h(
 									"span",
 									{
+										style: "width: 150px;",
 										staticClass: "pointer",
 										async onClick() {
 											const Component = await _.$importVue(

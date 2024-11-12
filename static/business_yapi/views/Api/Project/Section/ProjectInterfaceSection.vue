@@ -297,13 +297,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						multiple: true,
 						options: [],
 						once() {
-							/* this.options在wrapper中并不是响应式数据 */
-							vm.form.catid.options = _.map(vm.inject_project.all_category, row => {
-								return {
-									value: row._id,
-									label: row.name
-								};
-							});
+							vm.$watch(
+								() => vm.inject_project.all_category,
+								all_category => {
+									/* this.options在wrapper中并不是响应式数据 */
+									vm.form.catid.options = _.map(all_category, row => ({
+										value: row._id,
+										label: row.name
+									}));
+								},
+								{ immediate: true }
+							);
 						},
 						onEmitValue() {
 							vm.filterList();
@@ -351,12 +355,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						multiple: true,
 						options: [],
 						once() {
-							vm.form.tag.options = _.map(vm.inject_project.all_tags, label => {
-								return {
-									value: label,
-									label
-								};
-							});
+							vm.$watch(
+								() => vm.inject_project.all_tags,
+								all_tags => {
+									vm.form.tag.options = _.map(all_tags, label => ({
+										value: label,
+										label
+									}));
+								},
+								{ immediate: true }
+							);
 						},
 						onEmitValue() {
 							vm.filterList();
@@ -387,14 +395,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						multiple: true,
 						options: [],
 						once() {
-							vm.form.witchEnv.options = _.concat(
-								[{ label: "未设置", value: "unset" }],
-								_.map(vm.APP?.cptProject?.env, row => {
-									return {
-										value: row._id,
-										label: row.name
-									};
-								})
+							vm.$watch(
+								() => vm.APP?.cptProject?.env,
+								env => {
+									vm.form.witchEnv.options = _.concat(
+										[{ label: "未设置", value: "unset" }],
+										_.map(env, row => ({ value: row._id, label: row.name }))
+									);
+								},
+								{ immediate: true }
 							);
 						},
 						onEmitValue() {
