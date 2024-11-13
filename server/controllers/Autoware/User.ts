@@ -276,7 +276,7 @@ module.exports = {
 			}
 		},
 		/* 获取邮箱校验验证码 */
-		"/user/NewVarifyCode": {
+		"/user/new_varify_code": {
 			post: {
 				/* 授权所有人可以访问 */
 				auth: true,
@@ -312,17 +312,26 @@ module.exports = {
 							expires: xU.expireDay(1)
 						});
 
-						xU.sendMail({
-							subject: "验证码",
-							to: email,
-							contents: `<h3>亲爱的用户：</h3>
+						return new Promise((resolve, reject) => {
+							xU.sendMail(
+								{
+									subject: "验证码",
+									to: email,
+									contents: `<h3>亲爱的用户：</h3>
 <p>您好，感谢使用YApi可视化接口平台</p>
 <p>验证码为：</p>
 <h1 style="color:#34ff34;background-color:black;padding:16px;"> ${code} </h1>
 <p>请在24小时内填写，如非本人操作，请忽略此邮件。</p>`
+								},
+								error => {
+									if (error) {
+										reject(error?.message);
+									} else {
+										resolve("验证码已发送，请检查邮箱");
+									}
+								}
+							);
 						});
-
-						ctx.body = xU.$response({ msg: "验证码已发送，请检查邮箱" });
 					}
 
 					if (result) {
@@ -337,7 +346,12 @@ module.exports = {
 								"验证码未使用，请检查邮箱"
 							));
 						} else {
-							return sendNewVarifyCode();
+							try {
+								const msg = await sendNewVarifyCode();
+								ctx.body = xU.$response(msg);
+							} catch (error) {
+								ctx.body = xU.$response(null, 500, error);
+							}
 						}
 					}
 				}

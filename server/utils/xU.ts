@@ -612,7 +612,8 @@ function sendMail(options, cb) {
 		);
 	} catch (e) {
 		xU.applog.error(e.message);
-		console.error(e.message); // eslint-disable-line
+		console.error(e.message);
+		// eslint-disable-line
 	}
 }
 

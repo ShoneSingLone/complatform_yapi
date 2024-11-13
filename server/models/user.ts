@@ -14,8 +14,7 @@ class ModelUser extends ModelBase {
 			},
 			/* 昵称 */
 			nickname: {
-				type: String,
-				required: true
+				type: String
 			},
 			password: {
 				type: String,

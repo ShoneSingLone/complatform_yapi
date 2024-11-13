@@ -375,13 +375,13 @@ export default async function () {
 					return _.$ajax.post(`/api/user/logout`);
 				},
 				async postNewVarifyCode(email) {
-					return _.$ajax.post(`/api/user/NewVarifyCode`, {
+					return _.$ajax.post(`/api/user/new_varify_code`, {
 						data: {
 							email
 						}
 					});
 				},
-				async userReg(data) {
+				async user_reg(data) {
 					return _.$ajax.post(`/api/user/reg`, {
 						data
 					});
