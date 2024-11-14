@@ -2903,11 +2903,13 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 					eachWidth;
 
 				_.each(currentShouldShow, (column, index) => {
-					if (column.width) {
+					if (column.width && !column.__unset_width) {
+						/* 只记录自定义宽度的列 */
 						usedWidth += column.width;
 					} else {
-						/* 没有设置width就会自动分配 */
+						/* 初始化时收集未配置宽度的列 */
 						unsetWidth[index] = true;
+						column.__unset_width = true;
 					}
 				});
 				/* 剩余的宽度 */
@@ -2919,10 +2921,11 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 					eachWidth = Math.floor(remainWidth / unsetCount);
 					/* 最小宽度 */
 					eachWidth = eachWidth > 80 ? eachWidth : 80;
+					console.log("🚀 ~ column.__unset_width ~ eachWidth:", eachWidth);
 				}
 
 				return _.map(currentShouldShow, column => {
-					if (!hasOwn(column, "width")) {
+					if (column.__unset_width) {
 						_.$val(column, "width", eachWidth);
 					}
 					return {

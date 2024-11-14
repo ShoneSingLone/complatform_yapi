@@ -9,23 +9,39 @@ class ModelWiki extends ModelBase {
 		return {
 			belong_type: {
 				type: String,
-				enum: ["private", "group", "project", "all"],
+				enum: [
+					"private",
+					"group",
+					"project",
+					"all",
+					"chat_all",
+					"chat_one",
+					"chat_group",
+					"chat_project"
+				],
 				default: "private"
 			},
 			belong_id: { type: String },
 			del_tag: { type: Number, default: 0 },
+			/* article */
 			type: String,
 			title: String,
 			p_id: { type: Number, default: 0 },
 			project_id: { type: Number },
 			username: String,
+			/* 创建者_id */
 			uid: { type: Number },
+			/* 修改者_id */
 			edit_uid: { type: Number, default: 0 },
 			desc: String,
 			markdown: String,
 			add_time: Number,
 			up_time: Number
 		};
+	}
+
+	search(condition) {
+		return this.model.find(xU._.merge(condition, { del_tag: 0 })).exec();
 	}
 
 	save(data) {

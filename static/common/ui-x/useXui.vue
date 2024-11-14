@@ -197,6 +197,7 @@ export default async function ({
 				"/common/ui-x/directive/directive.install.vue",
 				"/common/ui-x/directive/xtips/xtips.vue",
 				"/common/ui-x/directive/ripple.vue",
+				"/common/ui-x/directive/infinitescroll.vue",
 				"/common/ui-x/directive/xloading.vue",
 				"/common/ui-x/directive/xmove.vue"
 			],

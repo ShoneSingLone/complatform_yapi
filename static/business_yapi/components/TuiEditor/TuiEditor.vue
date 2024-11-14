@@ -231,6 +231,9 @@ export default async function () {
 								style: { backgroundImage: "none" }
 							}
 						);
+						vm.vmTuiEditor.on("keydown", function (type, event) {
+							vm.$emit("keydown", { type, event });
+						});
 					})();
 				} catch (error) {
 					console.error(error);

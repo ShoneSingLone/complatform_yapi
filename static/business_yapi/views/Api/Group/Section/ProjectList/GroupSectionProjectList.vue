@@ -217,7 +217,9 @@ export default async function () {
 											}
 										})
 									]),
-									hDiv({ class: "data-list-id-number" }, [`${rowData._id || "--"}`])
+									hDiv({ class: "data-list-id-number" }, [
+										`${rowData._id || "--"}`
+									])
 								]);
 							}
 						},
@@ -356,6 +358,8 @@ export default async function () {
 
 <style lang="less">
 .GroupSectionProjectList {
+	width: 100%;
+
 	.GroupSectionProjectList-header {
 		background: #eee;
 		height: 64px;

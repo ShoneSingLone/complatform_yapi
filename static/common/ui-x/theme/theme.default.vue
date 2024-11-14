@@ -870,6 +870,12 @@ body.x-app-body {
 		opacity: 1;
 		&.hide {
 			opacity: 0;
+			overflow: hidden;
+			display: none;
+
+			* {
+				display: none;
+			}
 		}
 	}
 

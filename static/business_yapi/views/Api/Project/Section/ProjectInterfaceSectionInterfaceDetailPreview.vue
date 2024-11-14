@@ -235,7 +235,7 @@ export default async function () {
 						label: i18n("维护人"),
 						value: uid || "--",
 						xItemRender: () => {
-							const user = _.find(vm.APP.allUser, user => {
+							const user = _.find(vm.APP.all_user, user => {
 								return user.uid === uid;
 							});
 							return h("xTag", { class: "mr" }, [user?.username || uid]);

@@ -1,17 +1,26 @@
-const { ModelWiki } = require("server/models/wiki");
-const { ModelWikiOrder } = require("server/models/WikiOrder");
 const { diffText } = require("common/diff-view");
 
 const swagger_belong_type = {
 	description: "该资源所属",
 	required: true,
 	type: "string",
-	enum: [xU.var.ALL, xU.var.GROUP, xU.var.PROJECT, xU.var.PRIVATE]
+	enum: [
+		xU.var.ALL,
+		xU.var.GROUP,
+		xU.var.PROJECT,
+		xU.var.PRIVATE,
+		"chat_all",
+		"chat_one",
+		"chat_group",
+		"chat_project"
+	]
 };
 
 const swagger_belong_id = {
-	description: "该资源ID，所属类型题 为【group】【project】 需要提供对应的ID",
-	type: "number"
+	description: `该资源ID，
+- 所属类型题 为【group】【project】 需要提供对应的ID
+- 如果为【chat_one】，则需将uid按数字排序，以_链接：33_133`,
+	type: "string"
 };
 
 const postWikiUpsertOne = {
@@ -23,7 +32,7 @@ const postWikiUpsertOne = {
 				type: "number"
 			},
 			p_id: {
-				description: "该资源的PARENT_ID",
+				description: "该资源的PARENT_ID,如果是",
 				type: "number"
 			},
 			belong_type: swagger_belong_type,
@@ -33,6 +42,12 @@ const postWikiUpsertOne = {
 				required: true,
 				type: "string"
 			},
+			type: {
+				description: "该资源用于",
+				required: true,
+				type: "string",
+				enum: ["article", "chatcontent"]
+			},
 			markdown: {
 				description: "内容 markdown格式",
 				required: true,
@@ -41,37 +56,45 @@ const postWikiUpsertOne = {
 		}
 	},
 	async handler(ctx) {
-		const { payload } = ctx;
-		let { belong_type, belong_id, markdown, _id } = payload;
-		let res;
-		if (belong_type === "private") {
-			/* 当前用户的ID */
-			payload.belong_id = this.$uid;
-		}
-
-		if (_id) {
-			/* 修改 */
-			const oldWikiArticle = await orm.wiki.detail(_id);
-			const oldmarkdown = oldWikiArticle?.markdown || "";
-			res = await orm.wiki.up(_id, payload);
-			const result = diffText(oldmarkdown, markdown);
-			if (result) {
-				xU.saveLog({
-					content: `<a href='/user/profile/${this.$user._id}'>${this.$user.username}</a> 修改了文档 <a href='./wiki?wiki_id=${payload._id}'>${payload._id}:${payload.title}</a>`,
-					type: "wiki_doc",
-					uid: this.$user._id,
-					username: this.$user.username,
-					typeid: payload._id,
-					data: result
-				});
+		try {
+			const { payload } = ctx;
+			let { belong_type, belong_id, markdown, _id } = payload;
+			let res;
+			if (belong_type === "private") {
+				/* 当前用户的ID */
+				payload.belong_id = this.$uid;
 			}
-		} else {
-			/* 新增 */
-			res = await orm.wiki.save(payload);
-			payload._id = res._id;
-		}
 
-		ctx.body = xU.$response({ msg: res });
+			if (_id) {
+				/* 修改 */
+				const oldWikiArticle = await orm.wiki.detail(_id);
+				const oldmarkdown = oldWikiArticle?.markdown || "";
+				payload.up_time = xU.time();
+				res = await orm.wiki.up(_id, payload);
+				const result = diffText(oldmarkdown, markdown);
+				if (result) {
+					xU.saveLog({
+						content: `<a href='/user/profile/${this.$user._id}'>${this.$user.username}</a> 修改了文档 <a href='./wiki?wiki_id=${payload._id}'>${payload._id}:${payload.title}</a>`,
+						type: "wiki_doc",
+						uid: this.$user._id,
+						username: this.$user.username,
+						typeid: payload._id,
+						data: result
+					});
+				}
+			} else {
+				payload.add_time = xU.time();
+				payload.up_time = xU.time();
+				payload.uid = this.$user._id;
+				/* 新增 */
+				res = await orm.wiki.save(payload);
+				payload._id = res._id;
+			}
+
+			ctx.body = xU.$response({ msg: res });
+		} catch (error) {
+			ctx.body = xU.$response(null, 400, error);
+		}
 	}
 };
 
@@ -203,17 +226,6 @@ const getWikiDetail = {
 	}
 };
 
-const getWikiList = {
-	summary: "文档 list",
-	async handler(ctx) {
-		try {
-			ctx.body = xU.$response({ list: await orm.wiki.menu() });
-		} catch (e) {
-			xU.applog.error(e.message);
-		}
-	}
-};
-
 const postWikiResetMenuOrder = {
 	summary: "调整文档顺序，层级关系",
 	request: {
@@ -288,7 +300,26 @@ module.exports = {
 			get: getWikiDetail
 		},
 		"/wiki/list": {
-			get: getWikiList
+			post: {
+				summary: "文档 list",
+				request: {
+					body: {
+						belong_type: swagger_belong_type,
+						belong_id: swagger_belong_id
+					}
+				},
+				async handler(ctx) {
+					const { payload } = ctx;
+					try {
+						let condition = xU._.pick(payload, ["belong_type", "belong_id"]);
+
+						const list = await orm.wiki.search(condition);
+						ctx.body = xU.$response({ list: list });
+					} catch (e) {
+						xU.applog.error(e.message);
+					}
+				}
+			}
 		},
 		"/wiki/reset_menu_order": {
 			post: postWikiResetMenuOrder

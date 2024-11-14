@@ -22,7 +22,7 @@ export default async function ({ parentDocId, belong_type, belong_id, hide }) {
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 
 	return defineComponent({
-		inject: ["APP", "inject_note"],
+		inject: ["APP", "inject_im"],
 		props: useDialogProps(),
 		data() {
 			return {
@@ -64,8 +64,7 @@ export default async function ({ parentDocId, belong_type, belong_id, hide }) {
 							};
 							const res = await _api.yapi.wiki_upsert_one(params);
 							if (!res.errcode) {
-								await vm.inject_note.updateWikiMenuList();
-								await vm.inject_note.setCurrentWiki(res.data.msg);
+								await vm.inject_im.setCurrentWiki(res.data.msg);
 								vm.closeModal();
 							}
 						} catch (error) {

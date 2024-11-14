@@ -2039,7 +2039,6 @@
 		 */
 		_.$resetFormValues = function (xItemFormConfigsArray) {
 			xItemFormConfigsArray = xItemConfigsBy(xItemFormConfigsArray);
-
 			_.each(xItemFormConfigsArray, configs => {
 				if (_.isFunction(configs.resetValue)) {
 					configs.resetValue();

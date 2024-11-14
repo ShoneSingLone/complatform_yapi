@@ -4,17 +4,15 @@
 			<xAutoResizer :onResize="setSize">
 				<div class="flex">
 					<GroupSectionProjectList :style="cptListStyle" />
-					<div :style="cptDetailStyle">
-						<div class="flex vertical height100">
-							<xBlock class="group-desc-wrapper" :bodyClass="{ 'flex middle': true }">
-								<xRender :render="renderSwitchBtnGroup" />
-								<xGap f />
-								<xIcon icon="close" @click="closeGroupDetail" class="pointer" />
-							</xBlock>
-							<GroupSectionMemberList />
-							<GroupSectionLog />
-							<GroupSectionWiki />
-						</div>
+					<div :style="cptDetailStyle" class="GroupInfoPanel flex vertical">
+						<xBlock class="group-desc-wrapper" :bodyClass="{ 'flex middle': true }">
+							<xRender :render="renderSwitchBtnGroup" />
+							<xGap f />
+							<xIcon icon="close" @click="closeGroupDetail" class="pointer" />
+						</xBlock>
+						<GroupSectionMemberList />
+						<GroupSectionLog />
+						<GroupSectionWiki />
 					</div>
 				</div>
 			</xAutoResizer>
@@ -67,6 +65,7 @@ export default async function () {
 					size: { width, height },
 					cptIsShowGroupInfo
 				} = this;
+
 				const style = {
 					width: width + "px",
 					height: height + "px",
@@ -74,7 +73,8 @@ export default async function () {
 					transition: `all 0.3s ease-in`
 				};
 				if (cptIsShowGroupInfo) {
-					style.transform = `translate(-50px, -50px)`;
+					style.filter = `blur(6px)`;
+					// style.transform = `translate(-50px, -50px)`;
 				}
 
 				return style;

@@ -30,7 +30,13 @@ export default async function () {
 		}),
 		/* 指令 */
 		_.$newRoute("/directive", ComponentPageRouterView, {
-			children: [_.$newRoute("/directive/ripple", "@/views/directive/directive/ripple.vue")]
+			children: [
+				_.$newRoute("/directive/ripple", "@/views/directive/directive/ripple/ripple.vue"),
+				_.$newRoute(
+					"/directive/infinite_scroll",
+					"@/views/directive/directive/infinite_scroll/infinite_scroll.vue"
+				)
+			]
 		}),
 		/* 聚合类 */
 		_.$newRoute("/x-component", ComponentPageRouterView, {

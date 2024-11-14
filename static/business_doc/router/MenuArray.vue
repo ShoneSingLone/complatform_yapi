@@ -39,6 +39,11 @@ export default async function () {
 					label: i18n("水波纹"),
 					href: "/directive/ripple"
 				},
+				{
+					icon: "_icon_ripple",
+					label: i18n("Infinite Scroll"),
+					href: "/directive/infinite_scroll"
+				},
 				{ icon: "icon_report", label: i18n("layer"), href: "/other/layer" },
 				{ icon: "_icon_move", label: i18n("move"), href: "/other/move" },
 				{ icon: "_icon_popover", label: i18n("Popover"), href: "/other/popover" },

@@ -1,7 +1,7 @@
 <template>
 	<xBlock
 		class="flex1 mt"
-		style="height: 100%; position: relative"
+		style="height: 1px; position: relative"
 		:bodyClass="{ height100: true, flex: 1 }"
 		v-if="isShow">
 		<!-- 成员列表 -->
@@ -76,7 +76,7 @@ export default async function () {
 					{
 						prop: `b`,
 						label: `b`,
-						width: 200,
+						width: 256,
 						headerCellRenderer() {
 							return hDiv({ class: "flex end width100" }, [
 								hxBtn({

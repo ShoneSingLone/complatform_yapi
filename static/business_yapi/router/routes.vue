@@ -9,6 +9,7 @@ export default async function () {
 		_.$newRoute("/user", "@/views/user/UserList.vue"),
 		_.$newRoute("/i18n", "@/views/I18n/I18n.vue"),
 		_.$newRoute("/note", "@/views/Note/Note.vue"),
+		_.$newRoute("/im", "@/views/Im/Im.vue"),
 		_.$newRoute("/rtc", "@/views/Rtc/ViewRtc.vue", {
 			children: [
 				_.$newRoute("/rtc/demo", "@/views/Rtc/ViewRtcDemo.vue"),

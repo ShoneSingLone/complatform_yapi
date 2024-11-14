@@ -1,6 +1,5 @@
 <script lang="ts">
 export default async function () {
-	// window._CURENT_IS_MOBILE = /Mobile/gi.test(window.navigator.userAgent)
 	/*anxin应用用到的组件*/
 	_.each(
 		{
@@ -91,8 +90,8 @@ export default async function () {
 
 					if (vm.user.isLogin) {
 						const res = await _api.yapi.userSearch({});
-						const { data: allUser } = res;
-						vm.allUser = allUser;
+						const { data: all_user } = res;
+						vm.all_user = all_user;
 						/* TODO: 跳转到首页 或者note应用*/
 						if (vm.$route.path === "/note") {
 							return;
@@ -121,7 +120,7 @@ export default async function () {
 				expandedKeys: {
 					group: []
 				},
-				allUser: [],
+				all_user: [],
 				menu: {},
 				globalSize: "",
 				isFooterFold: false,
@@ -137,7 +136,7 @@ export default async function () {
 					_id: "",
 					isLogin: false,
 					isLDAP: false,
-					userName: null,
+					username: null,
 					uid: null,
 					loginState: LOADING_STATUS,
 					breadcrumb: [],
@@ -184,7 +183,7 @@ export default async function () {
 					isLDAP: !!userInfo.ladp,
 					role: userInfo ? userInfo.role : null,
 					loginState: isLogin ? MEMBER_STATUS : GUEST_STATUS,
-					userName: userInfo ? userInfo.username : null,
+					username: userInfo ? userInfo.username : null,
 					uid: userInfo ? isLogin : null,
 					type: userInfo ? userInfo.type : null,
 					study: userInfo ? userInfo.study : false
@@ -222,7 +221,7 @@ export default async function () {
 						this._setUser({
 							isLogin: false,
 							loginState: GUEST_STATUS,
-							userName: null,
+							username: null,
 							uid: null,
 							role: "",
 							type: ""

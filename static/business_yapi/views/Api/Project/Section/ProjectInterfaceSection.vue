@@ -462,7 +462,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					transition: `all 0.3s ease-in`
 				};
 				if (cptIsShowDetail) {
-					style.transform = `translate(-50px, -50px)`;
+					style.filter = `blur(6px)`;
+					// style.transform = `translate(-50px, -50px)`;
 				}
 
 				return style;

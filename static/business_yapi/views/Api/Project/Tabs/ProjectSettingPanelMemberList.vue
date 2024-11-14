@@ -38,6 +38,7 @@ export default async function () {
 							return hDiv({ staticClass: "flex middle", key: rowData.uid }, [
 								h("xItem", {
 									staticClass: "mr4 ml4",
+									style: "--xItem-wrapper-width:32px;",
 									configs: {
 										value: rowData.uid || "",
 										itemType: "YapiItemAvatar",
@@ -62,14 +63,15 @@ export default async function () {
 										}
 									},
 									[rowData.username]
-								)
+								),
+								hDiv({ class: "flex1" })
 							]);
 						}
 					},
 					{
 						prop: `b`,
 						label: `b`,
-						width: 200,
+						width: 256,
 						headerCellRenderer() {
 							return hxBtn({
 								vIf: vm.cptAuth,
