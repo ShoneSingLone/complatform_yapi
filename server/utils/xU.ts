@@ -577,6 +577,7 @@ function expireDate(day) {
 	date.setTime(date.getTime() + day * 86400000);
 	return date;
 }
+
 function expireDay(day) {
 	return Date.now() + day * 86400000;
 }
@@ -1110,8 +1111,49 @@ function createWebAPIRequest(ops) {
 	});
 }
 
+const SSE_STREAM_MAP = new Map();
+const SSE_TYPE = {
+	CHAT_ONE: "chat_one",
+	CHAT_ALL: "chat_all",
+	CHAT_GROUP: "chat_group",
+	CHAT_PROJECT: "chat_project"
+};
+
+const SSE_TYPE_HANDLERS = {
+	[SSE_TYPE.CHAT_ONE](id, message) {
+		const stream = SSE_STREAM_MAP.get(id);
+		if (stream) {
+			stream.write(`data: ${JSON.stringify(message)}\n\n`);
+		}
+	}
+};
+
 const xU = new Proxy(
 	{
+		SSE_TYPE,
+		SSE_TYPE_HANDLERS,
+		setSseStream(id, stream) {
+			id = String(id);
+			const _stream = SSE_STREAM_MAP.get(id);
+			if (_stream) {
+				SSE_STREAM_MAP.delete(id);
+			}
+			SSE_STREAM_MAP.set(id, stream);
+		},
+		removeSseStream(id) {
+			id = String(id);
+			const _stream = SSE_STREAM_MAP.get(id);
+			if (_stream) {
+				_stream.end();
+			}
+			SSE_STREAM_MAP.delete(id);
+		},
+		sseOn(type) {},
+		sseOff() {},
+		sseTrigger(type, clientID, payload) {
+			const handler = SSE_TYPE_HANDLERS[type];
+			handler && handler(clientID, { type, payload });
+		},
 		_,
 		fs,
 		path,
