@@ -52,17 +52,7 @@ export default async function () {
 				isShowEditor: false
 			};
 		},
-		methods: {
-			setCurrentWiki(data) {
-				this.$router.push({
-					path: this.$route.path,
-					query: {
-						...this.$route.query,
-						wiki: data._id
-					}
-				});
-			}
-		},
+		methods: {},
 		computed: {
 			cptImChatWith() {
 				const { uid } = this.$route.query;

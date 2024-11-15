@@ -1,10 +1,10 @@
 <style lang="less"></style>
 <template>
 	<div>
+		<xBtn @click="() => addNewQuery()" class="mt4">添加</xBtn>
 		<div class="width100 yapiItemReqBodyParams-table-height x-padding" ref="columns">
 			<xTableVir :columns="columns" :data="cptReqQuery" />
 		</div>
-		<xBtn @click="() => addNewQuery()" class="mt4">添加</xBtn>
 	</div>
 </template>
 <script lang="ts">

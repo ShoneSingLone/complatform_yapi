@@ -85,7 +85,7 @@ export default async function () {
 					if (!vm.user.isLogin) {
 						const res = await _api.yapi.userStatus();
 						const { data: userInfo } = res;
-						vm._setUser(userInfo);
+						await vm._setUser(userInfo);
 					}
 
 					if (vm.user.isLogin) {
@@ -175,7 +175,8 @@ export default async function () {
 			_toggleFooterFold() {
 				this.isFooterFold = !this.isFooterFold;
 			},
-			_setUser(userInfo) {
+			async _setUser(userInfo) {
+				const vm = this;
 				const isLogin = !!userInfo._id;
 				this.user = {
 					...userInfo,
@@ -188,6 +189,41 @@ export default async function () {
 					type: userInfo ? userInfo.type : null,
 					study: userInfo ? userInfo.study : false
 				};
+				await ((/* 登录之后再订阅sse事件 */) => {
+					if (!isLogin) {
+						return;
+					}
+					return new Promise(resolve => {
+						const SseEventSource = new EventSource(
+							`${window._URL_PREFIX_4_DEV || ""}/api/sse`
+						);
+						SseEventSource.onmessage = function (e) {
+							try {
+								const message = JSON.parse(e.data);
+								const { type, payload } = message;
+								const HANDLER_MAP = {
+									chat_one() {
+										vm.$emit("chat_one", payload);
+									}
+								};
+								const handler = HANDLER_MAP[type];
+								if (handler) {
+									handler();
+								}
+							} catch (error) {
+								console.error(error);
+							} finally {
+							}
+						};
+						SseEventSource.onerror = function (e) {
+							console.log("SseEventSource error: ", e.data);
+						};
+						SseEventSource.onopen = function (e) {
+							console.log("SseEventSource open:", e);
+							resolve(SseEventSource);
+						};
+					});
+				})();
 			},
 			/**
 			 * 如果group是对象，直接赋值，
@@ -218,7 +254,7 @@ export default async function () {
 					const { data } = await _api.yapi.userLogout();
 					if (data === "ok") {
 						_.$lStorage.x_token = "";
-						this._setUser({
+						await this._setUser({
 							isLogin: false,
 							loginState: GUEST_STATUS,
 							username: null,
