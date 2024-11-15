@@ -1,4 +1,4 @@
-const qs = require("qs");
+const JSON = require("qs");
 /*  if (cookieJsonStr) {
 	   // 将cookie字符串分割成单个cookie
 	   var cookieArr = cookieJsonStr.split(';');

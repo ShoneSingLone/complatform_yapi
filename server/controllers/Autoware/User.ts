@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const { customCookies } = require("server/utils/customCookies");
+const { PassThrough } = require("stream");
 
 const IMAGE_BUFFER_CACHE = {};
 async function makeNewUserPrivateGroup(uid) {
@@ -13,6 +14,7 @@ async function makeNewUserPrivateGroup(uid) {
 		type: "private"
 	});
 }
+let count = 0;
 
 module.exports = {
 	definitions: {
@@ -25,6 +27,35 @@ module.exports = {
 		description: "用户信息"
 	},
 	paths: {
+		"/user/sse": {
+			get: {
+				summary: "sse服务",
+				description: "sse服务",
+				request: {},
+				async handler(ctx) {
+					// 设置响应头，表明这是一个SSE连接
+					ctx.set({
+						"Content-Type": "text/event-stream",
+						"Cache-Control": "no-cache",
+						Connection: "keep-alive"
+					});
+					ctx.status = 200;
+					const stream = new PassThrough();
+					ctx.body = stream;
+					// 每隔一段时间（这里设置为3秒）发送一次数据
+					const interval = setInterval(async () => {
+						/* NOTICE: 需要换行，两个！！！！\n\n；
+						 * 不然onmessage无效
+						 */
+						stream.write(`data: hi from koa sse ${count++}\n\n`);
+					}, 1000);
+					ctx.req.on("close", () => {
+						clearInterval(interval);
+						stream.end();
+					});
+				}
+			}
+		},
 		"/user/update": {
 			post: {
 				auth: true,

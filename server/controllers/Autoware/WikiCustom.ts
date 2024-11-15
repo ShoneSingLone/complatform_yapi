@@ -9,10 +9,10 @@ const swagger_belong_type = {
 		xU.var.GROUP,
 		xU.var.PROJECT,
 		xU.var.PRIVATE,
-		"chat_all",
-		"chat_one",
-		"chat_group",
-		"chat_project"
+		xU.SSE_TYPE.CHAT_ONE,
+		xU.SSE_TYPE.CHAT_ALL,
+		xU.SSE_TYPE.CHAT_GROUP,
+		xU.SSE_TYPE.CHAT_PROJECT
 	]
 };
 
@@ -89,6 +89,11 @@ const postWikiUpsertOne = {
 				/* 新增 */
 				res = await orm.wiki.save(payload);
 				payload._id = res._id;
+				if (payload.belong_type === xU.SSE_TYPE.CHAT_ONE) {
+					payload.belong_id.split("_").forEach(id => {
+						xU.sseTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
+					});
+				}
 			}
 
 			ctx.body = xU.$response({ msg: res });
@@ -156,6 +161,7 @@ const getWikiDetail = {
 							xU.isSame(currentUid, member.uid)
 						);
 					}
+
 					/**
 					 * 定义一个处理不同访问权限的 Wiki 的处理器映射。
 					 * 不同的处理器根据 belong_id 来确定当前资源的访问权限，
