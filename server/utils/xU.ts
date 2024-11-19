@@ -1,3 +1,8 @@
+const {
+	SOCKET_TYPE_HANDLERS,
+	SOCKET_CONNECTIONS,
+	SSE_TYPE
+} = require("../middleware/websocket.handlers");
 const _ = require("lodash");
 const CryptoJS = require("crypto-js");
 const dayjs = require("dayjs");
@@ -1112,12 +1117,6 @@ function createWebAPIRequest(ops) {
 }
 
 const SSE_STREAM_MAP = new Map();
-const SSE_TYPE = {
-	CHAT_ONE: "chat_one",
-	CHAT_ALL: "chat_all",
-	CHAT_GROUP: "chat_group",
-	CHAT_PROJECT: "chat_project"
-};
 
 const SSE_TYPE_HANDLERS = {
 	[SSE_TYPE.CHAT_ONE](id, message) {
@@ -1152,6 +1151,11 @@ const xU = new Proxy(
 		sseOff() {},
 		sseTrigger(type, clientID, payload) {
 			const handler = SSE_TYPE_HANDLERS[type];
+			handler && handler(clientID, { type, payload });
+		},
+		SOCKET_CONNECTIONS,
+		socketTrigger(type, clientID, payload) {
+			const handler = SOCKET_TYPE_HANDLERS[type];
 			handler && handler(clientID, { type, payload });
 		},
 		_,
@@ -1215,10 +1219,9 @@ const xU = new Proxy(
 			}
 			return basepath;
 		},
-		socketMsg(msg, ctx, payload = {}) {
+		socketMsg(type, payload = {}) {
 			return {
-				msg,
-				id: ctx.socket.id,
+				type,
 				payload
 			};
 		},

@@ -91,7 +91,10 @@ const postWikiUpsertOne = {
 				payload._id = res._id;
 				if (payload.belong_type === xU.SSE_TYPE.CHAT_ONE) {
 					payload.belong_id.split("_").forEach(id => {
+						/* sse方案 */
 						xU.sseTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
+						/* socket方案 */
+						xU.socketTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
 					});
 				}
 			}

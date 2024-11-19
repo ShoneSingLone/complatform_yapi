@@ -107,6 +107,7 @@
 			</div>
 			<div class="flex center width100 mt">
 				<xBtn :configs="cptSendBtn" ref="refSendNewChatBtn" />
+				<xBtn :configs="cptSendBtn" ref="refSendNewChatBtn" />
 			</div>
 		</xPageContent>
 	</section>
@@ -146,8 +147,17 @@ export default async function () {
 					onClick: () => sendNewChat()
 				};
 			},
+			cptSendBtn({ inject_im, newChatContent, sendNewChat }) {
+				return {
+					label: "发送(Ctrl+Enter)",
+					preset: "primary",
+					disabled: !inject_im.cptImChatWith.uid || !newChatContent,
+					onClick: () => sendNewChat()
+				};
+			},
 			cptBelongParams() {
 				return {
+					wsId: this.APP.WS_ID,
 					belong_type: "chat_one",
 					belong_id: [this.APP.user._id, this.inject_im.cptImChatWith.uid]
 						.map(i => Number(i))

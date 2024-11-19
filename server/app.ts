@@ -1,15 +1,11 @@
 const Koa = require("koa");
-// const KoaWS = require("koa-websocket");
-const KoaSocket = require("koa-socket");
 /**
  * @description 启动服务
  *
  */
 async function main() {
 	const app = new Koa();
-	const appSocket = new KoaSocket("/ws");
 	app._version = Date.now();
-	appSocket.attach(app);
 
 	/*
 	!!!!!!!!!!!!!!!必先调用!!!!!!!!!!!!!!!
@@ -41,7 +37,7 @@ async function main() {
 	/* - boundless vue project */
 	await require("server/plugins/usePlugin")(app);
 	/* 原来yapi的路由 TODO: 移除*/
-	await require("server/router")({ app, appSocket });
+	await require("server/router")(app);
 
 	/* 启动 */
 	/* await require("server/middleware/historyMode")(app); */

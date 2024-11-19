@@ -1,5 +1,9 @@
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
+	const _$TRIGGER_EVENT_NAME = "USER_WS_MESSAGE";
+
+	PRIVATE_GLOBAL._$TRIGGER_EVENT_NAME = _$TRIGGER_EVENT_NAME;
+
 	/*anxin应用用到的组件*/
 	_.each(
 		{
@@ -189,41 +193,57 @@ export default async function () {
 					type: userInfo ? userInfo.type : null,
 					study: userInfo ? userInfo.study : false
 				};
-				await ((/* 登录之后再订阅sse事件 */) => {
-					if (!isLogin) {
-						return;
-					}
-					return new Promise(resolve => {
-						const SseEventSource = new EventSource(
-							`${window._URL_PREFIX_4_DEV || ""}/api/sse`
-						);
-						SseEventSource.onmessage = function (e) {
-							try {
-								const message = JSON.parse(e.data);
-								const { type, payload } = message;
-								const HANDLER_MAP = {
-									chat_one() {
-										vm.$emit("chat_one", payload);
-									}
-								};
-								const handler = HANDLER_MAP[type];
-								if (handler) {
-									handler();
+				if (!isLogin) {
+					return;
+				}
+				this.user._id && vm.initWebsocket(this.user._id);
+
+				// await vm.initSSE();
+			},
+			async initWebsocket(uid) {
+				uid = await new Promise(async resolve => {
+					const wsOptions = {
+						TRIGGER_EVENT_NAME: _$TRIGGER_EVENT_NAME,
+						onConnection: ({ id }) => resolve(id),
+						namespace: `/ws_yapi?uid=${uid}`
+					};
+					this.WS = await _.$importVue("/common/libs/socket.io.vue", wsOptions);
+				});
+				$(window).on(_$TRIGGER_EVENT_NAME, (event, { type, payload }) => {
+					this.$emit(type, payload);
+				});
+			},
+			initSSE() {
+				return new Promise(resolve => {
+					const SseEventSource = new EventSource(
+						`${window._URL_PREFIX_4_DEV || ""}/api/sse`
+					);
+					SseEventSource.onmessage = function (e) {
+						try {
+							const message = JSON.parse(e.data);
+							const { type, payload } = message;
+							const HANDLER_MAP = {
+								chat_one() {
+									vm.$emit("chat_one", payload);
 								}
-							} catch (error) {
-								console.error(error);
-							} finally {
+							};
+							const handler = HANDLER_MAP[type];
+							if (handler) {
+								handler();
 							}
-						};
-						SseEventSource.onerror = function (e) {
-							console.log("SseEventSource error: ", e.data);
-						};
-						SseEventSource.onopen = function (e) {
-							console.log("SseEventSource open:", e);
-							resolve(SseEventSource);
-						};
-					});
-				})();
+						} catch (error) {
+							console.error(error);
+						} finally {
+						}
+					};
+					SseEventSource.onerror = function (e) {
+						console.log("SseEventSource error: ", e.data);
+					};
+					SseEventSource.onopen = function (e) {
+						console.log("SseEventSource open:", e);
+						resolve(SseEventSource);
+					};
+				});
 			},
 			/**
 			 * 如果group是对象，直接赋值，

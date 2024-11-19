@@ -1,4 +1,5 @@
 const ControllerBase = require("server/controllers/base");
+const KoaSocket = require("koa-socket");
 
 var cps = require("current-processes");
 
@@ -219,7 +220,7 @@ function addPluginRouter(config) {
 	);
 }
 
-exports.old_appSetupWebsocket = function appSetupWebsocket({ app, appSocket }) {
+exports.old_appSetupWebsocket = function ({ app, appSocket }) {
 	xU.createAction(
 		wsRouter,
 		"/api",
@@ -242,35 +243,32 @@ exports.old_appSetupWebsocket = function appSetupWebsocket({ app, appSocket }) {
 	});
 };
 
-exports.appSetupWebsocket = function appSetupWebsocket({ app, appSocket }) {
-	const socketConnections = new Map();
-	global.socketConnections = socketConnections;
-	function msg(msg, ctx, payload = {}) {
-		return {
-			msg,
-			id: ctx.socket.id,
-			payload
-		};
-	}
-	/**
-	 * Socket middlewares
-	 */
-	appSocket.use(async function (ctx, next) {
-		const start = new Date();
-		await next();
-		const ms = new Date() - start;
-		console.log(`${ctx.event} WS ${ms}ms`, app);
-	});
+function msg(msg, ctx, payload = {}) {
+	return {
+		msg,
+		id: ctx.socket.id,
+		payload
+	};
+}
+
+exports.appSetupWebsocket = function (app) {
+	namespace_ws(app);
+	namespace_yapi(app);
+};
+function namespace_ws(app) {
+	const appSocket = new KoaSocket("/ws");
+	appSocket.attach(app);
+
 	/**
 	 * Socket handlers
 	 */
 	appSocket.on("connection", ctx => {
-		socketConnections.set(ctx.socket.id, app);
+		xU.SOCKET_CONNECTIONS.set(ctx.socket.id, app);
 		ctx.socket.emit("connection", msg("self", ctx));
 	});
 
 	appSocket.on("disconnect", ctx => {
-		socketConnections.delete(ctx.socket.id);
+		xU.SOCKET_CONNECTIONS.delete(ctx.socket.id);
 		appSocket.broadcast("disconnect", msg("disconnect", ctx));
 	});
 	appSocket.on("all", ctx => {
@@ -288,4 +286,58 @@ exports.appSetupWebsocket = function appSetupWebsocket({ app, appSocket }) {
 			console.error(error);
 		}
 	});
-};
+}
+function namespace_yapi(app) {
+	const appSocket = new KoaSocket("/ws_yapi");
+	appSocket.attach(app);
+	/**
+	 * Socket middlewares
+	 */
+	appSocket.use(async function (ctx, next) {
+		const start = new Date();
+		await next();
+		const ms = new Date() - start;
+		console.log(`${ctx.event} WS ${ms}ms`, app);
+	});
+	/**
+	 * Socket handlers
+	 */
+	appSocket.on("connection", ctx => {
+		let { uid } = ctx.socket.request?._query;
+		if (uid) {
+			uid = String(uid);
+			xU.SOCKET_CONNECTIONS.set(uid, ctx.socket);
+			ctx.socket.emit("connection", uid);
+		}
+	});
+	appSocket.on("disconnect", ctx => {
+		let uid;
+		xU.SOCKET_CONNECTIONS.forEach((socket, _uid) => {
+			if (socket.id === ctx.socket.id) {
+				uid = _uid;
+			}
+		});
+		if (uid) {
+			xU.SOCKET_CONNECTIONS.delete(uid);
+			appSocket.broadcast("disconnect", uid);
+		}
+	});
+	appSocket.on("all", ctx => {
+		appSocket.broadcast("message", msg("all", ctx));
+	});
+	appSocket.on("chat_one", ctx => {
+		appSocket.broadcast("message", msg("all", ctx));
+	});
+	appSocket.on("other", ctx => {
+		ctx.socket.broadcast("message", msg("other", ctx));
+		/* 回执 */
+		ctx.acknowledge(`send to other,callback with ctx.acknowledge`);
+	});
+	appSocket.on("self", ctx => {
+		try {
+			ctx.socket.emit("message", msg("other", ctx));
+		} catch (error) {
+			console.error(error);
+		}
+	});
+}
