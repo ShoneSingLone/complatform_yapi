@@ -108,6 +108,9 @@
 		};
 
 		const urlWrapper = url => {
+			if (/^htt/.test(url)) {
+				return url;
+			}
 			return `${window._URL_PREFIX_4_DEV || ""}${url}`;
 		};
 		const $ajax = {

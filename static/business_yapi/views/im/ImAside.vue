@@ -159,12 +159,12 @@ export default async function () {
 								staticClass: "node-name pointer flex1 ellipsis flex middle",
 								onClick() {
 									vm.APP.routerUpsertQuery({ uid: data.uid });
-									vm.inject_im.cptImChatWith = data;
 								}
 							},
 							[
 								h("xAvatar", {
 									src: data.avatar,
+									iscache: true,
 									class: "imAside-user-list-avatar mr8"
 								}),
 								data.username

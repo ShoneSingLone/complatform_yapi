@@ -28,7 +28,6 @@ export default async function () {
 			};
 		},
 		mounted() {
-			document.title = "Y-API-国际化";
 			const vm = this;
 			vm.getTableData();
 			vm.$watch(

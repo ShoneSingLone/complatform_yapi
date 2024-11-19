@@ -6,10 +6,12 @@
 <template>
 	<section class="x-page-view flex1 flash-when" id="ImSection">
 		<xPageContent>
-			<div class="flex1 overflow-auto">
-				inject_im.cptImChatWith: {{ inject_im.cptImChatWith }}
-				<div class="content-item" v-for="item in contentArray" :key="item.add_time">
-					<YapiChatContentItem :item="item" />
+			<div class="flex1 overflow-auto" ref="refChatContent">
+				<div ref="refChatContentWrapper">
+					inject_im.cptImChatWith: {{ inject_im.cptImChatWith }}
+					<div class="content-item" v-for="item in contentArray" :key="item.add_time">
+						<YapiChatContentItem :item="item" />
+					</div>
 				</div>
 			</div>
 			<div class="chat-content-editor">
@@ -21,13 +23,7 @@
 					@keydown="onKeydown" />
 			</div>
 			<div class="flex center width100 mt">
-				<xBtn
-					preset="primary"
-					@click="sendNewChat"
-					ref="refSendNewChatBtn"
-					:disabled="!inject_im.cptImChatWith.uid"
-					>发送(Ctrl+Enter)</xBtn
-				>
+				<xBtn :configs="cptSendBtn" ref="refSendNewChatBtn" />
 			</div>
 		</xPageContent>
 	</section>
@@ -39,6 +35,18 @@ export default async function () {
 		components: {
 			YapiChatContentItem: () => _.$importVue("@/components/YapiChatContentItem.vue")
 		},
+		setup() {
+			onMounted(() => {
+				this.APP.$on("chat_one", item => {
+					this.contentArray.push(item);
+					this.setPosition();
+				});
+			});
+
+			onUnmounted(() => {
+				this.APP.$off("chat_one");
+			});
+		},
 		data() {
 			return {
 				loading: false,
@@ -47,8 +55,17 @@ export default async function () {
 			};
 		},
 		computed: {
+			cptSendBtn({ inject_im, newChatContent, sendNewChat }) {
+				return {
+					label: "发送(Ctrl+Enter)",
+					preset: "primary",
+					disabled: !inject_im.cptImChatWith.uid || !newChatContent,
+					onClick: () => sendNewChat()
+				};
+			},
 			cptBelongParams() {
 				return {
+					wsId: this.APP.WS_ID,
 					belong_type: "chat_one",
 					belong_id: [this.APP.user._id, this.inject_im.cptImChatWith.uid]
 						.map(i => Number(i))
@@ -58,12 +75,22 @@ export default async function () {
 			}
 		},
 		methods: {
+			setPosition() {
+				setTimeout(() => {
+					const height = $(this.$refs.refChatContentWrapper).height();
+					this.$refs.refChatContent.scrollTo({
+						top: height,
+						behavior: "smooth"
+					});
+				}, 1000);
+			},
 			async updateContent() {
 				try {
 					const {
 						data: { list }
 					} = await _api.yapi.wikiList(this.cptBelongParams);
 					this.contentArray = list;
+					this.setPosition();
 				} catch (error) {
 					console.error(error);
 				} finally {
@@ -90,9 +117,6 @@ export default async function () {
 					await _api.yapi.wiki_upsert_one(params);
 					vm.$nextTick(() => {
 						vm.newChatContent = "";
-						vm.$nextTick(() => {
-							vm.updateContent();
-						});
 					});
 				} catch (error) {
 					console.error(error);

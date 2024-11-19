@@ -1,22 +1,8 @@
 <template>
-	<section id="ViewNote" :class="cptNoteClass">
+	<section id="ViewUser" :class="cptNoteClass">
 		<AppHeader v-if="cptIsShowAppHeaderComponent" />
-		<div v-if="APP.isMobile" class="flex1-overflow-auto flex vertical">
-			<xAdvancedSearch
-				mountTo="#MobileMenu"
-				v-model="isCollapse"
-				:label="false"
-				:mountProps="cptMountProps"
-				:style="cptToggleStyle">
-				<xGap t />
-				<ImAside class="width100 flex1 height100" />
-			</xAdvancedSearch>
-			<div id="MobileMenu"></div>
-			<ImSection style="width: 100%; height: 1px" v-show="isCollapse" />
-		</div>
-		<div v-else class="flex1-overflow-auto flex">
-			<ImAside v-show="!isShowEditor" />
-			<ImSection />
+		<div class="flex1-overflow-auto flex">
+			<UserList />
 		</div>
 	</section>
 </template>
@@ -26,17 +12,11 @@ export default async function () {
 		inject: ["APP"],
 		components: {
 			AppHeader: () => _.$importVue("@/views/Api/Header/ApiHeader.vue"),
-			ImAside: () => _.$importVue("@/views/im/ImAside.vue"),
-			ImSection: () => _.$importVue("@/views/im/ImSection.vue")
+			UserList: () => _.$importVue("@/views/User/UserList.vue")
 		},
 		async mounted() {
 			(() => {
-				const TITLE_MAP = {
-					private: "个人可见",
-					all: "所有人可见"
-				};
-				const title = TITLE_MAP[this.cptBelongType];
-				title && (document.title = `联系人-${title}`);
+				document.title = `Y-API-用户管理`;
 			})();
 		},
 		provide() {
@@ -104,7 +84,7 @@ export default async function () {
 </script>
 
 <style lang="less">
-#ViewNote {
+#ViewUser {
 	height: 100%;
 	width: 100%;
 	display: flex;
