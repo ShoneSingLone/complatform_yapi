@@ -7,12 +7,12 @@
 </style>
 <template>
 	<div :class="cptClass">
-		<div class="YapiChatContentItem el-card flex vertical x-padding">
-			<span>{{ cptAddTime }}</span>
-			<span>cptItemUid: {{ cptItemUid }}</span>
-			<span>cptCurrentUserId: {{ cptCurrentUserId }}</span>
+		<div :class="cptItemClass">
+			<TuiEditor :value="cptContent" :asRender="true" imgrange=".chat-messages" />
 			<xGap t />
-			<TuiEditor :value="cptContent" :asRender="true" />
+			<div :class="['flex width100', { end: cptIsSelf }]">
+				<span>{{ cptAddTime }}</span>
+			</div>
 		</div>
 	</div>
 </template>
@@ -25,12 +25,16 @@ export default async function () {
 			return {};
 		},
 		computed: {
-			cptClass({ cptItemUid, cptCurrentUserId }) {
+			cptIsSelf({ cptItemUid, cptCurrentUserId }) {
+				return cptItemUid === cptCurrentUserId;
+			},
+			cptClass({ cptIsSelf }) {
+				return ["YapiChatContentItem-wrapper width100 flex mb", { end: cptIsSelf }];
+			},
+			cptItemClass({ cptIsSelf }) {
 				return [
-					"YapiChatContentItem-wrapper width100 flex mb",
-					{
-						end: cptItemUid === cptCurrentUserId
-					}
+					"YapiChatContentItem el-card flex vertical x-padding",
+					cptIsSelf ? "message-self" : "message-other"
 				];
 			},
 			cptCurrentUserId() {

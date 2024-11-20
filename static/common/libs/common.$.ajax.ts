@@ -197,7 +197,7 @@
 							async success(result, state, xhr) {
 								try {
 									if (_.isFunction(resolveResult)) {
-										await resolveResult(result, state, xhr);
+										return await resolveResult(result, state, xhr);
 									} else {
 										//result:请求到的结果数据
 										//state:请求状态（success）
@@ -207,7 +207,7 @@
 										let header = xhr.getResponseHeader("content-disposition");
 
 										let fileName = (() => {
-											const kvStrArray = header.split(";");
+											const kvStrArray = header?.split(";") || [];
 											const kvObject = _.reduce(
 												kvStrArray,
 												(keyVal, keyvalString) => {

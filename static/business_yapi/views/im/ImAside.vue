@@ -162,8 +162,8 @@ export default async function () {
 								}
 							},
 							[
-								h("xAvatar", {
-									src: data.avatar,
+								hxIcon({
+									img: data.avatar,
 									iscache: true,
 									class: "imAside-user-list-avatar mr8"
 								}),
