@@ -1212,7 +1212,10 @@
 
 	/**
 	 * 确认信息
-	 * @param {*} options
+	 * @param {*} options {
+	 * title:string,
+	 * content:vNode or string
+	 * }
 	 * @returns
 	 */
 	/* @typescriptDeclare (options?:any)=>Promise<any> */
@@ -1250,6 +1253,11 @@
 				isDelete
 			});
 
+			/* 在弹窗中，可以获取到modalVm，调用forceUpdate，强制刷新弹窗内容 */
+			if (_.isFunction(options.setModalVm)) {
+				options.setModalVm({ modalVm });
+			}
+
 			modalVm.$on("hook:beforeDestroy", () => {
 				/* 如果点击关闭按钮，不会主动调用promise的终态 */
 				if (modalVm.isClickCloseIcon) {
@@ -1265,6 +1273,7 @@
 	 * @param {*} options
 	 * @returns
 	 */
+	/* @typescriptDeclare (options?:any)=>Promise<any> */
 	_.$confirm_important = (options = {}) => {
 		if (_.isString(options)) {
 			options = {
@@ -1298,50 +1307,53 @@
 		 * @returns
 		 */
 		/* @typescriptDeclare (title:string,options?:any)=>Promise<any> */
-		_.$msgError = msg => {
-			if (!msg) {
+		_.$msgError = tipsInfo => {
+			if (!tipsInfo) {
 				return;
 			}
-			console.log("🚀 ERROR: ", msg);
+			console.log("🚀 ERROR: ", tipsInfo);
 			/*如果返回的是一個對象，且对象status为200，则不提示*/
-			if (_.isPlainObject(msg)) {
+			if (_.isPlainObject(tipsInfo)) {
 				/* @ts-ignore */
-				if (msg.status === 200) {
+				if (tipsInfo.status === 200) {
 					return;
 				}
 				/* @ts-ignore */
-				if (_.isString(msg.error)) {
+				if (_.isString(tipsInfo.error)) {
 					/* @ts-ignore */
-					msg = msg.error;
+					tipsInfo = tipsInfo.error;
 					/* @ts-ignore */
-				} else if (_.isString(msg.responseJSON?.detailArgs)) {
+				} else if (_.isString(tipsInfo.responseJSON?.detailArgs)) {
 					/* @ts-ignore */
-					msg = msg.responseJSON.detailArgs;
+					tipsInfo = tipsInfo.responseJSON.detailArgs;
 					/* @ts-ignore */
-				} else if (_.isString(msg.responseText)) {
+				} else if (_.isString(tipsInfo.responseText)) {
 					/* @ts-ignore */
-					msg = msg.responseText;
+					tipsInfo = tipsInfo.responseText;
 					/* @ts-ignore */
-				} else if (_.isString(msg.message)) {
+				} else if (_.isString(tipsInfo.message)) {
 					/* @ts-ignore */
-					msg = msg.message;
+					tipsInfo = tipsInfo.message;
+				} else if (_.isString(tipsInfo.msg)) {
+					/* @ts-ignore */
+					tipsInfo = tipsInfo.msg;
 				}
 			} else {
 				try {
 					const _msg = JSON.parse(_msg);
 					if (_msg?.responseJSON?.detailArgs) {
-						msg = _msg?.responseJSON?.detailArgs;
+						tipsInfo = _msg?.responseJSON?.detailArgs;
 					} else if (_msg?.responseText) {
-						msg = _msg.responseText;
+						tipsInfo = _msg.responseText;
 					} else if (_msg?.message) {
-						msg = _msg.message;
+						tipsInfo = _msg.message;
 					}
 				} catch (error) {}
 			}
 
 			return _.$notify.error({
 				title: i18n("错误"),
-				message: msg
+				message: tipsInfo
 			});
 		};
 	})();

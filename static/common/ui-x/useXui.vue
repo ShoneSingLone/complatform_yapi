@@ -87,7 +87,29 @@ export default async function ({
 					mounted() {
 						new Vue({
 							el: `#${ID}`,
-							render: () => vNode
+							methods: {
+								rerender() {
+									this.vIf = false;
+									this.$nextTick(() => {
+										this.vIf = true;
+									});
+								}
+							},
+							data() {
+								return {
+									vIf: true
+								};
+							},
+							render() {
+								if (this.vIf) {
+									if (_.isFunction(vNode)) {
+										return vNode({ vm: this });
+									} else {
+										return vNode;
+									}
+								}
+								return null;
+							}
 						});
 					}
 				});

@@ -1,7 +1,6 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
 	const _$TRIGGER_EVENT_NAME = "USER_WS_MESSAGE";
-	debugger;
 
 	PRIVATE_GLOBAL._$TRIGGER_EVENT_NAME = _$TRIGGER_EVENT_NAME;
 

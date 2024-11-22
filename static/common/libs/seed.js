@@ -303,7 +303,7 @@
 	/* @typescriptDeclare (url: string)=>string */
 	function $resolvePath(url) {
 		if (/^http/.test(url)) {
-			return url
+			return url;
 		}
 		let lodash = window._;
 		let resolvedURL = ResolvePathCache[url];

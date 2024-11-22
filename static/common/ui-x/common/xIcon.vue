@@ -31,7 +31,7 @@ export default async function () {
 			/*  */
 			img: String,
 			iscache: {
-				type: [Boolean,String],
+				type: [Boolean, String],
 				default: false
 			}
 		},
