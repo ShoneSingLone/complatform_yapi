@@ -1,4 +1,4 @@
-const nodeID3 = require("../../utils/node-id3-0.2");
+const nodeID3 = require("server/utils/node-id3-0.2");
 const fs = require("fs");
 const { getType } = require("mime");
 

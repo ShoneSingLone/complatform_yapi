@@ -1,7 +1,7 @@
 const showDiffMsg = require("common/diff-view");
 const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
-const mergeJsonSchema = require("../../../common/mergeJsonSchema");
+const mergeJsonSchema = require("../../../../common/mergeJsonSchema");
 const { parse: urlParse } = require("url");
 const {
 	upsertInterface,

@@ -34,7 +34,7 @@ module.exports = {
 							body = xU.$response(null, 401, "权限不足");
 							return;
 						}
-						const { execCmd } = require("../../../common/utils");
+						const { execCmd } = require("../../../../common/utils");
 						const callback = {
 							log(data) {
 								const socket = ctx.app["/ws"].connections.get(id);

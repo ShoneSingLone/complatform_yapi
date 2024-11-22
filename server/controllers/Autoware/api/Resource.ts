@@ -219,7 +219,7 @@ module.exports = {
 						if (!DEFAULT_NOT_FOUND_IMG) {
 							const bitmapPath = path.resolve(
 								__dirname,
-								"../../assets/404.svg"
+								"../../../assets/404.svg"
 							);
 							var bitmap = fs.readFileSync(bitmapPath);
 							const basecode = new Buffer(bitmap).toString("base64");

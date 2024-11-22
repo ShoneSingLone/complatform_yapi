@@ -27,9 +27,8 @@ async function scanAllAutowareController(app) {
 					}
 				} catch (error) {
 					xU.applog.error(error);
-				} finally {
-					return _autoControllers;
 				}
+				return _autoControllers;
 			},
 			[]
 		);
@@ -44,6 +43,7 @@ async function scanAllAutowareController(app) {
 					controller_parent_dir: controllerInfo[2]
 				});
 			} catch (error) {
+				debugger;
 				xU.applog.error(error);
 			}
 		}
