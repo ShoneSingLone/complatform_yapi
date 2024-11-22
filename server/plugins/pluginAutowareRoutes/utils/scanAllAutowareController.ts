@@ -6,34 +6,42 @@ const swaggerJSON = newSwaggerJSON(
 const routes = [];
 async function scanAllAutowareController(app) {
 	try {
-		const [_, files] = await _n.asyncAllDirAndFile([
-			xU.path.resolve(xU.var.APP_ROOT_SERVER_DIR, "controllers/Autoware")
-		]);
+		const AUTOWARE_ROOT_DIR = xU.path.resolve(
+			xU.var.APP_ROOT_SERVER_DIR,
+			"controllers/Autoware"
+		);
+		const [_, files] = await _n.asyncAllDirAndFile([AUTOWARE_ROOT_DIR]);
 
-		const autoControllers = _n.reduce(
+		const CONTROLLERS_PATH_INFO_ARRAY = _n.reduce(
 			xU._.sortBy(files, i => i),
-			(target, file) => {
+			(_autoControllers, file) => {
 				try {
-					const fileName = xU.path.basename(file);
-					const [controllerName, ext] = String(fileName).split(".");
+					const FILE_NAME = xU.path.basename(file);
+					const BASE_PATH = String(file)
+						.replace(AUTOWARE_ROOT_DIR, "")
+						.replace(FILE_NAME, "")
+						.replaceAll(xU.path.sep, "");
+					const [controllerName, ext] = String(FILE_NAME).split(".");
 					if (controllerName && ext === "ts") {
-						target.push([file, controllerName]);
+						_autoControllers.push([file, controllerName, BASE_PATH]);
 					}
 				} catch (error) {
 					xU.applog.error(error);
 				} finally {
-					return target;
+					return _autoControllers;
 				}
 			},
 			[]
 		);
+
 		let controllerInfo;
-		while ((controllerInfo = autoControllers.pop())) {
+		while ((controllerInfo = CONTROLLERS_PATH_INFO_ARRAY.pop())) {
 			try {
 				/* Demo:AutowareControllerUseSwagger.js 获取的 info:["AutowareControllerUseSwagger","UseSwagger","use_swagger"] */
-				autowareRoute({
-					controller: require(controllerInfo[0]),
-					controllerName: controllerInfo[1]
+				handle_each_controller_info({
+					controller_info: require(controllerInfo[0]),
+					controller_name: controllerInfo[1],
+					controller_parent_dir: controllerInfo[2]
 				});
 			} catch (error) {
 				xU.applog.error(error);
@@ -49,30 +57,45 @@ async function scanAllAutowareController(app) {
 	};
 }
 
-function autowareRoute({ controller, controllerName }) {
-	if (controller.isHideInSwagger) {
+function handle_each_controller_info({
+	controller_info,
+	controller_name,
+	controller_parent_dir
+}) {
+	if (controller_info.isHideInSwagger) {
 		return;
 	}
-	swaggerJSON.tags.push({ ...controller.tag, name: controllerName });
+
+	const tag_name = `${controller_parent_dir}_${controller_name}`;
+	swaggerJSON.tags.push({
+		...controller_info.tag,
+		name: tag_name
+	});
 	/* 各个controller definitions合并,所以除了通用的定义，命名需要加上命名空间 */
-	if (controller.definitions) {
+	if (controller_info.definitions) {
 		swaggerJSON.definitions = _n.merge(
 			swaggerJSON.definitions,
-			controller.definitions
+			controller_info.definitions
 		);
 	}
-	_n.each(controller.paths, (pathInfo, propPath) => {
-		swaggerJSON.paths[propPath] = {};
-		_n.each(pathInfo, (handlerInfo, method) => {
+	_n.each(controller_info.paths, (api_info, url) => {
+		/* 将文件夹的名称作为路由前缀 */
+		const url_path = `/${controller_parent_dir}${url}`;
+		swaggerJSON.paths[url_path] = {};
+
+		_n.each(api_info, (handlerInfo, method) => {
 			/* 注册路由 */
-			routes.push({
+			const route = {
 				...handlerInfo,
-				url: propPath,
-				method,
-				prefix: _n.snakeCase(controllerName)
-			});
-			swaggerJSON.paths[propPath][method] = {
-				tags: [controllerName],
+				prefix: _n.snakeCase(controller_name),
+				url: url_path,
+				method
+			};
+
+			routes.push(route);
+
+			const url_path_method_info = {
+				tags: [tag_name],
 				consumes: ["application/json"],
 				produces: ["application/json"],
 				responses: {
@@ -95,21 +118,23 @@ function autowareRoute({ controller, controllerName }) {
 				])
 			};
 
+			swaggerJSON.paths[url_path][method] = url_path_method_info;
+
 			/* case by case TODO: */
 			const { request, responses, parameters, deprecated } = handlerInfo;
 
 			if (parameters) {
-				swaggerJSON.paths[propPath][method].parameters = parameters;
+				swaggerJSON.paths[url_path][method].parameters = parameters;
 			} else if (request) {
-				addParameters(propPath, method, request);
+				addParameters(url_path, method, request);
 			}
 
 			if (responses) {
-				swaggerJSON.paths[propPath][method].responses = responses;
+				swaggerJSON.paths[url_path][method].responses = responses;
 			}
 
 			if (deprecated) {
-				swaggerJSON.paths[propPath][method].deprecated = deprecated;
+				swaggerJSON.paths[url_path][method].deprecated = deprecated;
 			}
 		});
 	});
@@ -178,4 +203,4 @@ function addParameters(propPath, method, request) {
 }
 
 module.exports = scanAllAutowareController;
-exports.autowareRoute = autowareRoute;
+exports.handle_each_controller_info = handle_each_controller_info;

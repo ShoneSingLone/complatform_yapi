@@ -1,8 +1,8 @@
 (async function main() {
 	await require("../../../utils/onFirstLine")();
-	const { autowareRoute } = require("../utils/getInterfaceInfo");
+	const { handle_each_controller_info } = require("../utils/getInterfaceInfo");
 	const ControllerUseSwagger = require("server/controllers/AutowareControllerUseSwagger");
-	const swaggerJSON = autowareRoute({
+	const swaggerJSON = handle_each_controller_info({
 		controller: ControllerUseSwagger,
 		controllerName: "UseSwagger"
 	});

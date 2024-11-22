@@ -308,6 +308,7 @@ function namespace_yapi(app) {
 			uid = String(uid);
 			xU.SOCKET_CONNECTIONS.set(uid, ctx.socket);
 			ctx.socket.emit("connection", uid);
+			appSocket.broadcast("message", { type: "online", payload: { uid } });
 		}
 	});
 	appSocket.on("disconnect", ctx => {

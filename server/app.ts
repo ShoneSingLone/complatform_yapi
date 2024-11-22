@@ -9,10 +9,10 @@ async function main() {
 
 	/*
 	!!!!!!!!!!!!!!!必先调用!!!!!!!!!!!!!!!
-	 * await require("./utils/onFirstLine.ts")(); // 使用了相对路径，且有.ts后缀,
+	 * await require("./utils/onFirstLine.ts")(); // 使用了相对路径，且必须有.ts后缀,
 	 * 调用之后:
 	 * 1. 后面的代码才可以直接使用根目录下的文件夹名作为别名，例如server
-	 * 2. 可以不添加.ts后缀，不然只会加载js文件
+	 * 2. 可以不添加.ts后缀
 	 */
 	await require("./utils/onFirstLine.ts")();
 	/*
@@ -20,28 +20,28 @@ async function main() {
 	 */
 
 	/* base */
-	await require("server/plugin");
-	await require("server/utils/notice");
+	await require("./plugin");
+	await require("./utils/notice");
 	/* 静态资源 */
-	await require("server/assets")(app);
-	await require("server/middleware/parseParams")(app);
+	await require("./assets")(app);
+	await require("./middleware/parseParams")(app);
 	/* middleware */
-	await require("server/middleware/yapiDevHeaderInfo")(app);
+	await require("./middleware/yapiDevHeaderInfo")(app);
 	/* 跨域 */
-	await require("server/middleware/cors")(app);
+	await require("./middleware/cors")(app);
 	/* 转发代理 */
-	await require("server/middleware/mockServer")(app);
+	await require("./middleware/mockServer")(app);
 
 	/* plugin */
 	/* - 路由 autoware */
 	/* - boundless vue project */
-	await require("server/plugins/usePlugin")(app);
+	await require("./plugins/usePlugin")(app);
 	/* 原来yapi的路由 TODO: 移除*/
-	await require("server/router")(app);
+	await require("./router")(app);
 
 	/* 启动 */
-	/* await require("server/middleware/historyMode")(app); */
-	await require("server/utils/appListen")(app);
+	/* await require("./middleware/historyMode")(app); */
+	await require("./utils/appListen")(app);
 }
 
 try {

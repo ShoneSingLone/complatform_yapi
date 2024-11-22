@@ -31,7 +31,7 @@ const AutowareRoutes = {
 			termsOfService: "http://swagger.io/terms/"
 		},
 		host: "",
-		basePath: "/api",
+		version: "",
 		definitions
 	}
 };

@@ -259,7 +259,6 @@ export default async function () {
 			next() {
 				if (this.isLast && !this.infinite) return;
 				const len = this.urlList.length;
-				debugger;
 				this.index = (this.index + 1) % len;
 			},
 			handleActions(action, options = {}) {

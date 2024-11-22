@@ -107,7 +107,6 @@
 			</div>
 			<div class="flex center width100 mt">
 				<xBtn :configs="cptSendBtn" ref="refSendNewChatBtn" />
-				<xBtn :configs="cptSendBtn" ref="refSendNewChatBtn" />
 			</div>
 		</xPageContent>
 	</section>
@@ -121,8 +120,8 @@ export default async function () {
 		},
 		setup() {
 			onMounted(() => {
-				this.APP.$on("chat_one", payload => {
-					this.contentArray.push(payload);
+				this.APP.$on("chat_one", item => {
+					this.contentArray.push(item);
 					this.setPosition();
 				});
 			});
@@ -139,14 +138,6 @@ export default async function () {
 			};
 		},
 		computed: {
-			cptSendBtn({ inject_im, newChatContent, sendNewChat }) {
-				return {
-					label: "发送(Ctrl+Enter)",
-					preset: "primary",
-					disabled: !inject_im.cptImChatWith.uid || !newChatContent,
-					onClick: () => sendNewChat()
-				};
-			},
 			cptSendBtn({ inject_im, newChatContent, sendNewChat }) {
 				return {
 					label: "发送(Ctrl+Enter)",

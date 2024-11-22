@@ -18,9 +18,6 @@ const http = require("http");
 const path = require("path");
 const fs = require("fs-extra");
 const nodemailer = require("nodemailer");
-const { isUsePlugin } = require("./isUsePlugin");
-
-yapi_configs.isUsePlugin = isUsePlugin;
 
 global.orm = new Proxy(
 	{},

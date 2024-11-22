@@ -6,7 +6,7 @@ export default async function () {
 		}
 	};
 	return [
-		_.$newRoute("/user", "@/views/user/UserList.vue"),
+		_.$newRoute("/user", "@/views/user/ViewUser.vue"),
 		_.$newRoute("/i18n", "@/views/I18n/I18n.vue"),
 		_.$newRoute("/note", "@/views/Note/Note.vue"),
 		_.$newRoute("/im", "@/views/Im/Im.vue"),
