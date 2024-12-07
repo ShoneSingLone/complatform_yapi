@@ -19,6 +19,7 @@ const path = require("path");
 const fs = require("fs-extra");
 const nodemailer = require("nodemailer");
 
+/* 数据库Orm预处理 */
 global.orm = new Proxy(
 	{},
 	{

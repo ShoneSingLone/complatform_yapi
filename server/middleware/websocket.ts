@@ -6,6 +6,18 @@ var cps = require("current-processes");
 const ONLINE_USERS = new Map();
 xU.users = ONLINE_USERS;
 
+function msg(msg, ctx, payload = {}) {
+	return {
+		msg,
+		id: ctx.socket.id,
+		payload
+	};
+}
+
+const ioUtils = {
+	msg
+};
+
 /*
  *
  * @param {string} type
@@ -243,102 +255,13 @@ exports.old_appSetupWebsocket = function ({ app, appSocket }) {
 	});
 };
 
-function msg(msg, ctx, payload = {}) {
-	return {
-		msg,
-		id: ctx.socket.id,
-		payload
-	};
-}
-
 exports.appSetupWebsocket = function (app) {
-	namespace_ws(app);
-	namespace_yapi(app);
+	const { namespace_ws } = require("./websocket.ns.ws");
+	namespace_ws({ app, ioUtils });
+
+	const { namespace_chat } = require("./websocket.ns.chat");
+	namespace_chat({ app, ioUtils });
+
+	const { namespace_yapi } = require("./websocket.ns.yapi");
+	namespace_yapi({ app, ioUtils });
 };
-function namespace_ws(app) {
-	const appSocket = new KoaSocket("/ws");
-	appSocket.attach(app);
-
-	/**
-	 * Socket handlers
-	 */
-	appSocket.on("connection", ctx => {
-		xU.SOCKET_CONNECTIONS.set(ctx.socket.id, app);
-		ctx.socket.emit("connection", msg("self", ctx));
-	});
-
-	appSocket.on("disconnect", ctx => {
-		xU.SOCKET_CONNECTIONS.delete(ctx.socket.id);
-		appSocket.broadcast("disconnect", msg("disconnect", ctx));
-	});
-	appSocket.on("all", ctx => {
-		appSocket.broadcast("message", msg("all", ctx));
-	});
-	appSocket.on("other", ctx => {
-		ctx.socket.broadcast("message", msg("other", ctx));
-		/* 回执 */
-		ctx.acknowledge(`send to other,callback with ctx.acknowledge`);
-	});
-	appSocket.on("self", ctx => {
-		try {
-			ctx.socket.emit("message", msg("other", ctx));
-		} catch (error) {
-			console.error(error);
-		}
-	});
-}
-function namespace_yapi(app) {
-	const appSocket = new KoaSocket("/ws_yapi");
-	appSocket.attach(app);
-	/**
-	 * Socket middlewares
-	 */
-	appSocket.use(async function (ctx, next) {
-		const start = new Date();
-		await next();
-		const ms = new Date() - start;
-		console.log(`${ctx.event} WS ${ms}ms`, app);
-	});
-	/**
-	 * Socket handlers
-	 */
-	appSocket.on("connection", ctx => {
-		let { uid } = ctx.socket.request?._query;
-		if (uid) {
-			uid = String(uid);
-			xU.SOCKET_CONNECTIONS.set(uid, ctx.socket);
-			ctx.socket.emit("connection", uid);
-			appSocket.broadcast("message", { type: "online", payload: { uid } });
-		}
-	});
-	appSocket.on("disconnect", ctx => {
-		let uid;
-		xU.SOCKET_CONNECTIONS.forEach((socket, _uid) => {
-			if (socket.id === ctx.socket.id) {
-				uid = _uid;
-			}
-		});
-		if (uid) {
-			xU.SOCKET_CONNECTIONS.delete(uid);
-			appSocket.broadcast("disconnect", uid);
-		}
-	});
-	appSocket.on("all", ctx => {
-		appSocket.broadcast("message", msg("all", ctx));
-	});
-	appSocket.on("chat_one", ctx => {
-		appSocket.broadcast("message", msg("all", ctx));
-	});
-	appSocket.on("other", ctx => {
-		ctx.socket.broadcast("message", msg("other", ctx));
-		/* 回执 */
-		ctx.acknowledge(`send to other,callback with ctx.acknowledge`);
-	});
-	appSocket.on("self", ctx => {
-		try {
-			ctx.socket.emit("message", msg("other", ctx));
-		} catch (error) {
-			console.error(error);
-		}
-	});
-}

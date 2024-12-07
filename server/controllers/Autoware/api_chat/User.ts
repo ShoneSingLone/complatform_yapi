@@ -48,8 +48,8 @@ module.exports = {
 				},
 				async handler(ctx) {
 					//登录
-					let userInst = orm.user; //创建user实体
 					let { username, password } = ctx.payload;
+
 					username = (username || "").trim();
 
 					if (!username) {
@@ -59,7 +59,7 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 400, "密码不能为空"));
 					}
 
-					let userInfo = await userInst.findByEmail(username);
+					let userInfo = await orm.user.findByEmail(username);
 
 					if (!userInfo) {
 						return (ctx.body = xU.$response(null, 404, "该用户不存在"));
@@ -98,6 +98,18 @@ module.exports = {
 					} else {
 						ctx.body = xU.$response(null, 405, "登录信息错误");
 					}
+				}
+			}
+		},
+		"/logout": {
+			post: {
+				auth: true,
+				summary: "用户退出接口",
+				description: "",
+				async handler(ctx) {
+					customCookies(ctx, "_yapi_token", null);
+					customCookies(ctx, "_yapi_uid", null);
+					ctx.body = xU.$response("ok");
 				}
 			}
 		}
