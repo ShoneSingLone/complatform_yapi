@@ -2853,17 +2853,22 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 		watch: {
 			"$attrs.data": {
 				immediate: true,
-				handler(data = []) {
-					if (!data.length) {
-						return;
-					}
+				handler(data = [], oldData) {
 					this.$nextTick(async () => {
-						await _.$ensure(() => {
-							const selector = `[data-role=table-main_body]`;
-							const $el = $(this.$el).find(selector);
-							return $el.length;
-						});
-						this.updateTableByScroll && this.updateTableByScroll();
+						try {
+							if (!data.length) {
+								return;
+							}
+							if (_.isEqual(data, oldData)) {
+								return;
+							}
+							await _.$ensure(() => {
+								const selector = `[data-role=table-main_body]`;
+								const $el = $(this.$el).find(selector);
+								return $el.length;
+							});
+							this.updateTableByScroll && this.updateTableByScroll();
+						} catch (error) {}
 					});
 				}
 			}
@@ -2921,7 +2926,6 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 					eachWidth = Math.floor(remainWidth / unsetCount);
 					/* 最小宽度 */
 					eachWidth = eachWidth > 80 ? eachWidth : 80;
-					console.log("🚀 ~ column.__unset_width ~ eachWidth:", eachWidth);
 				}
 
 				return _.map(currentShouldShow, column => {

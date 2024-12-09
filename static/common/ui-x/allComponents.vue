@@ -15,6 +15,7 @@ export default async function () {
 		"components/base/layout/xCol",
 		/*  */
 		"components/base/xBtn/xBtnWithConfirm",
+		"components/base/xDevlog/xDevlog",
 		"components/base/xBtn/xBtn",
 		"components/base/xBtn/xBtnArray",
 		"components/base/xBtn/xBtnGroup",

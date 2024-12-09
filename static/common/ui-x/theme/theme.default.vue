@@ -528,6 +528,9 @@ a:active {
 	color: #333;
 }
 
+.all-scroll {
+	cursor: all-scroll;
+}
 .pointer {
 	cursor: pointer;
 

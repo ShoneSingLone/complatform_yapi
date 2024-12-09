@@ -181,7 +181,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					cptConfigs.value.once.call(cptConfigs.value, { xItem: this });
 				}
 				if (cptConfigs.value.style) {
-					this.$watch("cptConfigs.style", this.setStyle);
+					this.$watch("cptConfigs.style", this.updateStyle);
 				}
 				if (cptConfigs.value.attrs) {
 					this.$watch("cptConfigs.attrs", this.setAttrs);
@@ -197,7 +197,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 				this.$watch("p_value", this.emitValueChange, { deep: true });
 
-				this.setStyle();
+				this.updateStyle();
 				this.setProps();
 				this.setAttrs();
 				this.setListeners();
@@ -463,7 +463,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 				return this.errorTips;
 			},
-			setStyle() {
+			updateStyle() {
 				this.p_style = (() => {
 					return _.merge(
 						{

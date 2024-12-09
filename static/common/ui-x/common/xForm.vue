@@ -12,8 +12,11 @@ export default async function () {
 				return Number(props.col || 2);
 			});
 			let fullCount = [];
+			let _old_colNum = 0;
 			const updateStyle = colNum => {
-				setStyle(`
+				if (_old_colNum !== colNum) {
+					_old_colNum = colNum;
+					setStyle(`
 					.xForm[data-style-id="${styleId}"]{
 						--xForm-col: repeat(${cptCol.value}, 1fr);
 						${_.map(new Array(colNum), (v, i) => {
@@ -24,8 +27,9 @@ export default async function () {
 								return `.xFormItem:nth-of-type(${i + 1}) { margin-top: 0; }`;
 							}
 						}).join("")}
-					}
-					`);
+						}
+						`);
+				}
 			};
 			watch(() => cptCol.value, updateStyle, { immediate: true });
 			return function () {
