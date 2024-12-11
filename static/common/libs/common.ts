@@ -11,7 +11,6 @@
 			set(privateGlobal, prop, val) {
 				if (privateGlobal[prop]) {
 					alert(`PRIVATE_GLOBAL ${prop} 重复`);
-					debugger;
 				} else {
 					privateGlobal[prop] = val;
 					return true;
@@ -514,12 +513,12 @@
 							const old = Array.from(tableConfigs.data.set);
 							if (tableConfigs.data.set.size < tableConfigs.data.list.length) {
 								_.each(tableConfigs.data.list, i =>
-									tableConfigs.data.set.add(i[by])
+									tableConfigs.data.set.add(_.$val(i, by))
 								);
 								tableConfigs.data.set = new Set(Array.from(tableConfigs.data.set));
 							} else {
 								_.each(tableConfigs.data.list, i =>
-									tableConfigs.data.set.delete(i[by])
+									tableConfigs.data.set.delete(_.$val(i, by))
 								);
 								tableConfigs.data.set = new Set(Array.from(tableConfigs.data.set));
 							}
@@ -555,7 +554,7 @@
 
 					const { rowData } = params;
 					const tableConfigs = getConfigs();
-					const isChecked = tableConfigs.data.set.has(rowData[by]);
+					const isChecked = tableConfigs.data.set.has(_.$val(rowData, by));
 					let disabledTips = "";
 					let isDisabled = (() => {
 						if (_.isFunction(disabled)) {
@@ -584,9 +583,9 @@
 									const old = Array.from(tableConfigs.data.set);
 
 									if (value) {
-										tableConfigs.data.set.add(rowData[by]);
+										tableConfigs.data.set.add(_.$val(rowData, by));
 									} else {
-										tableConfigs.data.set.delete(rowData[by]);
+										tableConfigs.data.set.delete(_.$val(rowData, by));
 									}
 									/* vue2 未对set map 做响应式支持？？？ */
 									tableConfigs.data.set = _.clone(tableConfigs.data.set);
@@ -617,7 +616,7 @@
 				cellRenderer: params => {
 					const { rowData } = params;
 					const tableConfigs = getConfigs();
-					const isChecked = tableConfigs.data.set.has(rowData[by]);
+					const isChecked = tableConfigs.data.set.has(_.$val(rowData, by));
 					let disabledTips = "";
 					let isDisabled = (() => {
 						if (_.isFunction(disabled)) {
@@ -646,7 +645,7 @@
 								onChange(value) {
 									const old = Array.from(tableConfigs.data.set);
 
-									const id = rowData[by];
+									const id = _.$val(rowData, by);
 									if (value) {
 										tableConfigs.data.set = new Set([id]);
 									} else {
@@ -1124,6 +1123,7 @@
 	 * @param {*} wait time
 	 * @returns
 	 */
+	/* @typescriptDeclare (vm:any, fn:Function, wait:number)=>any */
 	_.$asyncDebounce = (vm, func, delay = 1000) => {
 		let timer;
 		let promise;

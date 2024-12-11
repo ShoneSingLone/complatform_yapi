@@ -590,6 +590,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			flex-flow: row nowrap;
 			align-items: center;
 			overflow: hidden !important;
+			> [disabled="disabled"] {
+				opacity: 0.5;
+				&:hover {
+					cursor: not-allowed;
+				}
+			}
 			.after-flex1 + * {
 				flex: 1;
 			}

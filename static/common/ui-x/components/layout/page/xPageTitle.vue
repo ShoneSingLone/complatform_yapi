@@ -3,6 +3,7 @@
 	--xPageTitle-back-color: var(--ti-base-color-white);
 	--xPageTitle-back-bg: var(--ti-base-color-common-6);
 
+	height: var(--xPageTitle-height, 48px);
 	font-size: 18px;
 	padding: var(--xPageTitle-padding, var(--ui-one));
 	padding-bottom: 0;
