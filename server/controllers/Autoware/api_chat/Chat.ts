@@ -1,3 +1,4 @@
+const { sendAndSaveMessage } = require("./Chat.service");
 module.exports = {
 	definitions: {
 		UserAvatar: {
@@ -11,7 +12,7 @@ module.exports = {
 	paths: {
 		/* 获取离线消息 */
 		"/chat/getmessage": {
-			get: {
+			post: {
 				summary: "获取离线消息",
 				description: "获取离线消息",
 				request: {
@@ -32,8 +33,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					const key = `getmessage_${this.$uid}`;
-					const { list } = await orm.Redis.list({ key });
-
+					const list = await orm.Redis.list({ key });
 					// 清除离线消息
 					await orm.Redis.remove({ key });
 					// 批量推送
@@ -45,6 +45,6 @@ module.exports = {
 					ctx.body = xU.$response({ list });
 				}
 			}
-		}
+		},
 	}
 };

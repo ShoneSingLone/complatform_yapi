@@ -365,6 +365,10 @@ Redis:{
 
 								
 								list:(...args:any)=> Promise<any>;
+								
+
+								
+								remove:(...args:any)=> Promise<any>;
 								 };
 project:{ 
 								
@@ -493,13 +497,13 @@ log:{
 								
 
 								/**
-	 * @param {String} content log内容
-	 * @param {Enum} type log类型， ['user', 'group', 'interface', 'project', 'other']
-	 * @param {Number} uid 用户id
-	 * @param {String} username 用户名
-	 * @param {Number} typeid 类型id
-	 * @param {Number} add_time 时间
-	 
+   * @param {String} content log内容
+   * @param {Enum} type log类型， ['user', 'group', 'interface', 'project', 'other']
+   * @param {Number} uid 用户id
+   * @param {String} username 用户名
+   * @param {Number} typeid 类型id
+   * @param {Number} add_time 时间
+   
 */
 								save:(...args:any)=> Promise<any>;
 								
@@ -914,6 +918,18 @@ group:{
 
 								
 								search:(...args:any)=> Promise<any>;
+								 };
+Friend:{ 
+								
+								getName:(...args:any)=> Promise<any>;
+								
+
+								
+								getSchema:(...args:any)=> Promise<any>;
+								
+
+								
+								list_all:(...args:any)=> Promise<any>;
 								 };
 follow:{ 
 								
