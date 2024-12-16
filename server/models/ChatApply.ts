@@ -27,6 +27,10 @@ class ModelAudio extends ModelBase {
 		};
 	}
 
+	async findOne({ uid, friendId, status }) {
+		return this.model.find({ uid, friendId, status }).exec();
+	}
+
 	async paging({ page, size, name, uid }) {
 		name = name || ".*";
 

@@ -5,6 +5,7 @@ const { customCookies } = require("server/utils/customCookies");
 const { PassThrough } = require("stream");
 
 const IMAGE_BUFFER_CACHE = {};
+
 async function makeNewUserPrivateGroup(uid) {
 	var groupInst = orm.group;
 	await groupInst.save({
@@ -15,6 +16,7 @@ async function makeNewUserPrivateGroup(uid) {
 		type: "private"
 	});
 }
+
 let count = 0;
 
 module.exports = {
@@ -71,7 +73,7 @@ module.exports = {
 				request: {},
 				async handler(ctx) {
 					let current_user_id = this.$uid;
-					const allFriends = await orm.Friend.list_all({
+					const allFriends = await orm.ChatFriend.list_all({
 						uid: current_user_id
 					});
 
@@ -97,6 +99,63 @@ module.exports = {
 					ctx.body = xU.$response({
 						list
 					});
+				}
+			}
+		},
+		"/friend/read": {
+			get: {
+				summary: "查看用户资料",
+				description: "查看用户资料",
+				request: {
+					uid: {
+						description: "用户uid",
+						requied: true,
+						type: "string"
+					}
+				},
+				async handler(ctx) {
+					let current_user_id = this.$uid;
+					const { uid } = ctx.payload;
+					let user_id = uid ? parseInt(uid) : 0;
+					let user = await orm.user.findById(uid);
+
+					if (!user) {
+						ctx.body = xU.$response(null, 400, "用户不存在");
+					}
+
+					let friendInfo = {
+						id: user.id,
+						username: user.username,
+						nickname: user.nickname ? user.nickname : user.username,
+						avatar: user.avatar,
+						sex: user.sex,
+						sign: user.sign,
+						area: user.area,
+						friend: false
+					};
+
+					let friend = await orm.ChatFriend.get({
+						uid: Number(current_user_id),
+						friendId: user_id
+					});
+
+					if (friend) {
+						friendInfo.friend = true;
+						if (friend.nickname) {
+							friendInfo.nickname = friend.nickname;
+						}
+						friendInfo = {
+							...friendInfo,
+							lookme: friend.lookme,
+							lookhim: friend.lookhim,
+							star: friend.star,
+							isblack: friend.isblack,
+							tags: friend.tags.map(tag => tag.name),
+							moments: user.moments
+						};
+					}
+
+					ctx.body = xU.$response(friendInfo);
 				}
 			}
 		}

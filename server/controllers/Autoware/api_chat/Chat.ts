@@ -45,6 +45,6 @@ module.exports = {
 					ctx.body = xU.$response({ list });
 				}
 			}
-		},
+		}
 	}
 };
