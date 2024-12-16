@@ -57,6 +57,11 @@ export default async function () {
 						onClick: vm.changeProxy
 					},
 					{
+						label: "切换维护人",
+						disabled: () => vm.cptIsCheckedRow,
+						onClick: vm.switchingMaintenancePersonnel
+					},
+					{
 						label: "复制接口",
 						disabled: () => vm.cptIsCheckedRow,
 						onClick: vm.copyInterface
@@ -127,6 +132,16 @@ export default async function () {
 				_.$openModal({
 					title: i18n("切换代理"),
 					url: "@/components/YapiChangeProxyDialog.vue",
+					parent: this,
+					selected: Array.from(
+						this.inject_project_interface_section.configsTable.data.set
+					)
+				});
+			},
+			async switchingMaintenancePersonnel() {
+				_.$openModal({
+					title: i18n("切换维护人"),
+					url: "@/components/YapiSwitchingMaintenancePersonnel.vue",
 					parent: this,
 					selected: Array.from(
 						this.inject_project_interface_section.configsTable.data.set

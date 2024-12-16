@@ -223,9 +223,38 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			};
 
 			const maintainer = {
-				prop: "tag",
+				prop: "uid",
 				label: i18n("维护人"),
-				width: 150
+				width: 150,
+				headerCellRenderer() {
+					return genHeaderCellVNode({
+						propName: "UidHeaderCell",
+						formProp: "uid",
+						label: "维护人"
+					});
+				},
+				cellRenderer: params => {
+					const {
+						rowData: { uid }
+					} = params;
+					const user = _.find(vm.cptProjectMembers, { uid });
+
+					if (user) {
+						user.avatar = Vue._common_utils.appendToken(
+							`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${uid}&usedBy=user`
+						);
+						return hDiv({ staticClass: "ellipsis flex middle" }, [
+							hxIcon({
+								img: user.avatar,
+								iscache: true,
+								style: `width: 32px;height: 32px;margin-right:8px;`
+							}),
+							user.username
+						]);
+					} else {
+						return "--";
+					}
+				}
 			};
 			const tag = {
 				prop: "tag",
@@ -313,11 +342,44 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							vm.filterList();
 						}
 					},
+					uid: {
+						value: "",
+						itemType: "xItemSelect",
+						clearable: true,
+						multiple: true,
+						options: [],
+						optonsRender({ options }) {
+							return _.map(options, option => {
+								return h(
+									"xOption",
+									{
+										class: "flex middle",
+										key: option.uid,
+										label: `${option.username}_${option.uid}`,
+										value: option.uid
+									},
+									[
+										hDiv({ style: "width:70px" }, [`ID:${option.uid}`]),
+										hDiv(`${option.username}`)
+									]
+								);
+							});
+						},
+						once() {
+							vm.$watch(
+								() => vm.cptProjectMembers,
+								options => {
+									vm.form.uid.options = _.unionBy(options, "uid");
+								},
+								{ immediate: true }
+							);
+						}
+					},
 					method: {
 						// label: "方法",
 						value: "",
-						clearable: true,
 						itemType: "xItemSelect",
+						clearable: true,
 						multiple: true,
 						options: _opts.yapi.httpMethod,
 						optonsRender({ vm, options }) {
@@ -454,6 +516,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			}
 		},
 		computed: {
+			cptProjectMembers() {
+				return this.APP.cptProject?.members || [];
+			},
 			cptListStyle({ size: { width, height }, cptIsShowDetail }) {
 				const style = {
 					width: width + "px",
@@ -536,25 +601,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					let paramKeys = Object.keys(filterForm);
 					let prop;
 					while ((prop = paramKeys.pop())) {
-						let search = filterForm[prop];
-						if (_.$isInput(search)) {
+						let searchParams = filterForm[prop];
+						if (_.$isInput(searchParams)) {
 							_allInterface = _.filter(_allInterface, i => {
 								if (prop == "status") {
-									return search.includes(i.status);
+									return searchParams.includes(i.status);
 								} else if (prop == "catid") {
-									return search.includes(i.catid);
+									return searchParams.includes(i.catid);
 								} else if (prop == "method") {
-									return search.includes(i.method);
+									return searchParams.includes(i.method);
 								} else if (prop == "tag") {
-									return _.some(i.tag, tag => search.includes(tag));
+									return _.some(i.tag, tag => searchParams.includes(tag));
+								} else if (prop == "uid") {
+									return searchParams.includes(i.uid);
 								} else if (prop == "isUseBackup") {
-									const _Use = search.includes(USE_BACKUP);
-									const _Unuse = search.includes(UNUSE_BACKUP);
+									const _Use = searchParams.includes(USE_BACKUP);
+									const _Unuse = searchParams.includes(UNUSE_BACKUP);
 									const _Use_One = _Use || _Unuse;
 									const _Use_All = _Use && _Unuse;
 
-									const _HasBackup = search.includes(HAS_BACKUP);
-									const _NoneBackup = search.includes(NO_BACKUP);
+									const _HasBackup = searchParams.includes(HAS_BACKUP);
+									const _NoneBackup = searchParams.includes(NO_BACKUP);
 									const _Backup_One = _NoneBackup || _HasBackup;
 									const _Backup_All = _NoneBackup && _HasBackup;
 
@@ -590,7 +657,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 									}
 									return false;
 								} else if (prop == "witchEnv") {
-									if (search.includes("unset")) {
+									if (searchParams.includes("unset")) {
 										if (!i.witchEnv) {
 											return true;
 										}
@@ -598,12 +665,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 									if (!i.isProxy) {
 										return false;
 									}
-									return search.includes(i.witchEnv);
+									return searchParams.includes(i.witchEnv);
 								} else {
-									search = _.trim(search);
+									searchParams = _.trim(searchParams);
 									return (
-										new RegExp(search, "i").test(i[prop]) ||
-										new RegExp(search, "i").test(i.title)
+										new RegExp(searchParams, "i").test(i[prop]) ||
+										new RegExp(searchParams, "i").test(i.title)
 									);
 								}
 							});
