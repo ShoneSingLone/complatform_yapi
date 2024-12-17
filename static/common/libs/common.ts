@@ -2093,7 +2093,7 @@
 						_params[prop] = configs.value;
 					}
 					if (configs.selectValue !== undefined) {
-						_params[`${prop}_selectValue`] = configs.s;
+						_params[`${prop}_selectValue`] = configs.selectValue;
 					}
 					return _params;
 				},

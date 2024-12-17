@@ -591,7 +591,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			align-items: center;
 			overflow: hidden !important;
 			> [disabled="disabled"] {
-				opacity: 0.5;
+				// opacity: 0.5;
 				&:hover {
 					cursor: not-allowed;
 				}
