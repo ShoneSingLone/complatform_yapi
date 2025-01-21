@@ -264,7 +264,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 									[
 										(() => {
 											if (vm.cptLoading) {
-												return h("i", {
+												return hxIcon({
+													icon: "loading",
 													class: ["el-icon-loading", { mr4: !!vChildren }]
 												});
 											} else if (vm.cptIcon) {
@@ -293,7 +294,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						hSpan({ class: ["flex", { middle: vm.cptIcon }] }, [
 							(() => {
 								if (vm.cptLoading) {
-									return h("i", {
+									return hxIcon({
+										icon: "loading",
 										class: ["el-icon-loading", { mr4: !!vChildren }]
 									});
 								} else if (vm.cptIcon) {
@@ -330,7 +332,7 @@ a.el-button {
 	cursor: pointer;
 	background: #fff;
 	border: 1px solid #dcdfe6;
-	color: #606266;
+	color: var(--el-text-color-regular);
 	-webkit-appearance: none;
 	text-align: center;
 	/* 列表当中 jsxFn link 左对齐 */
@@ -707,7 +709,7 @@ a.el-button {
 	}
 
 	&.el-button--text {
-		color: var(--el-color-primary);
+		color: var(--xBtn-text-color, var(--el-color-primary));
 		background: 0 0;
 		padding-left: 0;
 		padding-right: 0;
@@ -715,13 +717,13 @@ a.el-button {
 
 	&.el-button--text:focus,
 	&.el-button--text:hover {
-		color: var(--el-color-primary-hover);
+		color: var(--xBtn-text-color-hover, var(--el-color-primary-hover));
 		border-color: transparent;
 		background-color: transparent;
 	}
 
 	&.el-button--text:active {
-		color: var(--el-color-primary-active);
+		color: var(--xBtn-text-color-active, var(--el-color-primary-active));
 		background-color: transparent;
 	}
 }
@@ -1024,7 +1026,7 @@ a.el-button {
 	}
 
 	&.el-button--text {
-		color: var(--el-color-primary);
+		color: var(--xBtn-text-color, var(--el-color-primary));
 		background: 0 0;
 		padding-left: 0;
 		padding-right: 0;
@@ -1040,11 +1042,11 @@ a.el-button {
 
 		&:focus,
 		&:hover {
-			color: var(--el-color-primary-hover);
+			color: var(--xBtn-text-color-hover, var(--el-color-primary-hover));
 		}
 
 		&:active {
-			color: var(--el-color-primary-active);
+			color: var(--xBtn-text-color-active, var(--el-color-primary-active));
 		}
 
 		&.is-disabled,

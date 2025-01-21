@@ -496,11 +496,11 @@ export default async function () {
 			preview_image(item) {
 				const urlList = _.filter(this.APP.resourceList, { type: "image" }).map(item =>
 					Vue._common_utils.appendToken(
-						`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${item._id}`
+						`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${item._id}`
 					)
 				);
 				const currentUrl = Vue._common_utils.appendToken(
-					`${window._URL_PREFIX_4_DEV || ""}/api/resource/get?id=${item._id}`
+					`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${item._id}`
 				);
 				_.$previewImgs({ urlList, currentUrl });
 			},

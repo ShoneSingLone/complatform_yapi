@@ -43,7 +43,12 @@ class ModelProject extends ModelBase {
 				{
 					name: String,
 					domain: String,
-					header: Array,
+					header: [
+						{
+							name: String,
+							value: String
+						}
+					],
 					global: [
 						{
 							name: String,

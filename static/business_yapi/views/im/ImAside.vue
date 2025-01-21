@@ -93,7 +93,7 @@ export default async function () {
 					_.map(this.APP.all_user, user =>
 						_.merge(user, {
 							avatar: Vue._common_utils.appendToken(
-								`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${user.uid}&usedBy=user`
+								`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${user.uid}&usedBy=user`
 							)
 						})
 					),

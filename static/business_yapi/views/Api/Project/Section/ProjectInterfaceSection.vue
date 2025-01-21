@@ -184,10 +184,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 					if (rowData.isProxy) {
 						const vDom_yes = h("xTag", { type: "success" }, ["是"]);
-						const vDom_witchEnv = h("xTag", { class: "ml" }, [
+						const vDom_witchEnv = h("xTag", { class: "ellipsis mt4" }, [
 							vm.cptEnvObject[rowData.witchEnv]?.name || "--"
 						]);
-						return hDiv([vDom_yes, vDom_witchEnv]);
+						return hDiv({ class: "flex vertical width100" }, [
+							hDiv(vDom_yes),
+							hDiv(vDom_witchEnv)
+						]);
 					} else {
 						return h("xTag", { type: "info" }, ["否"]);
 					}
@@ -214,11 +217,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					);
 					const hasBackupData = h(
 						"xTag",
-						{ type: "warning", class: "ml8", vIf: !rowData.isSetBackupData },
+						{ type: "warning", class: "ellipsis mt4", vIf: !rowData.isSetBackupData },
 						[NO_BACKUP]
 					);
 
-					return [isUseBackup, hasBackupData];
+					return hDiv({ class: "flex vertical" }, [
+						hDiv(isUseBackup),
+						hDiv(hasBackupData)
+					]);
 				}
 			};
 
@@ -241,7 +247,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 					if (user) {
 						user.avatar = Vue._common_utils.appendToken(
-							`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${uid}&usedBy=user`
+							`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${uid}&usedBy=user`
 						);
 						return hDiv({ staticClass: "ellipsis flex middle" }, [
 							hxIcon({

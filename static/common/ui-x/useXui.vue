@@ -79,9 +79,7 @@ export default async function ({
 
 			const vmProp = vm.____hVmSingleNode;
 			if (!vmProp[prop]) {
-				console.log("🚀 ~ hVmSingleNode ~ vm[prop]:", vmProp[prop]);
 				const ID = _.$genId("hVmSingleNode");
-				console.log("🚀 ~ hVmSingleNode ~ ID:", ID);
 				vmProp[prop] = h({
 					template: `<span id="${ID}"/>`,
 					mounted() {
@@ -235,28 +233,25 @@ export default async function ({
 	await (async function lazyLoadAllComponents() {
 		const ALL_COMPONENTS = await _.$importVue("/common/ui-x/allComponents.vue");
 		const loadComponentByImportVue = async componentpath => {
-			const componentName = _.last(componentpath.split("/"));
-			if (
-				["xDropdownMenu", "xDropdown", "xBtn", "xTooltip", "xPopover"].includes(
-					componentName
-				)
-			) {
+			const NEED_FIRST_LOAD = ["xDropdownMenu", "xDropdown", "xBtn", "xTooltip", "xPopover"];
+			const component_name = _.last(componentpath.split("/"));
+			if (NEED_FIRST_LOAD.includes(component_name)) {
 				/* xBtn 多个地方用到，但是异步加载会有bug:骨架屏不刷新 */
 				const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
-				setComponentName(component, componentName);
+				setComponentName(component, component_name);
 				/* @ts-ignore */
-				Vue.component(componentName, component);
+				Vue.component(component_name, component);
 			} else {
 				/* 懒加载组件 */
 				/* @ts-ignore */
-				Vue.component(componentName, async () => {
+				Vue.component(component_name, async () => {
 					// if (componentName === "xCheckbox") {
 					// 	debugger;
 					// }
 					const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
-					setComponentName(component, componentName);
+					setComponentName(component, component_name);
 					/* @ts-ignore */
-					if (/^xCell/.test(componentName)) {
+					if (/^xCell/.test(component_name)) {
 						/**
 						 * props: ["row", "configs"], row,index,configs,prop 包含当前行、列、下标、配置信息
 						 * xCell****的组件 用于列表的cell，每一个默认有带有row configs props
@@ -319,14 +314,26 @@ export default async function ({
 	})();
 
 	await (async () => {
-		/* 设置样式 */
-
-		await _.$importVue("/common/ui-x/theme/theme.default.vue");
 		async function setThemeCss() {
 			const currentTheme = $("html").attr("data-theme");
-			if (currentTheme === "tiny") {
-				await _.$importVue("/common/ui-x/theme/theme.tiny.vue");
+			/* 设置样式 */
+			await _.$importVue("/common/ui-x/theme/theme.default.vue");
+
+			/* 如果不需要预设的样式 */
+			if (currentTheme === "nostyle") {
+				return;
 			}
+			setTimeout(async () => {
+				if (currentTheme === "tiny") {
+					/* 默认样式是必要的，历史遗留问题，新增的可以不用 */
+					await _.$importVue("/common/ui-x/theme/style.common.vue");
+					await _.$importVue("/common/ui-x/theme/style.tiny.vue");
+				} else {
+					/* 默认样式 */
+					$(`[id*="staticcommonuiXthemestyletinyvue"]`).remove();
+					await _.$importVue("/common/ui-x/theme/style.common.vue");
+				}
+			}, 10);
 		}
 		await setThemeCss();
 
@@ -334,3 +341,13 @@ export default async function ({
 	})();
 }
 </script>
+
+<style lang="less">
+.el-time-spinner__wrapper .el-scrollbar__wrap:not(.el-scrollbar__wrap--hidden-default) {
+	padding-bottom: 15px;
+}
+.el-picker-panel,
+.el-table-filter {
+	-webkit-box-shadow: var(--normal-box-shadow);
+}
+</style>

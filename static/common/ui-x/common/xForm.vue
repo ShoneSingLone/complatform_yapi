@@ -19,6 +19,9 @@ export default async function () {
 					setStyle(`
 					.xForm[data-style-id="${styleId}"]{
 						--xForm-col: repeat(${cptCol.value}, 1fr);
+						display: grid;
+						grid-template-columns: var(--xForm-col);
+
 						${_.map(new Array(colNum), (v, i) => {
 							const isNeedTop = fullCount[i] === TOP;
 							if (isNeedTop) {
@@ -26,9 +29,7 @@ export default async function () {
 							} else {
 								return `.xFormItem:nth-of-type(${i + 1}) { margin-top: 0; }`;
 							}
-						}).join("")}
-						}
-						`);
+						}).join("")}}`);
 				}
 			};
 			watch(() => cptCol.value, updateStyle, { immediate: true });
@@ -57,7 +58,7 @@ export default async function () {
 							};
 						})();
 
-						return hDiv({ class: "xFormItem grid-column" + span + classString }, [
+						return hDiv({ class: `xFormItem grid-column-${span}` + classString }, [
 							h("Transition", {}, [slotVNode])
 						]);
 					}
@@ -88,11 +89,10 @@ export default async function () {
 	.xFormItem:empty {
 		display: none;
 	}
-
 	width: 100%;
 	// height: 100%;
-	display: grid;
-	grid-template-columns: var(--xForm-col);
+	display: flex;
+	flex-flow: row nowrap;
 
 	&.no-gap {
 		> .xFormItem {
@@ -112,7 +112,7 @@ export default async function () {
 	}
 
 	each(@listFlex, {
-		.grid-column@{value} {
+		.grid-column-@{value} {
 			overflow: hidden;
 			grid-column: span @value;
 		}

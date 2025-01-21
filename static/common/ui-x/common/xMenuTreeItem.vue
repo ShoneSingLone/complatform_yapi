@@ -207,6 +207,7 @@ export default async function () {
 .xMenuTreeItem-submenu-wrapper {
 	display: flex;
 	align-items: center;
+	position: relative;
 }
 .xMenuTreeItem-submenu-icon {
 	margin-right: var(--ui-half);

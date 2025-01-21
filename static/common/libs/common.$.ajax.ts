@@ -83,21 +83,23 @@
 				return reject(response);
 			};
 
+			const CAN_NOT_COVER = ["success", "error", "url"];
+
 			const baseOptions = {
 				headers,
 				type,
 				data,
 				dataType: "json",
 				contentType: "application/json",
-				/* 不会被覆盖的参数 */
-				url: urlWrapper(url),
+				/* 不会被覆盖的参数 CAN_NOT_COVER*/
 				success,
-				error
+				error,
+				url: urlWrapper(url)
 			};
 
 			const configs = requestInjector(
 				/* url 使用处理过后的 */
-				_.merge(baseOptions, _.omit(API_OPTIONS, ["success", "error", "url"]))
+				_.merge(baseOptions, _.omit(API_OPTIONS, CAN_NOT_COVER))
 			);
 
 			return configs;
@@ -111,7 +113,13 @@
 			if (/^htt/.test(url)) {
 				return url;
 			}
-			return `${window._URL_PREFIX_4_DEV || ""}${url}`;
+			if (_.isFunction(window._AJAX_URL_PREFIX)) {
+				return window._AJAX_URL_PREFIX(url);
+			} else if (_.isString(window._AJAX_URL_PREFIX)) {
+				return `${window._AJAX_URL_PREFIX}${url}`;
+			} else {
+				return url;
+			}
 		};
 		const $ajax = {
 			urlWrapper,

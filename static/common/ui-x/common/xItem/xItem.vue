@@ -175,7 +175,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 			});
 
+			(() => {
+				let timmer;
+				onMounted(() => {
+					/* FIXED: xItem xItem_controller overflow-hidden 高度产生滑动条 */
+					if (cptConfigs.value.KEEP_SCROLL_TOP_0) {
+						timmer = setInterval(() => {
+							try {
+								const xItem_controller = $(this.$el).find(".xItem_controller");
+								if (xItem_controller[0]) {
+									const scrollTop = xItem_controller[0].scrollTop;
+									if (scrollTop !== 0) {
+										xItem_controller[0].scrollTop = 0;
+									}
+								}
+							} catch (e) {}
+						}, 50);
+					}
+				});
+				onBeforeUnmount(() => {
+					timmer && clearInterval(timmer);
+				});
+			})();
+
 			onMounted(() => {
+				/* TODO:优化逻辑 */
 				Vue._X_ITEM_VM_S[this.cpt_id] = this;
 				if (cptConfigs.value?.once) {
 					cptConfigs.value.once.call(cptConfigs.value, { xItem: this });
@@ -188,6 +212,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 				if (cptConfigs.value.multiple) {
 					this.$watch("cptConfigs.multiple", this.setAttrs);
+				}
+				if (cptConfigs.value.placeholder) {
+					this.$watch("cptConfigs.placeholder", this.setAttrs);
 				}
 				if (cptConfigs.value.value !== undefined) {
 					this.$watch("cptConfigs.value", this.emitValueChange);
@@ -221,6 +248,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				cptPlaceholder,
 				cptConfigs
 			};
+		},
+		onUpdate() {
+			console.log("xItem onUpdate");
 		},
 		computed: {
 			cptIsShowItemColon() {
@@ -589,7 +619,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			display: flex;
 			flex-flow: row nowrap;
 			align-items: center;
-			overflow: hidden !important;
+
 			> [disabled="disabled"] {
 				// opacity: 0.5;
 				&:hover {

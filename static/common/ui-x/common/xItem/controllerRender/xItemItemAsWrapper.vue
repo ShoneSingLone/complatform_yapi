@@ -65,7 +65,7 @@ export default async function () {
 							"div",
 							{
 								class: {
-									xItem_controller: true,
+									"xItem_controller overflow-hidden": true,
 									"el-form-item is-error": !!vm.errorTips
 								}
 							},

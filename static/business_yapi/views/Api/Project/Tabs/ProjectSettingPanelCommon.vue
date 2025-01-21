@@ -196,7 +196,43 @@ export default async function () {
 					onClick: async () => {
 						_.$openModal(
 							{
-								title: i18n("管理转发环境"),
+								title() {
+									return h({
+										template: `
+<div class="flex middle">
+	{{i18n("管理转发环境")}}			
+	<xPopover placement="top-start"  width="600" trigger="hover">
+		<xMd :md="mdTips" />
+        <xIcon icon="tips" slot="reference"/>
+    </xPopover>
+</div>`,
+										data() {
+											return {
+												mdTips: `
+- 新增时，不需要填写\`_id\`；保存之后会带出来
+- \`cookie\` 也在\`header\`中,value为cookie的值
+
+> 环境变量数据结构如下：
+\`\`\`js
+[
+        {
+			"name" : "local",
+			"domain" : "http://127.0.0.1",
+            "header" : [
+                { "name" : "x-auth-token", "value" : "*******" },
+                { "name" : "Cookie", "value" : "key=val;key2=val2" }
+            ],
+            "global" : [
+                { "name" : "token", "value" : "######" }
+            ]
+        }
+]
+\`\`\`
+`
+											};
+										}
+									});
+								},
 								url: "@/components/YapiItemProxyEnvManager.vue",
 								parent: this
 							},

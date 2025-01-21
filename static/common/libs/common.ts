@@ -19,6 +19,25 @@
 		}
 	);
 
+	/* @typescriptDeclare (paramName: any): string */
+	_.$getRawQueryParamFromSearch = function getRawQueryParamFromSearch(paramName) {
+		// 获取查询字符串部分
+		let search = location.search;
+		if (search.startsWith("?")) {
+			search = search.slice(1);
+		}
+		// 分割成多个参数对
+		let pairs = search.split("&");
+		for (let pair of pairs) {
+			let [key, value] = pair.split("=");
+			if (key === paramName) {
+				// 直接返回原始值，不进行解码
+				return value;
+			}
+		}
+		return null;
+	};
+
 	/**
 	 * 构造树型结构数据
 	 * @param {*} data 数据源
@@ -470,6 +489,12 @@
 			if (!Vue.hasOwn(options, "disabled")) {
 				options.disabled = false;
 			}
+
+			if (_.isArray(options.columns)) {
+				options.columns.push({
+					/* TODO: 最后一列的数据被吞了？*/
+				});
+			}
 			return options;
 		};
 
@@ -668,7 +693,7 @@
 		window.defTable.colActions = ({ cellRenderer, width, fixed = "right" }) => {
 			const columnDefaultConfigs = {
 				prop: "COL_ACTIONS",
-				label: i18n("COL_ACTIONS"),
+				label: i18n("操作"),
 				fixed,
 				width,
 				headerCellRenderer(_props) {
@@ -805,19 +830,22 @@
 		};
 	}
 
-	/**
-	 * 将一个url转换为VueRouter使用的a标签href
-	 * @param {*} urlLike
-	 * @param {*} query
-	 * @returns
-	 */
-	/* @typescriptDeclare (urlLike:string, query:object) => string */
-	_.$aHashLink = (urlLike, query) => {
-		const { url } = transToUrl(urlLike, query);
-		const targetUrl = new URL(location.href, location.origin);
-		targetUrl.hash = url.href.replace(url.origin, "");
-		return targetUrl.href;
-	};
+	(() => {
+		/**
+		 * 将一个url转换为VueRouter使用的a标签href
+		 * @param {*} urlLike
+		 * @param {*} query
+		 * @returns
+		 */
+		/* @typescriptDeclare (urlLike:string, query?:object) => string */
+		_.$aHashLink = (urlLike, query = {}) => {
+			const { url } = transToUrl(urlLike, query);
+			const targetUrl = new URL(location.href, location.origin);
+			targetUrl.hash = url.href.replace(url.origin, "");
+			return targetUrl.href;
+		};
+		Vue.prototype.$aHashLink = _.$aHashLink;
+	})();
 
 	/**
 	 * 设置主题
@@ -862,9 +890,17 @@
 		const viewRectBottom = viewRectTop + container.clientHeight;
 
 		if (top < viewRectTop) {
-			container.scrollTop = top;
+			container.scrollTo({
+				top: top,
+				behavior: "smooth"
+			});
+			// container.scrollTop = top;
 		} else if (bottom > viewRectBottom) {
-			container.scrollTop = bottom - container.clientHeight;
+			container.scrollTo({
+				top: bottom - container.clientHeight,
+				behavior: "smooth"
+			});
+			// container.scrollTop = bottom - container.clientHeight;
 		}
 	};
 
@@ -1375,50 +1411,6 @@
 				title: title,
 				_VueCtor: WindowVueCtor,
 				...options
-			});
-		};
-	})();
-
-	(() => {
-		const logEnsure = _.throttle(function (fnString, count) {
-			console.log("🚀:ensure", count, "\n", fnString);
-		}, 1000 * 2);
-
-		/**
-		 *
-		 * @param {*} fnGetValue 执行此函数，直到返回真值
-		 * @param {*} duration 默认为0即不断尝试；若给定时间，未在给定时间内完成，则失败
-		 * @returns
-		 */
-		/* @typescriptDeclare (fnGetValue:(()=>Promise<any>)|(()=>any), duration?:number) =>Promise<any> */
-		_.$ensure = async (fnGetValue, duration = 0, gap = 64) => {
-			var fnString = fnGetValue.toString();
-			return new Promise(async (resolve, reject) => {
-				let timer,
-					exeCount = 0;
-
-				/*如果超时*/
-				if (duration) {
-					setTimeout(() => {
-						if (timer) {
-							clearTimeout(timer);
-						}
-						logEnsure(fnString, exeCount);
-						reject(new Error("ensure timeout"));
-					}, duration);
-				}
-
-				(async function exeFnGetValue() {
-					const value = await fnGetValue();
-					/*始终执行一次*/
-					logEnsure(fnString, ++exeCount);
-					if (!!value) {
-						timer && clearTimeout(timer);
-						resolve(value);
-					} else {
-						timer = setTimeout(exeFnGetValue, gap);
-					}
-				})();
 			});
 		};
 	})();

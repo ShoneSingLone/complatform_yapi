@@ -78,7 +78,7 @@ export default async function () {
 				const vm = this;
 				return hDiv(
 					{
-						class: "flex middle height100 width100 end"
+						class: "flex middle height100 width100 end flex1"
 					},
 					h("xIcon", {
 						icon: "close",
