@@ -1729,7 +1729,7 @@
 		_.$sfcVueObject = async function ({ resolvedURL, payload, sourceCode }) {
 			/* hmr使用sourceCode不用发请求获取源码， */
 			payload = payload || {};
-			/* 切换页面时的动效 */
+			/* 切换页面时的动效 _.$importVue.Nprogress*/
 			_.$importVue?.Nprogress?.start?.();
 			try {
 				/* 源文件加载之后会有缓存，但是payload会有变化 */
