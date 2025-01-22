@@ -158,7 +158,8 @@
 				xhr.onload = transferComplete;
 				xhr.onerror = transferFailed;
 				xhr.onabort = transferCanceled;
-				xhr.open("GET", `${url}?_t=${Date.now()}`);
+				xhr.open("GET", url);
+				// xhr.open("GET", `${url}?_t=${Date.now()}`);
 				xhr.send();
 
 				// 服务端到客户端的传输进程（下载）

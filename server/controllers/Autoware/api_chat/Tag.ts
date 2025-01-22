@@ -30,7 +30,7 @@ module.exports = {
 					const { list, total } = await orm.ChatApply.paging({
 						page,
 						size,
-						friend_id: this.$uid
+						friendId: this.$uid
 					});
 
 					ctx.body = xU.$response({

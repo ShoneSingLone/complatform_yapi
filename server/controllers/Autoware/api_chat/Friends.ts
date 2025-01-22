@@ -56,7 +56,7 @@ module.exports = {
 					const { list, total } = await orm.ChatApply.paging({
 						page,
 						size,
-						friend_id: this.$uid
+						friendId: this.$uid
 					});
 
 					ctx.body = xU.$response({
@@ -116,7 +116,6 @@ module.exports = {
 				async handler(ctx) {
 					let current_user_id = this.$uid;
 					const { uid } = ctx.payload;
-					let user_id = uid ? parseInt(uid) : 0;
 					let user = await orm.user.findById(uid);
 
 					if (!user) {
@@ -134,25 +133,29 @@ module.exports = {
 						friend: false
 					};
 
-					let friend = await orm.ChatFriend.get({
-						uid: Number(current_user_id),
-						friendId: user_id
-					});
+					try {
+						let friend = await orm.ChatFriend.get({
+							uid: Number(current_user_id),
+							friendId: user.id
+						});
 
-					if (friend) {
-						friendInfo.friend = true;
-						if (friend.nickname) {
-							friendInfo.nickname = friend.nickname;
+						if (friend) {
+							friendInfo.friend = true;
+							if (friend.nickname) {
+								friendInfo.nickname = friend.nickname;
+							}
+							friendInfo = {
+								...friendInfo,
+								lookme: friend.lookme,
+								lookhim: friend.lookhim,
+								star: friend.star,
+								isblack: friend.isblack,
+								tags: friend.tags.map(tag => tag.name),
+								moments: user.moments
+							};
 						}
-						friendInfo = {
-							...friendInfo,
-							lookme: friend.lookme,
-							lookhim: friend.lookhim,
-							star: friend.star,
-							isblack: friend.isblack,
-							tags: friend.tags.map(tag => tag.name),
-							moments: user.moments
-						};
+					} catch (error) {
+						console.error(error);
 					}
 
 					ctx.body = xU.$response(friendInfo);

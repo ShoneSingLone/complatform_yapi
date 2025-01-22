@@ -1,23 +1,3 @@
-const jwt = require("jsonwebtoken");
-const CryptoJS = require("crypto-js");
-const { customCookies } = require("server/utils/customCookies");
-const { PassThrough } = require("stream");
-
-const IMAGE_BUFFER_CACHE = {};
-
-async function makeNewUserPrivateGroup(uid) {
-	var groupInst = orm.group;
-	await groupInst.save({
-		uid: uid,
-		group_name: "User-" + uid,
-		add_time: xU.time(),
-		up_time: xU.time(),
-		type: "private"
-	});
-}
-
-let count = 0;
-
 module.exports = {
 	definitions: {
 		UserAvatar: {
@@ -36,30 +16,36 @@ module.exports = {
 				description: "获取好友申请列表",
 				request: {
 					query: {
-						page: {
-							required: true,
-							description: "当前页",
-							type: "number",
-							default: 1
-						},
-						size: {
-							required: true,
-							description: "每页数量",
-							type: "number",
-							default: 10
-						}
+						// page: {
+						// 	required: true,
+						// 	description: "当前页",
+						// 	type: "number",
+						// 	default: 1
+						// },
+						// size: {
+						// 	required: true,
+						// 	description: "每页数量",
+						// 	type: "number",
+						// 	default: 10
+						// }
 					}
 				},
 				async handler(ctx) {
 					let { page, size } = ctx.payload;
 					const { list, total } = await orm.ChatApply.paging({
-						page,
-						size,
+						page: 0,
+						size: -1,
 						friendId: this.$uid
 					});
 
 					ctx.body = xU.$response({
-						list,
+						list: Promise.all(
+							xU._.map(list, async i => {
+								return xU._.merge(i, {
+									apply: await orm.user.findById(i.uid)
+								});
+							})
+						),
 						total
 					});
 				}
@@ -74,12 +60,12 @@ module.exports = {
 						friendId: {
 							type: "number",
 							required: true,
-							desc: "好友id"
+							description: "好友id"
 						},
 						nickname: {
 							type: "string",
 							required: false,
-							desc: "昵称"
+							description: "昵称"
 						},
 						lookme: {
 							type: "number",
@@ -87,13 +73,13 @@ module.exports = {
 							range: {
 								in: [0, 1]
 							},
-							desc: "看我"
+							description: "看我"
 						},
 						lookhim: {
 							type: "number",
 							enum: [0, 1],
 							required: true,
-							desc: "看他"
+							description: "看他"
 						}
 					}
 				},
@@ -111,31 +97,40 @@ module.exports = {
 						ctx.body = xU.$response(null, 400, "该用户不存在或者已被禁用");
 					}
 					// 之前是否申请过了
-					if (
-						await orm.ChatApply.findOne({
-							uid: current_user_id,
-							friendId,
-							status: {
-								$in: ["pending", "agree"]
-							}
-						})
-					) {
+					const [isApplied] = await await orm.ChatApply.findOne({
+						/*我提出申请*/
+						uid: Number(current_user_id),
+						/*申请这一个*/
+						friendId,
+						status: {
+							$in: ["pending", "agree"]
+						}
+					});
+
+					if (isApplied) {
 						ctx.body = xU.$response(null, 400, "你之前已经申请过了");
+						return;
 					}
+
 					// 创建申请
-					let apply = await app.model.Apply.create({
-						user_id: current_user_id,
+					let apply = await orm.ChatApply.save({
+						uid: Number(current_user_id),
+						nickname,
 						friendId,
 						lookme,
 						lookhim,
-						nickname
+						status: "pending"
 					});
+
 					if (!apply) {
-						ctx.throw(400, "申请失败");
+						ctx.body = xU.$response(null, 400, "申请失败");
+					} else {
+						ctx.body = xU.$response(apply);
+						// 消息推送
+						xU.socketTrigger(xU.SSE_TYPE.CHAT_NEW_APPLY, friendId, {
+							action: "updateApplyList"
+						});
 					}
-					ctx.body = xU.$response(apply);
-					// 消息推送
-					ctx.send(friendId, "", "updateApplyList");
 				}
 			}
 		}
