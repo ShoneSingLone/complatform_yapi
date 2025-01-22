@@ -26,6 +26,7 @@
 	}
 
 	function camelCase(str = "") {
+		str = String(str).replaceAll("@", "");
 		return (
 			str &&
 			str.replace(camelizeRE, function (_, c) {
@@ -118,12 +119,19 @@
 		const { src } = srcRootDom;
 		const [srcRoot] = src.split("/common/libs/seed");
 
-		const { appName, appEntryName, appVersion, loadingImg } = srcRootDom.dataset;
+		const {
+			appName,
+			appEntryName,
+			appVersion,
+			loadingImg,
+			appPrefix = "business_"
+		} = srcRootDom.dataset;
 
 		if (!appName) {
 			alert("miss APP_NAME");
 		}
 
+		window.APP_PREFIX = appPrefix;
 		window.SRC_ROOT_PATH = srcRoot || "";
 		window.APP_NAME = appName || "";
 		window.APP_ENTRY_NAME = appEntryName || "entry";
@@ -286,6 +294,10 @@
 	/*  */
 
 	function $resolveSvgIcon(cptIconName) {
+		if (/^http/.test(cptIconName)) {
+			return cptIconName;
+		}
+
 		let url = `/common/assets/svg/${cptIconName}.svg`;
 		if (/^_/.test(cptIconName)) {
 			const iconName = String(cptIconName).replace(/^_/, "");
@@ -334,7 +346,7 @@
 
 		if (/^@/.test(url)) {
 			/* 业务代码 */
-			resolvedURL = String(url).replace(/^@/, `${SRC_ROOT_PATH}/business_${APP_NAME}`);
+			resolvedURL = String(url).replace(/^@/, `${SRC_ROOT_PATH}/${APP_PREFIX}${APP_NAME}`);
 		}
 		if (/^\/common\//.test(url)) {
 			/* common 通用 */
@@ -423,6 +435,51 @@
 		});
 	};
 
+	var $ensure = (() => {
+		const logEnsure = () => null;
+
+		/**
+		 *
+		 * @param {*} fnGetValue 执行此函数，直到返回真值
+		 * @param {*} duration 默认为0即不断尝试；若给定时间，未在给定时间内完成，则失败
+		 * @returns
+		 */
+		/* @typescriptDeclare (fnGetValue:(()=>Promise<any>)|(()=>any), duration?:number) =>Promise<any> */
+		$ensure = async (fnGetValue, duration = 0, gap = 64) => {
+			var fnString = fnGetValue.toString();
+			return new Promise(async (resolve, reject) => {
+				let timer,
+					exeCount = 0;
+
+				/*如果超时*/
+				if (duration) {
+					setTimeout(() => {
+						if (timer) {
+							clearTimeout(timer);
+						}
+						logEnsure(fnString, exeCount);
+						reject(new Error("ensure timeout"));
+					}, duration);
+				}
+
+				(async function exeFnGetValue() {
+					const value = await fnGetValue();
+					/*始终执行一次*/
+					logEnsure(fnString, ++exeCount);
+					if (!!value) {
+						timer && clearTimeout(timer);
+						resolve(value);
+					} else {
+						timer = setTimeout(exeFnGetValue, gap);
+					}
+				})();
+			});
+		};
+		return $ensure;
+	})();
+
+	const load_count = {};
+
 	/**
 	 * 该函数用于在网页中动态添加脚本文件。它接受一个URL参数和一个全局名称参数，根据URL创建一个id，并检查是否已存在具有该id的script元素。如果不存在，它会创建一个新的script元素，设置其id和src属性，并添加到页面的body元素中。如果URL参数中包含路径，则使用该路径作为src属性值；否则，通过调用另一个函数获取脚本内容。无论使用哪种方式，加载脚本的过程都是异步的。如果指定了全局名称参数，则返回通过该名称访问到的值。
 	 *
@@ -434,6 +491,14 @@
 	async function $appendScript(url, globalName = "", _SCRIPT_USE_SRC = false) {
 		try {
 			const id = camelCase(url);
+			if (load_count[id]) {
+				if (globalName) {
+					await $ensure(() => window[globalName]);
+					return window[globalName];
+				}
+			} else {
+				load_count[id] = true;
+			}
 			let $script = $$id(id);
 			if (!$script) {
 				$script = document.createElement("script");
@@ -479,28 +544,52 @@
 		return styleSourceCode;
 	}
 
-	async function $appendStyle(url, styleSourceCode = "") {
+	/**
+	 * @param {any} url
+	 * @param {any} styleSourceCode
+	 * @param {any} options {userLink:Boolean 如果为true，则使用Link方式引入，这样文件里面的相对路径是相对css文件，否则会缓存文本放在style元素里面，路径是相对页面，有这个差异}
+	 * @returns
+	 */
+	/* @typescriptDeclare (url:string,styleSourceCode?:string,options?:any)=>any */
+	async function $appendStyle(url, styleSourceCode = "", options = {}) {
+		const { useLink = false } = options;
+		const id = camelCase(url);
+
+		if (useLink) {
+			try {
+				let $link = $$id(id);
+				if (!$link) {
+					$link = document.createElement("link");
+					$link.id = id;
+					$link.rel = "stylesheet";
+					const body = $$tags("head")[0];
+					body.appendChild($link);
+				}
+				$link.href = $resolvePath(url);
+			} catch (error) {
+			} finally {
+				return id;
+			}
+		}
+
 		const innerHtml = await (async function () {
 			if (!styleSourceCode) {
 				styleSourceCode = await _$loadText(url);
 				styleSourceCode = $resolveCssAssetsPath(styleSourceCode);
 			}
 			/* 如果是移动端，会替换px为rem html的font-size:1px; */
-
 			if (window._CURENT_IS_MOBILE) {
 				const pxReg = /([-+]?[0-9]*\.?[0-9]+)px/g;
 				styleSourceCode = styleSourceCode.replace(pxReg, (full, num) => {
 					return `${num}rem`;
 				});
 			}
-
 			return styleSourceCode;
 		})();
 
 		if (!innerHtml) {
-			return;
+			return id;
 		}
-		const id = camelCase(url);
 		let $style = $$id(id);
 		if (!$style) {
 			$style = document.createElement("style");
@@ -509,6 +598,7 @@
 			body.appendChild($style);
 		}
 		$style.innerHTML = innerHtml;
+		return id;
 	}
 
 	(async function bootstrap() {
@@ -528,7 +618,11 @@
 			}
 
 			await _$asyncLoadOrderAppendScrips([
-				["/common/libs/jquery-3.7.0.min.js", null, () => $("body").addClass("x-app-body")],
+				[
+					"/common/libs/jquery/jquery-3.7.0.min.js",
+					null,
+					() => $("body").addClass("x-app-body")
+				],
 				[
 					"/common/libs/lodash.js",
 					null,
@@ -536,6 +630,7 @@
 						_.$$tags = $$tags;
 						_.$$id = $$id;
 						_.$val = $val;
+						_.$ensure = $ensure;
 						_.$appendScript = $appendScript;
 						_.$appendStyle = $appendStyle;
 						_.$resolveCssAssetsPath = $resolveCssAssetsPath;
@@ -578,7 +673,6 @@
 			$appendStyle(
 				"xLoadingStyle",
 				`html, body, #app { height: 100%; width: 100%; }
-
 @keyframes spin {
 	from {
 		transform: rotate(0deg);
@@ -618,7 +712,11 @@
 					/!*使用 {变量名} 赋值*!/;
 					_.templateSettings.interpolate = /{([\s\S]+?)}/g;
 					let temp = $val(langOptions, key);
-					return _.template(temp)(payload) || key;
+					if (_.isString(temp)) {
+						return _.template(temp)(payload);
+					} else {
+						return key;
+					}
 				};
 				i18n.langOptions = langOptions;
 
@@ -639,7 +737,7 @@
 		/* setup */
 		_.$importVue.Nprogress = await _.$importVue("/common/libs/Nprogress.vue");
 		const APP = await _.$importVue(
-			`${SRC_ROOT_PATH}/business_${APP_NAME}/${APP_ENTRY_NAME}.vue`
+			`${SRC_ROOT_PATH}/${APP_PREFIX}${APP_NAME}/${APP_ENTRY_NAME}.vue`
 		);
 		if (isDev) {
 			window.HMR_APP = APP;

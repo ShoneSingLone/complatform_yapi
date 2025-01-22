@@ -53,7 +53,7 @@ export default async function () {
 
 		const controllerWrapperProps = {
 			class: {
-				xItem_controller: true,
+				"xItem_controller overflow-hidden": true,
 				"el-form-item is-error": !!vm.errorTips
 			}
 		};

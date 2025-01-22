@@ -106,9 +106,11 @@
 					<slot name="prefix"></slot>
 				</template>
 				<template slot="suffix">
-					<i
+					<!-- <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i> -->
+					<xIcon
 						v-show="!showClose"
-						:class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
+						:icon="cptIconArrow"
+						:class="['el-select__caret el-input__icon', 'el-icon-' + iconClass]" />
 					<i
 						v-if="showClose"
 						class="el-select__caret el-input__icon el-icon-circle-close"
@@ -182,6 +184,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			};
 		},
 		computed: {
+			cptIconArrow() {
+				if (this.iconClass) {
+					return "arrow-down";
+				}
+				return "";
+			},
 			cptClassInput() {
 				return [this.selectSize ? `is-${this.selectSize}` : ""];
 			},
@@ -207,11 +215,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			iconClass() {
-				return this.remote && this.filterable
-					? ""
-					: this.visible
-						? "arrow-up is-reverse"
-						: "arrow-up";
+				if (this.remote && this.filterable) {
+					return "";
+				}
+
+				if (this.visible) {
+					return "arrow-up is-reverse";
+				} else {
+					return "arrow-up";
+				}
 			},
 
 			duration() {
@@ -990,13 +1002,21 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			transform 0.3s,
 			-webkit-transform 0.3s;
 		-webkit-transform: rotateZ(180deg);
-		transform: rotateZ(180deg);
+		transform: rotateZ(0);
 		cursor: pointer;
+		&.el-input__icon {
+			&.el-icon-arrow-up {
+				width: 16px;
+			}
+			&.el-icon-arrow-down {
+				width: 16px;
+			}
+		}
 	}
 
 	.el-input .el-select__caret.is-reverse {
 		-webkit-transform: rotateZ(0);
-		transform: rotateZ(0);
+		transform: rotateZ(180deg);
 	}
 
 	.el-input .el-select__caret.is-show-close {
@@ -1095,8 +1115,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.el-select-dropdown .el-scrollbar.is-empty .el-select-dropdown__list {
-	padding: 0;
+.el-select-dropdown {
+	.el-scrollbar {
+		&.is-empty {
+			.el-select-dropdown__list {
+				padding: 0;
+			}
+		}
+	}
 }
 
 .el-select-dropdown__empty {
@@ -1109,6 +1135,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 .el-select-dropdown__wrap {
 	max-height: 274px;
+	width: 100%;
 }
 
 .el-select-dropdown__list {
@@ -1126,7 +1153,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	color: #606266;
+	color: var(--el-text-color-regular);
 	height: 34px;
 	line-height: 34px;
 	-webkit-box-sizing: border-box;

@@ -141,4 +141,74 @@ export default async function () {
 	});
 }
 </script>
-<style lang="less"></style>
+<style lang="less">
+.el-scrollbar {
+	overflow: hidden;
+	position: relative;
+}
+
+.el-scrollbar:active > .el-scrollbar__bar,
+.el-scrollbar:focus > .el-scrollbar__bar,
+.el-scrollbar:hover > .el-scrollbar__bar {
+	opacity: 1;
+	-webkit-transition: opacity 340ms ease-out;
+	transition: opacity 340ms ease-out;
+}
+
+.el-scrollbar__wrap {
+	overflow: scroll;
+	height: 100%;
+}
+
+.el-scrollbar__wrap--hidden-default {
+	scrollbar-width: none;
+}
+
+.el-scrollbar__wrap--hidden-default::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}
+
+.el-scrollbar__thumb {
+	position: relative;
+	display: block;
+	width: 0;
+	height: 0;
+	cursor: pointer;
+	border-radius: inherit;
+	background-color: var(--ui-thumb-hover);
+	transition: 0.3s background-color;
+}
+
+.el-scrollbar__thumb:hover {
+	background-color: var(--ui-thumb);
+}
+
+.el-scrollbar__bar {
+	position: absolute;
+	right: 2px;
+	bottom: 2px;
+	z-index: 1;
+	border-radius: var(--border-radius);
+	opacity: 0;
+	transition: opacity 120ms ease-out;
+}
+
+.el-scrollbar__bar.is-vertical {
+	width: 6px;
+	top: 2px;
+}
+
+.el-scrollbar__bar.is-vertical > div {
+	width: 100%;
+}
+
+.el-scrollbar__bar.is-horizontal {
+	height: 6px;
+	left: 2px;
+}
+
+.el-scrollbar__bar.is-horizontal > div {
+	height: 100%;
+}
+</style>

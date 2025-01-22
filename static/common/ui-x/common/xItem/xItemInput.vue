@@ -3,7 +3,6 @@ export default async function () {
 	const { mixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 	return defineComponent({
 		mixins: [mixins],
-		props: ["value", "configs"],
 		computed: {
 			isShowPassword() {
 				return !!this.configs?.isPwd;

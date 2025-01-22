@@ -226,6 +226,20 @@ export default async function hooks() {
 						}
 					}, 64)
 				};
+			},
+			/*
+			 * @description onUnmounted 的时候会移除组件引入的样式
+			 *
+			 * */
+			useStyleOnlyComponent(styleUrlArray) {
+				let styleIds = [];
+				const STYLE_LOAD_DONE = ref(false);
+				onMounted(async () => {
+					styleIds = await Promise.all(styleUrlArray);
+					STYLE_LOAD_DONE.value = true;
+				});
+				onUnmounted(() => _.each(styleIds, styleId => $(`#${styleId}`).remove()));
+				return { STYLE_LOAD_DONE };
 			}
 		};
 	}

@@ -179,7 +179,7 @@ export default async function () {
 		computed: {
 			cptAvatarUrl(id) {
 				return Vue._common_utils.appendToken(
-					`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${id}`
+					`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${id}`
 				);
 			},
 			isShow() {

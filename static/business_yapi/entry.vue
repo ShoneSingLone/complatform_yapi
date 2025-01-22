@@ -4,7 +4,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 	PRIVATE_GLOBAL._$TRIGGER_EVENT_NAME = _$TRIGGER_EVENT_NAME;
 
-	/*anxin应用用到的组件*/
 	_.each(
 		{
 			TuiEditor: "@/components/TuiEditor/TuiEditor.vue",
@@ -14,6 +13,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			YapiItemProxyEnv: "@/components/YapiItemProxyEnv.vue",
 			YapiItemAvatar: "@/components/YapiItemAvatar.vue",
 			YapiItemUac: "@/components/YapiItemUac.vue",
+			YapiItemKeyValTable: "@/components/YapiItemKeyValTable.vue",
 			YapiItemPathParams: "@/components/YapiItemPathParams.vue",
 			YapiProjectCard: "@/components/YapiProjectCard.vue",
 			YapiPlaceholderView: "@/components/YapiPlaceholderView.vue"
@@ -216,7 +216,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			initSSE() {
 				return new Promise(resolve => {
 					const SseEventSource = new EventSource(
-						`${window._URL_PREFIX_4_DEV || ""}/api/sse`
+						`${window._AJAX_URL_PREFIX || ""}/api/sse`
 					);
 					SseEventSource.onmessage = function (e) {
 						try {

@@ -42,7 +42,7 @@ export default async function () {
 				return (
 					this.imageUrl ||
 					Vue._common_utils.appendToken(
-						`${window._URL_PREFIX_4_DEV || ""}/api/user/avatar?uid=${this.value}&usedBy=${this.cptUsedBy}`
+						`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${this.value}&usedBy=${this.cptUsedBy}`
 					)
 				);
 			}

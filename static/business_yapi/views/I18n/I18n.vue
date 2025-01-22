@@ -241,6 +241,15 @@ export default async function () {
 						async onClick() {
 							return vm.openTranslateDialog();
 						}
+					},
+					{
+						label: "转换all.i18n.js",
+						async onClick() {
+							return _.$openModal({
+								title: "导入国际化字段",
+								url: "@/views/I18n/I18n.transi18n.dialog.vue"
+							});
+						}
 					}
 				],
 				configsTable: defTable({

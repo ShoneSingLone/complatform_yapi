@@ -2,6 +2,7 @@
 	<img v-if="cptImg" :src="cptImgSrc" />
 	<svg
 		v-else
+		:data-icon-name="cptIconName"
 		:class="['xIcon', cptIconName]"
 		v-bind="$attrs"
 		@click="handleClick"
@@ -70,14 +71,22 @@ export default async function () {
 				return cptImg;
 			},
 			cptIconUrl() {
-				const url = _.$resolveSvgIcon(this.cptIconName);
+				const url = _.$resolveSvgIcon(this.cptOriginIconName);
 				return _.$resolvePath(url);
 			},
 			cptColor() {
 				return this.color || this.$attrs.color || $(this.$el).css("color") || "inherit";
 			},
-			cptIconName() {
+			cptOriginIconName() {
 				return this.icon || this.$attrs.icon || "loading";
+			},
+			cptIconName() {
+				let iconName = this.cptOriginIconName;
+
+				if (/^http/gi.test(iconName)) {
+					return _.snakeCase(iconName);
+				}
+				return iconName;
 			},
 			cptHref() {
 				if (!this.isLoaded) {

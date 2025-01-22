@@ -13184,10 +13184,11 @@
 				let current = this;
 				let attrs = current.$attrs;
 
-				if (hasOwn(attrs, prop)) {
+				if (hasOwn(attrs, prop) && attrs[prop] !== undefined) {
 					return attrs[prop];
 				}
 				current = current.$parent;
+
 				while (current) {
 					if (current?.componentName === "xItem") {
 						attrs = current?.$attrs;
@@ -13211,7 +13212,6 @@
 	Vue.prototype.broadcast = broadcast;
 	Vue.prototype.isDef = isDef;
 	Vue.prototype.$log = (...args) => console.log.apply(console, args);
-
 	Vue.AsyncPlaceholderCollection = {};
 
 	Vue.component("AsyncPlaceholder", {
