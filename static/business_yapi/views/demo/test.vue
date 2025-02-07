@@ -1,8 +1,6 @@
 <style lang="less"></style>
 <template>
-	<div>
-		
-	</div>
+	<div></div>
 </template>
 <script lang="ts">
 export default async function () {

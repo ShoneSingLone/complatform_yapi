@@ -1,6 +1,10 @@
 <template>
-	<div class="avatar-uploader flex middle" v-bind="$attrs">
-		<xAvatar :src="cptAvatarUrl" @click.native="handleClick" :class="cptClassAvatar" />
+	<div class="avatar-uploader flex middle YapiItemAvatar" v-bind="$attrs">
+		<xIcon
+			:img="cptAvatarUrl"
+			iscache="true"
+			@click.native="handleClick"
+			:class="cptClassAvatar" />
 	</div>
 </template>
 
@@ -27,7 +31,7 @@ export default async function () {
 			cptClassAvatar() {
 				return {
 					pointer: !this.cptDisabled,
-					asdfasdfasdf: true
+					"project-avatar": true
 				};
 			},
 			cptDisabled() {
@@ -116,13 +120,20 @@ export default async function () {
 </script>
 
 <style lang="less">
-.xItem-wrapper[data-form-item-type="YapiItemAvatar"] {
-	// width: var(--xitem-avatar-width, 32px);
-	// height: var(--xitem-avatar-height, 32px);
-	span.el-avatar {
-		display: inline-block;
-		width: var(--xitem-avatar-width, 32px);
-		height: var(--xitem-avatar-height, 32px);
+.YapiItemAvatar {
+	.project-avatar {
+		width: 32px;
+		height: 32px;
+	}
+
+	.xItem-wrapper[data-form-item-type="YapiItemAvatar"] {
+		// width: var(--xitem-avatar-width, 32px);
+		// height: var(--xitem-avatar-height, 32px);
+		span.el-avatar {
+			display: inline-block;
+			width: var(--xitem-avatar-width, 32px);
+			height: var(--xitem-avatar-height, 32px);
+		}
 	}
 }
 </style>

@@ -174,7 +174,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return (this.elFormItem || {}).elFormItemSize;
 			},
 			inputNumberSize() {
-				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui.size;
 			},
 			inputNumberDisabled() {
 				return this.disabled || !!(this.elForm || {}).disabled;

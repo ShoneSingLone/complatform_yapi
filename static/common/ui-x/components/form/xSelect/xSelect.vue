@@ -106,15 +106,16 @@
 					<slot name="prefix"></slot>
 				</template>
 				<template slot="suffix">
-					<!-- <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i> -->
 					<xIcon
 						v-show="!showClose"
-						:icon="cptIconArrow"
-						:class="['el-select__caret el-input__icon', 'el-icon-' + iconClass]" />
-					<i
+						:icon="state.xSelectIconArrow"
+						:class="['el-select__caret el-input__icon', iconClass]" />
+					<!-- el-icon-circle-close -->
+					<xIcon
 						v-if="showClose"
-						class="el-select__caret el-input__icon el-icon-circle-close"
-						@click="handleClearClick"></i>
+						icon="circle-close"
+						class="el-select__caret el-input__icon"
+						@click="handleClearClick" />
 				</template>
 			</xInput>
 		</div>
@@ -164,7 +165,39 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	return defineComponent({
 		setup() {
 			const { focus } = useFocus(this, "reference");
-			return { focus };
+
+			const state = reactive({
+				xSelectIconArrow: "arrow-down"
+			});
+
+			(() => {
+				function onThemeChange() {
+					const theme = PRIVATE_GLOBAL.x_ui.theme;
+					if (theme && onThemeChange.old_theme !== theme) {
+						onThemeChange.old_theme = theme;
+
+						const x_ui_collection = PRIVATE_GLOBAL.x_ui_collection || {};
+						const configs = x_ui_collection[theme] || {};
+						const x_select = configs.x_select || {};
+
+						const { icon_arrow } = x_select;
+
+						if (_.isString(icon_arrow) && icon_arrow !== state.xSelectIconArrow) {
+							state.xSelectIconArrow = icon_arrow;
+						} else {
+							state.xSelectIconArrow = "arrow-down";
+						}
+					}
+				}
+
+				$(window).on(`x_ui_theme_change.${this._uid}`, onThemeChange);
+				onBeforeUnmount(() =>
+					$(window).off(`x_ui_theme_change.${this._uid}`, onThemeChange)
+				);
+				onThemeChange();
+			})();
+
+			return { focus, state };
 		},
 		mixins: [NavigationMixin],
 		name: "xSelect",
@@ -184,12 +217,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			};
 		},
 		computed: {
-			cptIconArrow() {
-				if (this.iconClass) {
-					return "arrow-down";
-				}
-				return "";
-			},
 			cptClassInput() {
 				return [this.selectSize ? `is-${this.selectSize}` : ""];
 			},
@@ -219,11 +246,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					return "";
 				}
 
-				if (this.visible) {
-					return "arrow-up is-reverse";
-				} else {
-					return "arrow-up";
-				}
+				return this.visible ? "is-reverse" : "";
 			},
 
 			duration() {
@@ -260,7 +283,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			selectSize() {
-				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui.size;
 			},
 
 			selectDisabled() {
@@ -1005,33 +1028,30 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		transform: rotateZ(0);
 		cursor: pointer;
 		&.el-input__icon {
-			&.el-icon-arrow-up {
-				width: 16px;
-			}
-			&.el-icon-arrow-down {
-				width: 16px;
-			}
+			width: 16px;
 		}
 	}
 
-	.el-input .el-select__caret.is-reverse {
-		-webkit-transform: rotateZ(0);
-		transform: rotateZ(180deg);
-	}
+	.el-input {
+		.el-select__caret {
+			&.is-show-close {
+				font-size: 14px;
+				text-align: center;
+				-webkit-transform: rotateZ(180deg);
+				transform: rotateZ(180deg);
+				border-radius: 100%;
+				color: var(--el-text-color-disabled);
+				-webkit-transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+				transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+				&:hover {
+					color: var(--el-text-color-secondary);
+				}
+			}
 
-	.el-input .el-select__caret.is-show-close {
-		font-size: 14px;
-		text-align: center;
-		-webkit-transform: rotateZ(180deg);
-		transform: rotateZ(180deg);
-		border-radius: 100%;
-		color: var(--el-text-color-disabled);
-		-webkit-transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-		transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-	}
-
-	.el-input .el-select__caret.is-show-close:hover {
-		color: var(--el-text-color-secondary);
+			&.is-reverse {
+				transform: rotateZ(180deg);
+			}
+		}
 	}
 
 	.el-input.is-disabled .el-input__inner {
@@ -1249,10 +1269,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	color: var(--el-text-color-disabled);
 	line-height: 18px;
 	font-size: 14px;
-}
-
-.el-select__close:hover {
-	color: var(--el-text-color-secondary);
+	&:hover {
+		color: var(--el-text-color-secondary);
+	}
 }
 
 .el-select__tags {

@@ -169,21 +169,6 @@ export default async function () {
 	height: 0;
 }
 
-.el-scrollbar__thumb {
-	position: relative;
-	display: block;
-	width: 0;
-	height: 0;
-	cursor: pointer;
-	border-radius: inherit;
-	background-color: var(--ui-thumb-hover);
-	transition: 0.3s background-color;
-}
-
-.el-scrollbar__thumb:hover {
-	background-color: var(--ui-thumb);
-}
-
 .el-scrollbar__bar {
 	position: absolute;
 	right: 2px;

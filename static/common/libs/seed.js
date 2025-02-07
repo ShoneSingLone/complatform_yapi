@@ -120,11 +120,12 @@
 		const [srcRoot] = src.split("/common/libs/seed");
 
 		const {
-			appName,
-			appEntryName,
+			appName /*应用名称 */,
+			appEntryName /* 入口名称 */,
 			appVersion,
 			loadingImg,
-			appPrefix = "business_"
+			appPrefix = "business_",
+			noNprogress /* 无加载伪进度条 */
 		} = srcRootDom.dataset;
 
 		if (!appName) {
@@ -135,6 +136,7 @@
 		window.SRC_ROOT_PATH = srcRoot || "";
 		window.APP_NAME = appName || "";
 		window.APP_ENTRY_NAME = appEntryName || "entry";
+		window.APP_NO_NPROGRESS = !!noNprogress;
 		/* empty */
 		window.APP_VERSION = "" || appVersion || "";
 		/* empty */
@@ -158,8 +160,7 @@
 				xhr.onload = transferComplete;
 				xhr.onerror = transferFailed;
 				xhr.onabort = transferCanceled;
-				xhr.open("GET", url);
-				// xhr.open("GET", `${url}?_t=${Date.now()}`);
+				xhr.open("GET", `${url}?_t=${Date.now()}`);
 				xhr.send();
 
 				// 服务端到客户端的传输进程（下载）
@@ -409,30 +410,26 @@
 	const _$asyncLoadOrderAppendScrips = async function (FRAMWORK_DEEPS) {
 		console.time("框架基本依赖");
 		return new Promise(async resolve => {
-			const appdScripts = () => {
-				const body = $$tags("body")[0];
-				for (const [url, innerHtml, callback] of FRAMWORK_DEEPS) {
-					const id = camelCase(url);
-					$script = document.createElement("script");
-					$script.id = id;
-					$script.innerHTML = innerHtml;
-					body.appendChild($script);
-					if (typeof callback === "function") {
-						callback();
-					}
+			const scripts = await Promise.all(
+				FRAMWORK_DEEPS.map(async ([url, , callback]) => {
+					const innerHtml = await _$loadText(url);
+					return { url, innerHtml, callback };
+				})
+			);
+
+			const body = $$tags("body")[0];
+			for (const { url, innerHtml, callback } of scripts) {
+				const id = camelCase(url);
+				const $script = document.createElement("script");
+				$script.id = id;
+				$script.innerHTML = innerHtml;
+				body.appendChild($script);
+				if (typeof callback === "function") {
+					callback();
 				}
-				console.timeEnd("框架基本依赖");
-				resolve();
-			};
-			let complateCount = 0;
-			FRAMWORK_DEEPS.forEach(async deep => {
-				const innerHtml = await _$loadText(deep[0]);
-				deep[1] = innerHtml;
-				complateCount++;
-				if (complateCount === FRAMWORK_DEEPS.length) {
-					appdScripts();
-				}
-			});
+			}
+			console.timeEnd("框架基本依赖");
+			resolve();
 		});
 	};
 
@@ -447,33 +444,31 @@
 		 */
 		/* @typescriptDeclare (fnGetValue:(()=>Promise<any>)|(()=>any), duration?:number) =>Promise<any> */
 		$ensure = async (fnGetValue, duration = 0, gap = 64) => {
-			var fnString = fnGetValue.toString();
-			return new Promise(async (resolve, reject) => {
-				let timer,
-					exeCount = 0;
+			const fnString = fnGetValue.toString();
+			return new Promise((resolve, reject) => {
+				let timer;
+				let exeCount = 0;
 
-				/*如果超时*/
+				const checkValue = async () => {
+					const value = await fnGetValue();
+					logEnsure(fnString, ++exeCount);
+					if (value) {
+						clearTimeout(timer);
+						resolve(value);
+					} else {
+						timer = setTimeout(checkValue, gap);
+					}
+				};
+
 				if (duration) {
 					setTimeout(() => {
-						if (timer) {
-							clearTimeout(timer);
-						}
+						clearTimeout(timer);
 						logEnsure(fnString, exeCount);
 						reject(new Error("ensure timeout"));
 					}, duration);
 				}
 
-				(async function exeFnGetValue() {
-					const value = await fnGetValue();
-					/*始终执行一次*/
-					logEnsure(fnString, ++exeCount);
-					if (!!value) {
-						timer && clearTimeout(timer);
-						resolve(value);
-					} else {
-						timer = setTimeout(exeFnGetValue, gap);
-					}
-				})();
+				checkValue();
 			});
 		};
 		return $ensure;
@@ -625,7 +620,7 @@
 					() => $("body").addClass("x-app-body")
 				],
 				[
-					"/common/libs/lodash.js",
+					"/common/libs/lodash.min.js",
 					null,
 					() => {
 						_.$$tags = $$tags;
@@ -643,7 +638,7 @@
 					}
 				],
 				["/common/libs/dayjs.js"],
-				["/common/libs/vue.js"],
+				["/common/libs/vue.min.js"],
 				["/common/libs/common.ts"],
 				["/common/libs/common.$.ajax.ts"]
 			]);
@@ -653,7 +648,6 @@
 			}
 
 			Vue.prototype._ = _;
-			Vue.prototype.$X_APP_THEME = $("html").attr("data-theme");
 
 			if (window._CURENT_IS_MOBILE) {
 				$("meta[name='viewport'").attr(
@@ -736,7 +730,9 @@
 		})();
 
 		/* setup */
-		_.$importVue.Nprogress = await _.$importVue("/common/libs/Nprogress.vue");
+		!APP_NO_NPROGRESS &&
+			(_.$importVue.Nprogress = await _.$importVue("/common/libs/Nprogress.vue"));
+
 		const APP = await _.$importVue(
 			`${SRC_ROOT_PATH}/${APP_PREFIX}${APP_NAME}/${APP_ENTRY_NAME}.vue`
 		);

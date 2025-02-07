@@ -854,9 +854,7 @@
 	/* @typescriptDeclare (theme:string)=>void */
 	_.$setAppTheme = function (theme) {
 		$("html").attr("data-theme", theme || "");
-		Vue.prototype.$X_APP_THEME = theme;
-		Vue.forceUpdate();
-		$(window).trigger("xUiThemeChange", theme);
+		$(window).trigger("x_ui_theme_change", theme);
 	};
 
 	_.$valueEquals = (a, b) => {
@@ -1658,9 +1656,13 @@
 		};
 
 		_.$sourceCodeSFC = async function ({ resolvedURL, sourceCode }) {
+			const init = () => {
+				$appendSfcStyle(VUE_COMPONENTS_CACHE[resolvedURL].styleSourceCode, resolvedURL);
+			};
 			/* @descript 非开发模式下，如果已经加载，直接返回，否则每次都获取最新的代码 */
 			/* @declare { scritpSourceCode, templateSourceCode, styleSourceCode } */
 			if (!IS_DEV && VUE_COMPONENTS_CACHE[resolvedURL]) {
+				init();
 				return VUE_COMPONENTS_CACHE[resolvedURL];
 			}
 
@@ -1669,7 +1671,7 @@
 			}
 			/* 缓存 */
 			VUE_COMPONENTS_CACHE[resolvedURL] = VueLoader(sourceCode);
-			$appendSfcStyle(VUE_COMPONENTS_CACHE[resolvedURL].styleSourceCode, resolvedURL);
+			init();
 			return VUE_COMPONENTS_CACHE[resolvedURL];
 		};
 
@@ -1729,7 +1731,7 @@
 		_.$sfcVueObject = async function ({ resolvedURL, payload, sourceCode }) {
 			/* hmr使用sourceCode不用发请求获取源码， */
 			payload = payload || {};
-			/* 切换页面时的动效 */
+			/* 切换页面时的动效 _.$importVue.Nprogress*/
 			_.$importVue?.Nprogress?.start?.();
 			try {
 				/* 源文件加载之后会有缓存，但是payload会有变化 */
@@ -1754,6 +1756,9 @@
 					ComponentOptions.parent = payload?.parent;
 				}
 				ComponentOptions.FILE_URL = resolvedURL;
+				if (_.isFunction(ComponentOptions.onLoadSFC)) {
+					ComponentOptions.onLoadSFC();
+				}
 				return ComponentOptions;
 			} catch (error) {
 				if (error == 404) {

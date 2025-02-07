@@ -334,6 +334,11 @@ body.x-app-body {
 	}
 }
 
+.el-auto-resizer {
+	width: 100%;
+	height: 100%;
+}
+
 .x-page-content-middle {
 	flex: 1;
 	height: 1px;
@@ -715,9 +720,17 @@ svg.pointer {
 		}
 	}
 }
+
+@keyframes rotating {
+	0% {
+		transform: rotateZ(0);
+	}
+
+	100% {
+		transform: rotateZ(360deg);
+	}
+}
 </style>
 <script lang="ts">
-export default async function () {
-	return {};
-}
+export default async function () {}
 </script>

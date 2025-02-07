@@ -2618,7 +2618,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 				$vSlots: {
 					default: ({ width, height }) => {
 						const xTableVirProps = {
-							staticClass: ["xDataGrid_table", PRIVATE_GLOBAL.x_ui_size].join(" "),
+							staticClass: ["xDataGrid_table", PRIVATE_GLOBAL.x_ui.size].join(" "),
 							attrs: { "data-table": vm._uid },
 							width,
 							height: this.getHeight(height),

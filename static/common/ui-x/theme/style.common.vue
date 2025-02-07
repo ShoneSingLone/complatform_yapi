@@ -1,3 +1,12 @@
+<script lang="ts">
+export default async function () {
+	return {
+		onLoadSFC() {
+			$(window).trigger("x_ui_theme_change");
+		}
+	};
+}
+</script>
 <style lang="less">
 @charset "utf-8";
 /* 默认风格，一旦引入，会影响界面主题 */
@@ -319,7 +328,3 @@ body,
 	flex-flow: column nowrap;
 }
 </style>
-
-<script lang="ts">
-export default async function () {}
-</script>

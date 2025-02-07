@@ -598,7 +598,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			pickerSize() {
-				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui.size;
 			},
 
 			pickerDisabled() {
