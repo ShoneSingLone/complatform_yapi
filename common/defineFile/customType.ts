@@ -365,6 +365,10 @@ Redis:{
 
 								
 								list:(...args:any)=> Promise<any>;
+								
+
+								
+								remove:(...args:any)=> Promise<any>;
 								 };
 project:{ 
 								
@@ -957,6 +961,22 @@ follow:{
 								
 								updateById:(...args:any)=> Promise<any>;
 								 };
+ChatFriend:{ 
+								
+								getName:(...args:any)=> Promise<any>;
+								
+
+								
+								getSchema:(...args:any)=> Promise<any>;
+								
+
+								
+								list_all:(...args:any)=> Promise<any>;
+								
+
+								
+								get:(...args:any)=> Promise<any>;
+								 };
 ChatApply:{ 
 								
 								getName:(...args:any)=> Promise<any>;
@@ -964,6 +984,14 @@ ChatApply:{
 
 								
 								getSchema:(...args:any)=> Promise<any>;
+								
+
+								
+								save:(...args:any)=> Promise<any>;
+								
+
+								
+								findOne:(...args:any)=> Promise<any>;
 								
 
 								

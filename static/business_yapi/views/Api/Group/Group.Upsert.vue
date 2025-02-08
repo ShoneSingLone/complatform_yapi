@@ -4,7 +4,7 @@
 		<xCard>
 			<xForm v-if="isUpdate">
 				<xItem :configs="form.currGroupName" span="full" />
-				<xItem :configs="form.currGroupDesc" span="full" />
+				<xItem :configs="form.currGroupDesc" span="full" class="mt" />
 				<xItem :configs="form.custom_field1_enable" />
 				<xItem :configs="form.custom_field1_name" />
 				<xRender :render="renderDeleteGroup" span="full" />

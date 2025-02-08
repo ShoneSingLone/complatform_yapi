@@ -7,7 +7,7 @@ export default async function () {
 	};
 	return [
 		_.$newRoute("/demo_test", "@/views/demo/test.vue"),
-		_.$newRoute("/user", "@/views/user/ViewUser.vue"),
+		_.$newRoute("/user", "@/views/User/ViewUser.vue"),
 		_.$newRoute("/i18n", "@/views/I18n/I18nLayout.vue", {
 			redirect: "/i18n/all",
 			children: [_.$newRoute("/i18n/all", "@/views/I18n/I18n.vue")]

@@ -191,7 +191,7 @@
 						optionsWrapper({
 							url,
 							method,
-							type:method,
+							type: method,
 							beforeSend,
 							xhrFields: {
 								responseType: "blob"

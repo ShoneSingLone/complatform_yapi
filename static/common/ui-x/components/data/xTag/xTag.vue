@@ -30,7 +30,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		},
 		computed: {
 			tagSize() {
-				return this.size || PRIVATE_GLOBAL.x_ui_size;
+				return this.size || PRIVATE_GLOBAL.x_ui.size;
 			},
 			cptStyle() {
 				const style = {

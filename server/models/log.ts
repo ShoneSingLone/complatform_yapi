@@ -91,6 +91,7 @@ class ModelLog extends ModelBase {
 			.limit(limit)
 			.exec();
 	}
+
 	listWithPagingByGroup(typeid, pidList, page, limit) {
 		page = parseInt(page);
 		limit = parseInt(limit);
@@ -112,6 +113,7 @@ class ModelLog extends ModelBase {
 			.limit(limit)
 			.exec();
 	}
+
 	listCountByGroup(typeid, pidList) {
 		return this.model.countDocuments({
 			$or: [
@@ -126,6 +128,7 @@ class ModelLog extends ModelBase {
 			]
 		});
 	}
+
 	listCount(typeid, type, selectValue) {
 		const params = {
 			type: type,

@@ -7,10 +7,10 @@ class ModelAudio extends ModelBase {
 
 	getSchema() {
 		return {
-			/* 申请人id */
-			user_id: Number,
-			/* 好友id */
-			friend_id: Number,
+			/* 用来搜索我提出的申请 */
+			uid: Number,
+			/* 用来搜索我收到的申请 */
+			friendId: Number,
 			/*  */
 			nickname: String,
 			/*  */
@@ -27,23 +27,31 @@ class ModelAudio extends ModelBase {
 		};
 	}
 
-	async paging({ page, size, name, uid }) {
-		name = name || ".*";
+	save(data) {
+		let apply = new this.model(data);
+		return apply.save();
+	}
 
+	async findOne({ uid, friendId, status }) {
+		return this.model.find({ uid, friendId, status }).exec();
+	}
+
+	async paging({ page, size, friendId }) {
 		const condition = {
-			friend_id: uid
+			friendId
 		};
 
 		if (page === 0 && size === -1) {
 			/* 查询所有 */
+			const list = await this.model
+				.find(condition)
+				.sort({
+					created_at: -1
+				})
+				.exec();
 			return {
-				list: await this.model
-					.find(condition)
-					.sort({
-						created_at: -1
-					})
-					.exec(),
-				total: await this.model.countDocuments(condition)
+				list,
+				total: list.length
 			};
 		} else {
 			/* 分页查询 */

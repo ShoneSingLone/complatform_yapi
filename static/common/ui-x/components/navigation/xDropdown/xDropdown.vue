@@ -68,7 +68,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 		computed: {
 			dropdownSize() {
-				return this.size || PRIVATE_GLOBAL.x_ui_size;
+				return this.size || PRIVATE_GLOBAL.x_ui.size;
 			}
 		},
 

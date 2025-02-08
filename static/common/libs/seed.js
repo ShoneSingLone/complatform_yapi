@@ -120,12 +120,12 @@
 		const [srcRoot] = src.split("/common/libs/seed");
 
 		const {
-			appName/*应用名称 */,
-			appEntryName/* 入口名称 */,
+			appName /*应用名称 */,
+			appEntryName /* 入口名称 */,
 			appVersion,
 			loadingImg,
 			appPrefix = "business_",
-			noNprogress/* 无加载伪进度条 */
+			noNprogress /* 无加载伪进度条 */
 		} = srcRootDom.dataset;
 
 		if (!appName) {
@@ -620,7 +620,7 @@
 					() => $("body").addClass("x-app-body")
 				],
 				[
-					"/common/libs/lodash.js",
+					"/common/libs/lodash.min.js",
 					null,
 					() => {
 						_.$$tags = $$tags;
@@ -638,7 +638,7 @@
 					}
 				],
 				["/common/libs/dayjs.js"],
-				["/common/libs/vue.js"],
+				["/common/libs/vue.min.js"],
 				["/common/libs/common.ts"],
 				["/common/libs/common.$.ajax.ts"]
 			]);
@@ -648,7 +648,6 @@
 			}
 
 			Vue.prototype._ = _;
-			Vue.prototype.$X_APP_THEME = $("html").attr("data-theme");
 
 			if (window._CURENT_IS_MOBILE) {
 				$("meta[name='viewport'").attr(
@@ -731,7 +730,8 @@
 		})();
 
 		/* setup */
-		!APP_NO_NPROGRESS && (_.$importVue.Nprogress = await _.$importVue("/common/libs/Nprogress.vue"));
+		!APP_NO_NPROGRESS &&
+			(_.$importVue.Nprogress = await _.$importVue("/common/libs/Nprogress.vue"));
 
 		const APP = await _.$importVue(
 			`${SRC_ROOT_PATH}/${APP_PREFIX}${APP_NAME}/${APP_ENTRY_NAME}.vue`

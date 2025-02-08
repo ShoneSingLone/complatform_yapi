@@ -41,7 +41,7 @@
 					</template>
 					<xIcon
 						v-if="showClear"
-						icon="close"
+						icon="circle-close"
 						class="el-input__icon el-input__suffix-inner_x-icon el-icon-circle-close el-input__clear"
 						@mousedown.prevent
 						@click="clear" />
@@ -221,7 +221,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return _.merge({}, this.textareaCalcStyle, { resize: this.resize });
 			},
 			inputSize() {
-				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui.size;
 			},
 			inputDisabled() {
 				return this.disabled || (this.elForm || {}).disabled;

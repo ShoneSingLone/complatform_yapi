@@ -84,7 +84,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				if (this.configs?.size) {
 					return this.configs.size;
 				}
-				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui_size;
+				return this.size || this._elFormItemSize || PRIVATE_GLOBAL.x_ui.size;
 			},
 			buttonDisabled() {
 				if (
