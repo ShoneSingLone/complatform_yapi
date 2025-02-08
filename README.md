@@ -4,11 +4,12 @@
 
 ## 特性
 
-提供公司局域网内后端服务的代理
-- 前端开发只需要代理到对应项目的mock地址
-- 后端开发可以针对接口提供mock数据、开发机环境、测试环境等
-    - ![alt text](docs/assets/img/image.png)
-    - ![alt text](docs/assets/img/image-1.png)
+提供公司局域网内部，代理后端服务
+- 前端开发人员只需要代理到对应项目的mock地址
+- 后端开发人员可以针对接口提供mock数据、开发机环境、测试环境等
+    - ![代理后端](docs/assets/img/image.png)
+
+    - ![mock数据](docs/assets/img/image-1.png)
 - 启用内网穿透，外网的同事也能如同本地开发一样访问本地服务
 
 ```mermaid
