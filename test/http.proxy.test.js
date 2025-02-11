@@ -1,7 +1,7 @@
 var http = require("http");
 var https = require("https");
 
-const _url = new URL("");
+const _url = new URL("http://kuwo.bfmzdx.cn/kuwo/search/searchMusicBykeyWord?key=%E7%8E%8B%E5%85%AB%E8%9B%8B&pn=0&cookie=");
 console.log(_url);
 
 const { hostname, pathname, port } = _url;

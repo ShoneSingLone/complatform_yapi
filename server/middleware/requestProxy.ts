@@ -175,7 +175,7 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 					}
 					/* default use http */
 					options = { method, headers };
-					return http.request(httpRequestOptions, options, onResponse);
+					return http.request(httpRequestOptions, onResponse);
 				} catch (error) {
 					console.error(error);
 				} finally {
@@ -196,7 +196,10 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 
 			HTTP_REQUEST.on("error", error => {
 				xU.applog.error(error);
-				resolve({ headers, body: { error, code: "Y_API_SERVER_500" } });
+				resolve({
+					headers,
+					body: { error, code: "Y_API_SERVER_500" }
+				});
 			});
 
 			return HTTP_REQUEST;
