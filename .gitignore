@@ -62,3 +62,4 @@ records.js
 server/records.course.js
 pnpm-lock.yaml
 package-lock.json
+pull.bat
