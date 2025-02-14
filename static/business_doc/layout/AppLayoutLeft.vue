@@ -4,11 +4,8 @@
 			<xInput v-model="filterText" placeholder="Search" clearable />
 			<xIcon icon="_icon_local" @click="local" class="pointer ml" />
 		</div>
-		<aside
-			:class="{
-				'x-sidebar-menu-wrapper flex vertical center': true,
-				hide: !isOpen
-			}">
+		<!-- aside.x-sidebar-menu-wrapper -->
+		<aside :class="cptSideMenuClass">
 			<div class="x-sidebar-menu" ref="menuWrapper">
 				<!-- <xMenuTree :data="menuList" :render="defaultRender" /> -->
 				<xMenuTreeItem
@@ -130,6 +127,14 @@ export default async function () {
 			this.local();
 		},
 		computed: {
+			cptSideMenuClass({ isOpen }) {
+				return [
+					"x-sidebar-menu-wrapper flex vertical center",
+					{
+						hide: !isOpen
+					}
+				];
+			},
 			menuList() {
 				return this.traverse({ menuArray: _.cloneDeep(MenuArray) });
 			},
@@ -198,5 +203,12 @@ export default async function () {
 <style lang="less">
 .menu-item-label {
 	font-size: 14px;
+}
+aside.x-sidebar-menu-wrapper {
+	.el-submenu {
+		.el-submenu__title {
+			padding: 0 var(--ui-one);
+		}
+	}
 }
 </style>

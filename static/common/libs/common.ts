@@ -5,6 +5,12 @@
 		console.log("common.js");
 	}
 
+	/* 调用window.location.reload(),附加reason */
+	_.$reloadWindow = function (message) {
+		console.log("🚀 ~ message:", message);
+		window.location.reload();
+	};
+
 	const PRIVATE_GLOBAL = new Proxy(
 		{},
 		{
@@ -1219,11 +1225,11 @@
 			_.$loading.count--;
 			if (_.$loading.count < 1) {
 				/* 延迟取消 */
-				var timmer = setTimeout(() => {
+				var timer = setTimeout(() => {
 					if (_.$loading.count < 1) {
 						$(selector).removeClass("x-loading");
 					} else {
-						clearTimeout(timmer);
+						clearTimeout(timer);
 					}
 				}, 400);
 				_.$loading.count = 0;
@@ -1591,6 +1597,7 @@
 				console.error(error);
 			}
 		};
+		_.$GenComponentOptions.optionsSets = new Set();
 
 		/**
 		 * 全局单例：同步
@@ -1640,7 +1647,7 @@
 		 * @param styleSourceCode
 		 */
 		_.$preprocessCssByless = async function (styleSourceCode) {
-			const { render } = await _.$appendScript("/common/libs/less.min.js", "less");
+			const { render } = await _.$appendScript("/common/libs/min/less.js", "less");
 			let cssContent = await new Promise(resolve => {
 				render(_.$resolveCssAssetsPath(styleSourceCode), {}, (error, cssContent) => {
 					if (error) {
@@ -1725,8 +1732,10 @@
 				return Promise.all(_.map(url, _url => _.$importVue(_url)));
 			}
 			const resolvedURL = _.$resolvePath(url);
+			_.$importVue.urlSets.add(url);
 			return _.$sfcVueObject({ resolvedURL, payload });
 		};
+		_.$importVue.urlSets = new Set();
 
 		_.$sfcVueObject = async function ({ resolvedURL, payload, sourceCode }) {
 			/* hmr使用sourceCode不用发请求获取源码， */

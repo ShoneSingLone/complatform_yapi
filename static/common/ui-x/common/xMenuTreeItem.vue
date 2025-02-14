@@ -157,7 +157,7 @@ export default async function () {
 										attrs: { icon: item?.icon }
 									}),
 									scopeSlotsDefault({ item }),
-									h("xGap", { attrs: { f: "" } }),
+									h("xGap", { vIf: isFolder, attrs: { f: "" } }),
 									h("xIcon", {
 										vIf: isFolder,
 										class: cptClassFolderIcon,
@@ -204,6 +204,9 @@ export default async function () {
 </script>
 
 <style lang="less">
+.xMenuTreeItem {
+}
+
 .xMenuTreeItem-submenu-wrapper {
 	display: flex;
 	align-items: center;

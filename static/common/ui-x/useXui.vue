@@ -31,7 +31,6 @@ export default async function ({
 			x_pagination_pagination_component || "PrivatePagination";
 		PRIVATE_GLOBAL.x_pagination_position = x_pagination_position || "end";
 	})();
-
 	/* @ts-ignore */
 	window._api = window._api || {};
 	/* @ts-ignore */
@@ -353,6 +352,48 @@ export default async function ({
 </script>
 
 <style lang="less">
+.el-upload-list--picture .el-progress {
+	position: relative;
+	top: -7px;
+}
+
+.el-upload-list--picture-card .el-progress {
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	bottom: auto;
+	width: 126px;
+}
+
+.el-upload-list--picture-card .el-progress .el-progress__text {
+	top: 50%;
+}
+.el-upload-list--picture-card .el-upload-list__item:hover .el-progress__text {
+	display: block;
+}
+
+.el-upload-list__item:hover .el-progress__text {
+	display: none;
+}
+
+.el-upload-list__item .el-progress {
+	position: absolute;
+	top: 20px;
+	width: 100%;
+}
+
+.el-upload-list__item .el-progress__text {
+	position: absolute;
+	right: 0;
+	top: -13px;
+}
+
+.el-upload-list__item .el-progress-bar {
+	margin-right: 0;
+	padding-right: 0;
+}
+
 .el-time-spinner__wrapper .el-scrollbar__wrap:not(.el-scrollbar__wrap--hidden-default) {
 	padding-bottom: 15px;
 }
@@ -438,6 +479,17 @@ export default async function ({
 	-webkit-box-direction: normal;
 }
 
+.el-backtop,
+.el-calendar-table td.is-today {
+	color: var(--el-color-primary);
+}
+
+.el-backtop,
+.el-page-header {
+	display: -webkit-box;
+	display: -ms-flexbox;
+}
+
 @keyframes v-modal-in {
 	0% {
 		opacity: 0;
@@ -465,6 +517,22 @@ export default async function ({
 	display: block;
 	-webkit-transform: translate(0, 0.5px);
 	transform: translate(0, 0.5px);
+}
+
+.el-progress-bar__inner::after,
+.el-row::after,
+.el-row::before,
+.el-slider::after,
+.el-slider::before,
+.el-slider__button-wrapper::after,
+.el-upload-cover::after {
+	content: "";
+}
+
+.el-image__error,
+.el-timeline-item__dot {
+	display: -webkit-box;
+	display: -ms-flexbox;
 }
 
 @keyframes v-modal-in {
