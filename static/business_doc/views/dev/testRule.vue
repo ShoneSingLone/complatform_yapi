@@ -41,28 +41,41 @@ export default async function () {
 						label: i18n("url2"),
 						rules: [
 							_rules.validator(({ val, xItem }) => {
+								if (!xItem.isShowTips) {
+									if (xItem.tipsHolder?.instance) {
+										xItem.tipsHolder.instance.options.visible = false;
+									}
+									return ""
+								}
 								return () => {
-									xItem.tipsHolder =
-										xItem.tipsHolder ||
-										h({
-											template: `<xIcon icon="exclamationMark" v-xtips="manual" class="ml4"/>`,
+									xItem.hideTips = xItem.hideTips || true;
+									xItem.tipsHolder = xItem.tipsHolder || h({ template: `<xIcon icon="exclamationMark" v-xtips="manual" class="ml4"/>`,
 											data(vm) {
 												return {
 													manual: {
-														content: () => hDiv([val]),
+														content: () => h({
+															template: '<div>{{state.val}}</div>',
+															setup() {
+																return {
+																	state:reactive({val})
+																}
+															}
+														}),
 														visible: true,
 														trigger: "manual",
 														placement: "right-end",
 														onMounted({ popoverVm }) {
-															xItem.tipsHolder.instance = popoverVm;
+															xItem.tipsHolder.popoverVm = popoverVm;
 														}
 													}
 												};
 											},
 											methods: {}
-										});
-									if (_.$val(xItem, "tipsHolder.instance")) {
-										xItem.tipsHolder.instance.options.content = val;
+									});
+
+									
+									if (_.$val(xItem, "tipsHolder.popoverVm")) {
+										xItem.tipsHolder.popoverVm.options.content = val;
 									}
 									return xItem.tipsHolder;
 								};

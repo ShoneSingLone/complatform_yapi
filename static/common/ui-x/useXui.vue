@@ -535,6 +535,11 @@ export default async function ({
 	display: -ms-flexbox;
 }
 
+.el-input__suffix,
+.el-tree.is-dragging .el-tree-node__content * {
+	pointer-events: none;
+}
+
 @keyframes v-modal-in {
 	0% {
 		opacity: 0;

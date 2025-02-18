@@ -73,7 +73,7 @@ async function loadHtmlEntry({ ctx, app, fileURI }) {
 	const $ = cheerio.load(indexHtmlString);
 	/* 添加版本号:每次重启服务 */
 	$("#src-root").attr("data-app-version", app._version);
-	$("#src-root").attr("src", "./common/libs/seed.js");
+	$("#src-root").attr("src", "./common/libs/min/seed.js");
 	return $;
 }
 
