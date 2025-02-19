@@ -690,6 +690,8 @@ module.exports = {
 						} else {
 							type = data.type;
 							dataBuffer = new Buffer(data.basecode, "base64");
+							const CONTENT_LENGTH = Buffer.byteLength(data.basecode);
+							ctx.set("Content-Length", CONTENT_LENGTH);
 						}
 
 						ctx.set("Content-type", type);

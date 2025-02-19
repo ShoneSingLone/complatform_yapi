@@ -22,7 +22,7 @@ const middlewareCORS = () => {
 				if (inCorsWhiteList) {
 					/* 允许在header中携带额外的字段 */
 					// ctx.set("Access-Control-Expose-Headers", "x_token");
-					ctx.url = ctx.url.replace(/^\/0/, "");
+					ctx.url = ctx.url.replace(/^\/1/, "");
 					return url;
 				} else {
 					console.log(chalk.blue.bgRed.bold(`not in cors.allow: `), ctx.href);
