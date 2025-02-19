@@ -352,6 +352,7 @@ export default async function ({
 </script>
 
 <style lang="less">
+<<<<<<< HEAD
 .el-form-item.is-error .el-input__inner,
 .el-form-item.is-error .el-input__inner:focus,
 .el-form-item.is-error .el-textarea__inner,
@@ -445,6 +446,8 @@ export default async function ({
 	-webkit-box-sizing: border-box;
 }
 
+=======
+>>>>>>> 17def74b063d06c470508ec5947cf5e5640d6391
 .el-upload-list--picture .el-progress {
 	position: relative;
 	top: -7px;
@@ -623,6 +626,7 @@ export default async function ({
 }
 
 .el-image__error,
+<<<<<<< HEAD
 .el-image__placeholder {
 	background: var(--el-fill-color-light);
 }
@@ -787,6 +791,8 @@ export default async function ({
 }
 
 .el-image__error,
+=======
+>>>>>>> 17def74b063d06c470508ec5947cf5e5640d6391
 .el-timeline-item__dot {
 	display: -webkit-box;
 	display: -ms-flexbox;

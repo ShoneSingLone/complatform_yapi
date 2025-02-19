@@ -712,7 +712,7 @@ module.exports = {
 							path: `${parentPath}/${name}`,
 							type: "SYSTEM_DIR",
 							size: 0,
-							fileId,
+							fileId: fileId || 0,
 							uploadBy: this.$uid,
 							add_time: xU.time(),
 							isdir: xU.var.FILE_DIR
