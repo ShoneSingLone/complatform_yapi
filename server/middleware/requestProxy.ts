@@ -175,7 +175,8 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 					}
 					/* default use http */
 					options = { method, headers };
-					return http.request(httpRequestOptions, onResponse);
+					return http.request(httpRequestOptions, options, onResponse);
+					// return http.request(httpRequestOptions, onResponse);
 				} catch (error) {
 					console.error(error);
 				} finally {

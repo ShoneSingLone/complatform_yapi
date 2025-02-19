@@ -1124,15 +1124,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	background-color: var(--el-fill-color-light);
 }
 
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
+.x-select-selected-icon {
 	position: absolute;
 	right: 20px;
-	font-family: element-icons;
-	content: "\e6da";
-	font-size: 12px;
-	font-weight: 700;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+	width: 12px;
+	// font-weight: 700;
+	height: 100%;
 }
 
 .el-select-dropdown {
