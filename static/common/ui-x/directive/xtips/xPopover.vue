@@ -282,14 +282,7 @@ export default async function () {
 .el-popover__reference:focus:not(.focusing) {
 	outline-width: 0;
 }
-<<<<<<< HEAD
 
-=======
-.el-popover,
-.el-time-panel {
-	-webkit-box-shadow: var(--normal-box-shadow);
-}
->>>>>>> 17def74b063d06c470508ec5947cf5e5640d6391
 .el-popover,
 .el-radio-button:first-child:last-child .el-radio-button__inner {
 	border-radius: var(--border-radius);
@@ -319,31 +312,4 @@ export default async function () {
 	line-height: 1;
 	margin-bottom: 12px;
 }
-<<<<<<< HEAD
-=======
-.el-dropdown .el-dropdown-selfdefine:focus:active,
-.el-dropdown .el-dropdown-selfdefine:focus:not(.focusing),
-.el-message__closeBtn:focus,
-.el-message__content:focus,
-.el-popover:focus,
-.el-popover:focus:active,
-.el-popover__reference:focus:hover,
-.el-popover__reference:focus:not(.focusing),
-.el-rate:active,
-.el-rate:focus,
-.el-tooltip:focus:hover,
-.el-tooltip:focus:not(.focusing),
-.el-upload-list__item.is-success:active,
-.el-upload-list__item.is-success:not(.focusing):focus {
-	outline-width: 0;
-}
-.el-popover,
-.el-time-panel {
-	-webkit-box-shadow: var(--normal-box-shadow);
-}
-.el-popover,
-.el-radio-button:first-child:last-child .el-radio-button__inner {
-	border-radius: var(--border-radius);
-}
->>>>>>> 17def74b063d06c470508ec5947cf5e5640d6391
 </style>
