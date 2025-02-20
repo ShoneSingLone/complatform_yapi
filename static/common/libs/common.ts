@@ -2151,16 +2151,31 @@
 
 		/**
 		 * 从数组中取第一个元素的value，如果数组为空则返回defaultValue
-		 * @param {*} options
+		 * @param {*} optionArray
 		 * @param {*} defaultValue
 		 * @returns
 		 */
-		_.$getFirstOrDefaultValue = function (options, defaultValue) {
+		_.$valuInArrayOrFirst = function (optionArray, obj) {
+			const [{ value, key }] = _.map(obj, (value, key) => ({ value, key }));
+			if (_.some(optionArray, item => item[key] === value)) {
+				return value;
+			} else {
+				return _.first(optionArray).value;
+			}
+		};
+
+		/**
+		 * 从数组中取第一个元素的value，如果数组为空则返回defaultValue
+		 * @param {*} optionArray
+		 * @param {*} defaultValue
+		 * @returns
+		 */
+		_.$getFirstOrDefaultValue = function (optionArray, defaultValue) {
 			if (defaultValue === undefined) {
 				alert("_.$getFirstOrDefaultValue miss defaultValue");
 			}
-			if (_.$isArrayFill(options)) {
-				return options[0].value;
+			if (_.$isArrayFill(optionArray)) {
+				return optionArray[0].value;
 			}
 			return defaultValue;
 		};

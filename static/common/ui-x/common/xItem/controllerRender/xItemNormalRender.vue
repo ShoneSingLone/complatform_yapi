@@ -147,19 +147,22 @@ export default async function () {
 						if (vm.errorTips) {
 							if (_.isString(vm.errorTips)) {
 								/* 默认 tooltips 弹窗 */
-								return h(
-									"xTooltip",
-									{
-										effect: "dark",
-										content: vm.errorTips,
-										placement: "top-end"
-									},
-									[
-										h("xIcon", {
-											icon: "exclamationMark",
-											staticClass: "xItem_error-msg ml4"
-										})
-									]
+								return hDiv(
+									{ class: "xItemerror-tips_wrapper flex middle" },
+									h(
+										"xTooltip",
+										{
+											effect: "dark",
+											content: vm.errorTips,
+											placement: "top-end"
+										},
+										[
+											h("xIcon", {
+												icon: "exclamationMark",
+												staticClass: "xItem_error-msg ml4"
+											})
+										]
+									)
 								);
 							} else {
 								return h("xRender", { render: vm.errorTips });
