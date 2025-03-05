@@ -23,7 +23,8 @@
 				const currentPath =
 					currentAbsolutePath
 						.split(INSERT_RESOURCE_ENTRY_PATH_PARENT)[1]
-						.replaceAll(SEP, "/") || "root";
+						.split(SEP)
+						.join("/") || "root";
 
 				const params = {
 					path: currentPath,
