@@ -98,7 +98,8 @@
 			if (!_item) {
 				const currentPath = currentAbsolutePath
 					.split(PREFIX)[1]
-					.replaceAll(SEP, "/");
+					.split(SEP)
+					.join("/");
 
 				const params = {
 					path: currentPath,
