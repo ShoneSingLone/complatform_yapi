@@ -1,5 +1,5 @@
 <template>
-	<img v-if="cptImg" :src="cptImgSrc" />
+	<img v-if="cptImg" :src="cptImgSrc" @click="handleClick" />
 	<svg
 		v-else
 		:data-icon-name="cptIconName"
@@ -58,7 +58,11 @@ export default async function () {
 				return this.cptHref === "#_svg_icon_loading";
 			},
 			cptImg() {
-				return _.$resolvePath(this.img || this.$attrs.img || "");
+				if (this.img) {
+					return _.$resolvePath(this.img || this.$attrs.img || "");
+				} else {
+					return "";
+				}
 			},
 			cptImgSrc({ iscache, cachedImgSrc, cptImg }) {
 				if (cachedImgSrc) {
@@ -66,7 +70,7 @@ export default async function () {
 				}
 
 				if (iscache && !cachedImgSrc) {
-					return "";
+					return cptImg;
 				}
 				return cptImg;
 			},

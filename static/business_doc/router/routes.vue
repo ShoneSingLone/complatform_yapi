@@ -171,6 +171,10 @@ export default async function () {
 							"@/views/component/data/pagination/pagination.vue"
 						),
 						_.$newRoute(
+							"/component/data/badge",
+							"@/views/component/data/badge/DemoBadge.vue"
+						),
+						_.$newRoute(
 							"/component/data/excalidraw",
 							"@/views/component/data/xExcalidraw/DemoExcalidraw.vue"
 						)

@@ -154,7 +154,7 @@ export default async function () {
 										{
 											effect: "dark",
 											content: vm.errorTips,
-											placement: "top-end"
+											placement: "right"
 										},
 										[
 											h("xIcon", {

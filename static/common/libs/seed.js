@@ -370,7 +370,7 @@
 			const key = camelCase(url);
 			let collection = $loadText.pending[key];
 
-			if ((typeof collection) === 'string') {
+			if (typeof collection === "string") {
 				return resolve(collection);
 			}
 
@@ -490,7 +490,6 @@
 		};
 		return $ensure;
 	})();
-
 
 	/**
 	 * 该函数用于在网页中动态添加脚本文件。它接受一个URL参数和一个全局名称参数，根据URL创建一个id，并检查是否已存在具有该id的script元素。如果不存在，它会创建一个新的script元素，设置其id和src属性，并添加到页面的body元素中。如果URL参数中包含路径，则使用该路径作为src属性值；否则，通过调用另一个函数获取脚本内容。无论使用哪种方式，加载脚本的过程都是异步的。如果指定了全局名称参数，则返回通过该名称访问到的值。
@@ -626,7 +625,7 @@
 		await (async (/* clearAssetsCacheByAppVersion */) => {
 			/* 如果没有配置或者配置了并且和缓存的版本不一致，则清除缓存 */
 			const NO_CACHE = !APP_VERSION;
-			const NOT_MATCH = APP_VERSION && (APP_VERSION !== (await $idb.get("APP_VERSION")));
+			const NOT_MATCH = APP_VERSION && APP_VERSION !== (await $idb.get("APP_VERSION"));
 
 			if (IS_DEV || NO_CACHE || NOT_MATCH) {
 				await $idb.clear();
@@ -634,82 +633,96 @@
 				window.APP_VERSION = APP_VERSION;
 			}
 
-
 			/* 预加载，等vue加载后赋值 */
 			_$loadText(`@/i18n/${I18N_LANGUAGE}.js`);
 
 			await _$asyncLoadOrderAppendScrips([
-				[COMMON_LIBS + "/jquery/jquery-3.7.0.min.js", null, () => $("body").addClass("x-app-body")],
-				[COMMON_LIBS + "/lodash.js", null, () => {
-					_.$$tags = $$tags;
-					_.$$id = $$id;
-					_.$val = $val;
-					_.$ensure = $ensure;
-					_.$appendScript = $appendScript;
-					_.$appendStyle = $appendStyle;
-					_.$resolveCssAssetsPath = $resolveCssAssetsPath;
-					_.$idb = $idb;
-					_.$resolveSvgIcon = $resolveSvgIcon;
-					_.$resolvePath = $resolvePath;
-					_.$loadText = _$loadText;
-					_.$asyncLoadOrderAppendScrips = _$asyncLoadOrderAppendScrips;
-					/**
-					 * 创建i18n 函数，可同时存在不同语言options的i18n对象
-					 * @param {*} lang zh-CN,对应i18n文件夹下的文件
-					 * @returns
-					 */
-					/* @typescriptDeclare (options: { lang: "zh-CN" | "en-US" }) => Promise<any> */
-					_.$newI18n = async function ({ lang }) {
-						/* @/i18n/zh-CN.js */
-						/* @/i18n/en-US.js */
-						let langOptionsString = await _.$loadText(`@/i18n/${lang}.js`);
-						langOptionsString = langOptionsString.replace("window.i18n.options = ", "");
-						const getLangOptionsFn = new Function(`return ${langOptionsString};`);
-						const langOptions = getLangOptionsFn();
-						const i18n = function (key, payload) {
-							if (key.length > 64) {
-								alert(`i18n key: 【${key}】 长度超过64，过长，建议重命名`);
-							}
-							/!*使用 {变量名} 赋值*!/;
-							_.templateSettings.interpolate = /{([\s\S]+?)}/g;
-							let temp = $val(langOptions, key);
-							if (_.isString(temp)) {
-								return _.template(temp)(payload);
-							} else {
-								return key;
-							}
+				[
+					COMMON_LIBS + "/jquery/jquery-3.7.0.min.js",
+					null,
+					() => $("body").addClass("x-app-body")
+				],
+				[
+					COMMON_LIBS + "/lodash.js",
+					null,
+					() => {
+						_.$$tags = $$tags;
+						_.$$id = $$id;
+						_.$val = $val;
+						_.$ensure = $ensure;
+						_.$appendScript = $appendScript;
+						_.$appendStyle = $appendStyle;
+						_.$resolveCssAssetsPath = $resolveCssAssetsPath;
+						_.$idb = $idb;
+						_.$resolveSvgIcon = $resolveSvgIcon;
+						_.$resolvePath = $resolvePath;
+						_.$loadText = _$loadText;
+						_.$asyncLoadOrderAppendScrips = _$asyncLoadOrderAppendScrips;
+						/**
+						 * 创建i18n 函数，可同时存在不同语言options的i18n对象
+						 * @param {*} lang zh-CN,对应i18n文件夹下的文件
+						 * @returns
+						 */
+						/* @typescriptDeclare (options: { lang: "zh-CN" | "en-US" }) => Promise<any> */
+						_.$newI18n = async function ({ lang }) {
+							/* @/i18n/zh-CN.js */
+							/* @/i18n/en-US.js */
+							let langOptionsString = await _.$loadText(`@/i18n/${lang}.js`);
+							langOptionsString = langOptionsString.replace(
+								"window.i18n.options = ",
+								""
+							);
+							const getLangOptionsFn = new Function(`return ${langOptionsString};`);
+							const langOptions = getLangOptionsFn();
+							const i18n = function (key, payload) {
+								if (key.length > 64) {
+									alert(`i18n key: 【${key}】 长度超过64，过长，建议重命名`);
+								}
+								/!*使用 {变量名} 赋值*!/;
+								_.templateSettings.interpolate = /{([\s\S]+?)}/g;
+								let temp = $val(langOptions, key);
+								if (_.isString(temp)) {
+									return _.template(temp)(payload);
+								} else {
+									return key;
+								}
+							};
+							i18n.langOptions = langOptions;
+
+							return i18n;
 						};
-						i18n.langOptions = langOptions;
 
-						return i18n;
-					};
-
-					if (IS_DEV || NO_CACHE || NOT_MATCH) {
-						try {
-							/* index.html页面带有preload的数据会首先加载并缓存，后续需要的时候直接使用 */
-							const preloadString = document.getElementById("preload")?.innerHTML || false;
-							if (preloadString) {
-								const getPreload = new Function(preloadString);
-								const preloadArray = getPreload();
-								preloadArray.forEach(url => $loadText(url));
-							}
-						} catch (error) { }
+						if (IS_DEV || NO_CACHE || NOT_MATCH) {
+							try {
+								/* index.html页面带有preload的数据会首先加载并缓存，后续需要的时候直接使用 */
+								const preloadString =
+									document.getElementById("preload")?.innerHTML || false;
+								if (preloadString) {
+									const getPreload = new Function(preloadString);
+									const preloadArray = getPreload();
+									preloadArray.forEach(url => $loadText(url));
+								}
+							} catch (error) {}
+						}
 					}
-				}
 				],
 				[COMMON_LIBS + "/dayjs.js"],
-				[COMMON_LIBS + "/vue.js", null, async () => {
-					/**
-					 *  国际化
-					 * @param {*} key
-					 * @param {*} payload
-					 * @returns
-					*/
-					const i18n = await _.$newI18n({ lang: I18N_LANGUAGE });
-					/* vue加载之后才能使用国际化属性 */
-					window.i18n = i18n;
-					Vue.prototype.i18n = i18n;
-				}],
+				[
+					COMMON_LIBS + "/vue.js",
+					null,
+					async () => {
+						/**
+						 *  国际化
+						 * @param {*} key
+						 * @param {*} payload
+						 * @returns
+						 */
+						const i18n = await _.$newI18n({ lang: I18N_LANGUAGE });
+						/* vue加载之后才能使用国际化属性 */
+						window.i18n = i18n;
+						Vue.prototype.i18n = i18n;
+					}
+				],
 				[COMMON_LIBS + "/common.ts"],
 				[COMMON_LIBS + "/common.$.ajax.ts"]
 			]);
@@ -745,7 +758,7 @@
 `
 			);
 		})();
-		
+
 		/* setup */
 		!APP_NO_NPROGRESS &&
 			(_.$importVue.Nprogress = await _.$importVue("/common/libs/Nprogress.vue"));

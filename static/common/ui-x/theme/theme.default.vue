@@ -175,6 +175,9 @@ each(@list, {
 	cursor: pointer;
 }
 
+.overflow-visible {
+	overflow: visible;
+}
 .overflow-hidden {
 	overflow: hidden;
 }
@@ -505,6 +508,14 @@ svg.pointer {
 	white-space: nowrap;
 }
 
+.position {
+	&.relative {
+		position: relative;
+	}
+	&.absolute {
+		position: absolute;
+	}
+}
 /* *****************************************transition********************************** */
 .fade-enter-active,
 .fade-leave-active {

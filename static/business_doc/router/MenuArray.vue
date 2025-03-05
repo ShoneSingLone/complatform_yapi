@@ -229,6 +229,11 @@ export default async function () {
 				},
 				{
 					icon: "icon_report",
+					label: `${i18n("Badge")} ${i18n("标记")}`,
+					href: "/component/data/badge"
+				},
+				{
+					icon: "icon_report",
 					label: `${i18n("Menu")} ${i18n("菜单")}`,
 					href: "/component/navigation/menu"
 				},

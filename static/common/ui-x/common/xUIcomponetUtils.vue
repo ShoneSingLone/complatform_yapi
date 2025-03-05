@@ -806,7 +806,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		return _.isArray(listLike) ? listLike.reduce(sumReducer, 0) : listLike;
 	};
 	const tryCall = (fLike, params, defaultRet = {}) => {
-		return _.isFunction(fLike) ? fLike(params) : fLike ?? defaultRet;
+		return _.isFunction(fLike) ? fLike(params) : (fLike ?? defaultRet);
 	};
 	const enforceUnit = (style = {}) => {
 		if (_.isArray(style)) {
