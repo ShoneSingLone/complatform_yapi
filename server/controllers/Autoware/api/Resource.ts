@@ -6,17 +6,11 @@ const path = require("path");
 const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
 const { TARGET_PREFIX } = xU;
+const { returnBase64Body, isAudioType } = require("./Resource.service");
 
 let types = {};
 
 let DEFAULT_NOT_FOUND_IMG;
-function returnBase64Body(basecode) {
-	if (basecode.indexOf("base64") > -1) {
-		return new Buffer(basecode.split("base64")[1], "base64");
-	} else {
-		return new Buffer(basecode, "base64");
-	}
-}
 
 module.exports = {
 	definitions: {
@@ -1139,70 +1133,4 @@ async function ifUploadAllChunckMergeIt({
 			return false;
 		}
 	}
-}
-
-/**
- * 判断给定路径是文件还是目录，并返回对应信息
- * @param fileOrDirPath 目标目录名或文件名。
- * @param absolutePathPrefix 相对或绝对的基础路径。
- * @param relativePathArray 记录路径的数组，用于构建返回结果中的路径信息。
- * @returns 返回一个对象，包含文件或目录的类型、路径和名称；如果路径不存在或无法访问，则返回undefined；如果路径是音频文件，返回特定的音频信息。
- */
-async function asyncResolvePathFileOrDir(
-	fileOrDirPath,
-	absolutePathPrefix,
-	relativePathArray
-) {
-	const absolutePath = path.resolve(absolutePathPrefix, fileOrDirPath); // 将基础路径和目录名解析为绝对路径
-	let stat;
-	try {
-		stat = await fs.promises.stat(absolutePath); // 尝试获取绝对路径的文件状态
-	} catch (error) {} // 忽略可能发生的错误，如果没有找到文件或目录，则stat将为undefined
-
-	if (!stat) {
-		return; // 如果无法获取文件状态，函数直接返回undefined
-	}
-
-	// 判断目标是目录还是文件，并返回相应的信息
-	if (stat.isDirectory()) {
-		return {
-			type: "directory",
-			path: [...relativePathArray, fileOrDirPath],
-			name: fileOrDirPath
-		};
-	}
-	if (stat.isFile()) {
-		const type = getType(absolutePath); // 获取文件类型
-		if (isAudioType(type)) {
-			// 如果文件是音频类型
-			// 此处注释掉的代码是获取音频记录的逻辑，但实际代码已被省略
-			return {
-				type: "audio",
-				path: [...relativePathArray, fileOrDirPath],
-				name: fileOrDirPath
-			};
-		}
-		if (isVideoType(type)) {
-			return {
-				type: "video",
-				path: [...relativePathArray, fileOrDirPath],
-				name: fileOrDirPath
-			};
-		}
-		types[type] = type;
-		console.log("🚀 ~ type:", JSON.stringify(types, null, 2));
-	}
-
-	return null; // 如果不是目录也不是音频文件，则返回null
-}
-
-function isAudioType(type) {
-	return (
-		/^audio/.test(type) ||
-		["audio/mpeg", "audio/x-flac", "audio/mp4"].includes(type)
-	);
-}
-function isImageType(type) {}
-function isVideoType(type) {
-	return ["video/mp4"].includes(type);
 }

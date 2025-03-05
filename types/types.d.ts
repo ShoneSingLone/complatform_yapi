@@ -5,6 +5,8 @@ declare global {
 	var xU: t_xU;
 
 	var yapi_configs: {
+		INSERT_RESOURCE_ENTRY_PATH: string;
+		INSERT_RESOURCE_ENTRY_PATH_PARENT: string;
 		RESOURCE_ASSETS_REMOTE: string;
 		passsalt?: string;
 		isCloseRegister?: boolean;

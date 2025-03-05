@@ -7,98 +7,23 @@
 	const SparkMD5 = getSparkMD5(undefined);
 	const { getType } = require("mime");
 	const { _n } = require("@ventose/utils-node");
-	const ENTRY_PATH = "/media/shone/Elements/resource/Course";
-	const PREFIX = "/media/shone/Elements/resource";
+
+	const { INSERT_RESOURCE_ENTRY_PATH, INSERT_RESOURCE_ENTRY_PATH_PARENT } =
+		yapi_configs;
+
 	const uploadBy = "1";
 	const SEP = path.sep;
 	let count = 0;
-	let cachefilepath = "/media/shone/Elements/resource/course.cache.js";
-	try {
-		const res = require(_n.pathR(cachefilepath));
-		[files, cacheMap] = res;
-	} catch (error) {
-		debugger;
-	}
-
-	async function main() {
-		async function ensure_dir_exit() {
-			const [dirs, files] = await _n.asyncAllDirAndFile([_n.pathR(ENTRY_PATH)]);
-			let fullPath;
-			while ((fullPath = dirs.pop())) {
-				await ensureDir(fullPath);
-				console.clear();
-				console.log(fullPath, count++);
-			}
-			fs.writeFileSync(
-				_n.pathR(cachefilepath),
-				`module.exports=${JSON.stringify([files, cacheMap])}`
-			);
-		}
-
-		// await ensure_dir_exit();
-
-		async function insert_files() {
-			let file;
-			while ((file = files.pop())) {
-				let params;
-				try {
-					const filePath = file;
-					const [isExit] = await orm.Resource.search({
-						path: filePath,
-						uploadBy
-					});
-
-					if (isExit) {
-						continue;
-					}
-
-					const fileArray = file.split(SEP);
-					const _p = _n.dropRight(fileArray).join(SEP);
-					const parentItem = cacheMap[_p];
-					if (!parentItem) {
-						debugger;
-					}
-					const { _id: fileId } = parentItem;
-					const fileBlob = fs.readFileSync(filePath);
-					const md5 = SparkMD5.ArrayBuffer.hash(fileBlob);
-					const stat = await fs.promises.stat(filePath);
-
-					const ext = xU.path.extname(filePath);
-					params = {
-						name: xU.path.basename(filePath),
-						ext,
-						size: stat.size,
-						type: getType(filePath) || ext || "unknow",
-						useFor: "CloudDisk",
-						md5,
-						path: filePath,
-						uploadBy,
-						add_time: xU.time(),
-						isdir: 0,
-						fileId
-					};
-					await orm.Resource.save(params);
-					console.log("file", params.name);
-				} catch (error) {
-					console.log(params, error);
-				}
-			}
-		}
-
-		await insert_files();
-		throw new Error("EOF");
-	}
-
-	main();
 
 	async function ensureDir(currentAbsolutePath) {
 		let item = await (async () => {
 			/* 1.缓存 */
 			let _item = cacheMap[currentAbsolutePath];
 			if (!_item) {
-				const currentPath = currentAbsolutePath
-					.split(PREFIX)[1]
-					.replaceAll(SEP, "/");
+				const currentPath =
+					currentAbsolutePath
+						.split(INSERT_RESOURCE_ENTRY_PATH_PARENT)[1]
+						.replaceAll(SEP, "/") || "root";
 
 				const params = {
 					path: currentPath,
@@ -108,16 +33,25 @@
 				[_item] = await orm.Resource.search(params);
 				if (!_item) {
 					/* 3.创建目录 */
-					const name = currentAbsolutePath.split(PREFIX)[1].split(SEP).pop();
+					// const name = currentAbsolutePath .split(INSERT_RESOURCE_ENTRY_PATH_PARENT)[1] .split(SEP);
+					const name = path.basename(currentAbsolutePath);
+
 					const parentItem = await (() => {
-						const parent = currentAbsolutePath.split(PREFIX)[1].split(SEP);
+						const [, relativePath] = currentAbsolutePath.split(
+							INSERT_RESOURCE_ENTRY_PATH_PARENT
+						);
+						const parent = relativePath.split(SEP);
 						parent.pop();
+						// const parent = path.dirname(currentAbsolutePath);
 						if (parent.length === 0) {
 							return { _id: "0" };
 						} else {
-							return ensureDir(`${PREFIX}${parent.join(SEP)}`);
+							return ensureDir(
+								`${INSERT_RESOURCE_ENTRY_PATH_PARENT}${parent.join(SEP)}`
+							);
 						}
 					})();
+
 					const resourceInfo = {
 						name: name,
 						ext: "SYSTEM_DIR",
@@ -129,6 +63,7 @@
 						add_time: xU.time(),
 						isdir: xU.var.FILE_DIR
 					};
+
 					_item = await orm.Resource.save(resourceInfo);
 				}
 			}
@@ -137,6 +72,80 @@
 		cacheMap[currentAbsolutePath] = { _id: item._id };
 		return item;
 	}
+
+	async function insert_files({ filePath }) {
+		let params;
+		try {
+			const [isExit] = await orm.Resource.search({
+				path: filePath,
+				uploadBy
+			});
+
+			if (isExit) {
+				return;
+			}
+
+			const fileArray = filePath.split(SEP);
+			const _p = _n.dropRight(fileArray).join(SEP);
+			const parentItem = cacheMap[_p];
+
+			if (!parentItem) {
+			}
+			const { _id: fileId } = parentItem;
+			const fileBlob = fs.readFileSync(filePath);
+			const md5 = SparkMD5.ArrayBuffer.hash(fileBlob);
+			const stat = await fs.promises.stat(filePath);
+
+			const ext = xU.path.extname(filePath);
+			params = {
+				name: xU.path.basename(filePath),
+				ext,
+				size: stat.size,
+				type: getType(filePath) || ext || "unknow",
+				useFor: "CloudDisk",
+				md5,
+				path: filePath,
+				uploadBy,
+				add_time: xU.time(),
+				isdir: 0,
+				fileId
+			};
+			await orm.Resource.save(params);
+			console.log("file", params.name);
+		} catch (error) {
+			console.log(params, error);
+		}
+	}
+
+	async function scanFolder({ folderPath }) {
+		try {
+			await ensureDir(folderPath);
+			// 读取文件夹内容
+			const items = fs.readdirSync(folderPath);
+
+			let item;
+			// 遍历所有文件和文件夹
+			while ((item = items.shift())) {
+				const subDirPath = path.join(folderPath, item);
+				const stats = fs.statSync(subDirPath);
+
+				if (stats.isDirectory()) {
+					// 如果是文件夹，递归遍历
+					await scanFolder({
+						folderPath: subDirPath
+					});
+				} else {
+					// 如果是文件，调用回调函数处理
+					await insert_files({ filePath: subDirPath });
+				}
+			}
+			throw new Error("EOF");
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	scanFolder({ folderPath: INSERT_RESOURCE_ENTRY_PATH });
 })();
 
 function getSparkMD5(undefined) {
