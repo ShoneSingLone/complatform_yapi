@@ -39,10 +39,10 @@ export default async function () {
 				el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName &&
 				vnode.context[el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName]
 			) {
-				vnode.context[el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName]();
+				vnode.context[el[EVENT_CLICK_OUTSIDE_CONTEXT].methodName]({ mouseup, mousedown });
 			} else {
 				el[EVENT_CLICK_OUTSIDE_CONTEXT].bindingFn &&
-					el[EVENT_CLICK_OUTSIDE_CONTEXT].bindingFn();
+					el[EVENT_CLICK_OUTSIDE_CONTEXT].bindingFn({ mouseup, mousedown });
 			}
 		};
 	}

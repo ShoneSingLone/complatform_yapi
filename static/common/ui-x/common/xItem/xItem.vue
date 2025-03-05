@@ -596,6 +596,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	min-width: 1px;
 
 	.xItem-label-controller {
+		position: relative;
 		display: flex;
 		flex-flow: var(--xItem-flex-flow, row nowrap);
 		justify-content: var(--xItem-layout-justify-content, center);

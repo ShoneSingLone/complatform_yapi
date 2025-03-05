@@ -20,7 +20,9 @@ async function scanAllAutowareController(app) {
 					const BASE_PATH = String(file)
 						.replace(AUTOWARE_ROOT_DIR, "")
 						.replace(FILE_NAME, "")
-						.replaceAll(xU.path.sep, "");
+						.split(xU.path.sep)
+						.join("");
+
 					const [controllerName, ext] = String(FILE_NAME).split(".");
 					if (controllerName && ext === "ts") {
 						_autoControllers.push([file, controllerName, BASE_PATH]);

@@ -267,7 +267,6 @@
 	color: var(--el-text-color-disabled);
 }
 
-
 .el-cascader-menu__hover-zone {
 	position: absolute;
 	top: 0;

@@ -25,6 +25,75 @@
 		}
 	);
 
+	/**
+	 * 字符串脱敏处理函数
+	 * @param {string} str - 需要脱敏的字符串
+	 * @param {string} type - 脱敏类型：'phone'|'email'|'idcard'|'name'|'custom'
+	 * @param {object} options - 自定义脱敏选项
+	 * @param {number} options.start - 保留开始位数
+	 * @param {number} options.end - 保留结束位数
+	 * @param {string} options.mask - 掩码字符
+	 * @returns {string} 脱敏后的字符串
+	 */
+	/* @typescriptDeclare (str: any, type?: string, options?: object)=>string*/
+	_.$desensitize = function (str, type = "custom", options = {}) {
+		if (!str) return str;
+
+		const defaultMask = "*";
+		let start = 0;
+		let end = 0;
+		let mask = options.mask || defaultMask;
+
+		switch (type) {
+			case "phone": // 手机号脱敏：保留前3后4
+				start = 3;
+				end = 4;
+				break;
+			case "email": // 邮箱脱敏：保留@前3位和@后所有
+				const atIndex = str.indexOf("@");
+				if (atIndex > -1) {
+					return (
+						str.substring(0, Math.min(3, atIndex)) +
+						mask.repeat(Math.max(0, atIndex - 3)) +
+						str.substring(atIndex)
+					);
+				}
+				start = 3;
+				end = 4;
+				break;
+			case "idcard": // 身份证号脱敏：保留前4后4
+				start = 4;
+				end = 4;
+				break;
+			case "name": // 姓名脱敏：保留姓
+				start = 1;
+				end = 0;
+				break;
+			case "custom": // 自定义脱敏
+				start = options.start || 0;
+				end = options.end || 0;
+				break;
+		}
+
+		const length = str.length;
+		const maskLength = Math.max(0, length - start - end);
+
+		return str.substring(0, start) + mask.repeat(maskLength) + str.substring(length - end);
+	};
+
+	// 使用示例：
+	/*
+console.log(desensitize('13812345678', 'phone'))               // 138****5678
+console.log(desensitize('test@example.com', 'email'))          // tes*@example.com
+console.log(desensitize('440123199001011234', 'idcard'))      // 4401**********1234
+console.log(desensitize('张三丰', 'name'))                     // 张**
+console.log(desensitize('abcdefgh', 'custom', {
+    start: 2,
+    end: 2,
+    mask: '#'
+}))                                                           // ab####gh
+*/
+
 	/* @typescriptDeclare (paramName: any): string */
 	_.$getRawQueryParamFromSearch = function getRawQueryParamFromSearch(paramName) {
 		// 获取查询字符串部分
@@ -1893,6 +1962,22 @@
 	}
 
 	/**
+	 * 通过ID获取xItem的vm实例
+	 * @param id
+	 * @returns Vue实例
+	 */
+	/* @typescriptDeclare (idName:string)=>Promise<[msg,vm][]> */
+	_.$xItemVmById = function (id) {
+		const itemDom = document.getElementById(id);
+		const { formItemId } = itemDom?.dataset || {};
+		if (formItemId) {
+			return Vue._X_ITEM_VM_S[formItemId];
+		} else {
+			return null;
+		}
+	};
+
+	/**
 	 * TODO: isHide的元素不需要校验
 	 *
 	 * @param {any} selector  满足jQuery能选出来就行 form#表单的包裹元素，校验元素内的所有控件
@@ -2151,16 +2236,31 @@
 
 		/**
 		 * 从数组中取第一个元素的value，如果数组为空则返回defaultValue
-		 * @param {*} options
+		 * @param {*} optionArray
 		 * @param {*} defaultValue
 		 * @returns
 		 */
-		_.$getFirstOrDefaultValue = function (options, defaultValue) {
+		_.$valuInArrayOrFirst = function (optionArray, obj) {
+			const [{ value, key }] = _.map(obj, (value, key) => ({ value, key }));
+			if (_.some(optionArray, item => item[key] === value)) {
+				return value;
+			} else {
+				return _.first(optionArray).value;
+			}
+		};
+
+		/**
+		 * 从数组中取第一个元素的value，如果数组为空则返回defaultValue
+		 * @param {*} optionArray
+		 * @param {*} defaultValue
+		 * @returns
+		 */
+		_.$getFirstOrDefaultValue = function (optionArray, defaultValue) {
 			if (defaultValue === undefined) {
 				alert("_.$getFirstOrDefaultValue miss defaultValue");
 			}
-			if (_.$isArrayFill(options)) {
-				return options[0].value;
+			if (_.$isArrayFill(optionArray)) {
+				return optionArray[0].value;
 			}
 			return defaultValue;
 		};
