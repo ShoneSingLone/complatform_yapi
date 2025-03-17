@@ -214,7 +214,6 @@ export default async function () {
 	};
 }
 </script>
-
 <style lang="less">
 .xIcon {
 	display: inline-block;

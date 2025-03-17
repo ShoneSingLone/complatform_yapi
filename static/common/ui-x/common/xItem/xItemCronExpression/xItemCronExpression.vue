@@ -1,4 +1,3 @@
-<style lang="less"></style>
 <template>
 	<div class="flex middle">
 		<xInput v-model="mixin_value" />

@@ -304,10 +304,12 @@ export default async function () {
 						label: i18n("BackupJSON"),
 						value: path || "--",
 						xItemRender: () => {
+							return "";
+							return hDiv(this.cptBackupData);
 							if (this.cptBackupData) {
 								return h("xMd", { md: this.cptBackupData });
 							} else {
-								return hDiv("");
+								return hDiv(this.cptBackupData);
 							}
 						}
 					},

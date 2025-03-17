@@ -1,4 +1,3 @@
-<style lang="less"></style>
 <template>
 	<table
 		cellspacing="0"

@@ -18,7 +18,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	};
 }
 </script>
-
 <style lang="less">
 @charset "utf-8";
 

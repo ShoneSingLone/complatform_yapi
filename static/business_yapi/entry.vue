@@ -27,10 +27,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				size: "small",
 				I18N_LANGUAGE: window.I18N_LANGUAGE,
 				x_table_vir_empty_component_icon: "_no_data"
-			}),
-			_.$importVue("/common/ui-element/useElementUI.NoJS.vue", {
-				size: "small",
-				I18N_LANGUAGE: window.I18N_LANGUAGE
 			})
 		]),
 		_.$importVue([

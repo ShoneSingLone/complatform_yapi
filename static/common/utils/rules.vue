@@ -188,7 +188,7 @@ export default async function () {
 				};
 			},
 			email: options => {
-				const msg = options?.msg || i18n("请输入Email");
+				const msg = _.$val(options, "msg") || i18n("请输入Email");
 
 				return {
 					name: "email",
@@ -217,7 +217,7 @@ export default async function () {
 						let msg = "";
 
 						if (String(val).length > size) {
-							msg = i18n("ruleMsgWordLessThan", { size });
+							msg = i18n("form.rules.msg.wordLessThan", { size });
 						}
 						/* 返回提示信息即error */
 						/* 返回""为success */
@@ -387,7 +387,7 @@ export default async function () {
 					name: "required",
 					async validator({ val, xItem }) {
 						const record = [];
-						let rows = xItem.configs?.payload?.row || {};
+						let rows = _.$val(xItem, "configs.payload.row") || {};
 						for (let key of rowArray) {
 							record.push(rows[key]);
 						}
@@ -413,7 +413,7 @@ export default async function () {
 					name: "required",
 					async validator({ val, xItem }) {
 						const record = [];
-						let rows = xItem.configs?.payload?.row || {};
+						let rows = _.$val(xItem, "configs.payload.row") || {};
 						for (let key of rowArray) {
 							record.push(rows[key]);
 						}

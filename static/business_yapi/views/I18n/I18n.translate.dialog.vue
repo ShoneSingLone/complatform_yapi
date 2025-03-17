@@ -8,7 +8,7 @@
 			<xTableVir class="mt" :columns="configsTable.columns" :data="configsTable.data.list" />
 		</div>
 		<template #footer>
-			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("cancel") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
@@ -88,7 +88,7 @@ Total：${listData.length}
 			btnOk() {
 				const vm = this;
 				return {
-					label: i18n("确定"),
+					label: i18n("ok"),
 					preset: "blue",
 					async onClick() {
 						refreshTableData();

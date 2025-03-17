@@ -1,4 +1,3 @@
-<style lang="less"></style>
 <template>
 	<table @click="handleMonthTableClick" @mousemove="handleMouseMove" class="el-month-table">
 		<tbody>
@@ -108,6 +107,7 @@ export default async function () {
 					"nov",
 					"dec"
 				],
+
 				tableRows: [[], [], []],
 				lastRow: null,
 				lastColumn: null

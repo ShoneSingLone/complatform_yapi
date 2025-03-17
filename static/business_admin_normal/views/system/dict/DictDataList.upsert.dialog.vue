@@ -14,7 +14,7 @@
 		</xCard>
 		<template #footer>
 			<xBtn :configs="btnOk" />
-			<xBtn @click="closeModal">{{ i18n("取消") }}</xBtn>
+			<xBtn @click="closeModal">{{ i18n("cancel") }}</xBtn>
 		</template>
 	</xDialog>
 </template>
@@ -42,7 +42,7 @@ export default async function ({ row, onClick, DICT_TYPE }) {
 		},
 		{
 			value: "info",
-			label: i18n("信息")
+			label: i18n("message")
 		},
 		{
 			value: "warning",
@@ -151,7 +151,7 @@ export default async function ({ row, onClick, DICT_TYPE }) {
 			btnOk() {
 				const vm = this;
 				return {
-					label: i18n("确定"),
+					label: i18n("ok"),
 					preset: "blue",
 					async onClick() {
 						vm.onClickOk();
