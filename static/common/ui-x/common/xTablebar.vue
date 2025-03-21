@@ -12,7 +12,6 @@
 		</div>
 	</div>
 </template>
-
 <script lang="ts">
 export default async function () {
 	return defineComponent({
@@ -22,7 +21,7 @@ export default async function () {
 				const vm = this;
 
 				return {
-					label: i18n("查询"),
+					label: i18n("search"),
 					preset: "primary",
 					isHide() {
 						return !vm.isShowInquire;
@@ -47,19 +46,18 @@ export default async function () {
 				};
 			},
 			isShowReset() {
-				return !!this?.configs?.isShowReset;
+				return !!_.$val(this, "configs.isShowReset");
 			},
 			isShowInquire() {
-				return !this?.configs?.isHideQuery;
+				return !_.$val(this, "configs.isHideQuery");
 			},
 			isShowFilter() {
-				return !this?.configs?.isHideFilter;
+				return !_.$val(this, "configs.isHideFilter");
 			}
 		}
 	});
 }
 </script>
-
 <style lang="less">
 .oprations-tab {
 	display: flex;

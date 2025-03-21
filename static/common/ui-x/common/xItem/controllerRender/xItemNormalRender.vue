@@ -28,7 +28,7 @@ export default async function () {
 			},
 			value: vm.p_value,
 			on: vm.p_listeners,
-			/* 监听配置项变化 */
+			/* 监听配置项变化,需要主动调用 */
 			onConfigschange: configs => {
 				_.each(configs, (value, prop) => {
 					vm.$set(vm.configs, prop, value);
@@ -42,6 +42,7 @@ export default async function () {
 		const xItemWrapperProps = {
 			vIf: !vm.cpt_isHide,
 			staticClass: "xItem-wrapper flex vertical",
+			class: CONFIGS.class || {},
 			attrs: {
 				"data-form-item-selector": CONFIGS.selector || "",
 				"data-form-item-type": vm.itemType,
@@ -68,20 +69,20 @@ export default async function () {
 
 		const controllerChildren = [h(vm.itemType, xItem_controllerProps)];
 
-		if (CONFIGS?.itemSlots?.beforeController) {
+		if (_.$val(CONFIGS, "itemSlots.beforeController")) {
 			controllerChildren.unshift(
 				/* beforeController插槽 */
 				h("xRender", {
-					render: CONFIGS?.itemSlots?.beforeController,
+					render: _.$val(CONFIGS, "itemSlots.beforeController"),
 					payload: { xItem: vm }
 				})
 			);
 		}
-		if (CONFIGS?.itemSlots?.afterController) {
+		if (_.$val(CONFIGS, "itemSlots.afterController")) {
 			controllerChildren.push(
 				/* afterController插槽 */
 				h("xRender", {
-					render: CONFIGS?.itemSlots?.afterController,
+					render: _.$val(CONFIGS, "itemSlots.afterController"),
 					payload: { xItem: vm }
 				})
 			);

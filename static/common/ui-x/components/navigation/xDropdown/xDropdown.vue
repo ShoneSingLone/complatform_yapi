@@ -335,6 +335,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							value: hide
 						}
 					],
+
 					attrs: {
 						"aria-disabled": disabled
 					}

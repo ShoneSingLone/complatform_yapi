@@ -60,7 +60,7 @@
 				response = responseInjector(response);
 				if (_.isPlainObject(response)) {
 					/* 兼容 */
-					const errcode = response?.errcode || response?.code;
+					const errcode = response && (response.errcode || response.code);
 
 					if (errcode) {
 						if (errorCodeArray.includes(errcode)) {
@@ -68,7 +68,7 @@
 							return;
 						}
 					}
-					if (response?.status) {
+					if (response && response.status) {
 						if (errorCodeArray.includes(response.status)) {
 							const { body, message } = response || {};
 							reject(body || message);
@@ -216,7 +216,7 @@
 										let header = xhr.getResponseHeader("content-disposition");
 
 										let fileName = (() => {
-											const kvStrArray = header?.split(";") || [];
+											const kvStrArray = (header && header.split(";")) || [];
 											const kvObject = _.reduce(
 												kvStrArray,
 												(keyVal, keyvalString) => {

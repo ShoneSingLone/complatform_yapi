@@ -11,7 +11,10 @@ export default async function () {
 		.on("mouseup", e => {
 			nodeList.forEach(node => {
 				try {
-					node[EVENT_CLICK_OUTSIDE_CONTEXT]?.documentHandler?.(e, startClick);
+					_.$callFn(node, `${EVENT_CLICK_OUTSIDE_CONTEXT}.documentHandler`)(
+						e,
+						startClick
+					);
 				} catch (error) {
 					console.log("error:", error);
 				}
@@ -95,4 +98,3 @@ export default async function () {
 	});
 }
 </script>
-<style lang="less"></style>

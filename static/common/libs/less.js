@@ -261,6 +261,7 @@
 				"charsetLookup",
 				"getSourceMapGenerator"
 			];
+
 			var requiredFunctions = [];
 			var functions = requiredFunctions.concat(optionalFunctions);
 			for (var i = 0; i < functions.length; i++) {
@@ -584,10 +585,10 @@
 		};
 		Node.compare = function (a, b) {
 			/* returns:
-           -1: a < b
-           0: a = b
-           1: a > b
-           and *any* other value for a != b (e.g. undefined, NaN, -2 etc.) */
+              -1: a < b
+              0: a = b
+              1: a > b
+              and *any* other value for a != b (e.g. undefined, NaN, -2 etc.) */
 			if (
 				a.compare &&
 				// for "symmetric results" force toCSS-based comparison
@@ -1057,19 +1058,19 @@
 	}
 
 	/*! *****************************************************************************
-  Copyright (c) Microsoft Corporation. All rights reserved.
-  Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-  this file except in compliance with the License. You may obtain a copy of the
-  License at http://www.apache.org/licenses/LICENSE-2.0
-
-  THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-  WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-  MERCHANTABLITY OR NON-INFRINGEMENT.
-
-  See the Apache Version 2.0 License for specific language governing permissions
-  and limitations under the License.
-  ***************************************************************************** */
+   Copyright (c) Microsoft Corporation. All rights reserved.
+   Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+   this file except in compliance with the License. You may obtain a copy of the
+   License at http://www.apache.org/licenses/LICENSE-2.0
+  
+   THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+   WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+   MERCHANTABLITY OR NON-INFRINGEMENT.
+  
+   See the Apache Version 2.0 License for specific language governing permissions
+   and limitations under the License.
+   ***************************************************************************** */
 
 	function __spreadArrays() {
 		for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
@@ -1846,8 +1847,8 @@
 		}
 	};
 	/*
-   parse is used whilst parsing
-   */
+    parse is used whilst parsing
+    */
 	var parseCopyProperties = [
 		// options
 		"paths",
@@ -3361,19 +3362,19 @@
 	});
 
 	/*! *****************************************************************************
-  Copyright (c) Microsoft Corporation.
-
-  Permission to use, copy, modify, and/or distribute this software for any
-  purpose with or without fee is hereby granted.
-
-  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-  PERFORMANCE OF THIS SOFTWARE.
-  ***************************************************************************** */
+   Copyright (c) Microsoft Corporation.
+  
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted.
+  
+   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+   REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+   AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+   INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+   LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+   OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+   PERFORMANCE OF THIS SOFTWARE.
+   ***************************************************************************** */
 
 	function __spreadArray(to, from, pack) {
 		if (pack || arguments.length === 2)
@@ -4569,6 +4570,7 @@
 		this.selectors = [
 			new Selector([new Element(null, name, false, this._index, this._fileInfo)])
 		];
+
 		this.params = params;
 		this.condition = condition;
 		this.variadic = variadic;
@@ -7751,8 +7753,8 @@
 					//
 					customFuncCall: function (name) {
 						/* Ideally the table is to be moved out of here for faster perf.,
-                         but it's quite tricky since it relies on all these `parsers`
-                         and `expect` available only here */
+                               but it's quite tricky since it relies on all these `parsers`
+                               and `expect` available only here */
 						return {
 							alpha: f(parsers.ieAlpha, true),
 							boolean: f(condition),
@@ -9909,6 +9911,7 @@
 				[3, 1, 0],
 				[0, 1, 2]
 			];
+
 			return colorFunctions.rgba(
 				vs[perm[i][0]] * 255,
 				vs[perm[i][1]] * 255,
@@ -10051,6 +10054,7 @@
 				color1.rgb[1] * w1 + color2.rgb[1] * w2,
 				color1.rgb[2] * w1 + color2.rgb[2] * w2
 			];
+
 			var alpha = color1.alpha * p + color2.alpha * (1 - p);
 			return new Color(rgb, alpha);
 		},
@@ -10929,6 +10933,7 @@
 			new visitors.ExtendVisitor(),
 			new visitors.ToCSSVisitor({ compress: Boolean(options.compress) })
 		];
+
 		var preEvalVisitors = [];
 		var v;
 		var visitorIterator;

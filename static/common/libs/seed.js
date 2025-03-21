@@ -27,7 +27,7 @@
 	}
 
 	function camelCase(str = "") {
-		str = String(str).replaceAll("@", "");
+		str = String(str).replace(/@/g, "");
 		return (
 			str &&
 			str.replace(camelizeRE, function (_, c) {
@@ -116,18 +116,17 @@
 	let LOADING_IMAGE_NAME = "x-loading";
 	/* 默认的loading样式 */
 	(function loadBaseInfo() {
-		const srcRootDom = $$id("src-root");
-		const { src } = srcRootDom;
-		const [srcRoot] = src.split("/common/libs");
+		var srcRootDom = $$id("src-root");
+		var src = srcRootDom.src;
+		var srcRoot = src.split("/common/libs")[0];
 
-		const {
-			appName /*应用名称 */,
-			appEntryName /* 入口名称 */,
-			appVersion,
-			loadingImg,
-			appPrefix = "business_",
-			noNprogress /* 无加载伪进度条 */
-		} = srcRootDom.dataset;
+		var dataset = srcRootDom.dataset;
+		var appName = dataset.appName;
+		var appEntryName = dataset.appEntryName;
+		var appVersion = dataset.appVersion;
+		var loadingImg = dataset.loadingImg;
+		var appPrefix = dataset.appPrefix || "business_";
+		var noNprogress = dataset.noNProgress;
 
 		if (!appName) {
 			alert("miss APP_NAME");
@@ -141,9 +140,11 @@
 		/* empty */
 		window.APP_VERSION = "" || appVersion || "";
 		/* empty */
-		let I18N_LANGUAGE = localStorage["X-Language"] || $$tags("html")[0].lang || "zh-CN";
-		if (!["zh-CN", "en-US"].includes(I18N_LANGUAGE)) {
-			console.error(`I18N_LANGUAGE is not valid ${I18N_LANGUAGE}`);
+		var I18N_LANGUAGE =
+			localStorage["X-Language"] || ($$tags("html")[0] && $$tags("html")[0].lang) || "zh-CN";
+
+		if (["zh-CN", "en-US"].indexOf(I18N_LANGUAGE) === -1) {
+			console.error("I18N_LANGUAGE is not valid " + I18N_LANGUAGE);
 			I18N_LANGUAGE = "zh-CN";
 		}
 		localStorage["X-Language"] = I18N_LANGUAGE;
@@ -152,16 +153,23 @@
 	})();
 
 	function execXHR(url) {
-		return new Promise((resolve, reject) => {
+		return new Promise(function (resolve, reject) {
 			try {
 				var xhr = new XMLHttpRequest();
 
 				/* "loadend" "loadstart" "timeout" */
 				xhr.onprogress = updateProgress;
-				xhr.onload = transferComplete;
+				xhr.onload = function (event) {
+					var target = event.currentTarget || event.target;
+					if (target.status === 404) {
+						reject(404);
+					} else {
+						resolve(target.responseText);
+					}
+				};
 				xhr.onerror = transferFailed;
 				xhr.onabort = transferCanceled;
-				xhr.open("GET", `${url}?_t=${Date.now()}`);
+				xhr.open("GET", url + "?_t=" + Date.now());
 				xhr.send();
 
 				// 服务端到客户端的传输进程（下载）
@@ -174,14 +182,6 @@
 					}
 				}
 
-				function transferComplete({ currentTarget }) {
-					if (currentTarget.status === 404) {
-						reject(404);
-					} else {
-						resolve(currentTarget.responseText);
-					}
-				}
-
 				function transferFailed(evt) {
 					console.log("An error occurred while transferring the file.");
 				}
@@ -190,7 +190,8 @@
 					console.log("The transfer has been canceled by the user.");
 				}
 			} catch (error) {
-				debugger;
+				console.error(error);
+				reject(error);
 			}
 		});
 	}
@@ -202,8 +203,8 @@
 	/* @typescriptDeclare (item: object, prop: string, val?: any)=> any */
 	function $val(item, prop, val, options = {}) {
 		item = item || {};
-		const isVue2 = item._isVue;
-		const fnVue$set = item.$set;
+		const isVue2 = item && item._isVue;
+		const fnVue$set = item && item.$set;
 
 		if (typeof prop != "string") {
 			throw new Error("prop must be a string");
@@ -216,10 +217,12 @@
 			while ((key = propArray.shift())) {
 				/* 如果是最后一项，就赋值后退出 */
 				if (propArray.length === 0) {
-					if (isVue2) {
+					if (isVue2 && fnVue$set) {
 						fnVue$set(nextItem, key, val);
 					} else {
-						Vue?.set && Vue?.set(nextItem, key, val);
+						if (window.Vue && window.Vue.set) {
+							window.Vue.set(nextItem, key, val);
+						}
 						nextItem[key] = val;
 					}
 					return;
@@ -227,7 +230,7 @@
 					/* 继续循环，如果中间有undefined，添加中间项 */
 					const _nextItem = nextItem[key];
 					if (!_nextItem) {
-						if (isVue2) {
+						if (isVue2 && fnVue$set) {
 							fnVue$set(nextItem, key, {});
 						} else {
 							nextItem[key] = {};
@@ -286,12 +289,27 @@
 		if (val !== undefined) {
 			setVal(isVue2, key, propArray, nextItem, val);
 		}
-		if (val == undefined && options?.delete) {
+		if (val == undefined && options && options.delete) {
 			delVal(isVue2, key, propArray, nextItem, val);
 		} else {
 			return getVal(isVue2, key, propArray, nextItem);
 		}
 		return item;
+	}
+
+	/**
+	 *
+	 * @param obj
+	 * @param prop_chain
+	 * @returns
+	 */
+	function $callFn(obj, prop_chain) {
+		const fn = $val(obj, prop_chain);
+		if (typeof fn === "function") {
+			return fn;
+		} else {
+			return () => null;
+		}
 	}
 
 	/*  */
@@ -327,7 +345,7 @@
 		}
 		resolvedURL = url;
 		try {
-			if (lodash?.THIS_FILE_URL) {
+			if (lodash && lodash.THIS_FILE_URL) {
 				let parentURL = last(lodash.THIS_FILE_URL);
 				const parentResolvedURL = ResolvePathCache[parentURL];
 				if (parentResolvedURL) {
@@ -370,7 +388,7 @@
 			const key = camelCase(url);
 			let collection = $loadText.pending[key];
 
-			if (typeof collection === "string") {
+			if (typeof collection === "string" && !IS_DEV) {
 				return resolve(collection);
 			}
 
@@ -390,7 +408,6 @@
 					if (Array.isArray(OLD_RESOLVE)) {
 						OLD_RESOLVE.forEach(({ resolve }) => resolve(res));
 					} else {
-						debugger;
 					}
 					$loadText.pending[key] = res;
 				} catch (error) {
@@ -622,7 +639,7 @@
 			}
 		})();
 
-		await (async (/* clearAssetsCacheByAppVersion */) => {
+		await (async () => /* clearAssetsCacheByAppVersion */ {
 			/* 如果没有配置或者配置了并且和缓存的版本不一致，则清除缓存 */
 			const NO_CACHE = !APP_VERSION;
 			const NOT_MATCH = APP_VERSION && APP_VERSION !== (await $idb.get("APP_VERSION"));
@@ -635,13 +652,13 @@
 
 			/* 预加载，等vue加载后赋值 */
 			_$loadText(`@/i18n/${I18N_LANGUAGE}.js`);
-
 			await _$asyncLoadOrderAppendScrips([
 				[
 					COMMON_LIBS + "/jquery/jquery-3.7.0.min.js",
 					null,
 					() => $("body").addClass("x-app-body")
 				],
+
 				[
 					COMMON_LIBS + "/lodash.js",
 					null,
@@ -649,6 +666,7 @@
 						_.$$tags = $$tags;
 						_.$$id = $$id;
 						_.$val = $val;
+						_.$callFn = $callFn;
 						_.$ensure = $ensure;
 						_.$appendScript = $appendScript;
 						_.$appendStyle = $appendStyle;
@@ -695,8 +713,9 @@
 						if (IS_DEV || NO_CACHE || NOT_MATCH) {
 							try {
 								/* index.html页面带有preload的数据会首先加载并缓存，后续需要的时候直接使用 */
-								const preloadString =
-									document.getElementById("preload")?.innerHTML || false;
+								const preloadString = document.getElementById("preload")
+									? document.getElementById("preload").innerHTML
+									: false;
 								if (preloadString) {
 									const getPreload = new Function(preloadString);
 									const preloadArray = getPreload();
@@ -706,6 +725,7 @@
 						}
 					}
 				],
+
 				[COMMON_LIBS + "/dayjs.js"],
 				[
 					COMMON_LIBS + "/vue.js",
@@ -723,6 +743,7 @@
 						Vue.prototype.i18n = i18n;
 					}
 				],
+
 				[COMMON_LIBS + "/common.ts"],
 				[COMMON_LIBS + "/common.$.ajax.ts"]
 			]);

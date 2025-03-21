@@ -1,14 +1,3 @@
-<style lang="less">
-.AdminDepartmentTree {
-	* {
-		// outline: 1px solid red;
-	}
-	height: 100%;
-	.AdminDepartmentTree-tree {
-		position: relative;
-	}
-}
-</style>
 <template>
 	<div class="AdminDepartmentTree flex vertical">
 		<xInput
@@ -58,7 +47,7 @@ export default async function () {
 		},
 		methods: {
 			handleQueryChange(query) {
-				if (this.$refs.refTree?.filter) {
+				if (_.$val(this, "$refs.refTree.filter")) {
 					this.$refs.refTree.filter(query);
 				}
 			},
@@ -88,3 +77,14 @@ export default async function () {
 	});
 }
 </script>
+<style lang="less">
+.AdminDepartmentTree {
+	* {
+		// outline: 1px solid red;
+	}
+	height: 100%;
+	.AdminDepartmentTree-tree {
+		position: relative;
+	}
+}
+</style>

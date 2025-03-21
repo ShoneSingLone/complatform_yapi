@@ -11,7 +11,8 @@ export default async function ({
 	x_item_is_show_item_colon,
 	x_modal_close_icon,
 	x_pagination_pagination_component,
-	x_pagination_position
+	x_pagination_position,
+	x_open_modal_do_some_thing_before_open
 }) {
 	((/* ui 默认配置 */) => {
 		/* tableVir empty 的默认组件地址 */
@@ -20,6 +21,8 @@ export default async function ({
 			size: size || "small",
 			z_index: zIndex || 2e3
 		};
+		PRIVATE_GLOBAL.x_open_modal_do_some_thing_before_open =
+			x_open_modal_do_some_thing_before_open;
 		PRIVATE_GLOBAL.x_table_vir_empty_component = x_table_vir_empty_component;
 		PRIVATE_GLOBAL.x_table_vir_empty_component_icon =
 			x_table_vir_empty_component_icon || "icon_no_data";
@@ -36,7 +39,7 @@ export default async function ({
 	/* @ts-ignore */
 	window._opts = window._opts || {};
 
-	(function (/* common h render  */) {
+	(function () /* common h render  */ {
 		const useH = tag => (props, innerContent) => h(tag, props, innerContent);
 
 		const hDiv = useH("div");
@@ -223,6 +226,7 @@ export default async function ({
 				"/common/ui-x/directive/xloading.vue",
 				"/common/ui-x/directive/xmove.vue"
 			],
+
 			url => _.$importVue(url)
 		)
 	);
@@ -350,7 +354,6 @@ export default async function ({
 	})();
 }
 </script>
-
 <style lang="less">
 .el-form-item.is-error .el-input__inner,
 .el-form-item.is-error .el-input__inner:focus,

@@ -81,7 +81,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			const title = {
 				prop: "title",
-				label: i18n("名称"),
+				label: i18n("name"),
 				width: 300,
 				cellRenderer({ rowData }) {
 					return hDiv([

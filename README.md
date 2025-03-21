@@ -2,6 +2,8 @@
 
 本项目是一个接口管理平台，主体框架基于 [yapi](https://github.com/YMFE/yapi)
 
+![qq_group](./docs/qq_group.png)
+
 ## 特性
 
 提供公司局域网内部，代理后端服务

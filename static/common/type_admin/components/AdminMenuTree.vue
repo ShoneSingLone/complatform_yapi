@@ -1,4 +1,3 @@
-<style lang="less"></style>
 <template>
 	<div class="AdminTree flex vertical">
 		<xInput
@@ -54,7 +53,7 @@ export default async function () {
 		},
 		methods: {
 			handleQueryChange(query) {
-				if (this.$refs.refTree?.filter) {
+				if (_.$val(this, "$refs.refTree.filter")) {
 					this.$refs.refTree.filter(query);
 				}
 			},

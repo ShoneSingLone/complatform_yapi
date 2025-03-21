@@ -18,12 +18,12 @@
 				window._AJAX_URL_PREFIX = "https://www.singlone.work/s/1";
 				entry_js.src = "../common/libs/min/seed.js";
 			} else {
-				entry_js.src = "/static/common/libs/min/seed.js";
+				entry_js.src = "/static/common/libs/seed.js";
 				window._AJAX_URL_PREFIX = "";
 			}
 
 			const preload = document.getElementById("src-root-preload");
-			preload.parentNode.removeChild(preload)
+			preload.parentNode.removeChild(preload);
 		</script>
 	</body>
 </html>

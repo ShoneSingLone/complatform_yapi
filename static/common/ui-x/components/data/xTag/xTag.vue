@@ -52,6 +52,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				effect ? `el-tag--${effect}` : "",
 				hit && "is-hit"
 			];
+
 			const tagEl = h(
 				"span",
 				{
@@ -63,7 +64,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				},
 				[
 					this.$slots.default,
-					h("i", {
+					hxIcon({
+						icon: "close",
 						vIf: this.closable,
 						class: "el-tag__close el-icon-close",
 						on: {
