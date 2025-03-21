@@ -19,13 +19,13 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 		/* TODO: why?*/
 		delete ctx.request?.header.host;
 
-		let httpRequestOptions = new URL(path);
+		let request_url_obj = new URL(path);
 		const setOptions = (key, value) => {
-			httpRequestOptions[key] = value;
+			request_url_obj[key] = value;
 		};
 
 		const upsertHeader = (key, value) => {
-			httpRequestOptions.headers[key] = value;
+			request_url_obj.headers[key] = value;
 		};
 
 		setOptions("method", ctx.request.method);
@@ -93,7 +93,9 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 		})();
 
 		/* TODO: 开启了代理直接走代理，目前是使用whistle起的服务，所以只考虑http */
-		let httpRequest = execHttpRequest(httpRequestOptions);
+		let httpRequest = execHttpRequest({
+			request_url_obj
+		});
 
 		if (bodyFiles) {
 			/* 文件上传 */
@@ -115,7 +117,7 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 			};
 			const handleResponseOnEnd = () => {
 				resolve({
-					httpRequestOptions: httpRequestOptions.headers,
+					httpRequestOptions: request_url_obj.headers,
 					headers: response.headers,
 					body: Buffer.concat(chunks, totallength)
 				});
@@ -123,9 +125,8 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 			response.on("data", handleResponseOnData);
 			response.on("end", handleResponseOnEnd);
 		}
-
-		function execHttpRequest(httpRequestOptions) {
-			const { method, headers, protocol } = httpRequestOptions;
+		function execHttpRequest({ request_url_obj }) {
+			const { method, headers, protocol } = request_url_obj;
 
 			const isUseOtherHostProxy = host && port;
 
@@ -155,48 +156,45 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 */
 						delete headers["content-length"];
 					}
+
+					/* 基础请求配置 */
+					options = {
+						method,
+						headers,
+						rejectUnauthorized: false // 忽略SSL证书验证
+					};
+
 					/* use local proxy */
 					if (isUseOtherHostProxy) {
-						/* 开启了代理 (maybe局域网，可达)*/
+						/* 使用指定的代理服务器 */
 						return http.request(
-							{ host, port, path, method, headers },
+							{
+								host,
+								port,
+								path,
+								method,
+								headers
+							},
 							onResponse
 						);
 					}
+
 					/* use https */
 					const isUseHttps = protocol === "https:";
 					if (isUseHttps) {
-						options = {
-							method,
-							headers,
-							rejectUnauthorized: false
-						};
 						return https.request(new URL(path), options, onResponse);
 					}
-					/* default use http */
-					options = { method, headers };
-					return http.request(httpRequestOptions, options, onResponse);
-					// return http.request(httpRequestOptions, onResponse);
-				} catch (error) {
-					console.error(error);
-				} finally {
-					const console_log_when_debugger = () => {
-						console.log(
-							"🚀 ~ execHttpRequest ~ httpRequestOptions:",
-							httpRequestOptions
-						);
-						console.log(
-							"🚀 ~ execHttpRequest ~ headers:",
-							JSON.stringify(options.headers, null, 2)
-						);
-					};
 
-					// console_log_when_debugger();
+					/* default use http */
+					return http.request(request_url_obj, onResponse);
+				} catch (error) {
+					console.error("代理请求出错:", error);
+					throw error;
 				}
 			})();
 
 			HTTP_REQUEST.on("error", error => {
-				xU.applog.error(error);
+				xU.applog.error("代理请求错误:", error);
 				resolve({
 					headers,
 					body: { error, code: "Y_API_SERVER_500" }
@@ -225,6 +223,7 @@ function handleFilesUpload({ bodyFiles, httpRequest, endData, requestBody }) {
 		let frs = fs.createReadStream(bodyFiles[key].path);
 		frs.on("err", logError);
 		frs.on("end", handleUploadFileOnEnd);
+
 		if (requestBody) {
 			httpRequest.write(requestBody);
 		}
