@@ -241,7 +241,7 @@ export default async function () {
 							return h("xTag", { class: "mr" }, [user?.username || uid]);
 						}
 					},
-					状态: { label: i18n("状态"), value: status || "--" },
+					状态: { label: i18n("status_info"), value: status || "--" },
 					更新时间: {
 						label: i18n("更新时间"),
 						value: up_time || "--",

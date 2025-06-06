@@ -55,7 +55,7 @@ export default async function ({ row, onSelected }) {
 						{ label: i18n("邮箱"), prop: "email" },
 						{ label: i18n("手机"), prop: "phonenumber" },
 						{
-							label: i18n("状态"),
+							label: i18n("status_info"),
 							prop: "status",
 							cellRenderer: ({ cellData }) => hVal2Tag(cellData, sys_normal_disable)
 						},

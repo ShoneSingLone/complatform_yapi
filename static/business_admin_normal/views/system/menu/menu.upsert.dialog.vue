@@ -91,8 +91,8 @@ export default async function ({ row, onClick, isAppend }) {
 						isButton: true,
 						tips: "选择是外链则路由地址需要以`http(s)://`开头",
 						options: [
-							{ label: i18n("是"), value: "0" },
-							{ label: i18n("否"), value: "1" }
+							{ label: i18n("yes_answer"), value: "0" },
+							{ label: i18n("no_answer"), value: "1" }
 						],
 						rules: [_rules.required()]
 					},

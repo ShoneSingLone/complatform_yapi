@@ -48,7 +48,7 @@ export default async function () {
 				return _.$isInput(val) ? val : "";
 			},
 			cptPlaceholder() {
-				return i18n("请输入菜单名称");
+				return i18n("input_menu_name");
 			}
 		},
 		methods: {

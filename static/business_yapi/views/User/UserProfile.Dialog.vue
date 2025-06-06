@@ -59,7 +59,7 @@ export default async function ({ onOk, userId, canModifyAvatar }) {
 					},
 					email: {
 						value: "",
-						label: i18n("邮箱地址"),
+						label: i18n("email_address"),
 						rules: [_rules.required()],
 						readonly: true
 					},
@@ -204,7 +204,7 @@ export default async function ({ onOk, userId, canModifyAvatar }) {
 				const vm = this;
 				return {
 					isHide: !vm.cptCurrentIsRootAdmin,
-					label: i18n("删除"),
+					label: i18n("delete_action"),
 					preset: "danger",
 					async onClick() {
 						try {

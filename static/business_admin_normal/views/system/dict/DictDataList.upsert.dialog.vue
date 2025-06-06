@@ -38,7 +38,7 @@ export default async function ({ row, onClick, DICT_TYPE }) {
 		},
 		{
 			value: "success",
-			label: i18n("成功")
+			label: i18n("success_info")
 		},
 		{
 			value: "info",
@@ -123,7 +123,7 @@ export default async function ({ row, onClick, DICT_TYPE }) {
 					},
 					status: {
 						value: "1",
-						label: i18n("状态"),
+						label: i18n("status_info"),
 						itemType: "xItemRadioGroup",
 						isButton: true,
 						options: dicts.sys_normal_disable,

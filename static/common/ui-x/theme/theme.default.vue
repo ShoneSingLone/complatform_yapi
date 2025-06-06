@@ -1,3 +1,6 @@
+<script lang="ts">
+export default async function () {}
+</script>
 <style lang="less">
 /* 常用的样式类，不加样式类不影响界面展示效果 */
 /* gap-gap-gap-gap-gap */
@@ -169,6 +172,9 @@ each(@list, {
 
 .display-none {
 	display: none;
+}
+.display-block {
+	display: block;
 }
 
 .cursor {
@@ -750,6 +756,3 @@ svg.pointer {
 	}
 }
 </style>
-<script lang="ts">
-export default async function () {}
-</script>

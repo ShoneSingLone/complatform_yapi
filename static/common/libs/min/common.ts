@@ -6,24 +6,42 @@
 				decode(e) {
 					return void 0 === e
 						? ""
-						: $.base64
-							? $.base64.decode(e || "", !0)
-							: atob(e || "");
+						: this.is(e)
+							? $.base64
+								? $.base64.decode(e || "", !0)
+								: atob(e || "")
+							: e;
 				},
 				encode(e) {
+					return void 0 === e
+						? ""
+						: this.is(e)
+							? e
+							: $.base64
+								? $.base64.encode(e || "", !0)
+								: btoa(e || "");
+				},
+				is(e) {
+					e = void 0 === e ? "" : e;
+					try {
+						return this._encode(this._decode(e)) === e;
+					} catch (e) {
+						return !1;
+					}
+				},
+				_encode(e) {
 					return void 0 === e
 						? ""
 						: $.base64
 							? $.base64.encode(e || "", !0)
 							: btoa(e || "");
 				},
-				is(e) {
-					e = void 0 === e ? "" : e;
-					try {
-						return this.encode(this.decode(e)) === e;
-					} catch (e) {
-						return !1;
-					}
+				_decode(e) {
+					return void 0 === e
+						? ""
+						: $.base64
+							? $.base64.decode(e || "", !0)
+							: atob(e || "");
 				}
 			}),
 			(_.$reloadWindow = function (e) {

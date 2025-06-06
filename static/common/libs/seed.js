@@ -142,7 +142,6 @@
 		/* empty */
 		var I18N_LANGUAGE =
 			localStorage["X-Language"] || ($$tags("html")[0] && $$tags("html")[0].lang) || "zh-CN";
-
 		if (["zh-CN", "en-US"].indexOf(I18N_LANGUAGE) === -1) {
 			console.error("I18N_LANGUAGE is not valid " + I18N_LANGUAGE);
 			I18N_LANGUAGE = "zh-CN";
@@ -198,6 +197,21 @@
 	/*  */
 
 	/**
+	 * 可选链兼容方案
+	 * @param obj
+	 * @param prop_chain
+	 * @returns
+	 */
+	function $callFn(obj, prop_chain) {
+		const fn = $val(obj, prop_chain);
+		if (typeof fn === "function") {
+			return fn;
+		} else {
+			return () => null;
+		}
+	}
+
+	/**
 	 * 用"xx.xx.xx"的字符串，安全get、set对象的值，如果是vue2，则用$set保证响应
 	 */
 	/* @typescriptDeclare (item: object, prop: string, val?: any)=> any */
@@ -213,7 +227,19 @@
 		let key = "";
 		let nextItem = item;
 
-		const setVal = () => {
+		/* 如果有输入 */
+		if (val !== undefined) {
+			setVal(isVue2, key, propArray, nextItem, val);
+		}
+
+		/* 明确是删除属性 */
+		if (val == undefined && options && options.delete) {
+			delVal(isVue2, key, propArray, nextItem, val);
+		} else {
+			return getVal(isVue2, key, propArray, nextItem);
+		}
+
+		function setVal() {
 			while ((key = propArray.shift())) {
 				/* 如果是最后一项，就赋值后退出 */
 				if (propArray.length === 0) {
@@ -239,8 +265,9 @@
 					nextItem = nextItem[key];
 				}
 			}
-		};
-		const delVal = () => {
+		}
+
+		function delVal() {
 			while ((key = propArray.shift())) {
 				/* 如果是最后一项，就赋值后退出 */
 				if (propArray.length === 0) {
@@ -267,9 +294,9 @@
 					nextItem = nextItem[key];
 				}
 			}
-		};
+		}
 
-		const getVal = () => {
+		function getVal() {
 			while ((key = propArray.shift())) {
 				const _nextItem = nextItem[key];
 				if (!_nextItem) {
@@ -283,33 +310,8 @@
 				}
 			}
 			return nextItem;
-		};
-
-		/* 如果有输入 */
-		if (val !== undefined) {
-			setVal(isVue2, key, propArray, nextItem, val);
-		}
-		if (val == undefined && options && options.delete) {
-			delVal(isVue2, key, propArray, nextItem, val);
-		} else {
-			return getVal(isVue2, key, propArray, nextItem);
 		}
 		return item;
-	}
-
-	/**
-	 *
-	 * @param obj
-	 * @param prop_chain
-	 * @returns
-	 */
-	function $callFn(obj, prop_chain) {
-		const fn = $val(obj, prop_chain);
-		if (typeof fn === "function") {
-			return fn;
-		} else {
-			return () => null;
-		}
 	}
 
 	/*  */
@@ -408,6 +410,7 @@
 					if (Array.isArray(OLD_RESOLVE)) {
 						OLD_RESOLVE.forEach(({ resolve }) => resolve(res));
 					} else {
+						debugger;
 					}
 					$loadText.pending[key] = res;
 				} catch (error) {
@@ -639,7 +642,7 @@
 			}
 		})();
 
-		await (async () => /* clearAssetsCacheByAppVersion */ {
+		await (async (/* clearAssetsCacheByAppVersion */) => {
 			/* 如果没有配置或者配置了并且和缓存的版本不一致，则清除缓存 */
 			const NO_CACHE = !APP_VERSION;
 			const NOT_MATCH = APP_VERSION && APP_VERSION !== (await $idb.get("APP_VERSION"));
@@ -652,13 +655,13 @@
 
 			/* 预加载，等vue加载后赋值 */
 			_$loadText(`@/i18n/${I18N_LANGUAGE}.js`);
+
 			await _$asyncLoadOrderAppendScrips([
 				[
 					COMMON_LIBS + "/jquery/jquery-3.7.0.min.js",
 					null,
 					() => $("body").addClass("x-app-body")
 				],
-
 				[
 					COMMON_LIBS + "/lodash.js",
 					null,
@@ -694,7 +697,9 @@
 							const langOptions = getLangOptionsFn();
 							const i18n = function (key, payload) {
 								if (key.length > 64) {
-									alert(`i18n key: 【${key}】 长度超过64，过长，建议重命名`);
+									console.warn(
+										`i18n key: 【${key}】 长度超过64，过长，建议重命名`
+									);
 								}
 								/!*使用 {变量名} 赋值*!/;
 								_.templateSettings.interpolate = /{([\s\S]+?)}/g;
@@ -721,11 +726,10 @@
 									const preloadArray = getPreload();
 									preloadArray.forEach(url => $loadText(url));
 								}
-							} catch (error) {}
+							} catch (error) { }
 						}
 					}
 				],
-
 				[COMMON_LIBS + "/dayjs.js"],
 				[
 					COMMON_LIBS + "/vue.js",
@@ -743,7 +747,6 @@
 						Vue.prototype.i18n = i18n;
 					}
 				],
-
 				[COMMON_LIBS + "/common.ts"],
 				[COMMON_LIBS + "/common.$.ajax.ts"]
 			]);

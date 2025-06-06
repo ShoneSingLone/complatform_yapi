@@ -64,7 +64,7 @@ export default async function () {
 				},
 				{
 					icon: "_icon_msg",
-					label: `${i18n("Message")} ${i18n("消息")}`,
+					label: `${i18n("Message")} ${i18n("message_info")}`,
 					href: "/other/message"
 				}
 			]

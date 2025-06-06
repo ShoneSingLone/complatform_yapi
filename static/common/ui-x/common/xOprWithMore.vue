@@ -2,8 +2,8 @@
 	<div class="xOprWithMore" ref="xOprWithMore">
 		<xBtn
 			preset="text"
-			v-for="(btn, index) in btnArray"
-			:key="index"
+			v-for="btn in btnArray"
+			:key="btn.__unix_index"
 			:data-title="btn | btnLabel(configs)"
 			:disabled="btn | isDisabled(configs)"
 			@click="handleClick(btn)">
@@ -19,8 +19,8 @@
 					ref="xOprWithMoreDropdown">
 					<xBtn
 						preset="text"
-						v-for="(btn, index) in btnArrayMore"
-						:key="index"
+						v-for="btn in btnArrayMore"
+						:key="btn.__unix_index"
 						:data-title="btn | btnLabel(configs)"
 						:disabled="btn | isDisabled(configs)"
 						@click="handleClick(btn)">
@@ -85,7 +85,10 @@ export default async function () {
 					}
 					return true;
 				});
-				return _btnArray;
+				return _.map(_btnArray, (configs, index) => {
+					configs.__unix_index = Date.now() + index;
+					return configs;
+				});
 			}
 		},
 		filters: {

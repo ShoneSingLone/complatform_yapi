@@ -18,6 +18,10 @@
 			if (str === undefined) {
 				return "";
 			} else {
+				/* 如果已经decode过了，则直接返回 */
+				if (!this.is(str)) {
+					return str;
+				}
 				if ($.base64) {
 					return $.base64.decode(str || "", true);
 				} else {
@@ -34,6 +38,11 @@
 			if (str === undefined) {
 				return "";
 			} else {
+				/* 如果已经encode过了，则直接返回 */
+				if (this.is(str)) {
+					return str;
+				}
+
 				if ($.base64) {
 					return $.base64.encode(str || "", true);
 				} else {
@@ -44,9 +53,31 @@
 		is(str) {
 			str = str === undefined ? "" : str;
 			try {
-				return this.encode(this.decode(str)) === str;
+				return this._encode(this._decode(str)) === str;
 			} catch (err) {
 				return false;
+			}
+		},
+		_encode(str) {
+			if (str === undefined) {
+				return "";
+			} else {
+				if ($.base64) {
+					return $.base64.encode(str || "", true);
+				} else {
+					return btoa(str || "");
+				}
+			}
+		},
+		_decode(str) {
+			if (str === undefined) {
+				return "";
+			} else {
+				if ($.base64) {
+					return $.base64.decode(str || "", true);
+				} else {
+					return atob(str || "");
+				}
 			}
 		}
 	};

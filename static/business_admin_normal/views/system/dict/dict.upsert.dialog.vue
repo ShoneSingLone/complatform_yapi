@@ -45,7 +45,7 @@ export default async function ({ row, onClick }) {
 					},
 					status: {
 						value: "1",
-						label: i18n("状态"),
+						label: i18n("status_info"),
 						itemType: "xItemRadioGroup",
 						isButton: true,
 						options: dicts.sys_normal_disable,

@@ -164,7 +164,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			const status = {
 				prop: "status",
-				label: i18n("状态"),
+				label: i18n("status_info"),
 				width: 150
 			};
 

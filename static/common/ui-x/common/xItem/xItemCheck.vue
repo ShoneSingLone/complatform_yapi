@@ -236,7 +236,6 @@ export default async function () {
 		color: var(--el-button-hover-text-color);
 		border-color: var(--el-button-hover-border-color);
 		background-color: var(--el-button-hover-bg-color);
-		transform: scale(1.01);
 		margin-bottom: var(--ui-half);
 		display: flex;
 		flex-flow: row nowrap;
