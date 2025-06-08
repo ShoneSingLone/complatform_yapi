@@ -117,6 +117,7 @@ module.exports = {
 						let targetPath = path.resolve(
 							TARGET_PREFIX,
 							useFor,
+							this.$uid,
 							xU.dayjs().format("YYYY_MM_DD")
 						);
 						await _n.asyncSafeMakeDir(targetPath);
@@ -145,7 +146,9 @@ module.exports = {
 		"/resource/get": {
 			get: {
 				summary: "根据ID获取资源",
-				description: "文件保存在服务器上",
+				description: `根据ID获取资源文件
+				1- 获取base64形式存储的文件
+				2- 获取文件形式存储的文件`,
 				request: {
 					query: {
 						id: {
