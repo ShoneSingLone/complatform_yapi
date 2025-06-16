@@ -41,8 +41,8 @@ export default async function () {
 								return hxItem({
 									configs: {
 										itemType: "xItemSelect",
-										options: vm.configs.selectOptions || {},
-										value: vm.configs.selectValue || {},
+										options: vm.configs.selectOptions ?? [],
+										value: vm.configs.selectValue ?? '',
 										onEmitValue({ val }) {
 											vm.configs.selectValue = val;
 											vm.$emit("configschange", vm.configs);

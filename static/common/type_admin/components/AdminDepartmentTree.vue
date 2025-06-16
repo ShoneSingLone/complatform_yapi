@@ -42,7 +42,7 @@ export default async function () {
 		},
 		computed: {
 			cptPlaceholder() {
-				return i18n("请输入部门名称");
+				return i18n("input_department_name");
 			}
 		},
 		methods: {

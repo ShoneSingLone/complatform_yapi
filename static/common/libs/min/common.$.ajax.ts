@@ -1,46 +1,46 @@
 _.$ajax = (() => {
 	let s = e =>
-			function (e) {
-				let { requestInjector: r, responseInjector: a } = this;
-				var t = e => e;
-				(r = r || t), (a = a || t);
-				let { type: o, url: n, options: s, success: i, error: d } = e;
-				(s = s || {}), (d = d || (() => null));
-				var t = ["POST", "PUT"].includes(_.toUpper(o))
-						? (s.query &&
-								(n = _.isString(s.query)
-									? n + "?" + s.query
-									: _.isPlainObject(s.query)
-										? ((t = _.map(
-												s.query,
+			function (a = {}) {
+				let { requestInjector: e, responseInjector: s } = this;
+				var r = e => e;
+				(e = e || r), (s = s || r);
+				let { type: t, url: o, options: n, success: i, error: d } = a;
+				(n = n || {}), (d = d || (() => null));
+				var r = ["POST", "PUT"].includes(_.toUpper(t))
+						? (n.query &&
+								(o = _.isString(n.query)
+									? o + "?" + n.query
+									: _.isPlainObject(n.query)
+										? ((r = _.map(
+												n.query,
 												(e, r) =>
 													encodeURIComponent(r) +
 													"=" +
 													encodeURIComponent(e)
 											).join("&")),
-											n + "?" + t)
-										: n),
-							JSON.stringify(s.data || {}))
-						: _.isString(s.data)
-							? s.data
-							: _.isPlainObject(s.data)
+											o + "?" + r)
+										: o),
+							JSON.stringify(n.data || {}))
+						: _.isString(n.data)
+							? n.data
+							: _.isPlainObject(n.data)
 								? _.map(
-										s.data,
+										n.data,
 										(e, r) =>
 											encodeURIComponent(r) + "=" + encodeURIComponent(e)
 									).join("&")
 								: void 0,
-					u = _.merge({ "X-Language": localStorage["X-Language"] }, s.headers);
+					u = _.merge({ "X-Language": localStorage["X-Language"] }, n.headers);
 				let l = [400, 401, 402, 403, 404, 405, 500, 555];
 				return (
 					(u = {
 						headers: u,
-						type: o,
-						data: t,
+						type: t,
+						data: r,
 						dataType: "json",
 						contentType: "application/json",
 						success: function (e, r, t) {
-							if (((e = a(e)), _.isPlainObject(e))) {
+							if (((e = s(e, { API_OPTIONS: a })), _.isPlainObject(e))) {
 								var o,
 									n = e && (e.errcode || e.code);
 								if (n && l.includes(n)) return void d(e.body || e);
@@ -51,11 +51,11 @@ _.$ajax = (() => {
 							return i(e, r, t);
 						},
 						error: function (e) {
-							return (e = a(e)), d(e);
+							return (e = s(e, { API_OPTIONS: a })), d(e);
 						},
-						url: c(n)
+						url: c(o)
 					}),
-					r(_.merge(u, _.omit(e, ["success", "error", "url"])))
+					e(_.merge(u, _.omit(a, ["success", "error", "url"])))
 				);
 			}.call(r, e),
 		c = e =>

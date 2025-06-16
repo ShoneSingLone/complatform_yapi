@@ -585,10 +585,10 @@
 		};
 		Node.compare = function (a, b) {
 			/* returns:
-              -1: a < b
-              0: a = b
-              1: a > b
-              and *any* other value for a != b (e.g. undefined, NaN, -2 etc.) */
+			  -1: a < b
+			  0: a = b
+			  1: a > b
+			  and *any* other value for a != b (e.g. undefined, NaN, -2 etc.) */
 			if (
 				a.compare &&
 				// for "symmetric results" force toCSS-based comparison
@@ -1847,8 +1847,8 @@
 		}
 	};
 	/*
-    parse is used whilst parsing
-    */
+	parse is used whilst parsing
+	*/
 	var parseCopyProperties = [
 		// options
 		"paths",
@@ -7753,8 +7753,8 @@
 					//
 					customFuncCall: function (name) {
 						/* Ideally the table is to be moved out of here for faster perf.,
-                               but it's quite tricky since it relies on all these `parsers`
-                               and `expect` available only here */
+							   but it's quite tricky since it relies on all these `parsers`
+							   and `expect` available only here */
 						return {
 							alpha: f(parsers.ieAlpha, true),
 							boolean: f(condition),
@@ -12528,7 +12528,6 @@
 				if (remainingSheets === 0) {
 					endTime = new Date();
 					totalMilliseconds = endTime - startTime;
-					console.log("Less has finished and no sheets were loaded.");
 					resolve({
 						startTime: startTime,
 						endTime: endTime,

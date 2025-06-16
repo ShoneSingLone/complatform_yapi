@@ -12,7 +12,8 @@ export default async function ({
 	x_modal_close_icon,
 	x_pagination_pagination_component,
 	x_pagination_position,
-	x_open_modal_do_some_thing_before_open
+	x_open_modal_do_some_thing_before_open,
+	x_confirm_window_component
 }) {
 	((/* ui 默认配置 */) => {
 		/* tableVir empty 的默认组件地址 */
@@ -33,6 +34,8 @@ export default async function ({
 		PRIVATE_GLOBAL.x_pagination_pagination_component =
 			x_pagination_pagination_component || "PrivatePagination";
 		PRIVATE_GLOBAL.x_pagination_position = x_pagination_position || "end";
+		PRIVATE_GLOBAL.x_confirm_window_component =
+			x_confirm_window_component || "/common/ui-x/msg/WindowConfirm.vue";
 	})();
 	/* @ts-ignore */
 	window._api = window._api || {};
@@ -168,20 +171,23 @@ export default async function ({
 		};
 
 		((/* xTableVir相关 */) => {
-			function xTableVirModifyCellsHeight({ mergeProp, columns, cells, rowData, calStyle }) {
+			function xTableVirCells({ GroupPropArray, columns, cells, rowData, setStyle }) {
 				if (_.isEmpty(columns)) {
 					return cells;
 				}
-				const mergeIndex = _.findIndex(columns, { prop: mergeProp });
-				const rowSpanProp = `${mergeProp}_row_span`;
+				/* 找到需要合并的列 */
 
-				if (_.isNumber(rowData[rowSpanProp])) {
-					const rowSpan = rowData[rowSpanProp];
+				_.each(GroupPropArray, mergeProp => {
+					const mergeIndex = _.findIndex(columns, { prop: mergeProp });
+					const rowSpanProp = `${mergeProp}_row_span`;
+					if (_.isNumber(rowData[rowSpanProp])) {
+						const rowSpan = rowData[rowSpanProp];
+						cells[mergeIndex] = cloneVNode(cells[mergeIndex], {
+							style: setStyle({ rowSpan, prop: mergeProp, colIndex: mergeIndex })
+						});
+					}
+				});
 
-					cells[mergeIndex] = cloneVNode(cells[mergeIndex], {
-						style: calStyle({ rowSpan })
-					});
-				}
 				return cells;
 			}
 
@@ -194,22 +200,58 @@ export default async function ({
 					return row;
 				});
 			}
+			/**
+			 *
+			 * @param param0
+			 */
+			function xTableVirMergeData({ rowArray, GroupPropArray }) {
+				// Return empty array if no data
+				if (!rowArray.length) {
+					return [];
+				}
 
-			function xTableVirNewGroupSortedRows({ groupedRowObj, mergeProp, sortBy }) {
-				sortBy = sortBy || Number;
-				const keys = _.sortBy(Object.keys(groupedRowObj), sortBy);
-				/*  */
-				let dataGroupSorted = [];
-				_.each(keys, key => {
-					let currentArray = groupedRowObj[key];
-					currentArray = setCurrentRowSpan({ rows: currentArray, mergeProp });
-					dataGroupSorted = dataGroupSorted.concat(currentArray);
-				});
-				return dataGroupSorted;
+				rowArray = _.cloneDeep(rowArray);
+
+				// Process each group level recursively
+				function processGroup(rows, props, level = 0) {
+					if (!props[level]) {
+						return rows;
+					}
+
+					let prop = props[level];
+					let sortBy = Number;
+
+					// Handle object format prop with custom sort
+					if (typeof prop === "object") {
+						const [key, sort] = Object.entries(prop)[0];
+						prop = key;
+						sortBy = sort;
+					}
+
+					// Group rows by current prop
+					const groups = _.groupBy(rows, prop);
+					const sortedKeys = _.sortBy(Object.keys(groups), sortBy);
+					// Process each group
+					return _.flatMap(sortedKeys, key => {
+						const groupRows = groups[key];
+
+						// Set row spans for current group
+						const rowsWithSpan = setCurrentRowSpan({
+							rows: groupRows,
+							mergeProp: props[level]
+						});
+
+						// Process next level recursively
+						return processGroup(rowsWithSpan, props, level + 1);
+					});
+				}
+
+				// Start processing from first group level
+				return processGroup(rowArray, GroupPropArray);
 			}
 
-			PRIVATE_GLOBAL.xTableVirNewGroupSortedRows = xTableVirNewGroupSortedRows;
-			PRIVATE_GLOBAL.xTableVirModifyCellsHeight = xTableVirModifyCellsHeight;
+			PRIVATE_GLOBAL.xTableVirMergeData = xTableVirMergeData;
+			PRIVATE_GLOBAL.xTableVirCells = xTableVirCells;
 		})();
 	})();
 
@@ -251,9 +293,7 @@ export default async function ({
 				/* 懒加载组件 */
 				/* @ts-ignore */
 				Vue.component(component_name, async () => {
-					// if (componentName === "xCheckbox") {
-					// 	debugger;
-					// }
+					// if (componentName === "xCheckbox") { }
 					const component = await _.$importVue(`/common/ui-x/${componentpath}.vue`);
 					setComponentName(component, component_name);
 					/* @ts-ignore */

@@ -532,13 +532,8 @@
 					var n = [];
 					let e = r.offsetParent;
 					for (; e && t !== e && t.contains(e); ) n.push(e), (e = e.offsetParent);
-					var a = r.offsetTop + n.reduce((e, t) => e + t.offsetTop, 0),
-						r = a + r.offsetHeight,
-						o = t.scrollTop,
-						i = o + t.clientHeight;
-					a < o
-						? t.scrollTo({ top: a, behavior: "smooth" })
-						: i < r && t.scrollTo({ top: r - t.clientHeight, behavior: "smooth" });
+					r = r.offsetTop + n.reduce((e, t) => e + t.offsetTop, 0);
+					t.scrollTo({ top: r, behavior: "smooth" });
 				} else t.scrollTop = 0;
 			}),
 			(_.$firstUpperCase = function (e) {
@@ -563,6 +558,7 @@
 			(_.$lStorage = new Proxy(localStorage, {
 				set(e, t, r) {
 					return (
+						console.log("🚀 ~ set ~ _localStorage:", t, r),
 						_.isPlainObject(r) || _.isArray(r)
 							? (e[t] = JSON.stringify(r))
 							: (e[t] = r),
@@ -709,7 +705,7 @@
 				}
 				let o = await _.$openModal({
 					title: n,
-					url: "/common/ui-x/msg/WindowConfirm.vue",
+					url: c.x_confirm_window_component,
 					style: i.style,
 					resolve: e,
 					reject: t,
@@ -781,7 +777,11 @@
 			payload: a
 		}) {
 			try {
-				(a = a || {}), (r = (r = r || "").replace("export default", ""));
+				(a = a || {}),
+					(r = (r = window.Babel ? window.Babel.babelTransformCode(r) : r).replace(
+						"export default",
+						""
+					));
 				var o = [
 					`console.info("${t}");`,
 					n && s ? `(()=>\`${n}\`)();` : "",

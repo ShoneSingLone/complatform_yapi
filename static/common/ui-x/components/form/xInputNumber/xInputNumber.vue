@@ -332,7 +332,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	z-index: 1;
 	top: 1px;
 	width: 40px;
-	height: 100%;
+	height: 94%;
 	text-align: center;
 	background: var(--el-fill-color-light);
 	color: var(--el-text-color-regular);

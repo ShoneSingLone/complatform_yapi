@@ -586,6 +586,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 
 	function get(object, path, defaultValue) {
 		const val = _.$val(object, path);
+
 		if (_.$isInput(val)) {
 			return val;
 		} else if (_.$isInput(defaultValue)) {
@@ -1503,7 +1504,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 		functional: true,
 		render: (h, { data: props, slots }) => {
 			const { cellData, style } = props;
-			const displayText = _.isString(cellData) ? cellData.toString() : "";
+			const displayText = _.isUndefined(cellData) ? "" : String(cellData);
 			return h(
 				"div",
 				{
@@ -1792,7 +1793,9 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 				if (_.$val(slots, "default")) {
 					return slots.default;
 				}
-				return props => h(TableV2Cell, mergeProps4h([{}, props]));
+				return props => {
+					return h(TableV2Cell, mergeProps4h([{}, props]));
+				};
 			})();
 
 			/* 从rowData获取cell数据，可以使用 xxx.xxx.x的字符串方法 */
@@ -2342,13 +2345,13 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 							]);
 
 							const hCustomCell = slotsCell => {
-								return h(CellRenderer, propsCell, ["slotsCell(cellProps)"]);
+								/* 自定义的 slotsCell */
+								return h(CellRenderer, propsCell, [slotsCell(cellProps)]);
 							};
 
 							const hDefaultCell = () => {
 								return h(CellRenderer, propsCell);
 							};
-
 							/* 如果有自定义 */
 							if (_.$val(xTableVirWrapper, "$attrs.slotsCell")) {
 								return hCustomCell(_.$val(xTableVirWrapper, "$attrs.slotsCell"));

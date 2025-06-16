@@ -1,52 +1,3 @@
-<style lang="less">
-.xBadge {
-	overflow: visible;
-	display: inline-block;
-
-	.xBadge-sup {
-		display: inline-block;
-		position: absolute;
-		white-space: nowrap;
-		padding: 0 6px;
-		line-height: 20px;
-		border-radius: 10px;
-		color: var(--el-color-white, #fff);
-		z-index: 1;
-		background-color: var(--el-color-danger);
-		text-align: center;
-		top: var(--xBadge-top, -12px);
-		left: var(--xBadge-left, -12px);
-		&.is-dot {
-			padding: 0;
-			width: 8px;
-			height: 8px;
-			border-radius: 50%;
-			top: -6px;
-			left: -6px;
-		}
-	}
-	&.primary {
-		.xBadge-sup {
-			background-color: var(--el-color-primary);
-		}
-	}
-	&.success {
-		.xBadge-sup {
-			background-color: var(--el-color-success);
-		}
-	}
-	&.warning {
-		.xBadge-sup {
-			background-color: var(--el-color-warning);
-		}
-	}
-	&.info {
-		.xBadge-sup {
-			background-color: var(--el-color-info);
-		}
-	}
-}
-</style>
 <template>
 	<span class="position relative xBadge" :style="cptOffset">
 		<div :class="{ 'xBadge-sup': true, 'is-dot': isDot }">
@@ -104,3 +55,52 @@ export default async function () {
 	});
 }
 </script>
+<style lang="less">
+.xBadge {
+	overflow: visible;
+	display: inline-block;
+
+	.xBadge-sup {
+		display: inline-block;
+		position: absolute;
+		white-space: nowrap;
+		padding: 0 6px;
+		line-height: 20px;
+		border-radius: 10px;
+		color: var(--el-color-white, #fff);
+		z-index: 1;
+		background-color: var(--el-color-danger);
+		text-align: center;
+		top: var(--xBadge-top, -12px);
+		left: var(--xBadge-left, -12px);
+		&.is-dot {
+			padding: 0;
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			top: -6px;
+			left: -6px;
+		}
+	}
+	&.primary {
+		.xBadge-sup {
+			background-color: var(--el-color-primary);
+		}
+	}
+	&.success {
+		.xBadge-sup {
+			background-color: var(--el-color-success);
+		}
+	}
+	&.warning {
+		.xBadge-sup {
+			background-color: var(--el-color-warning);
+		}
+	}
+	&.info {
+		.xBadge-sup {
+			background-color: var(--el-color-info);
+		}
+	}
+}
+</style>

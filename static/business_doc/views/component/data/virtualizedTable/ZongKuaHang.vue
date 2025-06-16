@@ -17,12 +17,13 @@ export default async function () {
 			const dataGenerator = (_, index) => ({
 				id: `random-id-${++index}`,
 				group: index % 10,
-				name: `Tom_${index}`
+				name: `Tom_${index % 3}`
 			});
 			const columns = [
 				{
 					prop: "no",
 					label: "no",
+					width: 30,
 					align: "center",
 					cellRenderer: ({ rowIndex }) => {
 						return rowIndex + 1;
@@ -47,35 +48,43 @@ export default async function () {
 			];
 			/* 处理数据 */
 			/* 分组 */
-			const needMergeColumnProp = "group";
-			const groupedRowObj = _.groupBy(
-				Array.from({ length: 100 }).map(dataGenerator),
-				needMergeColumnProp
-			);
+			const rowArray = Array.from({ length: 100 }).map(dataGenerator);
 			/* rowHeight需要保持一致，所以不要妄图动态行高，都是计算量 */
 			const rowHeight = 50;
+			const GroupPropArray = ["group", "name"];
 			return {
 				md: `**rowHeight**需要保持一致，所以不要妄图使用动态行高，都是计算量`,
 				rowHeight,
 				columns,
-				data: xTableVirNewGroupSortedRows({
-					groupedRowObj,
-					mergeProp: needMergeColumnProp
+				data: xTableVirMergeData({
+					rowArray,
+					GroupPropArray
 				}),
 				customRowRender({ cells, columns, depth, isScrolling, rowData, rowIndex, style }) {
-					return xTableVirModifyCellsHeight({
-						mergeProp: "group",
+					return xTableVirCells({
+						GroupPropArray,
 						columns,
 						cells,
 						rowData,
 						rowHeight,
-						calStyle({ rowSpan }) {
-							return {
-								backgroundColor: "var(--el-color-primary-light-3)",
-								height: `${rowSpan * rowHeight}px`,
-								alignSelf: "flex-start",
-								zIndex: rowSpan
-							};
+						setStyle({ rowSpan, prop, colIndex }) {
+							if (prop === "name") {
+								return {
+									outline: "1px solid var(--el-border-color-lighter)",
+									backgroundColor: "gray",
+									height: `${rowSpan * rowHeight}px`,
+									alignSelf: "flex-start",
+									zIndex: rowSpan
+								};
+							} else {
+								return {
+									outline: "1px solid var(--el-border-color-lighter)",
+									backgroundColor: "#fff",
+									height: `${rowSpan * rowHeight}px`,
+									alignSelf: "flex-start",
+									zIndex: rowSpan
+								};
+							}
 						}
 					});
 				}

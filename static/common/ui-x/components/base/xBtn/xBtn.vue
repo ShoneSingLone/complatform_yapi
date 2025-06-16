@@ -1006,7 +1006,7 @@ a.el-button {
 		color: var(--el-button-hover-text-color);
 		border-color: var(--el-button-hover-border-color);
 		background-color: var(--el-button-hover-bg-color);
-		transform: scale(1.01);
+		transform: scale(0.98);
 		.xIcon {
 			color: var(--el-button-hover-text-color);
 		}
@@ -1016,7 +1016,7 @@ a.el-button {
 		color: var(--el-button-active-text-color);
 		border-color: var(--el-button-active-border-color);
 		background-color: var(--el-button-active-bg-color);
-		transform: scale(0.99);
+		transform: scale(0.96);
 	}
 
 	&.is-disabled,

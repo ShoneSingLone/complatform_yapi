@@ -22,7 +22,7 @@ export default async function () {
 		},
 		computed: {
 			cptLabel() {
-				return i18n("生成表达式");
+				return i18n("generate_expression");
 			}
 		},
 		methods: {

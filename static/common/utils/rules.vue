@@ -231,11 +231,12 @@ export default async function () {
 					async validator({ val }) {
 						try {
 							if (!_.$isInput(val)) return;
+							let val1 = val;
 							val = _.toNumber(val);
 							if (!_.$isNumber(val)) {
 								return `请输入${min}~${max}范围内的整数`;
 							}
-							if (!/^\d+$/.test(val) || val > max || val < min) {
+							if (!/^\d+$/.test(val1) || val > max || val < min) {
 								return `请输入${min}~${max}范围内的整数`;
 							}
 							return "";

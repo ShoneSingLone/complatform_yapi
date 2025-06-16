@@ -272,6 +272,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						formProp: "tag",
 						label: "Tags"
 					});
+				},
+				cellRenderer: params => {
+					const {
+						rowData: { tag }
+					} = params;
+					return hDiv(
+						{ class: "flex vertical overflow-auto" },
+						_.map(tag, t => h("xTag", { class: "mt4" }, [t]))
+					);
 				}
 			};
 
@@ -684,13 +693,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						}
 					}
 
-					const NEED_MERGE_COLUMN_PROP = "catid";
-
-					const GroupedRowObj = _.groupBy(_allInterface, NEED_MERGE_COLUMN_PROP);
-
-					_allInterface = xTableVirNewGroupSortedRows({
-						groupedRowObj: GroupedRowObj,
-						mergeProp: NEED_MERGE_COLUMN_PROP
+					_allInterface = xTableVirMergeData({
+						rowArray: _allInterface,
+						GroupPropArray: ["catid"]
 					});
 
 					return _allInterface;

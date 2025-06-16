@@ -7952,12 +7952,10 @@
 									c = f.sheets.length;
 								0 === c
 									? ((a = new Date()),
-										(l = a - u),
-										console.log("Less has finished and no sheets were loaded."),
 										s({
 											startTime: u,
 											endTime: a,
-											totalMilliseconds: l,
+											totalMilliseconds: (l = a - u),
 											sheets: f.sheets.length
 										}))
 									: y(

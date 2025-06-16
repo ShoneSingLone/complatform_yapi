@@ -9,7 +9,7 @@
 	 * @param {Function} API_OPTIONS.error 请求失败回调
 	 */
 	_.$ajax = (function () {
-		function configs(API_OPTIONS) {
+		function configs(API_OPTIONS = {}) {
 			let { requestInjector, responseInjector } = this;
 
 			const normal = options => options;
@@ -57,7 +57,7 @@
 			const errorCodeArray = [400, 401, 402, 403, 404, 405, 500, 555];
 
 			const success = function (response, state, xhr) {
-				response = responseInjector(response);
+				response = responseInjector(response, { API_OPTIONS });
 				if (_.isPlainObject(response)) {
 					/* 兼容 */
 					const errcode = response && (response.errcode || response.code);
@@ -79,7 +79,7 @@
 				return resolve(response, state, xhr);
 			};
 			const error = function (response) {
-				response = responseInjector(response);
+				response = responseInjector(response, { API_OPTIONS });
 				return reject(response);
 			};
 
@@ -123,13 +123,14 @@
 		};
 		const $ajax = {
 			urlWrapper,
-			upload: ({ method, url, formData, callback }) => {
+			upload: ({ method, url, formData, callback, headers /* headers信息 */ }) => {
 				method = method || "post";
 				callback = callback || (() => null);
 				return new Promise((resolve, reject) => {
 					const options = optionsWrapper({
 						type: method,
 						options: {},
+						headers: headers || {},
 						url,
 						success: resolve,
 						error: reject

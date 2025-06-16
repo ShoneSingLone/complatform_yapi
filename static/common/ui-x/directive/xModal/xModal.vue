@@ -6,7 +6,7 @@
 					<div class="el-dialog__title-bar" v-xmove="moveOptions" />
 					<span class="el-dialog__title">
 						<span class="xModel-title_prefixe"></span>
-						<xRender :render="cptTitle" />
+						<xRender :render="cpt_title" />
 					</span>
 					<button
 						v-if="isShowFullScreen"
@@ -14,11 +14,15 @@
 						aria-label="Close"
 						class="x-dialog__headerbtn fullscreen"
 						@click="toggleFullScreen">
-						<i
+						<xIcon
 							v-if="dialogClass.fullscreen"
 							class="el-icon el-icon-copy-document"
-							style="transform: rotate(180deg)"></i>
-						<i v-else class="el-icon el-icon-full-screen"></i>
+							icon="copy-document"
+							style="transform: rotate(180deg)"></xIcon>
+						<xIcon
+							v-else
+							class="el-icon el-icon-full-screen"
+							icon="full-screen"></xIcon>
 					</button>
 					<button
 						type="button"
@@ -278,7 +282,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			cptCloseIcon() {
 				return PRIVATE_GLOBAL.x_modal_close_icon;
 			},
-			cptTitle() {
+			cpt_title() {
 				return options.title;
 			},
 			cptWrapperStyle() {
@@ -312,14 +316,14 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 	box-sizing: border-box;
 	width: 50%;
 	background-color: var(--xModal-bg-color, #fff);
-}
 
-.el-dialog.is-fullscreen {
-	width: 100%;
-	margin-top: 0;
-	margin-bottom: 0;
-	height: 100%;
-	overflow: auto;
+	&.is-fullscreen {
+		width: 100%;
+		margin-top: 0;
+		margin-bottom: 0;
+		height: 100%;
+		overflow: auto;
+	}
 }
 
 .el-dialog__header {
@@ -484,7 +488,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			display: flex;
 			flex-flow: column nowrap;
 			width: 100vw;
-			height: 100%;
+			height: 100vh;
 		}
 
 		> .el-dialog__header {

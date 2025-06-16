@@ -887,6 +887,7 @@
 		}
 		return Vue.reactive(options);
 	};
+	window.defItem.X_ITEM_LABEL_IS_EMPTY = "X_ITEM_LABEL_IS_EMPTY";
 
 	((/* checkvalue return true or false */) => {
 		_.$isHttp = url => {
@@ -1028,6 +1029,7 @@
 	};
 
 	_.$scrollIntoView = function (container, selected) {
+		/* TODO:自定义偏移量 */
 		/* scrollIntoView api */
 		if (!selected) {
 			container.scrollTop = 0;
@@ -1041,23 +1043,12 @@
 		}
 		const top =
 			selected.offsetTop + offsetParents.reduce((prev, curr) => prev + curr.offsetTop, 0);
-		const bottom = top + selected.offsetHeight;
-		const viewRectTop = container.scrollTop;
-		const viewRectBottom = viewRectTop + container.clientHeight;
 
-		if (top < viewRectTop) {
-			container.scrollTo({
-				top: top,
-				behavior: "smooth"
-			});
-			// container.scrollTop = top;
-		} else if (bottom > viewRectBottom) {
-			container.scrollTo({
-				top: bottom - container.clientHeight,
-				behavior: "smooth"
-			});
-			// container.scrollTop = bottom - container.clientHeight;
-		}
+		// 滑动到容器顶部
+		container.scrollTo({
+			top: top,
+			behavior: "smooth"
+		});
 	};
 
 	/**
@@ -1128,6 +1119,7 @@
 
 	_.$lStorage = new Proxy(localStorage, {
 		set(_localStorage, prop, value) {
+			console.log("🚀 ~ set ~ _localStorage:", prop, value);
 			if (_.isPlainObject(value) || _.isArray(value)) {
 				_localStorage[prop] = JSON.stringify(value);
 			} else {
@@ -1435,9 +1427,10 @@
 					]);
 				};
 			}
+
 			const modalVm = await _.$openModal({
 				title,
-				url: "/common/ui-x/msg/WindowConfirm.vue",
+				url: PRIVATE_GLOBAL.x_confirm_window_component,
 				style: options.style,
 				resolve,
 				reject,
@@ -1609,14 +1602,11 @@
 	}
 
 	_.$globalVar = $globalVar;
-	/**
-	 * 从location.search  get val
-	 * @param {*} key[]
-	 * @returns val[]
-	 */
-	/* @typescriptDeclare (key:string[])=>string[] */
-	_.$urlSearch = keys => {
-		const searchParams = new URLSearchParams(location.search);
+
+	/* @ts-ignore @declared*/
+	_.$urlSearch = (keys, searchLike) => {
+		searchLike = searchLike || location.search;
+		const searchParams = new URLSearchParams(searchLike);
 		const res = _.map(keys, key => searchParams.get(key));
 		return res;
 	};
@@ -1701,8 +1691,14 @@
 		}) {
 			try {
 				payload = payload || {};
-				scritpSourceCode = scritpSourceCode || "";
+
+				/* app-use-bable 会加载babel，兼容低版本浏览器*/
+				if (window.Babel) {
+					scritpSourceCode = window.Babel.babelTransformCode(scritpSourceCode);
+				}
+
 				scritpSourceCode = scritpSourceCode.replace("export default", "");
+
 				const isShowTemplate = templateSourceCode && IS_DEV;
 				const innerCode = [
 					`console.info("${resolvedURL}");`,
@@ -1713,6 +1709,7 @@
 						resolvedURL
 					)}.call({THIS_FILE_URL:"${resolvedURL}"},payload);}catch(e){console.error(e)}`
 				].join("\n");
+
 				let scfObjAsyncFn;
 				let component = {};
 
@@ -2257,9 +2254,12 @@
 		/**
 		 * 从 cofnigs 中获取value 返回 {xxx:value,...}形式的对象
 		 * @param {any} xItemFormConfigs
-		 * @returns
+		 * @param configs Source object to pick values from
+		 * @param props Optional array of property names to pick. If not provided, picks all properties
+		 * @returns Object containing the picked property values
+		 * @template const a = _.$pickFormValues(formConfigs,["a","b"]);a.a a.b
 		 */
-		/* @typescriptDeclare (configs:object)=>object */
+		/* @typescriptDeclare <T extends object, K extends keyof T = keyof T>( configs: T, props?: K[] ) => Pick<T, K> */
 		_.$pickFormValues = function (xItemFormConfigs) {
 			return _.reduce(
 				xItemFormConfigs,

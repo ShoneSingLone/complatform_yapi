@@ -7,7 +7,7 @@
 			:configs="btnConfigs" />
 		<xDropdown v-if="isShowMoreBtn" trigger="click" @visible-change="handleVisibleChange">
 			<xBtn :preset="preset">
-				{{ i18n("更多") }}<i class="el-icon-arrow-down el-icon--right"></i>
+				{{ i18n("more_content") }}<i class="el-icon-arrow-down el-icon--right"></i>
 			</xBtn>
 			<xDropdownMenu slot="dropdown" ref="ElDropdownMenu">
 				<div
@@ -69,7 +69,7 @@ export default async function () {
 				}
 			},
 			btnArrayAll() {
-				const _btnArray = _.filter(this.children, btnConfigs => {
+				const _btnArray = _.filter(_.filter(this.children, Boolean), btnConfigs => {
 					if (btnConfigs.isHide !== undefined) {
 						if (_.isBoolean(btnConfigs.isHide)) {
 							return !btnConfigs.isHide;

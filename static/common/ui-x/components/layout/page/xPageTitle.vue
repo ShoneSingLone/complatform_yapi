@@ -1,7 +1,7 @@
 <template>
 	<div class="xPageTitle back" v-if="back">
 		<div class="xPageTitle__left flex middle pointer" @click="back">
-			<i class="el-icon-back mr"></i>
+			<xIcon icon="icon_back" class="mr" />
 			<div class="xPageTitle__title flex middle">
 				<slot name="title">
 					<xRender :render="cptTitle" :payload="title" />
@@ -15,7 +15,7 @@
 	<div class="flex middle xPageTitle" v-else>
 		<slot name="title">
 			<span class="title-text mr4"> <xRender :render="cptTitle" :payload="title" /> </span>
-			<xIcon icon="_tip" v-if="tips" v-xtips="cptTips" />
+			<xIcon icon="tips" v-if="tips" v-xtips="cptTips" />
 		</slot>
 		<span class="flex1"> </span>
 		<slot />

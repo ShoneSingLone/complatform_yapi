@@ -72,7 +72,8 @@ export default async function () {
 								_.$lStorage.GroupSectionProjectListFormQuery.name) ||
 							"",
 						resetValue: "",
-						placeholder: i18n("分组、项目的名称或者ID")
+						placeholder: i18n("分组、项目的名称或者ID"),
+						clearable: true
 					},
 					group: {
 						value:
@@ -282,7 +283,7 @@ export default async function () {
 				return _.$pickFormValues(this.formQuery);
 			},
 			cptConfigsTableDataList() {
-				const rows = _.filter(this.configsTable.data.list, row => {
+				const rowArray = _.filter(this.configsTable.data.list, row => {
 					const { name, group } = this.cptFormQuery;
 					_.$lStorage.GroupSectionProjectListFormQuery = { name, group };
 					if (name) {
@@ -296,10 +297,9 @@ export default async function () {
 						return true;
 					}
 				});
-				const groupedRowObj = _.groupBy(rows, "group_id");
-				return xTableVirNewGroupSortedRows({
-					groupedRowObj,
-					mergeProp: "group_id"
+				return xTableVirMergeData({
+					rowArray,
+					GroupPropArray: ["group_id"]
 				});
 			},
 			btnRest() {
@@ -328,13 +328,13 @@ export default async function () {
 		methods: {
 			customRowRender({ cells, columns, depth, isScrolling, rowData, rowIndex, style }) {
 				const { rowHeight } = this;
-				return xTableVirModifyCellsHeight({
+				return xTableVirCells({
 					columns,
 					cells,
 					rowData,
 					rowHeight,
-					mergeProp: "group_id",
-					calStyle({ rowSpan }) {
+					GroupPropArray: ["group_id"],
+					setStyle({ rowSpan }) {
 						return {
 							backgroundColor: "#f8f8f8",
 							border: "var(--el-table-border)",

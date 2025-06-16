@@ -1,13 +1,40 @@
 (async function useIdbKeyVal() {
 	const ResolvePathCache = {};
 	const IS_DEV = !!localStorage.isDev;
-	const COMMON_LIBS = IS_DEV ? "/common/libs" : "/common/libs/min";
+	const COMMON_LIBS = IS_DEV ? "/common/libs" : "/common/libs";
 	const camelizeRE = /\/|\.|_|-(\w)/g;
+
+	const {
+		srcRoot,
+		appName,
+		appEntryName,
+		appVersion,
+		loadingImg,
+		appPrefix,
+		noNprogress,
+		appUseBabel
+	} = (() => {
+		const srcRootDom = $$id("src-root");
+		const { src, dataset } = srcRootDom;
+
+		return {
+			srcRoot: src.split("/common/libs")[0],
+			appName: dataset.appName,
+			appEntryName: dataset.appEntryName,
+			appVersion: dataset.appVersion,
+			loadingImg: dataset.loadingImg,
+			appPrefix: dataset.appPrefix || "business_",
+			noNprogress: dataset.noNProgress,
+			appUseBabel: dataset.appUseBabel === "true"
+		};
+	})();
+
 	/**
 	 * document.getElementById
 	 * @param {*} id
 	 * @returns
 	 */
+
 	/* @typescriptDeclare $id(id: string)=> HTMLElement */
 	function $$id(id) {
 		return document.getElementById(id);
@@ -18,10 +45,12 @@
 	 * @param {*} tagName
 	 * @returns
 	 */
+
 	/* @typescriptDeclare (tagName: string)=> HTMLElement[] */
 	function $$tags(tagName) {
 		return document.getElementsByTagName(tagName);
 	}
+
 	function last(arr) {
 		return arr.length ? arr[arr.length - 1] : false;
 	}
@@ -37,7 +66,7 @@
 	}
 
 	/**
-	 * indexedDB 简单封装，类似jQuery get set，异步函数
+	 * indexedDB 简单封装，类似 jQuery get set，异步函数
 	 * @param {*} key
 	 * @param {*} value
 	 * @param {*} customStore
@@ -51,6 +80,7 @@
 				request.onabort = request.onerror = () => reject(request.error);
 			});
 		}
+
 		function createStore(dbName, storeName) {
 			const request = indexedDB.open(dbName);
 			request.onupgradeneeded = () => request.result.createObjectStore(storeName);
@@ -58,34 +88,41 @@
 			return (txMode, callback) =>
 				dbp.then(db => callback(db.transaction(storeName, txMode).objectStore(storeName)));
 		}
+
 		let defaultGetStoreFunc;
+
 		function defaultGetStore() {
 			if (!defaultGetStoreFunc) {
 				defaultGetStoreFunc = createStore("keyval-store", "keyval");
 			}
 			return defaultGetStoreFunc;
 		}
+
 		function get(key, customStore = defaultGetStore()) {
 			return customStore("readonly", store => promisifyRequest(store.get(key)));
 		}
+
 		function set(key, value, customStore = defaultGetStore()) {
 			return customStore("readwrite", store => {
 				store.put(value, key);
 				return promisifyRequest(store.transaction);
 			});
 		}
+
 		function del(key, customStore = defaultGetStore()) {
 			return customStore("readwrite", store => {
 				store.delete(key);
 				return promisifyRequest(store.transaction);
 			});
 		}
+
 		function clear(customStore = defaultGetStore()) {
 			return customStore("readwrite", store => {
 				store.clear();
 				return promisifyRequest(store.transaction);
 			});
 		}
+
 		function eachCursor(store, callback) {
 			store.openCursor().onsuccess = function () {
 				if (!this.result) return;
@@ -94,6 +131,7 @@
 			};
 			return promisifyRequest(store.transaction);
 		}
+
 		function keys(customStore = defaultGetStore()) {
 			return customStore("readonly", store => {
 				if (store.getAllKeys) {
@@ -103,6 +141,7 @@
 				return eachCursor(store, cursor => items.push(cursor.key)).then(() => items);
 			});
 		}
+
 		return {
 			get,
 			set,
@@ -116,18 +155,6 @@
 	let LOADING_IMAGE_NAME = "x-loading";
 	/* 默认的loading样式 */
 	(function loadBaseInfo() {
-		var srcRootDom = $$id("src-root");
-		var src = srcRootDom.src;
-		var srcRoot = src.split("/common/libs")[0];
-
-		var dataset = srcRootDom.dataset;
-		var appName = dataset.appName;
-		var appEntryName = dataset.appEntryName;
-		var appVersion = dataset.appVersion;
-		var loadingImg = dataset.loadingImg;
-		var appPrefix = dataset.appPrefix || "business_";
-		var noNprogress = dataset.noNProgress;
-
 		if (!appName) {
 			alert("miss APP_NAME");
 		}
@@ -194,6 +221,7 @@
 			}
 		});
 	}
+
 	/*  */
 
 	/**
@@ -214,6 +242,7 @@
 	/**
 	 * 用"xx.xx.xx"的字符串，安全get、set对象的值，如果是vue2，则用$set保证响应
 	 */
+
 	/* @typescriptDeclare (item: object, prop: string, val?: any)=> any */
 	function $val(item, prop, val, options = {}) {
 		item = item || {};
@@ -311,6 +340,7 @@
 			}
 			return nextItem;
 		}
+
 		return item;
 	}
 
@@ -335,6 +365,7 @@
 	 * @param {any} url
 	 * @returns
 	 */
+
 	/* @typescriptDeclare (url: string)=>string */
 	function $resolvePath(url) {
 		if (/^http/.test(url)) {
@@ -419,6 +450,7 @@
 			}
 		});
 	}
+
 	$loadText.pending = {};
 
 	const $loadTextCacheify = async function (url) {
@@ -518,6 +550,7 @@
 	 * @param {string} [globalName=""]
 	 * @returns
 	 */
+
 	/* @typescriptDeclare (url:string,globalName:string)=>any */
 	async function $appendScript(url, globalName = "", _SCRIPT_USE_SRC = false) {
 		try {
@@ -558,6 +591,7 @@
 			console.error(error);
 		}
 	}
+
 	$appendScript.loaded = {};
 
 	/**
@@ -582,6 +616,7 @@
 	 * @param {any} options {userLink:Boolean 如果为true，则使用Link方式引入，这样文件里面的相对路径是相对css文件，否则会缓存文本放在style元素里面，路径是相对页面，有这个差异}
 	 * @returns
 	 */
+
 	/* @typescriptDeclare (url:string,styleSourceCode?:string,options?:any)=>any */
 	async function $appendStyle(url, styleSourceCode = "", options = {}) {
 		const { useLink = false } = options;
@@ -656,7 +691,8 @@
 			/* 预加载，等vue加载后赋值 */
 			_$loadText(`@/i18n/${I18N_LANGUAGE}.js`);
 
-			await _$asyncLoadOrderAppendScrips([
+			/* 一般依赖 */
+			const depends = [
 				[
 					COMMON_LIBS + "/jquery/jquery-3.7.0.min.js",
 					null,
@@ -697,21 +733,30 @@
 							const langOptions = getLangOptionsFn();
 							const i18n = function (key, payload) {
 								if (key.length > 64) {
-									console.warn(
-										`i18n key: 【${key}】 长度超过64，过长，建议重命名`
-									);
+									console.warn(`[i18n:key too lang] ${key}`);
 								}
 								/!*使用 {变量名} 赋值*!/;
-								_.templateSettings.interpolate = /{([\s\S]+?)}/g;
-								let temp = $val(langOptions, key);
-								if (_.isString(temp)) {
-									return _.template(temp)(payload);
-								} else {
+								let i18nString = $val(langOptions, key);
+
+								if (i18nString === undefined) {
+									console.warn(`[i18n:unset] ${key}`);
 									return key;
+								} else {
+									if (typeof payload === "object") {
+										Object.keys(payload).forEach(key => {
+											const i18nVariable = $val(payload, key);
+											if (i18nVariable !== undefined) {
+												i18nString = String(i18nString).replace(
+													`{${key}}`,
+													i18nVariable
+												);
+											}
+										});
+									}
+
+									return i18nString;
 								}
 							};
-							i18n.langOptions = langOptions;
-
 							return i18n;
 						};
 
@@ -726,7 +771,7 @@
 									const preloadArray = getPreload();
 									preloadArray.forEach(url => $loadText(url));
 								}
-							} catch (error) { }
+							} catch (error) {}
 						}
 					}
 				],
@@ -749,7 +794,14 @@
 				],
 				[COMMON_LIBS + "/common.ts"],
 				[COMMON_LIBS + "/common.$.ajax.ts"]
-			]);
+			];
+
+			if (appUseBabel) {
+				depends.push([COMMON_LIBS + "/babel/babel.standalone.7.27.0.js"]);
+				depends.push([COMMON_LIBS + "/babel/babel.custom.js"]);
+			}
+
+			await _$asyncLoadOrderAppendScrips(depends);
 
 			if (IS_DEV) {
 				window.ONLY_USE_IN_DEV_MODEL && window.ONLY_USE_IN_DEV_MODEL();
@@ -761,12 +813,14 @@
 					"content",
 					"width=device-width, initial-scale=1.0, user-scalable=no"
 				);
+
 				function setRemBase() {
 					const wWidth = $(window).width();
 					const rate = wWidth / 375;
 					const unit = (16 * rate) / 16;
 					$("html").css("font-size", unit + "px");
 				}
+
 				$(window).on("resize", setRemBase).on("orientationchange", setRemBase);
 				setRemBase();
 			}

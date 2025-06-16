@@ -145,6 +145,16 @@ export default async function () {
 						callback
 					});
 				},
+				/**
+				 *  上传单个文件
+				 */
+				async apiResourceSingleUpload({ formData, callback }) {
+					return _.$ajax.upload({
+						url: "/api/resource/single_upload",
+						formData,
+						callback
+					});
+				},
 				apiInterfaceListMenu(project_id) {
 					return _.$ajax.get("/api/interface/list_menu", {
 						data: { project_id }

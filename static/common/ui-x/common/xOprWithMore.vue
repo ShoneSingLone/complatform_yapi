@@ -11,7 +11,7 @@
 		</xBtn>
 		<xDropdown v-if="isShowMoreBtn" trigger="click" @visible-change="handleVisibleChange">
 			<xBtn preset="text">
-				{{ i18n("更多") }}
+				{{ i18n("more_content") }}
 			</xBtn>
 			<xDropdownMenu slot="dropdown" ref="ElDropdownMenu">
 				<div
@@ -69,22 +69,25 @@ export default async function () {
 				return this.$attrs.row || this.configs.row || {};
 			},
 			btnArrayAll() {
-				const _btnArray = _.filter(_.$val(this, "configs.col.btnList"), btnConfigs => {
-					if (btnConfigs.isHide !== undefined) {
-						if (_.isBoolean(btnConfigs.isHide)) {
-							return !btnConfigs.isHide;
-						}
-						if (_.isFunction(btnConfigs.isHide)) {
-							return !btnConfigs.isHide({
-								row: this.row,
-								configs: btnConfigs
-							});
-						}
+				const _btnArray = _.filter(
+					_.filter(_.$val(this, "configs.col.btnList"), Boolean),
+					btnConfigs => {
+						if (btnConfigs.isHide !== undefined) {
+							if (_.isBoolean(btnConfigs.isHide)) {
+								return !btnConfigs.isHide;
+							}
+							if (_.isFunction(btnConfigs.isHide)) {
+								return !btnConfigs.isHide({
+									row: this.row,
+									configs: btnConfigs
+								});
+							}
 
-						return false;
+							return false;
+						}
+						return true;
 					}
-					return true;
-				});
+				);
 				return _.map(_btnArray, (configs, index) => {
 					configs.__unix_index = Date.now() + index;
 					return configs;

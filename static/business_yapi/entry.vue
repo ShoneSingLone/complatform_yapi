@@ -6,6 +6,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 	_.each(
 		{
+			/* 涉及具体的上传接口，不能做通用的处理 */
 			TuiEditor: "@/components/TuiEditor/TuiEditor.vue",
 			YapiApiRequestBodyPreviewer: "@/components/YapiApiRequestBodyPreviewer.vue",
 			xItemMonaco: "@/components/xItemMonaco.vue",

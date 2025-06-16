@@ -101,7 +101,7 @@ export default async function () {
 	&.xDialog-wrapper {
 		display: flex;
 		flex-flow: column nowrap;
-		height: 100%;
+		height: auto;
 		max-height: calc(100vh - 200px);
 		min-width: unset;
 		width: var(--xDialog-wrapper-width, 600px);

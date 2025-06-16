@@ -97,13 +97,13 @@ export default async function () {
 		methods: {
 			customRowRender({ cells, columns, depth, isScrolling, rowData, rowIndex, style }) {
 				const { rowHeight } = this;
-				return xTableVirModifyCellsHeight({
+				return xTableVirCells({
+					GroupPropArray: ["catid"],
 					columns,
 					cells,
 					rowData,
 					rowHeight,
-					mergeProp: "catid",
-					calStyle({ rowSpan }) {
+					setStyle({ rowSpan }) {
 						return {
 							backgroundColor: "#f8f8f8",
 							border: "var(--el-table-border)",

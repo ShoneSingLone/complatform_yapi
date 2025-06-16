@@ -8,7 +8,10 @@
 export default async function () {
 	const { mixins: ItemMixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 	return defineComponent({
-		mixins: [ItemMixins]
+		mixins: [ItemMixins],
+		setup() {
+			return {};
+		}
 	});
 }
 </script>

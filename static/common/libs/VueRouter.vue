@@ -2317,7 +2317,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				this.router = router;
 				this.base = normalizeBase(base);
 				// start with a route object that stands for "nowhere"
-				this.current = START;
+				/* 首先根据页面信息加载路由数据 */
+				const mode = router.options.mode || "hash";
+				let _location;
+				if (mode === "hash") {
+					_location = location.hash;
+				} else {
+					_location = location.href;
+				}
+				_location = normalizeLocation(_location);
+				this.current = createRoute(null, _location);
+				/* 首先根据页面信息加载路由数据 */
 				this.pending = null;
 				this.ready = false;
 				this.readyCbs = [];
@@ -3237,8 +3247,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			};
 
 			Object.defineProperties(VueRouter.prototype, prototypeAccessors);
-
-			var VueRouter$1 = VueRouter;
 
 			function registerHook(list, fn) {
 				list.push(fn);

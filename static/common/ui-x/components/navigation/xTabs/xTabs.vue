@@ -6,6 +6,7 @@ export default async function () {
 			xTabNav: () => _.$importVue("/common/ui-x/components/navigation/xTabs/xTabNav.vue")
 		},
 		props: {
+			contentEmpty: Boolean,
 			type: String,
 			activeName: String,
 			closable: Boolean,
@@ -164,7 +165,11 @@ export default async function () {
 
 			const header = hDiv(
 				{
-					class: ["el-tabs__header", `is-${tabPosition}`]
+					class: [
+						"el-tabs__header",
+						`is-${tabPosition}`,
+						{ "content-empty": this.contentEmpty }
+					]
 				},
 				[newButton, h("xTabNav", navData)]
 			);
@@ -409,20 +414,27 @@ export default async function () {
 	position: relative;
 }
 
-.el-tabs--card > .el-tabs__header {
-	border-bottom: 1px solid #e4e7ed;
-}
+.el-tabs--card {
+	> .el-tabs__header {
+		border-bottom: 1px solid #e4e7ed;
 
-.el-tabs--card > .el-tabs__header .el-tabs__nav {
-	border: 1px solid #e4e7ed;
-	border-bottom: none;
-	border-radius: 4px 4px 0 0;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-}
+		&.content-empty {
+			border-bottom: 1px solid transparent;
+			margin: 0;
+		}
 
-.el-tabs--card > .el-tabs__header .el-tabs__active-bar {
-	display: none;
+		.el-tabs__nav {
+			border: 1px solid #e4e7ed;
+			border-bottom: none;
+			border-radius: 4px 4px 0 0;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+
+		.el-tabs__active-bar {
+			display: none;
+		}
+	}
 }
 
 .el-tabs--card > .el-tabs__header .el-tabs__item .el-icon-close {

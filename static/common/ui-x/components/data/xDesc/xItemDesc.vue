@@ -72,7 +72,7 @@ export default async function () {
 					}
 					content = _.$val(_, "find(options, {\n  value: this.item.value\n}).label");
 				} else if (_.isBoolean(content)) {
-					content = content ? i18n("是") : i18n("否");
+					content = content ? i18n("yes_answer") : i18n("no_answer");
 				} else if (_.isPlainObject(content)) {
 					content = "";
 				}

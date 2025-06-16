@@ -609,6 +609,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 .xItem-wrapper {
 	overflow: hidden;
 	width: var(--xItem-wrapper-width, 320px);
+	height: var(--xItem-wrapper-height, auto);
 	min-width: 1px;
 
 	.xItem-label-controller {

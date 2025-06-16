@@ -10,7 +10,7 @@
 			<tr>
 				<th v-if="showWeekNumber">{{ i18n("el.datepicker.week") }}</th>
 				<th v-for="(week, key) in WEEKS" :key="key">
-					{{ i18n("el.datepicker.weeks." + week) }}
+					{{ getCellText(week) }}
 				</th>
 			</tr>
 			<tr
@@ -273,6 +273,11 @@ export default async function () {
 		},
 
 		methods: {
+			getCellText(week) {
+				const propString = `el.datepicker.weeks.${week}`;
+				const weekString = i18n(propString);
+				return weekString;
+			},
 			cellMatchesDate(cell, date) {
 				const value = new Date(date);
 				return (
