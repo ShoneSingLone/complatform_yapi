@@ -13,7 +13,7 @@ proxy_set_header Connection "upgrade";
 
 ## 环境要求
 
-- nodejs（7.6+)
+- nodejs（7.6+）
 - mongodb（2.6+）
 
 ## 安装

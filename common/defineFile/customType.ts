@@ -919,6 +919,30 @@ group:{
 								
 								search:(...args:any)=> Promise<any>;
 								 };
+GitRepo:{ 
+								
+								getName:(...args:any)=> Promise<any>;
+								
+
+								
+								getSchema:(...args:any)=> Promise<any>;
+								
+
+								
+								git_address_list:(...args:any)=> Promise<any>;
+								
+
+								
+								find:(...args:any)=> Promise<any>;
+								
+
+								
+								remove:(...args:any)=> Promise<any>;
+								
+
+								
+								save:(...args:any)=> Promise<any>;
+								 };
 follow:{ 
 								
 								getName:(...args:any)=> Promise<any>;
@@ -960,6 +984,26 @@ follow:{
 
 								
 								updateById:(...args:any)=> Promise<any>;
+								 };
+CiCd:{ 
+								
+								getName:(...args:any)=> Promise<any>;
+								
+
+								
+								getSchema:(...args:any)=> Promise<any>;
+								
+
+								
+								list:(...args:any)=> Promise<any>;
+								
+
+								
+								remove:(...args:any)=> Promise<any>;
+								
+
+								
+								save:(...args:any)=> Promise<any>;
 								 };
 ChatFriend:{ 
 								
