@@ -259,9 +259,6 @@ exports.appSetupWebsocket = function (app) {
 	const { namespace_ws } = require("./websocket.ns.ws");
 	namespace_ws({ app, ioUtils });
 
-	const { namespace_chat } = require("./websocket.ns.chat");
-	namespace_chat({ app, ioUtils });
-
 	const { namespace_yapi } = require("./websocket.ns.yapi");
 	namespace_yapi({ app, ioUtils });
 };

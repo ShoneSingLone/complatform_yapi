@@ -11,8 +11,14 @@ class ModeGitRepo extends ModelBase {
 			alias: { type: String, required: true },
 			/* git地址 */
 			git_address: { type: String, required: true },
+			/* 仓库在物理主机上的地址 */
+			gir_repo_root: { type: String },
 			/* 状态是否已经从仓库下载到服务器：已下载 */
-			status: { type: String, enum: ["done", "unset"], default: "unset" },
+			status: {
+				type: String,
+				enum: ["done", "unset", "initing"],
+				default: "unset"
+			},
 			/* git 用户名 */
 			username: { type: String, required: true },
 			/* git 密码 */
@@ -45,6 +51,9 @@ class ModeGitRepo extends ModelBase {
 	save(data) {
 		let m = new this.model(data);
 		return m.save();
+	}
+	update(data) {
+		return this.model.update({ _id: data._id }, data, { runValidators: true });
 	}
 }
 

@@ -4,7 +4,7 @@ const Koa = require("koa");
  *
  */
 async function main() {
-	const app = new Koa();
+	const app = (global.APP = new Koa());
 	app._version = Date.now();
 
 	/*

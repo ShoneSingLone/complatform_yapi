@@ -12,8 +12,8 @@ class ModelCiCd extends ModelBase {
 			git_repo_id: { type: Number, required: true }
 		};
 	}
-	list({ project_id }) {
-		return this.model.find({ project_id }).exec();
+	list(condition) {
+		return this.model.find(condition).exec();
 	}
 
 	remove({ key }) {
