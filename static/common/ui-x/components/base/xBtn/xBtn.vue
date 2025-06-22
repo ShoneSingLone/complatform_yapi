@@ -294,30 +294,34 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					]);
 				} else {
 					return h(vm.type || "button", buttonProps, [
-						hSpan({ class: ["flex center", { middle: vm.cptIcon }] }, [
-							(() => {
-								if (vm.cptLoading) {
-									return hxIcon({
-										icon: "loading",
-										class: ["el-icon-loading", { mr4: !!vChildren }]
-									});
-								} else if (vm.cptIcon) {
-									if (/el-/.test(vm.cptIcon)) {
-										return h("i", {
-											class: [vm.cptIcon, { mr4: !!vChildren }]
+						hSpan(
+							{ class: ["flex center xbtn-contnet-wrapper", { middle: vm.cptIcon }] },
+							[
+								(() => {
+									if (vm.cptLoading) {
+										return hxIcon({
+											checkSize: true,
+											icon: "loading",
+											class: ["el-icon-loading", { mr4: !!vChildren }]
 										});
+									} else if (vm.cptIcon) {
+										if (/el-/.test(vm.cptIcon)) {
+											return h("i", {
+												class: [vm.cptIcon, { mr4: !!vChildren }]
+											});
+										} else {
+											return h("xIcon", {
+												icon: vm.cptIcon,
+												class: [{ mr4: !!vChildren }]
+											});
+										}
 									} else {
-										return h("xIcon", {
-											icon: vm.cptIcon,
-											class: [{ mr4: !!vChildren }]
-										});
+										return null;
 									}
-								} else {
-									return null;
-								}
-							})(),
-							vChildren
-						])
+								})(),
+								vChildren
+							]
+						)
 					]);
 				}
 			}

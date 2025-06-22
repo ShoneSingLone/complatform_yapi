@@ -247,6 +247,19 @@ export default async function () {
 					trigger: ["change", "blur"]
 				};
 			},
+			onlyNumber: () => {
+				return {
+					name: "onlyNumber",
+					async validator({ val }) {
+						if (!_.$isInput(val)) return;
+						if (/^\d+$/.test(val)) {
+							return "";
+						}
+						return i18n("only_enter_numbers");
+					},
+					trigger: ["change", "blur"]
+				};
+			},
 			portRange: (min, max) => {
 				return {
 					async validator({ val }) {

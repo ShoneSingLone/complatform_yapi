@@ -19,8 +19,10 @@
 					v-model="cptReqBodyForm" />
 				<PanelReqBodyJson v-if="cptReqBodyType === 'json'" v-model="cptReqBodyOther" />
 			</xTabPane>
-			<xTabPane label="Headers" name="third"> Headers </xTabPane>
-			<xTabPane label="Cookies" name="fourth"> Cookies </xTabPane>
+			<xTabPane label="Headers" name="third">
+				<PanelReqHeaders />
+			</xTabPane>
+			<xTabPane label="Cookies" name="fourth"> <PanelReqCookies /> </xTabPane>
 		</xTabs>
 	</xBlock>
 </template>
@@ -59,6 +61,8 @@ export default async function () {
 			PanelReqBodyForm: () => _.$importVue("@/components/PanelReqBodyForm.vue"),
 			PanelReqQuery: () => _.$importVue("@/components/PanelReqQuery.vue"),
 			PanelReqBodyUrlencoded: () => _.$importVue("@/components/PanelReqBodyUrlencoded.vue"),
+			PanelReqHeaders: () => _.$importVue("@/components/PanelReqHeaders.vue"),
+			PanelReqCookies: () => _.$importVue("@/components/PanelReqCookies.vue"),
 			PanelReqBodyJson: () => _.$importVue("@/components/PanelReqBodyJson.vue")
 		},
 		mixins: [mixins],

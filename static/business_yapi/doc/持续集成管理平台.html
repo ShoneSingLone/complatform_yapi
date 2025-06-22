@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>持续集成管理平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background: #1a202c;
+            color: white;
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #63b3ed;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 20px;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: #2d3748;
+            color: white;
+            border-left-color: #63b3ed;
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 16px;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 24px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #63b3ed;
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #3182ce;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2c5282;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-success {
+            background: #38a169;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #2f855a;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* 状态标签 */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            gap: 6px;
+        }
+
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-warning {
+            background: #fefcbf;
+            color: #744210;
+        }
+
+        .status-info {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .status-running {
+            background: #e9d8fd;
+            color: #44337a;
+        }
+
+        /* 表格样式 */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .table tr:hover {
+            background: #f7fafc;
+        }
+
+        /* 构建历史样式 */
+        .build-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+
+        .build-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .build-info {
+            flex: 1;
+        }
+
+        .build-id {
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 4px;
+        }
+
+        .build-meta {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .build-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* 进度条 */
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #3182ce;
+            transition: width 0.3s;
+        }
+
+        .progress-bar.success {
+            background: #38a169;
+        }
+
+        .progress-bar.error {
+            background: #e53e3e;
+        }
+
+        /* 代码块样式 */
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+
+        /* 标签页 */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #718096;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #3182ce;
+            border-bottom-color: #3182ce;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 文件列表 */
+        .file-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s;
+        }
+
+        .file-item:hover {
+            background: #f7fafc;
+        }
+
+        .file-icon {
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #1a202c;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .card-content {
+                padding: 16px;
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinning {
+            animation: spin 1s linear infinite;
+        }
+
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #38a169;
+        }
+
+        .notification.error {
+            background: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚀 CI/CD Platform</div>
+            </div>
+            <div class="nav-menu">
+                <a href="#" class="nav-item active" onclick="showTab('dashboard')">
+                    <i>📊</i> 仪表板
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('projects')">
+                    <i>📁</i> 项目配置
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('builds')">
+                    <i>🔨</i> 构建历史
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('artifacts')">
+                    <i>📦</i> 产出物管理
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('webhooks')">
+                    <i>🔗</i> Webhook配置
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('settings')">
+                    <i>⚙️</i> 系统设置
+                </a>
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 仪表板 -->
+            <div id="dashboard" class="tab-content active">
+                <div class="page-header">
+                    <h1 class="page-title">仪表板</h1>
+                    <p class="page-subtitle">持续集成系统概览</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-bottom: 24px;">
+                    <div class="card">
+                        <div class="card-content" style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700; color: #3182ce; margin-bottom: 8px;">12</div>
+                            <div style="color: #718096;">活跃项目</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content" style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700; color: #38a169; margin-bottom: 8px;">156</div>
+                            <div style="color: #718096;">成功构建</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content" style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700; color: #e53e3e; margin-bottom: 8px;">8</div>
+                            <div style="color: #718096;">失败构建</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content" style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700; color: #805ad5; margin-bottom: 8px;">3</div>
+                            <div style="color: #718096;">运行中</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">最近构建</h3>
+                        <button class="btn btn-primary" onclick="triggerBuild()">
+                            <span>🔨</span> 触发构建
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div class="build-item">
+                            <div class="build-info">
+                                <div class="build-id">#1234 - frontend-app</div>
+                                <div class="build-meta">main分支 • 2分钟前 • 张三</div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div class="build-actions">
+                                <span class="status-badge status-running">
+                                    <span class="spinning">⚡</span> 构建中
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="build-item">
+                            <div class="build-info">
+                                <div class="build-id">#1233 - backend-api</div>
+                                <div class="build-meta">develop分支 • 15分钟前 • 李四</div>
+                            </div>
+                            <div class="build-actions">
+                                <span class="status-badge status-success">✅ 成功</span>
+                                <button class="btn btn-sm btn-secondary" onclick="downloadArtifact(1233)">下载</button>
+                            </div>
+                        </div>
+
+                        <div class="build-item">
+                            <div class="build-info">
+                                <div class="build-id">#1232 - mobile-app</div>
+                                <div class="build-meta">feature/login分支 • 1小时前 • 王五</div>
+                            </div>
+                            <div class="build-actions">
+                                <span class="status-badge status-error">❌ 失败</span>
+                                <button class="btn btn-sm btn-secondary" onclick="viewLogs(1232)">查看日志</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 项目配置 -->
+            <div id="projects" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title">项目配置</h1>
+                    <p class="page-subtitle">配置Git仓库和构建参数</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Git仓库配置</h3>
+                    </div>
+                    <div class="card-content">
+                        <form id="projectForm">
+                            <div class="form-group">
+                                <label class="form-label">项目名称</label>
+                                <input type="text" class="form-input" id="projectName" placeholder="输入项目名称" value="frontend-app">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Git仓库地址</label>
+                                <input type="url" class="form-input" id="gitUrl" placeholder="https://github.com/username/repo.git" value="https://github.com/example/frontend-app.git">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="form-group">
+                                    <label class="form-label">默认分支</label>
+                                    <input type="text" class="form-input" id="defaultBranch" placeholder="main" value="main">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">构建环境</label>
+                                    <select class="form-select" id="buildEnv">
+                                        <option value="node">Node.js</option>
+                                        <option value="python">Python</option>
+                                        <option value="java">Java</option>
+                                        <option value="docker">Docker</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">构建脚本</label>
+                                <textarea class="form-input form-textarea" id="buildScript" placeholder="输入构建脚本...">#!/bin/bash
+# 安装依赖
+npm install
+
+# 运行测试
+npm test
+
+# 构建项目
+npm run build
+
+# 打包产出物
+tar -czf dist.tar.gz dist/</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">环境变量</label>
+                                <textarea class="form-input form-textarea" id="envVars" placeholder="KEY=value" style="min-height: 80px;">NODE_ENV=production
+API_URL=https://api.example.com
+BUILD_VERSION=1.0.0</textarea>
+                            </div>
+
+                            <div style="display: flex; gap: 12px;">
+                                <button type="submit" class="btn btn-primary">保存配置</button>
+                                <button type="button" class="btn btn-secondary" onclick="testConnection()">测试连接</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 构建历史 -->
+            <div id="builds" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title">构建历史</h1>
+                    <p class="page-subtitle">查看所有构建记录和状态</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">构建记录</h3>
+                        <div style="display: flex; gap: 12px;">
+                            <select class="form-select" style="width: auto;" onchange="filterBuilds(this.value)">
+                                <option value="all">所有状态</option>
+                                <option value="success">成功</option>
+                                <option value="error">失败</option>
+                                <option value="running">运行中</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="refreshBuilds()">刷新</button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>构建ID</th>
+                                    <th>项目</th>
+                                    <th>分支</th>
+                                    <th>提交者</th>
+                                    <th>状态</th>
+                                    <th>开始时间</th>
+                                    <th>耗时</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="buildsTable">
+                                <tr>
+                                    <td>#1234</td>
+                                    <td>frontend-app</td>
+                                    <td>main</td>
+                                    <td>张三</td>
+                                    <td><span class="status-badge status-running"><span class="spinning">⚡</span> 构建中</span></td>
+                                    <td>2024-01-15 14:30</td>
+                                    <td>2m 15s</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary" onclick="viewLogs(1234)">日志</button>
+                                        <button class="btn btn-sm btn-danger" onclick="cancelBuild(1234)">取消</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#1233</td>
+                                    <td>backend-api</td>
+                                    <td>develop</td>
+                                    <td>李四</td>
+                                    <td><span class="status-badge status-success">✅ 成功</span></td>
+                                    <td>2024-01-15 14:15</td>
+                                    <td>3m 42s</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary" onclick="viewLogs(1233)">日志</button>
+                                        <button class="btn btn-sm btn-success" onclick="downloadArtifact(1233)">下载</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#1232</td>
+                                    <td>mobile-app</td>
+                                    <td>feature/login</td>
+                                    <td>王五</td>
+                                    <td><span class="status-badge status-error">❌ 失败</span></td>
+                                    <td>2024-01-15 13:45</td>
+                                    <td>1m 28s</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary" onclick="viewLogs(1232)">日志</button>
+                                        <button class="btn btn-sm btn-primary" onclick="rebuildProject(1232)">重新构建</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 产出物管理 -->
+            <div id="artifacts" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title">产出物管理</h1>
+                    <p class="page-subtitle">管理构建产出的文件和包</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">产出物列表</h3>
+                        <button class="btn btn-secondary" onclick="cleanupArtifacts()">清理过期文件</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="file-list">
+                            <div class="file-item">
+                                <div class="file-icon">📦</div>
+                                <div class="file-info">
+                                    <div class="file-name">frontend-app-v1.2.3.tar.gz</div>
+                                    <div class="file-size">构建 #1233 • 15.2 MB • 2024-01-15 14:18</div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-sm btn-success" onclick="downloadFile('frontend-app-v1.2.3.tar.gz')">
+                                        📥 下载
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewFileInfo('frontend-app-v1.2.3.tar.gz')">
+                                        ℹ️ 详情
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteFile('frontend-app-v1.2.3.tar.gz')">
+                                        🗑️ 删除
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <div class="file-icon">📱</div>
+                                <div class="file-info">
+                                    <div class="file-name">mobile-app-release.apk</div>
+                                    <div class="file-size">构建 #1231 • 28.7 MB • 2024-01-15 12:45</div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-sm btn-success" onclick="downloadFile('mobile-app-release.apk')">
+                                        📥 下载
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewFileInfo('mobile-app-release.apk')">
+                                        ℹ️ 详情
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteFile('mobile-app-release.apk')">
+                                        🗑️ 删除
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <div class="file-icon">🐳</div>
+                                <div class="file-info">
+                                    <div class="file-name">backend-api:latest.docker</div>
+                                    <div class="file-size">构建 #1230 • 156.3 MB • 2024-01-15 11:20</div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-sm btn-success" onclick="downloadFile('backend-api:latest.docker')">
+                                        📥 下载
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewFileInfo('backend-api:latest.docker')">
+                                        ℹ️ 详情
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteFile('backend-api:latest.docker')">
+                                        🗑️ 删除
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <div class="file-icon">📊</div>
+                                <div class="file-info">
+                                    <div class="file-name">test-report.html</div>
+                                    <div class="file-size">构建 #1233 • 2.1 MB • 2024-01-15 14:18</div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-sm btn-success" onclick="downloadFile('test-report.html')">
+                                        📥 下载
+                                    </button>
+                                    <button class="btn btn-sm btn-info" onclick="previewFile('test-report.html')">
+                                        👁️ 预览
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteFile('test-report.html')">
+                                        🗑️ 删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">存储统计</h3>
+                    </div>
+                    <div class="card-content">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                            <div style="text-align: center; padding: 16px; background: #f7fafc; border-radius: 8px;">
+                                <div style="font-size: 24px; font-weight: 700; color: #3182ce;">2.3 GB</div>
+                                <div style="color: #718096; font-size: 14px;">总存储使用</div>
+                            </div>
+                            <div style="text-align: center; padding: 16px; background: #f7fafc; border-radius: 8px;">
+                                <div style="font-size: 24px; font-weight: 700; color: #38a169;">47</div>
+                                <div style="color: #718096; font-size: 14px;">产出物数量</div>
+                            </div>
+                            <div style="text-align: center; padding: 16px; background: #f7fafc; border-radius: 8px;">
+                                <div style="font-size: 24px; font-weight: 700; color: #805ad5;">7天</div>
+                                <div style="color: #718096; font-size: 14px;">平均保留时间</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Webhook配置 -->
+            <div id="webhooks" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title">Webhook配置</h1>
+                    <p class="page-subtitle">配置Git仓库的自动触发钩子</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Webhook设置</h3>
+                        <button class="btn btn-primary" onclick="addWebhook()">添加Webhook</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label class="form-label">Webhook URL</label>
+                            <div style="display: flex; gap: 12px;">
+                                <input type="text" class="form-input" id="webhookUrl" value="https://ci.example.com/webhook/trigger" readonly>
+                                <button class="btn btn-secondary" onclick="copyWebhookUrl()">复制</button>
+                            </div>
+                            <small style="color: #718096; margin-top: 4px; display: block;">
+                                将此URL添加到您的Git仓库的Webhook设置中
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">触发事件</label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" checked> Push事件
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" checked> Pull Request
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox"> Tag创建
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox"> Release发布
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">分支过滤</label>
+                            <input type="text" class="form-input" placeholder="main,develop,feature/*" value="main,develop">
+                            <small style="color: #718096; margin-top: 4px; display: block;">
+                                只有匹配的分支才会触发构建，支持通配符
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Secret密钥</label>
+                            <div style="display: flex; gap: 12px;">
+                                <input type="password" class="form-input" id="webhookSecret" value="your-secret-key">
+                                <button class="btn btn-secondary" onclick="generateSecret()">生成</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary">保存Webhook配置</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Webhook历史</h3>
+                    </div>
+                    <div class="card-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>事件类型</th>
+                                    <th>分支</th>
+                                    <th>提交信息</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-01-15 14:30</td>
+                                    <td>push</td>
+                                    <td>main</td>
+                                    <td>feat: 添加用户登录功能</td>
+                                    <td><span class="status-badge status-success">✅ 已触发</span></td>
+                                    <td><button class="btn btn-sm btn-secondary" onclick="viewWebhookDetails()">详情</button></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-15 13:45</td>
+                                    <td>pull_request</td>
+                                    <td>feature/login</td>
+                                    <td>fix: 修复登录验证问题</td>
+                                    <td><span class="status-badge status-error">❌ 失败</span></td>
+                                    <td><button class="btn btn-sm btn-secondary" onclick="viewWebhookDetails()">详情</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 系统设置 -->
+            <div id="settings" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title">系统设置</h1>
+                    <p class="page-subtitle">配置系统参数和用户权限</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">构建设置</h3>
+                    </div>
+                    <div class="card-content">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label class="form-label">最大并发构建数</label>
+                                <input type="number" class="form-input" value="5" min="1" max="20">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">构建超时时间(分钟)</label>
+                                <input type="number" class="form-input" value="30" min="5" max="120">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">产出物保留天数</label>
+                            <input type="number" class="form-input" value="30" min="1" max="365">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">构建日志保留天数</label>
+                            <input type="number" class="form-input" value="90" min="7" max="365">
+                        </div>
+
+                        <button class="btn btn-primary">保存设置</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 通知组件 -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // 全局变量
+        let currentTab = 'dashboard';
+        let builds = [];
+        let artifacts = [];
+
+        // 标签页切换
+        function showTab(tabName) {
+            // 隐藏所有标签页内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 显示选中的标签页
+            document.getElementById(tabName).classList.add('active');
+            
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            currentTab = tabName;
+        }
+
+        // 显示通知
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // 项目配置相关函数
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const projectData = {
+                name: document.getElementById('projectName').value,
+                gitUrl: document.getElementById('gitUrl').value,
+                branch: document.getElementById('defaultBranch').value,
+                buildEnv: document.getElementById('buildEnv').value,
+                buildScript: document.getElementById('buildScript').value,
+                envVars: document.getElementById('envVars').value
+            };
+            
+            // 模拟保存
+            console.log('保存项目配置:', projectData);
+            showNotification('项目配置已保存');
+        });
+
+        function testConnection() {
+            showNotification('正在测试Git连接...', 'info');
+            
+            // 模拟测试连接
+            setTimeout(() => {
+                showNotification('Git连接测试成功');
+            }, 2000);
+        }
+
+        // 构建相关函数
+        function triggerBuild() {
+            showNotification('构建已触发', 'info');
+            
+            // 模拟添加新构建
+            const newBuild = {
+                id: Date.now(),
+                project: 'frontend-app',
+                branch: 'main',
+                author: '当前用户',
+                status: 'running',
+                startTime: new Date().toLocaleString(),
+                duration: '0s'
+            };
+            
+            // 这里可以更新构建列表
+            console.log('新构建:', newBuild);
+        }
+
+        function viewLogs(buildId) {
+            alert(`查看构建 #${buildId} 的日志`);
+        }
+
+        function cancelBuild(buildId) {
+            if (confirm(`确定要取消构建 #${buildId} 吗？`)) {
+                showNotification(`构建 #${buildId} 已取消`);
+            }
+        }
+
+        function rebuildProject(buildId) {
+            if (confirm(`确定要重新构建 #${buildId} 吗？`)) {
+                showNotification(`重新构建 #${buildId} 已开始`);
+            }
+        }
+
+        function filterBuilds(status) {
+            const rows = document.querySelectorAll('#buildsTable tr');
+            rows.forEach(row => {
+                if (status === 'all') {
+                    row.style.display = '';
+                } else {
+                    const statusCell = row.querySelector('.status-badge');
+                    if (statusCell && statusCell.classList.contains(`status-${status}`)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function refreshBuilds() {
+            showNotification('构建列表已刷新');
+            // 这里可以重新加载构建数据
+        }
+
+        // 产出物相关函数
+        function downloadFile(filename) {
+            showNotification(`开始下载 ${filename}`);
+            
+            // 模拟文件下载
+            const link = document.createElement('a');
+            link.href = '#';
+            link.download = filename;
+            link.click();
+        }
+
+        function downloadArtifact(buildId) {
+            showNotification(`开始下载构建 #${buildId} 的产出物`);
+        }
+
+        function viewFileInfo(filename) {
+            alert(`文件信息: ${filename}`);
+        }
+
+        function deleteFile(filename) {
+            if (confirm(`确定要删除文件 ${filename} 吗？`)) {
+                showNotification(`文件 ${filename} 已删除`);
+            }
+        }
+
+        function previewFile(filename) {
+            window.open(`/preview/${filename}`, '_blank');
+        }
+
+        function cleanupArtifacts() {
+            if (confirm('确定要清理过期的产出物吗？此操作不可撤销。')) {
+                showNotification('正在清理过期文件...', 'info');
+                setTimeout(() => {
+                    showNotification('清理完成，释放了 156MB 存储空间');
+                }, 2000);
+            }
+        }
+
+        // Webhook相关函数
+        function addWebhook() {
+            alert('添加新的Webhook配置');
+        }
+
+        function copyWebhookUrl() {
+            const url = document.getElementById('webhookUrl').value;
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('Webhook URL已复制到剪贴板');
+            });
+        }
+
+        function generateSecret() {
+            const secret = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            document.getElementById('webhookSecret').value = secret;
+            showNotification('新的Secret密钥已生成');
+        }
+
+        function viewWebhookDetails() {
+            alert('查看Webhook详细信息');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('CI/CD平台已加载');
+            
+            // 模拟实时更新构建状态
+            setInterval(() => {
+                // 这里可以实现实时状态更新
+            }, 5000);
+        });
+
+        // 响应式菜单切换
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

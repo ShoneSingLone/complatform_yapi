@@ -19,7 +19,7 @@
 		viewer-fade
 		el-drawer-fade
 		-->
-		<Transition name="el-zoom-in-left">
+		<transition name="fade" mode="out-in">
 			<ProjectInterfaceSectionInterfaceDetailPreview
 				v-if="cptProjectInterfaceTab === 'preview'"
 				:interfaceInfo="interfaceInfo" />
@@ -29,7 +29,7 @@
 			<ProjectInterfaceSectionInterfaceDetailRunTest
 				v-if="cptProjectInterfaceTab === 'run_test' && interfaceInfo"
 				:interfaceInfo="interfaceInfo" />
-		</Transition>
+		</transition>
 	</div>
 </template>
 

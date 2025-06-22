@@ -6,10 +6,17 @@
 			1
 		</li>
 		<li
-			:class="('el-icon more btn-quickprev', [quickprevIconClass, { disabled }])"
+			:class="
+				('el-icon more flex middle center btn-quickprev',
+				[quickprevIconClass, { disabled }])
+			"
 			v-if="showPrevMore"
 			@mouseenter="onMouseenter('left')"
-			@mouseleave="quickprevIconClass = 'el-icon-more'"></li>
+			@mouseleave="quickprevIconClass = 'el-icon-more'">
+			<div class="flex center middle">
+				<xIcon icon="more-filled" />
+			</div>
+		</li>
 		<li
 			v-for="pager in pagers"
 			:key="pager"
@@ -17,10 +24,18 @@
 			{{ pager }}
 		</li>
 		<li
-			:class="['el-icon more btn-quicknext', quicknextIconClass, { disabled }]"
+			:class="[
+				'el-icon more flex middle center btn-quicknext',
+				quicknextIconClass,
+				{ disabled }
+			]"
 			v-if="showNextMore"
 			@mouseenter="onMouseenter('right')"
-			@mouseleave="quicknextIconClass = 'el-icon-more'"></li>
+			@mouseleave="quicknextIconClass = 'el-icon-more'">
+			<div class="flex center middle">
+				<xIcon icon="more-filled" />
+			</div>
+		</li>
 		<li
 			:class="['number flex middle center', { active: currentPage === pageCount, disabled }]"
 			v-if="pageCount > 1">

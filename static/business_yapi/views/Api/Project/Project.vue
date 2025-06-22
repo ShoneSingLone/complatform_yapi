@@ -4,6 +4,7 @@
 		<ProjectDoc />
 		<ProjectInterface />
 		<ProjectSetting />
+		<ProjectCi />
 	</div>
 </template>
 <script lang="ts">
@@ -14,7 +15,8 @@ export default async function () {
 			ProjectTabs: () => _.$importVue("@/views/Api/Project/Tabs/ProjectTabs.vue"),
 			ProjectDoc: () => _.$importVue("@/views/Api/Project/Tabs/ProjectDoc.vue"),
 			ProjectInterface: () => _.$importVue("@/views/Api/Project/Tabs/ProjectInterface.vue"),
-			ProjectSetting: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSetting.vue")
+			ProjectSetting: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSetting.vue"),
+			ProjectCi: () => _.$importVue("@/views/Api/Project/Tabs/ProjectCi.vue")
 		},
 		provide() {
 			return {
@@ -44,10 +46,10 @@ export default async function () {
 					...this.all_category
 				];
 			},
-			cptTabName: {
+			cpt_tab_name: {
 				get() {
 					if (!this.$route.query?.projectTabName) {
-						this.cptTabName = "接口";
+						this.cpt_tab_name = "接口";
 					}
 					return this.$route.query.projectTabName;
 				},

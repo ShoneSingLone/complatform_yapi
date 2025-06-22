@@ -17,7 +17,7 @@ export default async function () {
 		},
 		computed: {
 			isShow() {
-				return this.inject_project.cptTabName === "文档";
+				return this.inject_project.cpt_tab_name === "文档";
 			}
 		}
 	});

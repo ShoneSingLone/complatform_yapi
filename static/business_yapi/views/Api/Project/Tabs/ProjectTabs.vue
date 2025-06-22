@@ -1,10 +1,10 @@
 <template>
 	<aside id="ViewProjectTabs" class="box-shadow">
 		<div
-			:class="{ 'project-tab': true, active: inject_project.cptTabName === item.label }"
+			:class="{ 'project-tab': true, active: inject_project.cpt_tab_name === item.label }"
 			v-for="(item, index) in items"
 			:key="index"
-			@click="inject_project.cptTabName = item.label">
+			@click="inject_project.cpt_tab_name = item.label">
 			<div class="tab-icon">
 				<xIcon :icon="item.icon" />
 			</div>
@@ -29,6 +29,10 @@ export default async function () {
 					{
 						icon: "_icon_project_setting",
 						label: "设置"
+					},
+					{
+						icon: "_ci",
+						label: "CI"
 					}
 				]
 			};

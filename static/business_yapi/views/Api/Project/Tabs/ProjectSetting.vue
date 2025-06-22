@@ -53,7 +53,7 @@ export default async function () {
 		},
 		computed: {
 			isShow() {
-				return this.inject_project.cptTabName === "设置";
+				return this.inject_project.cpt_tab_name === "设置";
 			}
 		},
 		methods: {}

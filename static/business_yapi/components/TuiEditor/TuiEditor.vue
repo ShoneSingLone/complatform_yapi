@@ -268,7 +268,7 @@ export default async function () {
 										/* base64 字符串 */
 										return handleImageUpload(blob, callback);
 									} else {
-										debugger;
+										
 									}
 								}
 								/* addImageBlobHook: (blob, callback) => { vm.setLoading(true); var reader = new FileReader(); reader.onload = function (_a) { var target2 = _a.target; vm.setLoading(); return callback(target2.result); }; reader.readAsDataURL(blob); }*/

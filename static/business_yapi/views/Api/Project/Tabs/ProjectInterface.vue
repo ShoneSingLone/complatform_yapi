@@ -40,7 +40,7 @@ export default async function () {
 		},
 		computed: {
 			isShow() {
-				return this.inject_project.cptTabName === "接口";
+				return this.inject_project.cpt_tab_name === "接口";
 			}
 		},
 		methods: {

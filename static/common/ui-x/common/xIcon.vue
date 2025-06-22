@@ -30,11 +30,35 @@ export default async function () {
 			icon: String,
 			color: String,
 			/*  */
+			checkSize: {
+				type: [Boolean],
+				default: false
+			},
 			img: String,
 			iscache: {
 				type: [Boolean, String],
 				default: false
 			}
+		},
+		setup() {
+			const vm = this;
+
+			function updateSvgHeight() {
+				try {
+					const $el = $(vm.$el);
+					let fontSize = $el.css("fontSize");
+					[fontSize] = fontSize.match(/\d+(\.\d+)?/);
+					// 设置SVG的高度
+					$el.height(fontSize);
+					$el.width(fontSize);
+				} catch (error) {}
+			}
+
+			onMounted(() => {
+				if (vm.checkSize) {
+					updateSvgHeight();
+				}
+			});
 		},
 		data() {
 			//

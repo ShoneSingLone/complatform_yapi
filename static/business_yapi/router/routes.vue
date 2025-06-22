@@ -13,6 +13,7 @@ export default async function () {
 			children: [_.$newRoute("/i18n/all", "@/views/I18n/I18n.vue")]
 		}),
 		_.$newRoute("/note", "@/views/Note/Note.vue"),
+		_.$newRoute("/office", "@/views/office/AppOffice.vue"),
 		_.$newRoute("/im", "@/views/im/Im.vue"),
 		_.$newRoute("/rtc", "@/views/Rtc/ViewRtc.vue", {
 			children: [

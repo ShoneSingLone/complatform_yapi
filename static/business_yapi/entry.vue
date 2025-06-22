@@ -198,16 +198,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				// await vm.initSSE();
 			},
 			async initWebsocket(uid) {
-				uid = await new Promise(async resolve => {
+				return new Promise(async resolve => {
 					const wsOptions = {
 						TRIGGER_EVENT_NAME: _$TRIGGER_EVENT_NAME,
 						onConnection: ({ id }) => resolve(id),
 						namespace: `/ws_yapi?uid=${uid}`
 					};
+
 					this.WS = await _.$importVue("/common/libs/socket.io.vue", wsOptions);
-				});
-				$(window).on(_$TRIGGER_EVENT_NAME, (event, { type, payload }) => {
-					this.$emit(type, payload);
 				});
 			},
 			initSSE() {

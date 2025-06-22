@@ -605,23 +605,43 @@
 	 * @param {*} b
 	 * @returns
 	 */
-	/* @typescriptDeclare (a:object,b:object)=>boolean */
+	/* @typescriptDeclare (a:any,b:any)=>boolean */
 	_.$isEqualByObjVal = (a, b) => {
-		if (Object.keys(a).length !== Object.keys(b).length) {
-			return false;
+		//  null/undefined cases
+		if (a === b) return true;
+		if (!a || !b) return false;
+
+		//  different types
+		if (typeof a !== typeof b) return false;
+
+		//  non-object types
+		if (typeof a !== "object") return a === b;
+
+		//  arrays
+		if (Array.isArray(a) !== Array.isArray(b)) return false;
+		if (Array.isArray(a)) {
+			if (a.length !== b.length) return false;
+			return a.every((val, i) => _.$isEqualByObjVal(val, b[i]));
 		}
-		for (let key in a) {
-			if (_.isFunction(a[key])) {
-				var _a = a[key].toString();
-				var _b = b[key].toString();
-				if (_a !== _b) {
-					return false;
-				}
-			} else if (!_.isEqual(a[key], b[key])) {
-				return false;
+
+		//  objects
+		const aKeys = Object.keys(a);
+		const bKeys = Object.keys(b);
+
+		//
+		if (aKeys.length !== bKeys.length) return false;
+
+		return _.every(aKeys, key => {
+			const aVal = a[key];
+			const bVal = b[key];
+
+			// functions
+			if (_.isFunction(aVal) && _.isFunction(bVal)) {
+				return aVal.toString() === bVal.toString();
 			}
-		}
-		return true;
+
+			return _.$isEqualByObjVal(aVal, bVal);
+		});
 	};
 
 	/** 全局工具函数，共享lodash的全局变量_

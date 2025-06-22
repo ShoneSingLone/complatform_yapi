@@ -402,6 +402,24 @@ export default async function () {
 				 */
 				async userUpdate(data) {
 					return _.$ajax.post(`/api/user/update`, { data });
+				},
+				/**
+				 *  添加项目相关的git仓库地址
+				 */
+				async apiCicdGitAddressAdd(data) {
+					return _.$ajax.post(`/api/cicd/git_address_add`, { data });
+				},
+				/**
+				 *  获取项目相关的git仓库地址
+				 */
+				async apiCicdGitAddressList(data) {
+					return _.$ajax.get(`/api/cicd/git_address_list`, { data });
+				},
+				/**
+				 *  根据git仓库地址初始化git仓库（clone repo到服务器特定地址，方便后续操作）
+				 */
+				async apiCicdGitInitRepo(data) {
+					return _.$ajax.post(`/api/cicd/git_init_repo`, { data });
 				}
 			};
 		})();
