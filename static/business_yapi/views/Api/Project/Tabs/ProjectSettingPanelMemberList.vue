@@ -1,8 +1,6 @@
 <template>
-	<div class="flex1 vertical mt" style="height: 1px; position: relative" v-if="isShow">
-		<div style="overflow: hidden; position: absolute; width: 100%; height: 100%">
-			<xTableVir :columns="columns" :data="cptProjectMembers" v-if="isShow" />
-		</div>
+	<div class="width100 overflow-hidden">
+		<xTableVir :columns="columns" :data="cptProjectMembers" />
 	</div>
 </template>
 <script lang="ts">
@@ -94,7 +92,7 @@ export default async function () {
 									}),
 									hxBtn({
 										configs: {
-											icon: "el-icon-delete",
+											label: "移除",
 											preset: "danger",
 											onClick() {
 												vm.removeMember(rowData);
@@ -152,12 +150,12 @@ export default async function () {
 			},
 
 			async changeMemberRole({ role, uid, index }) {
-				const groupId = this.APP.cptCurrentGroup._id;
+				const group_id = this.APP.cptCurrentGroup._id;
 				_.$loading(true);
 				try {
 					if (role) {
 						await _api.yapi.project_change_member_role({
-							id: groupId,
+							id: group_id,
 							member_uid: uid,
 							role
 						});
@@ -194,8 +192,8 @@ export default async function () {
 		watch: {
 			"APP.cptGroupId": {
 				immediate: true,
-				async handler(groupId) {
-					if (groupId) {
+				async handler(group_id) {
+					if (group_id) {
 						try {
 							this.APP.updateGroupProjectList();
 						} catch (error) {

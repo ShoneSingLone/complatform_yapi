@@ -193,7 +193,7 @@ export default async function () {
 											label: `${rowData.group_name}`,
 											// label: `${rowData.group_name}-${rowIndex}`,
 											href: _.$aHashLink("/api/group", {
-												groupId: rowData.group_id
+												group_id: rowData.group_id
 											})
 										}),
 										hxIcon({
@@ -255,8 +255,8 @@ export default async function () {
 											class: "flex1",
 											label: `${rowData.name}`,
 											href: _.$aHashLink("/api/project", {
-												projectId: rowData._id,
-												groupId: rowData.group_id
+												project_id: rowData._id,
+												group_id: rowData.group_id
 											})
 										})
 									]),
@@ -322,7 +322,7 @@ export default async function () {
 				};
 			},
 			isShow() {
-				return this.$route.query.GroupViewTabName === Vue._yapi_var.TAB_KEY_PROJECT_LIST;
+				return this.$route.query.group_view_tab_name === Vue._yapi_var.TAB_KEY_PROJECT_LIST;
 			}
 		},
 		methods: {
@@ -349,8 +349,8 @@ export default async function () {
 		watch: {
 			"APP.cptGroupId": {
 				immediate: true,
-				async handler(groupId) {
-					if (groupId) {
+				async handler(group_id) {
+					if (group_id) {
 						try {
 							this.APP.updateGroupProjectList();
 						} catch (error) {

@@ -96,13 +96,14 @@ export default async function () {
 					"xBtnGroup",
 					_.map(this.selectOptions, item => {
 						const props = {
+							...item,
 							disabled: this.cptDisabled,
 							onClick: () => {
 								this.mixin_value = item.value;
 							}
 						};
 						if (item.value === this.value) {
-							props.preset = "blue";
+							props.preset = "primary";
 						}
 						return hxBtn(props, [item.label]);
 					})

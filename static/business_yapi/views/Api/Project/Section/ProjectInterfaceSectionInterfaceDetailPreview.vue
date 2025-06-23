@@ -169,8 +169,8 @@ export default async function () {
 						title,
 						path,
 						method,
-						groupId: this.APP.cptGroupId,
-						projectId: this.APP.cptProjectId,
+						group_id: this.APP.cptGroupId,
+						project_id: this.APP.cptProjectId,
 						interfaceId: _id,
 						camelCase: _.camelCase
 					});
@@ -369,7 +369,7 @@ export default async function () {
 						mockHref,
 						reqMethod,
 						interfaceId: this.interfaceInfo._id,
-						projectId: this.APP.cptProject._id
+						project_id: this.APP.cptProject._id
 					},
 					{
 						fullscreen: true

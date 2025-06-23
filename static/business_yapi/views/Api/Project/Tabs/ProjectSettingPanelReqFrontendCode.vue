@@ -1,13 +1,17 @@
 <style lang="less"></style>
 <template>
-	<div>
-		<xForm col="2">
-			<xItem :configs="form.editor" @save="btnOk.onClick" style="height: 500px" />
-			<div class="x-padding" style="position: absolute">
-				<xMd :md="cptCode" />
+	<div class="flex vertical height100 overflow-auto">
+		<xAutoResizer #default="{ width, height }" class="flex flex1 height1px">
+			<xItem
+				:configs="form.editor"
+				@save="btnOk.onClick"
+				:style="{ height: height + 'px' }"
+				class="flex1" />
+			<div class="x-padding overflow-hidden flex1">
+				<xMd :md="cptCode" :style="{ height: height + 'px' }" />
 			</div>
-		</xForm>
-		<div class="flex middle">
+		</xAutoResizer>
+		<div class="flex middle mt">
 			<xGap f />
 			<xBtn :configs="btnOk" />
 		</div>
@@ -49,8 +53,8 @@ export default async function () {
 						title: "TitleDemo",
 						path: "/path/demo",
 						method: "GET",
-						groupId: "1",
-						projectId: "2",
+						group_id: "1",
+						project_id: "2",
 						interfaceId: "3",
 						camelCase: _.camelCase
 					});

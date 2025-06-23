@@ -1,24 +1,29 @@
 <template>
-	<div class="x-page-view flex1 height100 flex">
-		<xBlock header="数据导入" class="flex1">
-			<xForm col="1">
-				<xItem :configs="form.curImportType" />
-				<xItem :configs="form.dataSync" />
-				<xItem
-					:configs="form.importBy"
-					span="full"
-					style="
-						--xItem-controller-flex: unset;
-						--xItem-controller-width: 100%;
-						--xItem-layout-justify-content: flex-start;
-					" />
-			</xForm>
-		</xBlock>
-		<xBlock header="数据导出" class="flex1">
-			<xForm>
-				<xItem :configs="form.curImportType" />
-			</xForm>
-		</xBlock>
+	<div class="x-page-view flex1 height100" id="ProjectSettingPanelDataImportExport">
+		<div class="flex height100 width100">
+			<xCard header="数据导入" class="flex1 height100">
+				<xForm col="1">
+					<xItem :configs="form.curImportType" />
+					<xItem :configs="form.dataSync" />
+					<xItem
+						:configs="form.importBy"
+						:importType="form.curImportType.value"
+						:dataSync="form.dataSync.value"
+						span="full"
+						style="
+							--xItem-controller-flex: unset;
+							--xItem-controller-width: 100%;
+							--xItem-layout-justify-content: flex-start;
+						" />
+				</xForm>
+			</xCard>
+			<xGap l />
+			<xCard header="数据导出" class="flex1 height100">
+				<xForm>
+					<xItem :configs="form.curImportType" />
+				</xForm>
+			</xCard>
+		</div>
 	</div>
 </template>
 
@@ -47,6 +52,7 @@ export default async function () {
 						value: "swagger",
 						label: "数据采用的标准",
 						itemType: "xItemRadioGroup",
+						isButton: true,
 						options: [
 							{
 								label: "Swagger",
@@ -89,120 +95,25 @@ export default async function () {
 					importBy: {
 						value: "2",
 						label: "导入方式",
-						itemType: "xItemSelect",
-						options: [
-							{ label: "上传JSON 文件", value: "1" },
-							{ label: "通过URL请求获取", value: "2" }
-						],
-						itemSlots: {
-							afterController() {
-								const xBtnProps = { configs: vm.btnSelectFile, class: "ml" };
-								const xBtn = hxBtn(xBtnProps);
-
-								if (vm.cptIsImportFile) {
-									return hDiv([xBtn]);
-								} else {
-									const xItemProps = {
-										class: "ml",
-										configs: vm.form.swaggerURL,
-										style: "--xItem-wrapper-width: 600px;",
-										onSetup({ xItem }) {
-											vm._importByVm = xItem;
-										}
-									};
-									return hDiv({ class: "flex middle" }, [
-										h("xItem", xItemProps),
-										xBtn
-									]);
-								}
-							}
-						}
+						itemType: "YapiItemInterfaceImportType"
 					}
 				})
 			};
 		},
 		computed: {
-			cptIsImportFile() {
-				return this.form.importBy.value === "1";
-			},
-			btnSelectFile() {
-				const vm = this;
-				return {
-					label: vm.cptIsImportFile ? i18n("选择文件") : "导入",
-					icon: "el-icon-upload",
-					preset: "blue",
-					async onClick() {
-						let json, res;
-
-						if (vm.cptIsImportFile) {
-							/* 导入本地文件 */
-							try {
-								/* 读取本地文件 */
-								const [file] = await _.$openFileSelector();
-								if (!file) {
-									return;
-								}
-								json = await _.$readFileAsText(file);
-								res = await _api.yapi.getSwaggerDataByUrl({
-									type: vm.cptParams.curImportType,
-									json
-								});
-							} catch (error) {
-								_.$msgError(error);
-							}
-						} else {
-							/* 通过URL导入 */
-							if (!vm.cptParams.swaggerURL) {
-								vm._importByVm.errorTips = "导入之前需要填写URL";
-								return;
-							}
-							res = await _api.yapi.getSwaggerDataByUrl({
-								url: encodeURI(encodeURI(vm.cptParams.swaggerURL)),
-								type: vm.cptParams.curImportType
-							});
-						}
-
-						if (res) {
-							await vm.checkBeforeOverwriteInterface(res.data);
-						}
-					}
-				};
-			},
 			cptParams() {
 				return _.$pickFormValues(this.form);
-			}
-		},
-		methods: {
-			async checkBeforeOverwriteInterface(originData) {
-				let typeid = this.APP.cptProjectId;
-				let apiCollections = originData.apis.map(item => {
-					return {
-						method: item.method,
-						path: item.path
-					};
-				});
-
-				let resToMerge = await _api.yapi.log_update({
-					type: "project",
-					typeid,
-					apis: apiCollections
-				});
-
-				if (resToMerge) {
-					_.$openModal({
-						title: i18n("确认数据同步"),
-						url: "@/views/Api/Project/Tabs/ProjectSettingConfirmMergeInterface.dialog.vue",
-						parent: this,
-						domainData: resToMerge.data,
-						originData,
-						all_category: this.inject_project.all_category,
-						dataSync: this.cptParams.dataSync
-					});
-				}
 			}
 		}
 	};
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss">
+#ProjectSettingPanelDataImportExport {
+	.xBlock + .xBlock {
+		margin-left: 20px;
+		margin-top: 0;
+	}
+}
+</style>

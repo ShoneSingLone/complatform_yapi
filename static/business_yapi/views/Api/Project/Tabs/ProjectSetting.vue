@@ -1,21 +1,21 @@
 <template>
-	<div class="x-page-view flex1" v-if="isShow" id="ProjectSetting">
+	<div class="x-page-view flex1" id="ProjectSetting">
 		<xPageContent>
-			<xTabs v-model="cptProjectSettingTab">
-				<xTabPane label="项目配置" name="1" />
-				<xTabPane label="项目成员" name="项目成员" />
-				<xTabPane label="环境配置" name="2" />
-				<xTabPane label="请求配置" name="3" />
-				<xTabPane label="token配置" name="4" />
-				<xTabPane label="全局mock脚本" name="5" />
-				<xTabPane label="Swagger自动同步" name="6" />
-				<xTabPane label="数据导入导出" name="7" />
+			<xTabs v-model="cpt_project_setting_tab_name">
+				<xTabPane
+					:label="item.label"
+					:name="item.name"
+					v-for="(item, index) in tabArray"
+					:key="index" />
 			</xTabs>
-			<div class="flex1 flex vertical">
-				<ProjectSettingPanelCommon v-if="cptProjectSettingTab === '1'" />
-				<ProjectSettingPanelMemberList v-if="cptProjectSettingTab === '项目成员'" />
-				<ProjectSettingPanelReqFrontendCode v-if="cptProjectSettingTab === '3'" />
-				<ProjectSettingPanelDataImportExport v-if="cptProjectSettingTab === '7'" />
+			<div class="slide-container">
+				<div class="slide-wrapper" :style="cpt_item_style">
+					<component
+						:is="item.component"
+						v-for="item in tabArray"
+						:key="item.label"
+						class="slide" />
+				</div>
 			</div>
 		</xPageContent>
 	</div>
@@ -28,37 +28,91 @@ export default async function () {
 	return {
 		name: "ProjectSettingVue",
 		inject: ["APP", "inject_project"],
-		components: {
-			ProjectSettingPanelCommon: () =>
-				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue"),
-			ProjectSettingPanelMemberList: () =>
-				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelMemberList.vue"),
-			ProjectSettingPanelReqFrontendCode: () =>
-				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelReqFrontendCode.vue"),
-			ProjectSettingPanelDataImportExport: () =>
-				_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelDataImportExport.vue")
-		},
 		setup() {
-			const cptProjectSettingTab = useTabName({
+			const tabArray = [
+				{
+					label: "项目配置",
+					name: "common",
+					component: () =>
+						_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue")
+				},
+				{
+					label: "项目成员",
+					name: "member_list",
+					component: () =>
+						_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelMemberList.vue")
+				},
+				{
+					label: "请求配置",
+					name: "req_frontend_code",
+					component: () =>
+						_.$importVue(
+							"@/views/Api/Project/Tabs/ProjectSettingPanelReqFrontendCode.vue"
+						)
+				},
+				{
+					label: "数据导入导出",
+					name: "data_import_export",
+					component: () =>
+						_.$importVue(
+							"@/views/Api/Project/Tabs/ProjectSettingPanelDataImportExport.vue"
+						)
+				}
+				/* 
+环境配置
+token配置
+全局mock脚本
+Swagger自动同步 */
+			];
+			const cpt_project_setting_tab_name = useTabName({
 				vm: this,
 				propName: "project_setting_tab",
-				defaultName: "1"
+				defaultName: _.first(tabArray).name
 			});
+
+			const cpt_current_index = computed(() => {
+				return _.findIndex(tabArray, { name: cpt_project_setting_tab_name.value });
+			});
+
+			const cpt_item_style = computed(() => {
+				return { transform: "translateX(" + -cpt_current_index.value * 100 + "%)" };
+			});
+
 			return {
-				cptProjectSettingTab
+				cpt_project_setting_tab_name,
+				cpt_item_style,
+				tabArray
 			};
 		},
-		data() {
-			return {};
-		},
-		computed: {
-			isShow() {
-				return this.inject_project.cpt_tab_name === "设置";
-			}
-		},
+		computed: {},
 		methods: {}
 	};
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+#ProjectSetting {
+	position: relative;
+	width: 100%;
+
+	.slide-container {
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		position: relative;
+		.slide-wrapper {
+			display: flex;
+			height: 100%;
+			transition: transform 0.5s ease-in-out;
+		}
+
+		.slide {
+			min-width: 100%;
+			max-width: 100%;
+			height: 100%;
+			display: flex;
+			overflow: auto;
+		}
+	}
+}
+</style>

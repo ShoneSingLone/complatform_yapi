@@ -1,10 +1,24 @@
 <template>
 	<div id="ViewProject">
-		<ProjectTabs />
-		<ProjectDoc />
-		<ProjectInterface />
-		<ProjectSetting />
-		<ProjectCi />
+		<ProjectTabs key="ProjectTabs" @change-tab="changeTab" />
+		<xAutoResizer :onResize="setSize">
+			<ProjectDoc
+				:style="wrapperStyle.transition_wrapper"
+				key="ProjectDoc"
+				v-if="isShow('文档')" />
+			<ProjectInterface
+				:style="wrapperStyle.transition_wrapper"
+				key="ProjectInterface"
+				v-if="isShow('接口')" />
+			<ProjectSetting
+				:style="wrapperStyle.transition_wrapper"
+				key="ProjectSetting"
+				v-if="isShow('设置')" />
+			<ProjectCi
+				:style="wrapperStyle.transition_wrapper"
+				key="ProjectCi"
+				v-if="isShow('CI')" />
+		</xAutoResizer>
 	</div>
 </template>
 <script lang="ts">
@@ -27,11 +41,35 @@ export default async function () {
 			/* 获取接口信息 */
 			this.get_interface_list();
 		},
+		setup() {
+			const wrapperStyle = reactive({ transition_wrapper: {} });
+			return {
+				wrapperStyle,
+				setSize({ width, height }) {
+					wrapperStyle.transition_wrapper = {
+						width: `${width}px`,
+						height: `${height}px`
+					};
+				},
+
+				addItem() {
+					this.items.push({ id: this.nextId++ });
+				},
+				removeItem() {
+					if (this.items.length > 0) {
+						this.items.pop();
+					}
+				}
+			};
+		},
 		data() {
 			return {
+				style: {},
 				all_category: [],
 				all_interface: [],
-				all_tags: []
+				all_tags: [],
+				items: [],
+				nextId: 1
 			};
 		},
 		computed: {
@@ -48,18 +86,18 @@ export default async function () {
 			},
 			cpt_tab_name: {
 				get() {
-					if (!this.$route.query?.projectTabName) {
+					if (!this.$route.query?.project_tab_name) {
 						this.cpt_tab_name = "接口";
 					}
-					return this.$route.query.projectTabName;
+					return this.$route.query.project_tab_name;
 				},
-				set(projectTabName) {
-					if (projectTabName) {
+				set(project_tab_name) {
+					if (project_tab_name) {
 						this.$router.push({
 							path: this.$route.path,
 							query: {
 								...this.$route.query,
-								projectTabName: projectTabName
+								project_tab_name: project_tab_name
 							}
 						});
 					}
@@ -67,6 +105,13 @@ export default async function () {
 			}
 		},
 		methods: {
+			changeTab(tab) {
+				this.cpt_tab_name = tab.label;
+			},
+			isShow(tabName) {
+				return this.cpt_tab_name === tabName;
+			},
+
 			async get_interface_list() {
 				const vm = this;
 				const { data } = await _api.yapi.apiInterfaceListMenu(this.APP.cptProjectId);
@@ -125,5 +170,17 @@ export default async function () {
 	height: 100%;
 	display: flex;
 	flex-flow: row nowrap;
+
+	/* 淡入淡出动画相关样式 */
+	.list-enter-active,
+	.list-leave-active {
+		transition: all 1s;
+		transform: translateX(-100%);
+	}
+	.list-enter,
+	.list-leave-to {
+		opacity: 0;
+		transform: translateX(100%);
+	}
 }
 </style>

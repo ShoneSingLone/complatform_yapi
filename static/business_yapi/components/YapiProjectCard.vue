@@ -85,8 +85,8 @@ export default async function () {
 					{
 						attrs: {
 							href: _.$aHashLink("/api/project", {
-								projectId: this.projectData._id,
-								groupId: this.$route.query.groupId
+								project_id: this.projectData._id,
+								group_id: this.$route.query.group_id
 							})
 						}
 					},

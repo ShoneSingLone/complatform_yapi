@@ -164,11 +164,11 @@ export default async function () {
 					]
 				);
 			},
-			async selectGroup(groupId) {
-				if (!groupId) {
+			async selectGroup(group_id) {
+				if (!group_id) {
 					return;
 				}
-				this.$router.push({ path: "/api/group", query: { groupId } });
+				this.$router.push({ path: "/api/group", query: { group_id } });
 			}
 		},
 		computed: {

@@ -131,12 +131,12 @@ export default async function ({ domainData, originData, dataSync }) {
 					let { basePath } = originData;
 					vm.hasDone = 0;
 					vm.successNum = 0;
-					const projectId = vm.APP.cptProjectId;
+					const project_id = vm.APP.cptProjectId;
 
 					/* 如果有公用前缀 */
 					if (basePath) {
 						await _api.yapi.project_update({
-							id: projectId,
+							id: project_id,
 							basepath: basePath
 							/* token */
 						});
@@ -146,7 +146,7 @@ export default async function ({ domainData, originData, dataSync }) {
 					while ((api = vm.apis.pop())) {
 						try {
 							let interfaceInfo = Object.assign(api, {
-								project_id: projectId
+								project_id: project_id
 							});
 							const category = _.find(vm.inject_project.all_category, {
 								name: interfaceInfo.catname

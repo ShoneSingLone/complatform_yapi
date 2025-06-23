@@ -223,6 +223,7 @@ export default async function () {
 					res_body_type: {
 						label: i18n("响应类型"),
 						itemType: "xItemRadioGroup",
+						isButton: true,
 						minWidth: 80,
 						tips: `如果没有使用转发，选择备份会直接返回备份的JSON数据`,
 						options: [

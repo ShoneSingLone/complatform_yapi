@@ -20,8 +20,8 @@ export default async function () {
 				const project = {
 					label: projectname || name,
 					href: _.$aHashLink("/api/project", {
-						groupId: this.APP.cptCurrentGroup?._id,
-						projectId: this.APP.cptProject?._id
+						group_id: this.APP.cptCurrentGroup?._id,
+						project_id: this.APP.cptProject?._id
 					})
 				};
 

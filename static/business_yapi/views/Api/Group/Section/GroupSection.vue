@@ -57,7 +57,7 @@ export default async function () {
 			};
 
 			const cptIsShowGroupInfo = computed(() => {
-				return _.$isInput(this.$route.query.groupId);
+				return _.$isInput(this.$route.query.group_id);
 			});
 
 			const cptListStyle = computed(() => {
@@ -107,11 +107,11 @@ export default async function () {
 				return style;
 			});
 
-			this.selectGroup = async groupId => {
-				if (!groupId) {
+			this.selectGroup = async group_id => {
+				if (!group_id) {
 					return;
 				}
-				this.$router.push({ path: "/api/group", query: { groupId } });
+				this.$router.push({ path: "/api/group", query: { group_id } });
 			};
 
 			return {
@@ -155,12 +155,12 @@ export default async function () {
 				};
 			},
 			cptGroupViewTabName() {
-				const { GroupViewTabName } = this.$route.query;
-				if (this.cptViewList.includes(GroupViewTabName)) {
-					return GroupViewTabName;
+				const { group_view_tab_name } = this.$route.query;
+				if (this.cptViewList.includes(group_view_tab_name)) {
+					return group_view_tab_name;
 				} else {
 					/* 不存在或者不存在当前角色列表，就默认第一个 */
-					this.APP.routerUpsertQuery({ GroupViewTabName: TAB_KEY_MEMBER_LIST });
+					this.APP.routerUpsertQuery({ group_view_tab_name: TAB_KEY_MEMBER_LIST });
 					return TAB_KEY_MEMBER_LIST;
 				}
 			}
@@ -169,7 +169,7 @@ export default async function () {
 			closeGroupDetail() {
 				this.$router.push({
 					path: this.$route.path,
-					query: _.omit(this.$route.query, ["groupId"])
+					query: _.omit(this.$route.query, ["group_id"])
 				});
 			},
 			genProjectCard(projectArray, isShow = false) {
@@ -197,7 +197,7 @@ export default async function () {
 								label: tabName,
 								preset: vm.cptGroupViewTabName === tabName ? "blue" : "",
 								onClick() {
-									vm.APP.routerUpsertQuery({ GroupViewTabName: tabName });
+									vm.APP.routerUpsertQuery({ group_view_tab_name: tabName });
 								}
 							}
 						});

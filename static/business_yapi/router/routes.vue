@@ -7,6 +7,16 @@ export default async function () {
 	};
 	return [
 		_.$newRoute("/demo_test", "@/views/demo/test.vue"),
+		_.$newRoute("/cicd", "@/views/CiCd/ViewCiCd.vue", {
+			children: [
+				_.$newRoute("/cicd/dashboard", "@/views/CiCd/views/CiCdDashboard.vue"),
+				_.$newRoute("/cicd/projects", "@/views/CiCd/views/CiCdProjects.vue"),
+				_.$newRoute("/cicd/builds", "@/views/CiCd/views/CiCdBuilds.vue"),
+				_.$newRoute("/cicd/artifacts", "@/views/CiCd/views/CiCdArtifacts.vue"),
+				_.$newRoute("/cicd/webhooks", "@/views/CiCd/views/CiCdWebhooks.vue"),
+				_.$newRoute("/cicd/settings", "@/views/CiCd/views/CiCdSettings.vue"),
+			]
+		}),
 		_.$newRoute("/user", "@/views/User/ViewUser.vue"),
 		_.$newRoute("/i18n", "@/views/I18n/I18nLayout.vue", {
 			redirect: "/i18n/all",

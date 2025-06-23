@@ -1,5 +1,5 @@
 <template>
-	<div v-if="isShow" class="flex1">
+	<div class="flex1">
 		<YapiNoteComponent />
 	</div>
 </template>
@@ -14,11 +14,6 @@ export default async function () {
 			return {
 				title: ""
 			};
-		},
-		computed: {
-			isShow() {
-				return this.inject_project.cpt_tab_name === "文档";
-			}
 		}
 	});
 }

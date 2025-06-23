@@ -16,7 +16,7 @@ class ModeGitRepo extends ModelBase {
 			/* 状态是否已经从仓库下载到服务器：已下载 */
 			status: {
 				type: String,
-				enum: ["done", "unset", "initing"],
+				enum: ["done", "unset", "initializing"],
 				default: "unset"
 			},
 			/* git 用户名 */

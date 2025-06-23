@@ -36,8 +36,8 @@ export default async function ({ onOk }) {
 					role: defItem({
 						value: "dev",
 						itemType: "xItemRadioGroup",
-						minWidth: 80,
 						isButton: true,
+						minWidth: 80,
 						label: i18n("权限"),
 						options: [
 							{ label: "组长", value: Vue._yapi_var.OWNER },

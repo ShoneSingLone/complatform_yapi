@@ -1,6 +1,7 @@
 <style lang="less">
 #ViewProjectInterface {
-	width: 1px;
+	width: 100%;
+	height: 100%;
 	position: relative;
 
 	.ViewProjectInterfaceResizeWrapper {
@@ -13,7 +14,7 @@
 }
 </style>
 <template>
-	<section class="flex1" v-if="isShow" id="ViewProjectInterface">
+	<section class="flex1" id="ViewProjectInterface">
 		<div class="ViewProjectInterfaceResizeWrapper flex">
 			<!-- <ProjectInterfaceAside /> -->
 			<ProjectInterfaceSection />
@@ -38,11 +39,7 @@ export default async function () {
 		data() {
 			return {};
 		},
-		computed: {
-			isShow() {
-				return this.inject_project.cpt_tab_name === "接口";
-			}
-		},
+		computed: {},
 		methods: {
 			async openGroupUpsertDialog(groupInfo) {
 				const upsert = await _.$importVue("@/views/Api/Group/Group.Upsert.vue", {

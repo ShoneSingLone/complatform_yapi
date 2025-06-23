@@ -262,7 +262,7 @@ export default async function () {
 <style lang="less">
 .xIcon {
 	display: inline-block;
-	width: 16px;
-	height: 16px;
+	width: var(--xIcon-width, 16px);
+	height: var(--xIcon-height, 16px);
 }
 </style>

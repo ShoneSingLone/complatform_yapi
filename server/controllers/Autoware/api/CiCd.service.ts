@@ -21,7 +21,7 @@ module.exports = {
 				}
 			};
 			/* 修改状态为正在初始化 */
-			git_repo.status = "initing";
+			git_repo.status = "initializing";
 			await orm.GitRepo.update(git_repo);
 			emit("正在初始化git仓库...");
 

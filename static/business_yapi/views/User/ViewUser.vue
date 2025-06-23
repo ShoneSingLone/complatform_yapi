@@ -61,19 +61,19 @@ export default async function () {
 				return ["private", "all"].includes(this.cptBelongType);
 			},
 			cptBelongType() {
-				const { privateId, projectId, groupId } = this.$route.query;
+				const { privateId, project_id, group_id } = this.$route.query;
 				/* 有优先级和权重，顺序不可变 */
 				if (privateId) return "private";
-				if (projectId) return "project";
-				if (groupId) return "group";
+				if (project_id) return "project";
+				if (group_id) return "group";
 				return "all";
 			},
 			cptBelongId() {
-				const { privateId, projectId, groupId } = this.$route.query;
+				const { privateId, project_id, group_id } = this.$route.query;
 				const variable_map = {
 					private: privateId,
-					project: projectId,
-					group: groupId,
+					project: project_id,
+					group: group_id,
 					all: "BELONG_ALL"
 				};
 				return variable_map[this.cptBelongType];

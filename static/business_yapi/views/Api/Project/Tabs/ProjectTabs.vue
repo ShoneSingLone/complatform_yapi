@@ -4,7 +4,7 @@
 			:class="{ 'project-tab': true, active: inject_project.cpt_tab_name === item.label }"
 			v-for="(item, index) in items"
 			:key="index"
-			@click="inject_project.cpt_tab_name = item.label">
+			@click="changeTab(item)">
 			<div class="tab-icon">
 				<xIcon :icon="item.icon" />
 			</div>
@@ -15,7 +15,7 @@
 export default async function () {
 	return defineComponent({
 		inject: ["inject_project"],
-		data() {
+		setup() {
 			return {
 				items: [
 					{
@@ -34,7 +34,11 @@ export default async function () {
 						icon: "_ci",
 						label: "CI"
 					}
-				]
+				],
+
+				changeTab(item) {
+					this.$emit("change-tab", item);
+				}
 			};
 		}
 	});

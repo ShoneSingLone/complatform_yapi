@@ -107,6 +107,7 @@ export default async function ({ onOk }) {
 			label: i18n("权限"),
 			rules: [_rules.required()],
 			itemType: "xItemRadioGroup",
+			isButton: true,
 			minWidth: 140,
 			options: [
 				{

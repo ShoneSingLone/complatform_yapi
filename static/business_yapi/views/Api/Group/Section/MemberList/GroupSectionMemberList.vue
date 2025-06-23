@@ -158,12 +158,12 @@ export default async function () {
 				vm.APP.updateGroupMemberList();
 			},
 			async changeMemberRole({ role, uid, index }) {
-				const groupId = this.APP.cptCurrentGroup._id;
+				const group_id = this.APP.cptCurrentGroup._id;
 				_.$loading(true);
 				try {
 					if (role) {
 						await _api.yapi.groupChangeMemberRole({
-							id: groupId,
+							id: group_id,
 							member_uid: uid,
 							role
 						});
@@ -183,7 +183,7 @@ export default async function () {
 				);
 			},
 			isShow() {
-				return this.$route.query.GroupViewTabName === Vue._yapi_var.TAB_KEY_MEMBER_LIST;
+				return this.$route.query.group_view_tab_name === Vue._yapi_var.TAB_KEY_MEMBER_LIST;
 			},
 			cptAuth() {
 				return [Vue._yapi_var.OWNER, Vue._yapi_var.ADMIN].includes(
@@ -194,8 +194,8 @@ export default async function () {
 		watch: {
 			"APP.cptGroupId": {
 				immediate: true,
-				async handler(groupId) {
-					if (groupId) {
+				async handler(group_id) {
+					if (group_id) {
 						try {
 							this.APP.updateGroupMemberList();
 						} catch (error) {

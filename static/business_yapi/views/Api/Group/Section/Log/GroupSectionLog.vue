@@ -52,7 +52,7 @@ export default async function () {
 		},
 		computed: {
 			isShow() {
-				return this.$route.query.GroupViewTabName === Vue._yapi_var.TAB_KEY_GROUP_LOG;
+				return this.$route.query.group_view_tab_name === Vue._yapi_var.TAB_KEY_GROUP_LOG;
 			}
 		},
 		methods: {
@@ -114,8 +114,8 @@ export default async function () {
 		watch: {
 			"APP.cptGroupId": {
 				immediate: true,
-				async handler(groupId, oldGroupId) {
-					if (groupId) {
+				async handler(group_id, oldGroupId) {
+					if (group_id) {
 						try {
 							this.configsTable.pagination.current = 1;
 							this.updateGroupLog();

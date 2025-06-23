@@ -77,7 +77,7 @@ export default async function () {
 				},
 				/**
 				 *  wiki左侧的菜单
-				 *  http://192.168.0.107:3002/static/business_yapi/yapi.html#/api/project?projectId=319&groupId=431&projectTabName=%E6%8E%A5%E5%8F%A3&interfaceType=interface&interfaceId=591&project_interface_tab=1&project_setting_tab=3/#/api/project?projectId=319&groupId=431&interfaceType=interface&interfaceId=591&project_interface_tab=1&project_setting_tab=3&projectTabName=接口
+				 *  http://192.168.0.107:3002/static/business_yapi/yapi.html#/api/project?project_id=319&group_id=431&project_tab_name=%E6%8E%A5%E5%8F%A3&interfaceType=interface&interfaceId=591&project_interface_tab=1&project_setting_tab=3/#/api/project?project_id=319&group_id=431&interfaceType=interface&interfaceId=591&project_interface_tab=1&project_setting_tab=3&project_tab_name=接口
 				 */
 				wikiMenu(data) {
 					return _.$ajax.get("/api/wiki/menu", {
@@ -86,7 +86,7 @@ export default async function () {
 				},
 				/**
 				 *  文档 list
-				 *  http://192.168.0.107:3002/static/business_yapi/yapi.html#/api/project?projectId=319&groupId=431&projectTabName=%E6%8E%A5%E5%8F%A3&interfaceType=interface&interfaceId=589&project_interface_tab=1&project_setting_tab=3/#/api/project?projectId=319&groupId=431&interfaceType=interface&interfaceId=589&project_interface_tab=1&project_setting_tab=3&projectTabName=接口
+				 *  http://192.168.0.107:3002/static/business_yapi/yapi.html#/api/project?project_id=319&group_id=431&project_tab_name=%E6%8E%A5%E5%8F%A3&interfaceType=interface&interfaceId=589&project_interface_tab=1&project_setting_tab=3/#/api/project?project_id=319&group_id=431&interfaceType=interface&interfaceId=589&project_interface_tab=1&project_setting_tab=3&project_tab_name=接口
 				 */
 				wikiList(data) {
 					return _.$ajax.post("/api/wiki/list", {
@@ -319,10 +319,10 @@ export default async function () {
 				groupMine() {
 					return _.$ajax.get("/api/group/mine");
 				},
-				groupGetMyGroupBy(groupId) {
+				groupGetMyGroupBy(group_id) {
 					let id;
 					try {
-						id = Number(groupId);
+						id = Number(group_id);
 					} catch (error) {
 						return;
 					}
@@ -333,10 +333,10 @@ export default async function () {
 						}
 					});
 				},
-				groupGetMemberListBy(groupId) {
+				groupGetMemberListBy(group_id) {
 					return _.$ajax.get("/api/group/get_member_list", {
 						data: {
-							id: Number(groupId)
+							id: Number(group_id)
 						}
 					});
 				},
@@ -355,7 +355,7 @@ export default async function () {
 				},
 				/**
 				 *  根据id删除一个用户
-				 *  https://yapi.ghca.dev/#/api/project?projectId=354&groupId=448&projectTabName=%E6%8E%A5%E5%8F%A3&project_interface_tab=preview&interfaceType=interface&interfaceId=35661/#/api/project?projectId=354&groupId=448&interfaceType=interface&interfaceId=35661&project_interface_tab=preview&project_setting_tab=3&projectTabName=接口
+				 *  https://yapi.ghca.dev/#/api/project?project_id=354&group_id=448&project_tab_name=%E6%8E%A5%E5%8F%A3&project_interface_tab=preview&interfaceType=interface&interfaceId=35661/#/api/project?project_id=354&group_id=448&interfaceType=interface&interfaceId=35661&project_interface_tab=preview&project_setting_tab=3&project_tab_name=接口
 				 */
 				async userDel(data) {
 					return _.$ajax.post(`/user/del`, { data });
@@ -365,7 +365,7 @@ export default async function () {
 				},
 				/**
 				 *  修改用户密码
-				 *  https://yapi.ghca.dev/#/api/project?projectId=354&groupId=448&projectTabName=%E6%8E%A5%E5%8F%A3&project_interface_tab=preview&project_setting_tab=7&interfaceType=interface&interfaceId=37400/#/api/project?projectId=354&groupId=448&interfaceType=interface&interfaceId=37400&project_interface_tab=preview&project_setting_tab=3&projectTabName=接口
+				 *  https://yapi.ghca.dev/#/api/project?project_id=354&group_id=448&project_tab_name=%E6%8E%A5%E5%8F%A3&project_interface_tab=preview&project_setting_tab=7&interfaceType=interface&interfaceId=37400/#/api/project?project_id=354&group_id=448&interfaceType=interface&interfaceId=37400&project_interface_tab=preview&project_setting_tab=3&project_tab_name=接口
 				 */
 				async userChangePassword(data) {
 					return _.$ajax.post(`/api/user/change_password`, { data });
@@ -398,7 +398,7 @@ export default async function () {
 				},
 				/**
 				 *  用户角色,只有管理员有权限修改
-				 *  https://yapi.ghca.dev/#/api/project?projectId=354&groupId=448&projectTabName=%E6%8E%A5%E5%8F%A3&project_interface_tab=preview&project_setting_tab=7&interfaceType=interface&interfaceId=37401/#/api/project?projectId=354&groupId=448&interfaceType=interface&interfaceId=37401&project_interface_tab=preview&project_setting_tab=3&projectTabName=接口
+				 *  https://yapi.ghca.dev/#/api/project?project_id=354&group_id=448&project_tab_name=%E6%8E%A5%E5%8F%A3&project_interface_tab=preview&project_setting_tab=7&interfaceType=interface&interfaceId=37401/#/api/project?project_id=354&group_id=448&interfaceType=interface&interfaceId=37401&project_interface_tab=preview&project_setting_tab=3&project_tab_name=接口
 				 */
 				async userUpdate(data) {
 					return _.$ajax.post(`/api/user/update`, { data });

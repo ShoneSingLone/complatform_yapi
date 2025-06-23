@@ -413,7 +413,7 @@ export default async function () {
 			/**
 			 * 如果group是对象，直接赋值，
 			 * 如果是Id(可能不是数字),则需要request
-			 * @param groupId
+			 * @param group_id
 			 * @returns {Promise<void>}
 			 */
 			async logoutActions() {

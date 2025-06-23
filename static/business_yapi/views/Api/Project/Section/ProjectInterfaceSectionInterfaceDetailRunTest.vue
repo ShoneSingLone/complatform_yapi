@@ -276,11 +276,11 @@ export default async function () {
 			async saveConfigs() {
 				try {
 					const id = this.currentUseCase?._id;
-					const { projectId, interfaceId } = this.$route.query;
+					const { project_id, interfaceId } = this.$route.query;
 					const dataForm = {
 						id,
 						interfaceId,
-						projectId,
+						project_id,
 						usecaseCode: this.form.editor.value
 					};
 					await _api.yapi.interface_usecase_upsert(dataForm);

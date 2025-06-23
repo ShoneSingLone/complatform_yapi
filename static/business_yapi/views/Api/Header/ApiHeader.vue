@@ -5,64 +5,68 @@
 		</span>
 		<YapiBreadcrumbNavigation />
 		<xGap f />
-		<a
-			class="flex middle"
-			:href="i18nHref"
-			target="_blank"
-			v-xtips="{ content: '国际化', trigger: 'hover', placement: 'left' }">
-			<xIcon icon="_icon_i18n" />
-		</a>
-		<xGap r="4" />
-		<a
-			class="flex middle"
-			:href="hoppscotchHref"
-			target="_blank"
-			v-xtips="{ content: 'hoppscotch', trigger: 'hover', placement: 'left' }">
-			<xIcon icon="_hoppscotch" />
-		</a>
-		<xGap r="4" />
-		<a
-			class="flex middle"
-			:href="publicNoteHref"
-			target="_blank"
-			v-xtips="{ content: '文档', trigger: 'hover', placement: 'left' }">
-			<xIcon icon="_wikidoc" />
-		</a>
-		<xGap r="4" />
-		<a
-			class="flex middle"
-			:href="publicRtcHref"
-			target="_blank"
-			v-xtips="{ content: 'webrtc', trigger: 'hover', placement: 'left' }">
-			<xIcon icon="_webrtc" />
-		</a>
-		<xGap r="4" />
-		<a
-			class="flex middle"
-			:href="privateExploreHref"
-			target="_blank"
-			v-xtips="{ content: '资源访问', trigger: 'hover', placement: 'left' }">
-			<xIcon icon="_hamburger" />
-		</a>
-		<xGap r="4" />
-		<a
-			@click="deploy"
-			v-if="cptIsAdmin"
-			class="flex middle"
-			target="_blank"
-			v-xtips="{ content: '部署项目', trigger: 'hover', placement: 'left' }">
-			<xIcon icon="_deploy" />
-		</a>
-		<xGap r="4" />
-		<a
-			@click="onClickUserManager"
-			v-if="cptIsAdmin"
-			class="flex middle"
-			target="_blank"
-			v-xtips="{ content: '用户管理', trigger: 'hover', placement: 'left' }">
-			<xIcon icon="_user_manager" />
-		</a>
-		<xGap f />
+		<TransitionGroup name="fade" mode="out-in" tag="div" class="flex middle">
+			<!-- 			v-xtips="{ content: '国际化', trigger: 'hover', placement: 'bottom' }" -->
+			<a class="flex middle mr4" :href="i18nHref" target="_blank" title="国际化" key="国际化">
+				<xIcon icon="_icon_i18n" />
+			</a>
+			<!-- 			v-xtips="{ content: 'hoppscotch', trigger: 'hover', placement: 'bottom' }" -->
+			<a
+				class="flex middle mr4"
+				:href="hoppscotchHref"
+				target="_blank"
+				title="hoppscotch"
+				key="hoppscotch">
+				<xIcon icon="_hoppscotch" />
+			</a>
+			<!-- 			v-xtips="{ content: '文档', trigger: 'hover', placement: 'bottom' }" -->
+			<a
+				class="flex middle mr4"
+				:href="publicNoteHref"
+				target="_blank"
+				title="文档"
+				key="文档">
+				<xIcon icon="_wikidoc" />
+			</a>
+			<!-- 			v-xtips="{ content: 'webrtc', trigger: 'hover', placement: 'bottom' }" -->
+			<a
+				class="flex middle mr4"
+				:href="publicRtcHref"
+				target="_blank"
+				title="webrtc"
+				key="webrtc">
+				<xIcon icon="_webrtc" />
+			</a>
+			<!-- 			v-xtips="{ content: '资源访问', trigger: 'hover', placement: 'bottom' }" -->
+			<a
+				class="flex middle mr4"
+				:href="privateExploreHref"
+				target="_blank"
+				title="资源访问"
+				key="资源访问">
+				<xIcon icon="_hamburger" />
+			</a>
+			<!-- 			v-xtips="{ content: '部署项目', trigger: 'hover', placement: 'bottom' }" -->
+			<a
+				@click="deploy"
+				v-if="cptIsAdmin"
+				class="flex middle mr4"
+				target="_blank"
+				title="部署项目"
+				key="部署项目">
+				<xIcon icon="_deploy" />
+			</a>
+			<!-- 			v-xtips="{ content: '用户管理', trigger: 'hover', placement: 'bottom' }" -->
+			<a
+				@click="onClickUserManager"
+				v-if="cptIsAdmin"
+				class="flex middle mr4"
+				target="_blank"
+				title="用户管理"
+				key="用户管理">
+				<xIcon icon="_user_manager" />
+			</a>
+		</TransitionGroup>
 		<YapiToolUserBar />
 	</header>
 </template>

@@ -8,6 +8,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		{
 			/* 涉及具体的上传接口，不能做通用的处理 */
 			TuiEditor: "@/components/TuiEditor/TuiEditor.vue",
+			YapiItemInterfaceImportType: "@/components/YapiItemInterfaceImportType.vue",
 			YapiApiRequestBodyPreviewer: "@/components/YapiApiRequestBodyPreviewer.vue",
 			xItemMonaco: "@/components/xItemMonaco.vue",
 			yapiItemReqBodyParams: "@/components/yapiItemReqBodyParams.vue",
@@ -243,7 +244,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			/**
 			 * 如果group是对象，直接赋值，
 			 * 如果是Id(可能不是数字),则需要request
-			 * @param groupId
+			 * @param group_id
 			 * @returns {Promise<void>}
 			 */
 			async ifUrlNoGroupIdGetAndAddIdToUrl() {
@@ -259,7 +260,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						const firstGroup = _.first(this.groupList);
 
 						if (firstGroup) {
-							this.routerUpsertQuery({ groupId: firstGroup._id });
+							this.routerUpsertQuery({ group_id: firstGroup._id });
 						}
 					}
 				};
@@ -305,12 +306,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			cptGroupId: {
 				get() {
 					const { path, query } = this.$route;
-					const { groupId } = query || {};
+					const { group_id } = query || {};
 
 					if (_.isEmpty(this.groupList)) {
 						this.updateGroupList();
 					}
-					return groupId || undefined;
+					return group_id || undefined;
 				}
 			},
 			cptCurrentGroup() {
@@ -320,7 +321,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return false;
 			},
 			cptProjectId() {
-				return this.$route.query.projectId;
+				return this.$route.query.project_id;
 			},
 			cptProject() {
 				if (this.cptProjectId && this.groupProjectList?.length) {

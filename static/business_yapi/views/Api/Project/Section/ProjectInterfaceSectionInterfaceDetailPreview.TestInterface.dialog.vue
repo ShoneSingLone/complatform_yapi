@@ -21,7 +21,7 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ mockHref, reqMethod, interfaceId, projectId }) {
+export default async function ({ mockHref, reqMethod, interfaceId, project_id }) {
 	const token = "";
 	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
@@ -147,7 +147,7 @@ ${httprequestoptions}
 					const dataForm = {
 						id,
 						interfaceId,
-						projectId,
+						project_id,
 						usecaseCode: this.form.editor.value
 					};
 					await _api.yapi.interface_usecase_upsert(dataForm);

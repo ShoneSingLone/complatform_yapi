@@ -18,7 +18,9 @@
 				<div>
 					<xBtn :configs="configsBtnOpenUpsertTagDialog" />
 					<xBtn :configs="configsBtnOpenProxyEnvDialog" />
-					<xBtn :configs="btnDeleteProject" />
+					<xBtn
+						:configs="btnDeleteProject"
+						style="--xIcon-width: 12px; --xIcon-height: 12px" />
 				</div>
 			</xForm>
 		</xBlock>
@@ -39,13 +41,36 @@ export default async function () {
 	return {
 		name: "ProjectSettingPanelCommonVue",
 		inject: ["APP", "inject_project"],
-		components: {},
+		watch: {
+			"APP.cptProject": {
+				immediate: true,
+				handler(project) {
+					if (!project) {
+						return;
+					}
+					_.$setFormValues(this.form, {
+						img: project._id || "",
+						group_id: String(project.group_id),
+						name: project.name,
+						basepath: project.basepath,
+						desc: project.desc || "",
+						project_type: project.project_type,
+						proxyHostPort: project.proxyHostPort || "",
+						strice: !!project.strice,
+						is_json5: !!project.is_json5,
+						switch_notice: !!project.switch_notice
+					});
+				}
+			}
+		},
 		setup() {
+			const vm = this;
 			const cptProjectSettingTab = useTabName({
 				vm: this,
 				propName: "project_setting_tab",
 				defaultName: "1"
 			});
+
 			return {
 				cptProjectSettingTab
 			};
@@ -117,7 +142,7 @@ export default async function () {
 					},
 					is_json5: {
 						itemType: "xItemSwitch",
-						label: "开启json5",
+						label: "开启JSON5",
 						tips: "开启后可在接口 body 和返回值中写 json 字段",
 						value: !!p.is_json5
 					},
@@ -135,7 +160,7 @@ export default async function () {
 				return {
 					label: "删除项目",
 					preset: "danger",
-					icon: "fa fa-trash",
+					icon: "_delete",
 					onClick: () => {
 						_.$confirm({
 							title: "请慎重操作！",

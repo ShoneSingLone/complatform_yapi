@@ -1,20 +1,26 @@
 <style lang="less">
 #ProjectCi {
+	--xPageTitle-padding: var(--ui-one);
 }
 </style>
 <template>
-	<div id="ProjectCi" class="x-page-view flex1" v-if="isShow">
-		<!-- <xPageTitle :title="i18n('标题使用i18n的key')" /> -->
+	<div id="ProjectCi" class="x-page-view flex1">
+		<xPageTitle>
+			<template #title>
+				<div class="flex middle">
+					<span class="mr4"> CI/CD </span>
+					<xPopover placement="top-start" width="600" trigger="hover">
+						<xMd :md="mdString" />
+						<xIcon icon="tips" slot="reference" />
+					</xPopover>
+				</div>
+			</template>
+		</xPageTitle>
 		<xPageContent>
-			<div class="x-padding">
-				<xMd :md="mdString" />
-				<xGap t />
-			</div>
-			<div>
-				<xBtn :configs="configsAddNewGitrepo" />
-			</div>
 			<xTablebar :configs="configsTable">
-				<xBtn @click="test">test</xBtn>
+				<template #left>
+					<xBtn :configs="configsAddNewGitrepo" />
+				</template>
 			</xTablebar>
 			<div class="mt" style="height: 500px">
 				<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" />
@@ -55,11 +61,13 @@ export default async function () {
 						defTable.colActions({
 							width: 210,
 							cellRenderer({ rowData }) {
+								const isUnset = rowData.status === "unset";
+								const isDone = rowData.status === "done";
 								return hBtnWithMore({
 									children: [
 										{
 											label: "初始化仓库",
-											isHide: rowData.status !== "unset",
+											isHide: !isUnset,
 											async onClick() {
 												return _.$openModal({
 													parent: vm,
@@ -72,6 +80,22 @@ export default async function () {
 													}
 												});
 											}
+										},
+										{
+											label: () =>
+												h(
+													"a",
+													{
+														attrs: {
+															href: _.$aHashLink("/cicd", {
+																id: rowData._id
+															}),
+															target: "_blank"
+														}
+													},
+													hxBtn({ preset: "text" }, "CI/CD 管理")
+												),
+											isHide: !isDone
 										}
 									]
 								});
@@ -88,9 +112,6 @@ export default async function () {
 					return _.$sleep(1000 * 500);
 				},
 				configsTable,
-				isShow: computed(() => {
-					return vm.inject_project.cpt_tab_name === "CI";
-				}),
 				configsAddNewGitrepo: {
 					label: "添加代码仓库",
 					async onClick() {
@@ -104,10 +125,14 @@ export default async function () {
 						});
 					}
 				},
-				mdString: `# CI项目
-1.添加代码仓库
-- 可以有多个代码仓库，但是属于同一个项目
-1.代码仓库状态？是否已经初始化（下载到服务器）
+				mdString: `1.添加代码仓库
+- 可以有多个代码仓库，可以是不同域名仓库，但是要保证\`username\`和\`password\`有效
+- 用户名和密码只在后端运行脚本时使用，不会再次出现在前端
+2.代码仓库状态分为： 
+- \`done\`(已下载到服务器)
+- \`unset\`(未下载到服务器)
+- \`initializing\`(正在初始化)
+3.\`unset\`需要手动触发Clone操作
                 `
 			};
 		}

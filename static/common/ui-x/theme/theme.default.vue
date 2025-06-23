@@ -577,6 +577,15 @@ svg.pointer {
 }
 
 /* *****************************************transition********************************** */
+/* 
+fade
+fade-short
+slide-fade 
+slide
+scale
+rotate
+slide-up-down
+ */
 .fade-enter-active,
 .fade-leave-active {
 	transition: opacity 0.5s;

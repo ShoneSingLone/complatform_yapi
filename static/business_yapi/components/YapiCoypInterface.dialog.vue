@@ -103,10 +103,10 @@ export default async function ({ selected: interfaceIds }) {
 					preset: "blue",
 					disabled: () => !vm.configsTable.data.set.size,
 					async onClick() {
-						const [projectId] = Array.from(vm.configsTable.data.set);
+						const [project_id] = Array.from(vm.configsTable.data.set);
 						await _api.yapi.interface_copy_to_project({
 							interfaceIds,
-							projectId
+							project_id
 						});
 						_.$msg("复制成功");
 						vm.closeModal();
