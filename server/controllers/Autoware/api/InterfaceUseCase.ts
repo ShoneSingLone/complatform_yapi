@@ -10,12 +10,12 @@ module.exports = {
 				description: "保存或修改单个测试用例",
 				request: {
 					body: {
-						interfaceId: {
+						interface_id: {
 							required: true,
 							description: "所属接口ID， 不能为空",
 							type: "number"
 						},
-						projectId: {
+						project_id: {
 							required: true,
 							description: "用例所属项目ID， 不能为空",
 							type: "number"
@@ -28,19 +28,19 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					const { interfaceId, projectId, usecaseCode, id } = ctx.payload;
+					const { interface_id, project_id, usecaseCode, id } = ctx.payload;
 
-					if (id && interfaceId && projectId && usecaseCode) {
+					if (id && interface_id && project_id && usecaseCode) {
 						let result = await orm.interfaceCase.up(id, {
-							interface_id: interfaceId,
-							project_id: projectId,
+							interface_id: interface_id,
+							project_id: project_id,
 							usecaseCode
 						});
 						ctx.body = xU.$response(result);
-					} else if (interfaceId && projectId && usecaseCode) {
+					} else if (interface_id && project_id && usecaseCode) {
 						let result = await orm.interfaceCase.save({
-							interface_id: interfaceId,
-							project_id: projectId,
+							interface_id: interface_id,
+							project_id: project_id,
 							usecaseCode
 						});
 						ctx.body = xU.$response(result);

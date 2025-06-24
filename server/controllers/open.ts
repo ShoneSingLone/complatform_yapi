@@ -202,7 +202,7 @@ class openController extends ControllerBase {
 		// console.log(1231312)
 		const token = ctx.query.token;
 
-		const projectId = ctx.params.project_id;
+		const project_id = ctx.params.project_id;
 		const startTime = new Date().getTime();
 		const records = (this.records = {});
 		const reports = (this.reports = {});
@@ -215,7 +215,7 @@ class openController extends ControllerBase {
 			return (ctx.body = xU.$response(null, 40022, "id值不存在"));
 		}
 
-		let projectData = await orm.project.get(projectId);
+		let projectData = await orm.project.get(project_id);
 
 		let caseList = await xU.getCaseList(id);
 		if (caseList.errcode !== 0) {
@@ -292,7 +292,7 @@ class openController extends ControllerBase {
 
 		if (ctx.params.email === true && reportsResult.message.failedNum !== 0) {
 			let autoTestUrl = `${ctx.request.origin}/api/open/run_auto_test?id=${id}&token=${token}&mode=${ctx.params.mode}`;
-			xU.sendNotice(projectId, {
+			xU.sendNotice(project_id, {
 				title: `YApi自动化测试报告`,
 				content: `
         <html>

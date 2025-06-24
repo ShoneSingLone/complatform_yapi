@@ -32,7 +32,7 @@ module.exports = {
 				description: "取消关注",
 				request: {
 					body: {
-						projectId: {
+						project_id: {
 							required: true,
 							description: "项目分组ID",
 							type: "string"

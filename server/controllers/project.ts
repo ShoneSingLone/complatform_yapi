@@ -167,8 +167,8 @@ class projectController extends ControllerBase {
 
 	async get(ctx) {
 		let params = ctx.params;
-		let projectId = params.id || params.project_id; // 通过 token 访问
-		let result = await this.model.getBaseInfo(projectId);
+		let project_id = params.id || params.project_id; // 通过 token 访问
+		let result = await this.model.getBaseInfo(project_id);
 
 		if (!result) {
 			return (ctx.body = xU.$response(null, 400, "不存在的项目"));
@@ -530,7 +530,7 @@ class projectController extends ControllerBase {
 			"_id",
 			"uid",
 			{ key: "title", alias: "title" },
-			{ key: "project_id", alias: "projectId" },
+			{ key: "project_id", alias: "project_id" },
 			{ key: "add_time", alias: "addTime" },
 			{ key: "up_time", alias: "upTime" }
 		];

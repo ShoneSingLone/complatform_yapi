@@ -1,4 +1,4 @@
-const https = require('http');
+const https = require("http");
 
 // https.get('http://66.187.4.252:7003/cloudsearch?keywords=%E7%8E%8B%E5%85%AB%E8%9B%8B&offset=0&type=1&cookie=', (res) => {
 //     let data = '';
@@ -23,10 +23,10 @@ const https = require('http');
 
 let axios = require("axios");
 (async () => {
-    const res = await axios({
-        method: "post",
-        url: `http://66.187.4.252:7003/cloudsearch?keywords=%E7%8E%8B%E5%85%AB%E8%9B%8B&offset=0&type=1&cookie=`,
-        data: {}
-    });
-    console.log("🚀 ~ res:", res);
+	const res = await axios({
+		method: "post",
+		url: `http://66.187.4.252:7003/cloudsearch?keywords=%E7%8E%8B%E5%85%AB%E8%9B%8B&offset=0&type=1&cookie=`,
+		data: {}
+	});
+	console.log("🚀 ~ res:", res);
 })();

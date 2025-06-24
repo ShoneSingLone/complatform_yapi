@@ -12,7 +12,7 @@ class ModelCiCd extends ModelBase {
 			git_repo_id: { type: Number, required: true }
 		};
 	}
-	list(condition) {
+	find(condition) {
 		return this.model.find(condition).exec();
 	}
 

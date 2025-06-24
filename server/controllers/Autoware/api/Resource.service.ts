@@ -87,12 +87,9 @@ exports.isVideoType = isVideoType;
 function scanResource() {
 	let count = 0;
 
-    async function handleFile({ filePath, parentPath = "", fileId = 0 }) {
-        const name = path.basename(filePath);
-
-        
-        
-    }
+	async function handleFile({ filePath, parentPath = "", fileId = 0 }) {
+		const name = path.basename(filePath);
+	}
 	/**
 	 * 递归遍历文件夹
 	 * @param {string} folderPath - 要遍历的文件夹路径

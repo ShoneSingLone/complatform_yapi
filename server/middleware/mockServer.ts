@@ -46,9 +46,9 @@ async function ifSuccessfulStoreResponse({
 	}
 }
 
-async function setResponseByRunProxy(ctx, { ENV_VAR, projectId }) {
+async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 	const { domain, header: ENV_VAR_HEADER_ARRAY } = ENV_VAR || {};
-	const targetURL = ctx.originalUrl.replace(`/mock/${projectId}`, "");
+	const targetURL = ctx.originalUrl.replace(`/mock/${project_id}`, "");
 	const headers = (() => {
 		/* 如果有ENV_VAR,那么用ENV_VAR覆盖，否则直接用ctx的headers */
 
@@ -310,20 +310,20 @@ const middlewareMockServer = () => async (ctx, next) => {
 	}
 	console.log(`🚀useMockServer: ${ctx.path}`);
 	let paths = ctx_path.split("/");
-	let projectId = paths[2];
+	let project_id = paths[2];
 	paths.splice(0, 3);
 	ctx_path = "/" + paths.join("/");
 
 	ctx.set("Access-Control-Allow-Origin", header.origin);
 	ctx.set("Access-Control-Allow-Credentials", true);
 
-	if (!projectId) {
+	if (!project_id) {
 		return (ctx.body = xU.$response(null, 400, "projectId不能为空"));
 	}
 
 	let project;
 	try {
-		project = await orm.project.get(projectId);
+		project = await orm.project.get(project_id);
 	} catch (e) {
 		console.error(e);
 		return (ctx.body = xU.$response(null, 404, "不存在的项目"));
@@ -462,7 +462,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			})();
 
 			await setResponseByRunProxy(ctx, {
-				projectId: project._id,
+				project_id: project._id,
 				ENV_VAR,
 				yapiRun: ctx.headers["yapi-run-test"]
 			});

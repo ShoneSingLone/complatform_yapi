@@ -21,12 +21,12 @@ const noticeObj = {
 
 xU.emitHook("addNotice", noticeObj);
 
-xU.sendNotice = async function (projectId, data) {
+xU.sendNotice = async function (project_id, data) {
 	const followInst = orm.follow;
 	const userInst = orm.user;
-	const list = await followInst.listByProjectId(projectId);
+	const list = await followInst.listByProjectId(project_id);
 	const starUsers = list.map(item => item.uid);
-	const projectList = await orm.project.get(projectId);
+	const projectList = await orm.project.get(project_id);
 	const projectMenbers = projectList.members
 		.filter(item => item.email_notice)
 		.map(item => item.uid);

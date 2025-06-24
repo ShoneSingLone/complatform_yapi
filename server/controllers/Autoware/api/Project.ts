@@ -647,8 +647,10 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						let { id: projectId, role, member_uids } = ctx.payload;
-						if ((await this.checkAuth(projectId, "project", "edit")) !== true) {
+						let { id: project_id, role, member_uids } = ctx.payload;
+						if (
+							(await this.checkAuth(project_id, "project", "edit")) !== true
+						) {
 							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
 
@@ -661,7 +663,7 @@ module.exports = {
 						for (let i = 0, len = member_uids.length; i < len; i++) {
 							let member_uid = member_uids[i];
 							let check = await orm.project.checkMemberRepeat(
-								projectId,
+								project_id,
 								member_uid
 							);
 							let userdata = await xU.getUserdata(member_uid, role);
@@ -674,7 +676,7 @@ module.exports = {
 							}
 						}
 
-						let result = await orm.project.addMember(projectId, add_members);
+						let result = await orm.project.addMember(project_id, add_members);
 						if (add_members.length) {
 							let members = add_members
 								.map(item => {
@@ -688,7 +690,7 @@ module.exports = {
 								type: "project",
 								uid: this.getUid(),
 								username: username,
-								typeid: projectId
+								typeid: project_id
 							});
 						}
 						ctx.body = xU.$response({
@@ -723,9 +725,9 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						let { id: projectId, member_uid } = ctx.payload;
+						let { id: project_id, member_uid } = ctx.payload;
 						var check = await orm.project.checkMemberRepeat(
-							projectId,
+							project_id,
 							member_uid
 						);
 						if (check === 0) {
@@ -733,12 +735,12 @@ module.exports = {
 						}
 
 						if (
-							(await this.checkAuth(projectId, "project", "danger")) !== true
+							(await this.checkAuth(project_id, "project", "danger")) !== true
 						) {
 							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
 
-						let result = await orm.project.delMember(projectId, member_uid);
+						let result = await orm.project.delMember(project_id, member_uid);
 						let username = this.getUsername();
 
 						orm.user.findById(member_uid).then(member => {
@@ -747,7 +749,7 @@ module.exports = {
 									member ? member.username : ""
 								}</a>`,
 								type: "project",
-								typeid: projectId,
+								typeid: project_id,
 								uid: this.getUid(),
 								username: username
 							});
@@ -786,17 +788,17 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						let params = ctx.request.body;
-						let { id: projectId, member_uid, role } = ctx.payload;
+						let { id: project_id, member_uid, role } = ctx.payload;
 
 						var check = await orm.project.checkMemberRepeat(
-							projectId,
+							project_id,
 							member_uid
 						);
 						if (check === 0) {
 							return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
 						}
 						if (
-							(await this.checkAuth(projectId, "project", "danger")) !== true
+							(await this.checkAuth(project_id, "project", "danger")) !== true
 						) {
 							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
@@ -809,7 +811,7 @@ module.exports = {
 						};
 
 						let result = await orm.project.changeMemberRole(
-							projectId,
+							project_id,
 							member_uid,
 							role
 						);
@@ -823,7 +825,7 @@ module.exports = {
 								type: "project",
 								uid: this.getUid(),
 								username: username,
-								typeid: projectId
+								typeid: project_id
 							});
 						});
 						ctx.body = xU.$response(result);

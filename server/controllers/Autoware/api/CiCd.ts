@@ -1,4 +1,11 @@
-const { initRepo } = require("./CiCd.service");
+const { initRepo, runTask } = require("./CiCd.service");
+
+const CICD_ID_TYPE = {
+	required: true,
+	description: "CICD ID",
+	type: "string"
+};
+
 module.exports = {
 	definitions: {},
 	tag: {
@@ -20,7 +27,7 @@ module.exports = {
 				async handler(ctx) {
 					let { project_id } = ctx.payload;
 					try {
-						let result = await orm.CiCd.list({ project_id });
+						let result = await orm.CiCd.find({ project_id });
 						/* 跟项目相关的git仓库id */
 						const ids = xU._.map(result, row => row.git_repo_id);
 						result = await orm.GitRepo.list_in({ ids });
@@ -68,8 +75,8 @@ module.exports = {
 		},
 		"/cicd/git_address_add": {
 			post: {
-				summary: "添加项目相关的git仓库地址",
-				description: "添加项目相关的git仓库地址",
+				summary: "添加CICD下的任务",
+				description: "添加CICD下的任务",
 				request: {
 					body: {
 						project_id: {
@@ -129,7 +136,7 @@ module.exports = {
 
 						git_repo_id = git_repo._id;
 
-						let [thisProjectCicd] = await orm.CiCd.list({
+						let [thisProjectCicd] = await orm.CiCd.find({
 							project_id,
 							git_repo_id
 						});
@@ -144,6 +151,153 @@ module.exports = {
 							project_id,
 							git_repo_id
 						});
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		"/cicd/task_list": {
+			get: {
+				summary: "获取任务列表",
+				description: "获取任务列表",
+				query: {
+					cicd_id: CICD_ID_TYPE
+				},
+				async handler(ctx) {
+					let { cicd_id } = ctx.payload;
+					try {
+						let result = await orm.CiCdTask.find({ cicd_id });
+						/* 跟项目相关的git仓库id */
+
+						ctx.body = xU.$response({
+							list: result
+						});
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, err.message);
+					}
+				}
+			}
+		},
+
+		"/cicd/task_add": {
+			post: {
+				summary: "添加CICD下的任务",
+				description: "添加CICD下的任务",
+				request: {
+					body: {
+						cicd_id: CICD_ID_TYPE,
+						task_name: {
+							required: true,
+							description: "任务名，同一个cici条目下，唯一",
+							type: "string"
+						},
+						task_action: {
+							required: true,
+							description: "此任务调用的脚本",
+							type: "string"
+						},
+						task_output_type: {
+							required: true,
+							description: "此任务最终的产出类型",
+							type: "string",
+							default: "ARCHIVE_FILE",
+							enum: ["ARCHIVE_FILE", "DO_NOTHING"]
+						},
+						task_remark: {
+							required: true,
+							description: "说明",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						const {
+							cicd_id,
+							task_name,
+							task_action,
+							task_output_type,
+							task_remark,
+							_id
+						} = ctx.payload;
+
+						if (!cicd_id) {
+							return (ctx.body = xU.$response(null, 400, "CICD ID不能为空"));
+						}
+						/* 同一个cicd下task_name不可重复 */
+						let [task] = await orm.CiCdTask.find({
+							cicd_id,
+							task_name
+						});
+
+						if (task) {
+							if (task._id === _id) {
+								/* 这是更新，无事发生 */
+							} else {
+								return (ctx.body = xU.$response(null, 400, "任务名称重复"));
+							}
+						}
+						const task_token = xU.$hashCode(
+							yapi_configs.passsalt + task_name + Date.now()
+						);
+
+						task = await orm.CiCdTask.upsert({
+							...ctx.payload,
+							cicd_id,
+							task_name,
+							task_token,
+							task_action,
+							task_output_type,
+							task_remark
+						});
+
+						ctx.body = xU.$response(task);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		"/cicd/task_run": {
+			post: {
+				/* 未登录，可访问 */
+				auth: true,
+				summary: "执行CICD下的任务",
+				description: "执行CICD下的任务",
+				request: {
+					query: {
+						task_id: {
+							required: true,
+							description: "任务名，同一个cici条目下，唯一",
+							type: "string"
+						},
+						task_token: {
+							required: true,
+							description: "调用脚本的token",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						const { task_id, task_token, after: commit_hash } = ctx.payload;
+
+						if (!task_id) {
+							return (ctx.body = xU.$response(null, 400, "任务 ID不能为空"));
+						}
+						/* task_name不可重复 */
+						let [task] = await orm.CiCdTask.find({
+							_id: task_id,
+							task_token
+						});
+						if (!task) {
+							return (ctx.body = xU.$response(null, 400, "任务不存在"));
+						}
+						if (task.task_token === task_token) {
+							runTask({ task, commit_hash });
+						}
+						ctx.body = xU.$response("任务开始执行");
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);
 					}

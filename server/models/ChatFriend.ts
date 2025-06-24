@@ -32,7 +32,8 @@ class ModelRedis extends ModelBase {
 	}
 
 	get({ uid, friendId }) {
-		return this.model .findOne({
+		return this.model
+			.findOne({
 				uid,
 				friendId
 			})

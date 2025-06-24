@@ -158,8 +158,8 @@ module.exports = {
 							);
 
 							for (let j = 0; j < interfaceIdList.length; j++) {
-								let interfaceId = interfaceIdList[j];
-								let id = interfaceId.id;
+								let interface_id = interfaceIdList[j];
+								let id = interface_id.id;
 								let result = await modelLog.listWithCatid(typeid, type, id);
 
 								list = list.concat(result);

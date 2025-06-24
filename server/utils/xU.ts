@@ -963,7 +963,7 @@ function convertString(variable) {
 	}
 }
 
-async function runCaseScript(params, colId, interfaceId) {
+async function runCaseScript(params, colId, interface_id) {
 	const { schemaValidator } = require("server/common/utils");
 	const colInst = orm.interfaceCol;
 	let colData = await colInst.get(colId);
@@ -1000,7 +1000,7 @@ async function runCaseScript(params, colId, interfaceId) {
 
 		if (colData.checkResponseSchema) {
 			const interfaceInst = orm.interface;
-			let interfaceData = await interfaceInst.get(interfaceId);
+			let interfaceData = await interfaceInst.get(interface_id);
 			if (interfaceData.res_body_is_json_schema && interfaceData.res_body) {
 				let schema = JSON.parse(interfaceData.res_body);
 				let result = schemaValidator(schema, context.body);

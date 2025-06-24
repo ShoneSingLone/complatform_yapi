@@ -7,11 +7,14 @@
 ## 特性
 
 提供公司局域网内部，代理后端服务
-- 前端开发人员只需要代理到对应项目的mock地址
-- 后端开发人员可以针对接口提供mock数据、开发机环境、测试环境等
-    - ![代理后端](docs/assets/img/image.png)
 
-    - ![mock数据](docs/assets/img/image-1.png)
+- 前端开发人员只需要代理到对应项目的 mock 地址
+- 后端开发人员可以针对接口提供 mock 数据、开发机环境、测试环境等
+
+  - ![代理后端](docs/assets/img/image.png)
+
+  - ![mock数据](docs/assets/img/image-1.png)
+
 - 启用内网穿透，外网的同事也能如同本地开发一样访问本地服务
 
 ```mermaid
@@ -29,10 +32,9 @@ flowchart TD
 
 ## 启动
 
-
 - mongodb **必要**
 - 入口文件 server/app.js
-    - server\utils\onFirstLine.ts
+  - server\utils\onFirstLine.ts
 
 ```js
 /* server\utils\onFirstLine.ts */
@@ -70,17 +72,20 @@ module.exports = {
 		appKey: "********"
 	},
 	proxyOptions: {
-		targets: {/* ********** */}
+		targets: {
+			/* ********** */
+		}
 	}
 };
 ```
+
     - pnpm install
     - pnpm start
 
 ## 开发记录
 
 - xU.js configs
-xU.validateParams
+  xU.validateParams
 
 只接受限定的参数，多余的会被过滤掉 => model 里面 schemaMap
 

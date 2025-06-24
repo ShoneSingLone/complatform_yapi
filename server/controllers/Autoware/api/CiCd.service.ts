@@ -4,35 +4,122 @@ const path = require("path");
 const { _n } = require("@ventose/utils-node");
 const { TARGET_PREFIX } = xU;
 const { spawn } = require("child_process");
+const { socket_const } = require("../../../middleware/websocket");
+/**
+ * 执行shell命令的通用函数
+ * @param {string} command - 要执行的命令
+ * @param {string[]} args - 命令参数数组
+ * @param {object} options - spawn选项
+ * @param {function} emit - 输出信息的函数
+ * @returns {Promise<void>}
+ */
+const executeCommand = (command, args, options, emit) => {
+	return new Promise((resolve, reject) => {
+		// 打印开始执行的命令信息
+		const fullCommand = `${command} ${args.join(" ")}`;
+		emit(`开始执行命令: ${fullCommand}`);
+
+		const cmd = spawn(command, args, options);
+
+		cmd.stdout.on("data", data => {
+			emit(`${data}`);
+		});
+
+		cmd.stderr.on("data", data => {
+			emit(`${data}`);
+		});
+
+		cmd.on("close", code => {
+			if (code !== 0) {
+				emit(`命令执行失败，退出码: ${code}`);
+				reject(new Error(`Command failed with exit code ${code}`));
+				return;
+			}
+
+			emit(`命令执行成功，退出码: ${code}`);
+			resolve(code);
+		});
+
+		cmd.on("error", error => {
+			emit(`命令执行出错: ${error.message}`);
+			reject(error);
+		});
+	});
+};
 
 module.exports = {
+	async runTask({
+		task: { _id: task_id, task_output_type, task_action, uid },
+		commit_hash
+	}) {
+		const emit = msg => {
+			const currentSocket = global.APP.socket.yapi.socket;
+			if (currentSocket) {
+				/* to all online users */
+				currentSocket.broadcast(socket_const.task_run_output, { task_id, msg });
+			} else {
+				console.log(msg);
+			}
+		};
+		debugger;
+		/* 如果没有任务正在运行，先在队列中添加任务 */
+		/* TODO:应该判断参数是否完全一样 */
+		/*  */
+		/* TODO:执行定时任务 */
+		let [taskInstance] = await orm.CiCdTaskQueue.find({
+			task_id,
+			/* task_action, */ task_status: "running"
+		});
+
+		if (taskInstance) {
+			/* 如果有任务在运行，查看时间，如果，提交任务时间间隔小于1分钟，则忽略 */
+			const now = Date.now();
+			if (now - taskInstance.last_time < 60 * 1000) {
+				return emit(`任务提交间隔过短，请稍后再试`);
+			}
+
+			return emit(`已有相近任务在运行中，请勿重复提交任务`);
+		} else {
+			await orm.CiCdTaskQueue.save({
+				task_id,
+				/* task_action, */
+				task_status: "running",
+				last_time: xU.time(),
+				commit_hash
+			});
+			/* 运行脚本，记录日志 */
+			/* task_id => cicd_id => git_repo_id */
+			const [task] = await orm.CiCdTask.find({ _id: task_id });
+			const [cicd] = await orm.CiCd.find({ _id: task.cicd_id });
+			debugger;
+			const [git_repo] = await orm.GitRepo.find({ _id: cicd.git_repo_id });
+			debugger;
+		}
+	},
 	async initRepo({ git_repo, uid }) {
-		try {
+		const { git_address, username, password } = git_repo;
+		/* 根据日期生成仓库名称 */
+		const repo_name = _n._.snakeCase(git_address);
+		const gir_repo_root = path.join(TARGET_PREFIX, "git_repo", repo_name);
+
+		const emit = msg => {
 			const currentSocket = global.APP.socket.yapi.connections.get(uid);
-			const { git_address, username, password } = git_repo;
-			const emit = msg => {
+			if (currentSocket) {
 				try {
 					currentSocket.emit(
-						"clone_git_repo_terminal_output",
+						socket_const.clone_git_repo_terminal_output,
 						`${msg.replace(TARGET_PREFIX, "❀")}`
 					);
 				} catch (error) {
-					currentSocket.emit("clone_git_repo_terminal_output", msg);
+					currentSocket.emit(socket_const.clone_git_repo_terminal_output, msg);
 				}
-			};
-			/* 修改状态为正在初始化 */
-			git_repo.status = "initializing";
-			await orm.GitRepo.update(git_repo);
-			emit("正在初始化git仓库...");
+			} else {
+				console.log(msg);
+			}
+		};
 
-			/* 根据日期生成仓库名称 */
-			const repo_name = _n._.snakeCase(git_address);
-			const gir_repo_root = path.join(TARGET_PREFIX, "git_repo", repo_name);
-			/* 确保放代码的文件夹存在 */
-			await _n.asyncSafeMakeDir(gir_repo_root);
-			emit(`代码的文件夹已创建:\n${gir_repo_root}`);
-
-			const cloneRepo = () => {
+		const cloneRepo = async () => {
+			try {
 				// 配置仓库信息和认证信息
 				// const git_address = "https://github.com/username/repo.git";
 				// const username = "your_username";
@@ -48,63 +135,49 @@ module.exports = {
 				emit(`克隆仓库地址: \n${authUrl}`);
 
 				// 执行克隆命令
-				const gitClone = spawn("git", ["clone", authUrl, gir_repo_root]);
-				emit("开始克隆仓库...");
+				await executeCommand(
+					"git",
+					["clone", authUrl, gir_repo_root],
+					{},
+					emit
+				);
+				emit("克隆成功");
+			} catch (error) {
+				emit(`操作失败: ${error.message}`);
+			}
+		};
 
-				gitClone.stdout.on("data", data => {
-					emit(`${data}`);
-				});
-				gitClone.stderr.on("data", data => {
-					emit(`${data}`);
-				});
+		const pullRepo = async () => {
+			try {
+				// 执行拉取命令
+				await executeCommand("git", ["pull"], { cwd: gir_repo_root }, emit);
+				emit("拉取成功");
+			} catch (error) {
+				emit(`操作失败: ${error.message}`);
+			}
+		};
 
-				// 监听命令执行结束
-				gitClone.on("close", async code => {
-					if (code !== 0) {
-						emit(`克隆命令失败，退出码: ${code}`);
-						return;
-					}
+		const set_repo_status = async status => {
+			git_repo.status = status;
+			await orm.GitRepo.update(git_repo);
+			emit(`git仓库状态：${status}`);
+		};
 
-					git_repo.status = "done";
-					git_repo.gir_repo_root = gir_repo_root;
-					await orm.GitRepo.update(git_repo);
-					emit("克隆成功");
-
-					const pullRepo = () => {
-						// 可以继续执行其他命令
-						const gitPull = spawn("git", ["pull"], { cwd: gir_repo_root });
-
-						gitPull.stdout.on("data", data => {
-							emit(`拉取输出: ${data}`);
-						});
-
-						gitPull.on("close", code => {
-							if (code !== 0) {
-								emit(`拉取命令失败，退出码: ${code}`);
-								return;
-							}
-
-							emit("拉取成功");
-						});
-					};
-
-					pullRepo();
-				});
-			};
+		const set_repo_initializing = () => set_repo_status("initializing");
+		const set_repo_done = () => set_repo_status("done");
+		try {
+			/* 修改状态为正在初始化 */
+			await set_repo_initializing();
+			/* 确保放代码的文件夹存在 */
+			await _n.asyncSafeMakeDir(gir_repo_root);
+			emit(`代码的文件夹已创建:\n${gir_repo_root}`);
 
 			await cloneRepo();
-
-			try {
-				git_repo.status = "done";
-				await orm.GitRepo.save(git_repo);
-				throw new Error("初始化成功");
-			} catch (err) {
-				git_repo.status = "unset";
-				await orm.GitRepo.update(git_repo);
-				throw new Error(`初始化git仓库失败: ${err.message}`);
-			}
+			await pullRepo();
+			await set_repo_done();
 		} catch (error) {
-			xU.applog.error(error.message);
+			git_repo.status = "unset";
+			await orm.GitRepo.update(git_repo);
 		}
 	}
 };

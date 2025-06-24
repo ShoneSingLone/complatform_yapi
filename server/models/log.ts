@@ -145,13 +145,13 @@ class ModelLog extends ModelBase {
 		return this.model.countDocuments(params);
 	}
 
-	listWithCatid(typeid, type, interfaceId) {
+	listWithCatid(typeid, type, interface_id) {
 		const params = {
 			type: type,
 			typeid: typeid
 		};
-		if (interfaceId && !isNaN(interfaceId)) {
-			params["data.interface_id"] = +interfaceId;
+		if (interface_id && !isNaN(interface_id)) {
+			params["data.interface_id"] = +interface_id;
 		}
 		return this.model
 			.find(params)

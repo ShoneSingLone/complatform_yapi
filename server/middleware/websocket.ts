@@ -262,3 +262,8 @@ exports.appSetupWebsocket = function (app) {
 	const { namespace_yapi } = require("./websocket.ns.yapi");
 	namespace_yapi({ app, ioUtils });
 };
+
+exports.socket_const = {
+	clone_git_repo_terminal_output: "clone_git_repo_terminal_output",
+	task_run_output: "task_run_output"
+};

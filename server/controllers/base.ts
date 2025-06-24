@@ -148,9 +148,9 @@ class ControllerBase {
 	}
 
 	async getProjectIdByToken(token) {
-		let projectId = await orm.token.findId(token);
-		if (projectId) {
-			return projectId.toObject().project_id;
+		let project_id = await orm.token.findId(token);
+		if (project_id) {
+			return project_id.toObject().project_id;
 		}
 	}
 

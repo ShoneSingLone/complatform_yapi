@@ -566,7 +566,7 @@ module.exports = {
 				description: "复制所选接口到指定项目",
 				request: {
 					body: {
-						projectId: {
+						project_id: {
 							required: true,
 							description: "项目id，不能为空",
 							type: "number"
@@ -582,24 +582,24 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					let { projectId, interfaceIds } = ctx.payload;
+					let { project_id, interfaceIds } = ctx.payload;
 					interfaceIds = interfaceIds || [];
 					ctx.body = xU.$response("success");
 					/* 获取对应项目的所有分类 */
-					const category = await orm.interfaceCategory.list(projectId);
+					const category = await orm.interfaceCategory.list(project_id);
 					let categoryPublic = xU._.find(category, { name: "复用接口" });
 					if (!categoryPublic) {
 						categoryPublic = await interface_add_cat.call(this, {
 							payload: {
 								name: "复用接口",
-								project_id: projectId,
+								project_id: project_id,
 								desc: "复用接口"
 							}
 						});
 					}
 					/* 获取对应项目的所有接口 */
 					const projectInterfaceList = await orm.interface.list(
-						projectId,
+						project_id,
 						"_id title path"
 					);
 					/* 获取所选接口的详细信息 */
@@ -617,7 +617,7 @@ module.exports = {
 							/* 如果不存在 */
 							if (!isExist) {
 								/* 修改接口所属项目id */
-								interface.project_id = projectId;
+								interface.project_id = project_id;
 								/* 默认放在公共分类下 */
 								interface.catid = categoryPublic._id;
 								/* 删除自己的id */
