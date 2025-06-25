@@ -40,7 +40,7 @@ async function getAllBranches(repoPath) {
 
 // 获取远程分支列表
 async function getRemoteBranches(repoPath) {
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		exec("git branch -r", { cwd: repoPath }, (error, stdout, stderr) => {
 			if (error) {
 				reject(new Error(`获取远程分支列表失败: ${stderr}`));

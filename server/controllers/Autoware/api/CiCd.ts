@@ -315,7 +315,12 @@ module.exports = {
 							return (ctx.body = xU.$response(null, 400, "任务不存在"));
 						}
 						if (task.task_token === task_token) {
-							runTask({ task, commit_hash, task_ref: ref });
+							runTask({
+								task,
+								commit_hash,
+								task_ref: ref,
+								payload: ctx.payload
+							});
 						}
 						ctx.body = xU.$response("任务开始执行");
 					} catch (e) {

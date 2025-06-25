@@ -434,9 +434,6 @@ export default async function () {
 				async apiCicdGitBranchInfo(data) {
 					return _.$ajax.get(`/api/cicd/git_branch_info`, { data });
 				},
-				async apiCicdGitBranchInfoRefresh(data) {
-					return _.$ajax.post(`/api/cicd/git_branch_info_refresh`, { data });
-				},
 				async apiCicdJobList(data) {
 					return _.$ajax.get(`/api/cicd/job_list`, { data });
 				},

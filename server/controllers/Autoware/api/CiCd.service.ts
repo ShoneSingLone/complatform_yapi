@@ -95,7 +95,8 @@ async function initRepo({ git_repo, uid }) {
 async function runTask({
 	task: { _id: task_id, cicd_id },
 	commit_hash,
-	task_ref
+	task_ref,
+	payload
 }) {
 	let task_log = [];
 	const emit = msg => {
@@ -139,7 +140,8 @@ async function runTask({
 				// task_status: "running",
 				task_status: "failed",
 				last_time: xU.time(),
-				commit_hash
+				commit_hash,
+				payload
 			});
 		}
 		emit(`加入任务队列成功`);

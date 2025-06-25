@@ -31,7 +31,8 @@ class ModelCiCdTaskQueue extends ModelBase {
 			/* git提交的hash值，可以作为唯一标识符 */
 			commit_hash: String,
 			/* 最新运行时间，如果短时间内，1分钟内多次运行，则只运行一次 */
-			last_time: Number
+			last_time: Number,
+			payload: Object
 		};
 	}
 	find(condition) {
@@ -58,3 +59,5 @@ class ModelCiCdTaskQueue extends ModelBase {
 		}
 	}
 }
+
+module.exports = ModelCiCdTaskQueue;
