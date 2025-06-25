@@ -154,13 +154,14 @@ async function runTask({
 		debugger;
 		await xU.executeCommand(
 			"git",
-			["checkout", task_ref],
+			["reset", " --hard", "HEAD"],
 			{ cwd: git_repo_root },
 			emit
 		);
+		debugger;
 		await xU.executeCommand(
 			"git",
-			["reset", " --hard", "HEAD"],
+			["checkout", task_ref],
 			{ cwd: git_repo_root },
 			emit
 		);

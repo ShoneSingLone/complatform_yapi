@@ -329,6 +329,28 @@ module.exports = {
 				}
 			}
 		},
+		"/cicd/job_list": {
+			get: {
+				summary: "获取作业列表",
+				description: "获取作业列表",
+				query: {
+					cicd_id: CICD_ID_TYPE
+				},
+				async handler(ctx) {
+					let { cicd_id } = ctx.payload;
+					try {
+						let result = await orm.CiCdTaskQueue.find({ cicd_id });
+						/* 跟项目相关的git仓库id */
+
+						ctx.body = xU.$response({
+							list: result
+						});
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, err.message);
+					}
+				}
+			}
+		},
 		"/cicd/git_branch_info": {
 			get: {
 				summary: "获取git的branch信息",
