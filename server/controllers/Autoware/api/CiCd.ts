@@ -27,13 +27,28 @@ module.exports = {
 				async handler(ctx) {
 					let { project_id } = ctx.payload;
 					try {
-						let result = await orm.CiCd.find({ project_id });
+						let cicd_array = await orm.CiCd.find({ project_id });
 						/* 跟项目相关的git仓库id */
-						const ids = xU._.map(result, row => row.git_repo_id);
-						result = await orm.GitRepo.list_in({ ids });
+						const git_repo_array = await Promise.all(
+							xU._.map(cicd_array, async cicd => {
+								let [git_repo] = await orm.GitRepo.find({
+									_id: cicd.git_repo_id
+								});
+								/* _id是git_repo */
+								const repoInfo = xU._.merge(
+									{
+										cicd_id: cicd._id
+									},
+									cicd.toObject(),
+									xU._.omit(git_repo.toObject(), ["username", "password"])
+								);
+
+								return repoInfo;
+							})
+						);
 
 						ctx.body = xU.$response({
-							list: result
+							list: git_repo_array
 						});
 					} catch (err) {
 						ctx.body = xU.$response(null, 402, err.message);
@@ -62,7 +77,7 @@ module.exports = {
 						/* 项目状态为unset才处理 */
 						let [git_repo] = await orm.GitRepo.find({ git_address });
 						if (git_repo) {
-							if (git_repo.status === "unset") {
+							if (git_repo.status === "unset" || !git_repo.git_repo_root) {
 								initRepo({ git_repo, uid: this.$uid });
 							}
 						}
@@ -323,12 +338,12 @@ module.exports = {
 				async handler(ctx) {
 					let { git_repo_id } = ctx.payload;
 					try {
-						let [git_repo] = await orm.GitRepo.find({ git_repo_id });
+						let [git_repo] = await orm.GitRepo.find({ _id: git_repo_id });
 						/* 跟项目相关的git仓库id */
 
-						if (git_repo.gir_repo_root) {
+						if (git_repo.git_repo_root) {
 							const branch_info = await xU.asyncGetLocalRepoBranchInfo(
-								git_repo.gir_repo_root
+								git_repo.git_repo_root
 							);
 							ctx.body = xU.$response({
 								git_repo,
@@ -337,7 +352,10 @@ module.exports = {
 						} else {
 							ctx.body = xU.$response(
 								{
-									git_repo
+									git_repo: xU._.omit(git_repo.toObject(), [
+										"username",
+										"password"
+									])
 								},
 								400,
 								"GIT仓库未初始化"

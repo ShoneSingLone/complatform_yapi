@@ -22,9 +22,10 @@
 export default async function ({ row, onSuccess }) {
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
-		inject: ["APP", "inject_project"],
+		inject: ["APP"],
 		props: useDialogProps(),
 		setup() {
+			debugger
 			const clone_git_repo_terminal_output = "clone_git_repo_terminal_output";
 			const state = reactive({ msgArray: [] });
 			onMounted(() => {

@@ -12,7 +12,7 @@ class ModeGitRepo extends ModelBase {
 			/* git地址 */
 			git_address: { type: String, required: true },
 			/* 仓库在物理主机上的地址 */
-			gir_repo_root: { type: String },
+			git_repo_root: { type: String },
 			/* 状态是否已经从仓库下载到服务器：已下载 */
 			status: {
 				type: String,
