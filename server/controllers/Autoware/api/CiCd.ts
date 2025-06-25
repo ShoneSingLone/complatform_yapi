@@ -308,6 +308,46 @@ module.exports = {
 					}
 				}
 			}
+		},
+		"/cicd/git_branch_info": {
+			get: {
+				summary: "获取git的branch信息",
+				description: "获取git的branch信息",
+				query: {
+					git_repo_id: {
+						required: true,
+						description: "git 仓库的 ID",
+						type: "string"
+					}
+				},
+				async handler(ctx) {
+					let { git_repo_id } = ctx.payload;
+					try {
+						let [git_repo] = await orm.GitRepo.find({ git_repo_id });
+						/* 跟项目相关的git仓库id */
+
+						if (git_repo.gir_repo_root) {
+							const branch_info = await xU.asyncGetLocalRepoBranchInfo(
+								git_repo.gir_repo_root
+							);
+							ctx.body = xU.$response({
+								git_repo,
+								branch_info
+							});
+						} else {
+							ctx.body = xU.$response(
+								{
+									git_repo
+								},
+								400,
+								"GIT仓库未初始化"
+							);
+						}
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, err.message);
+					}
+				}
+			}
 		}
 	}
 };

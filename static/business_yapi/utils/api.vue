@@ -421,6 +421,10 @@ export default async function () {
 				/**
 				 *  添加CICD下的任务
 				 */
+				async apiCicdTaskRun(data) {
+					return _.$ajax.post(`/api/cicd/task_run`, { data });
+				}
+,
 				async apiCicdTaskAdd(data) {
 					return _.$ajax.post(`/api/cicd/task_add`, { data });
 				},
@@ -430,15 +434,12 @@ export default async function () {
 				async apiCicdGitBranchInfo(data) {
 					return _.$ajax.get(`/api/cicd/git_branch_info`, { data });
 				},
-				async apiCicdJobList(data) {
-					return _.$ajax.get(`/api/cicd/job_list`, { data });
-				},
 				async apiCicdGitBranchInfoRefresh(data) {
 					return _.$ajax.post(`/api/cicd/git_branch_info_refresh`, { data });
 				},
-				async apiCicdTaskRun(data) {
-					return _.$ajax.post(`/api/cicd/task_run`, { data });
-				}
+				async apiCicdJobList(data) {
+					return _.$ajax.get(`/api/cicd/job_list`, { data });
+				},
 			};
 		})();
 	}

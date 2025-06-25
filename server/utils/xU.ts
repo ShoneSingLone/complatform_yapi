@@ -1,3 +1,5 @@
+const { asyncGetLocalRepoBranchInfo } = require("./git_local_branch_info");
+const { spawn } = require("child_process");
 const {
 	SOCKET_TYPE_HANDLERS,
 	SOCKET_CONNECTIONS,
@@ -1125,8 +1127,51 @@ const SSE_TYPE_HANDLERS = {
 	}
 };
 
+/* ======================================================== */
 const xU = new Proxy(
 	{
+		/**
+		 * 执行shell命令的通用函数
+		 * @param {string} command - 要执行的命令
+		 * @param {string[]} args - 命令参数数组
+		 * @param {object} options - spawn选项
+		 * @param {function} emit - 输出信息的函数
+		 * @returns {Promise<void>}
+		 */
+		executeCommand: (command, args, options, emit) => {
+			return new Promise((resolve, reject) => {
+				// 打印开始执行的命令信息
+				const fullCommand = `${command} ${args.join(" ")}`;
+				emit(`开始执行命令: ${fullCommand}`);
+
+				const cmd = spawn(command, args, options);
+
+				cmd.stdout.on("data", data => {
+					emit(`${data}`);
+				});
+
+				cmd.stderr.on("data", data => {
+					emit(`${data}`);
+				});
+
+				cmd.on("close", code => {
+					if (code !== 0) {
+						emit(`命令执行失败，退出码: ${code}`);
+						reject(new Error(`Command failed with exit code ${code}`));
+						return;
+					}
+
+					emit(`命令执行成功，退出码: ${code}`);
+					resolve(code);
+				});
+
+				cmd.on("error", error => {
+					emit(`命令执行出错: ${error.message}`);
+					reject(error);
+				});
+			});
+		},
+		asyncGetLocalRepoBranchInfo,
 		SSE_TYPE,
 		SSE_TYPE_HANDLERS,
 		setSseStream(id, stream) {

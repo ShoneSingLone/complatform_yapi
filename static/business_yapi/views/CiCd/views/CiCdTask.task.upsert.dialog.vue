@@ -55,7 +55,7 @@ export default async function ({
 			}));
 		} catch (error) {
 			_.$msgError(error);
-			if (error.message === "git仓库未初始化") {
+			if (error.message === "GIT仓库未初始化") {
 				git_repo = error.data.git_repo;
 				$DIALOG_VM.closeModal();
 				initRepo();
