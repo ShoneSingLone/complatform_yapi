@@ -166,6 +166,13 @@ async function runTask({
 			emit
 		);
 		await xU.executeCommand("git", ["pull"], { cwd: git_repo_root }, emit);
+		await xU.executeCommand(
+			"git",
+			["reset", "--hard", commit_hash],
+			{ cwd: git_repo_root },
+			emit
+		);
+
 		throw new Error(`脚本执行失败！`);
 		taskInstance.task_status = "success";
 		taskInstance.task_log = task_log.join("\n");
