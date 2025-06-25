@@ -21,7 +21,7 @@ export default async function () {
 		},
 		async mounted() {
 			(() => {
-				document.title = `Y-API-用户管理`;
+				document.title = `CI/CD 管理`;
 			})();
 		},
 		provide() {

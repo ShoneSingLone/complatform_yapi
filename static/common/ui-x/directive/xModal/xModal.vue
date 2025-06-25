@@ -80,6 +80,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			if (options._VueCtor) {
 				this.ContentComponent = options._VueCtor;
 			} else {
+				options.$DIALOG_VM = this;
 				this.ContentComponent = await _.$importVue(options.url, options);
 			}
 		},
@@ -166,8 +167,9 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			onBeforeUnmount(() => {
 				// _.$single.win.off("resize.xModal", setDialogOffset);
 			});
+
 			return {
-				isHideHeader,
+				isHideHeader: ref(isHideHeader),
 				toggleFullScreen() {
 					vm.dialogClass.fullscreen = !vm.dialogClass.fullscreen;
 					if (!vm.dialogClass.fullscreen) {
@@ -227,10 +229,8 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			};
 		},
 		// beforeDestroy() {
-		// 	debugger;
 		// 	/* 清理content组件 */
 		// 	if (this.$refs?.refContent) {
-		// 		debugger;
 		// 		this.$refs.refContent.$destroy();
 		// 	}
 		// },

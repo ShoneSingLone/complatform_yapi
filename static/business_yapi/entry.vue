@@ -333,7 +333,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return false;
 			},
 			cptInterfaceId() {
-				return this.$route.query.interfaceId;
+				return this.$route.query.interface_id;
 			}
 		},
 		watch: {
@@ -367,19 +367,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	}
 }
 
-html.x-yapi-app {
+:root[data-theme="tiny"].x-yapi-app {
 	color-scheme: light;
 	--el-color-white: #ffffff;
 	--el-color-black: #000000;
-	// --el-color-primary: #00695e;
-	// --el-color-primary-hover: #80b4af;
-	// --el-color-primary-active: #00695e;
-	// --el-color-primary-light-3: #4d968e;
-	// --el-color-primary-light-5: #80b4af;
-	// --el-color-primary-light-7: #b3d2cf;
-	// --el-color-primary-light-8: #cce1df;
-	// --el-color-primary-light-9: #e6f0ef;
-	// --el-color-primary-dark-2: #00544b;
+	--el-color-primary: #3182ce; /* 主色调：深蓝色 */
+	--el-color-primary-hover: #63b3ed; /* 主色悬停：较亮的蓝色 */
+	--el-color-primary-active: #2563eb; /* 主色点击：较深的蓝色 */
+	--el-color-primary-light-3: #60a5fa; /* 主色浅3级：明亮的蓝色 */
+	--el-color-primary-light-5: #93c5fd; /* 主色浅5级：更浅的蓝色 */
+	--el-color-primary-light-7: #bfdbfe; /* 主色浅7级：淡蓝色 */
+	--el-color-primary-light-8: #dbeafe; /* 主色浅8级：极淡的蓝色 */
+	--el-color-primary-light-9: #eff6ff; /* 主色浅9级：接近白色的蓝色 */
+	--el-color-primary-dark-2: #1e40af; /* 主色深2级：深蓝色 */
 	--el-color-success: #67c23a;
 	--el-color-success-light-3: #95d475;
 	--el-color-success-light-5: #b3e19d;
@@ -476,7 +476,7 @@ html.x-yapi-app {
 			--el-table-header-text-color: var(--el-text-color-primary);
 			--el-table-row-hover-bg-color: var(--el-fill-color-light);
 			--el-table-current-row-bg-color: var(--el-color-primary-light-9);
-			--el-table-header-bg-color: #fff;
+			--el-table-header-bg-color: #f7fafc;
 			--el-table-fixed-box-shadow: var(--el-box-shadow-light);
 			--el-table-bg-color: var(--el-fill-color-blank);
 			--el-table-tr-bg-color: var(--el-fill-color-blank);
@@ -489,6 +489,11 @@ html.x-yapi-app {
 			box-shadow: var(--el-box-shadow);
 			border-radius: 8px;
 			overflow: hidden;
+
+			.el-table-v2__header-cell {
+				font-weight: 600;
+				color: #2d3748;
+			}
 		}
 		.el-table-v2__left {
 			box-shadow: unset;
@@ -618,6 +623,12 @@ html.x-yapi-app {
 			--xItem-wrapper-width: 220px;
 			--xItem-label-width: 68px;
 		}
+	}
+	--border-radius: 8px;
+	--border-radius--small: 8px;
+
+	.oprations-tab_search-query-btn {
+		margin-left: 8px;
 	}
 }
 </style>

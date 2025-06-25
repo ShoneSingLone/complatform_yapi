@@ -171,7 +171,7 @@ export default async function () {
 						method,
 						group_id: this.APP.cptGroupId,
 						project_id: this.APP.cptProjectId,
-						interfaceId: _id,
+						interface_id: _id,
 						camelCase: _.camelCase
 					});
 				} catch (error) {
@@ -223,7 +223,7 @@ export default async function () {
 									label: _.$val2L(catid, vm.inject_project.all_category),
 									onClick() {
 										vm.APP.routerUpsertQuery({
-											interfaceId: catid,
+											interface_id: catid,
 											interfaceType: "category"
 										});
 									}
@@ -368,7 +368,7 @@ export default async function () {
 						parent: this,
 						mockHref,
 						reqMethod,
-						interfaceId: this.interfaceInfo._id,
+						interface_id: this.interfaceInfo._id,
 						project_id: this.APP.cptProject._id
 					},
 					{

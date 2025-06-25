@@ -1431,7 +1431,7 @@
 				};
 			}
 			const isDelete = !!options.isDelete;
-			let title = options.title || i18n("info");
+			let title = options.title || i18n("message");
 			let content = options.content || "";
 			if (isDelete) {
 				const _title = title || i18n("删除");

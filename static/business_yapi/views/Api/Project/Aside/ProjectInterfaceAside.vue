@@ -99,12 +99,12 @@ export default async function () {
 				return this.inject_project.cptAsideTreeData;
 			},
 			cptInterfaceId() {
-				return this.$route.query.interfaceId;
+				return this.$route.query.interface_id;
 			}
 		},
 		methods: {
 			selectInterface({ menuType, _id }) {
-				this.APP.routerUpsertQuery({ interfaceId: _id, interfaceType: menuType });
+				this.APP.routerUpsertQuery({ interface_id: _id, interfaceType: menuType });
 			},
 			async scrollToLocation() {
 				await _.$ensure(() => this.$refs.refTreeScroll);

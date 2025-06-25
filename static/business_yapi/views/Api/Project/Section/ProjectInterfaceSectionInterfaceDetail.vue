@@ -88,7 +88,7 @@ export default async function () {
 							vm.$router.push({
 								path,
 								query: {
-									..._.omit(query, ["interfaceId", "interfaceType"])
+									..._.omit(query, ["interface_id", "interfaceType"])
 								}
 							});
 						}

@@ -6,8 +6,18 @@
 	<!-- 仪表板 -->
 	<div id="CiCdDashboard" class="tab-content active">
 		<div class="page-header">
-			<h1 class="page-title">仪表板</h1>
-			<p class="page-subtitle">持续集成系统概览</p>
+			<h1 class="page-title">说明</h1>
+			<p class="page-subtitle">
+				<xMd>
+					<pre>
+- ID是当前项目下某一个代码仓库的唯一标识
+- 一个项目下多个代码仓库
+- 一个代码仓库可以有多个任务
+
+				</pre
+					>
+				</xMd>
+			</p>
 		</div>
 
 		<div

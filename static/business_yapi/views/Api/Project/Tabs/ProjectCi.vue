@@ -60,9 +60,9 @@ export default async function () {
 						{ prop: "status", label: "仓库状态" },
 						defTable.colActions({
 							width: 210,
-							cellRenderer({ rowData }) {
-								const isUnset = rowData.status === "unset";
-								const isDone = rowData.status === "done";
+							cellRenderer({ rowData: gitRepoRow }) {
+								const isUnset = gitRepoRow.status === "unset";
+								const isDone = gitRepoRow.status === "done";
 								return hBtnWithMore({
 									children: [
 										{
@@ -73,7 +73,7 @@ export default async function () {
 													parent: vm,
 													title: "CloneRepo",
 													url: "@/views/Api/Project/Tabs/ProjectCi/ProjectCi.GitRepo.Clone.dialog.vue",
-													row: rowData,
+													row: gitRepoRow,
 													isHideHeader: true,
 													onSuccess() {
 														configsTable.onQuery();
@@ -88,7 +88,8 @@ export default async function () {
 													{
 														attrs: {
 															href: _.$aHashLink("/cicd", {
-																id: rowData._id
+																cicd_id: gitRepoRow.cicd_id,
+																git_repo_id: gitRepoRow.git_repo_id
 															}),
 															target: "_blank"
 														}
@@ -128,7 +129,7 @@ export default async function () {
 				mdString: `1.添加代码仓库
 - 可以有多个代码仓库，可以是不同域名仓库，但是要保证\`username\`和\`password\`有效
 - 用户名和密码只在后端运行脚本时使用，不会再次出现在前端
-2.代码仓库状态分为： 
+2.代码仓库状态分为：
 - \`done\`(已下载到服务器)
 - \`unset\`(未下载到服务器)
 - \`initializing\`(正在初始化)

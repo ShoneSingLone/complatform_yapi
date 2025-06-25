@@ -13,6 +13,7 @@
 			<!-- 名称或者路径 -->
 			<template #right>
 				<xItem :configs="inject_project_interface_section.form.path" />
+				<xGap r="8" />
 				<xBtn
 					preset="primary"
 					@click="inject_project_interface_section.configsTable.onQuery({ page: 1 })"

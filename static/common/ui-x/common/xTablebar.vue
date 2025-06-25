@@ -1,12 +1,12 @@
 <template>
-	<div class="oprations-tab">
+	<div class="xTablebar oprations-tab">
 		<div class="oprations-tab_btns">
 			<slot name="left" />
 		</div>
 		<div class="oprations-tab_search">
 			<slot />
-			<xBtn :configs="cptQueryBtnConfigs" />
-			<xBtn :configs="cptResetBtnConfigs" />
+			<xBtn :configs="cptQueryBtnConfigs" class="oprations-tab_search-query-btn" />
+			<xBtn :configs="cptResetBtnConfigs" class="oprations-tab_search-reset-btn" />
 			<slot name="right" />
 			<xTableFilter v-if="isShowFilter" :configs="configs" />
 		</div>

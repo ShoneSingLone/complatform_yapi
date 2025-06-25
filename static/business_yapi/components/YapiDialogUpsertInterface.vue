@@ -47,7 +47,7 @@ export default async function ({ categoryInfo, project_id, get_interface_list })
 						itemSlots: {
 							afterController() {
 								return hxBtn({
-									class: "ml",
+									class: "ml8",
 									configs: {
 										label: i18n("添加分类"),
 										preset: "blue",

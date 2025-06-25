@@ -1,121 +1,233 @@
 <style lang="less">
 #CiCdBuilds {
+	--xPageTitle-padding: var(--ui-one);
+}
+
+.CiCdBuilds {
+	.log-container {
+		height: 100%;
+		overflow-y: auto;
+		font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+		background-color: #f9f9f9;
+		border-radius: 8px;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	}
+
+	.log-item {
+		position: relative;
+		margin: 12px 0;
+		padding: 12px 15px 12px 35px;
+		background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+		border-left: 3px solid #4a90e2;
+		border-radius: 0 4px 4px 0;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+		transition: all 0.3s ease;
+	}
+
+	.log-item:hover {
+		transform: translateX(2px);
+		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+	}
+
+	.log-item::before {
+		content: "";
+		position: absolute;
+		left: -8px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 13px;
+		height: 13px;
+		border-radius: 50%;
+		background-color: #4a90e2;
+		box-shadow:
+			0 0 0 2px #fff,
+			0 0 0 4px #4a90e2;
+	}
+
+	.log-item:nth-child(odd)::before {
+		background-color: #50e3c2;
+		box-shadow:
+			0 0 0 2px #fff,
+			0 0 0 4px #50e3c2;
+	}
+
+	.log-item:nth-child(odd) {
+		border-left-color: #50e3c2;
+	}
+
+	.log-item:last-child::after {
+		content: "";
+		position: absolute;
+		left: -6.5px;
+		top: calc(100% - 5px);
+		height: calc(100% + 20px);
+		width: 2px;
+		background-color: #e0e0e0;
+		z-index: 0;
+	}
+
+	.log-timestamp {
+		font-size: 0.85em;
+		color: #888;
+		margin-right: 8px;
+	}
+
+	.log-message {
+		color: #333;
+		line-height: 1.4;
+	}
 }
 </style>
 <template>
-	<!-- 构建历史 -->
-	<div id="CiCdBuilds">
-		<div class="page-header">
-			<h1 class="page-title">构建历史</h1>
-			<p class="page-subtitle">查看所有构建记录和状态</p>
-		</div>
-
-		<div class="card">
-			<div class="card-header">
-				<h3 class="card-title">构建记录</h3>
-				<div style="display: flex; gap: 12px">
-					<select
-						class="form-select"
-						style="width: auto"
-						onchange="filterBuilds(this.value)">
-						<option value="all">所有状态</option>
-						<option value="success">成功</option>
-						<option value="error">失败</option>
-						<option value="running">运行中</option>
-					</select>
-					<button class="btn btn-primary" onclick="refreshBuilds()">刷新</button>
+	<div id="CiCdBuilds" class="x-page-view flex1">
+		<xDrawer title="作业日志" :visible.sync="state.isShowDrawer" class="CiCdBuilds">
+			<div class="log-container x-padding">
+				<div class="log-item" v-for="([time, msg], index) in state.logArray" :key="index">
+					<span class="log-timestamp">{{ time }}</span>
+					<span class="log-message">{{ msg }}</span>
 				</div>
 			</div>
-			<div class="card-content">
-				<table class="table">
-					<thead>
-						<tr>
-							<th>构建ID</th>
-							<th>项目</th>
-							<th>分支</th>
-							<th>提交者</th>
-							<th>状态</th>
-							<th>开始时间</th>
-							<th>耗时</th>
-							<th>操作</th>
-						</tr>
-					</thead>
-					<tbody id="buildsTable">
-						<tr>
-							<td>#1234</td>
-							<td>frontend-app</td>
-							<td>main</td>
-							<td>张三</td>
-							<td>
-								<span class="status-badge status-running"
-									><span class="spinning">⚡</span> 构建中</span
-								>
-							</td>
-							<td>2024-01-15 14:30</td>
-							<td>2m 15s</td>
-							<td>
-								<button class="btn btn-sm btn-secondary" onclick="viewLogs(1234)">
-									日志
-								</button>
-								<button class="btn btn-sm btn-danger" onclick="cancelBuild(1234)">
-									取消
-								</button>
-							</td>
-						</tr>
-						<tr>
-							<td>#1233</td>
-							<td>backend-api</td>
-							<td>develop</td>
-							<td>李四</td>
-							<td>
-								<span class="status-badge status-success">✅ 成功</span>
-							</td>
-							<td>2024-01-15 14:15</td>
-							<td>3m 42s</td>
-							<td>
-								<button class="btn btn-sm btn-secondary" onclick="viewLogs(1233)">
-									日志
-								</button>
-								<button
-									class="btn btn-sm btn-success"
-									onclick="downloadArtifact(1233)">
-									下载
-								</button>
-							</td>
-						</tr>
-						<tr>
-							<td>#1232</td>
-							<td>mobile-app</td>
-							<td>feature/login</td>
-							<td>王五</td>
-							<td>
-								<span class="status-badge status-error">❌ 失败</span>
-							</td>
-							<td>2024-01-15 13:45</td>
-							<td>1m 28s</td>
-							<td>
-								<button class="btn btn-sm btn-secondary" onclick="viewLogs(1232)">
-									日志
-								</button>
-								<button
-									class="btn btn-sm btn-primary"
-									onclick="rebuildProject(1232)">
-									重新构建
-								</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+		</xDrawer>
+
+		<xPageTitle>
+			<template #title>
+				<div class="flex middle">
+					<span class="mr4"> 作业列表 </span>
+				</div>
+			</template>
+		</xPageTitle>
+		<xPageContent>
+			<xTablebar :configs="configsTable" />
+			<div class="mt flex1">
+				<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" />
 			</div>
-		</div>
+		</xPageContent>
 	</div>
 </template>
 <script lang="ts">
 export default async function () {
-	const { THIS_FILE_URL } = this;
 	return defineComponent({
-		data() {
-			return { THIS_FILE_URL };
+		inject: ["APP"],
+		setup() {
+			const vm = this;
+			const { cicd_id, git_repo_id } = this.$route.query;
+			const state = reactive({
+				logArray: [],
+				isShowDrawer: false
+			});
+			const task_run_output = "task_run_output";
+
+			/* 当前页可以接受提示信息 */
+			onMounted(async () => {
+				await _.$ensure(() => vm.APP.WS);
+				vm.APP.WS.on(task_run_output, ({ msg, task_id }) => {
+					state.logArray.push([_.$dateFormat(), msg]);
+					state.isShowDrawer = true;
+					queryJobs();
+				});
+			});
+
+			onBeforeUnmount(async () => {
+				await _.$ensure(() => vm.APP.WS);
+				vm.APP.WS.off(task_run_output);
+			});
+
+			const configsTable = reactive(
+				defTable({
+					// isHideQuery: true,
+					// isHideFilter: true,
+					// isHidePagination: true,
+					async onQuery() {
+						try {
+							const {
+								data: { list }
+							} = await _api.yapi.apiCicdJobList({
+								cicd_id
+							});
+							_.$setTableData(configsTable, { list });
+						} catch (error) {
+							_.$msgError(error);
+						}
+					},
+					data: {
+						set: new Set(),
+						list: []
+					},
+					columns: [
+						{ prop: "_id", label: "作业ID", width: 100 },
+						{ prop: "task_status", label: "作业状态", width: 100 },
+						{ prop: "artifacts", label: "产出物", width: 100 },
+						{ prop: "task_ref", label: "触发分支", width: 150 },
+						{ prop: "commit_hash", label: "commit hash" },
+						{
+							prop: "last_time",
+							label: "开始时间",
+							width: 150,
+							cellRenderer({ cellData }) {
+								return _.$dateFormat(cellData);
+							}
+						},
+						defTable.colActions({
+							width: 410,
+							cellRenderer({ rowData }) {
+								return hBtnWithMore({
+									children: [
+										{
+											label: "查看日志",
+											isHide: !rowData.task_log,
+											async onClick() {
+												_.$openModal({
+													title: "作业日志",
+													parent: vm,
+													url: "@/views/CiCd/views/CiCdBuilds.jobs_log.dialog.vue",
+													logString: rowData.task_log
+												});
+											}
+										},
+										{
+											icon: "refresh",
+											isHide: rowData.task_status === "running",
+											async onClick() {
+												try {
+													const {
+														data: {
+															list: [task]
+														}
+													} = await _api.yapi.apiCicdTaskList({
+														task_id: rowData.task_id
+													});
+													const hookUrl = `${location.origin}/api/cicd/task_run?task_token=${task.task_token}&task_id=${task._id}`;
+
+													await _.$ajax.post(hookUrl, {
+														data: _.merge(rowData, {
+															ref: rowData.task_ref,
+															after: rowData.commit_hash
+														})
+													});
+													configsTable.onQuery();
+												} catch (error) {
+													console.error();
+												}
+											}
+										}
+									]
+								});
+							}
+						})
+					]
+				})
+			);
+
+			const queryJobs = _.debounce(() => {
+				configsTable.onQuery();
+			}, 1000 * 3);
+
+			onMounted(configsTable.onQuery);
+
+			return {
+				configsTable,
+				state
+			};
 		}
 	});
 }

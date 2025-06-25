@@ -55,7 +55,7 @@ export default async function () {
 						method: "GET",
 						group_id: "1",
 						project_id: "2",
-						interfaceId: "3",
+						interface_id: "3",
 						camelCase: _.camelCase
 					});
 					return code;

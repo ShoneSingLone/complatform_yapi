@@ -65,7 +65,7 @@ export default async function () {
 	return defineComponent({
 		setup() {
 			const vm = this;
-			
+
 			watch(
 				() => vm.$route.path,
 				async path => {
@@ -85,7 +85,7 @@ export default async function () {
 				menuArray: _.map(
 					[
 						{ href: "/cicd/dashboard", title: "仪表板", id: "dashboard", icon: "📊" },
-						{ href: "/cicd/projects", title: "项目配置", id: "projects", icon: "📁" },
+						{ href: "/cicd/task_list", title: "任务配置", id: "task", icon: "📁" },
 						{ href: "/cicd/builds", title: "构建历史", id: "builds", icon: "🔨" },
 						{
 							href: "/cicd/artifacts",
@@ -102,7 +102,7 @@ export default async function () {
 						{ href: "/cicd/settings", title: "系统设置", id: "settings", icon: "⚙️" }
 					],
 					menu => {
-						menu.href = _.$aHashLink(menu.href, { id: vm.$route.query.id });
+						menu.href = _.$aHashLink(menu.href, vm.$route.query);
 						return menu;
 					}
 				)

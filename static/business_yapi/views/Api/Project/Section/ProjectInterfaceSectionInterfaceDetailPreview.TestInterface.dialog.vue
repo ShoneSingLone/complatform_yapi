@@ -21,7 +21,7 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ mockHref, reqMethod, interfaceId, project_id }) {
+export default async function ({ mockHref, reqMethod, interface_id, project_id }) {
 	const token = "";
 	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
@@ -127,7 +127,7 @@ ${httprequestoptions}
 			async saveAsBackupData() {
 				try {
 					const { data } = await _api.yapi.interface_up({
-						id: interfaceId,
+						id: interface_id,
 						resBackupJson: JSON.stringify(this.response.data, null, 2)
 					});
 					if (data) {
@@ -146,7 +146,7 @@ ${httprequestoptions}
 					const id = this.currentUseCase?._id;
 					const dataForm = {
 						id,
-						interfaceId,
+						interface_id,
 						project_id,
 						usecaseCode: this.form.editor.value
 					};
@@ -159,7 +159,7 @@ ${httprequestoptions}
 			},
 			async setEditorValue() {
 				try {
-					const res = await _api.yapi.interface_usecase_get_all(interfaceId);
+					const res = await _api.yapi.interface_usecase_get_all(interface_id);
 					if (!res.errcode) {
 						const { data } = res;
 						if (data.length > 0) {

@@ -218,7 +218,7 @@ export default async function () {
 					witchEnv,
 					method,
 					catid,
-					_id: interfaceId,
+					_id: interface_id,
 					project_id
 				} = this.interfaceInfo || {};
 				const { protocol, hostname, port } = location;
@@ -231,7 +231,7 @@ export default async function () {
 				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${project_id}${apiURL}`;
 
 				try {
-					const { data } = await _api.yapi.interface_usecase_get_all(interfaceId);
+					const { data } = await _api.yapi.interface_usecase_get_all(interface_id);
 					if (data.length > 0) {
 						await this.setFormEditorValue(data[0].usecaseCode);
 						this.currentUseCase = data[0];
@@ -276,10 +276,10 @@ export default async function () {
 			async saveConfigs() {
 				try {
 					const id = this.currentUseCase?._id;
-					const { project_id, interfaceId } = this.$route.query;
+					const { project_id, interface_id } = this.$route.query;
 					const dataForm = {
 						id,
-						interfaceId,
+						interface_id,
 						project_id,
 						usecaseCode: this.form.editor.value
 					};

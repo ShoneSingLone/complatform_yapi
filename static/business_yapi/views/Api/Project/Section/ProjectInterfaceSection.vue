@@ -92,7 +92,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							href: _.$aHashLink("/api/project", {
 								...vm.$route.query,
 								interfaceType: "interface",
-								interfaceId: rowData._id,
+								interface_id: rowData._id,
 								project_interface_tab: "preview"
 							})
 						}),
@@ -306,7 +306,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						{
 							prop: "order",
 							label: "序号",
-							width: 60,
+							width: 48,
 							cellRenderer({ rowIndex }) {
 								return hDiv({ style: "width:100%;text-align:right;" }, [
 									rowIndex + 1
