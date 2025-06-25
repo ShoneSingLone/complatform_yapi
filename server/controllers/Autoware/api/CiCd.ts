@@ -281,7 +281,12 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						const { task_id, task_token, after: commit_hash } = ctx.payload;
+						const {
+							task_id,
+							task_token,
+							after: commit_hash,
+							ref
+						} = ctx.payload;
 
 						if (!task_id) {
 							return (ctx.body = xU.$response(null, 400, "任务 ID不能为空"));
@@ -295,7 +300,7 @@ module.exports = {
 							return (ctx.body = xU.$response(null, 400, "任务不存在"));
 						}
 						if (task.task_token === task_token) {
-							runTask({ task, commit_hash });
+							runTask({ task, commit_hash, task_ref: ref });
 						}
 						ctx.body = xU.$response("任务开始执行");
 					} catch (e) {

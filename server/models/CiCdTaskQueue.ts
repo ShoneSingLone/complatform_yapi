@@ -8,6 +8,8 @@ class ModelCiCdTaskQueue extends ModelBase {
 	getSchema() {
 		return {
 			task_id: { type: Number, required: true },
+			/* 所属cicd */
+			cicd_id: { type: Number, required: true },
 			task_status: {
 				type: String,
 				required: true,
@@ -24,6 +26,8 @@ class ModelCiCdTaskQueue extends ModelBase {
 			artifacts: String,
 			/* 运行日志 */
 			task_log: String,
+			/* 触发任务的分支信息 */
+			task_ref: String,
 			/* git提交的hash值，可以作为唯一标识符 */
 			commit_hash: String,
 			/* 最新运行时间，如果短时间内，1分钟内多次运行，则只运行一次 */
@@ -40,10 +44,17 @@ class ModelCiCdTaskQueue extends ModelBase {
 		});
 	}
 
-	save(data) {
-		let model = new this.model(data);
-		return model.save();
+	upsert(data) {
+		if (data._id) {
+			return this.model.update(
+				{
+					_id: data._id
+				},
+				data
+			);
+		} else {
+			let m = new this.model(data);
+			return m.save();
+		}
 	}
 }
-
-module.exports = ModelCiCdTaskQueue;
