@@ -141,7 +141,7 @@ async function runTask({
 				task_status: "failed",
 				last_time: xU.time(),
 				commit_hash,
-				payload
+				// payload/*  */
 			});
 		}
 		emit(`加入任务队列成功`);
