@@ -18,7 +18,7 @@ class ModelCiCdTaskQueue extends ModelBase {
 					"stop" /* 未触发 */,
 					"running" /* 正在执行 */,
 					"success" /* 执行成功 */,
-					"fail" /* 执行失败 */,
+					"failed" /* 执行失败 */,
 					"waiting" /* 等待中 */
 				]
 			},

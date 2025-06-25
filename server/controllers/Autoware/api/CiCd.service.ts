@@ -119,7 +119,7 @@ async function runTask({
 		/* task_action, */
 		commit_hash
 	});
-
+	emit("查找是否已有作业");
 	try {
 		if (taskInstance) {
 			if (taskInstance.task_status === "running") {
@@ -171,7 +171,7 @@ async function runTask({
 		taskInstance.task_status = "success";
 		taskInstance.task_log = task_log.join("\n");
 	} catch (error) {
-		emit(`作业执行失败，请检查！`);
+		emit(`作业执行失败，请检查！` + error.message);
 		if (taskInstance) {
 			taskInstance.task_status = "failed";
 			taskInstance.task_log = task_log.join("\n");
