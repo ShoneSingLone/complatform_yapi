@@ -154,7 +154,7 @@ async function runTask({
 		debugger;
 		await xU.executeCommand(
 			"git",
-			["reset", " --hard", "HEAD"],
+			["reset", "--hard", "HEAD"],
 			{ cwd: git_repo_root },
 			emit
 		);
@@ -172,6 +172,7 @@ async function runTask({
 		taskInstance.task_log = task_log.join("\n");
 	} catch (error) {
 		emit(`作业执行失败，请检查！` + error.message);
+		debugger;
 		if (taskInstance) {
 			taskInstance.task_status = "failed";
 			taskInstance.task_log = task_log.join("\n");

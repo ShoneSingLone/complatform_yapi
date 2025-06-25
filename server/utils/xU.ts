@@ -1130,6 +1130,18 @@ const SSE_TYPE_HANDLERS = {
 /* ======================================================== */
 const xU = new Proxy(
 	{
+		newCondition(obj) {
+			return _.reduce(
+				obj,
+				(condition, value, key) => {
+					if (xU.isInput(value)) {
+						condition[key] = value;
+					}
+					return condition;
+				},
+				{}
+			);
+		},
 		/**
 		 * 执行shell命令的通用函数
 		 * @param {string} command - 要执行的命令

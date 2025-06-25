@@ -197,7 +197,6 @@ export default async function () {
 														task_id: rowData.task_id
 													});
 													const hookUrl = `${location.origin}/api/cicd/task_run?task_token=${task.task_token}&task_id=${task._id}`;
-
 													await _.$ajax.post(hookUrl, {
 														data: _.merge(rowData, {
 															ref: rowData.task_ref,

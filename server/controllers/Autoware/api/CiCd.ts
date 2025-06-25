@@ -1,10 +1,10 @@
 const { initRepo, runTask } = require("./CiCd.service");
 
-const CICD_ID_TYPE = {
-	required: true,
+const ID_TYPE = (required = false) => ({
+	required,
 	description: "CICD ID",
 	type: "string"
-};
+});
 
 module.exports = {
 	definitions: {},
@@ -18,11 +18,7 @@ module.exports = {
 				summary: "获取项目相关的git仓库地址",
 				description: "获取项目相关的git仓库地址",
 				query: {
-					project_id: {
-						required: true,
-						description: "项目ID",
-						type: "string"
-					}
+					project_id: ID_TYPE(true)
 				},
 				async handler(ctx) {
 					let { project_id } = ctx.payload;
@@ -94,11 +90,7 @@ module.exports = {
 				description: "添加CICD下的任务",
 				request: {
 					body: {
-						project_id: {
-							required: true,
-							description: "项目分组ID",
-							type: "number"
-						},
+						project_id: ID_TYPE(true),
 						alias: {
 							required: true,
 							description: "git地址别名，可用于关联的项目",
@@ -177,12 +169,15 @@ module.exports = {
 				summary: "获取任务列表",
 				description: "获取任务列表",
 				query: {
-					cicd_id: CICD_ID_TYPE
+					cicd_id: ID_TYPE(),
+					task_id: ID_TYPE()
 				},
 				async handler(ctx) {
-					let { cicd_id } = ctx.payload;
+					let { cicd_id, task_id } = ctx.payload;
 					try {
-						let result = await orm.CiCdTask.find({ cicd_id });
+						let result = await orm.CiCdTask.find(
+							xU.newCondition({ cicd_id, _id: task_id })
+						);
 						/* 跟项目相关的git仓库id */
 
 						ctx.body = xU.$response({
@@ -201,7 +196,7 @@ module.exports = {
 				description: "添加CICD下的任务",
 				request: {
 					body: {
-						cicd_id: CICD_ID_TYPE,
+						cicd_id: ID_TYPE(true),
 						task_name: {
 							required: true,
 							description: "任务名，同一个cici条目下，唯一",
@@ -334,7 +329,7 @@ module.exports = {
 				summary: "获取作业列表",
 				description: "获取作业列表",
 				query: {
-					cicd_id: CICD_ID_TYPE
+					cicd_id: ID_TYPE(true)
 				},
 				async handler(ctx) {
 					let { cicd_id } = ctx.payload;
