@@ -28,6 +28,8 @@ class ModelCiCdTaskQueue extends ModelBase {
 			task_log: String,
 			/* 触发任务的分支信息 */
 			task_ref: String,
+			/* git commit信息 */
+			message: String,
 			/* git提交的hash值，可以作为唯一标识符 */
 			commit_hash: String,
 			/* 最新运行时间，如果短时间内，1分钟内多次运行，则只运行一次 */

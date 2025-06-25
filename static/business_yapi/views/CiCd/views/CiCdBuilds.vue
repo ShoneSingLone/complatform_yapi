@@ -159,6 +159,7 @@ export default async function () {
 						{ prop: "artifacts", label: "产出物", width: 100 },
 						{ prop: "task_ref", label: "触发分支", width: 150 },
 						{ prop: "commit_hash", label: "commit hash" },
+						{ prop: "message", label: "commit message" },
 						{
 							prop: "last_time",
 							label: "开始时间",
@@ -173,7 +174,7 @@ export default async function () {
 								return hBtnWithMore({
 									children: [
 										{
-											label: "查看日志",
+											label: "日志",
 											isHide: !rowData.task_log,
 											async onClick() {
 												_.$openModal({

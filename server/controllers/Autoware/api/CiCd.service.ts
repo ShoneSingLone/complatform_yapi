@@ -94,6 +94,7 @@ async function initRepo({ git_repo, uid }) {
 
 async function runTask({
 	task: { _id: task_id, cicd_id },
+	message,
 	commit_hash,
 	task_ref,
 	payload
@@ -141,6 +142,7 @@ async function runTask({
 				// task_status: "running",
 				task_status: "failed",
 				last_time: xU.time(),
+				message,
 				commit_hash
 				// payload/*  */
 			});

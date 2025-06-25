@@ -291,12 +291,16 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						const {
+						let {
 							task_id,
 							task_token,
 							after: commit_hash,
-							ref
+							ref,
+							commits,
+							message
 						} = ctx.payload;
+
+						message = message || commits[0].message;
 
 						if (!task_id) {
 							return (ctx.body = xU.$response(null, 400, "任务 ID不能为空"));
@@ -312,6 +316,7 @@ module.exports = {
 						if (task.task_token === task_token) {
 							runTask({
 								task,
+								message,
 								commit_hash,
 								task_ref: ref,
 								payload: ctx.payload
