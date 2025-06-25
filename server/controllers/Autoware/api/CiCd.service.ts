@@ -99,6 +99,7 @@ async function runTask({
 	payload
 }) {
 	let task_log = [];
+	task_ref = task_ref.replace("refs/heads/", "");
 	const emit = msg => {
 		const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
 		task_log.push(`- ***${time}*** ${msg}`);
@@ -140,7 +141,7 @@ async function runTask({
 				// task_status: "running",
 				task_status: "failed",
 				last_time: xU.time(),
-				commit_hash,
+				commit_hash
 				// payload/*  */
 			});
 		}
@@ -151,28 +152,26 @@ async function runTask({
 		const [cicd] = await orm.CiCd.find({ _id: task.cicd_id });
 		const [git_repo] = await orm.GitRepo.find({ _id: cicd.git_repo_id });
 		const { git_repo_root } = git_repo;
-		debugger;
 		await xU.executeCommand(
 			"git",
 			["reset", "--hard", "HEAD"],
 			{ cwd: git_repo_root },
 			emit
 		);
-		debugger;
+		emit(`工作台清空完毕，开始运行脚本...`);
 		await xU.executeCommand(
 			"git",
 			["checkout", task_ref],
 			{ cwd: git_repo_root },
 			emit
 		);
-		debugger;
-		emit(`工作台清空完毕，开始运行脚本...`);
+		await xU.executeCommand("git", ["pull"], { cwd: git_repo_root }, emit);
 		throw new Error(`脚本执行失败！`);
 		taskInstance.task_status = "success";
 		taskInstance.task_log = task_log.join("\n");
 	} catch (error) {
+		console.error(error);
 		emit(`作业执行失败，请检查！` + error.message);
-		debugger;
 		if (taskInstance) {
 			taskInstance.task_status = "failed";
 			taskInstance.task_log = task_log.join("\n");
