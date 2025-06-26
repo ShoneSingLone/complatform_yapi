@@ -98,7 +98,8 @@ export default async function ({
 									icon: "refresh",
 									async onClick() {
 										const { data } = await _api.yapi.apiCicdGitBranchInfo({
-											git_repo_id
+											git_repo_id,
+											is_pull: true
 										});
 										git_repo = data.git_repo;
 										remote_branches_options = _.map(
