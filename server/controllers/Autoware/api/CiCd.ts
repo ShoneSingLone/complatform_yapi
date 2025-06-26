@@ -300,7 +300,7 @@ module.exports = {
 							message
 						} = ctx.payload;
 
-						message = message || commits[0].message;
+						message = message || xU._.first(commits)?.message || "";
 
 						if (!task_id) {
 							return (ctx.body = xU.$response(null, 400, "任务 ID不能为空"));
@@ -369,7 +369,7 @@ module.exports = {
 						/* 跟项目相关的git仓库id */
 
 						if (git_repo.git_repo_root) {
-							const branch_info = await xU.asyncGetLocalRepoBranchInfo(
+							const branch_info = await xU.async_get_local_repo_branch_info(
 								git_repo.git_repo_root
 							);
 							ctx.body = xU.$response({

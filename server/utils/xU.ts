@@ -1,4 +1,4 @@
-const { asyncGetLocalRepoBranchInfo } = require("./git_local_branch_info");
+const { async_get_local_repo_branch_info } = require("./git_local_branch_info");
 const { spawn } = require("child_process");
 const {
 	SOCKET_TYPE_HANDLERS,
@@ -1183,7 +1183,7 @@ const xU = new Proxy(
 				});
 			});
 		},
-		asyncGetLocalRepoBranchInfo,
+		async_get_local_repo_branch_info,
 		SSE_TYPE,
 		SSE_TYPE_HANDLERS,
 		setSseStream(id, stream) {

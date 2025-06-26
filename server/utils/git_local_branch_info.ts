@@ -69,7 +69,7 @@ async function isGitRepository(repoPath) {
 }
 
 // 获取指定本地仓库的分支信息
-async function asyncGetLocalRepoBranchInfo(repoPath) {
+async function async_get_local_repo_branch_info(repoPath) {
 	const resolvedPath = path.resolve(repoPath);
 
 	if (!(await isGitRepository(resolvedPath))) {
@@ -107,7 +107,7 @@ async function main() {
 		}
 
 		const repoPath = process.argv[2];
-		const branchInfo = await asyncGetLocalRepoBranchInfo(repoPath);
+		const branchInfo = await async_get_local_repo_branch_info(repoPath);
 
 		console.log("\n分支信息:");
 		console.log(`仓库路径: ${branchInfo.repositoryPath}`);
@@ -134,5 +134,5 @@ async function main() {
 }
 
 module.exports = {
-	asyncGetLocalRepoBranchInfo
+	async_get_local_repo_branch_info
 };

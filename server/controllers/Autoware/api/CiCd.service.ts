@@ -27,13 +27,13 @@ async function initRepo({ git_repo, uid }) {
 		}
 	};
 
-	const cloneRepo = async () => {
+	const exeCmdCloneRepo = async () => {
 		try {
 			// 配置仓库信息和认证信息
-			// const git_address = "https://github.com/username/repo.git";
+			// const git_address = "仓库地址";
 			// const username = "your_username";
 			// const password = "your_password";
-			// const git_repo_root = "./local-repo";
+			// const git_repo_root = "本地位置";
 
 			// 构建带有认证信息的 URL
 			const authUrl = git_address.replace(
@@ -41,7 +41,7 @@ async function initRepo({ git_repo, uid }) {
 				`https://${username}:${password}@`
 			);
 
-			emit(`克隆仓库地址: \n${authUrl}`);
+			emit(`克隆仓库地址: \n${git_address}`);
 
 			// 执行克隆命令
 			await xU.executeCommand(
@@ -58,9 +58,6 @@ async function initRepo({ git_repo, uid }) {
 
 	const pullRepo = async () => {
 		try {
-			// 执行拉取命令
-			await xU.executeCommand("git", ["pull"], { cwd: git_repo_root }, emit);
-			emit("拉取成功");
 		} catch (error) {
 			emit(`操作失败: ${error.message}`);
 		}
@@ -83,8 +80,10 @@ async function initRepo({ git_repo, uid }) {
 		git_repo.git_repo_root = git_repo_root;
 		emit(`代码的文件夹已创建:\n${git_repo_root}`);
 
-		await cloneRepo();
-		await pullRepo();
+		await exeCmdCloneRepo();
+		// 执行拉取命令
+		await xU.executeCommand("git", ["pull"], emit);
+		emit("拉取成功");
 		await set_repo_done();
 	} catch (error) {
 		git_repo.status = "unset";
@@ -93,7 +92,7 @@ async function initRepo({ git_repo, uid }) {
 }
 
 async function runTask({
-	task: { _id: task_id, cicd_id },
+	task: { _id: task_id, cicd_id, task_action, task_output_type },
 	message,
 	commit_hash,
 	task_ref,
@@ -101,6 +100,7 @@ async function runTask({
 }) {
 	let task_log = [];
 	task_ref = task_ref.replace("refs/heads/", "");
+
 	const emit = msg => {
 		const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
 		task_log.push(`- ***${time}*** ${msg}`);
@@ -154,28 +154,26 @@ async function runTask({
 		const [cicd] = await orm.CiCd.find({ _id: task.cicd_id });
 		const [git_repo] = await orm.GitRepo.find({ _id: cicd.git_repo_id });
 		const { git_repo_root } = git_repo;
-		await xU.executeCommand(
-			"git",
-			["reset", "--hard", "HEAD"],
-			{ cwd: git_repo_root },
-			emit
-		);
-		emit(`工作台清空完毕，开始运行脚本...`);
-		await xU.executeCommand(
-			"git",
-			["checkout", task_ref],
-			{ cwd: git_repo_root },
-			emit
-		);
-		await xU.executeCommand("git", ["pull"], { cwd: git_repo_root }, emit);
-		await xU.executeCommand(
-			"git",
-			["reset", "--hard", commit_hash],
-			{ cwd: git_repo_root },
-			emit
-		);
 
-		throw new Error(`脚本执行失败！`);
+		const ExecCmdOnRepoRoot = (command, args) =>
+			xU.executeCommand(command, args, { cwd: git_repo_root }, emit);
+
+		await ExecCmdOnRepoRoot("git", ["reset", "--hard", "HEAD"]);
+
+		emit(`工作台清空完毕，开始运行脚本...`);
+
+		await ExecCmdOnRepoRoot("git", ["checkout", task_ref]);
+
+		emit(`切换到${task_ref}分支成功，开始拉取最新代码...`);
+
+		await ExecCmdOnRepoRoot("git", ["pull"]);
+
+		emit(`拉取最新代码成功，开始切换到${commit_hash}提交...`);
+
+		await ExecCmdOnRepoRoot("git", ["reset", "--hard", commit_hash]);
+		if (task_action === "ARCHIVE_FILE") {
+			/* TODO: 打包文件,目前以约定的方式 */
+		}
 		taskInstance.task_status = "success";
 		taskInstance.task_log = task_log.join("\n");
 	} catch (error) {
