@@ -10,8 +10,8 @@ const { socket_const } = require("../../../middleware/websocket");
 
 const auth_url = ({ git_address, username, password }) =>
 	git_address
-		.replace("https://", `https://${username}:${password}@`)
-		.replace("http://", `http://${username}:${password}@`);
+		.replace(/^https:\/\//, `https://${username}:${password}@`)
+		.replace(/^http:\/\//, `http://${username}:${password}@`);
 
 async function vmRun(code, options = {}) {
 	options = options || {};
