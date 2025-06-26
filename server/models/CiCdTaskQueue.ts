@@ -23,7 +23,7 @@ class ModelCiCdTaskQueue extends ModelBase {
 				]
 			},
 			/* 产出物地址 */
-			artifacts: String,
+			resource: Object,
 			/* 运行日志 */
 			task_log: String,
 			/* 触发任务的分支信息 */

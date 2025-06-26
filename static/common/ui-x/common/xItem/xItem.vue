@@ -612,17 +612,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	height: var(--xItem-wrapper-height, auto);
 	min-width: 1px;
 
-	.xItem-label-controller {
+	.xItem-label_controller_wrapper {
+		width: var(--xItem-label_controller_wrapper-width, unset);
+		height: var(--xItem-label_controller_wrapper-height, unset);
 		position: relative;
 		display: flex;
 		flex-flow: var(--xItem-flex-flow, row nowrap);
 		justify-content: var(--xItem-layout-justify-content, center);
 		align-items: var(--xItem-layout-align-items, center);
 		flex: 1;
-		width: var(--xItem-controller-width, unset);
 
 		.xItem_label {
 			width: var(--xItem-label-width, 120px);
+			height: var(--xItem-label-height, unset);
 			display: flex;
 			flex-flow: row nowrap;
 			justify-content: var(--xItem-label-position, flex-end);
@@ -633,8 +635,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		.xItem_controller {
 			width: var(--xItem-controller-width, unset);
 			height: var(--xItem-controller-height, unset);
-			flex: var(--xItem-controller-flex, 1);
 			display: flex;
+			flex: var(--xItem-controller-flex, 1);
 			flex-flow: row nowrap;
 			align-items: center;
 

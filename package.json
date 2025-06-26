@@ -58,6 +58,7 @@
 	"license": "Apache-2.0",
 	"dependencies": {
 		"@ventose/utils-node": "^0.0.15",
+		"adm-zip": "^0.5.16",
 		"ajv": "^5.5.2",
 		"ajv-i18n": "^2.2.0",
 		"ava": "^0.22.0",

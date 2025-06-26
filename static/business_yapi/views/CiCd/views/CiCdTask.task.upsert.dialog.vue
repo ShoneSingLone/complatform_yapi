@@ -6,7 +6,14 @@
 				<xItem :configs="form.task_output_type" />
 				<xItem :configs="form.task_ref" />
 				<xItem :configs="form.task_remark" />
-				<xItem :configs="form.task_action" span="full" />
+				<xItem
+					:configs="form.task_action"
+					style="
+						height: 300px;
+						--xItem-label_controller_wrapper-height: 100%;
+						--xItem-controller-height: 100%;
+						--xItemMonaco-height: 100%;
+					" />
 			</xForm>
 		</xCard>
 		<template #footer>
@@ -91,7 +98,8 @@ export default async function ({
 									icon: "refresh",
 									async onClick() {
 										const { data } = await _api.yapi.apiCicdGitBranchInfo({
-											git_repo_id
+											git_repo_id,
+											is_pull: true
 										});
 										git_repo = data.git_repo;
 										remote_branches_options = _.map(
@@ -126,16 +134,18 @@ export default async function ({
 						}
 					},
 					task_action: {
-						value: `前端压缩包，默认运行
-- git pull
-- git checkout #{current_commit_hash}
-- pnpm i
-- pnpm arichive
-有复杂需求再说
-`,
+						value: ``,
 						label: "任务执行脚本",
-						type: "textarea",
-						rules: [_rules.required()]
+						itemType: "xItemMonaco",
+						rules: [_rules.required()],
+						msg() {
+							if (this.value === "ARCHIVE_FILE") {
+								return h("xMd", {
+									md: `以数组形式提供需要打包的文件路径，如：/data/www/yapi/frontend/dist/`
+								});
+							}
+							return null;
+						}
 					},
 					task_remark: {
 						value: "",

@@ -20,7 +20,7 @@ export default async function () {
 				h(
 					"div",
 					{
-						staticClass: "xItem-label-controller"
+						staticClass: "xItem-label_controller_wrapper"
 					},
 					[
 						/* label */

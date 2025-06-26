@@ -3,11 +3,11 @@ const path = require("path");
 const fs = require("fs-extra");
 
 // 获取当前目录下的Git分支信息
-async function getCurrentBranch(repoPath) {
+async function getCurrentBranch(git_repo_root) {
 	return new Promise((resolve, reject) => {
 		exec(
 			"git rev-parse --abbrev-ref HEAD",
-			{ cwd: repoPath },
+			{ cwd: git_repo_root },
 			(error, stdout, stderr) => {
 				if (error) {
 					reject(new Error(`获取分支信息失败: ${stderr}`));
@@ -20,9 +20,9 @@ async function getCurrentBranch(repoPath) {
 }
 
 // 获取所有分支列表
-async function getAllBranches(repoPath) {
+async function getAllBranches(git_repo_root) {
 	return new Promise((resolve, reject) => {
-		exec("git branch -a", { cwd: repoPath }, (error, stdout, stderr) => {
+		exec("git branch -a", { cwd: git_repo_root }, (error, stdout, stderr) => {
 			if (error) {
 				reject(new Error(`获取分支列表失败: ${stderr}`));
 				return;
@@ -38,10 +38,21 @@ async function getAllBranches(repoPath) {
 	});
 }
 
-// 获取远程分支列表
-async function getRemoteBranches(repoPath) {
+async function pull(git_repo_root) {
 	return new Promise(async (resolve, reject) => {
-		exec("git branch -r", { cwd: repoPath }, (error, stdout, stderr) => {
+		exec("git pull", { cwd: git_repo_root }, (error, stdout, stderr) => {
+			if (error) {
+				reject(new Error(`pull失败: ${stderr}`));
+				return;
+			}
+			resolve("pull成功");
+		});
+	});
+}
+// 获取远程分支列表
+async function getRemoteBranches(git_repo_root) {
+	return new Promise(async (resolve, reject) => {
+		exec("git branch -r", { cwd: git_repo_root }, (error, stdout, stderr) => {
 			if (error) {
 				reject(new Error(`获取远程分支列表失败: ${stderr}`));
 				return;
@@ -59,9 +70,9 @@ async function getRemoteBranches(repoPath) {
 }
 
 // 检查路径是否为有效的Git仓库
-async function isGitRepository(repoPath) {
+async function isGitRepository(git_repo_root) {
 	try {
-		await fs.access(path.join(repoPath, ".git"));
+		await fs.access(path.join(git_repo_root, ".git"));
 		return true;
 	} catch (error) {
 		return false;
@@ -69,14 +80,17 @@ async function isGitRepository(repoPath) {
 }
 
 // 获取指定本地仓库的分支信息
-async function async_get_local_repo_branch_info(repoPath) {
-	const resolvedPath = path.resolve(repoPath);
+async function async_get_local_repo_branch_info({ git_repo_root, is_pull }) {
+	const resolvedPath = path.resolve(git_repo_root);
 
 	if (!(await isGitRepository(resolvedPath))) {
 		throw new Error(`路径 '${resolvedPath}' 不是一个有效的Git仓库`);
 	}
 
 	try {
+		if (is_pull) {
+			await pull(resolvedPath);
+		}
 		const [currentBranch, allBranches, remoteBranches] = await Promise.all([
 			getCurrentBranch(resolvedPath),
 			getAllBranches(resolvedPath),
@@ -106,8 +120,8 @@ async function main() {
 			return;
 		}
 
-		const repoPath = process.argv[2];
-		const branchInfo = await async_get_local_repo_branch_info(repoPath);
+		const git_repo_root = process.argv[2];
+		const branchInfo = await async_get_local_repo_branch_info(git_repo_root);
 
 		console.log("\n分支信息:");
 		console.log(`仓库路径: ${branchInfo.repositoryPath}`);

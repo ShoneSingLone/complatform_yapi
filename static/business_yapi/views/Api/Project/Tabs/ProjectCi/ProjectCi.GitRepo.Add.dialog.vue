@@ -30,19 +30,19 @@ export default async function ({ project_id, onSuccess }) {
 						rules: [_rules.required()]
 					},
 					git_address: {
-						value: "http://10.143.133.22/fe/boundless-vue-project.git",
+						value: "",
 						label: i18n("git地址"),
 						rules: [_rules.required()],
 						tips: "目前只支持http"
 					},
 					username: {
-						value: "root",
+						value: "",
 						label: i18n("用户名"),
 						rules: [_rules.required()],
 						msg: "用户名及密码不可展示，请务必填写正确、匹配"
 					},
 					password: {
-						value: "Pbu4@123",
+						value: "",
 						label: i18n("密码"),
 						rules: [_rules.required()],
 						msg: "用户名及密码不可展示，请务必填写正确、匹配"

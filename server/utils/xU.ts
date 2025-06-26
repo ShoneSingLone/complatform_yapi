@@ -1,3 +1,4 @@
+const { SparkMD5 } = require("./SparkMD5");
 const { async_get_local_repo_branch_info } = require("./git_local_branch_info");
 const { spawn } = require("child_process");
 const {
@@ -1130,6 +1131,7 @@ const SSE_TYPE_HANDLERS = {
 /* ======================================================== */
 const xU = new Proxy(
 	{
+		SparkMD5,
 		newCondition(obj) {
 			return _.reduce(
 				obj,

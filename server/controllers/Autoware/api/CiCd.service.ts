@@ -1,3 +1,6 @@
+const { NodeVM } = require("vm2");
+const { getType } = require("mime");
+const adm_zip = require("adm-zip");
 const dayjs = require("dayjs");
 const fs = require("fs");
 const path = require("path");
@@ -5,6 +8,42 @@ const { _n } = require("@ventose/utils-node");
 const { TARGET_PREFIX } = xU;
 const { socket_const } = require("../../../middleware/websocket");
 
+async function vmRun(code, options = {}) {
+	options = options || {};
+	const sandbox = options.sandbox || {};
+	const _require = options.require || {};
+	const timeout = options.timeout || 1000; // 执行超时时间（毫秒）
+	const memoryLimit = options.memoryLimit || 128; // 最大内存使用（MB）
+	return new Promise((resolve, reject) => {
+		const vm = new NodeVM({
+			// 限制可用的 Node.js 模块
+			require: xU._.merge(
+				{
+					external: false, // 禁止加载外部模块
+					builtin: [], // 允许使用的内置模块（示例中仅允许 fs 和 path）
+					root: "./" // 模块根路径
+				},
+				_require
+			),
+			// 定义沙箱内可用的全局变量
+			sandbox: xU._.merge(
+				{
+					// 允许访问 console（可选）
+					// 提供当前目录信息（可选）
+					// 可以添加自定义工具函数
+					// 定义回调函数
+					VM_REJECT: reject,
+					VM_RESOLVE: resolve
+				},
+				sandbox
+			),
+			// 限制资源使用
+			timeout,
+			memoryLimit
+		});
+		vm.run(code);
+	});
+}
 async function initRepo({ git_repo, uid }) {
 	const { git_address, username, password } = git_repo;
 	/* 根据日期生成仓库名称 */
@@ -91,43 +130,38 @@ async function initRepo({ git_repo, uid }) {
 	}
 }
 
-async function runTask({
-	task: { _id: task_id, cicd_id, task_action, task_output_type },
-	message,
-	commit_hash,
-	task_ref,
-	payload
-}) {
-	let task_log = [];
-	task_ref = task_ref.replace("refs/heads/", "");
-
-	const emit = msg => {
-		const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
-		task_log.push(`- ***${time}*** ${msg}`);
-		const currentSocket = global.APP.socket.yapi.socket;
-		if (currentSocket) {
-			/* to all online users */
-			currentSocket.broadcast(socket_const.task_run_output, { task_id, msg });
-		} else {
-			console.log(msg);
-		}
-	};
-	/*  */
-	/* TODO:执行定时任务 */
-
-	/* 判断参数是否完全一样 */
-	let [taskInstance] = await orm.CiCdTaskQueue.find({
-		task_id,
-		/* task_action, */
-		commit_hash
-	});
-	emit("查找是否已有作业");
+async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
+	const { _id: task_id, cicd_id, task_action, task_output_type } = task;
 	try {
+		let task_log = [];
+		const emit = msg => {
+			const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
+			task_log.push(`- ***${time}*** ${msg}`);
+			const currentSocket = global.APP.socket.yapi.socket;
+			if (currentSocket) {
+				/* to all online users */
+				currentSocket.broadcast(socket_const.task_run_output, { task_id, msg });
+			} else {
+				console.log(msg);
+			}
+		};
+
+		/*  */
+		/* TODO:执行定时任务 */
+
+		/* 判断参数是否完全一样 */
+		let [taskInstance] = await orm.CiCdTaskQueue.find({
+			task_id,
+			/* task_action, */
+			commit_hash
+		});
+		emit("查找是否已有作业");
 		if (taskInstance) {
 			if (taskInstance.task_status === "running") {
 				return emit(`已有相同务在运行中，请勿重复提交任务`);
 			} else {
 				/* 更新状态 */
+				// taskInstance.task_status = "failed";
 				taskInstance.task_status = "running";
 				await orm.CiCdTaskQueue.upsert(taskInstance);
 			}
@@ -138,44 +172,123 @@ async function runTask({
 				/* 查找列表需要查找 */
 				cicd_id,
 				/* task_action, */
-				task_ref,
+				task_ref: ref_trigger_this_job,
 				// task_status: "running",
 				task_status: "failed",
 				last_time: xU.time(),
 				message,
 				commit_hash
-				// payload/*  */
 			});
 		}
 		emit(`加入任务队列成功`);
 		/* 运行脚本，记录日志 */
 		/* task_id => cicd_id => git_repo_id */
-		const [task] = await orm.CiCdTask.find({ _id: task_id });
 		const [cicd] = await orm.CiCd.find({ _id: task.cicd_id });
 		const [git_repo] = await orm.GitRepo.find({ _id: cicd.git_repo_id });
-		const { git_repo_root } = git_repo;
+		const { git_repo_root, git_address } = git_repo;
 
 		const ExecCmdOnRepoRoot = (command, args) =>
 			xU.executeCommand(command, args, { cwd: git_repo_root }, emit);
 
 		await ExecCmdOnRepoRoot("git", ["reset", "--hard", "HEAD"]);
 
-		emit(`工作台清空完毕，开始运行脚本...`);
+		emit(`工作台清空完毕`);
+		// emit(`开始安装依赖...`);
+		// await ExecCmdOnRepoRoot("pnpm ", ["i"]);
+		// emit(`安装依赖完成，开始运行脚本...`);
+		emit(`开始运行脚本...`);
 
-		await ExecCmdOnRepoRoot("git", ["checkout", task_ref]);
+		await ExecCmdOnRepoRoot("git", ["checkout", ref_trigger_this_job]);
 
-		emit(`切换到${task_ref}分支成功，开始拉取最新代码...`);
+		emit(`切换到${ref_trigger_this_job}分支成功，开始拉取最新代码...`);
 
 		await ExecCmdOnRepoRoot("git", ["pull"]);
 
 		emit(`拉取最新代码成功，开始切换到${commit_hash}提交...`);
 
 		await ExecCmdOnRepoRoot("git", ["reset", "--hard", commit_hash]);
-		if (task_action === "ARCHIVE_FILE") {
+		if (task_output_type === "ARCHIVE_FILE") {
 			/* TODO: 打包文件,目前以约定的方式 */
+			const getTargetDir = new Function("return " + task_action);
+			const TargetDirArray = await vmRun(
+				`
+			try {
+				const TargetDirArray = getTargetDir();
+				console(TargetDirArray)
+				if (_.every(TargetDirArray,validateFolderConfig)) {
+					console(TargetDirArray)
+					VM_RESOLVE(TargetDirArray);
+				}
+				VM_RESOLVE([]);
+			} catch (error) {
+				VM_REJECT(error);
+			}
+				`,
+				{
+					sandbox: {
+						getTargetDir,
+						_: xU._,
+						console: console.log,
+						validateFolderConfig(obj) {
+							// 获取对象所有属性名并排序
+							const keys = Object.keys(obj).sort();
+							// 定义合法属性名并排序
+							const validKeys = ["source", "target"].sort();
+
+							// 比较属性名数组是否完全一致
+							return (
+								keys.length === validKeys.length &&
+								keys.every((key, index) => key === validKeys[index])
+							);
+						}
+					}
+				}
+			);
+
+			emit(TargetDirArray);
+
+			const repo_name = _n._.snakeCase(git_address);
+			const git_repo_archive_path = path.join(
+				TARGET_PREFIX,
+				"git_repo_archive",
+				repo_name
+			);
+			_n.asyncSafeMakeDir(git_repo_archive_path);
+
+			var zip = new adm_zip();
+			const archive_name = commit_hash;
+			xU._.each(TargetDirArray, ({ source, target }) => {
+				zip.addLocalFolder(path.resolve(git_repo_root, source), target);
+			});
+			const archive_path = `${git_repo_archive_path}/${archive_name}.zip`;
+			zip.writeZip(archive_path);
+
+			const fileBlob = fs.readFileSync(archive_path);
+			const md5 = xU.SparkMD5.ArrayBuffer.hash(fileBlob);
+			const stat = await fs.promises.stat(archive_path);
+
+			const ext = xU.path.extname(archive_path);
+			const params = {
+				name: xU.path.basename(archive_path),
+				ext,
+				size: stat.size,
+				type: getType(archive_path) || ext || "unknow",
+				useFor: "cicd/archive",
+				md5,
+				path: archive_path,
+				uploadBy: "1",
+				add_time: xU.time(),
+				isdir: 0,
+				fileId: 0
+			};
+			const resource = await orm.Resource.upsertCicdArchive(params);
+			taskInstance.resource = resource;
+			taskInstance.task_status = "success";
+			taskInstance.task_log = task_log.join("\n");
+			await orm.CiCdTaskQueue.upsert(taskInstance);
+		} else {
+			throw new Error("测试异常");
 		}
-		taskInstance.task_status = "success";
-		taskInstance.task_log = task_log.join("\n");
 	} catch (error) {
 		console.error(error);
 		emit(`作业执行失败，请检查！` + error.message);

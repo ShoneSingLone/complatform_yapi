@@ -21,6 +21,11 @@ class ModelCiCdTask extends ModelBase {
 				required: true,
 				type: String
 			},
+			/* 触发job的分支 */
+			task_ref: {
+				required: true,
+				type: [String]
+			},
 			task_output_type: {
 				required: true,
 				type: String,

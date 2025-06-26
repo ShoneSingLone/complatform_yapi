@@ -202,6 +202,10 @@ module.exports = {
 							description: "任务名，同一个cici条目下，唯一",
 							type: "string"
 						},
+						task_ref: {
+							required: true,
+							type: "array"
+						},
 						task_action: {
 							required: true,
 							description: "此任务调用的脚本",
@@ -223,10 +227,12 @@ module.exports = {
 				},
 				async handler(ctx) {
 					try {
-						const {
+						let {
 							cicd_id,
 							task_name,
 							task_action,
+							task_token,
+							task_ref,
 							task_output_type,
 							task_remark,
 							_id
@@ -248,15 +254,17 @@ module.exports = {
 								return (ctx.body = xU.$response(null, 400, "任务名称重复"));
 							}
 						}
-						const task_token = xU.$hashCode(
-							yapi_configs.passsalt + task_name + Date.now()
-						);
+
+						task_token =
+							task_token ||
+							xU.$hashCode(yapi_configs.passsalt + task_name + Date.now());
 
 						task = await orm.CiCdTask.upsert({
 							...ctx.payload,
 							cicd_id,
 							task_name,
 							task_token,
+							task_ref,
 							task_action,
 							task_output_type,
 							task_remark
@@ -280,7 +288,7 @@ module.exports = {
 						task_id: {
 							required: true,
 							description: "任务名，同一个cici条目下，唯一",
-							type: "string"
+							type: "number"
 						},
 						task_token: {
 							required: true,
@@ -295,34 +303,49 @@ module.exports = {
 							task_id,
 							task_token,
 							after: commit_hash,
-							ref,
+							ref: ref_trigger_this_job,
 							commits,
 							message
 						} = ctx.payload;
+
+						ref_trigger_this_job = ref_trigger_this_job.replace(
+							"refs/heads/",
+							""
+						);
 
 						message = message || xU._.first(commits)?.message || "";
 
 						if (!task_id) {
 							return (ctx.body = xU.$response(null, 400, "任务 ID不能为空"));
 						}
-						/* task_name不可重复 */
+
 						let [task] = await orm.CiCdTask.find({
-							_id: task_id,
-							task_token
+							_id: task_id
 						});
+
 						if (!task) {
 							return (ctx.body = xU.$response(null, 400, "任务不存在"));
 						}
+
+						/* 如果不属于触发条件的branch则退出 */
+						if (
+							xU._.every(task.task_ref, ref => ref !== ref_trigger_this_job)
+						) {
+							return (ctx.body = xU.$response(null, 400, "当前推送未触发作业"));
+						}
+
 						if (task.task_token === task_token) {
 							runTask({
 								task,
 								message,
 								commit_hash,
-								task_ref: ref,
+								ref_trigger_this_job,
 								payload: ctx.payload
 							});
+							ctx.body = xU.$response("任务开始执行");
+						} else {
+							throw new Error("token 过期");
 						}
-						ctx.body = xU.$response("任务开始执行");
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);
 					}
@@ -360,18 +383,22 @@ module.exports = {
 						required: true,
 						description: "git 仓库的 ID",
 						type: "string"
+					},
+					is_pull: {
+						type: Boolean
 					}
 				},
 				async handler(ctx) {
-					let { git_repo_id } = ctx.payload;
+					let { git_repo_id, is_pull } = ctx.payload;
 					try {
 						let [git_repo] = await orm.GitRepo.find({ _id: git_repo_id });
 						/* 跟项目相关的git仓库id */
 
 						if (git_repo.git_repo_root) {
-							const branch_info = await xU.async_get_local_repo_branch_info(
-								git_repo.git_repo_root
-							);
+							const branch_info = await xU.async_get_local_repo_branch_info({
+								git_repo_root: git_repo.git_repo_root,
+								is_pull
+							});
 							ctx.body = xU.$response({
 								git_repo,
 								branch_info
