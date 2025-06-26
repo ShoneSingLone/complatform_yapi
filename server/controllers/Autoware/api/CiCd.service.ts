@@ -8,6 +8,11 @@ const { _n } = require("@ventose/utils-node");
 const { TARGET_PREFIX } = xU;
 const { socket_const } = require("../../../middleware/websocket");
 
+const auth_url = ({ git_address, username, password }) =>
+	git_address
+		.replace("https://", `https://${username}:${password}@`)
+		.replace("http://", `http://${username}:${password}@`);
+
 async function vmRun(code, options = {}) {
 	options = options || {};
 	const sandbox = options.sandbox || {};
@@ -47,8 +52,10 @@ async function vmRun(code, options = {}) {
 async function initRepo({ git_repo, uid }) {
 	xU.applog.info("[initRepo] 开始初始化仓库，参数:", { git_repo, uid });
 
-	const { git_address, username, password } = git_repo;
+	const { git_address, username } = git_repo;
 	xU.applog.info("[initRepo] 从git_repo中提取配置:", { git_address, username });
+
+	const AUTH_URL = auth_url(git_repo);
 
 	/* 根据日期生成仓库名称 */
 	const repo_name = _n._.snakeCase(git_address);
@@ -80,22 +87,19 @@ async function initRepo({ git_repo, uid }) {
 		xU.applog.info("[exeCmdCloneRepo] 开始克隆仓库");
 		try {
 			// 配置仓库信息和认证信息
-			const authUrl = git_address
-				.replace("https://", `https://${username}:${password}@`)
-				.replace("http://", `http://${username}:${password}@`);
-			xU.applog.info("[exeCmdCloneRepo] 构建认证URL:", authUrl);
+			xU.applog.info("[exeCmdCloneRepo] 构建认证URL:", AUTH_URL);
 
 			emit(`克隆仓库地址: \n${git_address}`);
 
 			// 执行克隆命令
 			xU.applog.info(
 				"[exeCmdCloneRepo] 执行命令: git clone",
-				authUrl,
+				AUTH_URL,
 				git_repo_root
 			);
 			await xU.executeCommand(
 				"git",
-				["clone", authUrl, git_repo_root],
+				["clone", AUTH_URL, git_repo_root],
 				{},
 				emit
 			);
@@ -107,11 +111,16 @@ async function initRepo({ git_repo, uid }) {
 		}
 	};
 
-	const pullRepo = async () => {
+	const exeCmdPullRepo = async () => {
 		xU.applog.info("[pullRepo] 开始拉取仓库更新");
 		try {
 			xU.applog.info("[pullRepo] 执行命令: git pull");
-			await xU.executeCommand("git", ["pull"], { cwd: git_repo_root }, emit);
+			await xU.executeCommand(
+				"git",
+				["pull", AUTH_URL],
+				{ cwd: git_repo_root },
+				emit
+			);
 			xU.applog.info("[pullRepo] 仓库拉取成功");
 			emit("拉取成功");
 		} catch (error) {
@@ -149,7 +158,7 @@ async function initRepo({ git_repo, uid }) {
 
 		xU.applog.info("[initRepo] 开始执行拉取操作");
 		// 执行拉取命令（注意：这里需要指定cwd为仓库目录）
-		await xU.executeCommand("git", ["pull"], { cwd: git_repo_root }, emit);
+		await exeCmdPullRepo();
 		xU.applog.info("[initRepo] 拉取操作成功");
 		emit("拉取成功");
 
@@ -220,6 +229,7 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 		const [cicd] = await orm.CiCd.find({ _id: task.cicd_id });
 		const [git_repo] = await orm.GitRepo.find({ _id: cicd.git_repo_id });
 		const { git_repo_root, git_address } = git_repo;
+		const AUTH_URL = auth_url(git_repo);
 
 		const ExecCmdOnRepoRoot = (command, args) =>
 			xU.executeCommand(command, args, { cwd: git_repo_root }, emit);
@@ -236,7 +246,7 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 
 		emit(`切换到${ref_trigger_this_job}分支成功，开始拉取最新代码...`);
 
-		await ExecCmdOnRepoRoot("git", ["pull"]);
+		await ExecCmdOnRepoRoot("git", ["pull", AUTH_URL]);
 
 		emit(`拉取最新代码成功，开始切换到${commit_hash}提交...`);
 
