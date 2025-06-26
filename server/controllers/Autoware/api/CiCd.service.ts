@@ -45,15 +45,18 @@ async function vmRun(code, options = {}) {
 	});
 }
 async function initRepo({ git_repo, uid }) {
-	console.log("[initRepo] 开始初始化仓库，参数:", { git_repo, uid });
+	xU.applog.info("[initRepo] 开始初始化仓库，参数:", { git_repo, uid });
 
 	const { git_address, username, password } = git_repo;
-	console.log("[initRepo] 从git_repo中提取配置:", { git_address, username });
+	xU.applog.info("[initRepo] 从git_repo中提取配置:", { git_address, username });
 
 	/* 根据日期生成仓库名称 */
 	const repo_name = _n._.snakeCase(git_address);
 	const git_repo_root = path.join(TARGET_PREFIX, "git_repo", repo_name);
-	console.log("[initRepo] 生成仓库名称和路径:", { repo_name, git_repo_root });
+	xU.applog.info("[initRepo] 生成仓库名称和路径:", {
+		repo_name,
+		git_repo_root
+	});
 
 	const emit = msg => {
 		const currentSocket = global.APP.socket.yapi.connections.get(uid);
@@ -63,29 +66,29 @@ async function initRepo({ git_repo, uid }) {
 					socket_const.clone_git_repo_terminal_output,
 					`${msg.replace(TARGET_PREFIX, "❀")}`
 				);
-				console.log("[emit] 通过socket发送消息:", msg);
+				xU.applog.info("[emit] 通过socket发送消息:", msg);
 			} catch (error) {
 				currentSocket.emit(socket_const.clone_git_repo_terminal_output, msg);
 				console.error("[emit] 发送格式化消息失败，使用原始消息:", msg, error);
 			}
 		} else {
-			console.log("[emit] 无可用socket连接，直接打印消息:", msg);
+			xU.applog.info("[emit] 无可用socket连接，直接打印消息:", msg);
 		}
 	};
 
 	const exeCmdCloneRepo = async () => {
-		console.log("[exeCmdCloneRepo] 开始克隆仓库");
+		xU.applog.info("[exeCmdCloneRepo] 开始克隆仓库");
 		try {
 			// 配置仓库信息和认证信息
 			const authUrl = git_address
 				.replace("https://", `https://${username}:${password}@`)
 				.replace("http://", `http://${username}:${password}@`);
-			console.log("[exeCmdCloneRepo] 构建认证URL:", authUrl);
+			xU.applog.info("[exeCmdCloneRepo] 构建认证URL:", authUrl);
 
 			emit(`克隆仓库地址: \n${git_address}`);
 
 			// 执行克隆命令
-			console.log(
+			xU.applog.info(
 				"[exeCmdCloneRepo] 执行命令: git clone",
 				authUrl,
 				git_repo_root
@@ -96,21 +99,20 @@ async function initRepo({ git_repo, uid }) {
 				{},
 				emit
 			);
-			console.log("[exeCmdCloneRepo] 仓库克隆成功");
+			xU.applog.info("[exeCmdCloneRepo] 仓库克隆成功");
 			emit("克隆成功");
 		} catch (error) {
 			console.error("[exeCmdCloneRepo] 克隆失败:", error);
 			emit(`操作失败: ${error.message}`);
-			throw error; // 确保错误向上传播
 		}
 	};
 
 	const pullRepo = async () => {
-		console.log("[pullRepo] 开始拉取仓库更新");
+		xU.applog.info("[pullRepo] 开始拉取仓库更新");
 		try {
-			console.log("[pullRepo] 执行命令: git pull");
+			xU.applog.info("[pullRepo] 执行命令: git pull");
 			await xU.executeCommand("git", ["pull"], { cwd: git_repo_root }, emit);
-			console.log("[pullRepo] 仓库拉取成功");
+			xU.applog.info("[pullRepo] 仓库拉取成功");
 			emit("拉取成功");
 		} catch (error) {
 			console.error("[pullRepo] 拉取失败:", error);
@@ -120,45 +122,45 @@ async function initRepo({ git_repo, uid }) {
 	};
 
 	const set_repo_status = async status => {
-		console.log("[set_repo_status] 更新仓库状态:", status);
+		xU.applog.info("[set_repo_status] 更新仓库状态:", status);
 		git_repo.status = status;
 		await orm.GitRepo.update(git_repo);
 		emit(`git仓库状态：${status}`);
-		console.log("[set_repo_status] 状态更新成功");
+		xU.applog.info("[set_repo_status] 状态更新成功");
 	};
 
 	const set_repo_initializing = () => set_repo_status("initializing");
 	const set_repo_done = () => set_repo_status("done");
 
 	try {
-		console.log("[initRepo] 修改状态为正在初始化");
+		xU.applog.info("[initRepo] 修改状态为正在初始化");
 		/* 修改状态为正在初始化 */
 		await set_repo_initializing();
 
-		console.log("[initRepo] 确保放代码的文件夹存在");
+		xU.applog.info("[initRepo] 确保放代码的文件夹存在");
 		/* 确保放代码的文件夹存在 */
 		await _n.asyncSafeMakeDir(git_repo_root);
 		git_repo.git_repo_root = git_repo_root;
-		console.log("[initRepo] 代码文件夹创建成功:", git_repo_root);
+		xU.applog.info("[initRepo] 代码文件夹创建成功:", git_repo_root);
 		emit(`代码的文件夹已创建:\n${git_repo_root}`);
 
-		console.log("[initRepo] 开始执行克隆操作");
+		xU.applog.info("[initRepo] 开始执行克隆操作");
 		await exeCmdCloneRepo();
 
-		console.log("[initRepo] 开始执行拉取操作");
+		xU.applog.info("[initRepo] 开始执行拉取操作");
 		// 执行拉取命令（注意：这里需要指定cwd为仓库目录）
 		await xU.executeCommand("git", ["pull"], { cwd: git_repo_root }, emit);
-		console.log("[initRepo] 拉取操作成功");
+		xU.applog.info("[initRepo] 拉取操作成功");
 		emit("拉取成功");
 
-		console.log("[initRepo] 修改状态为已完成");
+		xU.applog.info("[initRepo] 修改状态为已完成");
 		await set_repo_done();
-		console.log("[initRepo] 仓库初始化流程全部完成");
+		xU.applog.info("[initRepo] 仓库初始化流程全部完成");
 	} catch (error) {
 		console.error("[initRepo] 初始化过程中发生错误:", error);
 		git_repo.status = "unset";
 		await orm.GitRepo.update(git_repo);
-		console.log("[initRepo] 已将仓库状态重置为unset");
+		xU.applog.info("[initRepo] 已将仓库状态重置为unset");
 	}
 }
 
@@ -174,7 +176,7 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 				/* to all online users */
 				currentSocket.broadcast(socket_const.task_run_output, { task_id, msg });
 			} else {
-				console.log(msg);
+				xU.applog.info(msg);
 			}
 		};
 
@@ -260,7 +262,7 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 					sandbox: {
 						getTargetDir,
 						_: xU._,
-						console: console.log,
+						console: xU.applog.info,
 						validateFolderConfig(obj) {
 							// 获取对象所有属性名并排序
 							const keys = Object.keys(obj).sort();
