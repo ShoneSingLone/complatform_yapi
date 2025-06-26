@@ -25,7 +25,7 @@ export default async function ({ row, onSuccess }) {
 		inject: ["APP"],
 		props: useDialogProps(),
 		setup() {
-			debugger
+			debugger;
 			const clone_git_repo_terminal_output = "clone_git_repo_terminal_output";
 			const state = reactive({ msgArray: [] });
 			onMounted(() => {

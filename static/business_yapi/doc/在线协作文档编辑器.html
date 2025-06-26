@@ -1,859 +1,918 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线协作文档编辑器</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .container {
-            display: flex;
-            height: 100vh;
-        }
-
-        /* 侧边栏样式 */
-        .sidebar {
-            width: 320px;
-            background: white;
-            border-right: 1px solid #e5e7eb;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .sidebar-title {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .sidebar-title h2 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .new-btn {
-            background: #f3f4f6;
-            border: 1px solid #d1d5db;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            margin-left: auto;
-        }
-
-        .new-btn:hover {
-            background: #e5e7eb;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 8px 12px 8px 36px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6b7280;
-        }
-
-        .tabs {
-            display: flex;
-            margin: 16px 20px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 8px 16px;
-            text-align: center;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: #6b7280;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab.active {
-            color: #3b82f6;
-            border-bottom-color: #3b82f6;
-        }
-
-        .file-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px 20px;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 8px;
-            transition: background-color 0.2s;
-        }
-
-        .file-item:hover {
-            background: #f3f4f6;
-        }
-
-        .file-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-
-        .file-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .file-name {
-            font-size: 14px;
-            font-weight: 500;
-            color: #1f2937;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .file-meta {
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 2px;
-        }
-
-        .file-menu {
-            background: none;
-            border: none;
-            padding: 4px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .file-menu:hover {
-            background: #e5e7eb;
-        }
-
-        .upload-section {
-            padding: 20px;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .upload-btn {
-            width: 100%;
-            padding: 10px;
-            background: white;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .upload-btn:hover {
-            background: #f9fafb;
-        }
-
-        /* 主编辑区域 */
-        .main-editor {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: white;
-        }
-
-        .editor-header {
-            padding: 20px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .document-title {
-            font-size: 18px;
-            font-weight: 600;
-            border: none;
-            background: none;
-            color: #1f2937;
-            padding: 4px 0;
-        }
-
-        .document-title:focus {
-            outline: none;
-            border-bottom: 2px solid #3b82f6;
-        }
-
-        .status-badge {
-            background: #dcfce7;
-            color: #166534;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .collaborators {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid white;
-            position: relative;
-        }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .status-dot {
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .status-online { background: #10b981; }
-        .status-away { background: #f59e0b; }
-
-        .action-btn {
-            padding: 8px 16px;
-            border: 1px solid #d1d5db;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .action-btn:hover {
-            background: #f9fafb;
-        }
-
-        .action-btn.primary {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-
-        .action-btn.primary:hover {
-            background: #2563eb;
-        }
-
-        /* 工具栏 */
-        .toolbar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 0 20px 16px;
-        }
-
-        .toolbar-group {
-            display: flex;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .toolbar-btn {
-            padding: 8px;
-            background: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-        }
-
-        .toolbar-btn:hover {
-            background: #f3f4f6;
-        }
-
-        .toolbar-btn.active {
-            background: #dbeafe;
-            color: #3b82f6;
-        }
-
-        .toolbar-separator {
-            width: 1px;
-            height: 24px;
-            background: #d1d5db;
-            margin: 0 8px;
-        }
-
-        /* 编辑器内容 */
-        .editor-content {
-            flex: 1;
-            padding: 32px;
-            background: #f8f9fa;
-            overflow-y: auto;
-        }
-
-        .document-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            min-height: 600px;
-        }
-
-        .document-editor {
-            width: 100%;
-            height: 100%;
-            min-height: 600px;
-            padding: 32px;
-            border: none;
-            font-size: 16px;
-            line-height: 1.6;
-            resize: none;
-            font-family: inherit;
-        }
-
-        .document-editor:focus {
-            outline: none;
-        }
-
-        /* 状态栏 */
-        .status-bar {
-            padding: 12px 20px;
-            background: #f9fafb;
-            border-top: 1px solid #e5e7eb;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .status-left {
-            display: flex;
-            gap: 16px;
-        }
-
-        .status-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .connection-status {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .connection-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #10b981;
-        }
-
-        /* 模态框样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 8px;
-            padding: 24px;
-            width: 90%;
-            max-width: 500px;
-        }
-
-        .modal-header {
-            margin-bottom: 16px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .modal-description {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .upload-area {
-            border: 2px dashed #d1d5db;
-            border-radius: 8px;
-            padding: 48px 24px;
-            text-align: center;
-            margin: 16px 0;
-        }
-
-        .upload-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 16px;
-            color: #6b7280;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #f3f4f6;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 16px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #3b82f6;
-            width: 75%;
-            transition: width 0.3s;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 280px;
-            }
-            
-            .editor-content {
-                padding: 16px;
-            }
-            
-            .document-editor {
-                padding: 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- 侧边栏 -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-title">
-                    <h2>资源管理</h2>
-                    <button class="new-btn" onclick="createNew()">+ 新建</button>
-                </div>
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" class="search-input" placeholder="搜索资源..." oninput="searchFiles(this.value)">
-                </div>
-            </div>
-
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('files', this)">文件</button>
-                <button class="tab" onclick="switchTab('recent', this)">最近</button>
-            </div>
-
-            <div class="file-list" id="fileList">
-                <div class="file-item" onclick="selectFile(this)">
-                    <div class="file-icon">📄</div>
-                    <div class="file-info">
-                        <div class="file-name">项目需求文档.pdf</div>
-                        <div class="file-meta">2.3 MB • 2小时前</div>
-                    </div>
-                    <button class="file-menu" onclick="showFileMenu(event)">⋯</button>
-                </div>
-
-                <div class="file-item" onclick="selectFile(this)">
-                    <div class="file-icon">📁</div>
-                    <div class="file-info">
-                        <div class="file-name">设计稿</div>
-                        <div class="file-meta">5个文件 • 1天前</div>
-                    </div>
-                    <button class="file-menu" onclick="showFileMenu(event)">⋯</button>
-                </div>
-
-                <div class="file-item" onclick="selectFile(this)">
-                    <div class="file-icon">🖼️</div>
-                    <div class="file-info">
-                        <div class="file-name">logo.png</div>
-                        <div class="file-meta">156 KB • 3天前</div>
-                    </div>
-                    <button class="file-menu" onclick="showFileMenu(event)">⋯</button>
-                </div>
-
-                <div class="file-item" onclick="selectFile(this)">
-                    <div class="file-icon">📝</div>
-                    <div class="file-info">
-                        <div class="file-name">会议记录.docx</div>
-                        <div class="file-meta">1.2 MB • 1周前</div>
-                    </div>
-                    <button class="file-menu" onclick="showFileMenu(event)">⋯</button>
-                </div>
-            </div>
-
-            <div class="upload-section">
-                <button class="upload-btn" onclick="showUploadModal()">
-                    📤 上传文件
-                </button>
-            </div>
-        </div>
-
-        <!-- 主编辑区域 -->
-        <div class="main-editor">
-            <div class="editor-header">
-                <div class="header-top">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <input type="text" class="document-title" value="无标题文档" onchange="updateTitle(this.value)">
-                        <span class="status-badge">已保存</span>
-                    </div>
-
-                    <div class="header-actions">
-                        <div class="collaborators">
-                            <div class="avatar">
-                                <img src="/placeholder.svg?height=32&width=32" alt="张三">
-                                <div class="status-dot status-online"></div>
-                            </div>
-                            <div class="avatar">
-                                <img src="/placeholder.svg?height=32&width=32" alt="李四">
-                                <div class="status-dot status-online"></div>
-                            </div>
-                            <div class="avatar">
-                                <img src="/placeholder.svg?height=32&width=32" alt="王五">
-                                <div class="status-dot status-away"></div>
-                            </div>
-                            <button class="action-btn">👥 邀请</button>
-                        </div>
-
-                        <div style="width: 1px; height: 24px; background: #d1d5db;"></div>
-
-                        <button class="action-btn" onclick="shareDocument()">🔗 分享</button>
-                        <button class="action-btn primary" onclick="saveDocument()">💾 保存</button>
-                    </div>
-                </div>
-
-                <div class="toolbar">
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" onclick="formatText('bold')" title="粗体"><strong>B</strong></button>
-                        <button class="toolbar-btn" onclick="formatText('italic')" title="斜体"><em>I</em></button>
-                        <button class="toolbar-btn" onclick="formatText('underline')" title="下划线"><u>U</u></button>
-                    </div>
-
-                    <div class="toolbar-separator"></div>
-
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" onclick="alignText('left')" title="左对齐">⬅️</button>
-                        <button class="toolbar-btn" onclick="alignText('center')" title="居中">↔️</button>
-                        <button class="toolbar-btn" onclick="alignText('right')" title="右对齐">➡️</button>
-                    </div>
-
-                    <div class="toolbar-separator"></div>
-
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" onclick="insertList('ul')" title="无序列表">• </button>
-                        <button class="toolbar-btn" onclick="insertList('ol')" title="有序列表">1.</button>
-                    </div>
-
-                    <div class="toolbar-separator"></div>
-
-                    <button class="toolbar-btn" onclick="insertLink()" title="插入链接">🔗</button>
-                    <button class="toolbar-btn" onclick="insertImage()" title="插入图片">🖼️</button>
-                </div>
-            </div>
-
-            <div class="editor-content">
-                <div class="document-container">
-                    <textarea 
-                        class="document-editor" 
-                        id="documentEditor"
-                        placeholder="开始编写您的文档..."
-                        oninput="updateWordCount()"
-                    >开始编写您的文档...</textarea>
-                </div>
-            </div>
-
-            <div class="status-bar">
-                <div class="status-left">
-                    <span>字数: <span id="wordCount">12</span></span>
-                    <span>最后编辑: 刚刚</span>
-                </div>
-                <div class="status-right">
-                    <div class="connection-status">
-                        <div class="connection-dot"></div>
-                        <span>已连接</span>
-                    </div>
-                    <button class="action-btn" onclick="showSettings()">⚙️</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 上传模态框 -->
-    <div class="modal" id="uploadModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">上传文件</h3>
-                <p class="modal-description">拖拽文件到此处或点击选择文件</p>
-            </div>
-            <div class="upload-area" onclick="selectFile()">
-                <div class="upload-icon">📤</div>
-                <p>支持 PDF, DOC, DOCX, PNG, JPG 等格式</p>
-                <button class="action-btn" style="margin-top: 12px;">选择文件</button>
-            </div>
-            <div>
-                <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px;">
-                    <span>上传进度</span>
-                    <span>75%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
-            </div>
-            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
-                <button class="action-btn" onclick="closeModal()">取消</button>
-                <button class="action-btn primary">确定</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // 文档标题更新
-        function updateTitle(title) {
-            document.title = title + ' - 在线协作文档编辑器';
-        }
-
-        // 字数统计
-        function updateWordCount() {
-            const editor = document.getElementById('documentEditor');
-            const wordCount = document.getElementById('wordCount');
-            wordCount.textContent = editor.value.length;
-        }
-
-        // 标签切换
-        function switchTab(tabName, element) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            element.classList.add('active');
-            
-            // 这里可以加载不同标签的内容
-            if (tabName === 'recent') {
-                document.getElementById('fileList').innerHTML = '<p style="padding: 20px; color: #6b7280; text-align: center;">最近访问的文档将显示在这里</p>';
-            } else {
-                // 重新加载文件列表
-                location.reload();
-            }
-        }
-
-        // 文件搜索
-        function searchFiles(query) {
-            const fileItems = document.querySelectorAll('.file-item');
-            fileItems.forEach(item => {
-                const fileName = item.querySelector('.file-name').textContent.toLowerCase();
-                if (fileName.includes(query.toLowerCase())) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        // 选择文件
-        function selectFile(element) {
-            document.querySelectorAll('.file-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
-        }
-
-        // 显示文件菜单
-        function showFileMenu(event) {
-            event.stopPropagation();
-            alert('文件操作菜单');
-        }
-
-        // 格式化文本
-        function formatText(command) {
-            const editor = document.getElementById('documentEditor');
-            editor.focus();
-            
-            // 简单的格式化实现
-            const start = editor.selectionStart;
-            const end = editor.selectionEnd;
-            const selectedText = editor.value.substring(start, end);
-            
-            let formattedText = selectedText;
-            switch(command) {
-                case 'bold':
-                    formattedText = `**${selectedText}**`;
-                    break;
-                case 'italic':
-                    formattedText = `*${selectedText}*`;
-                    break;
-                case 'underline':
-                    formattedText = `<u>${selectedText}</u>`;
-                    break;
-            }
-            
-            editor.value = editor.value.substring(0, start) + formattedText + editor.value.substring(end);
-            updateWordCount();
-        }
-
-        // 文本对齐
-        function alignText(alignment) {
-            alert(`设置文本对齐: ${alignment}`);
-        }
-
-        // 插入列表
-        function insertList(type) {
-            const editor = document.getElementById('documentEditor');
-            const cursor = editor.selectionStart;
-            const listItem = type === 'ul' ? '• ' : '1. ';
-            
-            editor.value = editor.value.substring(0, cursor) + '\n' + listItem + editor.value.substring(cursor);
-            editor.focus();
-            editor.setSelectionRange(cursor + listItem.length + 1, cursor + listItem.length + 1);
-            updateWordCount();
-        }
-
-        // 插入链接
-        function insertLink() {
-            const url = prompt('请输入链接地址:');
-            if (url) {
-                const editor = document.getElementById('documentEditor');
-                const cursor = editor.selectionStart;
-                const linkText = `[链接](${url})`;
-                
-                editor.value = editor.value.substring(0, cursor) + linkText + editor.value.substring(cursor);
-                editor.focus();
-                updateWordCount();
-            }
-        }
-
-        // 插入图片
-        function insertImage() {
-            const url = prompt('请输入图片地址:');
-            if (url) {
-                const editor = document.getElementById('documentEditor');
-                const cursor = editor.selectionStart;
-                const imageText = `![图片](${url})`;
-                
-                editor.value = editor.value.substring(0, cursor) + imageText + editor.value.substring(cursor);
-                editor.focus();
-                updateWordCount();
-            }
-        }
-
-        // 显示上传模态框
-        function showUploadModal() {
-            document.getElementById('uploadModal').classList.add('show');
-        }
-
-        // 关闭模态框
-        function closeModal() {
-            document.getElementById('uploadModal').classList.remove('show');
-        }
-
-        // 保存文档
-        function saveDocument() {
-            alert('文档已保存');
-        }
-
-        // 分享文档
-        function shareDocument() {
-            alert('分享功能');
-        }
-
-        // 创建新文档
-        function createNew() {
-            if (confirm('创建新文档？未保存的更改将丢失。')) {
-                document.getElementById('documentEditor').value = '';
-                document.querySelector('.document-title').value = '无标题文档';
-                updateWordCount();
-            }
-        }
-
-        // 显示设置
-        function showSettings() {
-            alert('设置面板');
-        }
-
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            updateWordCount();
-            
-            // 模拟自动保存
-            setInterval(() => {
-                // 这里可以实现自动保存逻辑
-            }, 30000);
-        });
-
-        // 点击模态框外部关闭
-        document.getElementById('uploadModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-    </script>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>在线协作文档编辑器</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				background-color: #f8f9fa;
+				height: 100vh;
+				overflow: hidden;
+			}
+
+			.container {
+				display: flex;
+				height: 100vh;
+			}
+
+			/* 侧边栏样式 */
+			.sidebar {
+				width: 320px;
+				background: white;
+				border-right: 1px solid #e5e7eb;
+				display: flex;
+				flex-direction: column;
+			}
+
+			.sidebar-header {
+				padding: 20px;
+				border-bottom: 1px solid #e5e7eb;
+			}
+
+			.sidebar-title {
+				display: flex;
+				justify-content: between;
+				align-items: center;
+				margin-bottom: 16px;
+			}
+
+			.sidebar-title h2 {
+				font-size: 18px;
+				font-weight: 600;
+				color: #1f2937;
+			}
+
+			.new-btn {
+				background: #f3f4f6;
+				border: 1px solid #d1d5db;
+				padding: 6px 12px;
+				border-radius: 6px;
+				font-size: 14px;
+				cursor: pointer;
+				margin-left: auto;
+			}
+
+			.new-btn:hover {
+				background: #e5e7eb;
+			}
+
+			.search-box {
+				position: relative;
+			}
+
+			.search-input {
+				width: 100%;
+				padding: 8px 12px 8px 36px;
+				border: 1px solid #d1d5db;
+				border-radius: 6px;
+				font-size: 14px;
+			}
+
+			.search-icon {
+				position: absolute;
+				left: 12px;
+				top: 50%;
+				transform: translateY(-50%);
+				color: #6b7280;
+			}
+
+			.tabs {
+				display: flex;
+				margin: 16px 20px 0;
+				border-bottom: 1px solid #e5e7eb;
+			}
+
+			.tab {
+				flex: 1;
+				padding: 8px 16px;
+				text-align: center;
+				background: none;
+				border: none;
+				cursor: pointer;
+				font-size: 14px;
+				color: #6b7280;
+				border-bottom: 2px solid transparent;
+			}
+
+			.tab.active {
+				color: #3b82f6;
+				border-bottom-color: #3b82f6;
+			}
+
+			.file-list {
+				flex: 1;
+				overflow-y: auto;
+				padding: 16px 20px;
+			}
+
+			.file-item {
+				display: flex;
+				align-items: center;
+				padding: 12px;
+				border-radius: 8px;
+				cursor: pointer;
+				margin-bottom: 8px;
+				transition: background-color 0.2s;
+			}
+
+			.file-item:hover {
+				background: #f3f4f6;
+			}
+
+			.file-icon {
+				width: 20px;
+				height: 20px;
+				margin-right: 12px;
+				flex-shrink: 0;
+			}
+
+			.file-info {
+				flex: 1;
+				min-width: 0;
+			}
+
+			.file-name {
+				font-size: 14px;
+				font-weight: 500;
+				color: #1f2937;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.file-meta {
+				font-size: 12px;
+				color: #6b7280;
+				margin-top: 2px;
+			}
+
+			.file-menu {
+				background: none;
+				border: none;
+				padding: 4px;
+				cursor: pointer;
+				border-radius: 4px;
+			}
+
+			.file-menu:hover {
+				background: #e5e7eb;
+			}
+
+			.upload-section {
+				padding: 20px;
+				border-top: 1px solid #e5e7eb;
+			}
+
+			.upload-btn {
+				width: 100%;
+				padding: 10px;
+				background: white;
+				border: 1px solid #d1d5db;
+				border-radius: 6px;
+				cursor: pointer;
+				font-size: 14px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 8px;
+			}
+
+			.upload-btn:hover {
+				background: #f9fafb;
+			}
+
+			/* 主编辑区域 */
+			.main-editor {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				background: white;
+			}
+
+			.editor-header {
+				padding: 20px;
+				border-bottom: 1px solid #e5e7eb;
+			}
+
+			.header-top {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 16px;
+			}
+
+			.document-title {
+				font-size: 18px;
+				font-weight: 600;
+				border: none;
+				background: none;
+				color: #1f2937;
+				padding: 4px 0;
+			}
+
+			.document-title:focus {
+				outline: none;
+				border-bottom: 2px solid #3b82f6;
+			}
+
+			.status-badge {
+				background: #dcfce7;
+				color: #166534;
+				padding: 4px 8px;
+				border-radius: 12px;
+				font-size: 12px;
+				font-weight: 500;
+			}
+
+			.header-actions {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+
+			.collaborators {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+			}
+
+			.avatar {
+				width: 32px;
+				height: 32px;
+				border-radius: 50%;
+				border: 2px solid white;
+				position: relative;
+			}
+
+			.avatar img {
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+				object-fit: cover;
+			}
+
+			.status-dot {
+				position: absolute;
+				bottom: -2px;
+				right: -2px;
+				width: 12px;
+				height: 12px;
+				border-radius: 50%;
+				border: 2px solid white;
+			}
+
+			.status-online {
+				background: #10b981;
+			}
+			.status-away {
+				background: #f59e0b;
+			}
+
+			.action-btn {
+				padding: 8px 16px;
+				border: 1px solid #d1d5db;
+				background: white;
+				border-radius: 6px;
+				cursor: pointer;
+				font-size: 14px;
+				display: flex;
+				align-items: center;
+				gap: 6px;
+			}
+
+			.action-btn:hover {
+				background: #f9fafb;
+			}
+
+			.action-btn.primary {
+				background: #3b82f6;
+				color: white;
+				border-color: #3b82f6;
+			}
+
+			.action-btn.primary:hover {
+				background: #2563eb;
+			}
+
+			/* 工具栏 */
+			.toolbar {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				padding: 0 20px 16px;
+			}
+
+			.toolbar-group {
+				display: flex;
+				border: 1px solid #d1d5db;
+				border-radius: 6px;
+				overflow: hidden;
+			}
+
+			.toolbar-btn {
+				padding: 8px;
+				background: white;
+				border: none;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 36px;
+				height: 36px;
+			}
+
+			.toolbar-btn:hover {
+				background: #f3f4f6;
+			}
+
+			.toolbar-btn.active {
+				background: #dbeafe;
+				color: #3b82f6;
+			}
+
+			.toolbar-separator {
+				width: 1px;
+				height: 24px;
+				background: #d1d5db;
+				margin: 0 8px;
+			}
+
+			/* 编辑器内容 */
+			.editor-content {
+				flex: 1;
+				padding: 32px;
+				background: #f8f9fa;
+				overflow-y: auto;
+			}
+
+			.document-container {
+				max-width: 800px;
+				margin: 0 auto;
+				background: white;
+				border-radius: 8px;
+				box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+				min-height: 600px;
+			}
+
+			.document-editor {
+				width: 100%;
+				height: 100%;
+				min-height: 600px;
+				padding: 32px;
+				border: none;
+				font-size: 16px;
+				line-height: 1.6;
+				resize: none;
+				font-family: inherit;
+			}
+
+			.document-editor:focus {
+				outline: none;
+			}
+
+			/* 状态栏 */
+			.status-bar {
+				padding: 12px 20px;
+				background: #f9fafb;
+				border-top: 1px solid #e5e7eb;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				font-size: 14px;
+				color: #6b7280;
+			}
+
+			.status-left {
+				display: flex;
+				gap: 16px;
+			}
+
+			.status-right {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+
+			.connection-status {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+			}
+
+			.connection-dot {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				background: #10b981;
+			}
+
+			/* 模态框样式 */
+			.modal {
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0, 0, 0, 0.5);
+				z-index: 1000;
+			}
+
+			.modal.show {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.modal-content {
+				background: white;
+				border-radius: 8px;
+				padding: 24px;
+				width: 90%;
+				max-width: 500px;
+			}
+
+			.modal-header {
+				margin-bottom: 16px;
+			}
+
+			.modal-title {
+				font-size: 18px;
+				font-weight: 600;
+				margin-bottom: 4px;
+			}
+
+			.modal-description {
+				color: #6b7280;
+				font-size: 14px;
+			}
+
+			.upload-area {
+				border: 2px dashed #d1d5db;
+				border-radius: 8px;
+				padding: 48px 24px;
+				text-align: center;
+				margin: 16px 0;
+			}
+
+			.upload-icon {
+				width: 48px;
+				height: 48px;
+				margin: 0 auto 16px;
+				color: #6b7280;
+			}
+
+			.progress-bar {
+				width: 100%;
+				height: 8px;
+				background: #f3f4f6;
+				border-radius: 4px;
+				overflow: hidden;
+				margin-top: 16px;
+			}
+
+			.progress-fill {
+				height: 100%;
+				background: #3b82f6;
+				width: 75%;
+				transition: width 0.3s;
+			}
+
+			/* 响应式设计 */
+			@media (max-width: 768px) {
+				.sidebar {
+					width: 280px;
+				}
+
+				.editor-content {
+					padding: 16px;
+				}
+
+				.document-editor {
+					padding: 20px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<!-- 侧边栏 -->
+			<div class="sidebar">
+				<div class="sidebar-header">
+					<div class="sidebar-title">
+						<h2>资源管理</h2>
+						<button class="new-btn" onclick="createNew()">+ 新建</button>
+					</div>
+					<div class="search-box">
+						<span class="search-icon">🔍</span>
+						<input
+							type="text"
+							class="search-input"
+							placeholder="搜索资源..."
+							oninput="searchFiles(this.value)" />
+					</div>
+				</div>
+
+				<div class="tabs">
+					<button class="tab active" onclick="switchTab('files', this)">文件</button>
+					<button class="tab" onclick="switchTab('recent', this)">最近</button>
+				</div>
+
+				<div class="file-list" id="fileList">
+					<div class="file-item" onclick="selectFile(this)">
+						<div class="file-icon">📄</div>
+						<div class="file-info">
+							<div class="file-name">项目需求文档.pdf</div>
+							<div class="file-meta">2.3 MB • 2小时前</div>
+						</div>
+						<button class="file-menu" onclick="showFileMenu(event)">⋯</button>
+					</div>
+
+					<div class="file-item" onclick="selectFile(this)">
+						<div class="file-icon">📁</div>
+						<div class="file-info">
+							<div class="file-name">设计稿</div>
+							<div class="file-meta">5个文件 • 1天前</div>
+						</div>
+						<button class="file-menu" onclick="showFileMenu(event)">⋯</button>
+					</div>
+
+					<div class="file-item" onclick="selectFile(this)">
+						<div class="file-icon">🖼️</div>
+						<div class="file-info">
+							<div class="file-name">logo.png</div>
+							<div class="file-meta">156 KB • 3天前</div>
+						</div>
+						<button class="file-menu" onclick="showFileMenu(event)">⋯</button>
+					</div>
+
+					<div class="file-item" onclick="selectFile(this)">
+						<div class="file-icon">📝</div>
+						<div class="file-info">
+							<div class="file-name">会议记录.docx</div>
+							<div class="file-meta">1.2 MB • 1周前</div>
+						</div>
+						<button class="file-menu" onclick="showFileMenu(event)">⋯</button>
+					</div>
+				</div>
+
+				<div class="upload-section">
+					<button class="upload-btn" onclick="showUploadModal()">📤 上传文件</button>
+				</div>
+			</div>
+
+			<!-- 主编辑区域 -->
+			<div class="main-editor">
+				<div class="editor-header">
+					<div class="header-top">
+						<div style="display: flex; align-items: center; gap: 12px">
+							<input
+								type="text"
+								class="document-title"
+								value="无标题文档"
+								onchange="updateTitle(this.value)" />
+							<span class="status-badge">已保存</span>
+						</div>
+
+						<div class="header-actions">
+							<div class="collaborators">
+								<div class="avatar">
+									<img src="/placeholder.svg?height=32&width=32" alt="张三" />
+									<div class="status-dot status-online"></div>
+								</div>
+								<div class="avatar">
+									<img src="/placeholder.svg?height=32&width=32" alt="李四" />
+									<div class="status-dot status-online"></div>
+								</div>
+								<div class="avatar">
+									<img src="/placeholder.svg?height=32&width=32" alt="王五" />
+									<div class="status-dot status-away"></div>
+								</div>
+								<button class="action-btn">👥 邀请</button>
+							</div>
+
+							<div style="width: 1px; height: 24px; background: #d1d5db"></div>
+
+							<button class="action-btn" onclick="shareDocument()">🔗 分享</button>
+							<button class="action-btn primary" onclick="saveDocument()">
+								💾 保存
+							</button>
+						</div>
+					</div>
+
+					<div class="toolbar">
+						<div class="toolbar-group">
+							<button class="toolbar-btn" onclick="formatText('bold')" title="粗体">
+								<strong>B</strong>
+							</button>
+							<button class="toolbar-btn" onclick="formatText('italic')" title="斜体">
+								<em>I</em>
+							</button>
+							<button
+								class="toolbar-btn"
+								onclick="formatText('underline')"
+								title="下划线">
+								<u>U</u>
+							</button>
+						</div>
+
+						<div class="toolbar-separator"></div>
+
+						<div class="toolbar-group">
+							<button class="toolbar-btn" onclick="alignText('left')" title="左对齐">
+								⬅️
+							</button>
+							<button class="toolbar-btn" onclick="alignText('center')" title="居中">
+								↔️
+							</button>
+							<button class="toolbar-btn" onclick="alignText('right')" title="右对齐">
+								➡️
+							</button>
+						</div>
+
+						<div class="toolbar-separator"></div>
+
+						<div class="toolbar-group">
+							<button class="toolbar-btn" onclick="insertList('ul')" title="无序列表">
+								•
+							</button>
+							<button class="toolbar-btn" onclick="insertList('ol')" title="有序列表">
+								1.
+							</button>
+						</div>
+
+						<div class="toolbar-separator"></div>
+
+						<button class="toolbar-btn" onclick="insertLink()" title="插入链接">
+							🔗
+						</button>
+						<button class="toolbar-btn" onclick="insertImage()" title="插入图片">
+							🖼️
+						</button>
+					</div>
+				</div>
+
+				<div class="editor-content">
+					<div class="document-container">
+						<textarea
+							class="document-editor"
+							id="documentEditor"
+							placeholder="开始编写您的文档..."
+							oninput="updateWordCount()">
+开始编写您的文档...</textarea
+						>
+					</div>
+				</div>
+
+				<div class="status-bar">
+					<div class="status-left">
+						<span>字数: <span id="wordCount">12</span></span>
+						<span>最后编辑: 刚刚</span>
+					</div>
+					<div class="status-right">
+						<div class="connection-status">
+							<div class="connection-dot"></div>
+							<span>已连接</span>
+						</div>
+						<button class="action-btn" onclick="showSettings()">⚙️</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 上传模态框 -->
+		<div class="modal" id="uploadModal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title">上传文件</h3>
+					<p class="modal-description">拖拽文件到此处或点击选择文件</p>
+				</div>
+				<div class="upload-area" onclick="selectFile()">
+					<div class="upload-icon">📤</div>
+					<p>支持 PDF, DOC, DOCX, PNG, JPG 等格式</p>
+					<button class="action-btn" style="margin-top: 12px">选择文件</button>
+				</div>
+				<div>
+					<div
+						style="
+							display: flex;
+							justify-content: space-between;
+							font-size: 14px;
+							margin-bottom: 8px;
+						">
+						<span>上传进度</span>
+						<span>75%</span>
+					</div>
+					<div class="progress-bar">
+						<div class="progress-fill"></div>
+					</div>
+				</div>
+				<div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px">
+					<button class="action-btn" onclick="closeModal()">取消</button>
+					<button class="action-btn primary">确定</button>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// 文档标题更新
+			function updateTitle(title) {
+				document.title = title + " - 在线协作文档编辑器";
+			}
+
+			// 字数统计
+			function updateWordCount() {
+				const editor = document.getElementById("documentEditor");
+				const wordCount = document.getElementById("wordCount");
+				wordCount.textContent = editor.value.length;
+			}
+
+			// 标签切换
+			function switchTab(tabName, element) {
+				document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+				element.classList.add("active");
+
+				// 这里可以加载不同标签的内容
+				if (tabName === "recent") {
+					document.getElementById("fileList").innerHTML =
+						'<p style="padding: 20px; color: #6b7280; text-align: center;">最近访问的文档将显示在这里</p>';
+				} else {
+					// 重新加载文件列表
+					location.reload();
+				}
+			}
+
+			// 文件搜索
+			function searchFiles(query) {
+				const fileItems = document.querySelectorAll(".file-item");
+				fileItems.forEach(item => {
+					const fileName = item.querySelector(".file-name").textContent.toLowerCase();
+					if (fileName.includes(query.toLowerCase())) {
+						item.style.display = "flex";
+					} else {
+						item.style.display = "none";
+					}
+				});
+			}
+
+			// 选择文件
+			function selectFile(element) {
+				document
+					.querySelectorAll(".file-item")
+					.forEach(item => item.classList.remove("active"));
+				element.classList.add("active");
+			}
+
+			// 显示文件菜单
+			function showFileMenu(event) {
+				event.stopPropagation();
+				alert("文件操作菜单");
+			}
+
+			// 格式化文本
+			function formatText(command) {
+				const editor = document.getElementById("documentEditor");
+				editor.focus();
+
+				// 简单的格式化实现
+				const start = editor.selectionStart;
+				const end = editor.selectionEnd;
+				const selectedText = editor.value.substring(start, end);
+
+				let formattedText = selectedText;
+				switch (command) {
+					case "bold":
+						formattedText = `**${selectedText}**`;
+						break;
+					case "italic":
+						formattedText = `*${selectedText}*`;
+						break;
+					case "underline":
+						formattedText = `<u>${selectedText}</u>`;
+						break;
+				}
+
+				editor.value =
+					editor.value.substring(0, start) + formattedText + editor.value.substring(end);
+				updateWordCount();
+			}
+
+			// 文本对齐
+			function alignText(alignment) {
+				alert(`设置文本对齐: ${alignment}`);
+			}
+
+			// 插入列表
+			function insertList(type) {
+				const editor = document.getElementById("documentEditor");
+				const cursor = editor.selectionStart;
+				const listItem = type === "ul" ? "• " : "1. ";
+
+				editor.value =
+					editor.value.substring(0, cursor) +
+					"\n" +
+					listItem +
+					editor.value.substring(cursor);
+				editor.focus();
+				editor.setSelectionRange(
+					cursor + listItem.length + 1,
+					cursor + listItem.length + 1
+				);
+				updateWordCount();
+			}
+
+			// 插入链接
+			function insertLink() {
+				const url = prompt("请输入链接地址:");
+				if (url) {
+					const editor = document.getElementById("documentEditor");
+					const cursor = editor.selectionStart;
+					const linkText = `[链接](${url})`;
+
+					editor.value =
+						editor.value.substring(0, cursor) +
+						linkText +
+						editor.value.substring(cursor);
+					editor.focus();
+					updateWordCount();
+				}
+			}
+
+			// 插入图片
+			function insertImage() {
+				const url = prompt("请输入图片地址:");
+				if (url) {
+					const editor = document.getElementById("documentEditor");
+					const cursor = editor.selectionStart;
+					const imageText = `![图片](${url})`;
+
+					editor.value =
+						editor.value.substring(0, cursor) +
+						imageText +
+						editor.value.substring(cursor);
+					editor.focus();
+					updateWordCount();
+				}
+			}
+
+			// 显示上传模态框
+			function showUploadModal() {
+				document.getElementById("uploadModal").classList.add("show");
+			}
+
+			// 关闭模态框
+			function closeModal() {
+				document.getElementById("uploadModal").classList.remove("show");
+			}
+
+			// 保存文档
+			function saveDocument() {
+				alert("文档已保存");
+			}
+
+			// 分享文档
+			function shareDocument() {
+				alert("分享功能");
+			}
+
+			// 创建新文档
+			function createNew() {
+				if (confirm("创建新文档？未保存的更改将丢失。")) {
+					document.getElementById("documentEditor").value = "";
+					document.querySelector(".document-title").value = "无标题文档";
+					updateWordCount();
+				}
+			}
+
+			// 显示设置
+			function showSettings() {
+				alert("设置面板");
+			}
+
+			// 初始化
+			document.addEventListener("DOMContentLoaded", function () {
+				updateWordCount();
+
+				// 模拟自动保存
+				setInterval(() => {
+					// 这里可以实现自动保存逻辑
+				}, 30000);
+			});
+
+			// 点击模态框外部关闭
+			document.getElementById("uploadModal").addEventListener("click", function (e) {
+				if (e.target === this) {
+					closeModal();
+				}
+			});
+		</script>
+	</body>
 </html>

@@ -423,8 +423,7 @@ export default async function () {
 				 */
 				async apiCicdTaskRun(data) {
 					return _.$ajax.post(`/api/cicd/task_run`, { data });
-				}
-,
+				},
 				async apiCicdTaskAdd(data) {
 					return _.$ajax.post(`/api/cicd/task_add`, { data });
 				},
@@ -436,7 +435,7 @@ export default async function () {
 				},
 				async apiCicdJobList(data) {
 					return _.$ajax.get(`/api/cicd/job_list`, { data });
-				},
+				}
 			};
 		})();
 	}

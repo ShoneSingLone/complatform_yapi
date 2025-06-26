@@ -90,10 +90,10 @@ export default async function ({
 									class: "ml4",
 									icon: "refresh",
 									async onClick() {
-	const { data } = await _api.yapi.apiCicdGitBranchInfo({
-				git_repo_id
-			});
-			git_repo = data.git_repo;
+										const { data } = await _api.yapi.apiCicdGitBranchInfo({
+											git_repo_id
+										});
+										git_repo = data.git_repo;
 										remote_branches_options = _.map(
 											data.branch_info.remoteBranches,
 											i => ({

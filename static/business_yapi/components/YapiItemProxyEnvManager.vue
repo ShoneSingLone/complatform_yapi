@@ -169,7 +169,7 @@ export default async function ({}) {
 						return `${row.key}=${row.value}`;
 					}).join(";");
 				};
-				
+
 				const Cookie = toString(formData.Cookie);
 
 				if (Cookie) {
