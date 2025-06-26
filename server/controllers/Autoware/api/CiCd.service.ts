@@ -8,10 +8,18 @@ const { _n } = require("@ventose/utils-node");
 const { TARGET_PREFIX } = xU;
 const { socket_const } = require("../../../middleware/websocket");
 
-const auth_url = ({ git_address, username, password }) =>
-	git_address
-		.replace(/^https:\/\//, `https://${username}:${password}@`)
-		.replace(/^http:\/\//, `http://${username}:${password}@`);
+const auth_url = ({ git_address, username, password }) => {
+	if (!git_address || !username || !password) {
+		throw new Error("git_address, username and password are required");
+	}
+
+	const encodedUsername = encodeURIComponent(username);
+	const encodedPassword = encodeURIComponent(password);
+
+	return git_address
+		.replace(/^https:\/\//, `https://${encodedUsername}:${encodedPassword}@`)
+		.replace(/^http:\/\//, `http://${encodedUsername}:${encodedPassword}@`);
+};
 
 async function vmRun(code, options = {}) {
 	options = options || {};
