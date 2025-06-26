@@ -77,10 +77,9 @@ async function initRepo({ git_repo, uid }) {
 		console.log("[exeCmdCloneRepo] 开始克隆仓库");
 		try {
 			// 配置仓库信息和认证信息
-			const authUrl = git_address.replace(
-				"https://",
-				`https://${username}:${password}@`
-			);
+			const authUrl = git_address
+				.replace("https://", `https://${username}:${password}@`)
+				.replace("http://", `http://${username}:${password}@`);
 			console.log("[exeCmdCloneRepo] 构建认证URL:", authUrl);
 
 			emit(`克隆仓库地址: \n${git_address}`);
