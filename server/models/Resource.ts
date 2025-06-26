@@ -36,7 +36,7 @@ const schemaObj = {
 	basecode: String,
 	useFor: {
 		type: String,
-		enum: ["all", "CloudDisk", "wiki"]
+		enum: ["all", "CloudDisk", "wiki", "cicd/archive"]
 	}
 };
 
@@ -53,6 +53,17 @@ class ModelResource extends ModelBase {
 	save(data) {
 		let modelVM = new this.model(data);
 		return modelVM.save();
+	}
+
+	async upsertCicdArchive(data) {
+		let [archive] = await this.model.find({ path: data.path });
+		if (archive) {
+			await this.update(archive._id, data);
+		} else {
+			await this.save(data);
+		}
+		[archive] = await this.model.find({ path: data.path });
+		return archive;
 	}
 
 	/* @typescriptDeclare (id:number|number[],modify:object)=> Promise<any> */
