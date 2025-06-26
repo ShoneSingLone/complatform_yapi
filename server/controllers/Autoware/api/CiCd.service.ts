@@ -130,45 +130,39 @@ async function initRepo({ git_repo, uid }) {
 	}
 }
 
-async function runTask({
-	task: { _id: task_id, cicd_id, task_action, task_output_type },
-	message,
-	commit_hash,
-	task_ref,
-	payload
-}) {
-	let task_log = [];
-	task_ref = task_ref.replace("refs/heads/", "");
-
-	const emit = msg => {
-		const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
-		task_log.push(`- ***${time}*** ${msg}`);
-		const currentSocket = global.APP.socket.yapi.socket;
-		if (currentSocket) {
-			/* to all online users */
-			currentSocket.broadcast(socket_const.task_run_output, { task_id, msg });
-		} else {
-			console.log(msg);
-		}
-	};
-	/*  */
-	/* TODO:执行定时任务 */
-
-	/* 判断参数是否完全一样 */
-	let [taskInstance] = await orm.CiCdTaskQueue.find({
-		task_id,
-		/* task_action, */
-		commit_hash
-	});
-	emit("查找是否已有作业");
+async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
+	const { _id: task_id, cicd_id, task_action, task_output_type } = task;
 	try {
+		let task_log = [];
+		const emit = msg => {
+			const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
+			task_log.push(`- ***${time}*** ${msg}`);
+			const currentSocket = global.APP.socket.yapi.socket;
+			if (currentSocket) {
+				/* to all online users */
+				currentSocket.broadcast(socket_const.task_run_output, { task_id, msg });
+			} else {
+				console.log(msg);
+			}
+		};
+
+		/*  */
+		/* TODO:执行定时任务 */
+
+		/* 判断参数是否完全一样 */
+		let [taskInstance] = await orm.CiCdTaskQueue.find({
+			task_id,
+			/* task_action, */
+			commit_hash
+		});
+		emit("查找是否已有作业");
 		if (taskInstance) {
 			if (taskInstance.task_status === "running") {
 				return emit(`已有相同务在运行中，请勿重复提交任务`);
 			} else {
 				/* 更新状态 */
-				taskInstance.task_status = "failed";
-				// taskInstance.task_status = "running";
+				// taskInstance.task_status = "failed";
+				taskInstance.task_status = "running";
 				await orm.CiCdTaskQueue.upsert(taskInstance);
 			}
 		} else {
@@ -178,19 +172,17 @@ async function runTask({
 				/* 查找列表需要查找 */
 				cicd_id,
 				/* task_action, */
-				task_ref,
+				task_ref: ref_trigger_this_job,
 				// task_status: "running",
 				task_status: "failed",
 				last_time: xU.time(),
 				message,
 				commit_hash
-				// payload/*  */
 			});
 		}
 		emit(`加入任务队列成功`);
 		/* 运行脚本，记录日志 */
 		/* task_id => cicd_id => git_repo_id */
-		const [task] = await orm.CiCdTask.find({ _id: task_id });
 		const [cicd] = await orm.CiCd.find({ _id: task.cicd_id });
 		const [git_repo] = await orm.GitRepo.find({ _id: cicd.git_repo_id });
 		const { git_repo_root, git_address } = git_repo;
@@ -198,7 +190,7 @@ async function runTask({
 		const ExecCmdOnRepoRoot = (command, args) =>
 			xU.executeCommand(command, args, { cwd: git_repo_root }, emit);
 
-		// await ExecCmdOnRepoRoot("git", ["reset", "--hard", "HEAD"]);
+		await ExecCmdOnRepoRoot("git", ["reset", "--hard", "HEAD"]);
 
 		emit(`工作台清空完毕`);
 		// emit(`开始安装依赖...`);
@@ -206,15 +198,15 @@ async function runTask({
 		// emit(`安装依赖完成，开始运行脚本...`);
 		emit(`开始运行脚本...`);
 
-		// await ExecCmdOnRepoRoot("git", ["checkout", task_ref]);
+		await ExecCmdOnRepoRoot("git", ["checkout", ref_trigger_this_job]);
 
-		emit(`切换到${task_ref}分支成功，开始拉取最新代码...`);
+		emit(`切换到${ref_trigger_this_job}分支成功，开始拉取最新代码...`);
 
-		// await ExecCmdOnRepoRoot("git", ["pull"]);
+		await ExecCmdOnRepoRoot("git", ["pull"]);
 
 		emit(`拉取最新代码成功，开始切换到${commit_hash}提交...`);
 
-		// await ExecCmdOnRepoRoot("git", ["reset", "--hard", commit_hash]);
+		await ExecCmdOnRepoRoot("git", ["reset", "--hard", commit_hash]);
 		if (task_output_type === "ARCHIVE_FILE") {
 			/* TODO: 打包文件,目前以约定的方式 */
 			const getTargetDir = new Function("return " + task_action);

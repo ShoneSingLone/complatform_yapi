@@ -3,7 +3,7 @@
 		<xMd :md="md" />
 		<DemoAndCode
 			title="configs用法"
-			path="@/views/component/data/pagination/ConfigsChuYongFa.vue"
+			path="@/views/component/data/pagination/ConfigsYongFa.vue"
 			unfold />
 		<DemoAndCode
 			title="基础用法"

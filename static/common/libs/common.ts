@@ -2319,7 +2319,6 @@
 					return item;
 				}
 			}
-			console.error("getSelectedItemFrom miss options or value");
 			return { value: "", label: "", labelKey: "" };
 		};
 

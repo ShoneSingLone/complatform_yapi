@@ -280,7 +280,7 @@ module.exports = {
 						task_id: {
 							required: true,
 							description: "任务名，同一个cici条目下，唯一",
-							type: "string"
+							type: "number"
 						},
 						task_token: {
 							required: true,
@@ -295,34 +295,49 @@ module.exports = {
 							task_id,
 							task_token,
 							after: commit_hash,
-							ref,
+							ref: ref_trigger_this_job,
 							commits,
 							message
 						} = ctx.payload;
+
+						ref_trigger_this_job = ref_trigger_this_job.replace(
+							"refs/heads/",
+							""
+						);
 
 						message = message || xU._.first(commits)?.message || "";
 
 						if (!task_id) {
 							return (ctx.body = xU.$response(null, 400, "任务 ID不能为空"));
 						}
-						/* task_name不可重复 */
+
 						let [task] = await orm.CiCdTask.find({
-							_id: task_id,
-							task_token
+							_id: task_id
 						});
+
 						if (!task) {
 							return (ctx.body = xU.$response(null, 400, "任务不存在"));
 						}
+
+						/* 如果不属于触发条件的branch则退出 */
+						if (
+							xU._.every(task.task_ref, ref => ref !== ref_trigger_this_job)
+						) {
+							return (ctx.body = xU.$response(null, 400, "当前推送未触发作业"));
+						}
+
 						if (task.task_token === task_token) {
 							runTask({
 								task,
 								message,
 								commit_hash,
-								task_ref: ref,
+								ref_trigger_this_job,
 								payload: ctx.payload
 							});
+							ctx.body = xU.$response("任务开始执行");
+						} else {
+							throw new Error("token 过期");
 						}
-						ctx.body = xU.$response("任务开始执行");
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);
 					}

@@ -156,7 +156,30 @@ export default async function () {
 					columns: [
 						{ prop: "_id", label: "作业ID", width: 100 },
 						{ prop: "task_status", label: "作业状态", width: 100 },
-						{ prop: "artifacts", label: "产出物", width: 100 },
+						{
+							prop: "resource",
+							label: "产出物",
+							width: 100,
+							cellRenderer({ cellData: resource }) {
+								const file_url = Vue._common_utils.appendToken(
+									`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${resource._id}`
+								);
+								return hDiv([
+									h(
+										"a",
+										{
+											class: "flex1 ellipsis flex middle",
+											attrs: {
+												href: file_url,
+												download: resource.name,
+												target: "_blank"
+											}
+										},
+										[hxIcon({ icon: "download", class: "mr" }), "📦"]
+									)
+								]);
+							}
+						},
 						{ prop: "task_ref", label: "触发分支", width: 150 },
 						{ prop: "commit_hash", label: "commit hash" },
 						{ prop: "message", label: "commit message" },
@@ -187,7 +210,7 @@ export default async function () {
 										},
 										{
 											icon: "refresh",
-											isHide: rowData.task_status === "running",
+											// isHide: rowData.task_status === "running",
 											async onClick() {
 												try {
 													const {
@@ -205,8 +228,9 @@ export default async function () {
 														})
 													});
 													configsTable.onQuery();
+													_.$msgSuccess("任务已启动");
 												} catch (error) {
-													console.error();
+													_.$msgError(error);
 												}
 											}
 										}

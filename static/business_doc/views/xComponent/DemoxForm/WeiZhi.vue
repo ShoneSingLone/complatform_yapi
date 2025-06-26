@@ -78,7 +78,7 @@ export default async function () {
 			outline: 1px dashed darkcyan;
 		}
 	}
-	.xItem-label-controller {
+	.xItem-label_controller_wrapper {
 		outline: 1px dashed darkcyan;
 		.xItem_label {
 			outline: 1px dashed red;
