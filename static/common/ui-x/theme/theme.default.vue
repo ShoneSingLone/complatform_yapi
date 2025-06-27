@@ -447,6 +447,10 @@ svg.pointer {
 	width: 100%;
 }
 
+.width1px {
+	width: 1px;
+}
+
 .height100 {
 	height: 100%;
 }

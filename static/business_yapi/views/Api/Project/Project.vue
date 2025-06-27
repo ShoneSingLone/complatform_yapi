@@ -1,7 +1,7 @@
 <template>
 	<div id="ViewProject">
 		<ProjectTabs key="ProjectTabs" @change-tab="changeTab" />
-		<xAutoResizer :onResize="setSize">
+		<xAutoResizer :onResize="setSize" class="flex1 width1px">
 			<ProjectDoc
 				:style="wrapperStyle.transition_wrapper"
 				key="ProjectDoc"
