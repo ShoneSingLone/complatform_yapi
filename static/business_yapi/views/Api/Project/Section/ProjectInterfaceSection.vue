@@ -91,7 +91,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							style: "text-align:left;",
 							href: _.$aHashLink("/api/project", {
 								...vm.$route.query,
-								interfaceType: "interface",
+								interface_type: "interface",
 								interface_id: rowData._id,
 								project_interface_tab: "preview"
 							})
@@ -572,7 +572,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return this.cptInterfaceType === "interface";
 			},
 			cptInterfaceType() {
-				return this.$route.query.interfaceType;
+				return this.$route.query.interface_type;
 			},
 			cptEnvObject() {
 				return _.reduce(

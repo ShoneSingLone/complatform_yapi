@@ -183,20 +183,20 @@ async function initRepo({ git_repo, uid }) {
 
 async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 	const { _id: task_id, cicd_id, task_action, task_output_type } = task;
-	try {
-		let task_log = [];
-		const emit = msg => {
-			const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
-			task_log.push(`- ***${time}*** ${msg}`);
-			const currentSocket = global.APP.socket.yapi.socket;
-			if (currentSocket) {
-				/* to all online users */
-				currentSocket.broadcast(socket_const.task_run_output, { task_id, msg });
-			} else {
-				xU.applog.info(msg);
-			}
-		};
+	let task_log = [];
+	const emit = msg => {
+		const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
+		task_log.push(`- ***${time}*** ${msg}`);
+		const currentSocket = global.APP.socket.yapi.socket;
+		if (currentSocket) {
+			/* to all online users */
+			currentSocket.broadcast(socket_const.task_run_output, { task_id, msg });
+		} else {
+			xU.applog.info(msg);
+		}
+	};
 
+	try {
 		/*  */
 		/* TODO:执行定时任务 */
 

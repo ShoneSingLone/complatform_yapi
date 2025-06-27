@@ -224,7 +224,7 @@ export default async function () {
 									onClick() {
 										vm.APP.routerUpsertQuery({
 											interface_id: catid,
-											interfaceType: "category"
+											interface_type: "category"
 										});
 									}
 								}

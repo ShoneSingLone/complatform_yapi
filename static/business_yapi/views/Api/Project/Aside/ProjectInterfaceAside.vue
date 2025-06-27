@@ -104,7 +104,7 @@ export default async function () {
 		},
 		methods: {
 			selectInterface({ menuType, _id }) {
-				this.APP.routerUpsertQuery({ interface_id: _id, interfaceType: menuType });
+				this.APP.routerUpsertQuery({ interface_id: _id, interface_type: menuType });
 			},
 			async scrollToLocation() {
 				await _.$ensure(() => this.$refs.refTreeScroll);
