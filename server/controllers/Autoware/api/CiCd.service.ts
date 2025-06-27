@@ -196,12 +196,14 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 		}
 	};
 
+	let taskInstance;
+
 	try {
 		/*  */
 		/* TODO:执行定时任务 */
 
 		/* 判断参数是否完全一样 */
-		let [taskInstance] = await orm.CiCdTaskQueue.find({
+		[taskInstance] = await orm.CiCdTaskQueue.find({
 			task_id,
 			/* task_action, */
 			commit_hash
