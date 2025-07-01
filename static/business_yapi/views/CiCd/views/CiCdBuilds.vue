@@ -161,10 +161,12 @@ export default async function () {
 							label: "产出物",
 							width: 100,
 							cellRenderer({ cellData: resource, rowData }) {
+								if (!resource?.name) {
+									return resource;
+								}
 								const file_url = Vue._common_utils.appendToken(
 									`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${resource._id}`
 								);
-								debugger;
 								return hDiv([
 									h(
 										"a",
