@@ -182,7 +182,13 @@ async function initRepo({ git_repo, uid }) {
 }
 
 async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
-	const { _id: task_id, cicd_id, task_action, task_output_type } = task;
+	const {
+		_id: task_id,
+		cicd_id,
+		task_action,
+		task_output_type,
+		task_name
+	} = task;
 	let task_log = [];
 	const emit = msg => {
 		const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
@@ -312,7 +318,11 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 			_n.asyncSafeMakeDir(git_repo_archive_path);
 
 			var zip = new adm_zip();
-			const archive_name = commit_hash;
+
+			const archive_name = `${commit_hash}_${task_name}_${dayjs().format(
+				"YYYYMMDD_HHmmss"
+			)}`;
+
 			xU._.each(TargetDirArray, ({ source, target }) => {
 				zip.addLocalFolder(path.resolve(git_repo_root, source), target);
 			});

@@ -155,7 +155,7 @@ export default async function () {
 				const { max, min } = this._checkboxGroup;
 				return (
 					(!!(max || min) && this.model.length >= max && !this.isChecked) ||
-					(this.model.length <= min && this.isChecked)
+					(this.model?.length <= min && this.isChecked)
 				);
 			},
 

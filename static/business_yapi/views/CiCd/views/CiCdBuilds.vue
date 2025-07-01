@@ -160,10 +160,11 @@ export default async function () {
 							prop: "resource",
 							label: "产出物",
 							width: 100,
-							cellRenderer({ cellData: resource }) {
+							cellRenderer({ cellData: resource, rowData }) {
 								const file_url = Vue._common_utils.appendToken(
 									`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${resource._id}`
 								);
+								debugger;
 								return hDiv([
 									h(
 										"a",
@@ -171,7 +172,10 @@ export default async function () {
 											class: "flex1 ellipsis flex middle",
 											attrs: {
 												href: file_url,
-												download: resource.name,
+												download: resource.name.replace(
+													`${rowData.commit_hash}_`,
+													""
+												),
 												target: "_blank"
 											}
 										},
@@ -180,19 +184,19 @@ export default async function () {
 								]);
 							}
 						},
-						{ prop: "task_ref", label: "触发分支", width: 150 },
-						{ prop: "commit_hash", label: "commit hash" },
+						{ prop: "task_ref", label: "触发分支" },
+						{ prop: "commit_hash", label: "commit hash", width: 200 },
 						{ prop: "message", label: "commit message" },
 						{
 							prop: "last_time",
-							label: "开始时间",
+							label: "提交时间",
 							width: 150,
 							cellRenderer({ cellData }) {
 								return _.$dateFormat(cellData);
 							}
 						},
 						defTable.colActions({
-							width: 410,
+							width: 100,
 							cellRenderer({ rowData }) {
 								return hBtnWithMore({
 									children: [

@@ -8844,14 +8844,14 @@ collaboration or history management.)
 					appendMappingInverted(mapping) {
 						for (
 							let i = mapping.maps.length - 1,
-								totalSize = this.maps.length + mapping.maps.length;
+								totalCount = this.maps.length + mapping.maps.length;
 							i >= 0;
 							i--
 						) {
 							let mirr = mapping.getMirror(i);
 							this.appendMap(
 								mapping.maps[i].invert(),
-								mirr != null && mirr > i ? totalSize - mirr - 1 : undefined
+								mirr != null && mirr > i ? totalCount - mirr - 1 : undefined
 							);
 						}
 					}
@@ -36745,7 +36745,7 @@ PERFORMANCE OF THIS SOFTWARE.
 								image.dataset.prefix = prefix;
 							}
 						})();
-						
+
 						image.src = imageUrl;
 						if (altText) {
 							image.alt = altText;

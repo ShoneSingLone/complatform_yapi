@@ -102,9 +102,10 @@ export default async function () {
 		display: flex;
 		flex-flow: column nowrap;
 		height: auto;
+		height: var(--xDialog-wrapper-height, auto);
+		width: var(--xDialog-wrapper-width, 600px);
 		max-height: calc(100vh - 200px);
 		min-width: unset;
-		width: var(--xDialog-wrapper-width, 600px);
 
 		&.fullscreen {
 			max-height: 100vh;
