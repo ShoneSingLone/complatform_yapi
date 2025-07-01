@@ -258,17 +258,20 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 		// emit(`安装依赖完成，开始运行脚本...`);
 		emit(`开始运行脚本...`);
 
-		await ExecCmdOnRepoRoot("git", ["checkout", ref_trigger_this_job]);
+		await ExecCmdOnRepoRoot("git", ["checkout", "-f", ref_trigger_this_job]);
 
 		emit(`切换到${ref_trigger_this_job}分支成功，开始拉取最新代码...`);
 
 		await ExecCmdOnRepoRoot("git", ["reset", "--hard", "HEAD"]);
+
+		await ExecCmdOnRepoRoot("git", ["clean", "-fd"]);
 
 		await ExecCmdOnRepoRoot("git", ["pull", AUTH_URL]);
 
 		emit(`拉取最新代码成功，开始切换到${commit_hash}提交...`);
 
 		await ExecCmdOnRepoRoot("git", ["reset", "--hard", commit_hash]);
+		
 		if (task_output_type === "ARCHIVE_FILE") {
 			/* TODO: 打包文件,目前以约定的方式 */
 			const getTargetDir = new Function("return " + task_action);
