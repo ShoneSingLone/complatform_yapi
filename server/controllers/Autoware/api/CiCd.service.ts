@@ -125,7 +125,7 @@ async function initRepo({ git_repo, uid }) {
 			xU.applog.info("[pullRepo] 执行命令: git pull");
 			await xU.executeCommand(
 				"git",
-				["pull", AUTH_URL],
+				["pull", "--force", AUTH_URL],
 				{ cwd: git_repo_root },
 				emit
 			);
@@ -266,12 +266,12 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 
 		await ExecCmdOnRepoRoot("git", ["clean", "-fd"]);
 
-		await ExecCmdOnRepoRoot("git", ["pull", AUTH_URL]);
+		await ExecCmdOnRepoRoot("git", ["pull", "--force", AUTH_URL]);
 
 		emit(`拉取最新代码成功，开始切换到${commit_hash}提交...`);
 
 		await ExecCmdOnRepoRoot("git", ["reset", "--hard", commit_hash]);
-		
+
 		if (task_output_type === "ARCHIVE_FILE") {
 			/* TODO: 打包文件,目前以约定的方式 */
 			const getTargetDir = new Function("return " + task_action);
