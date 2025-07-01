@@ -256,6 +256,8 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 
 		emit(`切换到${ref_trigger_this_job}分支成功，开始拉取最新代码...`);
 
+		await ExecCmdOnRepoRoot("git", ["reset", "--hard", "HEAD"]);
+
 		await ExecCmdOnRepoRoot("git", ["pull", AUTH_URL]);
 
 		emit(`拉取最新代码成功，开始切换到${commit_hash}提交...`);
