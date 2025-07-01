@@ -251,6 +251,7 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 			xU.executeCommand(command, args, { cwd: git_repo_root }, emit);
 
 		await ExecCmdOnRepoRoot("git", ["reset", "--hard", "HEAD"]);
+		await ExecCmdOnRepoRoot("git", ["clean", "-fd"]);
 
 		emit(`工作台清空完毕`);
 		// emit(`开始安装依赖...`);
@@ -266,7 +267,7 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 
 		await ExecCmdOnRepoRoot("git", ["clean", "-fd"]);
 
-		await ExecCmdOnRepoRoot("git", ["pull", "--force", AUTH_URL]);
+		await ExecCmdOnRepoRoot("git", ["fetch", AUTH_URL]);
 
 		emit(`拉取最新代码成功，开始切换到${commit_hash}提交...`);
 
