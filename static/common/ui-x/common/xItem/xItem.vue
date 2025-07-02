@@ -465,9 +465,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				const isRended = this.p_value === val;
 				// prop=>render=>emit
 				const isEmited = this.emitValueChange.val === val;
+
 				if (isRended && isEmited) {
 					return;
-				} else {
+				}
+
+				const next = () => {
 					this.emitValueChange.val = val;
 					/* 设置了configs.value，未设置model ；二者只能取其一*/
 					if (
@@ -482,6 +485,24 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					if (rule) {
 						this.debounceValidate();
 					}
+				};
+
+				if (_.isFunction(this.cptConfigs.beforeChange)) {
+					(async () => {
+						const isContinue = await this.cptConfigs.beforeChange.call(
+							this.cptConfigs,
+							{
+								val,
+								old_val: this.p_value,
+								xItem: this
+							}
+						);
+						if (isContinue) {
+							next();
+						}
+					})();
+				} else {
+					next();
 				}
 			},
 			debounceValidate() {

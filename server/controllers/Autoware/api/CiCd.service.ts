@@ -192,7 +192,11 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 	let task_log = [];
 	const emit = msg => {
 		const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
-		task_log.push(`- ***${time}*** ${msg}`);
+		task_log.push(
+			`- ***${time}***  ${
+				xU._.isObject(msg) ? JSON.stringify(msg, null, 2) : String(msg)
+			}`
+		);
 		const currentSocket = global.APP.socket.yapi.socket;
 		if (currentSocket) {
 			/* to all online users */

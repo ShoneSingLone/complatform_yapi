@@ -204,7 +204,7 @@ module.exports = {
 						},
 						task_ref: {
 							required: true,
-							type: "array"
+							type: "string"
 						},
 						task_action: {
 							required: true,
@@ -232,7 +232,7 @@ module.exports = {
 							task_name,
 							task_action,
 							task_token,
-							task_ref,
+							task_triggers,
 							task_output_type,
 							task_remark,
 							_id
@@ -264,7 +264,7 @@ module.exports = {
 							cicd_id,
 							task_name,
 							task_token,
-							task_ref,
+							task_triggers,
 							task_action,
 							task_output_type,
 							task_remark
@@ -308,11 +308,6 @@ module.exports = {
 							message
 						} = ctx.payload;
 
-						ref_trigger_this_job = ref_trigger_this_job.replace(
-							"refs/heads/",
-							""
-						);
-
 						message = message || xU._.first(commits)?.message || "";
 
 						if (!task_id) {
@@ -327,24 +322,22 @@ module.exports = {
 							return (ctx.body = xU.$response(null, 400, "任务不存在"));
 						}
 
-						/* 如果不属于触发条件的branch则退出 */
-						if (
-							xU._.every(task.task_ref, ref => ref !== ref_trigger_this_job)
-						) {
-							return (ctx.body = xU.$response(null, 400, "当前推送未触发作业"));
-						}
-
-						if (task.task_token === task_token) {
-							runTask({
-								task,
-								message,
-								commit_hash,
-								ref_trigger_this_job,
-								payload: ctx.payload
-							});
-							ctx.body = xU.$response("任务开始执行");
+						if (xU._.some(task.task_triggers, trigger => message.includes(trigger))) {
+							/* 在commit里面自定义的特殊字段，只要推送的commit信息有，则通过 */
+							if (task.task_token === task_token) {
+								runTask({
+									task,
+									message,
+									commit_hash,
+									ref_trigger_this_job,
+									payload: ctx.payload
+								});
+								ctx.body = xU.$response("任务开始执行");
+							} else {
+								throw new Error("token 过期");
+							}
 						} else {
-							throw new Error("token 过期");
+							return (ctx.body = xU.$response(null, 400, "当前推送未触发作业"));
 						}
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);

@@ -155,17 +155,57 @@ export default async function () {
 					},
 					columns: [
 						{ prop: "_id", label: "作业ID", width: 100 },
+						{
+							prop: "last_time",
+							label: "提交时间",
+							width: 150,
+							cellRenderer: ({ cellData }) => _.$dateFormat(cellData)
+						},
 						{ prop: "task_status", label: "作业状态", width: 100 },
+						{ prop: "task_ref", label: "触发分支", width: 200 },
+						{
+							prop: "message",
+							label: "commit message",
+							width: 200,
+							cellRenderer({ cellData }) {
+								return h({
+									template: `<div v-xtips="manual" class="ml4 ellipsis">${cellData}</div>`,
+									setup(vm) {
+										return {
+											manual: {
+												content: () =>
+													h({
+														template: "<xMd :md='cellData' />",
+														setup() {
+															return {
+																cellData
+															};
+														}
+													}),
+												trigger: "hover",
+												placement: "right-end"
+											}
+										};
+									},
+									methods: {}
+								});
+							}
+						},
 						{
 							prop: "resource",
 							label: "产出物",
-							width: 100,
+							width: 300,
 							cellRenderer({ cellData: resource, rowData }) {
 								if (!resource?.name) {
 									return resource;
 								}
 								const file_url = Vue._common_utils.appendToken(
 									`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${resource._id}`
+								);
+
+								const ARCHIVE_FILE = resource.name.replace(
+									`${rowData.commit_hash}_`,
+									""
 								);
 								return hDiv([
 									h(
@@ -174,27 +214,17 @@ export default async function () {
 											class: "flex1 ellipsis flex middle",
 											attrs: {
 												href: file_url,
-												download: resource.name.replace(
-													`${rowData.commit_hash}_`,
-													""
-												),
+												download: ARCHIVE_FILE,
 												target: "_blank"
 											}
 										},
-										[hxIcon({ icon: "download", class: "mr" }), "📦"]
+										[
+											hxIcon({ icon: "download", class: "mr" }),
+											"📦",
+											ARCHIVE_FILE
+										]
 									)
 								]);
-							}
-						},
-						{ prop: "task_ref", label: "触发分支" },
-						{ prop: "commit_hash", label: "commit hash", width: 200 },
-						{ prop: "message", label: "commit message" },
-						{
-							prop: "last_time",
-							label: "提交时间",
-							width: 150,
-							cellRenderer({ cellData }) {
-								return _.$dateFormat(cellData);
 							}
 						},
 						defTable.colActions({

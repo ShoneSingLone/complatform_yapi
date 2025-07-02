@@ -38,7 +38,7 @@ class ModelCiCdTaskQueue extends ModelBase {
 		};
 	}
 	find(condition) {
-		return this.model.find(condition).exec();
+		return this.model.find(condition).sort({ last_time: -1 }).exec();
 	}
 
 	remove({ _id }) {
