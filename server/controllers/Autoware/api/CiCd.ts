@@ -308,7 +308,7 @@ module.exports = {
 							message
 						} = ctx.payload;
 
-						message = message || xU._.first(commits)?.message || "";
+						message = message || xU._.last(commits)?.message || "";
 
 						if (!task_id) {
 							return (ctx.body = xU.$response(null, 400, "任务 ID不能为空"));
