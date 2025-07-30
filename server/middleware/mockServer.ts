@@ -481,9 +481,10 @@ const middlewareMockServer = () => async (ctx, next) => {
 		res = currentRequestInterfaceDataInYapiDB.res_body;
 		try {
 			if (currentRequestInterfaceDataInYapiDB.res_body_type === "json") {
-				if (
-					currentRequestInterfaceDataInYapiDB.res_body_is_json_schema === true
-				) {
+				const isUseJsonSchema =
+					currentRequestInterfaceDataInYapiDB.res_body_is_json_schema === true;
+
+				if (isUseJsonSchema) {
 					//json-schema
 					const schema = xU.json_parse(
 						currentRequestInterfaceDataInYapiDB.res_body
@@ -585,36 +586,38 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 			ctx.status = context.httpCode;
 			let responseByMock = {};
-			let msg = "ok";
-			let A_TIPS = `由yAPI MockJson 模拟数据`;
-			try {
-				/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
-				/* isUseBackup */
+			/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
+			/* isUseBackup */
+			(() => {
 				if (currentRequestInterfaceDataInYapiDB.res_body_type === "backup") {
-					const getJsonFn = new Function(
-						`return ${currentRequestInterfaceDataInYapiDB.resBackupJson}`
-					);
-					responseByMock = getJsonFn.call(null);
-					A_TIPS = `使用备份的JSON数据`;
+					try {
+						const getJsonFn = new Function(
+							`return ${currentRequestInterfaceDataInYapiDB.resBackupJson}`
+						);
+						responseByMock = getJsonFn.call(null);
+					} catch (error) {
+						/* 直接使用备份数据，不需要添加额外的 */
+						ctx.type = "html";
+						responseByMock = currentRequestInterfaceDataInYapiDB.resBackupJson;
+						return;
+					}
 				} else if (xU._.isPlainObject(context.mockJson)) {
+					/* TODO:这是干嘛用的？ */
 					responseByMock = context.mockJson;
 				}
-			} catch (error) {
-				msg = error.message;
-			}
 
-			/* 使用备份的JSON数据 */
-			responseByMock.A_NOTICE = {
-				A_TIPS,
-				msg
-			};
-			ctx.body = responseByMock;
-			return;
+				/* 使用备份的JSON数据 */
+				responseByMock.A_NOTICE = {
+					A_TIPS: `使用备份的JSON数据`
+				};
+			})();
+
+			return (ctx.body = responseByMock);
 		} catch (e) {
 			xU.applog.error(e);
 			return (ctx.body = {
 				errcode: 400,
-				message: "解析出错，请检查。Error: " + e.message,
+				message: "X-API server error: " + e.message,
 				data: null
 			});
 		}
