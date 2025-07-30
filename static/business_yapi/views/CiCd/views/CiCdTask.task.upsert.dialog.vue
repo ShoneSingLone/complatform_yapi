@@ -4,7 +4,7 @@
 			<xForm ref="form" col="1">
 				<xItem :configs="form.task_name" />
 				<xItem :configs="form.task_output_type" />
-				<xItem :configs="form.task_triggers" />
+				<xItem :configs="form.task_ref" />
 				<xItem :configs="form.task_remark" />
 				<xItem
 					:configs="form.task_action"
@@ -81,16 +81,40 @@ export default async function ({
 						label: i18n("任务名称"),
 						rules: [_rules.required(), _rules.lessThan(50)]
 					},
-					task_triggers: {
+					task_ref: {
 						value: "",
-						label: i18n("任务触发关键字"),
+						label: i18n("任务触发分支"),
 						itemType: "xItemSelect",
 						multiple: true,
-						attrs: { allowCreate: true },
-						tips: "在commit 内容里面添加关键字，如果匹配，会执行此任务",
 						msg: "",
-						options: [],
-						rules: [_rules.required()]
+						options: remote_branches_options,
+						rules: [_rules.required()],
+						itemSlots: {
+							afterController() {
+								const itemVm = this;
+
+								return hxBtn({
+									class: "ml4",
+									icon: "refresh",
+									async onClick() {
+										const { data } = await _api.yapi.apiCicdGitBranchInfo({
+											git_repo_id,
+											is_pull: true
+										});
+										git_repo = data.git_repo;
+										remote_branches_options = _.map(
+											data.branch_info.remoteBranches,
+											i => ({
+												label: i,
+												value: i
+											})
+										);
+
+										itemVm.configs.options = remote_branches_options;
+									}
+								});
+							}
+						}
 					},
 					task_output_type: {
 						value: "ARCHIVE_FILE",
@@ -139,7 +163,7 @@ export default async function ({
 			onMounted(async () => {
 				await _.$ensure(() => vm.APP.WS);
 				vm.APP.WS.on(git_cmd, ({ msg }) => {
-					vm.form.task_triggers.msg = msg;
+					vm.form.task_ref.msg = msg;
 				});
 			});
 

@@ -2,6 +2,7 @@
 	<div>
 		<xMd :md="md" />
 		<xForm col="1" style="--xItem-label-position: flex-start">
+			<xItem :configs="form.xItemtips1" />
 			<xItem :configs="form.xItemRadioGroup" />
 			<xItem :configs="form.xItemSelect" />
 			<xItem :configs="form.xItemAny" />
@@ -29,9 +30,22 @@ export default async function () {
 					value: "xItemSelect"
 				}
 			];
+
 			return {
 				rules: [],
 				form: defItems({
+					xItemtips1: {
+						value: "xItemInput",
+						label: "xItemSelect",
+						itemType: "xItemSelect",
+						options: options,
+						readonly: true,
+						disabled: true,
+						tips: () => h({ template: `<h1>readonly优先级高于disabled</h1>` }),
+						onEmitValue({ val }) {
+							vm.form.xItemAny.itemType = val;
+						}
+					},
 					xItemAny: {
 						value: "",
 						label: "xItemAny",

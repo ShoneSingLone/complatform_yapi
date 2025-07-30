@@ -42,7 +42,7 @@ export default async function () {
 									configs: {
 										itemType: "xItemSelect",
 										options: vm.configs.selectOptions ?? [],
-										value: vm.configs.selectValue ?? '',
+										value: vm.configs.selectValue ?? "",
 										onEmitValue({ val }) {
 											vm.configs.selectValue = val;
 											vm.$emit("configschange", vm.configs);

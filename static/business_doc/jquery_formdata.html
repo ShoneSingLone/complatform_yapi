@@ -1,255 +1,264 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>jQuery FormData 示例</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link
-            href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
-            rel="stylesheet">
-        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-        <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3B82F6',
-                        secondary: '#10B981',
-                        danger: '#EF4444',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-        <style type="text/tailwindcss">
-        @layer utilities {
-            .content-auto {
-                content-visibility: auto;
-            }
-            .form-input-focus {
-                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary transition duration-200;
-            }
-            .btn {
-                @apply px-4 py-2 rounded-md font-medium transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2;
-            }
-            .btn-primary {
-                @apply bg-primary text-white hover:bg-primary/90 focus:ring-primary/50;
-            }
-            .btn-secondary {
-                @apply bg-secondary text-white hover:bg-secondary/90 focus:ring-secondary/50;
-            }
-            .btn-danger {
-                @apply bg-danger text-white hover:bg-danger/90 focus:ring-danger/50;
-            }
-        }
-    </style>
-    </head>
-    <body class="bg-gray-50 min-h-screen">
-        <div class="container mx-auto px-4 py-8 max-w-3xl">
-            <div
-                class="bg-white rounded-xl shadow-lg p-6 mb-8 transform transition duration-300 hover:shadow-xl">
-                <h1
-                    class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                    <i class="fa fa-paper-plane text-primary mr-3"></i>
-                    jQuery FormData 示例
-                </h1>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>jQuery FormData 示例</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link
+			href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+			rel="stylesheet" />
+		<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+		<script>
+			tailwind.config = {
+				theme: {
+					extend: {
+						colors: {
+							primary: "#3B82F6",
+							secondary: "#10B981",
+							danger: "#EF4444"
+						},
+						fontFamily: {
+							sans: ["Inter", "system-ui", "sans-serif"]
+						}
+					}
+				}
+			};
+		</script>
+		<style type="text/tailwindcss">
+			@layer utilities {
+				.content-auto {
+					content-visibility: auto;
+				}
+				.form-input-focus {
+					@apply focus:ring-2 focus:ring-primary/50 focus:border-primary transition duration-200;
+				}
+				.btn {
+					@apply px-4 py-2 rounded-md font-medium transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2;
+				}
+				.btn-primary {
+					@apply bg-primary text-white hover:bg-primary/90 focus:ring-primary/50;
+				}
+				.btn-secondary {
+					@apply bg-secondary text-white hover:bg-secondary/90 focus:ring-secondary/50;
+				}
+				.btn-danger {
+					@apply bg-danger text-white hover:bg-danger/90 focus:ring-danger/50;
+				}
+			}
+		</style>
+	</head>
+	<body class="bg-gray-50 min-h-screen">
+		<div class="container mx-auto px-4 py-8 max-w-3xl">
+			<div
+				class="bg-white rounded-xl shadow-lg p-6 mb-8 transform transition duration-300 hover:shadow-xl">
+				<h1 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+					<i class="fa fa-paper-plane text-primary mr-3"></i>
+					jQuery FormData 示例
+				</h1>
 
-                <form id="myForm" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="name"
-                                class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
-                            <input type="text" id="name" name="name"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md form-input-focus"
-                                placeholder="请输入您的姓名">
-                        </div>
-                        <div>
-                            <label for="email"
-                                class="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
-                            <input type="email" id="email" name="email"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md form-input-focus"
-                                placeholder="请输入您的邮箱">
-                        </div>
-                    </div>
+				<form id="myForm" class="space-y-6">
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<label for="name" class="block text-sm font-medium text-gray-700 mb-1"
+								>姓名</label
+							>
+							<input
+								type="text"
+								id="name"
+								name="name"
+								class="w-full px-4 py-2 border border-gray-300 rounded-md form-input-focus"
+								placeholder="请输入您的姓名" />
+						</div>
+						<div>
+							<label for="email" class="block text-sm font-medium text-gray-700 mb-1"
+								>邮箱</label
+							>
+							<input
+								type="email"
+								id="email"
+								name="email"
+								class="w-full px-4 py-2 border border-gray-300 rounded-md form-input-focus"
+								placeholder="请输入您的邮箱" />
+						</div>
+					</div>
 
-                    <div>
-                        <label for="message"
-                            class="block text-sm font-medium text-gray-700 mb-1">留言</label>
-                        <textarea id="message" name="message" rows="4"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md form-input-focus"
-                            placeholder="请输入您的留言内容"></textarea>
-                    </div>
+					<div>
+						<label for="message" class="block text-sm font-medium text-gray-700 mb-1"
+							>留言</label
+						>
+						<textarea
+							id="message"
+							name="message"
+							rows="4"
+							class="w-full px-4 py-2 border border-gray-300 rounded-md form-input-focus"
+							placeholder="请输入您的留言内容"></textarea>
+					</div>
 
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-gray-700 mb-2">上传文件</label>
-                        <div
-                            class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-primary transition duration-200">
-                            <div class="space-y-1 text-center">
-                                <i
-                                    class="fa fa-cloud-upload text-gray-400 text-3xl mb-2"></i>
-                                <div class="flex text-sm text-gray-600">
-                                    <label for="file"
-                                        class="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary/80">
-                                        <span>选择文件</span>
-                                        <input id="file" name="file" type="file"
-                                            class="sr-only">
-                                    </label>
-                                    <p class="pl-1">或拖放文件</p>
-                                </div>
-                                <p class="text-xs text-gray-500"
-                                    id="file-name">支持 JPG, PNG, PDF 等格式</p>
-                            </div>
-                        </div>
-                    </div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">上传文件</label>
+						<div
+							class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-primary transition duration-200">
+							<div class="space-y-1 text-center">
+								<i class="fa fa-cloud-upload text-gray-400 text-3xl mb-2"></i>
+								<div class="flex text-sm text-gray-600">
+									<label
+										for="file"
+										class="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary/80">
+										<span>选择文件</span>
+										<input id="file" name="file" type="file" class="sr-only" />
+									</label>
+									<p class="pl-1">或拖放文件</p>
+								</div>
+								<p class="text-xs text-gray-500" id="file-name">
+									支持 JPG, PNG, PDF 等格式
+								</p>
+							</div>
+						</div>
+					</div>
 
-                    <div class="flex items-center justify-between">
-                        <button type="button" id="resetBtn"
-                            class="btn btn-danger">
-                            <i class="fa fa-refresh mr-1"></i> 重置
-                        </button>
-                        <button type="button" id="submitBtn"
-                            class="btn btn-primary">
-                            <i class="fa fa-send mr-1"></i> 提交表单
-                        </button>
-                    </div>
-                </form>
-            </div>
+					<div class="flex items-center justify-between">
+						<button type="button" id="resetBtn" class="btn btn-danger">
+							<i class="fa fa-refresh mr-1"></i> 重置
+						</button>
+						<button type="button" id="submitBtn" class="btn btn-primary">
+							<i class="fa fa-send mr-1"></i> 提交表单
+						</button>
+					</div>
+				</form>
+			</div>
 
-            <div id="responseArea"
-                class="hidden bg-white rounded-xl shadow-lg p-6 transform transition-all duration-500 opacity-0">
-                <h2
-                    class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                    <i class="fa fa-info-circle text-primary mr-2"></i>
-                    服务器响应
-                </h2>
+			<div
+				id="responseArea"
+				class="hidden bg-white rounded-xl shadow-lg p-6 transform transition-all duration-500 opacity-0">
+				<h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+					<i class="fa fa-info-circle text-primary mr-2"></i>
+					服务器响应
+				</h2>
 
-                <div id="progressContainer" class="mb-4">
-                    <div class="flex items-center justify-between mb-1">
-                        <span
-                            class="text-sm font-medium text-gray-700">上传进度</span>
-                        <span id="progressText"
-                            class="text-sm font-medium text-gray-700">0%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div id="progressBar"
-                            class="bg-primary h-2.5 rounded-full"
-                            style="width: 0%"></div>
-                    </div>
-                </div>
+				<div id="progressContainer" class="mb-4">
+					<div class="flex items-center justify-between mb-1">
+						<span class="text-sm font-medium text-gray-700">上传进度</span>
+						<span id="progressText" class="text-sm font-medium text-gray-700">0%</span>
+					</div>
+					<div class="w-full bg-gray-200 rounded-full h-2.5">
+						<div
+							id="progressBar"
+							class="bg-primary h-2.5 rounded-full"
+							style="width: 0%"></div>
+					</div>
+				</div>
 
-                <div id="responseContent"
-                    class="bg-gray-50 p-4 rounded-lg overflow-auto max-h-64">
-                    <pre id="responseText"
-                        class="text-gray-700 whitespace-pre-wrap"></pre>
-                </div>
-            </div>
-        </div>
+				<div id="responseContent" class="bg-gray-50 p-4 rounded-lg overflow-auto max-h-64">
+					<pre id="responseText" class="text-gray-700 whitespace-pre-wrap"></pre>
+				</div>
+			</div>
+		</div>
 
-        <script>
-        $(document).ready(function() {
-            // 文件选择事件
-            $('#file').on('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    $('#file-name').text(file.name);
-                } else {
-                    $('#file-name').text('支持 JPG, PNG, PDF 等格式');
-                }
-            });
-            
-            // 重置按钮事件
-            $('#resetBtn').on('click', function() {
-                $('#myForm')[0].reset();
-                $('#file-name').text('支持 JPG, PNG, PDF 等格式');
-                hideResponseArea();
-            });
-            
-            // 提交按钮事件
-            $('#submitBtn').on('click', function() {
-                submitFormData();
-            });
-            
-            // 提交表单数据
-            function submitFormData() {
-                // 创建 FormData 对象
-                const formData = new FormData();
-                
-                // 添加表单字段
-                formData.append('name', $('#name').val());
-                formData.append('email', $('#email').val());
-                formData.append('message', $('#message').val());
-                
-                // 添加文件
-                const fileInput = $('#file')[0];
-                if (fileInput.files.length > 0) {
-                    formData.append('file', fileInput.files[0]);
-                }
-                
-                // 显示响应区域
-                showResponseArea();
-                $('#responseText').text('正在提交数据...');
-                
-                // 使用 jQuery 发送 FormData
-                $.ajax({
-                    url: 'https://httpbin.org/post', // 测试API，会返回提交的数据
-                    type: 'POST',
-                    data: formData,
-                    contentType: false, // 必须
-                    processData: false, // 必须
-                    xhr: function() {
-                        const xhr = new window.XMLHttpRequest();
-                        // 监听上传进度
-                        xhr.upload.addEventListener('progress', function(e) {
-                            if (e.lengthComputable) {
-                                const percentComplete = (e.loaded / e.total) * 100;
-                                updateProgress(percentComplete);
-                            }
-                        }, false);
-                        return xhr;
-                    },
-                    success: function(response) {
-                        updateProgress(100);
-                        $('#responseText').text(JSON.stringify(response, null, 2));
-                    },
-                    error: function(error) {
-                        updateProgress(100);
-                        $('#responseText').text('错误: ' + JSON.stringify(error, null, 2));
-                    }
-                });
-            }
-            
-            // 更新进度条
-            function updateProgress(percent) {
-                $('#progressBar').css('width', percent + '%');
-                $('#progressText').text(percent + '%');
-                
-                if (percent === 100) {
-                    setTimeout(() => {
-                        $('#progressContainer').fadeOut(500);
-                    }, 1000);
-                }
-            }
-            
-            // 显示响应区域
-            function showResponseArea() {
-                $('#responseArea').removeClass('hidden').animate({ opacity: 1 }, 500);
-                $('#progressContainer').show();
-                $('#progressBar').css('width', '0%');
-                $('#progressText').text('0%');
-            }
-            
-            // 隐藏响应区域
-            function hideResponseArea() {
-                $('#responseArea').animate({ opacity: 0 }, 300, function() {
-                    $(this).addClass('hidden');
-                });
-            }
-        });
-    </script>
-    </body>
+		<script>
+			$(document).ready(function () {
+				// 文件选择事件
+				$("#file").on("change", function () {
+					const file = this.files[0];
+					if (file) {
+						$("#file-name").text(file.name);
+					} else {
+						$("#file-name").text("支持 JPG, PNG, PDF 等格式");
+					}
+				});
+
+				// 重置按钮事件
+				$("#resetBtn").on("click", function () {
+					$("#myForm")[0].reset();
+					$("#file-name").text("支持 JPG, PNG, PDF 等格式");
+					hideResponseArea();
+				});
+
+				// 提交按钮事件
+				$("#submitBtn").on("click", function () {
+					submitFormData();
+				});
+
+				// 提交表单数据
+				function submitFormData() {
+					// 创建 FormData 对象
+					const formData = new FormData();
+
+					// 添加表单字段
+					formData.append("name", $("#name").val());
+					formData.append("email", $("#email").val());
+					formData.append("message", $("#message").val());
+
+					// 添加文件
+					const fileInput = $("#file")[0];
+					if (fileInput.files.length > 0) {
+						formData.append("file", fileInput.files[0]);
+					}
+
+					// 显示响应区域
+					showResponseArea();
+					$("#responseText").text("正在提交数据...");
+
+					// 使用 jQuery 发送 FormData
+					$.ajax({
+						url: "https://httpbin.org/post", // 测试API，会返回提交的数据
+						type: "POST",
+						data: formData,
+						contentType: false, // 必须
+						processData: false, // 必须
+						xhr: function () {
+							const xhr = new window.XMLHttpRequest();
+							// 监听上传进度
+							xhr.upload.addEventListener(
+								"progress",
+								function (e) {
+									if (e.lengthComputable) {
+										const percentComplete = (e.loaded / e.total) * 100;
+										updateProgress(percentComplete);
+									}
+								},
+								false
+							);
+							return xhr;
+						},
+						success: function (response) {
+							updateProgress(100);
+							$("#responseText").text(JSON.stringify(response, null, 2));
+						},
+						error: function (error) {
+							updateProgress(100);
+							$("#responseText").text("错误: " + JSON.stringify(error, null, 2));
+						}
+					});
+				}
+
+				// 更新进度条
+				function updateProgress(percent) {
+					$("#progressBar").css("width", percent + "%");
+					$("#progressText").text(percent + "%");
+
+					if (percent === 100) {
+						setTimeout(() => {
+							$("#progressContainer").fadeOut(500);
+						}, 1000);
+					}
+				}
+
+				// 显示响应区域
+				function showResponseArea() {
+					$("#responseArea").removeClass("hidden").animate({ opacity: 1 }, 500);
+					$("#progressContainer").show();
+					$("#progressBar").css("width", "0%");
+					$("#progressText").text("0%");
+				}
+
+				// 隐藏响应区域
+				function hideResponseArea() {
+					$("#responseArea").animate({ opacity: 0 }, 300, function () {
+						$(this).addClass("hidden");
+					});
+				}
+			});
+		</script>
+	</body>
 </html>

@@ -4,6 +4,20 @@
 	if (IS_DEV) {
 		console.log("common.js");
 	}
+
+	/**
+	 * 验证参数
+	 * @param "fn" type
+	 * @param {Object} target
+	 * @param {string} name
+	 */
+	_.$required = function (type, target, name) {
+		if (type === "fn") {
+			if (!_.isFunction(_.$val(target, name))) {
+				throw new Error(`参数 ${name} 必须是函数`);
+			}
+		}
+	};
 	/**
 	 * base64编码 原生不支持字符，需要用$.base64 插件
 	 * */
@@ -1049,26 +1063,30 @@
 	};
 
 	_.$scrollIntoView = function (container, selected) {
-		/* TODO:自定义偏移量 */
-		/* scrollIntoView api */
-		if (!selected) {
-			container.scrollTop = 0;
-			return;
-		}
-		const offsetParents = [];
-		let pointer = selected.offsetParent;
-		while (pointer && container !== pointer && container.contains(pointer)) {
-			offsetParents.push(pointer);
-			pointer = pointer.offsetParent;
-		}
-		const top =
-			selected.offsetTop + offsetParents.reduce((prev, curr) => prev + curr.offsetTop, 0);
+		try {
+			/* TODO:自定义偏移量 */
+			/* scrollIntoView api */
+			if (!selected) {
+				container.scrollTop = 0;
+				return;
+			}
+			const offsetParents = [];
+			let pointer = selected.offsetParent;
+			while (pointer && container !== pointer && container.contains(pointer)) {
+				offsetParents.push(pointer);
+				pointer = pointer.offsetParent;
+			}
+			const top =
+				selected.offsetTop + offsetParents.reduce((prev, curr) => prev + curr.offsetTop, 0);
 
-		// 滑动到容器顶部
-		container.scrollTo({
-			top: top,
-			behavior: "smooth"
-		});
+			// 滑动到容器顶部
+			container.scrollTo({
+				top: top,
+				behavior: "smooth"
+			});
+		} catch (e) {
+			console.log("scrollIntoView", e);
+		}
 	};
 
 	/**
@@ -1243,7 +1261,12 @@
 	 */
 	/* @typescriptDeclare (name:string)=>string */
 	_.$randomName = (name, length = 16) => {
-		return name + parseInt((new Date().getTime() % 61439) + 4096).toString(length);
+		return (
+			name +
+			parseInt((new Date().getTime() % 61439) + 4096)
+				.toString(length)
+				.substr(0, length)
+		);
 	};
 
 	/**
@@ -1404,6 +1427,11 @@
 		if (isLoading) {
 			/* 已经有loading */
 			if (!_.$loading.count) {
+				try {
+					throw new Error("just x-loading info");
+				} catch (error) {
+					console.warn(error);
+				}
 				$(selector).addClass("x-loading");
 			}
 			_.$loading.count++;
@@ -1431,6 +1459,7 @@
 				};
 			}
 			const isDelete = !!options.isDelete;
+			const isHideCancel = options.isHideCancel || false;
 			let title = options.title || i18n("message");
 			let content = options.content || "";
 			if (isDelete) {
@@ -1455,7 +1484,8 @@
 				resolve,
 				reject,
 				content,
-				isDelete
+				isDelete,
+				isHideCancel
 			});
 
 			/* 在弹窗中，可以获取到modalVm，调用forceUpdate，强制刷新弹窗内容 */
@@ -1816,7 +1846,7 @@
 		 * @param styleSourceCode
 		 */
 		_.$preprocessCssByless = async function (styleSourceCode) {
-			const { render } = await _.$appendScript("/common/libs/min/less.js", "less");
+			const { render } = await _.$appendScript("/common/libs/less.js", "less");
 			let cssContent = await new Promise(resolve => {
 				render(_.$resolveCssAssetsPath(styleSourceCode), {}, (error, cssContent) => {
 					if (error) {
@@ -1898,7 +1928,12 @@
 				return url;
 			}
 			if (_.isArray(url)) {
-				return Promise.all(_.map(url, _url => _.$importVue(_url)));
+				return Promise.all(
+					_.map(url, (_url, index) => {
+						const subPayload = _.$val(payload, String(index));
+						return _.$importVue(_url, subPayload);
+					})
+				);
 			}
 			const resolvedURL = _.$resolvePath(url);
 			_.$importVue.urlSets.add(url);
@@ -2157,7 +2192,12 @@
 	_.$getVmById = id => {
 		let vm = {};
 		try {
-			const targetDom = document.querySelector(`#${id}`);
+			let targetDom;
+			if (_.isString(id)) {
+				targetDom = document.querySelector(`#${id}`);
+			} else {
+				targetDom = id;
+			}
 			const { formItemId } = targetDom.dataset || {};
 			vm = _.$val(Vue, `_X_ITEM_VM_S.${formItemId || "________No"}`) || {};
 		} catch (error) {
@@ -2265,6 +2305,25 @@
 				}
 			});
 		};
+		/**
+		 * 如果有下拉项，要等到下拉有数据再回填
+		 * 适用于xItem不使用v-mode，form的configs带有value form.xxx.value, {xxx:"value"}
+		 * @param {any} xItemFormConfigs xItem 配置信息，config带有value属性
+		 * @param {any} values
+		 */
+		_.$asyncSetFormValues = async function (xItemFormConfigs, values) {
+			return Promise.all(
+				_.map(values, async (value, prop) => {
+					/* 允许null，代表使用configs.value */
+					if (value !== undefined && _.isPlainObject(xItemFormConfigs[prop])) {
+						if (_.includes(["xItemSelect"], xItemFormConfigs[prop]?.itemType)) {
+							await _.$ensure(() => xItemFormConfigs[prop]?.options?.length);
+						}
+						xItemFormConfigs[prop].value = value;
+					}
+				})
+			);
+		};
 		_.$setFormValuesDelay = function (xItemFormConfigs, values, delay = 100) {
 			setTimeout(() => {
 				_.$setFormValues(xItemFormConfigs, values);
@@ -2312,14 +2371,20 @@
 		 * @returns
 		 */
 		_.$getSelectedItemFrom = function (xItemConfigs) {
-			const { options, value } = xItemConfigs;
-			if (_.$isArrayFill(options) && _.$isInput(value)) {
-				const item = _.find(options, { value });
-				if (item) {
-					return item;
+			let defaultValue = { value: "", label: "", labelKey: "" };
+			try {
+				const { options, value } = xItemConfigs;
+				if (_.$isArrayFill(options) && _.$isInput(value)) {
+					const item = _.find(options, { value });
+					if (item) {
+						defaultValue = item;
+					}
 				}
+			} catch (error) {
+				console.log("_.$getSelectedItemFrom", error);
+			} finally {
+				return defaultValue;
 			}
-			return { value: "", label: "", labelKey: "" };
 		};
 
 		/**

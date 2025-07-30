@@ -2437,7 +2437,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
    exports.TableV2Placeholder = placeholderSign;
    exports.TableV2SortOrder = SortOrder;
    exports.tableV2Props = tableV2Props;
-  
+
    */
 	let curr = {
 		id: 0,
@@ -2504,6 +2504,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 						const item = vm.$props.columns[index];
 						const width = item.width + grow;
 						if (width) {
+							item.__unset_width = false;
 							item.width = width;
 							// vm.$props.columns.splice(index, 1, item);
 							vm.$props.columns[index] = item;
@@ -2731,6 +2732,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 
 		display: flex;
 		font-size: 13px;
+		justify-content: var(--xTableVir-header-align, center);
 		align-items: center;
 		padding: 0 8px;
 		height: 100%;

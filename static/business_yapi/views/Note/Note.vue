@@ -219,6 +219,11 @@ export default async function () {
 			}
 		},
 		watch: {
+			cptCurrentWiki(wiki) {
+				if (wiki.title) {
+					document.title = wiki.title;
+				}
+			},
 			"$route.query.wiki"() {
 				this.updateCurrentWiki();
 			}
@@ -233,6 +238,7 @@ export default async function () {
 	width: 100%;
 	display: flex;
 	flex-flow: row nowrap;
+
 	&.is-show-header {
 		flex-flow: column nowrap;
 	}

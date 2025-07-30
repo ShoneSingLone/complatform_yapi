@@ -9,6 +9,7 @@
 			<div class="flex mb10 middle" style="height: 48px">
 				<xRender :render="vDomTitle" class="flex1" />
 				<xGap l />
+				<xBtn :configs="btnHistory" />
 				<xBtn :configs="btnSave" />
 				<xBtn :configs="btnCancel" />
 			</div>
@@ -48,6 +49,24 @@ export default async function () {
 			}
 		},
 		computed: {
+			btnHistory() {
+				const vm = this;
+				return {
+					label: "历史记录",
+					isHide() {
+						return vm.inject_note.isShowEditor;
+					},
+					async onClick() {
+						return _.$openDrawer({
+							title: "历史记录",
+							url: "@/views/Note/Note.history.dialog.vue",
+							size: "50vw",
+							wiki: vm.inject_note.cptCurrentWiki,
+							parent: vm
+						});
+					}
+				};
+			},
 			btnSave() {
 				const vm = this;
 				return {

@@ -187,13 +187,13 @@ export default async function () {
 				props: ["value", "configs"],
 				computed: {
 					mixin_attrs() {
-						return {
-							...this.configs,
-							...this.$attrs
-						};
+						return _.merge({}, this.configs, this.$attrs);
 					},
 					mixin_value: {
 						get() {
+							if (_.isUndefined(this.value)) {
+								debugger;
+							}
 							return this.value;
 						},
 						set(val) {

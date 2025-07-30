@@ -54,7 +54,7 @@ module.exports = {
 
 	operation: ["操作", "Operation"],
 
-	reset_action: ["重置", "Reset"],
+	reset: ["重置", "Reset"],
 
 	yes_answer: ["是", "yes"],
 
@@ -72,7 +72,7 @@ module.exports = {
 
 	input_correct_phone: ["请输入正确的手机号码", "Please enter the correct phone number"],
 
-	required_item: ["必填项", "Required "],
+	required: ["必填项", "Required "],
 
 	input_email_addr: ["请输入Email", "Please enter your email address"],
 
