@@ -24,6 +24,7 @@
 						<div class="flex middle mr8">
 							<xItem :configs="formQuery.group" />
 							<xItem :configs="formQuery.name" />
+							<xGap r />
 							<xBtn :configs="btnQuery" />
 						</div>
 					</template>

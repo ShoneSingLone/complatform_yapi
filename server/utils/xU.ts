@@ -807,9 +807,9 @@ function validateParams(schema2, params) {
 	};
 }
 
-async function save_log({ content, type, uid, username, typeid, data }) {
+async function save_log(params) {
 	try {
-		await orm.log.save({ content, type, uid, username, typeid, data });
+		await orm.log.save(params);
 	} catch (e) {
 		xU.applog.error(e); // eslint-disable-line
 	}

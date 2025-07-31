@@ -1,5 +1,15 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
+	await _.$importVue(
+		"/common/ui-x/useXui.vue",
+		{
+			size: "small",
+			I18N_LANGUAGE: window.I18N_LANGUAGE,
+			x_table_vir_empty_component_icon: "_no_data"
+		} /*接口*/,
+		"@/utils/api.vue"
+	);
+
 	const _$TRIGGER_EVENT_NAME = "USER_WS_MESSAGE";
 
 	PRIVATE_GLOBAL._$TRIGGER_EVENT_NAME = _$TRIGGER_EVENT_NAME;
@@ -23,36 +33,26 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		(componentURL, name) => Vue.component(name, () => _.$importVue(componentURL))
 	);
 
-	const [, [VueRouter, routes]] = await Promise.all([
-		Promise.all([
-			_.$importVue("/common/ui-x/useXui.vue", {
-				size: "small",
-				I18N_LANGUAGE: window.I18N_LANGUAGE,
-				x_table_vir_empty_component_icon: "_no_data"
-			})
-		]),
-		_.$importVue([
-			"/common/libs/VueRouter.vue",
-			"@/router/routes.vue",
-			/*常量*/
-			"@/utils/var.vue",
-			/*接口*/
-			"@/utils/api.vue",
-			/*校验规则*/
-			"/common/utils/rules.vue",
-			/*枚举选项*/
-			"@/utils/utils.vue",
-			/*工具函数*/
-			// "@/utils/helper.vue",
-			/*复用组件*/
-			// "@/utils/reuse.vue"
-			/*通用下拉项*/
-			"@/utils/opts.vue",
-			/* 项目独有样式 */
-			"@/yapi.defaul.style.vue"
-		])
+	const [VueRouter, routes] = await _.$importVue([
+		"/common/libs/VueRouter.vue",
+		"@/router/routes.vue",
+		/*常量*/
+		"@/utils/var.vue",
+		/*接口*/
+		"@/utils/api.vue",
+		/*校验规则*/
+		"/common/utils/rules.vue",
+		/*枚举选项*/
+		"@/utils/utils.vue",
+		/*工具函数*/
+		// "@/utils/helper.vue",
+		/*复用组件*/
+		// "@/utils/reuse.vue"
+		/*通用下拉项*/
+		"@/utils/opts.vue",
+		/* 项目独有样式 */
+		"@/yapi.defaul.style.vue"
 	]);
-
 	/* app entry  */
 	const router = new VueRouter({ routes });
 	const LOADING_STATUS = 0;
@@ -69,7 +69,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		components: {
 			ViewApp: () => _.$importVue("@/layout/AppLayoutLevel.vue")
 		},
-		template: `<ViewApp/>`,
+		template: `
+			<ViewApp />`,
 		provide() {
 			return {
 				APP: this
@@ -495,6 +496,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				color: #2d3748;
 			}
 		}
+
 		.el-table-v2__left {
 			box-shadow: unset;
 		}
@@ -507,6 +509,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		}
 
 		/* .el-switch__core */
+
 		.xSwitch.el-switch {
 			.xSwitch__core-wrapper {
 				.el-switch__core {
@@ -514,6 +517,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					background-color: var(--unactive-color-bg);
 					height: 10px;
 				}
+
 				.xSwitch__core-bar {
 					background-color: var(--unactive-color);
 					box-shadow: var(--el-box-shadow);
@@ -526,12 +530,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						border-color: var(--active-color-bg);
 						background-color: var(--active-color-bg);
 					}
+
 					.xSwitch__core-bar {
 						background-color: var(--active-color);
 					}
 				}
 			}
 		}
+
 		/* el-page-header__title */
 
 		.el-page-header__left::after {
@@ -561,9 +567,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		.form-wrapper {
 			display: flex;
 			justify-content: center;
+
 			> .xForm[data-col="1"] {
 				width: 500px;
 			}
+
 			> .xForm[data-col="2"] {
 				width: 800px;
 			}
@@ -571,6 +579,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 		.el-dialog__wrapper > .el-dialog {
 			--xModel-dialog-border-radius: 8px;
+
 			> .el-dialog__header {
 				background-color: var(--dialog-bg-color);
 			}
@@ -604,26 +613,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				.xPageContent {
 					padding-left: 0;
 					padding-right: 0;
+
 					.width50percent {
 						width: 50%;
 						flex: 1;
 					}
+
 					.page-body {
 						padding-top: 0;
 						background-color: transparent;
 					}
 				}
 			}
+
 			.page-body {
 				border-radius: 8px;
 			}
 		}
+
 		.card-as-condition-panel {
 			margin: -16px -16px 0;
 			--xItem-wrapper-width: 220px;
 			--xItem-label-width: 68px;
 		}
 	}
+
 	--border-radius: 8px;
 	--border-radius--small: 8px;
 

@@ -6,11 +6,11 @@ module.exports = {
 	paths: {
 		/* 获取动态列表 */
 		"/log/list": {
-			get: {
+			post: {
 				summary: "获取动态列表",
 				description: "",
 				request: {
-					query: {
+					body: {
 						typeid: {
 							required: true,
 							description: "动态类型id， 不能为空",
@@ -35,11 +35,15 @@ module.exports = {
 						selectValue: {
 							description: "********",
 							type: "string"
+						},
+						query_params: {
+							type: Object
 						}
 					}
 				},
 				async handler(ctx) {
-					const { typeid, type, selectValue, page, size } = ctx.payload;
+					const { typeid, type, selectValue, page, size, query_params } =
+						ctx.payload;
 
 					if (!typeid) {
 						return (ctx.body = xU.$response(null, 400, "typeid不能为空"));
@@ -51,13 +55,14 @@ module.exports = {
 					/* 策略 */
 					const strategies = {
 						async wiki_doc() {
-							let result = await orm.log.listWithPaging(
+							let result = await orm.log.listWithPaging({
 								typeid,
 								type,
 								page,
 								size,
-								selectValue
-							);
+								selectValue,
+								query_params
+							});
 							let count = await orm.log.listCount(typeid, type, selectValue);
 							ctx.body = xU.$response({
 								total: count,
@@ -66,13 +71,13 @@ module.exports = {
 						},
 
 						async project() {
-							let result = await orm.log.listWithPaging(
+							let result = await orm.log.listWithPaging({
 								typeid,
 								type,
 								page,
 								size,
 								selectValue
-							);
+							});
 							let count = await orm.log.listCount(typeid, type, selectValue);
 
 							ctx.body = xU.$response({

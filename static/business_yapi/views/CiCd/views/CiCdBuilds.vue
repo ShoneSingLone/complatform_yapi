@@ -167,7 +167,7 @@ export default async function () {
 								const file_url = Vue._common_utils.appendToken(
 									`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${resource._id}`
 								);
-								debugger;
+
 								return hDiv([
 									h(
 										"a",

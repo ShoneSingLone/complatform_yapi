@@ -69,29 +69,41 @@ const postWikiUpsertOne = {
 			const modify = async () => {
 				/* 修改 */
 				const oldWikiArticle = await orm.wiki.detail(_id);
+				const oldTitle = oldWikiArticle.title;
+				const newTitle = payload.title;
+				const isModify = oldTitle !== newTitle;
 				const oldmarkdown = oldWikiArticle?.markdown || "";
 				payload.up_time = xU.time();
-				res = await orm.wiki.up(_id, payload);
+				const diffContent = diffText(oldmarkdown, markdown);
 
-				if (payload.belong_type === xU.SSE_TYPE.CHAT_ONE) {
-					payload.belong_id.split("_").forEach(id => {
-						/* sse方案 */
-						xU.sseTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
-						/* socket方案 */
-						xU.socketTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
-					});
-				}
+				if (isModify || diffContent) {
+					res = await orm.wiki.up(_id, payload);
 
-				const result = diffText(oldmarkdown, markdown);
-				if (result) {
-					xU.save_log({
+					const diffData = {
 						content: `<a href='/user/profile/${this.$user?._id}'>${this.$user?.username}</a> 修改了文档 <a href='./wiki?wiki_id=${payload._id}'>${payload._id}:${payload.title}</a>`,
 						type: "wiki_doc",
 						uid: this.$user._id,
 						username: this.$user?.username,
 						typeid: payload._id,
-						data: result
-					});
+						data: diffContent || ""
+					};
+
+					if (isModify) {
+						diffData.payload = {
+							old_title: oldTitle,
+							new_title: newTitle
+						};
+					}
+					await xU.save_log(diffData);
+
+					if (payload.belong_type === xU.SSE_TYPE.CHAT_ONE) {
+						payload.belong_id.split("_").forEach(id => {
+							/* sse方案 */
+							xU.sseTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
+							/* socket方案 */
+							xU.socketTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
+						});
+					}
 				}
 			};
 
@@ -118,7 +130,7 @@ const postWikiUpsertOne = {
 				await add();
 			}
 
-			ctx.body = xU.$response({ msg: res });
+			ctx.body = xU.$response({ msg: res || "ok" });
 		} catch (error) {
 			ctx.body = xU.$response(null, 400, error);
 		}

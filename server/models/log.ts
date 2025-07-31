@@ -10,6 +10,16 @@ class ModelLog extends ModelBase {
 	getSchema() {
 		return {
 			uid: { type: Number, required: true },
+			payload: {
+				/* 其他数据，比如wiki的title变动 */
+				old_title: {
+					type: String
+				},
+				new_title: {
+					type: String
+				}
+				/* 其他数据，比如wiki的title变动 */
+			},
 			type: {
 				type: String,
 				enum: [
@@ -43,6 +53,8 @@ class ModelLog extends ModelBase {
 	 */
 	save(data) {
 		let saveData = {
+			...data,
+			payload: data.payload || {},
 			content: data.content,
 			type: data.type,
 			uid: data.uid,
@@ -72,7 +84,7 @@ class ModelLog extends ModelBase {
 			.exec();
 	}
 
-	listWithPaging(typeid, type, page, size, selectValue) {
+	listWithPaging({ typeid, type, page, size, selectValue, query_params }) {
 		page = parseInt(page);
 		size = parseInt(size);
 		const params = {
@@ -85,6 +97,21 @@ class ModelLog extends ModelBase {
 		}
 		if (selectValue && !isNaN(selectValue)) {
 			params["data.interface_id"] = +selectValue;
+		}
+		if (query_params) {
+			if (query_params.type === "wiki_log") {
+				const { key } = query_params;
+				// 处理关键字搜索
+				if (key) {
+					// 构建多字段模糊匹配条件
+					params.$or = [
+						{ data: { $regex: key, $options: "i" } }, // 匹配data字段
+						{ content: { $regex: key, $options: "i" } }, // 匹配content字段
+						{ "payload.old_title": { $regex: key, $options: "i" } }, // 匹配payload.old_title
+						{ "payload.new_title": { $regex: key, $options: "i" } } // 匹配payload.new_title
+					];
+				}
+			}
 		}
 		return this.model
 			.find(params)

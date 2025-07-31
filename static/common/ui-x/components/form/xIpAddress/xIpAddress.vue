@@ -69,13 +69,12 @@ export default async function () {
 			ipObj: {
 				get() {
 					try {
-						const [one, two, three, four] = _.$callFn(this, "value.split")(".");
-
+						let arr = this.value.split(".") || [];
 						return {
-							one,
-							two,
-							three,
-							four
+							one: arr[0],
+							two: arr[1],
+							three: arr[2],
+							four: arr[3]
 						};
 					} catch (error) {
 						return { one: "", two: "", three: "", four: "" };
@@ -119,6 +118,7 @@ export default async function () {
 					if (_.isNaN(val)) {
 						return;
 					}
+					val = parseInt(val) > 255 ? 255 : parseInt(val);
 					this.setIpObj(prop, val);
 				}
 			}

@@ -1,8 +1,8 @@
 <script lang="ts">
-export default async function({ PRIVATE_GLOBAL }) {
-	(function() /* 预览图片 */ {
+export default async function ({ PRIVATE_GLOBAL }) {
+	(function () /* 预览图片 */ {
 		let instance;
-		_.$previewImgs = async function(options) {
+		_.$previewImgs = async function (options) {
 			const ImageViewer = await _.$importVue("/common/ui-x/directive/xImg/ImageViewer.vue");
 			const PopupManager = await _.$importVue("/common/libs/VuePopper/popupManager.vue");
 
@@ -20,8 +20,8 @@ export default async function({ PRIVATE_GLOBAL }) {
 		};
 	})();
 
-	(function() /* 弹窗 */ {
-		_.$openModal = async function(options, modalConfigs) {
+	(function () /* 弹窗 */ {
+		_.$openModal = async function (options, modalConfigs) {
 			const xModal = await _.$importVue("/common/ui-x/directive/xModal/xModal.vue", {
 				options,
 				modalConfigs
@@ -39,8 +39,8 @@ export default async function({ PRIVATE_GLOBAL }) {
 			return instance;
 		};
 	})();
-	(function() /* xDrawer */ {
-		_.$openDrawer = async function(options) {
+	(function () /* xDrawer */ {
+		_.$openDrawer = async function (options) {
 			const [xDrawer, PopupManager] = await _.$importVue([
 				"/common/ui-x/directive/xDrawer/xDrawer.vue",
 				"/common/libs/VuePopper/popupManager.vue"
@@ -86,7 +86,7 @@ export default async function({ PRIVATE_GLOBAL }) {
 		};
 	})();
 
-	(function() /* notification */ {
+	(function () /* notification */ {
 		let instances = [];
 		let seed = 1;
 
@@ -97,7 +97,7 @@ export default async function({ PRIVATE_GLOBAL }) {
 			/* TODO:可以作为prop传递 在 xNotification 内部用vIf添加新的样式*/
 		};
 
-		_.$notify = async function(options) {
+		_.$notify = async function (options) {
 			const xNotification = await getCurrentNotifyComponent(
 				_.$val(_xUtils, "globalConfigs.xNotification.componentName")
 			);
@@ -109,7 +109,7 @@ export default async function({ PRIVATE_GLOBAL }) {
 			const id = "notification_" + seed++;
 			const position = options.position || "top-right";
 
-			options.onClose = function() {
+			options.onClose = function () {
 				_.$notify.close(id, userOnClose);
 			};
 
@@ -148,7 +148,7 @@ export default async function({ PRIVATE_GLOBAL }) {
 			};
 		});
 
-		_.$notify.close = function(id, userOnClose) {
+		_.$notify.close = function (id, userOnClose) {
 			let index = -1;
 			const len = instances.length;
 			const instance = instances.filter((instance, i) => {
@@ -182,14 +182,14 @@ export default async function({ PRIVATE_GLOBAL }) {
 			}
 		};
 
-		_.$notify.closeAll = function() {
+		_.$notify.closeAll = function () {
 			for (let i = instances.length - 1; i >= 0; i--) {
 				instances[i].close();
 			}
 		};
 	})();
 
-	(function() /* message */ {
+	(function () /* message */ {
 		let instances = [];
 		let seed = 1;
 
@@ -199,7 +199,7 @@ export default async function({ PRIVATE_GLOBAL }) {
 			}
 		};
 
-		_.$msg = async function(options) {
+		_.$msg = async function (options) {
 			const xMsg = await getCurrentMessageComponent(
 				_.$val(_xUtils, "globalConfigs.xNotification.componentName")
 			);
@@ -229,7 +229,7 @@ export default async function({ PRIVATE_GLOBAL }) {
 			const userOnClose = options.onClose;
 			const id = "message_" + seed++;
 
-			options.onClose = function() {
+			options.onClose = function () {
 				_.$msg.close(id, userOnClose);
 			};
 			let instance = new MsgConstructor({
@@ -247,8 +247,7 @@ export default async function({ PRIVATE_GLOBAL }) {
 			instance.visible = true;
 			instance.$el.style.zIndex = PopupManager.nextZIndex();
 			instances.push(instance);
-			instance.$on("hook:beforeDestroy", () => {
-			});
+			instance.$on("hook:beforeDestroy", () => {});
 
 			return instance;
 		};
@@ -267,7 +266,7 @@ export default async function({ PRIVATE_GLOBAL }) {
 			};
 		});
 
-		_.$msg.close = function(id, userOnClose) {
+		_.$msg.close = function (id, userOnClose) {
 			let len = instances.length;
 			let index = -1;
 			let removedHeight;
@@ -289,7 +288,7 @@ export default async function({ PRIVATE_GLOBAL }) {
 			}
 		};
 
-		_.$msg.closeAll = function() {
+		_.$msg.closeAll = function () {
 			for (let i = instances.length - 1; i >= 0; i--) {
 				instances[i].close();
 			}

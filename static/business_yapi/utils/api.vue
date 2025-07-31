@@ -215,9 +215,9 @@ export default async function () {
 					});
 				},
 				/* log */
-				getLogList({ typeid, type, page, limit }) {
-					return _.$ajax.get("/api/log/list", {
-						data: { typeid: Number(typeid), type, page, limit }
+				get_log_list({ typeid, type, page, size, query_params }) {
+					return _.$ajax.post("/api/log/list", {
+						data: { typeid, type, page, size, query_params }
 					});
 				},
 				log_update(data) {

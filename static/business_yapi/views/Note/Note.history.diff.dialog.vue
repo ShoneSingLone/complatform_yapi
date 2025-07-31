@@ -1,5 +1,5 @@
 <template>
-	<div class="x-padding flex vertical height100 note-history-dialog-vue" style="width: 50vw">
+	<div class="x-padding flex vertical height100 note-history-dialog-vue">
 		<!-- 搜索框 -->
 		<div class="search-container">
 			<i class="search-icon">🔍</i>
@@ -29,9 +29,7 @@ export default async function () {
 		data() {
 			return {
 				cpt_pagination: defTable({
-					onQuery(pagination) {
-						debugger;
-					},
+					onQuery(pagination) {},
 					data: {
 						list: []
 					},

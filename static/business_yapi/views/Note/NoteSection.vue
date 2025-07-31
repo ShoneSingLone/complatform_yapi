@@ -60,7 +60,7 @@ export default async function () {
 						return _.$openDrawer({
 							title: "历史记录",
 							url: "@/views/Note/Note.history.dialog.vue",
-							size: "50vw",
+							size: "unset",
 							wiki: vm.inject_note.cptCurrentWiki,
 							parent: vm
 						});
