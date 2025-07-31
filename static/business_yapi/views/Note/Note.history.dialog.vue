@@ -2,13 +2,19 @@
 	<div class="x-padding flex vertical height100 note-history-dialog-vue">
 		<!-- 搜索框 -->
 		<div class="search-container flex middle">
-			<i class="search-icon" @click="configs_log_list.onQuery({ page: 1 })">🔍</i>
-			<input
+			<xInput
+				class="flex1"
+				clearable
 				v-model="searchText"
-				type="text"
-				class="search-input"
 				placeholder="搜索历史记录..."
-				@keyup.enter="configs_log_list.onQuery({ page: 1 })" />
+				@enter="configs_log_list.onQuery({ page: 1 })">
+				<template slot="append">
+					<xIcon
+						icon="_search"
+						@click="configs_log_list.onQuery({ page: 1 })"
+						class="pointer" />
+				</template>
+			</xInput>
 			<xGap f />
 			<button class="toggle-all-btn" @click="toggleAll">
 				{{ cpt_current_all_expanded ? "全部折叠" : "全部展开" }}
@@ -133,8 +139,6 @@ export default async function ({ OPTIONS: { wiki } }) {
 	/* 基础样式 */
 
 	* {
-		margin: 0;
-		padding: 0;
 		box-sizing: border-box;
 		font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	}
@@ -150,30 +154,6 @@ export default async function ({ OPTIONS: { wiki } }) {
 		border-bottom: 1px solid #f0f0f0;
 		position: relative;
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-
-		.search-input {
-			flex: 1;
-			padding: 0.7rem 0.7rem 0.7rem 2.5rem;
-			border: 1px solid #e5e6eb;
-			border-radius: 6px;
-			font-size: 0.9rem;
-			transition: all 0.2s ease;
-
-			&:focus {
-				outline: none;
-				border-color: var(--el-color-primary);
-				box-shadow: 0 0 0 3px rgba(64, 158, 255, 0.1);
-			}
-		}
-
-		.search-icon {
-			position: absolute;
-			left: 1.5rem;
-			top: 50%;
-			transform: translateY(-50%);
-			color: #909399;
-			font-size: 1rem;
-		}
 	}
 
 	/* 历史记录列表 */
