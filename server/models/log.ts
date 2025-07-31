@@ -10,7 +10,6 @@ class ModelLog extends ModelBase {
 	getSchema() {
 		return {
 			uid: { type: Number, required: true },
-			typeid: { type: Number, required: true },
 			type: {
 				type: String,
 				enum: [
@@ -20,10 +19,13 @@ class ModelLog extends ModelBase {
 					"project",
 					"other",
 					"interface_col",
+					/* wiki note */
 					"wiki_doc"
 				],
 				required: true
 			},
+			/* 针对不同type，比如wiki_doc,typeid就是修改的wiki_doc的id */
+			typeid: { type: Number, required: true },
 			content: { type: String, required: true },
 			username: { type: String, required: true },
 			add_time: Number,
@@ -70,9 +72,9 @@ class ModelLog extends ModelBase {
 			.exec();
 	}
 
-	listWithPaging(typeid, type, page, limit, selectValue) {
+	listWithPaging(typeid, type, page, size, selectValue) {
 		page = parseInt(page);
-		limit = parseInt(limit);
+		size = parseInt(size);
 		const params = {
 			type: type,
 			typeid: typeid
@@ -87,8 +89,8 @@ class ModelLog extends ModelBase {
 		return this.model
 			.find(params)
 			.sort({ add_time: -1 })
-			.skip((page - 1) * limit)
-			.limit(limit)
+			.skip((page - 1) * size)
+			.limit(size)
 			.exec();
 	}
 

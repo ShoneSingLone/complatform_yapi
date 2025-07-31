@@ -101,7 +101,7 @@ async function upsertInterface(ctx) {
 			result._id
 		}">${data.title}</a> `;
 
-		xU.saveLog({
+		xU.save_log({
 			content: title,
 			type: "project",
 			uid: this.getUid(),
@@ -246,7 +246,7 @@ async function interface_add_cat({ payload }) {
 		});
 
 		let username = this.getUsername();
-		xU.saveLog({
+		xU.save_log({
 			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了分类  <a href="/project/${
 				payload.project_id
 			}/interface/api/cat_${result._id}">${payload.name}</a>`,

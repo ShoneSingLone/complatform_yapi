@@ -164,7 +164,7 @@ class SyncUtils {
 	 * @param {*} projectId
 	 */
 	saveSyncLog(errcode, syncMode, moremsg, uid, projectId) {
-		xU.saveLog({
+		xU.save_log({
 			content:
 				"自动同步接口状态:" +
 				(errcode == 0 ? "成功," : "失败,") +
@@ -231,7 +231,7 @@ class SyncUtils {
 			if (response.status > 400) {
 				throw new Error(
 					`http status "${response.status}"` +
-						"获取数据失败，请确认 swaggerUrl 是否正确"
+					"获取数据失败，请确认 swaggerUrl 是否正确"
 				);
 			}
 			return response.data;
@@ -239,7 +239,7 @@ class SyncUtils {
 			let response = e.response || { status: e.message || "error" };
 			throw new Error(
 				`http status "${response.status}"` +
-					"获取数据失败，请确认 swaggerUrl 是否正确"
+				"获取数据失败，请确认 swaggerUrl 是否正确"
 			);
 		}
 	}

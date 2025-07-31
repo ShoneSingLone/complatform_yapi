@@ -211,7 +211,7 @@ module.exports = {
 					]);
 
 					let username = this.getUsername();
-					xU.saveLog({
+					xU.save_log({
 						content: `<a href="/user/profile/${this.getUid()}"> ${username} </a> 新增了分组 <a href="/group/${
 							result._id
 						}"> ${group_name} </a>`,
@@ -275,7 +275,7 @@ module.exports = {
 						custom_field1
 					});
 					let username = this.getUsername();
-					xU.saveLog({
+					xU.save_log({
 						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了 <a href="/group/${group_id}">${group_name}</a> 分组`,
 						type: "group",
 						typeid: group_id,
@@ -314,7 +314,7 @@ module.exports = {
 					let result = await orm.group.delMember(groupId, member_uid);
 					let username = this.getUsername();
 					let groupUserdata = await xU.getUserdata(member_uid);
-					xU.saveLog({
+					xU.save_log({
 						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分组成员 <a href="/user/profile/${member_uid}">${
 							groupUserdata ? groupUserdata.username : ""
 						}</a>`,

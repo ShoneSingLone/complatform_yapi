@@ -141,7 +141,7 @@ class groupController extends ControllerBase {
 				return `<a href = "/user/profile/${item.uid}">${item.username}</a>`;
 			});
 			members = members.join("、");
-			xU.saveLog({
+			xU.save_log({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组成员 ${members} 为 ${
 					ROLE_NAME[params.role]
 				}`,
@@ -193,7 +193,7 @@ class groupController extends ControllerBase {
 		let username = this.getUsername();
 
 		let groupUserdata = await xU.getUserdata(params.member_uid, params.role);
-		xU.saveLog({
+		xU.save_log({
 			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更改了分组成员 <a href="/user/profile/${
 				params.member_uid
 			}">${groupUserdata ? groupUserdata.username : ""}</a> 的权限为 "${

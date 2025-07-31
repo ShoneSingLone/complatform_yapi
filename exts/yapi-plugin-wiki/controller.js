@@ -139,7 +139,7 @@ class ControllerWiki extends ControllerBase {
 			}
 
 			// 保存修改日志信息
-			xU.saveLog({
+			xU.save_log({
 				content: `<a href="/user/profile/${uid}">${username}</a> 更新了 <a href="${wikiUrl}">wiki</a> 的信息`,
 				type: "project",
 				uid,
@@ -180,7 +180,7 @@ class ControllerWiki extends ControllerBase {
 					ctx.websocket.send(JSON.stringify(data));
 				}
 			});
-			ctx.websocket.on("close", async () => {});
+			ctx.websocket.on("close", async () => { });
 		} catch (err) {
 			xU.applog.error(err);
 		}

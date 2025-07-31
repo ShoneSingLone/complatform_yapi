@@ -27,7 +27,7 @@ module.exports = {
 							description: "分页页码",
 							type: "number"
 						},
-						limit: {
+						size: {
 							required: true,
 							description: "分页大小",
 							type: "number"
@@ -39,67 +39,83 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					const modelLog = orm.log;
-					const modelProject = orm.project;
-					try {
-						const { typeid, page, limit, type, selectValue } = ctx.payload;
-						if (!typeid) {
-							return (ctx.body = xU.$response(null, 400, "typeid不能为空"));
-						}
-						if (!type) {
-							return (ctx.body = xU.$response(null, 400, "type不能为空"));
-						}
+					const { typeid, type, selectValue, page, size } = ctx.payload;
 
-						try {
-							if (type === "group") {
-								let projectList = await modelProject.list(typeid);
-								let projectIds = [],
-									projectDatas = {};
-								for (let i in projectList) {
-									projectDatas[projectList[i]._id] = projectList[i];
-									projectIds[i] = projectList[i]._id;
-								}
-								let projectLogList = await modelLog.listWithPagingByGroup(
-									typeid,
-									projectIds,
-									page,
-									limit
-								);
-								projectLogList.forEach((item, index) => {
-									item = item.toObject();
-									if (item.type === "project") {
-										item.content =
-											`在 <a href="/project/${item.typeid}">${
-												projectDatas[item.typeid].name
-											}</a> 项目: ` + item.content;
-									}
-									projectLogList[index] = item;
-								});
-								let total = await modelLog.listCountByGroup(typeid, projectIds);
-								ctx.body = xU.$response({
-									list: projectLogList,
-									total
-								});
-							} else if (type === "project") {
-								let result = await modelLog.listWithPaging(
-									typeid,
-									type,
-									page,
-									limit,
-									selectValue
-								);
-								let count = await modelLog.listCount(typeid, type, selectValue);
+					if (!typeid) {
+						return (ctx.body = xU.$response(null, 400, "typeid不能为空"));
+					}
+					if (!type) {
+						return (ctx.body = xU.$response(null, 400, "type不能为空"));
+					}
 
-								ctx.body = xU.$response({
-									total: count,
-									list: result
-								});
+					/* 策略 */
+					const strategies = {
+						async wiki_doc() {
+							let result = await orm.log.listWithPaging(
+								typeid,
+								type,
+								page,
+								size,
+								selectValue
+							);
+							let count = await orm.log.listCount(typeid, type, selectValue);
+							ctx.body = xU.$response({
+								total: count,
+								list: result
+							});
+						},
+
+						async project() {
+							let result = await orm.log.listWithPaging(
+								typeid,
+								type,
+								page,
+								size,
+								selectValue
+							);
+							let count = await orm.log.listCount(typeid, type, selectValue);
+
+							ctx.body = xU.$response({
+								total: count,
+								list: result
+							});
+						},
+						async group() {
+							let projectList = await orm.project.list(typeid);
+							let projectIds = [],
+								projectDatas = {};
+							for (let i in projectList) {
+								projectDatas[projectList[i]._id] = projectList[i];
+								projectIds[i] = projectList[i]._id;
 							}
-						} catch (err) {
-							ctx.body = xU.$response(null, 402, err.message);
+							let projectLogList = await orm.log.listWithPagingByGroup(
+								typeid,
+								projectIds,
+								page,
+								size
+							);
+							projectLogList.forEach((item, index) => {
+								item = item.toObject();
+								if (item.type === "project") {
+									item.content =
+										`在 <a href="/project/${item.typeid}">${
+											projectDatas[item.typeid].name
+										}</a> 项目: ` + item.content;
+								}
+								projectLogList[index] = item;
+							});
+							let total = await orm.log.listCountByGroup(typeid, projectIds);
+							ctx.body = xU.$response({
+								list: projectLogList,
+								total
+							});
 						}
-					} catch (e) {
-						ctx.body = xU.$response(null, 402, e.message);
+					};
+
+					try {
+						await strategies[type]();
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, err.message);
 					}
 				}
 			}

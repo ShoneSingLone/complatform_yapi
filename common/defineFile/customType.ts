@@ -44,7 +44,7 @@ export type t_xU = LoDashStatic & {
 	rtrim: Function;
 	ensureParamsType: Function;
 	validateParams: Function;
-	saveLog: Function;
+	save_log: Function;
 	createAction: Function;
 	handleParamsValue: Function;
 	getCaseList: Function;

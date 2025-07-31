@@ -807,19 +807,9 @@ function validateParams(schema2, params) {
 	};
 }
 
-function saveLog(logData) {
+async function save_log({ content, type, uid, username, typeid, data }) {
 	try {
-		let logInst = orm.log;
-		let data = {
-			content: logData.content,
-			type: logData.type,
-			uid: logData.uid,
-			username: logData.username,
-			typeid: logData.typeid,
-			data: logData.data
-		};
-
-		logInst.save(data).then();
+		await orm.log.save({ content, type, uid, username, typeid, data });
 	} catch (e) {
 		xU.applog.error(e); // eslint-disable-line
 	}
@@ -1248,7 +1238,7 @@ const xU = new Proxy(
 		rtrim,
 		ensureParamsType,
 		validateParams,
-		saveLog,
+		save_log,
 		createAction,
 		handleParamsValue,
 		getCaseList,

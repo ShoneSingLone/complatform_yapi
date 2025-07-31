@@ -91,7 +91,7 @@ module.exports = {
 
 						let result = await orm.project.up(id, data);
 						let username = this.getUsername();
-						xU.saveLog({
+						xU.save_log({
 							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
 								projectData.name
 							}</a>`,
@@ -222,7 +222,7 @@ module.exports = {
 						await modelProject.addMember(result._id, [userdata]);
 					}
 					let username = this.getUsername();
-					xU.saveLog({
+					xU.save_log({
 						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了项目 <a href="/project/${
 							result._id
 						}">${name}</a>`,
@@ -538,7 +538,7 @@ module.exports = {
 						// 在每个测试结合下添加interface
 
 						let username = this.getUsername();
-						xU.saveLog({
+						xU.save_log({
 							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 复制了项目 ${
 								payload.preName
 							} 为 <a href="/project/${result._id}">${payload.name}</a>`,
@@ -685,7 +685,7 @@ module.exports = {
 								.join("、");
 
 							let username = this.getUsername();
-							xU.saveLog({
+							xU.save_log({
 								content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了项目成员 ${members}`,
 								type: "project",
 								uid: this.getUid(),
@@ -744,7 +744,7 @@ module.exports = {
 						let username = this.getUsername();
 
 						orm.user.findById(member_uid).then(member => {
-							xU.saveLog({
+							xU.save_log({
 								content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了项目中的成员 <a href="/user/profile/${member_uid}">${
 									member ? member.username : ""
 								}</a>`,
@@ -818,7 +818,7 @@ module.exports = {
 
 						let username = this.getUsername();
 						orm.user.findById(member_uid).then(member => {
-							xU.saveLog({
+							xU.save_log({
 								content: `<a href="/user/profile/${this.getUid()}">${username}</a> 修改了项目中的成员 <a href="/user/profile/${member_uid}">${
 									member.username
 								}</a> 的角色为 "${rolename[role]}"`,

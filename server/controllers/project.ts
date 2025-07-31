@@ -258,7 +258,7 @@ class projectController extends ControllerBase {
 		try {
 			this.modelFollow.updateById(this.getUid(), id, data).then(() => {
 				let username = this.getUsername();
-				xU.saveLog({
+				xU.save_log({
 					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 修改了项目图标、颜色`,
 					type: "project",
 					uid: this.getUid(),
@@ -313,7 +313,7 @@ class projectController extends ControllerBase {
 			}
 			let result = await this.model.up(id, data);
 			let username = this.getUsername();
-			xU.saveLog({
+			xU.save_log({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
 					projectData.name
 				}</a> 的环境`,
@@ -365,7 +365,7 @@ class projectController extends ControllerBase {
 
 			let result = await this.model.up(id, data);
 			let username = this.getUsername();
-			xU.saveLog({
+			xU.save_log({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
 					projectData.name
 				}</a> 的tag`,

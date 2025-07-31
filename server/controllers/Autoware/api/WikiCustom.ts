@@ -60,29 +60,42 @@ const postWikiUpsertOne = {
 			const { payload } = ctx;
 			let { belong_type, belong_id, markdown, _id } = payload;
 			let res;
+
 			if (belong_type === "private") {
 				/* 当前用户的ID */
 				payload.belong_id = this.$uid;
 			}
 
-			if (_id) {
+			const modify = async () => {
 				/* 修改 */
 				const oldWikiArticle = await orm.wiki.detail(_id);
 				const oldmarkdown = oldWikiArticle?.markdown || "";
 				payload.up_time = xU.time();
 				res = await orm.wiki.up(_id, payload);
+
+				if (payload.belong_type === xU.SSE_TYPE.CHAT_ONE) {
+					payload.belong_id.split("_").forEach(id => {
+						/* sse方案 */
+						xU.sseTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
+						/* socket方案 */
+						xU.socketTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
+					});
+				}
+
 				const result = diffText(oldmarkdown, markdown);
 				if (result) {
-					xU.saveLog({
-						content: `<a href='/user/profile/${this.$user._id}'>${this.$user.username}</a> 修改了文档 <a href='./wiki?wiki_id=${payload._id}'>${payload._id}:${payload.title}</a>`,
+					xU.save_log({
+						content: `<a href='/user/profile/${this.$user?._id}'>${this.$user?.username}</a> 修改了文档 <a href='./wiki?wiki_id=${payload._id}'>${payload._id}:${payload.title}</a>`,
 						type: "wiki_doc",
 						uid: this.$user._id,
-						username: this.$user.username,
+						username: this.$user?.username,
 						typeid: payload._id,
 						data: result
 					});
 				}
-			} else {
+			};
+
+			const add = async () => {
 				payload.add_time = xU.time();
 				payload.up_time = xU.time();
 				payload.uid = this.$user._id;
@@ -97,6 +110,12 @@ const postWikiUpsertOne = {
 						xU.socketTrigger(xU.SSE_TYPE.CHAT_ONE, id, payload);
 					});
 				}
+			};
+
+			if (_id) {
+				await modify();
+			} else {
+				await add();
 			}
 
 			ctx.body = xU.$response({ msg: res });
@@ -336,7 +355,7 @@ module.exports = {
 		"/wiki/delete": {
 			delete: deleteWikiDelete
 		},
-		"/wiki/upsertOne": {
+		"/wiki/upsert_one": {
 			post: postWikiUpsertOne
 		}
 	}

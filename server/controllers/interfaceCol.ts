@@ -103,7 +103,7 @@ class interfaceColController extends ControllerBase {
 				up_time: xU.time()
 			});
 			let username = this.getUsername();
-			xU.saveLog({
+			xU.save_log({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 添加了接口集 <a href="/project/${
 					params.project_id
 				}/interface/col/${result._id}">${params.name}</a>`,
@@ -339,7 +339,7 @@ class interfaceColController extends ControllerBase {
 			let username = this.getUsername();
 
 			this.colModel.get(params.col_id).then(col => {
-				xU.saveLog({
+				xU.save_log({
 					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${
 						params.project_id
 					}/interface/col/${params.col_id}">${
@@ -423,7 +423,7 @@ class interfaceColController extends ControllerBase {
 				let caseResultData = await this.modelCase.save(data);
 				let username = this.getUsername();
 				this.colModel.get(params.col_id).then(col => {
-					xU.saveLog({
+					xU.save_log({
 						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${
 							params.project_id
 						}/interface/col/${params.col_id}">${
@@ -596,7 +596,7 @@ class interfaceColController extends ControllerBase {
 			let result = await this.modelCase.up(params.id, params);
 			let username = this.getUsername();
 			this.colModel.get(caseData.col_id).then(col => {
-				xU.saveLog({
+				xU.save_log({
 					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 在接口集 <a href="/project/${
 						caseData.project_id
 					}/interface/col/${caseData.col_id}">${
@@ -710,7 +710,7 @@ class interfaceColController extends ControllerBase {
 			delete params.col_id;
 			let result = await this.colModel.up(id, params);
 			let username = this.getUsername();
-			xU.saveLog({
+			xU.save_log({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了测试集合 <a href="/project/${
 					colData.project_id
 				}/interface/col/${id}">${colData.name}</a> 的信息`,
@@ -826,7 +826,7 @@ class interfaceColController extends ControllerBase {
 			let result = await this.colModel.del(id);
 			await this.modelCase.delByCol(id);
 			let username = this.getUsername();
-			xU.saveLog({
+			xU.save_log({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 ${
 					colData.name
 				} 及其下面的接口`,
@@ -869,7 +869,7 @@ class interfaceColController extends ControllerBase {
 
 			let username = this.getUsername();
 			this.colModel.get(caseData.col_id).then(col => {
-				xU.saveLog({
+				xU.save_log({
 					content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了接口集 <a href="/project/${
 						caseData.project_id
 					}/interface/col/${caseData.col_id}">${col.name}</a> 下的接口 ${

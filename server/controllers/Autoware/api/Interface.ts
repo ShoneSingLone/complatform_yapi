@@ -489,7 +489,7 @@ module.exports = {
 						if (diffView2.length <= 0) {
 							return; // 没有变化时，不写日志
 						}
-						xU.saveLog({
+						xU.save_log({
 							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 
 								更新了分类 <a href="/project/${cate.project_id}/interface/api/cat_${
 								data.catid
@@ -858,7 +858,7 @@ module.exports = {
 										interface.catid
 									);
 
-									xU.saveLog({
+									xU.save_log({
 										content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 <a href="/project/${
 											category.project_id
 										}/interface/api/cat_${interface.catid}">${
@@ -965,7 +965,7 @@ async function hander_interface_up_cat(ctx) {
 			up_time: xU.time()
 		});
 
-		xU.saveLog({
+		xU.save_log({
 			content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${
 				cate.project_id
 			}/interface/api/cat_${payload.catid}">${cate.name}</a>`,

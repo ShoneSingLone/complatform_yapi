@@ -340,7 +340,7 @@ class ControllerInterface extends ControllerBase {
 			}
 
 			let username = this.getUsername();
-			xU.saveLog({
+			xU.save_log({
 				content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 "${
 					catData.name
 				}" 及该分类下的接口`,

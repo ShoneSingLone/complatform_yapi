@@ -61,7 +61,7 @@ export default async function () {
 					});
 				},
 				wiki_upsert_one(data) {
-					return _.$ajax.post("/api/wiki/upsertOne", {
+					return _.$ajax.post("/api/wiki/upsert_one", {
 						data
 					});
 				},
