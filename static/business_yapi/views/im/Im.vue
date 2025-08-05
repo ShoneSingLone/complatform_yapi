@@ -54,7 +54,7 @@ export default async function () {
 		},
 		methods: {},
 		computed: {
-			cptImChatWith() {
+			cpt_im_chat_with() {
 				const { uid } = this.$route.query;
 				const item = _.find(this.APP.all_user, i => _.$isSame(i.uid, uid));
 				return item || {};

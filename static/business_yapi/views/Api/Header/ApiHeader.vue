@@ -4,6 +4,7 @@
 			<xIcon :icon="icon" :style="logoStyle" />
 		</span>
 		<YapiBreadcrumbNavigation />
+		<CollabUserContainer />
 		<xGap f />
 		<TransitionGroup name="fade" mode="out-in" tag="div" class="flex middle">
 			<!-- 			v-xtips="{ content: '国际化', trigger: 'hover', placement: 'bottom' }" -->
@@ -77,6 +78,7 @@ export default async function () {
 		inject: ["APP"],
 		name: "AppLayoutHeader",
 		components: {
+			CollabUserContainer: () => _.$importVue("@/views/Api/Header/CollabUserContainer.vue"),
 			YapiToolUserBar: () => _.$importVue("@/components/YapiToolUserBar.vue"),
 			YapiBreadcrumbNavigation: () =>
 				_.$importVue("@/components/YapiBreadcrumbNavigation.vue")
@@ -142,6 +144,7 @@ export default async function () {
 	background-color: var(--el-color-white);
 	box-shadow: var(--el-box-shadow-lighter);
 	z-index: 1;
+
 	.YapiLogo {
 		box-shadow: var(--el-box-shadow-lighter);
 		// border: 1px solid gray;

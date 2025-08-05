@@ -28,7 +28,9 @@
 				:info="info" />
 
 			<!-- 空状态提示 -->
-			<div class="empty-state" v-if="configs_log_list.data.list.length === 0">
+			<div
+				class="empty-state height100 flex vertical center"
+				v-if="configs_log_list.data.list.length === 0">
 				<div class="empty-icon">📜</div>
 				<div class="empty-text">暂无历史记录</div>
 			</div>

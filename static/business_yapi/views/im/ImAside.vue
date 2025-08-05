@@ -6,10 +6,12 @@
 	}
 
 	background-color: white;
+
 	.tree-wrapper {
 		.aside-tree-item {
 			width: 1px;
 		}
+
 		.is-current {
 			.el-tree-node__content {
 				color: var(--el-color-primary);
@@ -22,6 +24,7 @@
 			.xIcon._add {
 				display: none;
 			}
+
 			&:hover {
 				.xIcon._add {
 					display: block;
@@ -163,6 +166,7 @@ export default async function () {
 							},
 							[
 								hxIcon({
+									key: data.uid,
 									img: data.avatar,
 									iscache: true,
 									class: "imAside-user-list-avatar mr8"

@@ -42,6 +42,7 @@ export default async function () {
 		});
 		return callback(`${prefix}_id:${data._id}`);
 	}
+
 	return defineComponent({
 		props: ["value", "asRender", "imgrange" /* jquery选择器，find范围内的图片 */],
 		model: {
@@ -134,7 +135,7 @@ export default async function () {
 					let html = this.vmTuiEditor.getHTML();
 					this.html = new PreprocessHTML(html).html;
 					setTimeout(() => {
-						$(this.$refs.refViewer).html(this.html);
+						$(this.$refs.refMarkdownViewer).html(this.html);
 					}, 64);
 				} catch (error) {
 					console.error(error);
@@ -148,7 +149,7 @@ export default async function () {
 					if (this.imgrange) {
 						return $(this.imgrange);
 					} else {
-						return $(this.$refs.refViewer);
+						return $(this.$refs.refMarkdownViewer);
 					}
 				})();
 
@@ -321,7 +322,7 @@ export default async function () {
 			return hDiv({ class: "flex1-overflow-auto" }, [
 				/*viewer html*/
 				hDiv(viewerProps, [
-					hDiv({ ref: "refViewer", staticClass: "toastui-viewer-contents" })
+					hDiv({ ref: "refMarkdownViewer", staticClass: "toastui-viewer-contents" })
 				]),
 				/*tuiEdior*/
 				hDiv({

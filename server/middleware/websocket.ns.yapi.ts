@@ -50,7 +50,14 @@ function namespace_yapi({ app, ioUtils }) {
 		if (uid) {
 			uid = String(uid);
 			global._app_socket_yapi_connections.set(uid, ctx.socket);
-			ctx.socket.emit("connection", { id: ctx.socket.id });
+			const all_current_online_user = xU._.uniqBy(
+				global._app_socket_yapi_connections.obj,
+				i => i[0]
+			);
+			ctx.socket.emit("connection", {
+				id: ctx.socket.id,
+				current_online_user: Array.from(all_current_online_user).map(i => i[0])
+			});
 		} else {
 			debugger;
 		}
