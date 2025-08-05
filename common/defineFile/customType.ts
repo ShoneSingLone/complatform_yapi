@@ -9,7 +9,6 @@ export type t_xU = LoDashStatic & {
 	sseOn: Function;
 	sseOff: Function;
 	sseTrigger: Function;
-	SOCKET_CONNECTIONS: object;
 	socketTrigger: Function;
 	_: Function;
 	fs: object;
