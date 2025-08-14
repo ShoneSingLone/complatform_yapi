@@ -670,31 +670,41 @@ module.exports = {
 								return avatarInst.get(uid);
 							}
 						})();
+
 						let dataBuffer, type;
 
-						if (!data || !data.basecode) {
-							let imagePath = "static/image/setting.png";
-							if (!usedBy) {
-								imagePath = "static/image/avatar.png";
+						if (!data?.basecode) {
+							if (usedBy) {
+								const imagePath = "static/image/setting.png";
+
+								dataBuffer = (function () {
+									if (!IMAGE_BUFFER_CACHE[imagePath]) {
+										IMAGE_BUFFER_CACHE[imagePath] = xU.fs.readFileSync(
+											xU.path.join(xU.var.APP_ROOT_DIR, imagePath)
+										);
+									}
+									return IMAGE_BUFFER_CACHE[imagePath];
+								})();
+								type = "image/png";
+							} else {
+								const {
+									generateAvatarSvg,
+									svgToBase64
+								} = require("./User.service");
+								const user = await orm.user.findById(uid);
+								const svg = generateAvatarSvg(user.username, 200);
+
+								data = {
+									basecode: svgToBase64(svg)
+								};
+								type = "image/svg+xml";
 							}
-
-							dataBuffer = (function () {
-								if (!IMAGE_BUFFER_CACHE[imagePath]) {
-									IMAGE_BUFFER_CACHE[imagePath] = xU.fs.readFileSync(
-										xU.path.join(xU.var.APP_ROOT_DIR, imagePath)
-									);
-								}
-								return IMAGE_BUFFER_CACHE[imagePath];
-							})();
-							type = "image/png";
-						} else {
-							type = data.type;
-							dataBuffer = new Buffer(data.basecode, "base64");
-							const CONTENT_LENGTH = Buffer.byteLength(data.basecode);
-							ctx.set("Content-Length", CONTENT_LENGTH);
 						}
+						dataBuffer = new Buffer(data.basecode, "base64");
+						const CONTENT_LENGTH = Buffer.byteLength(data.basecode);
+						ctx.set("Content-Length", CONTENT_LENGTH);
 
-						ctx.set("Content-type", type);
+						ctx.set("Content-type", data.type);
 						ctx.body = dataBuffer;
 					} catch (err) {
 						ctx.body = "error:" + err.message;

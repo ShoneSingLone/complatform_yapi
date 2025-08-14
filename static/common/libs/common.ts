@@ -17,6 +17,12 @@
 				throw new Error(`参数 ${name} 必须是函数`);
 			}
 		}
+
+		if (type === "prop") {
+			if (!_.$isInput(_.$val(target, name))) {
+				throw new Error(`缺少属性 ${name} `);
+			}
+		}
 	};
 	/**
 	 * base64编码 原生不支持字符，需要用$.base64 插件
@@ -460,15 +466,15 @@
 	 * 打开文件选择器
 	 * @returns
 	 */
-	/* @typescriptDeclare (options:{accept?:string,multiple?:boolean})=>Promise<File[]> */
+	/* @typescriptDeclare (options:{accept?:string,multiple?:boolean,limit_size_max?:number})=>Promise<File[]> */
 	_.$openFileSelector = function (options = {}) {
 		/* 可选文件的过滤 */
-		let { accept, multiple } = options;
+		let { accept, multiple, limit_size_max } = options;
 		accept = accept || "*";
 		multiple = multiple || false;
 
 		let lock = false;
-		return new Promise(resolve => {
+		return new Promise((resolve, reject) => {
 			try {
 				// create input file
 				let el = document.createElement("input");
@@ -476,7 +482,7 @@
 				el.setAttribute("type", "file");
 				el.setAttribute("accept", accept);
 				if (multiple) {
-					el.setAttribute("multiple", multiple);
+					el.setAttribute("multiple", "multiple");
 				}
 				document.body.appendChild(el);
 
@@ -484,6 +490,18 @@
 
 				$el.one("change.openFileSelector", function handleOk() {
 					lock = true;
+					if (limit_size_max) {
+						if (
+							_.some(el.files, file => {
+								if (file.size > limit_size_max) {
+									return true;
+								}
+							})
+						) {
+							_.$msgError(`文件大小不能超过${_.$bytesToSize(limit_size_max)}`);
+							return resolve([]);
+						}
+					}
 					resolve(el.files);
 					$el.remove();
 					$el = null;
@@ -498,6 +516,7 @@
 						el = null;
 					}
 				}, 1000 * 1);
+
 				_.$single.win.one("focus.openFileSelector", handleCancel);
 
 				el.click();
@@ -2315,6 +2334,7 @@
 		 * @param {any} options
 		 * 1.FIRST_OPTION_AS_VALUE 如果values的值为undefined，默认取options第一个值
 		 */
+		/* @typescriptDeclare (xItemFormConfigs:object,values:object,options?:object)=>Promise<void[]> */
 		_.$asyncSetFormValues = async function (xItemFormConfigs, values, options = {}) {
 			return Promise.all(
 				_.map(values, async (value, prop) => {
@@ -2491,10 +2511,10 @@
 				o = "",
 				n = 16777216;
 			for (t = 0; t < 4; t++)
-				(o = 0 === t ? o : o + "."),
+				((o = 0 === t ? o : o + "."),
 					(o += parseInt(e / n)),
 					(e -= parseInt(e / n) * n),
-					(n /= 256);
+					(n /= 256));
 			return o;
 		}
 	})();
