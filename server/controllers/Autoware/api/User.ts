@@ -662,6 +662,7 @@ module.exports = {
 						let { uid, usedBy } = ctx.payload;
 						uid = uid ? uid : this.getUid();
 						let avatarInst = orm.avatar;
+						let dataBuffer, type;
 						let data = await (function () {
 							if (usedBy) {
 								return avatarInst.getBy(uid, usedBy);
@@ -671,10 +672,14 @@ module.exports = {
 							}
 						})();
 
-						let dataBuffer, type;
-
 						if (!data?.basecode) {
+							const {
+								generateAvatarSvg,
+								svgToBase64
+							} = require("./User.service");
+							
 							if (usedBy) {
+								// 如果是系统设置类头像，仍然使用默认图片
 								const imagePath = "static/image/setting.png";
 
 								dataBuffer = (function () {
@@ -686,26 +691,48 @@ module.exports = {
 									return IMAGE_BUFFER_CACHE[imagePath];
 								})();
 								type = "image/png";
+								ctx.set("Content-type", type);
+								ctx.body = dataBuffer;
+								return;
 							} else {
-								const {
-									generateAvatarSvg,
-									svgToBase64
-								} = require("./User.service");
+								// 获取用户信息并生成基于用户名的SVG头像
 								const user = await orm.user.findById(uid);
-								const svg = generateAvatarSvg(user.username, 200);
-
-								data = {
-									basecode: svgToBase64(svg)
-								};
-								type = "image/svg+xml";
+								if (user) {
+									const svg = generateAvatarSvg(user.username, 200);
+									const base64Svg = svgToBase64(svg);
+									
+									// 从base64字符串中提取实际的base64编码部分
+									const base64Data = base64Svg.split('base64,')[1];
+									dataBuffer = new Buffer(base64Data, "base64");
+									type = "image/svg+xml";
+									
+									ctx.set("Content-type", type);
+									ctx.body = dataBuffer;
+									return;
+								} else {
+									// 如果找不到用户，使用默认头像
+									const imagePath = "static/image/setting.png";
+									dataBuffer = (function () {
+										if (!IMAGE_BUFFER_CACHE[imagePath]) {
+											IMAGE_BUFFER_CACHE[imagePath] = xU.fs.readFileSync(
+												xU.path.join(xU.var.APP_ROOT_DIR, imagePath)
+											);
+										}
+										return IMAGE_BUFFER_CACHE[imagePath];
+									})();
+									type = "image/png";
+									ctx.set("Content-type", type);
+									ctx.body = dataBuffer;
+									return;
+								}
 							}
+						} else {
+							dataBuffer = new Buffer(data.basecode, "base64");
+							const CONTENT_LENGTH = Buffer.byteLength(data.basecode);
+							ctx.set("Content-Length", CONTENT_LENGTH);
+							ctx.set("Content-type", data.type);
+							ctx.body = dataBuffer;
 						}
-						dataBuffer = new Buffer(data.basecode, "base64");
-						const CONTENT_LENGTH = Buffer.byteLength(data.basecode);
-						ctx.set("Content-Length", CONTENT_LENGTH);
-
-						ctx.set("Content-type", data.type);
-						ctx.body = dataBuffer;
 					} catch (err) {
 						ctx.body = "error:" + err.message;
 					}
