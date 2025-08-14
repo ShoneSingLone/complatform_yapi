@@ -247,7 +247,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 					if (user) {
 						user.avatar = Vue._common_utils.appendToken(
-							`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${uid}&usedBy=user`
+							`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${uid}`
 						);
 						return hDiv({ staticClass: "ellipsis flex middle" }, [
 							hxIcon({

@@ -173,6 +173,7 @@
 			<div class="chat-width-wrapper flex middle">
 				<div>
 					<xIcon
+						:key="inject_im.cpt_im_chat_with.uid"
 						:img="inject_im.cpt_im_chat_with.avatar"
 						class="chat-with-avatar"
 						iscache="true" />
