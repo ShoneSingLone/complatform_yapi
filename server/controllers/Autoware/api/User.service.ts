@@ -5,32 +5,93 @@
  * @returns {string} SVG格式的头像字符串
  */
 function generateAvatarSvg(name, size = 100) {
+	// 处理空名称情况
+	if (!name) name = "用户";
+
 	// 计算名字的哈希值，用于生成一致的颜色
 	let hash = 0;
 	for (let i = 0; i < name.length; i++) {
 		hash = name.charCodeAt(i) + ((hash << 5) - hash);
 	}
 
-	// 生成基于哈希的RGB颜色
-	const r = (hash & 0xff0000) >> 16;
-	const g = (hash & 0x00ff00) >> 8;
-	const b = hash & 0x0000ff;
+	// 生成基于哈希的HSL颜色（更美观）
+	const hue = Math.abs(hash % 360);
+	const saturation = 65 + Math.abs((hash >> 8) % 20); // 65-85%
+	const lightness = 45 + Math.abs((hash >> 16) % 20); // 45-65%
 
-	// 确保颜色不太暗，提高文字可读性
-	const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-	const textColor = brightness > 125 ? "#000000" : "#ffffff";
+	// 确保文字颜色与背景对比度高
+	const textColor = lightness > 50 ? "#333333" : "#ffffff";
 
-	// 获取名字首字母（支持中文名字取第一个字符）
-	const initial = name.charAt(0).toUpperCase();
+	// 处理用户名显示
+	let displayText = name;
+	let lines = [];
+	let fontSize;
+	
+	// 检测是否需要换行显示
+	if (name.length <= 2) {
+		// 1-2个字符：单行显示，大字体
+		lines = [name];
+		fontSize = size / 2.5;
+	} else if (name.length <= 4) {
+		// 3-4个字符：单行显示，中等字体
+		lines = [name];
+		fontSize = size / 3.5;
+	} else if (name.length <= 6) {
+		// 5-6个字符：单行显示，较小字体
+		lines = [name];
+		fontSize = size / 5;
+	} else if (name.length <= 10) {
+		// 7-10个字符：考虑分两行显示
+		// 尝试在中间位置分割
+		const midPoint = Math.ceil(name.length / 2);
+		lines = [name.substring(0, midPoint), name.substring(midPoint)];
+		fontSize = size / 5;
+	} else {
+		// 超过10个字符：分多行显示
+		// 每行最多5个字符
+		for (let i = 0; i < name.length; i += 5) {
+			lines.push(name.substring(i, Math.min(i + 5, name.length)));
+		}
+		fontSize = size / 6;
+		// 如果行数过多，限制最多显示3行
+		if (lines.length > 3) {
+			lines = lines.slice(0, 3);
+			// 最后一行添加省略号
+			lines[2] = lines[2].substring(0, lines[2].length - 1) + "...";
+		}
+	}
 
-	// 构建SVG字符串
+	// 构建渐变背景
+	const gradientId = `grad-${Math.abs(hash).toString(16).substring(0, 6)}`;
+	const gradientAngle = hash % 360;
+	const secondHue = (hue + 40) % 360;
+
+	// 构建SVG字符串（带渐变和圆角）
+	let textElements = '';
+	
+	// 计算多行文本的垂直位置
+	const lineHeight = fontSize * 1.2; // 行高为字体大小的1.2倍
+	const totalHeight = lines.length * lineHeight;
+	const startY = (size - totalHeight) / 2 + fontSize / 2;
+	
+	// 为每行文本创建一个text元素
+	lines.forEach((line, index) => {
+		const yPos = startY + index * lineHeight;
+		textElements += `
+    <text x="${size / 2}" y="${yPos}" 
+          font-family="Arial, sans-serif" font-size="${fontSize}" font-weight="bold"
+          text-anchor="middle" dominant-baseline="middle" fill="${textColor}">${line}</text>`;
+	});
+	
 	return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${size}" height="${size}" fill="rgb(${r}, ${g}, ${b})"/>
-    <text x="${size / 2}" y="${
-		size / 2
-	}" font-family="Arial, sans-serif" font-size="${size / 2}" 
-          text-anchor="middle" dominant-baseline="middle" fill="${textColor}">${initial}</text>
+    <defs>
+        <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="hsl(${hue}, ${saturation}%, ${lightness}%)" />
+            <stop offset="100%" stop-color="hsl(${secondHue}, ${saturation}%, ${lightness - 10}%)" />
+        </linearGradient>
+    </defs>
+    <rect width="${size}" height="${size}" rx="${size * 0.2}" ry="${size * 0.2}" fill="url(#${gradientId})"/>${textElements}
 </svg>`;
 }
 
