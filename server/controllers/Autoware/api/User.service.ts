@@ -90,57 +90,11 @@ function generateAvatarSvg(name, size = 100) {
 		}
 	}
 
-	// 构建渐变背景和效果
-	const gradientId = `grad-${Math.abs(hash).toString(16).substring(0, 6)}`;
+	// 设置背景色和效果
+	const backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 	const shadowId = `shadow-${Math.abs(hash).toString(16).substring(0, 6)}`;
-	
-	// 根据配色方案选择渐变类型
-	let gradientType, gradientColors;
-	switch (colorScheme) {
-		case 0: // 互补色渐变
-			const complementaryHue = (hue + 180) % 360;
-			gradientType = 'linear';
-			gradientColors = [
-				`hsl(${hue}, ${saturation}%, ${lightness}%)`,
-				`hsl(${complementaryHue}, ${saturation-10}%, ${lightness+5}%)`
-			];
-			break;
-		case 1: // 单色渐变
-			gradientType = 'linear';
-			gradientColors = [
-				`hsl(${hue}, ${saturation}%, ${lightness}%)`,
-				`hsl(${hue}, ${saturation-15}%, ${lightness-15}%)`
-			];
-			break;
-		case 2: // 三色渐变
-			const hue1 = hue;
-			const hue2 = (hue + 30) % 360;
-			const hue3 = (hue + 60) % 360;
-			gradientType = 'linear';
-			gradientColors = [
-				`hsl(${hue1}, ${saturation}%, ${lightness}%)`,
-				`hsl(${hue2}, ${saturation}%, ${lightness-5}%)`,
-				`hsl(${hue3}, ${saturation-5}%, ${lightness-10}%)`
-			];
-			break;
-		case 3: // 径向渐变
-			gradientType = 'radial';
-			gradientColors = [
-				`hsl(${hue}, ${saturation+10}%, ${lightness+5}%)`,
-				`hsl(${hue}, ${saturation}%, ${lightness-10}%)`
-			];
-			break;
-		default: // 默认对角线渐变
-			const secondHue = (hue + 40) % 360;
-			gradientType = 'linear';
-			gradientColors = [
-				`hsl(${hue}, ${saturation}%, ${lightness}%)`,
-				`hsl(${secondHue}, ${saturation}%, ${lightness-10}%)`
-			];
-			break;
-	}
 
-	// 构建SVG字符串（带渐变和圆角）
+	// 构建SVG字符串（带圆角和阴影效果）
 	let textElements = '';
 	
 	// 计算多行文本的垂直位置
@@ -158,33 +112,14 @@ function generateAvatarSvg(name, size = 100) {
           filter="url(#${shadowId})">${line}</text>`;
 	});
 	
-	// 构建渐变定义
-	let gradientDef;
-	if (gradientType === 'linear') {
-		gradientDef = `
-        <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="100%">
-            ${gradientColors.map((color, index) => 
-				`<stop offset="${index * 100 / (gradientColors.length - 1)}%" stop-color="${color}" />`
-			).join('\n            ')}
-        </linearGradient>`;
-	} else { // radial
-		gradientDef = `
-        <radialGradient id="${gradientId}" cx="50%" cy="50%" r="50%" fx="25%" fy="25%">
-            ${gradientColors.map((color, index) => 
-				`<stop offset="${index * 100 / (gradientColors.length - 1)}%" stop-color="${color}" />`
-			).join('\n            ')}
-        </radialGradient>`;
-	}
-	
 	return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
     <defs>
-        ${gradientDef}
         <filter id="${shadowId}" x="-10%" y="-10%" width="120%" height="120%">
             <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.3" flood-color="#000"/>
         </filter>
     </defs>
-    <rect width="${size}" height="${size}" rx="${size * 0.2}" ry="${size * 0.2}" fill="url(#${gradientId})"/>${textElements}
+    <rect width="${size}" height="${size}" rx="${size * 0.2}" ry="${size * 0.2}" fill="${backgroundColor}"/>${textElements}
 </svg>`;
 }
 
