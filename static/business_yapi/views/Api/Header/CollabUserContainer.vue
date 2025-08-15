@@ -63,8 +63,9 @@ export default async function () {
 		transition: all 0.2s ease;
 
 		&:hover {
-			transform: translateY(40%);
+			transform: translateY(40%) scale(1.6);
 			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			z-index: 999 !important; /* 确保悬停时置顶 */
 		}
 
 		.user-avatar-wrapper {

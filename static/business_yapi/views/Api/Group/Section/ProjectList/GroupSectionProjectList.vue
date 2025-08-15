@@ -242,15 +242,13 @@ export default async function () {
 								}
 								return hDiv({ class: "flex vertical width100" }, [
 									hDiv({ class: "flex middle" }, [
-										hxItem({
-											style: "--xItem-wrapper-width:32px",
+										hxIcon({
+											key: rowData._id,
 											class: "mr4",
-											configs: {
-												value: rowData._id || "",
-												usedBy: "project",
-												itemType: "YapiItemAvatar",
-												disabled: true
-											}
+											style: "width: 32px; height: 32px;",
+											img: Vue._common_utils.appendToken(
+												`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${rowData._id}&usedBy=project`
+											)
 										}),
 										hLink({
 											class: "flex1",
