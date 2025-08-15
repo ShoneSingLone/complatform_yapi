@@ -95,9 +95,7 @@ export default async function () {
 				return _.sortBy(
 					_.map(this.APP.all_user, user =>
 						_.merge(user, {
-							avatar: Vue._common_utils.appendToken(
-								`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${user.uid}`
-							)
+							avatar: _common_utils.avatar_url(user.uid)
 						})
 					),
 					"username"

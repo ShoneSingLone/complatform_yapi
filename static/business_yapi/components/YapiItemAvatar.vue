@@ -43,12 +43,7 @@ export default async function () {
 				return this.configs.usedBy || "";
 			},
 			cptAvatarUrl() {
-				return (
-					this.imageUrl ||
-					Vue._common_utils.appendToken(
-						`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${this.value}`
-					)
-				);
+				return this.imageUrl || _common_utils.avatar_url(this.value);
 			}
 		},
 		data() {

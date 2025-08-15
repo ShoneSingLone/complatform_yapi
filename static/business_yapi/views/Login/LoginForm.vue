@@ -84,6 +84,7 @@ export default async function () {
 					} else {
 						const formData = _.$pickFormValues(vm.configsForm);
 						const res = await _api.yapi.userLogin(formData);
+
 						if (res?.data?.x_token) {
 							_.$lStorage.x_token = res?.data?.x_token;
 							const info = await this.APP.refreshUserInfo();

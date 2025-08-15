@@ -168,9 +168,7 @@ export default async function () {
 				}
 			},
 			cptAvatarUrl(id) {
-				return Vue._common_utils.appendToken(
-					`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${id}`
-				);
+				return _common_utils.avatar_url(id);
 			}
 		},
 		computed: {

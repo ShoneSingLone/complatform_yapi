@@ -154,11 +154,7 @@ export default async function () {
 								(_list, groupItem) => {
 									if (!group_at_least_one_project.has(groupItem._id)) {
 										group_at_least_one_project.add(groupItem._id);
-										console.log(
-											"🚀 ~ onQuery ~ groupItem._id:",
-											Array.from(group_at_least_one_project),
-											groupItem._id
-										);
+
 										_list.push({
 											group_id: groupItem._id,
 											group_desc: groupItem.group_desc || "",
@@ -246,9 +242,7 @@ export default async function () {
 											key: rowData._id,
 											class: "mr4",
 											style: "width: 32px; height: 32px;",
-											img: Vue._common_utils.appendToken(
-												`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${rowData._id}&usedBy=project`
-											)
+											img: _common_utils.avatar_url(rowData._id, "project")
 										}),
 										hLink({
 											class: "flex1",

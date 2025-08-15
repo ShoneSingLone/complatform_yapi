@@ -2,10 +2,13 @@
 export default async function () {
 	if (!Vue._common_utils) {
 		Vue._common_utils = {
-			avatar_url(id) {
-				return Vue._common_utils.appendToken(
-					`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${id}`
-				);
+			avatar_url(id, usedBy = "") {
+				let href = `/api/user/avatar?uid=${id}`;
+
+				if (usedBy) {
+					href += `&usedBy=${usedBy}`;
+				}
+				return this.appendToken(`${window._AJAX_URL_PREFIX || ""}${href}`);
 			},
 			RequestCode: function RequestCode({
 				basepath,

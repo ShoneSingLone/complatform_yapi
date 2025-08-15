@@ -178,9 +178,7 @@ export default async function () {
 		},
 		computed: {
 			cptAvatarUrl(id) {
-				return Vue._common_utils.appendToken(
-					`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${id}`
-				);
+				return _common_utils.avatar_url(id);
 			},
 			isShow() {
 				return this.$route.query.group_view_tab_name === Vue._yapi_var.TAB_KEY_MEMBER_LIST;

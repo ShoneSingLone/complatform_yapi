@@ -244,16 +244,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						rowData: { uid }
 					} = params;
 					const user = _.find(vm.cptProjectMembers, { uid });
-
 					if (user) {
-						user.avatar = Vue._common_utils.appendToken(
-							`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${uid}`
-						);
-						return hDiv({ staticClass: "ellipsis flex middle" }, [
+						return hDiv({ staticClass: "ellipsis flex middle", key: uid }, [
 							hxIcon({
-								img: user.avatar,
+								img: _common_utils.avatar_url(uid),
 								iscache: true,
-								style: `width: 32px;height: 32px;margin-right:8px;`
+								style: `width: 32px;height: 32px;margin-right:8px;border-radius: 50%;`
 							}),
 							user.username
 						]);
