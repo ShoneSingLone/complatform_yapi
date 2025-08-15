@@ -46,7 +46,7 @@
 					:item-size="48"
 					ref="refTree"
 					:contentRender="treeContentRender"
-					:data="cptMenuTree"
+					:data="cpt_menu_tree"
 					:props="treeProps" />
 			</div>
 		</div>
@@ -101,7 +101,7 @@ export default async function () {
 					"username"
 				);
 			},
-			cptMenuTree() {
+			cpt_menu_tree() {
 				if (this.configsSearch.value) {
 					let newTree = [];
 					_.$traverse(this.cptUserTreeData, node => {

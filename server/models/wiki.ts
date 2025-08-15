@@ -58,22 +58,38 @@ class ModelWiki extends ModelBase {
 	 *
 	 * @memberOf ModelWiki
 	 */
-	/* @typescriptDeclare (parems:{belong_type?:string,belong_id?:string,select?:string})=>Promise<any> */
+
+	/* @typescriptDeclare (parems:{belong_type?:string,belong_id?:string,select?:string,search_params?:object})=>Promise<any> */
 	menu(params = {}) {
 		const select =
 			params.select ||
 			"_id p_id type title project_id username uid edit_uid add_time up_time desc belong_type belong_id";
 		const belong_type = params.belong_type || "all";
 		let belong_id = params.belong_id;
-		const condition = { del_tag: 0, belong_type };
+		let content = params.search_params?.content || "";
+		const condition = {
+			del_tag: 0,
+			belong_type
+		};
+
 		if (belong_id || 0 == belong_id) {
 			condition.belong_id = belong_id;
 		}
+
+		if (content) {
+			condition.markdown = {
+				$regex: content,
+				$options: "i"
+			};
+		}
+
 		return this.model.find(condition).select(select).exec();
 	}
+
 	detail(_id) {
 		return this.model.findOne({ _id, del_tag: 0 }).exec();
 	}
+
 	/* find  find  find  find  find  find  find  find  find  find  find  */
 
 	delete(_id) {

@@ -137,39 +137,6 @@ const postWikiUpsertOne = {
 	}
 };
 
-const getWikiMenu = {
-	summary: "wiki左侧的菜单",
-	description: "文件保存在服务器上",
-	request: {
-		query: {
-			belong_type: swagger_belong_type,
-			belong_id: swagger_belong_id
-		}
-	},
-	async handler(ctx) {
-		try {
-			let { belong_type, belong_id } = ctx.payload || {};
-
-			if (belong_type === xU.var.PRIVATE) {
-				belong_id = this.$uid;
-			}
-
-			let queryConditions = {};
-
-			if (belong_id && belong_id !== "BELONG_ALL") {
-				queryConditions.belong_id = belong_id;
-			}
-
-			const { order } = (await orm.WikiOrder.detail(queryConditions)) || {};
-			ctx.body = xU.$response({
-				list: await orm.wiki.menu({ belong_type, belong_id }),
-				orderArray: order || [5]
-			});
-		} catch (e) {
-			xU.applog.error(e.message);
-		}
-	}
-};
 
 const getWikiDetail = {
 	summary: "单个文档详情",
@@ -334,7 +301,45 @@ module.exports = {
 	},
 	paths: {
 		"/wiki/menu": {
-			get: getWikiMenu
+			post: {
+				summary: "wiki左侧的菜单",
+				description: "文件保存在服务器上",
+				request: {
+					query: {
+						belong_type: swagger_belong_type,
+						belong_id: swagger_belong_id,
+						search_params: {
+							content: {
+								type: "string",
+								description: "文档的内容"
+							}
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let { belong_type, belong_id, search_params } = ctx.payload || {};
+
+						if (belong_type === xU.var.PRIVATE) {
+							belong_id = this.$uid;
+						}
+
+						let queryConditions = {};
+
+						if (belong_id && belong_id !== "BELONG_ALL") {
+							queryConditions.belong_id = belong_id;
+						}
+
+						const { order } = (await orm.WikiOrder.detail(queryConditions)) || {};
+						ctx.body = xU.$response({
+							list: await orm.wiki.menu({ belong_type, belong_id, search_params }),
+							orderArray: order || [5]
+						});
+					} catch (e) {
+						xU.applog.error(e.message);
+					}
+				}
+			}
 		},
 		"/wiki/detail": {
 			get: getWikiDetail

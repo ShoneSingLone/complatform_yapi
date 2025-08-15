@@ -75,7 +75,7 @@ export type t_orm = {
 	 * @returns
 	 *
 	 * @memberOf ModelWikiOrder
-	 
+
 */
 		getName: (...args: any) => Promise<any>;
 
@@ -88,7 +88,7 @@ export type t_orm = {
 	 * @returns
 	 *
 	 * @memberOf ModelWikiOrder
-	 
+
 */
 
 		save: (data: any) => Promise<any>;
@@ -118,13 +118,14 @@ export type t_orm = {
 	 * @returns
 	 *
 	 * @memberOf ModelWiki
-	 
+
 */
 
 		menu: (parems: {
 			belong_type?: string;
 			belong_id?: string;
 			select?: string;
+
 		}) => Promise<any>;
 
 		detail: (...args: any) => Promise<any>;
@@ -177,7 +178,7 @@ export type t_orm = {
 	 * @returns
 	 *
 	 * @memberOf ModelUser
-	 
+
 */
 		update: (...args: any) => Promise<any>;
 
@@ -220,7 +221,7 @@ export type t_orm = {
 	 * 根据md5查询分片信息
 	 * @param {any} md5
 	 * @returns
-	 
+
 */
 
 		findByMd5: (md5: string) => Promise<any>;
@@ -251,7 +252,7 @@ export type t_orm = {
 	 * @returns
 	 *
 	 * @memberOf ModelResource
-	 
+
 */
 
 		search: (
@@ -342,7 +343,7 @@ export type t_orm = {
 	 * @param {String} username 用户名
 	 * @param {Number} typeid 类型id
 	 * @param {Number} add_time 时间
-	 
+
 */
 		save: (...args: any) => Promise<any>;
 
@@ -554,7 +555,7 @@ export type t_orm = {
 	 * @returns
 	 *
 	 * @memberOf ModelGroup
-	 
+
 */
 		getAuthList: (...args: any) => Promise<any>;
 
@@ -595,7 +596,7 @@ export type t_orm = {
 	 * @param {Number} projectid 项目id
 	 * @param {String} projectname 项目名
 	 * @param {String} icon 项目图标
-	 
+
 */
 		save: (...args: any) => Promise<any>;
 
