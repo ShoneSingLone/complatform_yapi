@@ -1,7 +1,7 @@
 <template>
 	<transition name="viewer-fade">
 		<div class="el-dialog__wrapper" :style="cptWrapperStyle">
-			<div role="dialog" :class="dialogClass" :style="dialogStyle" ref="refDialog">
+			<div role="dialog" :class="dialog_class" :style="dialogStyle" ref="refDialog">
 				<div class="el-dialog__header" v-if="!isHideHeader">
 					<div class="el-dialog__title-bar" v-xmove="moveOptions" />
 					<span class="el-dialog__title">
@@ -15,7 +15,7 @@
 						class="x-dialog__headerbtn fullscreen"
 						@click="toggleFullScreen">
 						<xIcon
-							v-if="dialogClass.fullscreen"
+							v-if="dialog_class.fullscreen"
 							class="el-icon el-icon-copy-document"
 							icon="copy-document"
 							style="transform: rotate(180deg)"></xIcon>
@@ -50,6 +50,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 	options = options || {};
 
 	const isHideHeader = options.isHideHeader || false;
+
 	function useModal(vm) {
 		onMounted(() => {
 			vm.deviceSupportInstall();
@@ -68,11 +69,12 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			}
 		});
 	}
+
 	return defineComponent({
 		name: "xModal",
 		provide() {
 			return {
-				inject_modal: this
+				INJECT_MODAL: this
 			};
 		},
 		async mounted() {
@@ -94,19 +96,45 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 				width: refDialogRectWidth,
 				sizer: refDialog
 			} = useAutoResize(props);
+
 			const {
 				height: refContentHeight,
 				width: refContentWidth,
 				sizer: refContent
 			} = useAutoResize(props);
 
-			const setDialogOffset = _.throttle(() => {
+			// 添加状态标记避免重复计算
+			let isCalculating = false;
+			let lastCalculatedValues = null;
+
+			const setDialogOffset = _.debounce(() => {
 				try {
+					// 防止重复计算
+					if (isCalculating) return;
+					isCalculating = true;
+					// 检查是否需要重新计算
+					const currentValues = {
+						width: refDialogRectWidth.value,
+						height: refDialogRectHeight.value,
+						winWidth: _.$single.win.width(),
+						winHeight: _.$single.win.height(),
+						fullscreen: vm.dialog_class.fullscreen
+					};
+
+					// 如果值没有变化，跳过计算
+					if (
+						lastCalculatedValues &&
+						JSON.stringify(currentValues) === JSON.stringify(lastCalculatedValues)
+					) {
+						isCalculating = false;
+						return;
+					}
+
 					let left = (() => {
-						if (vm.dialogClass.fullscreen) {
+						if (vm.dialog_class.fullscreen) {
 							return 0;
 						}
-						let left = (_.$single.win.width() - refDialogRectWidth.value) / 2;
+						let left = (currentValues.winWidth - currentValues.width) / 2;
 
 						if (left < 0) {
 							return 0;
@@ -115,28 +143,47 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 					})();
 
 					let topOnepice = (() => {
-						if (vm.dialogClass.fullscreen) {
+						if (vm.dialog_class.fullscreen) {
 							return 0;
 						}
 
 						let topOnepice = 2;
-						const topTotal = _.$single.win.height() - refDialogRectHeight.value;
+						const topTotal = currentValues.winHeight - currentValues.height;
 						if (topTotal >= 4) {
 							topOnepice = topTotal / 4;
 						}
 						return topOnepice;
 					})();
 
-					vm.dialogStyle = {
-						"margin-top": "0",
-						opacity: 1,
-						left: `${left}px`,
-						top: `${topOnepice}px`
-					};
+					// 使用 requestAnimationFrame 确保样式更新在下一帧执行
+					requestAnimationFrame(() => {
+						if (vm.dialog_class.fullscreen) {
+							vm.dialogStyle = {
+								"margin-top": "0",
+								opacity: 1,
+								left: "0",
+								top: "0",
+								transform: "none",
+								visibility: "visible"
+							};
+						} else {
+							vm.dialogStyle = {
+								"margin-top": "0",
+								opacity: 1,
+								left: `${left}px`,
+								top: `${topOnepice}px`,
+								transform: "none",
+								visibility: "visible"
+							};
+						}
+						lastCalculatedValues = currentValues;
+						isCalculating = false;
+					});
 				} catch (error) {
+					isCalculating = false;
 					return {};
 				}
-			}, 32);
+			}, 50); // 减少防抖延迟
 
 			watch(
 				() => {
@@ -148,10 +195,12 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 					];
 				},
 				rectArray => {
-					if (_.every(rectArray, val => !!val)) {
+					// 添加更严格的检查条件
+					if (_.every(rectArray, val => val && val > 0)) {
 						setDialogOffset();
 					}
-				}
+				},
+				{ flush: "post" } // 确保在 DOM 更新后执行
 			);
 
 			const setPosition = _.throttle(function ({ left, top }) {
@@ -161,18 +210,11 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 				});
 			}, 18);
 
-			onMounted(() => {
-				// _.$single.win.on("resize.xModal", setDialogOffset);
-			});
-			onBeforeUnmount(() => {
-				// _.$single.win.off("resize.xModal", setDialogOffset);
-			});
-
 			return {
 				isHideHeader: ref(isHideHeader),
 				toggleFullScreen() {
-					vm.dialogClass.fullscreen = !vm.dialogClass.fullscreen;
-					if (!vm.dialogClass.fullscreen) {
+					vm.dialog_class.fullscreen = !vm.dialog_class.fullscreen;
+					if (!vm.dialog_class.fullscreen) {
 						vm.setDialogOffset();
 					}
 				},
@@ -181,6 +223,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 				/*  */
 				refDialog,
 				refContent,
+				/*移动*/
 				moveOptions: {
 					left: 0,
 					width: 0,
@@ -220,6 +263,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 								return;
 							}
 						})();
+
 						setPosition({
 							left,
 							top
@@ -242,7 +286,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 				isShowFullScreen: _.isBoolean(modalConfigs.fullscreen),
 				viewerZIndex: 0,
 				left: 0,
-				dialogClass: {
+				dialog_class: {
 					"el-dialog": true,
 					fullscreen: !!_.$val(modalConfigs, "fullscreen")
 				},
@@ -292,14 +336,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			}
 		},
 		watch: {
-			"dialogClass.fullscreen"() {
-				/*
-        this.dialogStyle.opacity = 0;
-        setTimeout(() => {
-        	this.dialogStyle.opacity = 1;
-        }, 300);
-        */
-			}
+			// "dialog_class.fullscreen"(isFullScreen) {}
 		}
 	});
 }
@@ -459,6 +496,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 	margin: 0;
 	overflow: hidden;
 	z-index: var(--xModal-zIndex);
+
 	&::before {
 		content: "";
 		position: absolute;
@@ -478,7 +516,14 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 		box-sizing: border-box;
 		position: absolute;
-		transition: opacity 0.3s ease-in-out;
+		transition:
+			opacity 0.3s ease-in-out,
+			top 0.1s ease,
+			right 0.1s ease,
+			bottom 0.1s ease,
+			left 0.1s ease,
+			width 0.1s ease,
+			height 0.1s ease;
 		box-shadow:
 			0 6px 16px 0 rgba(0, 0, 0, 0.08),
 			0 3px 6px -4px rgba(0, 0, 0, 0.12),
@@ -494,6 +539,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 		> .el-dialog__header {
 			padding: var(--ui-one);
 			border-bottom: 1px solid #eee;
+
 			.el-dialog__title-bar {
 				cursor: move;
 				background-color: transparent;

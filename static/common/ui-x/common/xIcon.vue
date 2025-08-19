@@ -320,7 +320,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 									viewBox: width && height ? `0 0 ${width} ${height}` : undefined
 								})
 								.removeAttr("width")
-								.removeAttr("height");
+								.removeAttr("height")
+								.css({
+									width: "",
+									height: ""
+								});
 
 							// 将 SVG 内容追加到容器中
 							$svgWrapper.append($svgContent);
