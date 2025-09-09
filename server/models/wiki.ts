@@ -95,6 +95,10 @@ class ModelWiki extends ModelBase {
 			});
 		}
 
+		if (xU._.isEmpty(condition.$or)) {
+			delete condition.$or;
+		}
+
 		return this.model.find(condition).select(select).exec();
 	}
 
