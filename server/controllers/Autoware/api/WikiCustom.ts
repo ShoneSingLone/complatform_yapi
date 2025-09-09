@@ -137,7 +137,6 @@ const postWikiUpsertOne = {
 	}
 };
 
-
 const getWikiDetail = {
 	summary: "单个文档详情",
 	request: {
@@ -329,10 +328,16 @@ module.exports = {
 						if (belong_id && belong_id !== "BELONG_ALL") {
 							queryConditions.belong_id = belong_id;
 						}
-
-						const { order } = (await orm.WikiOrder.detail(queryConditions)) || {};
+						/* 排序的顺序 */
+						const { order } =
+							(await orm.WikiOrder.detail(queryConditions)) || {};
+							
 						ctx.body = xU.$response({
-							list: await orm.wiki.menu({ belong_type, belong_id, search_params }),
+							list: await orm.wiki.menu({
+								belong_type,
+								belong_id,
+								search_params
+							}),
 							orderArray: order || [5]
 						});
 					} catch (e) {

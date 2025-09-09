@@ -67,6 +67,7 @@ class ModelWiki extends ModelBase {
 		const belong_type = params.belong_type || "all";
 		let belong_id = params.belong_id;
 		let content = params.search_params?.content || "";
+		let title = params.search_params?.title || content || "";
 		const condition = {
 			del_tag: 0,
 			belong_type
@@ -75,12 +76,23 @@ class ModelWiki extends ModelBase {
 		if (belong_id || 0 == belong_id) {
 			condition.belong_id = belong_id;
 		}
+		condition.$or = [];
 
 		if (content) {
-			condition.markdown = {
-				$regex: content,
-				$options: "i"
-			};
+			condition.$or.push({
+				markdown: {
+					$regex: content,
+					$options: "i"
+				}
+			});
+		}
+		if (title) {
+			condition.$or.push({
+				title: {
+					$regex: title,
+					$options: "i"
+				}
+			});
 		}
 
 		return this.model.find(condition).select(select).exec();
