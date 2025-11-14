@@ -334,9 +334,9 @@ const middlewareMockServer = () => async (ctx, next) => {
 	}
 
 	/*用于初步确定Interface的中间变量*/
-	let interfaceArray;
+	let interface_array;
 	/*具体的interfac数据*/
-	let currentRequestInterfaceDataInYapiDB;
+	let current_request_interface_data_in_yapi_db;
 	/**
 	 * @type ModelInterface
 	 */
@@ -361,28 +361,28 @@ const middlewareMockServer = () => async (ctx, next) => {
 			return String(_path).replace(/\/\//g, "/");
 		})();
 		/*直接通过url获取接口信息*/
-		interfaceArray = await orm.interface.getByPath(
+		interface_array = await orm.interface.getByPath(
 			project._id,
 			REAL_URL_PATH,
 			ctx.method
 		);
 
 		//处理query_path情况  url 中有 ?params=xxx
-		if (!interfaceArray) {
+		if (!interface_array) {
 			/* 通过realUrlPath，method 来获取API的信息 */
-			const interfaceArray_byQueryPath = await orm.interface.getByQueryPath(
+			const interface_array_by_query_path = await orm.interface.getByQueryPath(
 				project._id,
 				REAL_URL_PATH,
 				ctx.method
 			);
 
-			interfaceArray = handleQueryInUrlPath(
+			interface_array = handleQueryInUrlPath(
 				ctx.query,
-				interfaceArray_byQueryPath
+				interface_array_by_query_path
 				// interfaceArray
 			);
 			//处理动态路由
-		} else if (interfaceArray.length === 0) {
+		} else if (interface_array.length === 0) {
 			let newData = await orm.interface.getVar(project._id, ctx.method);
 
 			let findInterface;
@@ -419,16 +419,16 @@ const middlewareMockServer = () => async (ctx, next) => {
 					`当前使用yAPI代理，${ctx.method} ${REAL_URL_PATH}，但API不存在。请确认GET?POST?URL?是否正确`
 				));
 			}
-			interfaceArray = [await orm.interface.get(findInterface._id)];
-		} else if (interfaceArray.length > 1) {
+			interface_array = [await orm.interface.get(findInterface._id)];
+		} else if (interface_array.length > 1) {
 			return (ctx.body = xU.$response(null, 405, "存在多个api，请检查数据库"));
 		}
-		currentRequestInterfaceDataInYapiDB = interfaceArray[0];
+		current_request_interface_data_in_yapi_db = interface_array[0];
 
 		// 必填字段是否填写好
 		if (project.strice) {
 			const validResult = mockValidator(
-				currentRequestInterfaceDataInYapiDB,
+				current_request_interface_data_in_yapi_db,
 				ctx
 			);
 			if (!validResult.valid) {
@@ -443,7 +443,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		/* 是否启用代理，在局域网中访问其他主机 */
 		const isRunWithYapiProxy = (() => {
 			return (
-				currentRequestInterfaceDataInYapiDB?.isProxy ||
+				current_request_interface_data_in_yapi_db?.isProxy ||
 				ctx.headers["yapi-run-test"]
 			);
 		})();
@@ -453,7 +453,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 				return xU._.find(project.env, i => {
 					try {
 						const id = ObjectId(i._id).toString();
-						return id === currentRequestInterfaceDataInYapiDB.witchEnv;
+						return id === current_request_interface_data_in_yapi_db.witchEnv;
 					} catch (error) {
 						console.log("ERROR:获取对应的代理环境", error);
 					}
@@ -470,7 +470,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			ifSuccessfulStoreResponse({
 				ctx,
 				modelInterface: orm.interface,
-				interfaceData: currentRequestInterfaceDataInYapiDB
+				interfaceData: current_request_interface_data_in_yapi_db
 			});
 
 			return;
@@ -478,16 +478,16 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 		let res;
 		// mock 返回值处理
-		res = currentRequestInterfaceDataInYapiDB.res_body;
+		res = current_request_interface_data_in_yapi_db.res_body;
 		try {
-			if (currentRequestInterfaceDataInYapiDB.res_body_type === "json") {
+			if (current_request_interface_data_in_yapi_db.res_body_type === "json") {
 				const isUseJsonSchema =
-					currentRequestInterfaceDataInYapiDB.res_body_is_json_schema === true;
+					current_request_interface_data_in_yapi_db.res_body_is_json_schema === true;
 
 				if (isUseJsonSchema) {
 					//json-schema
 					const schema = xU.json_parse(
-						currentRequestInterfaceDataInYapiDB.res_body
+						current_request_interface_data_in_yapi_db.res_body
 					);
 					res = xU.schemaToJson(schema, {
 						alwaysFakeOptionals: true
@@ -506,7 +506,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 					// console.log('body', ctx.request.body)
 
 					res = mockExtra(
-						xU.json_parse(currentRequestInterfaceDataInYapiDB.res_body),
+						xU.json_parse(current_request_interface_data_in_yapi_db.res_body),
 						{
 							query: ctx.request.query,
 							body: ctx.request.body,
@@ -526,7 +526,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 			let context = {
 				projectData: project,
-				interfaceData: currentRequestInterfaceDataInYapiDB,
+				interfaceData: current_request_interface_data_in_yapi_db,
 				ctx: ctx,
 				mockJson: res,
 				resHeader: {},
@@ -589,16 +589,16 @@ const middlewareMockServer = () => async (ctx, next) => {
 			/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
 			/* isUseBackup */
 			(() => {
-				if (currentRequestInterfaceDataInYapiDB.res_body_type === "backup") {
+				if (current_request_interface_data_in_yapi_db.res_body_type === "backup") {
 					try {
 						const getJsonFn = new Function(
-							`return ${currentRequestInterfaceDataInYapiDB.resBackupJson}`
+							`return ${current_request_interface_data_in_yapi_db.resBackupJson}`
 						);
 						responseByMock = getJsonFn.call(null);
 					} catch (error) {
 						/* 直接使用备份数据，不需要添加额外的 */
 						ctx.type = "html";
-						responseByMock = currentRequestInterfaceDataInYapiDB.resBackupJson;
+						responseByMock = current_request_interface_data_in_yapi_db.resBackupJson;
 						return;
 					}
 				} else if (xU._.isPlainObject(context.mockJson)) {
@@ -631,14 +631,14 @@ module.exports = async function (app) {
 	app.use(middlewareMockServer());
 };
 
-function handleQueryInUrlPath(ctxQuery, interfaceArray_byQueryPath) {
+function handleQueryInUrlPath(ctxQuery, interface_array_by_query_path) {
 	let i,
 		l,
 		j,
 		len,
 		curQuery,
 		match = false;
-	for (const currentInterfaceData of interfaceArray_byQueryPath) {
+	for (const currentInterfaceData of interface_array_by_query_path) {
 		match = false;
 		curQuery = currentInterfaceData.query_path;
 		if (!curQuery || typeof curQuery !== "object" || !curQuery.path) {
