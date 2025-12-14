@@ -41,7 +41,10 @@
 				</xForm>
 				<xGap t />
 				<xForm col="3">
-					<xItem :configs="form.isProxy" v-model="formData.isProxy" span="full" />
+					<xItem
+						:configs="form.isProxy"
+						v-model="formData.isProxy"
+						span="full" />
 				</xForm>
 				<xDivider>响应参数</xDivider>
 				<xForm col="3">
@@ -74,7 +77,11 @@
 <script lang="ts">
 export default async function () {
 	return defineComponent({
-		inject: ["APP", "inject_project", "inject_interface_section_interface_detail"],
+		inject: [
+			"APP",
+			"inject_project",
+			"inject_interface_section_interface_detail"
+		],
 		props: {
 			interfaceInfo: {
 				type: Object,

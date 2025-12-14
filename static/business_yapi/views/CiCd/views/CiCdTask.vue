@@ -19,7 +19,9 @@
 				</template>
 			</xTablebar>
 			<div class="mt flex1">
-				<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" />
+				<xTableVir
+					:columns="configsTable.columns"
+					:data="configsTable.data.list" />
 			</div>
 		</xPageContent>
 	</div>
@@ -38,7 +40,10 @@ export default async function () {
 			onMounted(async () => {
 				await _.$ensure(() => vm.APP.WS);
 				vm.APP.WS.on(task_run_output, ({ msg, task_id }) => {
-					const index = _.findIndex(configsTable.data.list, row => row._id === task_id);
+					const index = _.findIndex(
+						configsTable.data.list,
+						row => row._id === task_id
+					);
 					if (index > -1) {
 						configsTable.data.list[index].msg = msg;
 						configsTable.data.list = [...configsTable.data.list];

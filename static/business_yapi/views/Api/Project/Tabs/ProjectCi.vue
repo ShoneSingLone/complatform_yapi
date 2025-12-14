@@ -23,7 +23,9 @@
 				</template>
 			</xTablebar>
 			<div class="mt" style="height: 500px">
-				<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" />
+				<xTableVir
+					:columns="configsTable.columns"
+					:data="configsTable.data.list" />
 			</div>
 		</xPageContent>
 	</div>

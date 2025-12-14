@@ -34,13 +34,17 @@ export default async function () {
 					label: "项目配置",
 					name: "common",
 					component: () =>
-						_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue")
+						_.$importVue(
+							"@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue"
+						)
 				},
 				{
 					label: "项目成员",
 					name: "member_list",
 					component: () =>
-						_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelMemberList.vue")
+						_.$importVue(
+							"@/views/Api/Project/Tabs/ProjectSettingPanelMemberList.vue"
+						)
 				},
 				{
 					label: "请求配置",
@@ -71,11 +75,15 @@ Swagger自动同步 */
 			});
 
 			const cpt_current_index = computed(() => {
-				return _.findIndex(tabArray, { name: cpt_project_setting_tab_name.value });
+				return _.findIndex(tabArray, {
+					name: cpt_project_setting_tab_name.value
+				});
 			});
 
 			const cpt_item_style = computed(() => {
-				return { transform: "translateX(" + -cpt_current_index.value * 100 + "%)" };
+				return {
+					transform: "translateX(" + -cpt_current_index.value * 100 + "%)"
+				};
 			});
 
 			return {

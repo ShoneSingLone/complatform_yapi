@@ -61,7 +61,9 @@
 		<div class="player-opr x-padding">
 			<div class="player-opr_background" />
 			<div class="overflow-auto width100 player-ctrl">
-				<span class="flex middle audio-title"> {{ APP.stateAudio.currentAudio.name }}</span>
+				<span class="flex middle audio-title">
+					{{ APP.stateAudio.currentAudio.name }}</span
+				>
 			</div>
 			<MusicPlayerAudio class="player-ctrl" />
 			<div class="flex middle player-ctrl">
@@ -116,7 +118,9 @@ export default async function () {
 				if (!this.cloudDiskSizeTotal) {
 					return 0;
 				}
-				return Number(this.cloudDiskSizeUsed / this.cloudDiskSizeTotal).toFixed(2);
+				return Number(this.cloudDiskSizeUsed / this.cloudDiskSizeTotal).toFixed(
+					2
+				);
 			}
 		},
 		methods: {

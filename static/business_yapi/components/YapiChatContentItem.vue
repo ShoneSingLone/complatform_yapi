@@ -8,7 +8,10 @@
 <template>
 	<div :class="cptClass">
 		<div :class="cptItemClass">
-			<TuiEditor :value="cptContent" :asRender="true" imgrange=".chat-messages" />
+			<TuiEditor
+				:value="cptContent"
+				:asRender="true"
+				imgrange=".chat-messages" />
 			<xGap t />
 			<div :class="['flex width100', { end: cptIsSelf }]">
 				<span>{{ cptAddTime }}</span>
@@ -29,7 +32,10 @@ export default async function () {
 				return cptItemUid === cptCurrentUserId;
 			},
 			cptClass({ cptIsSelf }) {
-				return ["YapiChatContentItem-wrapper width100 flex mb", { end: cptIsSelf }];
+				return [
+					"YapiChatContentItem-wrapper width100 flex mb",
+					{ end: cptIsSelf }
+				];
 			},
 			cptItemClass({ cptIsSelf }) {
 				return [

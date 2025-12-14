@@ -36,7 +36,10 @@ export default async function () {
 			},
 			cptDisabled() {
 				return (
-					this.$attrs.readonly || this.$attrs.disabled || this.configs.disabled || false
+					this.$attrs.readonly ||
+					this.$attrs.disabled ||
+					this.configs.disabled ||
+					false
 				);
 			},
 			cptUsedBy() {

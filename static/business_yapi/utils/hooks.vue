@@ -13,7 +13,11 @@ export default async function () {
 					)
 				);
 
-				const onMoving = _.throttle(function ({ clickEvent, movingEvent, clickInfo }) {
+				const onMoving = _.throttle(function ({
+					clickEvent,
+					movingEvent,
+					clickInfo
+				}) {
 					const { left: leftStart } = clickInfo;
 					let left = 16 + leftStart + movingEvent.clientX - clickEvent.clientX;
 					if (left < 100) {

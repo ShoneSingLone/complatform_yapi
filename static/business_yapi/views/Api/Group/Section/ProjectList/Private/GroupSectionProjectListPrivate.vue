@@ -16,9 +16,10 @@ export default async function () {
 		methods: {
 			renderNoFollowPanel() {
 				const isUnfollow = project => !project.follow;
-				let unfollowArray = _.sortBy(_.filter(this.APP.groupProjectList, isUnfollow), [
-					"up_time"
-				]);
+				let unfollowArray = _.sortBy(
+					_.filter(this.APP.groupProjectList, isUnfollow),
+					["up_time"]
+				);
 
 				if (_.$isArrayFill(unfollowArray)) {
 					return h(
@@ -42,9 +43,10 @@ export default async function () {
 			},
 			renderFollowPanel() {
 				const isFollow = project => !!project.follow;
-				let followProject = _.sortBy(_.filter(this.APP.groupProjectList, isFollow), [
-					"up_time"
-				]);
+				let followProject = _.sortBy(
+					_.filter(this.APP.groupProjectList, isFollow),
+					["up_time"]
+				);
 				if (_.$isArrayFill(followProject)) {
 					return h(
 						"xBlock",

@@ -37,7 +37,9 @@ export default async function () {
 			async startScreenShare(e) {
 				try {
 					//调用getDisplayMedia()方法，约束设置成{video:true}即可
-					const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+					const stream = await navigator.mediaDevices.getDisplayMedia({
+						video: true
+					});
 					console.log("handleSuccess:");
 					this.handleSuccess(stream);
 				} catch (e) {

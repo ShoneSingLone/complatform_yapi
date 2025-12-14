@@ -24,33 +24,33 @@
 
 1. **克隆仓库**：
 
-    ```bash
-    git clone https://gitee.com/ShoneSingLone/boundless_static_business_yapi.git
-    cd boundless_static_business_yapi
-    ```
+   ```bash
+   git clone https://gitee.com/ShoneSingLone/boundless_static_business_yapi.git
+   cd boundless_static_business_yapi
+   ```
 
 2. **安装依赖**：
 
-    ```bash
-    npm install
-    # 或者使用 yarn
-    yarn install
-    ```
+   ```bash
+   npm install
+   # 或者使用 yarn
+   yarn install
+   ```
 
 3. **配置数据库**：
    确保 MongoDB 已安装并运行，然后在项目根目录下创建 `.env` 文件，配置数据库连接：
 
-    ```env
-    MONGO_URI=mongodb://localhost:27017/yapi
-    ```
+   ```env
+   MONGO_URI=mongodb://localhost:27017/yapi
+   ```
 
 4. **启动项目**：
 
-    ```bash
-    npm run dev
-    # 或者使用 yarn
-    yarn dev
-    ```
+   ```bash
+   npm run dev
+   # 或者使用 yarn
+   yarn dev
+   ```
 
 5. **访问项目**：
    打开浏览器，访问 `http://localhost:3000`，即可看到 YAPI 的界面。

@@ -12,7 +12,12 @@
 					<canvas ref="canvas"></canvas>
 				</div>
 				<div>
-					<video ref="video" playsInline autoPlay controls class="small-video"></video>
+					<video
+						ref="video"
+						playsInline
+						autoPlay
+						controls
+						class="small-video"></video>
 				</div>
 			</div>
 			<xMd :md="md" />

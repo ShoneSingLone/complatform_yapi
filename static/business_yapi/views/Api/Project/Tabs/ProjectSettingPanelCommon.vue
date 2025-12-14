@@ -1,7 +1,9 @@
 <template>
 	<div class="flex vertical height100 overflow-auto">
 		<xBlock class="flex1">
-			<xForm col="1" style="--xItem-wrapper-width: 446px; --xItem-label-width: 220px">
+			<xForm
+				col="1"
+				style="--xItem-wrapper-width: 446px; --xItem-label-width: 220px">
 				<xItem :configs="form.img" />
 				<xItem :configs="form.group_id" />
 				<xItem :configs="form.name" />
@@ -77,7 +79,8 @@ export default async function () {
 		},
 		data() {
 			const vm = this;
-			const { group_id, name, basepath, desc, project_type } = useProjectForm(vm);
+			const { group_id, name, basepath, desc, project_type } =
+				useProjectForm(vm);
 			const p = vm.APP.cptProject;
 			group_id.value = vm.APP.cptGroupId;
 
@@ -114,7 +117,9 @@ export default async function () {
 						label: "代理服务器地址",
 						tips: () =>
 							hDiv([
-								hDiv(["如果请求需要使用VPN，则需要有一台开启VPN的PC作为代理机。"]),
+								hDiv([
+									"如果请求需要使用VPN，则需要有一台开启VPN的PC作为代理机。"
+								]),
 								hDiv([
 									"利用",
 									h(
@@ -176,9 +181,7 @@ export default async function () {
 													class: "card-danger-content"
 												},
 												[
-													h("p", [
-														"此操作非常危险,会删除该项目下面所有接口"
-													]),
+													h("p", ["此操作非常危险,会删除该项目下面所有接口"]),
 													h("p", ["项目一旦删除，将无法恢复数据"]),
 													h("p", ["只有组长和管理员有权限删除项目。"])
 												]

@@ -18,22 +18,42 @@
 				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
 					<div class="form-group">
 						<label class="form-label">最大并发构建数</label>
-						<input type="number" class="form-input" value="5" min="1" max="20" />
+						<input
+							type="number"
+							class="form-input"
+							value="5"
+							min="1"
+							max="20" />
 					</div>
 					<div class="form-group">
 						<label class="form-label">构建超时时间(分钟)</label>
-						<input type="number" class="form-input" value="30" min="5" max="120" />
+						<input
+							type="number"
+							class="form-input"
+							value="30"
+							min="5"
+							max="120" />
 					</div>
 				</div>
 
 				<div class="form-group">
 					<label class="form-label">产出物保留天数</label>
-					<input type="number" class="form-input" value="30" min="1" max="365" />
+					<input
+						type="number"
+						class="form-input"
+						value="30"
+						min="1"
+						max="365" />
 				</div>
 
 				<div class="form-group">
 					<label class="form-label">构建日志保留天数</label>
-					<input type="number" class="form-input" value="90" min="7" max="365" />
+					<input
+						type="number"
+						class="form-input"
+						value="90"
+						min="7"
+						max="365" />
 				</div>
 
 				<button class="btn btn-primary">保存设置</button>

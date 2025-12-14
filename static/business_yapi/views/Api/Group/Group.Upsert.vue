@@ -155,7 +155,8 @@ export default async function ({ groupInfo, onOk }) {
 								});
 								_.$msg("分组修改成功");
 							} else {
-								const { newGroupName, newGroupDesc, owner_uids } = vm.cptFormData;
+								const { newGroupName, newGroupDesc, owner_uids } =
+									vm.cptFormData;
 								await _api.yapi.groupAddGroup({
 									group_name: newGroupName,
 									group_desc: newGroupDesc,
@@ -226,9 +227,7 @@ export default async function ({ groupInfo, onOk }) {
 										[
 											hDiv({ staticClass: "card-danger-content" }, [
 												h("p", [
-													i18n(
-														"分组一旦删除，将无法恢复数据，请慎重操作！"
-													)
+													i18n("分组一旦删除，将无法恢复数据，请慎重操作！")
 												]),
 												h("p", [i18n("只有超级管理员有权限删除分组。")])
 											]),
@@ -245,8 +244,7 @@ export default async function ({ groupInfo, onOk }) {
 																content: () => {
 																	return hDiv([
 																		hxItem({
-																			configs:
-																				vm.confirmGroupName
+																			configs: vm.confirmGroupName
 																		})
 																	]);
 																},
@@ -259,8 +257,7 @@ export default async function ({ groupInfo, onOk }) {
 																			},
 																			[
 																				hxBtn({
-																					staticClass:
-																						"mr",
+																					staticClass: "mr",
 																					configs: {
 																						label: "删除",
 																						onClick() {
@@ -272,9 +269,7 @@ export default async function ({ groupInfo, onOk }) {
 																				}),
 																				hxBtn({
 																					configs: {
-																						label: i18n(
-																							"取消"
-																						),
+																						label: i18n("取消"),
 																						preset: "primary",
 																						onClick() {
 																							vmConfirmWindow.closeModal();

@@ -122,7 +122,9 @@
 					</xBtn>
 					<template #dropdown>
 						<xMenu>
-							<xMenuItem @click="inviteCollaborator">Invite Collaborator</xMenuItem>
+							<xMenuItem @click="inviteCollaborator"
+								>Invite Collaborator</xMenuItem
+							>
 							<xMenuItem @click="shareDocument">Share Link</xMenuItem>
 						</xMenu>
 					</template>

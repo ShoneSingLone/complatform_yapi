@@ -220,7 +220,8 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP", "inject_im"],
 		components: {
-			YapiChatContentItem: () => _.$importVue("@/components/YapiChatContentItem.vue")
+			YapiChatContentItem: () =>
+				_.$importVue("@/components/YapiChatContentItem.vue")
 		},
 		setup() {
 			onMounted(() => {

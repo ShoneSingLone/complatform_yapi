@@ -88,7 +88,9 @@ export default async function () {
 				if (this.configsSearch.value) {
 					let newTree = [];
 					_.$traverse(this.inject_project.cptAsideTreeData, node => {
-						const isOk = new RegExp(this.configsSearch.value, "i").test(node.title);
+						const isOk = new RegExp(this.configsSearch.value, "i").test(
+							node.title
+						);
 						if (isOk) {
 							newTree.push(node);
 						}
@@ -104,7 +106,10 @@ export default async function () {
 		},
 		methods: {
 			selectInterface({ menuType, _id }) {
-				this.APP.routerUpsertQuery({ interface_id: _id, interface_type: menuType });
+				this.APP.routerUpsertQuery({
+					interface_id: _id,
+					interface_type: menuType
+				});
 			},
 			async scrollToLocation() {
 				await _.$ensure(() => this.$refs.refTreeScroll);
@@ -185,7 +190,10 @@ export default async function () {
 						get_interface_list: this.inject_project.get_interface_list
 					}
 				);
-				_.$openWindow_deprecated(categoryInfo ? "修改分类" : "添加分类", DialogTypeVueSFC);
+				_.$openWindow_deprecated(
+					categoryInfo ? "修改分类" : "添加分类",
+					DialogTypeVueSFC
+				);
 			},
 			openInterfaceDialog(categoryInfo) {
 				return _.$openModal({
@@ -209,7 +217,9 @@ export default async function () {
 						$(`[data-key=${_id}]`).addClass("is-current");
 						const $target = $(`.ProjectInterfaceAside-node-item.id-${_id}`);
 						$target.addClass("is-current");
-						$target.parents(".ProjectInterfaceAside-node-item").addClass("is-current");
+						$target
+							.parents(".ProjectInterfaceAside-node-item")
+							.addClass("is-current");
 					}
 				}
 			}

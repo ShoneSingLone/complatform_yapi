@@ -68,13 +68,19 @@ module.exports = {
 
 	availablePartitionName: ["availablePartitionName", "AvailablePartitioname"],
 
-	input_correct_phone: ["请输入正确的手机号码", "Please enter the correct phone number"],
+	input_correct_phone: [
+		"请输入正确的手机号码",
+		"Please enter the correct phone number"
+	],
 
 	required: ["必填项", "Required "],
 
 	input_email_addr: ["请输入Email", "Please enter your email address"],
 
-	"form.rules.msg.wordLessThan": ["字数应少于{size}", "Word count should be less than {size}"],
+	"form.rules.msg.wordLessThan": [
+		"字数应少于{size}",
+		"Word count should be less than {size}"
+	],
 
 	msgEnterTheCorrectIPv4Address: [
 		"请输入正确的IPv4地址",
@@ -86,7 +92,10 @@ module.exports = {
 		"Please enter the correct IPv6 address"
 	],
 
-	ruleEnterCorrectAddress: ["ruleEnterCorrectAddress", "ruleEnterCorrectAddress"],
+	ruleEnterCorrectAddress: [
+		"ruleEnterCorrectAddress",
+		"ruleEnterCorrectAddress"
+	],
 
 	msgEnterPositiveInteger: ["请输入正整数", "Please enter a positive integer"],
 
@@ -100,7 +109,10 @@ module.exports = {
 		"Starting with a lowercase English letter or number and containing only letters, numbers, or-"
 	],
 
-	ruleEnterValidIPAddress: ["ruleEnterValidIPAddress", "ruleEnter ValidIPadress"],
+	ruleEnterValidIPAddress: [
+		"ruleEnterValidIPAddress",
+		"ruleEnter ValidIPadress"
+	],
 
 	添加: ["添加", "Add"],
 
@@ -216,7 +228,10 @@ module.exports = {
 
 	组长: ["组长", "unset_unset_unset_unset_unset_unset"],
 
-	启用接口自定义字段: ["启用接口自定义字段", "unset_unset_unset_unset_unset_unset"],
+	启用接口自定义字段: [
+		"启用接口自定义字段",
+		"unset_unset_unset_unset_unset_unset"
+	],
 
 	接口自定义字段: ["接口自定义字段", "unset_unset_unset_unset_unset_unset"],
 
@@ -247,7 +262,10 @@ module.exports = {
 
 	添加成员: ["添加成员", "unset_unset_unset_unset_unset_unset"],
 
-	"分组、项目的名称或者ID": ["分组、项目的名称或者ID", "unset_unset_unset_unset_unset_unset"],
+	"分组、项目的名称或者ID": [
+		"分组、项目的名称或者ID",
+		"unset_unset_unset_unset_unset_unset"
+	],
 
 	添加项目: ["添加项目", "unset_unset_unset_unset_unset_unset"],
 
@@ -302,7 +320,10 @@ module.exports = {
 
 	复用接口: ["复用接口", "unset_unset_unset_unset_unset_unset"],
 
-	复制接口到所选项目: ["复制接口到所选项目", "unset_unset_unset_unset_unset_unset"],
+	复制接口到所选项目: [
+		"复制接口到所选项目",
+		"unset_unset_unset_unset_unset_unset"
+	],
 
 	更新时间: ["更新时间", "unset_unset_unset_unset_unset_unset"],
 
@@ -382,21 +403,33 @@ module.exports = {
 
 	登录: ["登录", "unset_unset_unset_unset_unset_unset"],
 
-	"用户名，显示给其他人看": ["用户名，显示给其他人看", "unset_unset_unset_unset_unset_unset"],
+	"用户名，显示给其他人看": [
+		"用户名，显示给其他人看",
+		"unset_unset_unset_unset_unset_unset"
+	],
 
 	"请输入用户名!": ["请输入用户名!", "unset_unset_unset_unset_unset_unset"],
 
-	"E-mail，登录和收邮件用": ["E-mail，登录和收邮件用", "unset_unset_unset_unset_unset_unset"],
+	"E-mail，登录和收邮件用": [
+		"E-mail，登录和收邮件用",
+		"unset_unset_unset_unset_unset_unset"
+	],
 
 	"请输入Email!": ["请输入Email!", "unset_unset_unset_unset_unset_unset"],
 
 	"请再次输入密码!": ["请再次输入密码!", "unset_unset_unset_unset_unset_unset"],
 
-	"两次输入的密码不一致!": ["两次输入的密码不一致!", "unset_unset_unset_unset_unset_unset"],
+	"两次输入的密码不一致!": [
+		"两次输入的密码不一致!",
+		"unset_unset_unset_unset_unset_unset"
+	],
 
 	邮箱验证码: ["邮箱验证码", "unset_unset_unset_unset_unset_unset"],
 
-	请输入邮箱收到的验证码: ["请输入邮箱收到的验证码", "unset_unset_unset_unset_unset_unset"],
+	请输入邮箱收到的验证码: [
+		"请输入邮箱收到的验证码",
+		"unset_unset_unset_unset_unset_unset"
+	],
 
 	获取验证码: ["获取验证码", "Obtain verification code"],
 
@@ -412,7 +445,10 @@ module.exports = {
 
 	用户总数: ["用户总数", "unset_unset_unset_unset_unset_unset"],
 
-	请输入用户名或者Email: ["请输入用户名或者Email", "unset_unset_unset_unset_unset_unset"],
+	请输入用户名或者Email: [
+		"请输入用户名或者Email",
+		"unset_unset_unset_unset_unset_unset"
+	],
 
 	用户名: ["用户名", "user name"],
 

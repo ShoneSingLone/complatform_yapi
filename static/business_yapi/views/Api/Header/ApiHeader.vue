@@ -8,7 +8,12 @@
 		<xGap f />
 		<TransitionGroup name="fade" mode="out-in" tag="div" class="flex middle">
 			<!-- 			v-xtips="{ content: '国际化', trigger: 'hover', placement: 'bottom' }" -->
-			<a class="flex middle mr4" :href="i18nHref" target="_blank" title="国际化" key="国际化">
+			<a
+				class="flex middle mr4"
+				:href="i18nHref"
+				target="_blank"
+				title="国际化"
+				key="国际化">
 				<xIcon icon="_icon_i18n" />
 			</a>
 			<!-- 			v-xtips="{ content: 'hoppscotch', trigger: 'hover', placement: 'bottom' }" -->
@@ -78,7 +83,8 @@ export default async function () {
 		inject: ["APP"],
 		name: "AppLayoutHeader",
 		components: {
-			CollabUserContainer: () => _.$importVue("@/views/Api/Header/CollabUserContainer.vue"),
+			CollabUserContainer: () =>
+				_.$importVue("@/views/Api/Header/CollabUserContainer.vue"),
 			YapiToolUserBar: () => _.$importVue("@/components/YapiToolUserBar.vue"),
 			YapiBreadcrumbNavigation: () =>
 				_.$importVue("@/components/YapiBreadcrumbNavigation.vue")

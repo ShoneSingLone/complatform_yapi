@@ -53,8 +53,13 @@ export default async function () {
 		},
 		setup() {
 			const vm = this;
-			const { LOOP_TYPE_NAME_ARRAY, playAudio, playMedia, stateAudio, methodsMusicPlayer } =
-				useMusic(this);
+			const {
+				LOOP_TYPE_NAME_ARRAY,
+				playAudio,
+				playMedia,
+				stateAudio,
+				methodsMusicPlayer
+			} = useMusic(this);
 
 			onMounted(() => {
 				vm.$watch(
@@ -272,7 +277,11 @@ export default async function () {
 			},
 			triggerUploadFileChange(args) {
 				const { md5 } = args;
-				this.$set(this.fileRecords, md5, _.merge({}, this.fileRecords[md5], args));
+				this.$set(
+					this.fileRecords,
+					md5,
+					_.merge({}, this.fileRecords[md5], args)
+				);
 				$(window).trigger("UPLOAD_FILE_CHANGE", md5);
 				this.saveFileRecords();
 			},
@@ -440,7 +449,10 @@ export default async function () {
 		computed: {
 			cptNavBarName: {
 				get() {
-					let item = _.find(this.tabArray, item => item.path === this.$route.path);
+					let item = _.find(
+						this.tabArray,
+						item => item.path === this.$route.path
+					);
 					if (!item) {
 						item = _.first(this.tabArray);
 						this.$nextTick(() => {
@@ -486,7 +498,10 @@ export default async function () {
 			fileId(fileId) {
 				if (fileId !== 0) {
 					if (this.breadcrumbItems.length === 1) {
-						console.log("🚀 ~ fileId ~ this.breadcrumbItems:", this.breadcrumbItems);
+						console.log(
+							"🚀 ~ fileId ~ this.breadcrumbItems:",
+							this.breadcrumbItems
+						);
 					}
 				}
 			},

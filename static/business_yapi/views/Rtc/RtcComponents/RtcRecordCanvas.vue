@@ -89,7 +89,9 @@ export default async function () {
 				this.recordedBlobs = [];
 				try {
 					//创建MediaRecorder对象，准备录制
-					this.mediaRecorder = new MediaRecorder(this.stream, { mimeType: "video/webm" });
+					this.mediaRecorder = new MediaRecorder(this.stream, {
+						mimeType: "video/webm"
+					});
 				} catch (e) {
 					console.error("创建MediaRecorder错误:", e);
 					return;

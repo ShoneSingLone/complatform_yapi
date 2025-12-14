@@ -13,7 +13,9 @@
 		<div class="card">
 			<div class="card-header">
 				<h3 class="card-title">Webhook设置</h3>
-				<button class="btn btn-primary" onclick="addWebhook()">添加Webhook</button>
+				<button class="btn btn-primary" onclick="addWebhook()">
+					添加Webhook
+				</button>
 			</div>
 			<div class="card-content">
 				<div class="form-group">
@@ -25,7 +27,9 @@
 							id="webhookUrl"
 							value="https://ci.example.com/webhook/trigger"
 							readonly />
-						<button class="btn btn-secondary" onclick="copyWebhookUrl()">复制</button>
+						<button class="btn btn-secondary" onclick="copyWebhookUrl()">
+							复制
+						</button>
 					</div>
 					<small style="color: #718096; margin-top: 4px; display: block">
 						将此URL添加到您的Git仓库的Webhook设置中
@@ -75,7 +79,9 @@
 							class="form-input"
 							id="webhookSecret"
 							value="your-secret-key" />
-						<button class="btn btn-secondary" onclick="generateSecret()">生成</button>
+						<button class="btn btn-secondary" onclick="generateSecret()">
+							生成
+						</button>
 					</div>
 				</div>
 

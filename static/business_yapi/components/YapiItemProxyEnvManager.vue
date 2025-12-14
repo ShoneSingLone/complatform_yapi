@@ -19,7 +19,10 @@
 							<div class="flex middle">
 								<div>{{ item.name }}</div>
 								<xGap f />
-								<xIcon icon="_delete" class="pointer" @click="removeEnv(item)" />
+								<xIcon
+									icon="_delete"
+									class="pointer"
+									@click="removeEnv(item)" />
 							</div>
 							<div>{{ item.domain }}</div>
 						</div>
@@ -74,8 +77,16 @@ export default async function ({}) {
 						value: [],
 						itemType: "YapiItemKeyValTable"
 					},
-					Cookie: { label: "Cookie", value: [], itemType: "YapiItemKeyValTable" },
-					global: { label: "global", value: [], itemType: "YapiItemKeyValTable" },
+					Cookie: {
+						label: "Cookie",
+						value: [],
+						itemType: "YapiItemKeyValTable"
+					},
+					global: {
+						label: "global",
+						value: [],
+						itemType: "YapiItemKeyValTable"
+					},
 					editor: {
 						label: "",
 						type: "textarea",

@@ -71,7 +71,12 @@ export default async function ({ onOk, projectData }) {
 			async copyProject(newProjectName) {
 				const id = projectData._id;
 				let { data } = await _api.yapi.getProjectById(id);
-				data = _.merge({}, data, { name: newProjectName }, { preName: data.name });
+				data = _.merge(
+					{},
+					data,
+					{ name: newProjectName },
+					{ preName: data.name }
+				);
 				await _api.yapi.copyProject(data);
 				_.$msg("项目复制成功");
 				this.$emit("change");
@@ -104,9 +109,7 @@ export default async function ({ onOk, projectData }) {
 										[
 											hDiv({ staticClass: "card-danger-content" }, [
 												h("p", [
-													i18n(
-														"分组一旦删除，将无法恢复数据，请慎重操作！"
-													)
+													i18n("分组一旦删除，将无法恢复数据，请慎重操作！")
 												]),
 												h("p", [i18n("只有超级管理员有权限删除分组。")])
 											]),

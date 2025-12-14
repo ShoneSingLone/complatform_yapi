@@ -22,7 +22,10 @@ export default async function () {
 		},
 		computed: {
 			cptAvatarUrl() {
-				return this.imageUrl || _common_utils.avatar_url(this.projectData._id, "project");
+				return (
+					this.imageUrl ||
+					_common_utils.avatar_url(this.projectData._id, "project")
+				);
 			},
 			followIcon() {
 				return h(
@@ -34,7 +37,12 @@ export default async function () {
 						staticClass: "pointer icon-item-wrapper",
 						onClick: this.followIconClickHandler
 					},
-					[h("xIcon", { icon: `_${this.followIconIcon}`, style: "color: #faad14" })]
+					[
+						h("xIcon", {
+							icon: `_${this.followIconIcon}`,
+							style: "color: #faad14"
+						})
+					]
 				);
 			},
 			copyIcon() {

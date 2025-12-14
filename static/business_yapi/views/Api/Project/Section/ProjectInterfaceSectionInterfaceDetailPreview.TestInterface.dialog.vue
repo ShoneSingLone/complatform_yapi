@@ -1,5 +1,6 @@
 <template>
-	<xDialog id="project-interface-section-interface-detail-preview-test-interface-dialog">
+	<xDialog
+		id="project-interface-section-interface-detail-preview-test-interface-dialog">
 		<xForm col="2">
 			<div span="full">
 				<xBtn :configs="btnRun" />
@@ -21,12 +22,21 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ mockHref, reqMethod, interface_id, project_id }) {
+export default async function ({
+	mockHref,
+	reqMethod,
+	interface_id,
+	project_id
+}) {
 	const token = "";
 	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
-		inject: ["APP", "inject_project", "inject_interface_section_interface_detail"],
+		inject: [
+			"APP",
+			"inject_project",
+			"inject_interface_section_interface_detail"
+		],
 		props: useDialogProps(),
 		data() {
 			return {
@@ -54,7 +64,11 @@ export default async function ({ mockHref, reqMethod, interface_id, project_id }
 						response = JSON.stringify(this.response, null, 2);
 					}
 					if (this.httprequestoptions) {
-						httprequestoptions = JSON.stringify(this.httprequestoptions, null, 2);
+						httprequestoptions = JSON.stringify(
+							this.httprequestoptions,
+							null,
+							2
+						);
 					}
 				} catch (error) {
 					console.error(error);

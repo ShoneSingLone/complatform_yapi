@@ -54,7 +54,11 @@
 			<div class="logo">🚀 CI/CD Platform</div>
 		</div>
 		<div class="nav-menu">
-			<a :href="menu.href" class="nav-item" v-for="menu in menuArray" :key="menu.id">
+			<a
+				:href="menu.href"
+				class="nav-item"
+				v-for="menu in menuArray"
+				:key="menu.id">
 				<i>{{ menu.icon }}</i> {{ menu.title }}
 			</a>
 		</div>
@@ -84,9 +88,24 @@ export default async function () {
 			return {
 				menuArray: _.map(
 					[
-						{ href: "/cicd/dashboard", title: "仪表板", id: "dashboard", icon: "📊" },
-						{ href: "/cicd/task_list", title: "任务配置", id: "task", icon: "📁" },
-						{ href: "/cicd/builds", title: "构建历史", id: "builds", icon: "🔨" },
+						{
+							href: "/cicd/dashboard",
+							title: "仪表板",
+							id: "dashboard",
+							icon: "📊"
+						},
+						{
+							href: "/cicd/task_list",
+							title: "任务配置",
+							id: "task",
+							icon: "📁"
+						},
+						{
+							href: "/cicd/builds",
+							title: "构建历史",
+							id: "builds",
+							icon: "🔨"
+						},
 						{
 							href: "/cicd/artifacts",
 							title: "产出物管理",
@@ -99,7 +118,12 @@ export default async function () {
 							id: "webhooks",
 							icon: "🔗"
 						},
-						{ href: "/cicd/settings", title: "系统设置", id: "settings", icon: "⚙️" }
+						{
+							href: "/cicd/settings",
+							title: "系统设置",
+							id: "settings",
+							icon: "⚙️"
+						}
 					],
 					menu => {
 						menu.href = _.$aHashLink(menu.href, vm.$route.query);

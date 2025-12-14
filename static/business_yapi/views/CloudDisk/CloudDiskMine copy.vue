@@ -66,7 +66,9 @@ export default async function () {
 				if (!this.cloudDiskSizeTotal) {
 					return 0;
 				}
-				return Number(this.cloudDiskSizeUsed / this.cloudDiskSizeTotal).toFixed(2);
+				return Number(this.cloudDiskSizeUsed / this.cloudDiskSizeTotal).toFixed(
+					2
+				);
 			}
 		},
 		methods: {

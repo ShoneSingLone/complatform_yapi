@@ -34,7 +34,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					"@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetail.vue"
 				),
 			ProjectInterfaceSectionInterfaceList: () =>
-				_.$importVue("@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceList.vue")
+				_.$importVue(
+					"@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceList.vue"
+				)
 		},
 		provide() {
 			return { inject_project_interface_section: this };
@@ -217,7 +219,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					);
 					const hasBackupData = h(
 						"xTag",
-						{ type: "warning", class: "ellipsis mt4", vIf: !rowData.isSetBackupData },
+						{
+							type: "warning",
+							class: "ellipsis mt4",
+							vIf: !rowData.isSetBackupData
+						},
 						[NO_BACKUP]
 					);
 

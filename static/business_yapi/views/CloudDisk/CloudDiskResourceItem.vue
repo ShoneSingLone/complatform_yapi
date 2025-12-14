@@ -55,7 +55,10 @@
 				icon="_cloud_select_resource"
 				style="color: var(--el-color-primary)"
 				v-if="checked" />
-			<xIcon icon="_cloud_unselect_resource" style="color: var(--el-border-color)" v-else />
+			<xIcon
+				icon="_cloud_unselect_resource"
+				style="color: var(--el-border-color)"
+				v-else />
 		</div>
 	</div>
 </template>

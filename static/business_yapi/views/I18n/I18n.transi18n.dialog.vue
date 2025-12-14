@@ -99,7 +99,9 @@ export default async function ({}) {
 					return;
 				}
 				let i18nString = await _.$readFileAsText(file);
-				const parseJson = new Function(`return ${i18nString.split("module.exports =")[1]}`);
+				const parseJson = new Function(
+					`return ${i18nString.split("module.exports =")[1]}`
+				);
 				return parseJson();
 			},
 

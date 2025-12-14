@@ -115,7 +115,9 @@
 					</div>
 					<div class="build-actions">
 						<span class="status-badge status-success">✅ 成功</span>
-						<button class="btn btn-sm btn-secondary" onclick="downloadArtifact(1233)">
+						<button
+							class="btn btn-sm btn-secondary"
+							onclick="downloadArtifact(1233)">
 							下载
 						</button>
 					</div>

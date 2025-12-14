@@ -20,7 +20,9 @@
 <template>
 	<div class="flex vertical height100 CloudDiskResource">
 		<div class="width100 overflow-auto mr ml">
-			<xBreadcrumb :items="APP.breadcrumbItems" :itemRender="mRendeBreadCrumbItem" />
+			<xBreadcrumb
+				:items="APP.breadcrumbItems"
+				:itemRender="mRendeBreadCrumbItem" />
 		</div>
 		<div class="flex flex1 vertical overflow-auto">
 			<CloudDiskResourceItem
@@ -95,7 +97,8 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP"],
 		components: {
-			CloudDiskResourceItem: () => _.$importVue("@/views/CloudDisk/CloudDiskResourceItem.vue")
+			CloudDiskResourceItem: () =>
+				_.$importVue("@/views/CloudDisk/CloudDiskResourceItem.vue")
 		},
 		data(vm) {
 			return {
@@ -181,7 +184,10 @@ export default async function () {
 
 				if (!isLastItem) {
 					target.push(
-						h("xIcon", { icon: "_back_group", style: "transform:rotate(180deg);" })
+						h("xIcon", {
+							icon: "_back_group",
+							style: "transform:rotate(180deg);"
+						})
 					);
 				}
 				return target;
@@ -194,7 +200,10 @@ export default async function () {
 					md5: md5Value,
 					name: fileKey
 				};
-				const response = await makePostRequest("http://127.0.0.1:3000/merge", params);
+				const response = await makePostRequest(
+					"http://127.0.0.1:3000/merge",
+					params
+				);
 			},
 			//文件切片
 			mSlickFile(file) {
@@ -206,7 +215,10 @@ export default async function () {
 				while (start < file.size) {
 					end = Math.min(start + CHUNK_SIZE, file.size);
 					//slice 截取文件字节
-					chunkAndSizeArray.push({ chunk: file.slice(start, end), size: end - start });
+					chunkAndSizeArray.push({
+						chunk: file.slice(start, end),
+						size: end - start
+					});
 					start = end;
 				}
 				_.$loading(false);
@@ -214,7 +226,14 @@ export default async function () {
 			},
 			async mUpload() {
 				this.APP.isShowResourceDrawer = false;
-				const newFormData = ({ chunkTotal, chunkSize, chunkIndex, md5, chunk, name }) => {
+				const newFormData = ({
+					chunkTotal,
+					chunkSize,
+					chunkIndex,
+					md5,
+					chunk,
+					name
+				}) => {
 					let formData = new FormData();
 					formData.append("fileId", this.APP.fileId || 0);
 					// 分片总数
@@ -274,7 +293,10 @@ export default async function () {
 						// 文件所有分片状态list,默认都填充为0（0: 未上传，1：已上传）
 						const allChunkStatusList = new Array(Number(chunkTotal)).fill(0);
 						// 遍历已上传的分片，获取已上传分片对应的索引 (chunkIndex为每个文件分片的索引)
-						const chunkIndexArray = _.map(uploadedChunkArray, item => item.chunkIndex);
+						const chunkIndexArray = _.map(
+							uploadedChunkArray,
+							item => item.chunkIndex
+						);
 						/* 只有上传成功的chunk才会有记录 */
 						// 遍历已上传分片的索引，将对应索引赋值为1，代表已上传的分片 （注意这里，服务端返回的值是按照索引正序排列）
 						_.each(chunkIndexArray, index => (allChunkStatusList[index] = 1));
@@ -311,7 +333,8 @@ export default async function () {
 
 					_.each(needUploadchunkIndexArray, async chunkIndex => {
 						try {
-							const { chunk, size: chunkSize } = this.chunkAndSizeArray[chunkIndex];
+							const { chunk, size: chunkSize } =
+								this.chunkAndSizeArray[chunkIndex];
 							let formData = newFormData({
 								chunkTotal,
 								chunkSize,
@@ -392,7 +415,9 @@ export default async function () {
 				if (vm.APP.selectedItems.length !== 1) {
 					return _.$msgError("只能选择一个文件");
 				}
-				let item = _.find(vm.APP.resourceList, { _id: vm.APP.selectedItems[0] });
+				let item = _.find(vm.APP.resourceList, {
+					_id: vm.APP.selectedItems[0]
+				});
 				item.type = type;
 				this.APP.playMedia(item, { resource: this.APP.resourceList });
 			},
@@ -439,7 +464,9 @@ export default async function () {
 				if (vm.APP.selectedItems.length !== 1) {
 					return _.$msgError("只能选择一个文件");
 				}
-				let item = _.find(vm.APP.resourceList, { _id: vm.APP.selectedItems[0] });
+				let item = _.find(vm.APP.resourceList, {
+					_id: vm.APP.selectedItems[0]
+				});
 				return _.$ajax.downloadOctetStream({
 					url: `/api/resource/get`,
 					payload: { id: item._id },
@@ -494,10 +521,11 @@ export default async function () {
 				}
 			},
 			preview_image(item) {
-				const urlList = _.filter(this.APP.resourceList, { type: "image" }).map(item =>
-					Vue._common_utils.appendToken(
-						`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${item._id}`
-					)
+				const urlList = _.filter(this.APP.resourceList, { type: "image" }).map(
+					item =>
+						Vue._common_utils.appendToken(
+							`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${item._id}`
+						)
 				);
 				const currentUrl = Vue._common_utils.appendToken(
 					`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${item._id}`

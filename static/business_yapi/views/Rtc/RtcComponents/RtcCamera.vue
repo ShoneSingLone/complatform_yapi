@@ -6,14 +6,21 @@
 				<span>摄像头示例</span>
 			</h1>
 			<div class="width100">
-				<video class="video" ref="myVideo" autoPlay playsInline controls></video>
+				<video
+					class="video"
+					ref="myVideo"
+					autoPlay
+					playsInline
+					controls></video>
 			</div>
 		</div>
 	</div>
 </template>
 <script lang="ts">
 export default async function () {
-	const { useGetMediaHander } = await _.$importVue("@/views/Rtc/reuse/reuseRtc.vue");
+	const { useGetMediaHander } = await _.$importVue(
+		"@/views/Rtc/reuse/reuseRtc.vue"
+	);
 	return defineComponent({
 		componentName: "RtcCamera",
 		inject: ["inject_rtc"],

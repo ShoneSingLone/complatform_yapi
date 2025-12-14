@@ -12,7 +12,8 @@
 			}
 
 			body {
-				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				font-family:
+					-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 				background-color: #f5f7fa;
 				color: #2d3748;
 				line-height: 1.6;
@@ -627,7 +628,9 @@
 							<div class="build-item">
 								<div class="build-info">
 									<div class="build-id">#1232 - mobile-app</div>
-									<div class="build-meta">feature/login分支 • 1小时前 • 王五</div>
+									<div class="build-meta">
+										feature/login分支 • 1小时前 • 王五
+									</div>
 								</div>
 								<div class="build-actions">
 									<span class="status-badge status-error">❌ 失败</span>
@@ -736,7 +739,9 @@ BUILD_VERSION=1.0.0</textarea
 								</div>
 
 								<div style="display: flex; gap: 12px">
-									<button type="submit" class="btn btn-primary">保存配置</button>
+									<button type="submit" class="btn btn-primary">
+										保存配置
+									</button>
 									<button
 										type="button"
 										class="btn btn-secondary"
@@ -1011,7 +1016,8 @@ BUILD_VERSION=1.0.0</textarea
 										background: #f7fafc;
 										border-radius: 8px;
 									">
-									<div style="font-size: 24px; font-weight: 700; color: #3182ce">
+									<div
+										style="font-size: 24px; font-weight: 700; color: #3182ce">
 										2.3 GB
 									</div>
 									<div style="color: #718096; font-size: 14px">总存储使用</div>
@@ -1023,7 +1029,8 @@ BUILD_VERSION=1.0.0</textarea
 										background: #f7fafc;
 										border-radius: 8px;
 									">
-									<div style="font-size: 24px; font-weight: 700; color: #38a169">
+									<div
+										style="font-size: 24px; font-weight: 700; color: #38a169">
 										47
 									</div>
 									<div style="color: #718096; font-size: 14px">产出物数量</div>
@@ -1035,10 +1042,13 @@ BUILD_VERSION=1.0.0</textarea
 										background: #f7fafc;
 										border-radius: 8px;
 									">
-									<div style="font-size: 24px; font-weight: 700; color: #805ad5">
+									<div
+										style="font-size: 24px; font-weight: 700; color: #805ad5">
 										7天
 									</div>
-									<div style="color: #718096; font-size: 14px">平均保留时间</div>
+									<div style="color: #718096; font-size: 14px">
+										平均保留时间
+									</div>
 								</div>
 							</div>
 						</div>
@@ -1154,9 +1164,7 @@ BUILD_VERSION=1.0.0</textarea
 										<td>main</td>
 										<td>feat: 添加用户登录功能</td>
 										<td>
-											<span class="status-badge status-success"
-												>✅ 已触发</span
-											>
+											<span class="status-badge status-success">✅ 已触发</span>
 										</td>
 										<td>
 											<button
@@ -1200,7 +1208,12 @@ BUILD_VERSION=1.0.0</textarea
 							<h3 class="card-title">构建设置</h3>
 						</div>
 						<div class="card-content">
-							<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+							<div
+								style="
+									display: grid;
+									grid-template-columns: 1fr 1fr;
+									gap: 16px;
+								">
 								<div class="form-group">
 									<label class="form-label">最大并发构建数</label>
 									<input
@@ -1289,22 +1302,24 @@ BUILD_VERSION=1.0.0</textarea
 			}
 
 			// 项目配置相关函数
-			document.getElementById("projectForm").addEventListener("submit", function (e) {
-				e.preventDefault();
+			document
+				.getElementById("projectForm")
+				.addEventListener("submit", function (e) {
+					e.preventDefault();
 
-				const projectData = {
-					name: document.getElementById("projectName").value,
-					gitUrl: document.getElementById("gitUrl").value,
-					branch: document.getElementById("defaultBranch").value,
-					buildEnv: document.getElementById("buildEnv").value,
-					buildScript: document.getElementById("buildScript").value,
-					envVars: document.getElementById("envVars").value
-				};
+					const projectData = {
+						name: document.getElementById("projectName").value,
+						gitUrl: document.getElementById("gitUrl").value,
+						branch: document.getElementById("defaultBranch").value,
+						buildEnv: document.getElementById("buildEnv").value,
+						buildScript: document.getElementById("buildScript").value,
+						envVars: document.getElementById("envVars").value
+					};
 
-				// 模拟保存
-				console.log("保存项目配置:", projectData);
-				showNotification("项目配置已保存");
-			});
+					// 模拟保存
+					console.log("保存项目配置:", projectData);
+					showNotification("项目配置已保存");
+				});
 
 			function testConnection() {
 				showNotification("正在测试Git连接...", "info");
@@ -1357,7 +1372,10 @@ BUILD_VERSION=1.0.0</textarea
 						row.style.display = "";
 					} else {
 						const statusCell = row.querySelector(".status-badge");
-						if (statusCell && statusCell.classList.contains(`status-${status}`)) {
+						if (
+							statusCell &&
+							statusCell.classList.contains(`status-${status}`)
+						) {
 							row.style.display = "";
 						} else {
 							row.style.display = "none";

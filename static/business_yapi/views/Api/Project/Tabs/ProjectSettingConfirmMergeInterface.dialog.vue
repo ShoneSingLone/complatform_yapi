@@ -43,7 +43,9 @@ export default async function ({ domainData, originData, dataSync }) {
 		computed: {
 			cptTaskNotice() {
 				if (this.hasDone === this.apisTotal) {
-					let exist = this.existNum ? "，其中" + this.existNum + "个接口已存在" : "";
+					let exist = this.existNum
+						? "，其中" + this.existNum + "个接口已存在"
+						: "";
 					return `数据已全部导入，共执行任务 ${this.hasDone} 个${exist}`;
 				}
 				if (this.hasDone) {

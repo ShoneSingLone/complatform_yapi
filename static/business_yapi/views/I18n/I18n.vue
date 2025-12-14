@@ -20,7 +20,9 @@
 				<xGap r="16" />
 			</xTablebar>
 			<div class="x-page-content-middle mt8">
-				<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" />
+				<xTableVir
+					:columns="configsTable.columns"
+					:data="configsTable.data.list" />
 			</div>
 		</xPageContent>
 	</div>
@@ -83,9 +85,14 @@ export default async function () {
 					try {
 						var from = "auto";
 
-						const { data: params, errcode } = await _api.yapi.i18nTranslate(payload);
+						const { data: params, errcode } =
+							await _api.yapi.i18nTranslate(payload);
 						if (!errcode) {
-							const { trans_result } = await translateByBaidu({ params, to, from });
+							const { trans_result } = await translateByBaidu({
+								params,
+								to,
+								from
+							});
 							const [_res] = trans_result;
 							resolve(_res);
 						} else if (errcode === 408) {

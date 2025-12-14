@@ -6,7 +6,10 @@
 			<xItem :configs="searchForm.name" />
 		</xTablebar>
 		<div style="height: 500px" class="mb">
-			<xTableVir class="mt" :columns="configsTable.columns" :data="configsTable.data.list" />
+			<xTableVir
+				class="mt"
+				:columns="configsTable.columns"
+				:data="configsTable.data.list" />
 		</div>
 		<xPagination :configs="configsTable" />
 		<template #footer>
@@ -74,7 +77,10 @@ export default async function ({ selected: interfaceIds }) {
 					async onQuery(pagination) {
 						_.$loading(true);
 						try {
-							const { page, size } = _.$setPagination(vm.configsTable, pagination);
+							const { page, size } = _.$setPagination(
+								vm.configsTable,
+								pagination
+							);
 							const {
 								data: { list, total }
 							} = await _api.yapi.project_page({

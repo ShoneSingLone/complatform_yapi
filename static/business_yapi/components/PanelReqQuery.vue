@@ -1,7 +1,9 @@
 <style lang="less"></style>
 <template>
 	<div>
-		<div class="width100 yapiItemReqBodyParams-table-height x-padding" ref="columns">
+		<div
+			class="width100 yapiItemReqBodyParams-table-height x-padding"
+			ref="columns">
 			<xTableVir :columns="columns" :data="cptReqQuery" />
 		</div>
 		<xBtn @click="() => addNewQuery()" class="mt4">添加</xBtn>
@@ -22,7 +24,10 @@ export default async function () {
 						rules: [
 							_rules.required(),
 							_rules.validator(({ val }) => {
-								const items = _.filter(vm.cptReqQuery, item => item.name === val);
+								const items = _.filter(
+									vm.cptReqQuery,
+									item => item.name === val
+								);
 								if (items.length > 1) {
 									return "参数名重复";
 								}

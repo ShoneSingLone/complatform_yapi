@@ -3,7 +3,9 @@
 		<xCard>
 			<div>
 				<xItem :configs="form.img" id="UserProfileAvatar" />
-				<div class="flex center mt8" style="width: 120px">用户ID：{{ form.uid.value }}</div>
+				<div class="flex center mt8" style="width: 120px">
+					用户ID：{{ form.uid.value }}
+				</div>
 			</div>
 			<xDivider>基本信息</xDivider>
 			<xForm col="1">

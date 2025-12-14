@@ -24,33 +24,33 @@ This is an open-source project based on YAPI, designed to provide a powerful and
 
 1. **Clone the Repository**:
 
-    ```bash
-    git clone https://gitee.com/ShoneSingLone/boundless_static_business_yapi.git
-    cd boundless_static_business_yapi
-    ```
+   ```bash
+   git clone https://gitee.com/ShoneSingLone/boundless_static_business_yapi.git
+   cd boundless_static_business_yapi
+   ```
 
 2. **Install Dependencies**:
 
-    ```bash
-    npm install
-    # or using yarn
-    yarn install
-    ```
+   ```bash
+   npm install
+   # or using yarn
+   yarn install
+   ```
 
 3. **Configure the Database**:
    Ensure MongoDB is installed and running, then create a `.env` file in the project root directory and configure the database connection:
 
-    ```env
-    MONGO_URI=mongodb://localhost:27017/yapi
-    ```
+   ```env
+   MONGO_URI=mongodb://localhost:27017/yapi
+   ```
 
 4. **Start the Project**:
 
-    ```bash
-    npm run dev
-    # or using yarn
-    yarn dev
-    ```
+   ```bash
+   npm run dev
+   # or using yarn
+   yarn dev
+   ```
 
 5. **Access the Project**:
    Open a browser and navigate to `http://localhost:3000` to view the YAPI interface.

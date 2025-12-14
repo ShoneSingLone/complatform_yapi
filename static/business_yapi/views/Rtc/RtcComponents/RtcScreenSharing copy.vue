@@ -16,7 +16,9 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const { useGetMediaHander } = await _.$importVue("@/views/Rtc/reuse/reuseRtc.vue");
+	const { useGetMediaHander } = await _.$importVue(
+		"@/views/Rtc/reuse/reuseRtc.vue"
+	);
 
 	return defineComponent({
 		componentName: "RtcScreenSharing",

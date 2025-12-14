@@ -16,7 +16,10 @@
 				<span>→</span>
 				<span>{{ info.payload?.new_title }}</span>
 			</div>
-			<div class="diff-text" v-html="$parent.noteContent(info.data)" v-if="info.data"></div>
+			<div
+				class="diff-text"
+				v-html="$parent.noteContent(info.data)"
+				v-if="info.data"></div>
 		</div>
 	</div>
 </template>
@@ -194,7 +197,8 @@ export default async function () {
 		pre {
 			margin: 0;
 			padding: 10px;
-			font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+			font-family:
+				"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 			font-size: 13px;
 			line-height: 1.5;
 			color: #333;

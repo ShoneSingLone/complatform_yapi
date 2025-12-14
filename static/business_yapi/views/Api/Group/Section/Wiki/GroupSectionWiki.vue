@@ -20,7 +20,10 @@ export default async function () {
 		},
 		computed: {
 			isShow() {
-				return this.$route.query.group_view_tab_name === Vue._yapi_var.TAB_KEY_GROUP_WIKI;
+				return (
+					this.$route.query.group_view_tab_name ===
+					Vue._yapi_var.TAB_KEY_GROUP_WIKI
+				);
 			}
 		}
 	});

@@ -13,7 +13,12 @@ export default async function () {
 	const BODY = "body";
 
 	const HTTP_METHOD = {
-		[GET]: { type: "", textColor: "#00008B", color: "#：#F0F8", default_tab: QUERY },
+		[GET]: {
+			type: "",
+			textColor: "#00008B",
+			color: "#：#F0F8",
+			default_tab: QUERY
+		},
 		[POST]: {
 			type: "success",
 			textColor: "#006400",
@@ -42,8 +47,18 @@ export default async function () {
 			request_body: true,
 			default_tab: BODY
 		},
-		[HEAD]: { type: "warning", textColor: "#696969", color: "#D3D3D3", default_tab: QUERY },
-		[OPTIONS]: { type: "info", textColor: "#4B0082", color: "#E6E6FA", default_tab: QUERY }
+		[HEAD]: {
+			type: "warning",
+			textColor: "#696969",
+			color: "#D3D3D3",
+			default_tab: QUERY
+		},
+		[OPTIONS]: {
+			type: "info",
+			textColor: "#4B0082",
+			color: "#E6E6FA",
+			default_tab: QUERY
+		}
 	};
 
 	if (!window._opts.yapi) {

@@ -44,7 +44,10 @@
 				:disabled="!header.enabled" />
 
 			<div class="header-actions">
-				<xBtn preset="text" icon="el-icon-delete" @click="removeHeader(index)" />
+				<xBtn
+					preset="text"
+					icon="el-icon-delete"
+					@click="removeHeader(index)" />
 			</div>
 		</div>
 

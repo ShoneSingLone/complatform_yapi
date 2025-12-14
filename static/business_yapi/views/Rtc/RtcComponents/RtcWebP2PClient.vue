@@ -434,7 +434,9 @@ export default async function () {
 				navigator.webkitGetUserMedia ||
 				navigator.msGetUserMedia;
 			//ICE配置
-			this.configuration = { iceServers: [{ url: "stun:stun.l.google.com:19302" }] };
+			this.configuration = {
+				iceServers: [{ url: "stun:stun.l.google.com:19302" }]
+			};
 			//访问TURN服务器
 			Axios.get(this.turnUrl, {})
 				.then(res => {

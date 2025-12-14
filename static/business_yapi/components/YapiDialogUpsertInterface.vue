@@ -15,7 +15,11 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({ categoryInfo, project_id, get_interface_list }) {
+export default async function ({
+	categoryInfo,
+	project_id,
+	get_interface_list
+}) {
 	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 	return defineComponent({
@@ -65,7 +69,11 @@ export default async function ({ categoryInfo, project_id, get_interface_list })
 							}
 						}
 					},
-					title: { value: "", label: i18n("接口名称"), rules: [_rules.required()] },
+					title: {
+						value: "",
+						label: i18n("接口名称"),
+						rules: [_rules.required()]
+					},
 					path: {
 						value: "",
 						label: i18n("接口路径"),

@@ -6,7 +6,9 @@
 				<span>录制屏幕示例</span>
 			</h1>
 			<video class="video" ref="myVideo" autoPlay playsInline></video>
-			<xBtn @click="startCaptureScreen" :disabled="status === 'recording'"> 开始 </xBtn>
+			<xBtn @click="startCaptureScreen" :disabled="status === 'recording'">
+				开始
+			</xBtn>
 			<xBtn @click="stopRecord" :disabled="status === 'stop'">停止</xBtn>
 		</div>
 	</div>
@@ -60,7 +62,9 @@ export default async function () {
 				this.recordedBlobs = [];
 				try {
 					//创建MediaRecorder对象，准备录制
-					this.mediaRecorder = new MediaRecorder(this.stream, { mimeType: "video/webm" });
+					this.mediaRecorder = new MediaRecorder(this.stream, {
+						mimeType: "video/webm"
+					});
 				} catch (e) {
 					console.error("创建MediaRecorder错误:", e);
 					return;

@@ -17,7 +17,9 @@ export default async function () {
 				"//repo.bfw.wiki/bfwrepo/js/monaco-editor/loader.js",
 				"require"
 			);
-			require.config({ paths: { vs: "//repo.bfw.wiki/bfwrepo/js/monaco-editor" } });
+			require.config({
+				paths: { vs: "//repo.bfw.wiki/bfwrepo/js/monaco-editor" }
+			});
 
 			require(["vs/editor/editor.main"], function () {
 				const { monaco } = window;
@@ -28,10 +30,13 @@ export default async function () {
 					readOnly: vm.configs?.readOnly || false,
 					theme: vm.configs?.theme || theme[1]
 				});
-				vm.raw$editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function () {
-					vm.raw$editor.getAction("editor.action.formatDocument").run();
-					vm.xItem.$emit("save");
-				});
+				vm.raw$editor.addCommand(
+					monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+					function () {
+						vm.raw$editor.getAction("editor.action.formatDocument").run();
+						vm.xItem.$emit("save");
+					}
+				);
 				vm.$nextTick(() => {
 					vm.raw$editor.getAction("editor.action.formatDocument").run();
 					vm.raw$editor.onDidChangeModelContent(data =>

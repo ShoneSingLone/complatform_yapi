@@ -10,7 +10,8 @@ export default async function () {
 		inject: ["APP"],
 		components: {
 			GroupAside: () => _.$importVue("@/views/Api/Group/Aside/GroupAside.vue"),
-			GroupSection: () => _.$importVue("@/views/Api/Group/Section/GroupSection.vue")
+			GroupSection: () =>
+				_.$importVue("@/views/Api/Group/Section/GroupSection.vue")
 		},
 		mounted() {
 			this.APP.ifUrlNoGroupIdGetAndAddIdToUrl();
@@ -24,10 +25,13 @@ export default async function () {
 		methods: {
 			async openGroupUpsertDialog(groupInfo) {
 				const isModify = !!groupInfo;
-				const upsert = await _.$importVue("@/views/Api/Group/Group.Upsert.vue", {
-					parent: this,
-					groupInfo
-				});
+				const upsert = await _.$importVue(
+					"@/views/Api/Group/Group.Upsert.vue",
+					{
+						parent: this,
+						groupInfo
+					}
+				);
 				_.$openWindow_deprecated(
 					isModify ? i18n("修改分组信息") : i18n("添加分组"),
 					upsert

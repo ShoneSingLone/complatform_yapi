@@ -190,11 +190,13 @@ export default async function ({
 							if (error) {
 								return;
 							}
-							const { errcode, data, message } = await _api.yapi.apiCicdTaskAdd({
-								...row,
-								cicd_id,
-								..._.$pickFormValues(vm.form)
-							});
+							const { errcode, data, message } = await _api.yapi.apiCicdTaskAdd(
+								{
+									...row,
+									cicd_id,
+									..._.$pickFormValues(vm.form)
+								}
+							);
 							if (_.$isSame(errcode, 0)) {
 								onSuccess();
 								vm.closeModal();

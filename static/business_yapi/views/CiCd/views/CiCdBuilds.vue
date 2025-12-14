@@ -80,9 +80,15 @@
 </style>
 <template>
 	<div id="CiCdBuilds" class="x-page-view flex1">
-		<xDrawer title="作业日志" :visible.sync="state.isShowDrawer" class="CiCdBuilds">
+		<xDrawer
+			title="作业日志"
+			:visible.sync="state.isShowDrawer"
+			class="CiCdBuilds">
 			<div class="log-container x-padding">
-				<div class="log-item" v-for="([time, msg], index) in state.logArray" :key="index">
+				<div
+					class="log-item"
+					v-for="([time, msg], index) in state.logArray"
+					:key="index">
 					<span class="log-timestamp">{{ time }}</span>
 					<span class="log-message">{{ msg }}</span>
 				</div>
@@ -99,7 +105,9 @@
 		<xPageContent>
 			<xTablebar :configs="configsTable" />
 			<div class="mt flex1">
-				<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" />
+				<xTableVir
+					:columns="configsTable.columns"
+					:data="configsTable.data.list" />
 			</div>
 		</xPageContent>
 	</div>

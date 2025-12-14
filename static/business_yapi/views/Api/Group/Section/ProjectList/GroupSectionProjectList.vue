@@ -281,8 +281,9 @@ export default async function () {
 					_.$lStorage.GroupSectionProjectListFormQuery = { name, group };
 					if (name) {
 						const regexp = val => new RegExp(val, "ig");
-						return _.some([row._id, row.name, row.group_id, row.group_name], val =>
-							regexp(name).test(val || "")
+						return _.some(
+							[row._id, row.name, row.group_id, row.group_name],
+							val => regexp(name).test(val || "")
 						);
 					} else if (!_.isEmpty(group)) {
 						return _.includes(group, row.group_id);
@@ -315,11 +316,22 @@ export default async function () {
 				};
 			},
 			isShow() {
-				return this.$route.query.group_view_tab_name === Vue._yapi_var.TAB_KEY_PROJECT_LIST;
+				return (
+					this.$route.query.group_view_tab_name ===
+					Vue._yapi_var.TAB_KEY_PROJECT_LIST
+				);
 			}
 		},
 		methods: {
-			customRowRender({ cells, columns, depth, isScrolling, rowData, rowIndex, style }) {
+			customRowRender({
+				cells,
+				columns,
+				depth,
+				isScrolling,
+				rowData,
+				rowIndex,
+				style
+			}) {
 				const { rowHeight } = this;
 				return xTableVirCells({
 					columns,

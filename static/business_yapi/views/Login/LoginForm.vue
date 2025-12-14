@@ -1,7 +1,10 @@
 <template>
 	<xForm col="1">
 		<!-- 用户名 -->
-		<xItem :configs="configsForm.email" autocomplete="email" @keypress.enter="login" />
+		<xItem
+			:configs="configsForm.email"
+			autocomplete="email"
+			@keypress.enter="login" />
 		<!-- 密码 -->
 		<xItem
 			:configs="configsForm.password"

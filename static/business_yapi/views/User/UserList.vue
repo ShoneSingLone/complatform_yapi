@@ -12,7 +12,9 @@
 				<xGap r="16" />
 			</xTablebar>
 			<div class="x-page-content-middle mt8">
-				<xTableVir :columns="configsTable.columns" :data="configsTable.data.list" />
+				<xTableVir
+					:columns="configsTable.columns"
+					:data="configsTable.data.list" />
 			</div>
 		</xPageContent>
 	</div>
@@ -135,8 +137,7 @@ export default async function () {
 										{
 											label: i18n("修改"),
 											onClick: async () => {
-												const isCurrentIsMe =
-													rowData.uid === vm.APP.user._id;
+												const isCurrentIsMe = rowData.uid === vm.APP.user._id;
 												_.$openModal({
 													title: i18n("个人中心"),
 													url: "@/views/User/UserProfile.Dialog.vue",

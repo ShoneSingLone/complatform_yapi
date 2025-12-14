@@ -12,7 +12,8 @@
 			}
 
 			body {
-				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				font-family:
+					-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 				background-color: #f8f9fa;
 				height: 100vh;
 				overflow: hidden;
@@ -522,7 +523,9 @@
 				</div>
 
 				<div class="tabs">
-					<button class="tab active" onclick="switchTab('files', this)">文件</button>
+					<button class="tab active" onclick="switchTab('files', this)">
+						文件
+					</button>
 					<button class="tab" onclick="switchTab('recent', this)">最近</button>
 				</div>
 
@@ -565,7 +568,9 @@
 				</div>
 
 				<div class="upload-section">
-					<button class="upload-btn" onclick="showUploadModal()">📤 上传文件</button>
+					<button class="upload-btn" onclick="showUploadModal()">
+						📤 上传文件
+					</button>
 				</div>
 			</div>
 
@@ -601,7 +606,9 @@
 
 							<div style="width: 1px; height: 24px; background: #d1d5db"></div>
 
-							<button class="action-btn" onclick="shareDocument()">🔗 分享</button>
+							<button class="action-btn" onclick="shareDocument()">
+								🔗 分享
+							</button>
 							<button class="action-btn primary" onclick="saveDocument()">
 								💾 保存
 							</button>
@@ -610,10 +617,16 @@
 
 					<div class="toolbar">
 						<div class="toolbar-group">
-							<button class="toolbar-btn" onclick="formatText('bold')" title="粗体">
+							<button
+								class="toolbar-btn"
+								onclick="formatText('bold')"
+								title="粗体">
 								<strong>B</strong>
 							</button>
-							<button class="toolbar-btn" onclick="formatText('italic')" title="斜体">
+							<button
+								class="toolbar-btn"
+								onclick="formatText('italic')"
+								title="斜体">
 								<em>I</em>
 							</button>
 							<button
@@ -627,13 +640,22 @@
 						<div class="toolbar-separator"></div>
 
 						<div class="toolbar-group">
-							<button class="toolbar-btn" onclick="alignText('left')" title="左对齐">
+							<button
+								class="toolbar-btn"
+								onclick="alignText('left')"
+								title="左对齐">
 								⬅️
 							</button>
-							<button class="toolbar-btn" onclick="alignText('center')" title="居中">
+							<button
+								class="toolbar-btn"
+								onclick="alignText('center')"
+								title="居中">
 								↔️
 							</button>
-							<button class="toolbar-btn" onclick="alignText('right')" title="右对齐">
+							<button
+								class="toolbar-btn"
+								onclick="alignText('right')"
+								title="右对齐">
 								➡️
 							</button>
 						</div>
@@ -641,10 +663,16 @@
 						<div class="toolbar-separator"></div>
 
 						<div class="toolbar-group">
-							<button class="toolbar-btn" onclick="insertList('ul')" title="无序列表">
+							<button
+								class="toolbar-btn"
+								onclick="insertList('ul')"
+								title="无序列表">
 								•
 							</button>
-							<button class="toolbar-btn" onclick="insertList('ol')" title="有序列表">
+							<button
+								class="toolbar-btn"
+								onclick="insertList('ol')"
+								title="有序列表">
 								1.
 							</button>
 						</div>
@@ -654,7 +682,10 @@
 						<button class="toolbar-btn" onclick="insertLink()" title="插入链接">
 							🔗
 						</button>
-						<button class="toolbar-btn" onclick="insertImage()" title="插入图片">
+						<button
+							class="toolbar-btn"
+							onclick="insertImage()"
+							title="插入图片">
 							🖼️
 						</button>
 					</div>
@@ -715,7 +746,13 @@
 						<div class="progress-fill"></div>
 					</div>
 				</div>
-				<div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px">
+				<div
+					style="
+						display: flex;
+						justify-content: flex-end;
+						gap: 12px;
+						margin-top: 24px;
+					">
 					<button class="action-btn" onclick="closeModal()">取消</button>
 					<button class="action-btn primary">确定</button>
 				</div>
@@ -737,7 +774,9 @@
 
 			// 标签切换
 			function switchTab(tabName, element) {
-				document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+				document
+					.querySelectorAll(".tab")
+					.forEach(tab => tab.classList.remove("active"));
 				element.classList.add("active");
 
 				// 这里可以加载不同标签的内容
@@ -754,7 +793,9 @@
 			function searchFiles(query) {
 				const fileItems = document.querySelectorAll(".file-item");
 				fileItems.forEach(item => {
-					const fileName = item.querySelector(".file-name").textContent.toLowerCase();
+					const fileName = item
+						.querySelector(".file-name")
+						.textContent.toLowerCase();
 					if (fileName.includes(query.toLowerCase())) {
 						item.style.display = "flex";
 					} else {
@@ -801,7 +842,9 @@
 				}
 
 				editor.value =
-					editor.value.substring(0, start) + formattedText + editor.value.substring(end);
+					editor.value.substring(0, start) +
+					formattedText +
+					editor.value.substring(end);
 				updateWordCount();
 			}
 
@@ -908,11 +951,13 @@
 			});
 
 			// 点击模态框外部关闭
-			document.getElementById("uploadModal").addEventListener("click", function (e) {
-				if (e.target === this) {
-					closeModal();
-				}
-			});
+			document
+				.getElementById("uploadModal")
+				.addEventListener("click", function (e) {
+					if (e.target === this) {
+						closeModal();
+					}
+				});
 		</script>
 	</body>
 </html>

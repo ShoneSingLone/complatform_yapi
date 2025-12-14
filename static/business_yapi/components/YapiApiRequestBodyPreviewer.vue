@@ -37,7 +37,10 @@ export default async function () {
 		},
 		computed: {
 			isRequired() {
-				return _.includes(this.YapiApiRequestBodyPreviewer.required, this.propName);
+				return _.includes(
+					this.YapiApiRequestBodyPreviewer.required,
+					this.propName
+				);
 			},
 			cptTitle() {
 				return h(
@@ -68,7 +71,10 @@ export default async function () {
 				return hDiv({ col: 2 }, [
 					hDiv({ class: "flex middle" }, [this.item.title]),
 					..._.map(this.item.properties, (property, prop) => {
-						return h("YapiApiRequestBodyPreviewer", { item: property, propName: prop });
+						return h("YapiApiRequestBodyPreviewer", {
+							item: property,
+							propName: prop
+						});
 					})
 				]);
 			}

@@ -39,14 +39,20 @@ export default async function () {
 			async call() {
 				console.log("开始呼叫...");
 				//设置ICE Server，使用Google服务器
-				let configuration = { iceServers: [{ url: "stun:stun.l.google.com:19302" }] };
+				let configuration = {
+					iceServers: [{ url: "stun:stun.l.google.com:19302" }]
+				};
 				//创建RTCPeerConnection对象
 				this.localConnection = new RTCPeerConnection(configuration);
 				console.log("创建本地PeerConnection成功:localConnection");
 				//监听返回的Candidate信息
-				this.localConnection.addEventListener("icecandidate", this.onLocalIceCandidate);
+				this.localConnection.addEventListener(
+					"icecandidate",
+					this.onLocalIceCandidate
+				);
 				//实例化发送通道
-				this.sendChannel = this.localConnection.createDataChannel("webrtc-datachannel");
+				this.sendChannel =
+					this.localConnection.createDataChannel("webrtc-datachannel");
 				//onopen事件监听
 				this.sendChannel.onopen = this.onSendChannelStateChange;
 				//onclose事件监听
@@ -55,7 +61,10 @@ export default async function () {
 				this.remoteConnection = new RTCPeerConnection(configuration);
 				console.log("创建本地PeerConnection成功:remoteConnection");
 				//监听返回的Candidate信息
-				this.remoteConnection.addEventListener("icecandidate", this.onRemoteIceCandidate);
+				this.remoteConnection.addEventListener(
+					"icecandidate",
+					this.onRemoteIceCandidate
+				);
 				//远端连接数据到达事件监听
 				this.remoteConnection.ondatachannel = this.receiveChannelCallback;
 				//监听ICE状态变化
@@ -122,14 +131,18 @@ export default async function () {
 			},
 			//设置远端描述完成
 			onSetRemoteSuccess(pc) {
-				console.log(`${this.getName(pc)}设置远端描述完成：setRemoteDescription`);
+				console.log(
+					`${this.getName(pc)}设置远端描述完成：setRemoteDescription`
+				);
 			},
 			//设置描述SD错误
 			onSetSessionDescriptionError(error) {
 				console.log(`设置描述SD错误: ${error.toString()}`);
 			},
 			getName(pc) {
-				return pc === this.localConnection ? "localConnection" : "remoteConnection";
+				return pc === this.localConnection
+					? "localConnection"
+					: "remoteConnection";
 			},
 			//创建应答成功
 			async onCreateAnswerSuccess(desc) {
@@ -188,7 +201,9 @@ export default async function () {
 			},
 			//添加Candidate失败
 			onAddIceCandidateError(pc, error) {
-				console.log(`${this.getName(pc)}添加IceCandidate失败: ${error.toString()}`);
+				console.log(
+					`${this.getName(pc)}添加IceCandidate失败: ${error.toString()}`
+				);
 			},
 			//监听I,E状态变化事件回调方法
 			onLocalIceStateChange(event) {

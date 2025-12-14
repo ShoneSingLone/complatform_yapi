@@ -58,8 +58,7 @@ export default async function () {
 												{
 													parent: vm,
 													userId: rowData.uid,
-													canModifyAvatar:
-														rowData.uid === vm.APP.user._id,
+													canModifyAvatar: rowData.uid === vm.APP.user._id,
 													onOk() {
 														vm.APP.updateGroupMemberList();
 													}
@@ -181,7 +180,10 @@ export default async function () {
 				return _common_utils.avatar_url(id);
 			},
 			isShow() {
-				return this.$route.query.group_view_tab_name === Vue._yapi_var.TAB_KEY_MEMBER_LIST;
+				return (
+					this.$route.query.group_view_tab_name ===
+					Vue._yapi_var.TAB_KEY_MEMBER_LIST
+				);
 			},
 			cptAuth() {
 				return [Vue._yapi_var.OWNER, Vue._yapi_var.ADMIN].includes(
