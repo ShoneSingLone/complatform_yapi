@@ -1829,12 +1829,7 @@
 					`with ({...PRIVATE_GLOBAL,..._,...Vue,}){${innerCode};}`
 				);
 			} catch (e) {
-<<<<<<< HEAD
 				console.error(e);
-=======
-				console.error(innerCode);
-				throw e;
->>>>>>> 46e912d0f702d930b8bc15180a92c9ae6448b112
 			}
 			const fnPayload = new Proxy(payload, {
 				get(obj, prop) {
@@ -1851,7 +1846,6 @@
 			try {
 				component = await scfObjAsyncFn(fnPayload, PRIVATE_GLOBAL);
 			} catch (error) {
-<<<<<<< HEAD
 				if (IS_DEV) {
 					scfObjAsyncFn = new Function(
 						"payload",
@@ -1877,11 +1871,6 @@
 				} else {
 					console.error(e);
 				}
-=======
-				console.error(scritpSourceCode);
-				console.error("template中不可使用'`'");
-				console.error(error);
->>>>>>> 46e912d0f702d930b8bc15180a92c9ae6448b112
 			}
 			/* 可以不返回对象，只执行外层 wrapper层的function */
 			/* template */
@@ -2410,7 +2399,6 @@
 		 * @param {any} options
 		 * 1.FIRST_OPTION_AS_VALUE 如果values的值为undefined，默认取options第一个值
 		 */
-<<<<<<< HEAD
 		/* @typescriptDeclare (
 			xItemFormConfigs: object,
 			values: object,
@@ -2424,26 +2412,6 @@
 					return _logValues;
 				},
 				{}
-=======
-		/* @typescriptDeclare (xItemFormConfigs:object,values:object,options?:object)=>Promise<void[]> */
-		_.$asyncSetFormValues = async function (xItemFormConfigs, values, options = {}) {
-			return Promise.all(
-				_.map(values, async (value, prop) => {
-					/* 允许null，代表使用configs.value */
-					if (_.isPlainObject(xItemFormConfigs[prop])) {
-						if (_.includes(["xItemSelect"], xItemFormConfigs[prop]?.itemType)) {
-							await _.$ensure(() => xItemFormConfigs[prop]?.options?.length);
-							if (_.isUndefined(value)) {
-								if (options.FIRST_OPTION_AS_VALUE) {
-									value = _.first(xItemFormConfigs[prop]?.options).value;
-								}
-							}
-						}
-						/*TODO:other type*/
-						xItemFormConfigs[prop].value = value;
-					}
-				})
->>>>>>> 46e912d0f702d930b8bc15180a92c9ae6448b112
 			);
 			try {
 				return await Promise.all(

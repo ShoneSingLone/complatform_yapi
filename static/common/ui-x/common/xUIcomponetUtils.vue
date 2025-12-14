@@ -1017,30 +1017,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			if (prop === "width") {
 				if (width$.value !== value) {
-<<<<<<< HEAD
 					console.warn("🚀 ~ useAutoResize_setValue ~ value:", prop, value);
-=======
->>>>>>> 46e912d0f702d930b8bc15180a92c9ae6448b112
 					width$.value = value;
 				}
 			}
 			if (prop === "height") {
 				if (height$.value !== value) {
-<<<<<<< HEAD
 					console.warn("🚀 ~ useAutoResize_setValue ~ value:", prop, value);
-=======
->>>>>>> 46e912d0f702d930b8bc15180a92c9ae6448b112
 					height$.value = value;
 				}
 			}
 		};
 
 		/*关键*/
-<<<<<<< HEAD
 		const setValue = _setValue;
-=======
-		const setValue = _.throttle(_setValue, 18);
->>>>>>> 46e912d0f702d930b8bc15180a92c9ae6448b112
 
 		onMounted(() => {
 			resizerStopper = useResizeObserver(sizer, ([entry]) => {
