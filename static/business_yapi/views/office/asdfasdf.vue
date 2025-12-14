@@ -159,10 +159,7 @@
 
 		<!-- Upload Modal -->
 		<a-modal v-model:visible="uploadModalVisible" title="Upload Files">
-			<upload-dragger
-				:multiple="true"
-				:action="uploadUrl"
-				@change="handleUpload">
+			<upload-dragger :multiple="true" :action="uploadUrl" @change="handleUpload">
 				<p class="ant-upload-drag-icon">
 					<inbox-outlined />
 				</p>

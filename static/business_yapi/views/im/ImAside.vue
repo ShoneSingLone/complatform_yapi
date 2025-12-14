@@ -105,10 +105,9 @@ export default async function () {
 				if (this.configsSearch.value) {
 					let newTree = [];
 					_.$traverse(this.cptUserTreeData, node => {
-						const isMatchUsername = new RegExp(
-							this.configsSearch.value,
-							"i"
-						).test(node.username);
+						const isMatchUsername = new RegExp(this.configsSearch.value, "i").test(
+							node.username
+						);
 						const isMatchEmail = new RegExp(this.configsSearch.value, "i").test(
 							node.email
 						);

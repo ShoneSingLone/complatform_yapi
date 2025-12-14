@@ -9,10 +9,7 @@
 			</div>
 			<div class="terminal_body">
 				<div class="terminal_promt flex vertical pl pr">
-					<div
-						class="terminal_user"
-						v-for="(item, index) in state.msgArray"
-						:key="index">
+					<div class="terminal_user" v-for="(item, index) in state.msgArray" :key="index">
 						{{ item }}
 					</div>
 					<span class="terminal_cursor"></span>

@@ -37,10 +37,7 @@ export default async function () {
 		},
 		computed: {
 			isRequired() {
-				return _.includes(
-					this.YapiApiRequestBodyPreviewer.required,
-					this.propName
-				);
+				return _.includes(this.YapiApiRequestBodyPreviewer.required, this.propName);
 			},
 			cptTitle() {
 				return h(

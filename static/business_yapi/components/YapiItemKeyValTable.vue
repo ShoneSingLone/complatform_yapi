@@ -1,8 +1,6 @@
 <style lang="less"></style>
 <template>
-	<xBlock
-		class="flex vertical el-card body-height-100"
-		style="height: 400px; width: 100%">
+	<xBlock class="flex vertical el-card body-height-100" style="height: 400px; width: 100%">
 		<xTablebar :configs="configs_taints">
 			<template #left>
 				<xBtnArray :configs="oprBtnArray" />
@@ -17,9 +15,7 @@
 </template>
 <script lang="ts">
 export default async function ({}) {
-	const [{ mixins }] = await _.$importVue([
-		"/common/ui-x/common/ItemMixins.vue"
-	]);
+	const [{ mixins }] = await _.$importVue(["/common/ui-x/common/ItemMixins.vue"]);
 	return defineComponent({
 		mixins: [mixins],
 		mounted() {},
@@ -111,18 +107,9 @@ export default async function ({}) {
 				this.x_item_value.splice(index, 1);
 			},
 			setValue(index, { key, value, _uniqueId }) {
-				console.log(
-					"🚀 ~ setValue ~  key, value, _uniqueId :",
-					key,
-					value,
-					_uniqueId
-				);
+				console.log("🚀 ~ setValue ~  key, value, _uniqueId :", key, value, _uniqueId);
 				const dataList = _.cloneDeep(this.value);
-				const OLD_VALUE = _.pick(dataList[index], [
-					"key",
-					"value",
-					"_uniqueId"
-				]);
+				const OLD_VALUE = _.pick(dataList[index], ["key", "value", "_uniqueId"]);
 
 				const NEW_VALUE = {
 					_uniqueId: OLD_VALUE._uniqueId,

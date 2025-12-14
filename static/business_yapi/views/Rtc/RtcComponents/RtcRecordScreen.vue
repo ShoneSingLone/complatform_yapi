@@ -6,9 +6,7 @@
 				<span>录制屏幕示例</span>
 			</h1>
 			<video class="video" ref="myVideo" autoPlay playsInline></video>
-			<xBtn @click="startCaptureScreen" :disabled="status === 'recording'">
-				开始
-			</xBtn>
+			<xBtn @click="startCaptureScreen" :disabled="status === 'recording'"> 开始 </xBtn>
 			<xBtn @click="stopRecord" :disabled="status === 'stop'">停止</xBtn>
 		</div>
 	</div>

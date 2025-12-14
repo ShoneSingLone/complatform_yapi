@@ -13,15 +13,11 @@
 						{{ cptReqBodyOther }}
 					</code>
 				 </pre> -->
-				<PanelReqBodyForm
-					v-if="cptReqBodyType === 'form'"
-					v-model="cptReqBodyForm" />
+				<PanelReqBodyForm v-if="cptReqBodyType === 'form'" v-model="cptReqBodyForm" />
 				<PanelReqBodyUrlencoded
 					v-if="cptReqBodyType === 'x-www-form-urlencoded'"
 					v-model="cptReqBodyForm" />
-				<PanelReqBodyJson
-					v-if="cptReqBodyType === 'json'"
-					v-model="cptReqBodyOther" />
+				<PanelReqBodyJson v-if="cptReqBodyType === 'json'" v-model="cptReqBodyOther" />
 			</xTabPane>
 			<xTabPane label="Headers" name="third">
 				<PanelReqHeaders />
@@ -64,8 +60,7 @@ export default async function () {
 		components: {
 			PanelReqBodyForm: () => _.$importVue("@/components/PanelReqBodyForm.vue"),
 			PanelReqQuery: () => _.$importVue("@/components/PanelReqQuery.vue"),
-			PanelReqBodyUrlencoded: () =>
-				_.$importVue("@/components/PanelReqBodyUrlencoded.vue"),
+			PanelReqBodyUrlencoded: () => _.$importVue("@/components/PanelReqBodyUrlencoded.vue"),
 			PanelReqHeaders: () => _.$importVue("@/components/PanelReqHeaders.vue"),
 			PanelReqCookies: () => _.$importVue("@/components/PanelReqCookies.vue"),
 			PanelReqBodyJson: () => _.$importVue("@/components/PanelReqBodyJson.vue")

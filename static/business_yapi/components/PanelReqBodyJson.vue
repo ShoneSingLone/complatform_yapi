@@ -202,14 +202,7 @@ export default async function () {
 					})
 				);
 			},
-			gen_row_cells({
-				GAP,
-				isRoot,
-				item,
-				parentProp,
-				level,
-				isArryItem = false
-			}) {
+			gen_row_cells({ GAP, isRoot, item, parentProp, level, isArryItem = false }) {
 				const vm = this;
 
 				return [
@@ -264,7 +257,9 @@ export default async function () {
 														const _parentProp = parentProp.split(".");
 														_parentProp.pop();
 														const paremtItem =
-															vm.cptReqBodyJson[_parentProp.join(".")];
+															vm.cptReqBodyJson[
+																_parentProp.join(".")
+															];
 														const items = _.filter(paremtItem, {
 															propname
 														});
@@ -419,8 +414,7 @@ export default async function () {
 			return hDiv([
 				hDiv(
 					{
-						class:
-							"flex middle panel-req-body-json-row panel-req-body-json-row_header"
+						class: "flex middle panel-req-body-json-row panel-req-body-json-row_header"
 					},
 					[
 						hDiv({ style: { width: `${16}px` } }, []),

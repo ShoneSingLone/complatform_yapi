@@ -1,7 +1,5 @@
 <template>
-	<div
-		class="x-page-view flex1 height100"
-		id="ProjectSettingPanelDataImportExport">
+	<div class="x-page-view flex1 height100" id="ProjectSettingPanelDataImportExport">
 		<div class="flex height100 width100">
 			<xCard header="数据导入" class="flex1 height100">
 				<xForm col="1">

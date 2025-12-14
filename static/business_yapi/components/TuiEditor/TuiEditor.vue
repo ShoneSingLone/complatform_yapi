@@ -44,11 +44,7 @@ export default async function () {
 	}
 
 	return defineComponent({
-		props: [
-			"value",
-			"asRender",
-			"imgrange" /* jquery选择器，find范围内的图片 */
-		],
+		props: ["value", "asRender", "imgrange" /* jquery选择器，find范围内的图片 */],
 		model: {
 			prop: "value",
 			emit: "change"
@@ -168,9 +164,7 @@ export default async function () {
 			},
 			handleClick(event) {
 				const { target } = event;
-				const $ele = $(target).parents(
-					".x-mkit-wrapper[data-x-mkit-wrapper-index]"
-				);
+				const $ele = $(target).parents(".x-mkit-wrapper[data-x-mkit-wrapper-index]");
 				if ($ele && $ele.length) {
 					this.showImg($ele.find("img").attr("src"));
 				}
@@ -199,8 +193,7 @@ export default async function () {
 						const { skipChildren } = context;
 						skipChildren();
 
-						const [all, prefix, id] =
-							String(destination).match(/(.*)_id:(\d+)/) || [];
+						const [all, prefix, id] = String(destination).match(/(.*)_id:(\d+)/) || [];
 						let src = destination;
 
 						if (id) {
@@ -323,8 +316,7 @@ export default async function () {
 					"toastui-editor-contents flex1 border-radius box-shadow": true,
 					"display-none": !vm.readonly
 				},
-				style:
-					"position:relative;height:100%;width:100%;z-index:1;padding:var(--note-normal-padding,var(--ui-one));"
+				style: "position:relative;height:100%;width:100%;z-index:1;padding:var(--note-normal-padding,var(--ui-one));"
 			};
 
 			return hDiv({ class: "flex1-overflow-auto" }, [
@@ -472,9 +464,7 @@ img.ProseMirror-separator {
 	margin-top: 0 !important;
 }
 
-.toastui-editor-md-container
-	.toastui-editor-md-preview
-	.toastui-editor-contents {
+.toastui-editor-md-container .toastui-editor-md-preview .toastui-editor-contents {
 	padding-top: 8px;
 }
 
@@ -497,9 +487,7 @@ img.ProseMirror-separator {
 }
 
 .toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor,
-.toastui-editor-main
-	.toastui-editor-md-vertical-style
-	.toastui-editor-md-preview {
+.toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor-md-preview {
 	width: 50%;
 }
 
@@ -512,9 +500,7 @@ img.ProseMirror-separator {
 	left: 50%;
 }
 
-.toastui-editor-main
-	.toastui-editor-md-vertical-style
-	.toastui-editor-md-splitter {
+.toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor-md-splitter {
 	display: block;
 }
 
@@ -1090,8 +1076,7 @@ img.ProseMirror-separator {
 }
 
 .toastui-editor-context-menu span:before {
-	background: url(/common/ui-x/components/other/TuiEditor/imgs/tui_editor_icon_bar.png)
-		no-repeat;
+	background: url(/common/ui-x/components/other/TuiEditor/imgs/tui_editor_icon_bar.png) no-repeat;
 	background-size: 466px 146px;
 	content: "";
 	width: 20px;
@@ -1182,8 +1167,7 @@ img.ProseMirror-separator {
 }
 
 .toastui-editor-toolbar-icons {
-	background: url(/common/ui-x/components/other/TuiEditor/imgs/tui_editor_icon_bar.png)
-		no-repeat;
+	background: url(/common/ui-x/components/other/TuiEditor/imgs/tui_editor_icon_bar.png) no-repeat;
 	background-size: 466px 146px;
 }
 
@@ -1307,8 +1291,7 @@ img.ProseMirror-separator {
 	border-radius: 50%;
 	border: 1px solid #c9ccd5;
 	background: #fff
-		url(/common/ui-x/components/other/TuiEditor/imgs/toastui-editor-contents-link.svg)
-		no-repeat;
+		url(/common/ui-x/components/other/TuiEditor/imgs/toastui-editor-contents-link.svg) no-repeat;
 	background-position: center;
 	box-shadow: 0 2px 4px #00000014;
 	cursor: pointer;
@@ -1328,8 +1311,7 @@ img.ProseMirror-separator {
 	left: 0;
 	top: 1px;
 	cursor: pointer;
-	background: transparent
-		url(/common/ui-x/components/other/TuiEditor/imgs/task-list-item.svg);
+	background: transparent url(/common/ui-x/components/other/TuiEditor/imgs/task-list-item.svg);
 }
 
 .toastui-editor-contents .task-list-item.checked:before {
@@ -1877,8 +1859,7 @@ table.ProseMirror-selectednode,
 	border-radius: 50%;
 	border: 1px solid #c9ccd5;
 	background: #fff
-		url(/common/ui-x/components/other/TuiEditor/imgs/toastui-editor-contents-link.svg)
-		no-repeat;
+		url(/common/ui-x/components/other/TuiEditor/imgs/toastui-editor-contents-link.svg) no-repeat;
 	background-position: center;
 	box-shadow: 0 2px 4px #00000014;
 	cursor: pointer;
@@ -1905,8 +1886,7 @@ table.ProseMirror-selectednode,
 	left: 0;
 	top: 1px;
 	cursor: pointer;
-	background: transparent
-		url(/common/ui-x/components/other/TuiEditor/imgs/task-list-item.svg);
+	background: transparent url(/common/ui-x/components/other/TuiEditor/imgs/task-list-item.svg);
 }
 
 .toastui-editor-contents .task-list-item.checked:before {
@@ -1924,8 +1904,7 @@ table.ProseMirror-selectednode,
 	padding: 9px 13px 8px 12px;
 }
 
-.toastui-editor-custom-block.ProseMirror-selectednode
-	.toastui-editor-custom-block-view {
+.toastui-editor-custom-block.ProseMirror-selectednode .toastui-editor-custom-block-view {
 	border: solid 1px #dbd4ea;
 	border-radius: 2px;
 }
@@ -1937,9 +1916,7 @@ table.ProseMirror-selectednode,
 	display: none;
 }
 
-.toastui-editor-custom-block.ProseMirror-selectednode
-	.toastui-editor-custom-block-view
-	.tool {
+.toastui-editor-custom-block.ProseMirror-selectednode .toastui-editor-custom-block-view .tool {
 	display: block;
 }
 

@@ -2,11 +2,7 @@
 	<header class="AppLayoutHeader flex middle">
 		<span class="flex middle pointer"> {{ APP.cptNavBarName }} </span>
 		<xGap r />
-		<xInput
-			placeholder="搜索网盘内容"
-			v-model="APP.homeListSearchKey"
-			class="flex1"
-			clearable>
+		<xInput placeholder="搜索网盘内容" v-model="APP.homeListSearchKey" class="flex1" clearable>
 			<i slot="prefix" class="el-icon-search"></i>
 		</xInput>
 		<xGap r />

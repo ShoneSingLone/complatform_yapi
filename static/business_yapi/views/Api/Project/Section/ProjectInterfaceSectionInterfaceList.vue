@@ -16,9 +16,7 @@
 				<xGap r="8" />
 				<xBtn
 					preset="primary"
-					@click="
-						inject_project_interface_section.configsTable.onQuery({ page: 1 })
-					"
+					@click="inject_project_interface_section.configsTable.onQuery({ page: 1 })"
 					>查询</xBtn
 				>
 			</template>
@@ -45,9 +43,7 @@ export default async function () {
 		},
 		computed: {
 			cptIsCheckedRow() {
-				return (
-					this.inject_project_interface_section.configsTable.data.set.size === 0
-				);
+				return this.inject_project_interface_section.configsTable.data.set.size === 0;
 			},
 			oprBtnArray() {
 				const vm = this;
@@ -100,15 +96,7 @@ export default async function () {
 		},
 		watch: {},
 		methods: {
-			customRowRender({
-				cells,
-				columns,
-				depth,
-				isScrolling,
-				rowData,
-				rowIndex,
-				style
-			}) {
+			customRowRender({ cells, columns, depth, isScrolling, rowData, rowIndex, style }) {
 				const { rowHeight } = this;
 				return xTableVirCells({
 					GroupPropArray: ["catid"],
@@ -151,8 +139,7 @@ export default async function () {
 					title: "修改Tags",
 					url: "@/components/ModifyInterfaceTags.dialog.vue",
 					parent: this,
-					allInterface:
-						this.inject_project_interface_section.configsTable.data.list,
+					allInterface: this.inject_project_interface_section.configsTable.data.list,
 					selected: Array.from(
 						this.inject_project_interface_section.configsTable.data.set
 					)
@@ -193,9 +180,7 @@ export default async function () {
 					await _.$confirm_important("是否删除当前选择的接口？");
 					_.$loading(true);
 					const res = await _api.yapi.interface_del_by_ids(
-						Array.from(
-							this.inject_project_interface_section.configsTable.data.set
-						)
+						Array.from(this.inject_project_interface_section.configsTable.data.set)
 					);
 					this.inject_project.get_interface_list();
 				} catch (error) {

@@ -1,10 +1,7 @@
 <template>
 	<xDialog>
 		<xCard>
-			<upload-dragger
-				:multiple="true"
-				:action="uploadUrl"
-				@change="handleUpload">
+			<upload-dragger :multiple="true" :action="uploadUrl" @change="handleUpload">
 				<p class="ant-upload-drag-icon">
 					<inbox-outlined />
 				</p>

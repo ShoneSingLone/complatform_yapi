@@ -15,9 +15,7 @@
 								<span class="logtime ml mr">
 									{{ getTimeAgo(logItem.add_time) }}
 								</span>
-								<xBtn
-									@click="showDiff(logItem.data)"
-									v-if="hasDiff(logItem.data)"
+								<xBtn @click="showDiff(logItem.data)" v-if="hasDiff(logItem.data)"
 									>改动详情</xBtn
 								>
 							</div>
@@ -54,10 +52,7 @@ export default async function () {
 		},
 		computed: {
 			isShow() {
-				return (
-					this.$route.query.group_view_tab_name ===
-					Vue._yapi_var.TAB_KEY_GROUP_LOG
-				);
+				return this.$route.query.group_view_tab_name === Vue._yapi_var.TAB_KEY_GROUP_LOG;
 			}
 		},
 		methods: {
@@ -68,11 +63,7 @@ export default async function () {
 					"jsondiffpatch"
 				);
 				const formattersHtml = jsondiffpatch.formatters.html;
-				const diffView = Vue._common_utils.diffMessage(
-					jsondiffpatch,
-					formattersHtml,
-					data
-				);
+				const diffView = Vue._common_utils.diffMessage(jsondiffpatch, formattersHtml, data);
 				const addMember = await _.$importVue(
 					"@/views/Api/Group/Section/Log/GroupSectionLogWindowDiff.vue",
 					{

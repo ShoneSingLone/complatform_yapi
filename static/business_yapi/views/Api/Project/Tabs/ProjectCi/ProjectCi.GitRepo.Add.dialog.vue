@@ -62,12 +62,10 @@ export default async function ({ project_id, onSuccess }) {
 							return;
 						}
 						try {
-							const { errcode, message } = await _api.yapi.apiCicdGitAddressAdd(
-								{
-									project_id: project_id,
-									..._.$pickFormValues(vm.form)
-								}
-							);
+							const { errcode, message } = await _api.yapi.apiCicdGitAddressAdd({
+								project_id: project_id,
+								..._.$pickFormValues(vm.form)
+							});
 							if (_.$isSame(errcode, 0)) {
 								_.$msg(i18n("添加代码仓库成功"));
 								onSuccess();

@@ -58,9 +58,7 @@ export default async function () {
 			//根据Id获取音频轨道
 			btnGetTrackById() {
 				console.log("getTrackById");
-				console.log(
-					this.stream.getTrackById(this.stream.getAudioTracks()[0].id)
-				);
+				console.log(this.stream.getTrackById(this.stream.getAudioTracks()[0].id));
 			},
 			//删除音频轨道
 			btnRemoveAudioTrack() {

@@ -13,10 +13,7 @@
 			</div>
 		</div>
 		<div class="flex mt8" v-else>
-			<xItem
-				:configs="swaggerURL"
-				style="--xItem-wrapper-width: 300px"
-				class="mr4" />
+			<xItem :configs="swaggerURL" style="--xItem-wrapper-width: 300px" class="mr4" />
 			<xBtn @click="importByUrl" preset="primary">导入</xBtn>
 		</div>
 	</div>

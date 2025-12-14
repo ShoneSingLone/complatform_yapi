@@ -1,9 +1,7 @@
 <style lang="less"></style>
 <template>
 	<div class="flex middle x-padding">
-		<xBtn
-			class="volume flex horizon"
-			@click="methodsMusicPlayer.toggleVolumeMute">
+		<xBtn class="volume flex horizon" @click="methodsMusicPlayer.toggleVolumeMute">
 			<xIcon :icon="cptIconSound" />
 		</xBtn>
 		<!-- <xGap l />

@@ -5,9 +5,7 @@
 				<div class="flex">
 					<GroupSectionProjectList :style="cptListStyle" />
 					<div :style="cptDetailStyle" class="GroupInfoPanel flex vertical">
-						<xBlock
-							class="group-desc-wrapper"
-							:bodyClass="{ 'flex middle': true }">
+						<xBlock class="group-desc-wrapper" :bodyClass="{ 'flex middle': true }">
 							<xRender :render="renderSwitchBtnGroup" />
 							<xGap f />
 							<xIcon icon="close" @click="closeGroupDetail" class="pointer" />
@@ -35,13 +33,9 @@ export default async function () {
 		inject: ["APP", "Group"],
 		components: {
 			GroupSectionProjectList: () =>
-				_.$importVue(
-					"@/views/Api/Group/Section/ProjectList/GroupSectionProjectList.vue"
-				),
+				_.$importVue("@/views/Api/Group/Section/ProjectList/GroupSectionProjectList.vue"),
 			GroupSectionMemberList: () =>
-				_.$importVue(
-					"@/views/Api/Group/Section/MemberList/GroupSectionMemberList.vue"
-				),
+				_.$importVue("@/views/Api/Group/Section/MemberList/GroupSectionMemberList.vue"),
 			GroupSectionLog: () =>
 				_.$importVue("@/views/Api/Group/Section/Log/GroupSectionLog.vue"),
 			GroupSectionWiki: () =>

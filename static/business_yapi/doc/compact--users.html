@@ -275,8 +275,7 @@
 			// 渲染组件
 			function renderUsers() {
 				// 更新在线人数
-				document.getElementById("onlineCount").textContent =
-					current_online_user.length;
+				document.getElementById("onlineCount").textContent = current_online_user.length;
 
 				// 渲染用户列表
 				const usersList = document.getElementById("usersList");
@@ -306,9 +305,7 @@
 
 			// 模拟状态更新
 			setInterval(() => {
-				const randomIndex = Math.floor(
-					Math.random() * current_online_user.length
-				);
+				const randomIndex = Math.floor(Math.random() * current_online_user.length);
 				current_online_user[randomIndex].isActive =
 					!current_online_user[randomIndex].isActive;
 				renderUsers();

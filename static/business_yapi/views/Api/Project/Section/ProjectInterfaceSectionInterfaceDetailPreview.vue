@@ -75,10 +75,7 @@
 		</xCard>
 		<xGap t />
 		<xCard header="描述">
-			<TuiEditor
-				:value="{ md: interfaceInfo.desc }"
-				:asRender="true"
-				style="height: 400px" />
+			<TuiEditor :value="{ md: interfaceInfo.desc }" :asRender="true" style="height: 400px" />
 		</xCard>
 		<!-- <xCard header="源数据">
 	<xForm col="1" style="--xItem-label-width: 100px">
@@ -90,11 +87,7 @@
 <script lang="ts">
 export default async function () {
 	return defineComponent({
-		inject: [
-			"APP",
-			"inject_interface_section_interface_detail",
-			"inject_project"
-		],
+		inject: ["APP", "inject_interface_section_interface_detail", "inject_project"],
 		props: ["interfaceInfo"],
 		components: {
 			PanelReqBodyJson: () => _.$importVue("@/components/PanelReqBodyJson.vue")
@@ -164,10 +157,7 @@ export default async function () {
 			},
 			cptClientReqCode() {
 				try {
-					const fn = new Function(
-						"params",
-						`return (${this.cptRequestCode})(params)`
-					);
+					const fn = new Function("params", `return (${this.cptRequestCode})(params)`);
 					const { title, _id, up_time, path, tag, isProxy, witchEnv, method } =
 						this.interfaceInfo;
 
@@ -197,23 +187,15 @@ export default async function () {
 			},
 			cptDescItems() {
 				const vm = this;
-				const {
-					title,
-					uid,
-					up_time,
-					path,
-					tag,
-					isProxy,
-					witchEnv,
-					method,
-					catid
-				} = this.interfaceInfo || {};
+				const { title, uid, up_time, path, tag, isProxy, witchEnv, method, catid } =
+					this.interfaceInfo || {};
 
 				/* @ts-ignore */
 				const { protocol, hostname, port } = location;
-				const apiURL = String(
-					`${this.APP.cptProject?.basepath || ""}${path}`
-				).replace(/\/\//g, "/");
+				const apiURL = String(`${this.APP.cptProject?.basepath || ""}${path}`).replace(
+					/\/\//g,
+					"/"
+				);
 				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${this.APP?.cptProject?._id}${apiURL}`;
 
 				return {
@@ -296,10 +278,7 @@ export default async function () {
 								vDomMockHref
 							]);
 							*/
-							return hDiv([
-								h("xTag", { class: "mr" }, [method]),
-								hSpan([path])
-							]);
+							return hDiv([h("xTag", { class: "mr" }, [method]), hSpan([path])]);
 						}
 					},
 					code: {

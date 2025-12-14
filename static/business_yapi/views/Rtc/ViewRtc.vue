@@ -43,10 +43,7 @@ export default async function () {
 				return [
 					["基本API", _.$aHashLink("/rtc/demo", {})],
 					["PeerConnectionHref", _.$aHashLink("/rtc/peer_connection", {})],
-					[
-						"PeerConnectionCanvas",
-						_.$aHashLink("/rtc/peer_connection_canvas", {})
-					],
+					["PeerConnectionCanvas", _.$aHashLink("/rtc/peer_connection_canvas", {})],
 					["DataChannel", _.$aHashLink("/rtc/data_channel", {})],
 					["DataChannelFile", _.$aHashLink("/rtc/data_channel_file", {})]
 				];

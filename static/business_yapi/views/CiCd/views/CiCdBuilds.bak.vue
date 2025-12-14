@@ -23,9 +23,7 @@
 						<option value="error">失败</option>
 						<option value="running">运行中</option>
 					</select>
-					<button class="btn btn-primary" onclick="refreshBuilds()">
-						刷新
-					</button>
+					<button class="btn btn-primary" onclick="refreshBuilds()">刷新</button>
 				</div>
 			</div>
 			<div class="card-content">
@@ -56,14 +54,10 @@
 							<td>2024-01-15 14:30</td>
 							<td>2m 15s</td>
 							<td>
-								<button
-									class="btn btn-sm btn-secondary"
-									onclick="viewLogs(1234)">
+								<button class="btn btn-sm btn-secondary" onclick="viewLogs(1234)">
 									日志
 								</button>
-								<button
-									class="btn btn-sm btn-danger"
-									onclick="cancelBuild(1234)">
+								<button class="btn btn-sm btn-danger" onclick="cancelBuild(1234)">
 									取消
 								</button>
 							</td>
@@ -79,9 +73,7 @@
 							<td>2024-01-15 14:15</td>
 							<td>3m 42s</td>
 							<td>
-								<button
-									class="btn btn-sm btn-secondary"
-									onclick="viewLogs(1233)">
+								<button class="btn btn-sm btn-secondary" onclick="viewLogs(1233)">
 									日志
 								</button>
 								<button
@@ -102,9 +94,7 @@
 							<td>2024-01-15 13:45</td>
 							<td>1m 28s</td>
 							<td>
-								<button
-									class="btn btn-sm btn-secondary"
-									onclick="viewLogs(1232)">
+								<button class="btn btn-sm btn-secondary" onclick="viewLogs(1232)">
 									日志
 								</button>
 								<button

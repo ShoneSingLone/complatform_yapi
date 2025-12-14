@@ -153,8 +153,7 @@ export default async function ({ onOk }) {
 		inject: ["APP"],
 		props: useDialogProps(),
 		data(vm) {
-			const { group_id, name, basepath, desc, project_type } =
-				useProjectForm(vm);
+			const { group_id, name, basepath, desc, project_type } = useProjectForm(vm);
 			return {
 				form: {
 					group_id,
@@ -184,8 +183,7 @@ export default async function ({ onOk }) {
 						try {
 							const [atLestOne] = await _.$validateForm(vm.$el);
 							if (atLestOne) return;
-							const { name, basepath, group_id, project_type, desc } =
-								vm.cptFormData;
+							const { name, basepath, group_id, project_type, desc } = vm.cptFormData;
 							const group = _.find(vm.form.group_id.options, {
 								value: group_id
 							});
@@ -239,7 +237,9 @@ export default async function ({ onOk }) {
 										[
 											hDiv({ staticClass: "card-danger-content" }, [
 												h("p", [
-													i18n("分组一旦删除，将无法恢复数据，请慎重操作！")
+													i18n(
+														"分组一旦删除，将无法恢复数据，请慎重操作！"
+													)
 												]),
 												h("p", [i18n("只有超级管理员有权限删除分组。")])
 											]),

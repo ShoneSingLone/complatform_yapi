@@ -297,10 +297,7 @@
 		<!-- 路径栏 -->
 		<div class="path-bar">
 			<div class="breadcrumb">
-				<button
-					class="toolbar-toggle"
-					@click="toggleToolbar"
-					title="切换工具栏">
+				<button class="toolbar-toggle" @click="toggleToolbar" title="切换工具栏">
 					{{ toolbarCollapsed ? "▼" : "▲" }}
 				</button>
 				<div class="breadcrumb-item" @click="back(-1)">root</div>
@@ -320,10 +317,7 @@
 			<div class="toolbar-content" :class="{ collapsed: toolbarCollapsed }">
 				<div class="sort-controls">
 					<div class="sort-description">排序方式：</div>
-					<div
-						v-for="option in sortOptions"
-						:key="option.value"
-						class="sort-btn-group">
+					<div v-for="option in sortOptions" :key="option.value" class="sort-btn-group">
 						<button
 							class="sort-btn"
 							:class="getSortBtnClass(option.value)"
@@ -345,11 +339,7 @@
 					>
 				</div>
 				<div class="search-box">
-					<input
-						v-model.lazy="searchKey"
-						placeholder="搜索"
-						clearable
-						class="input" />
+					<input v-model.lazy="searchKey" placeholder="搜索" clearable class="input" />
 				</div>
 			</div>
 		</div>
@@ -386,12 +376,7 @@
 </template>
 <script lang="ts">
 export default async function () {
-	const LOOP_TYPE_NAME_ARRAY = [
-		"playOrder",
-		"playRandom",
-		"playLoop",
-		"playSingleLoop"
-	];
+	const LOOP_TYPE_NAME_ARRAY = ["playOrder", "playRandom", "playLoop", "playSingleLoop"];
 	return defineComponent({
 		components: {
 			MusicPlayerModel: () =>
@@ -459,9 +444,7 @@ export default async function () {
 				}
 			}
 			function intervalCurrentTime() {
-				stateAudio.currentTime = parseInt(
-					stateAudio.audio.currentTime.toString()
-				);
+				stateAudio.currentTime = parseInt(stateAudio.audio.currentTime.toString());
 				stateAudio.duration = parseInt(stateAudio.audio.duration.toString());
 				stateAudio.ended = stateAudio.audio.ended;
 			}
@@ -472,9 +455,7 @@ export default async function () {
 				});
 				if (currentSongIndex > -1) {
 					if (currentSongIndex === 0) {
-						playAudio(
-							vm.cptResourceOnlyAudio[vm.cptResourceOnlyAudio.length - 1]
-						);
+						playAudio(vm.cptResourceOnlyAudio[vm.cptResourceOnlyAudio.length - 1]);
 					} else {
 						playAudio(vm.cptResourceOnlyAudio[currentSongIndex - 1]);
 					}
@@ -596,8 +577,7 @@ export default async function () {
 					}
 					const max = vm.cptResourceOnlyAudio.length - 1;
 					const min = 0;
-					const getNext = () =>
-						Math.floor(Math.random() * (max - min + 1)) + min;
+					const getNext = () => Math.floor(Math.random() * (max - min + 1)) + min;
 					next = getNext();
 					while (next === currentSongIndex) {
 						next = getNext();
@@ -678,8 +658,7 @@ export default async function () {
 					{ label: "大小", value: "size" },
 					{ label: "修改时间", value: "mtime" }
 				],
-				toolbarCollapsed:
-					_.$lStorage["VIEW_EXPLORE_TOOLBAR_COLLAPSED"] === "true" || false
+				toolbarCollapsed: _.$lStorage["VIEW_EXPLORE_TOOLBAR_COLLAPSED"] === "true" || false
 			};
 		},
 		computed: {
@@ -739,8 +718,7 @@ export default async function () {
 							const bValue = b[field] || "";
 							if (aValue !== bValue) {
 								compareResult = aValue > bValue ? 1 : -1;
-								compareResult =
-									order === "asc" ? compareResult : -compareResult;
+								compareResult = order === "asc" ? compareResult : -compareResult;
 							}
 						}
 
@@ -768,9 +746,7 @@ export default async function () {
 			},
 			// 获取排序按钮的CSS类
 			getSortBtnClass(field) {
-				const sortIndex = this.sortConfig.findIndex(
-					item => item.field === field
-				);
+				const sortIndex = this.sortConfig.findIndex(item => item.field === field);
 				if (sortIndex === -1) {
 					return {};
 				}
@@ -790,9 +766,7 @@ export default async function () {
 			},
 			// 获取排序优先级指示器
 			getSortPriorityIndicator(field) {
-				const sortIndex = this.sortConfig.findIndex(
-					item => item.field === field
-				);
+				const sortIndex = this.sortConfig.findIndex(item => item.field === field);
 				if (sortIndex === -1) {
 					return "";
 				}
@@ -800,21 +774,16 @@ export default async function () {
 			},
 			// 获取排序按钮的提示信息
 			getSortBtnTitle(field) {
-				const sortIndex = this.sortConfig.findIndex(
-					item => item.field === field
-				);
+				const sortIndex = this.sortConfig.findIndex(item => item.field === field);
 				if (sortIndex === -1) {
 					return `${this.sortOptions.find(opt => opt.value === field).label}排序`;
 				}
-				const orderText =
-					this.sortConfig[sortIndex].order === "asc" ? "升序" : "降序";
+				const orderText = this.sortConfig[sortIndex].order === "asc" ? "升序" : "降序";
 				return `${this.sortOptions.find(opt => opt.value === field).label}${orderText} (优先级${sortIndex + 1})`;
 			},
 			// 切换排序字段
 			toggleSortField(field) {
-				const existingIndex = this.sortConfig.findIndex(
-					item => item.field === field
-				);
+				const existingIndex = this.sortConfig.findIndex(item => item.field === field);
 
 				if (existingIndex === -1) {
 					// 如果字段不在排序配置中，添加到末尾

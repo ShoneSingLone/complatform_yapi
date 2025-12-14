@@ -26,13 +26,10 @@ export default async function () {
 	return defineComponent({
 		inject: ["APP"],
 		components: {
-			ProjectTabs: () =>
-				_.$importVue("@/views/Api/Project/Tabs/ProjectTabs.vue"),
+			ProjectTabs: () => _.$importVue("@/views/Api/Project/Tabs/ProjectTabs.vue"),
 			ProjectDoc: () => _.$importVue("@/views/Api/Project/Tabs/ProjectDoc.vue"),
-			ProjectInterface: () =>
-				_.$importVue("@/views/Api/Project/Tabs/ProjectInterface.vue"),
-			ProjectSetting: () =>
-				_.$importVue("@/views/Api/Project/Tabs/ProjectSetting.vue"),
+			ProjectInterface: () => _.$importVue("@/views/Api/Project/Tabs/ProjectInterface.vue"),
+			ProjectSetting: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSetting.vue"),
 			ProjectCi: () => _.$importVue("@/views/Api/Project/Tabs/ProjectCi.vue")
 		},
 		provide() {
@@ -117,9 +114,7 @@ export default async function () {
 
 			async get_interface_list() {
 				const vm = this;
-				const { data } = await _api.yapi.apiInterfaceListMenu(
-					this.APP.cptProjectId
-				);
+				const { data } = await _api.yapi.apiInterfaceListMenu(this.APP.cptProjectId);
 				if (data) {
 					const all_category = data.map(category => {
 						const children = _.map(category.list, i => {

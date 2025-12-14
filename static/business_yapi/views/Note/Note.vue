@@ -50,9 +50,7 @@ export default async function () {
 		},
 		data() {
 			const vm = this;
-			vm.updateCurrentWiki = _.debounce(async function updateCurrentWiki(
-				callback = false
-			) {
+			vm.updateCurrentWiki = _.debounce(async function updateCurrentWiki(callback = false) {
 				_.$loading(true);
 				$(".flash-when").addClass("loading");
 				try {

@@ -7,20 +7,11 @@
 		</div>
 
 		<xItem span="full" :configs="configsForm.code" autocomplete="email" />
-		<xItem
-			span="full"
-			:configs="configsForm.username"
-			autocomplete="username" />
+		<xItem span="full" :configs="configsForm.username" autocomplete="username" />
 		<!-- 密码 -->
-		<xItem
-			span="full"
-			:configs="configsForm.password"
-			autocomplete="current-password" />
+		<xItem span="full" :configs="configsForm.password" autocomplete="current-password" />
 		<!-- 确认密码 -->
-		<xItem
-			span="full"
-			:configs="configsForm.confirm"
-			autocomplete="current-password" />
+		<xItem span="full" :configs="configsForm.confirm" autocomplete="current-password" />
 		<div class="width100" span="full">
 			<xBtn :configs="configsSubmit" />
 		</div>

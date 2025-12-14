@@ -93,10 +93,7 @@ BUILD_VERSION=1.0.0</textarea
 
 					<div style="display: flex; gap: 12px">
 						<button type="submit" class="btn btn-primary">保存配置</button>
-						<button
-							type="button"
-							class="btn btn-secondary"
-							onclick="testConnection()">
+						<button type="button" class="btn btn-secondary" onclick="testConnection()">
 							测试连接
 						</button>
 					</div>

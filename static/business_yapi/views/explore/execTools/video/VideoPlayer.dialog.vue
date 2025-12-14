@@ -1,9 +1,6 @@
 <template>
 	<xDialog>
-		<video
-			ref="refVideo"
-			controls="true"
-			style="max-width: 600px; width: 100%; margin: auto" />
+		<video ref="refVideo" controls="true" style="max-width: 600px; width: 100%; margin: auto" />
 	</xDialog>
 </template>
 <script lang="ts">

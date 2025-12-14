@@ -7,10 +7,7 @@
 			</h1>
 			<audio ref="audioPlayer" controls autoPlay></audio>
 			<div>
-				<xBtn
-					class="button"
-					:disabled="status != 'start'"
-					@click="startClickHandler">
+				<xBtn class="button" :disabled="status != 'start'" @click="startClickHandler">
 					打开麦克风
 				</xBtn>
 				<xBtn
@@ -25,10 +22,7 @@
 					@click="stopRecordButtonClickHandler">
 					停止录制
 				</xBtn>
-				<xBtn
-					class="button"
-					:disabled="status != 'play'"
-					@click="playButtonClickHandler">
+				<xBtn class="button" :disabled="status != 'play'" @click="playButtonClickHandler">
 					播放
 				</xBtn>
 				<xBtn

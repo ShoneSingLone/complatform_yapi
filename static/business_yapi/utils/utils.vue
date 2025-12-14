@@ -115,11 +115,7 @@ async ${camelCase(path)}(data) {
 
 				let diffView = [];
 
-				if (
-					curDiffData &&
-					typeof curDiffData === "object" &&
-					curDiffData.current
-				) {
+				if (curDiffData && typeof curDiffData === "object" && curDiffData.current) {
 					const { current, old, type } = curDiffData;
 					// wiki 信息的diff 输出
 					if (type === "wiki") {
@@ -161,10 +157,7 @@ async ${camelCase(path)}(data) {
 					if (current.status != old.status) {
 						diffView.push({
 							title: "接口状态",
-							content: diffText(
-								valueMaps[old.status],
-								valueMaps[current.status]
-							)
+							content: diffText(valueMaps[old.status], valueMaps[current.status])
 						});
 					}
 
@@ -191,9 +184,7 @@ async ${camelCase(path)}(data) {
 					});
 
 					let oldValue =
-						current.req_body_type === "form"
-							? old.req_body_form
-							: old.req_body_other;
+						current.req_body_type === "form" ? old.req_body_form : old.req_body_other;
 					if (current.req_body_type !== old.req_body_type) {
 						diffView.push({
 							title: "Request Type",

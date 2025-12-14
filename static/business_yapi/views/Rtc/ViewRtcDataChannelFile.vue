@@ -72,13 +72,9 @@ export default async function () {
 					vm.localConnection = new RTCPeerConnection();
 					console.log("创建本地PeerConnection成功:localConnection");
 					//监听返回的Candidate信息
-					vm.localConnection.addEventListener(
-						"icecandidate",
-						vm.onLocalIceCandidate
-					);
+					vm.localConnection.addEventListener("icecandidate", vm.onLocalIceCandidate);
 					//实例化发送通道
-					vm.sendChannel =
-						vm.localConnection.createDataChannel("webrtc-datachannel");
+					vm.sendChannel = vm.localConnection.createDataChannel("webrtc-datachannel");
 					//数据类型为二进制
 					vm.sendChannel.binaryType = "arraybuffer";
 					//onopen事件监听
@@ -89,10 +85,7 @@ export default async function () {
 					vm.remoteConnection = new RTCPeerConnection();
 					console.log("创建本地PeerConnection成功:remoteConnection");
 					//监听返回的Candidate信息
-					vm.remoteConnection.addEventListener(
-						"icecandidate",
-						vm.onRemoteIceCandidate
-					);
+					vm.remoteConnection.addEventListener("icecandidate", vm.onRemoteIceCandidate);
 					//远端连接数据到达事件监听
 					vm.remoteConnection.addEventListener("datachannel", event =>
 						vm.receiveChannelCallback(event)
@@ -160,18 +153,14 @@ export default async function () {
 				};
 				//设置远端描述完成
 				onSetRemoteSuccess = pc => {
-					console.log(
-						`${vm.getName(pc)}设置远端描述完成：setRemoteDescription`
-					);
+					console.log(`${vm.getName(pc)}设置远端描述完成：setRemoteDescription`);
 				};
 				//设置描述SD错误
 				onSetSessionDescriptionError = error => {
 					console.log(`设置描述SD错误: ${error.toString()}`);
 				};
 				getName = pc => {
-					return pc === vm.localConnection
-						? "localConnection"
-						: "remoteConnection";
+					return pc === vm.localConnection ? "localConnection" : "remoteConnection";
 				};
 				//创建应答成功
 				onCreateAnswerSuccess = async desc => {
@@ -230,9 +219,7 @@ export default async function () {
 				};
 				//添加Candidate失败
 				onAddIceCandidateError = (pc, error) => {
-					console.log(
-						`${vm.getName(pc)}添加IceCandidate失败: ${error.toString()}`
-					);
+					console.log(`${vm.getName(pc)}添加IceCandidate失败: ${error.toString()}`);
 				};
 				//监听ICE状态变化事件回调方法
 				onLocalIceStateChange = event => {
@@ -320,8 +307,7 @@ export default async function () {
 					//数据类型为二进制
 					vm.receiveChannel.binaryType = "arraybuffer";
 					//接收消息事件监听
-					vm.receiveChannel.onmessage = event =>
-						vm.onReceiveMessageCallback(event);
+					vm.receiveChannel.onmessage = event => vm.onReceiveMessageCallback(event);
 					//onopen事件监听
 					vm.receiveChannel.onopen = vm.onReceiveChannelStateChange;
 					//onclose事件监听

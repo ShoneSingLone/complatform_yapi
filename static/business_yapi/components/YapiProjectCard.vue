@@ -22,10 +22,7 @@ export default async function () {
 		},
 		computed: {
 			cptAvatarUrl() {
-				return (
-					this.imageUrl ||
-					_common_utils.avatar_url(this.projectData._id, "project")
-				);
+				return this.imageUrl || _common_utils.avatar_url(this.projectData._id, "project");
 			},
 			followIcon() {
 				return h(

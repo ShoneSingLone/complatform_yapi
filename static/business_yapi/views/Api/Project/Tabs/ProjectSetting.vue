@@ -34,17 +34,13 @@ export default async function () {
 					label: "项目配置",
 					name: "common",
 					component: () =>
-						_.$importVue(
-							"@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue"
-						)
+						_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelCommon.vue")
 				},
 				{
 					label: "项目成员",
 					name: "member_list",
 					component: () =>
-						_.$importVue(
-							"@/views/Api/Project/Tabs/ProjectSettingPanelMemberList.vue"
-						)
+						_.$importVue("@/views/Api/Project/Tabs/ProjectSettingPanelMemberList.vue")
 				},
 				{
 					label: "请求配置",

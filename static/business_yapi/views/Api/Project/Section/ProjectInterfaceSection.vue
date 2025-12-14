@@ -34,9 +34,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					"@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetail.vue"
 				),
 			ProjectInterfaceSectionInterfaceList: () =>
-				_.$importVue(
-					"@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceList.vue"
-				)
+				_.$importVue("@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceList.vue")
 		},
 		provide() {
 			return { inject_project_interface_section: this };

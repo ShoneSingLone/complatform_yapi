@@ -3,14 +3,9 @@
 		<div class="mb">
 			<xBtn :configs="btnTranslateIt" />
 		</div>
-		<xAlert v-if="cptTips" show-icon :closable="false" type="success">
-			{{ cptTips }}</xAlert
-		>
+		<xAlert v-if="cptTips" show-icon :closable="false" type="success"> {{ cptTips }}</xAlert>
 		<div style="height: 500px">
-			<xTableVir
-				class="mt"
-				:columns="configsTable.columns"
-				:data="configsTable.data.list" />
+			<xTableVir class="mt" :columns="configsTable.columns" :data="configsTable.data.list" />
 		</div>
 		<template #footer>
 			<xBtn @click="closeModal">{{ i18n("cancel") }}</xBtn>

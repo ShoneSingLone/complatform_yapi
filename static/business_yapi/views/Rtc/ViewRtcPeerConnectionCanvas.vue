@@ -108,15 +108,9 @@ export default async function () {
 				//监听返回的Candidate信息
 				this.peerConnB.addEventListener("icecandidate", this.onIceCandidateB);
 				//监听ICE状态变化
-				this.peerConnA.addEventListener(
-					"iceconnectionstatechange",
-					this.onIceStateChangeA
-				);
+				this.peerConnA.addEventListener("iceconnectionstatechange", this.onIceStateChangeA);
 				//监听ICE状态变化
-				this.peerConnB.addEventListener(
-					"iceconnectionstatechange",
-					this.onIceStateChangeB
-				);
+				this.peerConnB.addEventListener("iceconnectionstatechange", this.onIceStateChangeB);
 				//监听track事件，可以获取到远端视频流
 				this.peerConnB.addEventListener("track", this.gotRemoteStream);
 				//peerConnA.addStream(localStream);
@@ -253,22 +247,16 @@ export default async function () {
 			},
 			//添加Candidate失败
 			onAddIceCandidateError(pc, error) {
-				console.log(
-					`${this.getName(pc)}添加IceCandidate失败: ${error.toString()}`
-				);
+				console.log(`${this.getName(pc)}添加IceCandidate失败: ${error.toString()}`);
 			},
 			//监听ICE状态变化事件回调方法
 			onIceStateChangeA(event) {
-				console.log(
-					`peerConnA连接的ICE状态: ${this.peerConnA.iceConnectionState}`
-				);
+				console.log(`peerConnA连接的ICE状态: ${this.peerConnA.iceConnectionState}`);
 				console.log("ICE状态改变事件: ", event);
 			},
 			//监听ICE状态变化事件回调方法
 			onIceStateChangeB(event) {
-				console.log(
-					`peerConnB连接的ICE状态: ${this.peerConnB.iceConnectionState}`
-				);
+				console.log(`peerConnB连接的ICE状态: ${this.peerConnB.iceConnectionState}`);
 				console.log("ICE状态改变事件: ", event);
 			},
 			//断开连接

@@ -49,9 +49,7 @@ export default async function () {
 			});
 			//监听远端视频尺寸的变化
 			remoteVideo.addEventListener("resize", () => {
-				console.log(
-					`远端视频尺寸为: ${remoteVideo.videoWidth}x${remoteVideo.videoHeight}`
-				);
+				console.log(`远端视频尺寸为: ${remoteVideo.videoWidth}x${remoteVideo.videoHeight}`);
 			});
 		},
 		data() {
@@ -108,15 +106,9 @@ export default async function () {
 				//监听返回的Candidate信息
 				peerConnB.addEventListener("icecandidate", this.onIceCandidateB);
 				//监听ICE状态变化
-				peerConnA.addEventListener(
-					"iceconnectionstatechange",
-					this.onIceStateChangeA
-				);
+				peerConnA.addEventListener("iceconnectionstatechange", this.onIceStateChangeA);
 				//监听ICE状态变化
-				peerConnB.addEventListener(
-					"iceconnectionstatechange",
-					this.onIceStateChangeB
-				);
+				peerConnB.addEventListener("iceconnectionstatechange", this.onIceStateChangeB);
 				//监听track事件，可以获取到远端视频流
 				peerConnB.addEventListener("track", this.gotRemoteStream);
 				//peerConnA.addStream(localStream);
@@ -253,9 +245,7 @@ export default async function () {
 			},
 			//添加Candidate失败
 			onAddIceCandidateError(pc, error) {
-				console.log(
-					`${this.getName(pc)}添加IceCandidate失败: ${error.toString()}`
-				);
+				console.log(`${this.getName(pc)}添加IceCandidate失败: ${error.toString()}`);
 			},
 			//监听ICE状态变化事件回调方法
 			onIceStateChangeA(event) {

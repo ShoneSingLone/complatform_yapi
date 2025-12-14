@@ -6,16 +6,12 @@
 		</h1>
 		<!-- 音频对象，可播放声音 -->
 		<audio ref="audio" controls autoPlay></audio>
-		<p className="warning">
-			警告: 如果没有使用头戴式耳机，声音会反馈到扬声器。
-		</p>
+		<p className="warning">警告: 如果没有使用头戴式耳机，声音会反馈到扬声器。</p>
 	</div>
 </template>
 <script lang="ts">
 export default async function () {
-	const { useGetMediaHander } = await _.$importVue(
-		"@/views/Rtc/reuse/reuseRtc.vue"
-	);
+	const { useGetMediaHander } = await _.$importVue("@/views/Rtc/reuse/reuseRtc.vue");
 
 	return defineComponent({
 		componentName: "RtcMicrophone",

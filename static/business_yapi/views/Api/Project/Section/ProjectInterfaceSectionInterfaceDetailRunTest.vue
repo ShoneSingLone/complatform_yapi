@@ -27,10 +27,7 @@
 }
 </style>
 <template>
-	<div
-		v-if="isShow"
-		id="ProjectInterfaceSectionInterfaceDetailEditor"
-		class="flex1 flex">
+	<div v-if="isShow" id="ProjectInterfaceSectionInterfaceDetailEditor" class="flex1 flex">
 		<div class="flex flex1 vertical">
 			<div class="flex middle">
 				<xItem :configs="form.path" v-model="formData.path" class="mr" />
@@ -44,10 +41,7 @@
 			class="flex flex1 vertical height100 overflow-auto result-wrapper"
 			v-xloading="cpt_is_loading">
 			<xCollapse :value="'Response'">
-				<xCollapseItem
-					title="Response"
-					name="Response"
-					v-if="cpt_code_response">
+				<xCollapseItem title="Response" name="Response" v-if="cpt_code_response">
 					<xMd
 						:md="cpt_code_response"
 						@click.native="copyResponse(cpt_code_response)"
@@ -76,11 +70,7 @@
 <script lang="ts">
 export default async function () {
 	return defineComponent({
-		inject: [
-			"APP",
-			"inject_project",
-			"inject_interface_section_interface_detail"
-		],
+		inject: ["APP", "inject_project", "inject_interface_section_interface_detail"],
 		props: {
 			interfaceInfo: {
 				type: Object,
@@ -196,11 +186,7 @@ export default async function () {
 				let httprequestoptions = "";
 				try {
 					if (this.httprequestoptions) {
-						httprequestoptions = JSON.stringify(
-							this.httprequestoptions,
-							null,
-							2
-						);
+						httprequestoptions = JSON.stringify(this.httprequestoptions, null, 2);
 					}
 				} catch (error) {
 					console.error(error);
@@ -237,15 +223,15 @@ export default async function () {
 				} = this.interfaceInfo || {};
 				const { protocol, hostname, port } = location;
 
-				const apiURL = String(
-					`${this.APP.cptProject?.basepath || ""}${path}`
-				).replace(/\/\//g, "/");
+				const apiURL = String(`${this.APP.cptProject?.basepath || ""}${path}`).replace(
+					/\/\//g,
+					"/"
+				);
 
 				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${project_id}${apiURL}`;
 
 				try {
-					const { data } =
-						await _api.yapi.interface_usecase_get_all(interface_id);
+					const { data } = await _api.yapi.interface_usecase_get_all(interface_id);
 					if (data.length > 0) {
 						await this.setFormEditorValue(data[0].usecaseCode);
 						this.currentUseCase = data[0];

@@ -8,15 +8,10 @@
 			:style="iconStyle(index)">
 			<!-- 用户信息 -->
 			<div class="user-details">
-				<xIcon
-					:img="useravatar(user)"
-					:iscache="true"
-					class="user-avatar-icon" />
+				<xIcon :img="useravatar(user)" :iscache="true" class="user-avatar-icon" />
 			</div>
 		</div>
-		<xBadge
-			:value="current_online_user.length"
-			class="success online-users-count-badge" />
+		<xBadge :value="current_online_user.length" class="success online-users-count-badge" />
 	</div>
 </template>
 <script lang="ts">
@@ -29,8 +24,7 @@ export default async function () {
 		methods: {
 			username(uid) {
 				return (
-					_.find(this.APP.all_user, user => _.$isSame(user.uid, uid))
-						?.username || "匿名"
+					_.find(this.APP.all_user, user => _.$isSame(user.uid, uid))?.username || "匿名"
 				);
 			},
 			useravatar(user) {

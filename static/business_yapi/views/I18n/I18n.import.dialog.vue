@@ -3,13 +3,8 @@
 		<div class="mb">
 			<xBtn :configs="btnSelectFile" />
 		</div>
-		<xAlert v-if="cptTips" show-icon :closable="false" type="success">
-			{{ cptTips }}</xAlert
-		>
-		<xTableVir
-			class="mt"
-			:columns="configsTable.columns"
-			:data="configsTable.data.list" />
+		<xAlert v-if="cptTips" show-icon :closable="false" type="success"> {{ cptTips }}</xAlert>
+		<xTableVir class="mt" :columns="configsTable.columns" :data="configsTable.data.list" />
 
 		<!-- <xForm col="1"> <xItem :configs="form.content" style="min-height: 300px" /> </xForm> -->
 		<template #footer>
@@ -105,16 +100,13 @@ export default async function ({ refreshTableData, listData }) {
 					async onClick() {
 						try {
 							const i18nJson = await vm.getJson();
-							vm.configsTable.data.list = _.map(
-								i18nJson,
-								([zhCn, enUs], key) => {
-									return {
-										key,
-										zhCn,
-										enUs
-									};
-								}
-							);
+							vm.configsTable.data.list = _.map(i18nJson, ([zhCn, enUs], key) => {
+								return {
+									key,
+									zhCn,
+									enUs
+								};
+							});
 						} catch (error) {
 							console.error(error);
 						}

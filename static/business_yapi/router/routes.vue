@@ -29,19 +29,13 @@ export default async function () {
 		_.$newRoute("/rtc", "@/views/Rtc/ViewRtc.vue", {
 			children: [
 				_.$newRoute("/rtc/demo", "@/views/Rtc/ViewRtcDemo.vue"),
-				_.$newRoute(
-					"/rtc/peer_connection",
-					"@/views/Rtc/ViewRtcPeerConnection.vue"
-				),
+				_.$newRoute("/rtc/peer_connection", "@/views/Rtc/ViewRtcPeerConnection.vue"),
 				_.$newRoute(
 					"/rtc/peer_connection_canvas",
 					"@/views/Rtc/ViewRtcPeerConnectionCanvas.vue"
 				),
 				_.$newRoute("/rtc/data_channel", "@/views/Rtc/ViewRtcDataChannel.vue"),
-				_.$newRoute(
-					"/rtc/data_channel_file",
-					"@/views/Rtc/ViewRtcDataChannelFile.vue"
-				),
+				_.$newRoute("/rtc/data_channel_file", "@/views/Rtc/ViewRtcDataChannelFile.vue"),
 				_.$newRoute("/rtc/p2p", "@/views/Rtc/ViewRtcP2PLogin.vue")
 			]
 		}),

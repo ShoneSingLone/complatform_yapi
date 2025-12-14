@@ -14,10 +14,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		{
 			/* 涉及具体的上传接口，不能做通用的处理 */
 			TuiEditor: "@/components/TuiEditor/TuiEditor.vue",
-			YapiItemInterfaceImportType:
-				"@/components/YapiItemInterfaceImportType.vue",
-			YapiApiRequestBodyPreviewer:
-				"@/components/YapiApiRequestBodyPreviewer.vue",
+			YapiItemInterfaceImportType: "@/components/YapiItemInterfaceImportType.vue",
+			YapiApiRequestBodyPreviewer: "@/components/YapiApiRequestBodyPreviewer.vue",
 			yapiItemReqBodyParams: "@/components/yapiItemReqBodyParams.vue",
 			YapiItemProxyEnv: "@/components/YapiItemProxyEnv.vue",
 			YapiItemAvatar: "@/components/YapiItemAvatar.vue",
@@ -27,8 +25,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			YapiProjectCard: "@/components/YapiProjectCard.vue",
 			YapiPlaceholderView: "@/components/YapiPlaceholderView.vue"
 		},
-		(componentURL, name) =>
-			Vue.component(name, () => _.$importVue(componentURL))
+		(componentURL, name) => Vue.component(name, () => _.$importVue(componentURL))
 	);
 
 	const [VueRouter, routes] = await _.$importVue([
@@ -92,41 +89,38 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		data() {
 			const vm = this;
 
-			vm.refreshUserInfo = _.$asyncDebounce(
-				vm,
-				async function refreshUserInfo() {
-					try {
-						if (!vm.user.isLogin) {
-							const res = await _api.yapi.userStatus();
-							const { data: userInfo } = res;
-							await vm._setUser(userInfo);
-						}
-
-						if (vm.user.isLogin) {
-							const res = await _api.yapi.userSearch({});
-							const { data: all_user } = res;
-							vm.all_user = all_user;
-							/* TODO: 跳转到首页 或者note应用*/
-							if (vm.$route.path === "/note") {
-								return;
-							}
-							await vm.ifUrlNoGroupIdGetAndAddIdToUrl();
-							if (vm.cptProjectId) {
-								await vm.updateGroupProjectList();
-							}
-							if (vm.$route.path === "/login") {
-								vm.$router.push("/api/group");
-							}
-						}
-						return true;
-					} catch (error) {
-						/* 未登录，跳转登录界面 */
-						vm.$router.push("/login");
-					} finally {
-						$("body").removeClass("x-loading");
+			vm.refreshUserInfo = _.$asyncDebounce(vm, async function refreshUserInfo() {
+				try {
+					if (!vm.user.isLogin) {
+						const res = await _api.yapi.userStatus();
+						const { data: userInfo } = res;
+						await vm._setUser(userInfo);
 					}
+
+					if (vm.user.isLogin) {
+						const res = await _api.yapi.userSearch({});
+						const { data: all_user } = res;
+						vm.all_user = all_user;
+						/* TODO: 跳转到首页 或者note应用*/
+						if (vm.$route.path === "/note") {
+							return;
+						}
+						await vm.ifUrlNoGroupIdGetAndAddIdToUrl();
+						if (vm.cptProjectId) {
+							await vm.updateGroupProjectList();
+						}
+						if (vm.$route.path === "/login") {
+							vm.$router.push("/api/group");
+						}
+					}
+					return true;
+				} catch (error) {
+					/* 未登录，跳转登录界面 */
+					vm.$router.push("/login");
+				} finally {
+					$("body").removeClass("x-loading");
 				}
-			);
+			});
 
 			return {
 				isMobile: /Mobile/gi.test(window.navigator.userAgent),
@@ -439,8 +433,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	--el-fill-color-dark: #ebedf0;
 	--el-fill-color-darker: #e6e8eb;
 	--el-fill-color-blank: #ffffff;
-	--el-box-shadow:
-		0px 12px 32px 4px rgba(0, 0, 0, 0.04), 0px 8px 20px rgba(0, 0, 0, 0.08);
+	--el-box-shadow: 0px 12px 32px 4px rgba(0, 0, 0, 0.04), 0px 8px 20px rgba(0, 0, 0, 0.08);
 	--el-box-shadow-light: 0px 0px 12px rgba(0, 0, 0, 0.12);
 	--el-box-shadow-lighter: 0px 0px 6px rgba(0, 0, 0, 0.12);
 	--el-box-shadow-dark:
@@ -457,8 +450,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	--el-border-width: 1px;
 	--el-border-style: solid;
 	--el-border-color-hover: var(--el-text-color-disabled);
-	--el-border: var(--el-border-width) var(--el-border-style)
-		var(--el-border-color);
+	--el-border: var(--el-border-width) var(--el-border-style) var(--el-border-color);
 	--el-svg-monochrome-grey: var(--el-border-color);
 
 	--base-box-showdow: 7px 0px 80px 0px rgba(0, 0, 0, 0.05);
@@ -487,8 +479,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			--el-table-tr-bg-color: var(--el-fill-color-blank);
 			--el-table-expanded-cell-bg-color: var(--el-fill-color-blank);
 			--el-table-fixed-left-column: inset 10px 0 10px -10px rgba(0, 0, 0, 0.15);
-			--el-table-fixed-right-column: inset -10px 0 10px -10px
-				rgba(0, 0, 0, 0.15);
+			--el-table-fixed-right-column: inset -10px 0 10px -10px rgba(0, 0, 0, 0.15);
 		}
 
 		.xDataGrid {

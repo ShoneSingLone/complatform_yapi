@@ -23,10 +23,7 @@ export default async function () {
 				);
 			}, 1000);
 
-			$(window).on(
-				`UPLOAD_FILE_CHANGE.${this._uid}`,
-				this.handlerUploadFileChange
-			);
+			$(window).on(`UPLOAD_FILE_CHANGE.${this._uid}`, this.handlerUploadFileChange);
 
 			onBeforeUnmount(() => {
 				$(window).off(`UPLOAD_FILE_CHANGE.${this._uid}`);

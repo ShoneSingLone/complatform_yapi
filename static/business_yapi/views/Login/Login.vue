@@ -157,21 +157,12 @@ body.app-mobile {
 			left: 20%;
 			width: 70%;
 			height: 240px;
-			background-image: linear-gradient(
-				-225deg,
-				#5f2bff 0%,
-				#6088fe 48%,
-				#22ccf6 100%
-			);
+			background-image: linear-gradient(-225deg, #5f2bff 0%, #6088fe 48%, #22ccf6 100%);
 		}
 	}
 
 	.login-form-button {
-		background-image: linear-gradient(
-			to right,
-			#6d69fe 0%,
-			#48a0fa 100%
-		) !important;
+		background-image: linear-gradient(to right, #6d69fe 0%, #48a0fa 100%) !important;
 		border: none !important;
 		width: 100%;
 	}

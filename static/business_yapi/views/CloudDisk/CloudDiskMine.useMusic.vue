@@ -1,11 +1,6 @@
 <script lang="ts">
 export default async function () {
-	const LOOP_TYPE_NAME_ARRAY = [
-		"playOrder",
-		"playRandom",
-		"playLoop",
-		"playSingleLoop"
-	];
+	const LOOP_TYPE_NAME_ARRAY = ["playOrder", "playRandom", "playLoop", "playSingleLoop"];
 
 	return {
 		useMusic() {
@@ -95,9 +90,7 @@ export default async function () {
 				}
 			}
 			function intervalCurrentTime() {
-				stateAudio.currentTime = parseInt(
-					stateAudio.audio.currentTime.toString()
-				);
+				stateAudio.currentTime = parseInt(stateAudio.audio.currentTime.toString());
 				stateAudio.duration = parseInt(stateAudio.audio.duration.toString());
 				stateAudio.ended = stateAudio.audio.ended;
 			}
@@ -142,10 +135,7 @@ export default async function () {
 				if (record.type === "audio") {
 					playAudio(record);
 					stateAudio.audioArray = _.uniqBy(
-						[
-							...stateAudio.audioArray,
-							..._.filter(resource, i => i.type === "audio")
-						],
+						[...stateAudio.audioArray, ..._.filter(resource, i => i.type === "audio")],
 						"_id"
 					);
 					_.$idb.set("audioArray", stateAudio.audioArray);
@@ -246,8 +236,7 @@ export default async function () {
 					}
 					const max = stateAudio.audioArray.length - 1;
 					const min = 0;
-					const getNext = () =>
-						Math.floor(Math.random() * (max - min + 1)) + min;
+					const getNext = () => Math.floor(Math.random() * (max - min + 1)) + min;
 					next = getNext();
 					while (next === cptAudioIndex) {
 						next = getNext();

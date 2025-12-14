@@ -2,9 +2,7 @@
 <template>
 	<xDialog style="min-height: 100px">
 		<xAlert :closable="false"
-			>已选择接口数量{{ selected.length }}:已处理接口数量{{
-				handledCount
-			}}</xAlert
+			>已选择接口数量{{ selected.length }}:已处理接口数量{{ handledCount }}</xAlert
 		>
 		<xForm ref="form" :style="labelStyle" col="2">
 			<xItem :configs="form.tag" span="full" />

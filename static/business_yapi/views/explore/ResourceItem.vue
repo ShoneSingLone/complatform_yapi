@@ -69,19 +69,12 @@
 }
 </style>
 <template>
-	<div
-		v-if="resource.type === 'img'"
-		class="resource-item file"
-		@click="clickItem">
+	<div v-if="resource.type === 'img'" class="resource-item file" @click="clickItem">
 		<img :src="cpt_img_preview_src" alt="preview" />
 		<div class="name">{{ resource.name }}</div>
 		<div class="type">{{ resource.type }}</div>
 	</div>
-	<div
-		v-else
-		class="resource-item"
-		:class="{ file: isShow(resource) }"
-		@click="clickItem">
+	<div v-else class="resource-item" :class="{ file: isShow(resource) }" @click="clickItem">
 		<img :src="getIcon(resource)" alt="icon" />
 		<div class="name">{{ resource.name }}</div>
 		<div class="type">{{ resource.type }}</div>

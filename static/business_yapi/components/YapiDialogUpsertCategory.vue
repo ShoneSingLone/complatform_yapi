@@ -13,12 +13,7 @@
 	</xDialog>
 </template>
 <script lang="ts">
-export default async function ({
-	categoryInfo,
-	project_id,
-	get_interface_list,
-	all_category
-}) {
+export default async function ({ categoryInfo, project_id, get_interface_list, all_category }) {
 	const isUpdate = !!categoryInfo;
 	/* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
 	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");

@@ -34,22 +34,15 @@ export default async function () {
 				"https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/css/pluginsCss.css"
 			);
 
-			_.$appendStyle(
-				"https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/plugins.css"
-			);
-			_.$appendStyle(
-				"https://cdn.jsdelivr.net/npm/luckysheet/dist/css/luckysheet.css"
-			);
+			_.$appendStyle("https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/plugins.css");
+			_.$appendStyle("https://cdn.jsdelivr.net/npm/luckysheet/dist/css/luckysheet.css");
 			_.$appendStyle(
 				"https://cdn.jsdelivr.net/npm/luckysheet/dist/assets/iconfont/iconfont.css"
 			);
 
 			await _.$appendScript("@/assets/js/luckysheet.plugin.js");
 			window.luckysheetPlugin = _.noConflict();
-			const luckysheet = await _.$appendScript(
-				"@/assets/js/luckysheet.umd.js",
-				"luckysheet"
-			);
+			const luckysheet = await _.$appendScript("@/assets/js/luckysheet.umd.js", "luckysheet");
 			// 初始化表格
 			var options = {
 				container: "luckysheet" //luckysheet为容器id

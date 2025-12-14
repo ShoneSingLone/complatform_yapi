@@ -54,11 +54,7 @@
 			<div class="logo">🚀 CI/CD Platform</div>
 		</div>
 		<div class="nav-menu">
-			<a
-				:href="menu.href"
-				class="nav-item"
-				v-for="menu in menuArray"
-				:key="menu.id">
+			<a :href="menu.href" class="nav-item" v-for="menu in menuArray" :key="menu.id">
 				<i>{{ menu.icon }}</i> {{ menu.title }}
 			</a>
 		</div>
