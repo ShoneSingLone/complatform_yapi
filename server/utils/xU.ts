@@ -3,7 +3,6 @@ const { async_get_local_repo_branch_info } = require("./git_local_branch_info");
 const { spawn } = require("child_process");
 const {
 	SOCKET_TYPE_HANDLERS,
-	SOCKET_CONNECTIONS,
 	SSE_TYPE
 } = require("../middleware/websocket.handlers");
 const _ = require("lodash");
@@ -1200,7 +1199,6 @@ const xU = new Proxy(
 			const handler = SSE_TYPE_HANDLERS[type];
 			handler && handler(clientID, { type, payload });
 		},
-		SOCKET_CONNECTIONS,
 		socketTrigger(type, clientID, payload) {
 			const handler = SOCKET_TYPE_HANDLERS[type];
 			handler && handler(clientID, { type, payload });

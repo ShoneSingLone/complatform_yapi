@@ -639,9 +639,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				const vm = this;
 				const handleListener = (listeners, eventName) => {
 					listeners[eventName] = function (value, $event) {
+<<<<<<< HEAD
 						const on = vm.cpt_configs.on;
 						/*除非主动调用 _.$validateForm，只有对应的事件才会触发校验*/
 						const rule = vm.cpt_rules_by_trigger[eventName];
+=======
+						const on = vm.cptConfigs.on;
+						/*除非主动调用 _.$validateForm，只有对应的事件才会触发校验*/
+						const rule = vm.cpt_rulesByTrigger[eventName];
+>>>>>>> 46e912d0f702d930b8bc15180a92c9ae6448b112
 						if (rule) {
 							vm.debounceValidate();
 						}

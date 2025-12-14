@@ -1829,7 +1829,12 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 				rowData,
 				rowIndex
 			};
+<<<<<<< HEAD
 			const Cell = _CellRenderer(cellProps);
+=======
+			const Cell = CellComponent(cellProps);
+
+>>>>>>> 46e912d0f702d930b8bc15180a92c9ae6448b112
 			const column_align = column.align || PRIVATE_GLOBAL.x_table_vir_column_row_cell_align;
 
 			const el_table_v2_row_cell_class = [

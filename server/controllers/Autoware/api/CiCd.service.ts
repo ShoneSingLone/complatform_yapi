@@ -74,18 +74,20 @@ async function initRepo({ git_repo, uid }) {
 	});
 
 	const emit = msg => {
-		const currentSocket = global.APP.socket.yapi.connections.get(uid);
-		if (currentSocket) {
-			try {
-				currentSocket.emit(
-					socket_const.clone_git_repo_terminal_output,
-					`${msg.replace(TARGET_PREFIX, "❀")}`
-				);
-				xU.applog.info("[emit] 通过socket发送消息:", msg);
-			} catch (error) {
-				currentSocket.emit(socket_const.clone_git_repo_terminal_output, msg);
-				console.error("[emit] 发送格式化消息失败，使用原始消息:", msg, error);
-			}
+		const currentSocket = global._app_socket_yapi_connections.get(uid);
+		if (Array.isArray(currentSocket) && currentSocket.length > 0) {
+			currentSocket.forEach(socket => {
+				try {
+					socket.emit(
+						socket_const.clone_git_repo_terminal_output,
+						`${msg.replace(TARGET_PREFIX, "❀")}`
+					);
+					xU.applog.info("[emit] 通过socket发送消息:", msg);
+				} catch (error) {
+					socket.emit(socket_const.clone_git_repo_terminal_output, msg);
+					console.error("[emit] 发送格式化消息失败，使用原始消息:", msg, error);
+				}
+			});
 		} else {
 			xU.applog.info("[emit] 无可用socket连接，直接打印消息:", msg);
 		}

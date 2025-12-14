@@ -141,7 +141,8 @@ const old_middlewareWebsocket = () => async (ctx, next) => {
 							info: xU._.pick(currentProcess, ["cpu", "mem"])
 						})
 					);
-				} catch (error) {}
+				} catch (error) {
+				}
 			}, 1000 * 10);
 			ctx.websocket.on("message", paramsString => {
 				try {
@@ -232,7 +233,7 @@ function addPluginRouter(config) {
 	);
 }
 
-exports.old_appSetupWebsocket = function ({ app, appSocket }) {
+exports.old_appSetupWebsocket = function({ app, appSocket }) {
 	xU.createAction(
 		wsRouter,
 		"/api",
@@ -255,10 +256,7 @@ exports.old_appSetupWebsocket = function ({ app, appSocket }) {
 	});
 };
 
-exports.appSetupWebsocket = function (app) {
-	const { namespace_ws } = require("./websocket.ns.ws");
-	namespace_ws({ app, ioUtils });
-
+exports.appSetupWebsocket = function(app) {
 	const { namespace_yapi } = require("./websocket.ns.yapi");
 	namespace_yapi({ app, ioUtils });
 };
