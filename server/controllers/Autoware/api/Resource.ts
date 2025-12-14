@@ -3,6 +3,7 @@ const mime = require("mime-types");
 const dayjs = require("dayjs");
 const fs = require("fs");
 const path = require("path");
+const sharp = require("sharp");
 const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
 const { TARGET_PREFIX } = xU;
@@ -177,13 +178,35 @@ module.exports = {
 						if (uri) {
 							const uri_array = JSON.parse(uri);
 							if (xU._.isArray(uri_array)) {
-								const resource_path = path.resolve.apply(path, uri_array);
-								let isExist = xU.fileExist(resource_path);
-								if (isExist) {
-									/* 返回文件形式存储的文件 */
-									return returnFileByPath(resource_path, {
-										path: resource_path
-									});
+								let resource_path = path.resolve.apply(path, uri_array);
+								if (preview) {
+									// 获取压缩图片
+									const preview_resource_path = resource_path + ".preview";
+									let isExist = xU.fileExist(preview_resource_path);
+									if (isExist) {
+										/* 返回文件形式存储的文件 */
+										return returnFileByPath(preview_resource_path, {
+											path: preview_resource_path
+										});
+									} else {
+										/* 没有预览图，需要先生成40*40的图片 */
+										// 使用sharp库生成40*40的预览图
+										await sharp(resource_path)
+											.resize(40)
+											.toFile(preview_resource_path);
+										/* 返回生成的预览图 */
+										return returnFileByPath(preview_resource_path, {
+											path: preview_resource_path
+										});
+									}
+								} else {
+									let isExist = xU.fileExist(resource_path);
+									if (isExist) {
+										/* 返回文件形式存储的文件 */
+										return returnFileByPath(resource_path, {
+											path: resource_path
+										});
+									}
 								}
 							}
 						}
@@ -191,7 +214,6 @@ module.exports = {
 							ctx.query.id
 						);
 						var type;
-						debugger;
 						if (targetResource?.basecode) {
 							/* 返回base64形式存储的文件 */
 							return returnFileByBase64(targetResource);

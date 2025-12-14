@@ -45,7 +45,7 @@ async function scanAllAutowareController(app) {
 					controller_parent_dir: controllerInfo[2]
 				});
 			} catch (error) {
-				debugger;
+				console.error(error)
 				xU.applog.error(error);
 			}
 		}
