@@ -3,7 +3,7 @@ const mime = require("mime-types");
 const dayjs = require("dayjs");
 const fs = require("fs");
 const path = require("path");
-const sharp = require("sharp");
+const Jimp = require("jimp");
 const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
 const { TARGET_PREFIX } = xU;
@@ -158,7 +158,6 @@ module.exports = {
 					query: {
 						id: {
 							description: "资源id",
-							required: true,
 							type: "integer"
 						},
 						uri: {
@@ -180,7 +179,7 @@ module.exports = {
 							if (xU._.isArray(uri_array)) {
 								let resource_path = path.resolve.apply(path, uri_array);
 								if (preview) {
-									// 获取压缩图片
+									///* 获取压缩图片 */
 									const preview_resource_path = resource_path + ".preview";
 									let isExist = xU.fileExist(preview_resource_path);
 									if (isExist) {
@@ -189,24 +188,37 @@ module.exports = {
 											path: preview_resource_path
 										});
 									} else {
-										/* 没有预览图，需要先生成40*40的图片 */
-										// 使用sharp库生成40*40的预览图
-										await sharp(resource_path)
-											.resize(40)
-											.toFile(preview_resource_path);
-										/* 返回生成的预览图 */
-										return returnFileByPath(preview_resource_path, {
-											path: preview_resource_path
-										});
+										try {
+											/* 没有预览图，需要先生成40*40的图片 */
+											// 使用jimp库生成40*40的预览图
+											const input_path = path.resolve(resource_path);
+											console.log("🚀 ~ input_path:", input_path);
+											const image = await Jimp.Jimp.read(input_path);
+											await image.resize({ w: 80 });
+											await image.write(
+												path.resolve(preview_resource_path + ".png")
+											);
+											/* 文件改名 */
+											await xU.fs.promises.rename(
+												preview_resource_path + ".png",
+												preview_resource_path
+											);
+											/* 返回生成的预览图 */
+											return returnFileByPath(preview_resource_path, {
+												path: preview_resource_path
+											});
+										} catch (error) {
+											console.error(error);
+										}
 									}
-								} else {
-									let isExist = xU.fileExist(resource_path);
-									if (isExist) {
-										/* 返回文件形式存储的文件 */
-										return returnFileByPath(resource_path, {
-											path: resource_path
-										});
-									}
+								}
+
+								let isExist = xU.fileExist(resource_path);
+								if (isExist) {
+									/* 返回文件形式存储的文件 */
+									return returnFileByPath(resource_path, {
+										path: resource_path
+									});
 								}
 							}
 						}

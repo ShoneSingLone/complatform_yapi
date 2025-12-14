@@ -1,11 +1,20 @@
-const sharp = require("sharp");
+const Jimp = require("jimp");
+const path = require("path");
 
-sharp("./input.png")
-    .resize(300, 200) // 300px 宽，200px 高
-    .toFile("output.jpg", (err, info) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(info);
+async function testJimp() {
+    try {
+        const imagePath = path.join(__dirname, "input.png");
+        console.log("Reading image from:", imagePath);
+        const image = await Jimp.Jimp.read(imagePath);
+        await image.resize({ w: 80 });
+        await image.write(path.join(__dirname, "output.png"));
+        console.log("Image processed successfully");
+    } catch (err) {
+        console.error("Error processing image:", err.message);
+        if (err.stack) {
+            console.error("Stack trace:", err.stack);
         }
-    });
+    }
+}
+
+testJimp();
