@@ -24,6 +24,33 @@
       flex-grow: 1;
       height: 100%;
       
+      .toolbar-toggle {
+        border-radius: 4px;
+        border: 1px solid transparent;
+        padding: 4px 8px;
+        font-size: 12px;
+        background-color: transparent;
+        color: #666;
+        cursor: pointer;
+        transition: all 100ms ease;
+        margin-right: 5px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+          border-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        &:focus {
+          outline: none;
+          background-color: rgba(74, 144, 226, 0.1);
+          border-color: rgba(74, 144, 226, 0.3);
+        }
+      }
+      
       &::-webkit-scrollbar {
         height: 2px;
       }
@@ -70,29 +97,6 @@
       align-items: center;
       border-bottom: 1px solid #e0e0e0;
       transition: all 0.2s ease;
-      
-      .toolbar-toggle {
-        border-radius: 4px;
-        border: 1px solid transparent;
-        padding: 5px 8px;
-        font-size: 13px;
-        background-color: transparent;
-        color: #333;
-        cursor: pointer;
-        transition: all 100ms ease;
-        margin-right: 5px;
-        
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.05);
-          border-color: rgba(0, 0, 0, 0.1);
-        }
-        
-        &:focus {
-          outline: none;
-          background-color: rgba(74, 144, 226, 0.1);
-          border-color: rgba(74, 144, 226, 0.3);
-        }
-      }
       
       .toolbar-content {
         display: flex;
@@ -147,24 +151,43 @@
             }
             
             &.sort-level-1 {
-              box-shadow: 0 0 0 1px #4a90e2;
+              box-shadow: 0 0 0 2px #4a90e2;
+              border-color: #4a90e2;
+              background-color: rgba(74, 144, 226, 0.2);
             }
             
             &.sort-level-2 {
-              box-shadow: 0 0 0 1px #5cb85c;
+              box-shadow: 0 0 0 2px #5cb85c;
+              border-color: #5cb85c;
+              background-color: rgba(92, 184, 92, 0.2);
             }
             
             .sort-order-indicator {
               font-size: 11px;
             }
+            .sort-priority-indicator {
+              font-size: 10px;
+              background-color: #4a90e2;
+              color: white;
+              border-radius: 10px;
+              padding: 1px 4px;
+              margin-left: 3px;
+              font-weight: bold;
+            }
           }
         }
         
-        .search-box {
-          margin-left: auto;
-          min-width: 170px;
-          width: 26%;
-          max-width: 400px;
+        .sort-help {
+        margin-right: 15px;
+        color: #666;
+        font-size: 12px;
+      }
+
+      .search-box {
+        margin-left: auto;
+        min-width: 170px;
+        width: 26%;
+        max-width: 400px;
           
           .input {
             border-radius: var(--border-radius);
@@ -327,6 +350,9 @@
     <!-- 路径栏 -->
     <div class="path-bar">
       <div class="breadcrumb">
+        <button class="toolbar-toggle" @click="toggleToolbar" title="切换工具栏">
+          {{ toolbarCollapsed ? '▼' : '▲' }}
+        </button>
         <div class="breadcrumb-item" @click="back(-1)">root</div>
         <span class="separator">/</span>
         <div v-for="(item, index) in pathStack" :key="index" class="breadcrumb-item" @click="back(index)">
@@ -337,9 +363,6 @@
     
     <!-- 工具栏 -->
     <div class="toolbar">
-      <button class="toolbar-toggle" @click="toggleToolbar" title="切换工具栏">
-        {{ toolbarCollapsed ? '▼' : '▲' }}
-      </button>
       <div class="toolbar-content" :class="{ collapsed: toolbarCollapsed }">
         <div class="sort-controls">
           <div class="sort-description">排序方式：</div>
@@ -348,12 +371,16 @@
               class="sort-btn"
               :class="getSortBtnClass(option.value)"
               @click="toggleSortField(option.value)"
-              :title="option.label + '排序'"
+              :title="getSortBtnTitle(option.value)"
             >
               {{ option.label }}
               <span class="sort-order-indicator">{{ getSortOrderIndicator(option.value) }}</span>
+              <span class="sort-priority-indicator">{{ getSortPriorityIndicator(option.value) }}</span>
             </button>
           </div>
+        </div>
+        <div class="sort-help">
+          <small>默认排序：先按类型再按名称排序。点击排序字段可设置优先级，最多支持两个字段组合排序</small>
         </div>
         <div class="search-box">
           <input v-model.lazy="searchKey" placeholder="搜索" clearable class="input" />
@@ -768,6 +795,23 @@ export default async function () {
           return '';
         }
         return sortItem.order === 'asc' ? '↑' : '↓';
+      },
+      // 获取排序优先级指示器
+      getSortPriorityIndicator(field) {
+        const sortIndex = this.sortConfig.findIndex(item => item.field === field);
+        if (sortIndex === -1) {
+          return '';
+        }
+        return `(${sortIndex + 1})`;
+      },
+      // 获取排序按钮的提示信息
+      getSortBtnTitle(field) {
+        const sortIndex = this.sortConfig.findIndex(item => item.field === field);
+        if (sortIndex === -1) {
+          return `${this.sortOptions.find(opt => opt.value === field).label}排序`;
+        }
+        const orderText = this.sortConfig[sortIndex].order === 'asc' ? '升序' : '降序';
+        return `${this.sortOptions.find(opt => opt.value === field).label}${orderText} (优先级${sortIndex + 1})`;
       },
       // 切换排序字段
       toggleSortField(field) {
