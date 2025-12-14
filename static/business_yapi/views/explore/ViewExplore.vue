@@ -815,14 +815,16 @@ export default async function () {
 				if (existingIndex === -1) {
 					// 如果字段不在排序配置中，添加到末尾
 					this.sortConfig.push({ field, order: "asc" });
-				} else if (existingIndex === 0 && this.sortConfig.length === 1) {
-					// 如果是唯一的排序字段，切换排序方向
+				} else {
+					// 如果字段已在排序配置中，切换排序方向
 					this.sortConfig[existingIndex].order =
 						this.sortConfig[existingIndex].order === "asc" ? "desc" : "asc";
-				} else {
-					// 如果字段已在排序配置中，调整其优先级
-					const [sortItem] = this.sortConfig.splice(existingIndex, 1);
-					this.sortConfig.unshift(sortItem);
+					
+					// 如果不是唯一的排序字段且不在首位，调整其优先级到首位
+					if (this.sortConfig.length > 1 && existingIndex !== 0) {
+						const [sortItem] = this.sortConfig.splice(existingIndex, 1);
+						this.sortConfig.unshift(sortItem);
+					}
 				}
 
 				// 限制最大排序字段数为2
