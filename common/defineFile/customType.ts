@@ -125,7 +125,6 @@ export type t_orm = {
 			belong_type?: string;
 			belong_id?: string;
 			select?: string;
-
 		}) => Promise<any>;
 
 		detail: (...args: any) => Promise<any>;

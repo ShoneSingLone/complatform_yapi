@@ -57,7 +57,19 @@ async function asyncResolvePathFileOrDir(fileOrDirPath, relativePathArray) {
 				name: fileOrDirPath
 			};
 		}
+		if (isImageType(type)) {
+			return {
+				type: "img",
+				path: [...relativePathArray, fileOrDirPath],
+				name: fileOrDirPath
+			};
+		}
 		asyncResolvePathFileOrDir.types[type] = type;
+		console.log(
+			"🚀 ~ asyncResolvePathFileOrDir ~ types.type:",
+			type,
+			fileOrDirPath
+		);
 	}
 
 	return null; // 如果不是目录也不是音频文件，则返回null
@@ -74,9 +86,12 @@ function isAudioType(type) {
 }
 
 exports.isAudioType = isAudioType;
-function isImageType(type) {}
+function isImageType(type) {
+	return /^image/.test(type) || ["image/webp"].includes(type);
+}
 
 exports.isImageType = isImageType;
+
 function isVideoType(type) {
 	return ["video/mp4"].includes(type);
 }

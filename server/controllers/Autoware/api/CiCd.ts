@@ -322,7 +322,11 @@ module.exports = {
 							return (ctx.body = xU.$response(null, 400, "任务不存在"));
 						}
 
-						if (xU._.some(task.task_triggers, trigger => message.includes(trigger))) {
+						if (
+							xU._.some(task.task_triggers, trigger =>
+								message.includes(trigger)
+							)
+						) {
 							/* 在commit里面自定义的特殊字段，只要推送的commit信息有，则通过 */
 							if (task.task_token === task_token) {
 								runTask({

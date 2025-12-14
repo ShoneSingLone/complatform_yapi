@@ -231,7 +231,7 @@ class SyncUtils {
 			if (response.status > 400) {
 				throw new Error(
 					`http status "${response.status}"` +
-					"获取数据失败，请确认 swaggerUrl 是否正确"
+						"获取数据失败，请确认 swaggerUrl 是否正确"
 				);
 			}
 			return response.data;
@@ -239,7 +239,7 @@ class SyncUtils {
 			let response = e.response || { status: e.message || "error" };
 			throw new Error(
 				`http status "${response.status}"` +
-				"获取数据失败，请确认 swaggerUrl 是否正确"
+					"获取数据失败，请确认 swaggerUrl 是否正确"
 			);
 		}
 	}

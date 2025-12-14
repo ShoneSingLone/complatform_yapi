@@ -22,7 +22,7 @@ function generateAvatarSvg(name, size = 100) {
 	// 生成文字颜色 - 使用更丰富的配色方案
 	let textColor;
 	const colorScheme = Math.abs((hash >> 4) % 5); // 0-4的配色方案
-	
+
 	switch (colorScheme) {
 		case 0: // 互补色
 			const complementaryHue = (hue + 180) % 360;
@@ -36,15 +36,16 @@ function generateAvatarSvg(name, size = 100) {
 			textColor = `hsl(${lightHue}, 90%, 85%)`;
 			break;
 		case 3: // 金色/银色变体
-			textColor = lightness < 50 ? 
-				`hsl(45, 90%, 85%)` : // 金色
-				`hsl(210, 20%, 90%)`; // 银色
+			textColor =
+				lightness < 50
+					? `hsl(45, 90%, 85%)` // 金色
+					: `hsl(210, 20%, 90%)`; // 银色
 			break;
 		case 4: // 默认高对比度
 			textColor = lightness > 50 ? "#333333" : "#ffffff";
 			break;
 	}
-	
+
 	// 确保文字在深色背景上有足够对比度
 	if (lightness < 30) {
 		// 如果背景非常暗，强制使用亮色文字
@@ -55,7 +56,7 @@ function generateAvatarSvg(name, size = 100) {
 	let displayText = name;
 	let lines = [];
 	let fontSize;
-	
+
 	// 检测是否需要换行显示
 	if (name.length <= 2) {
 		// 1-2个字符：单行显示，大字体
@@ -95,13 +96,13 @@ function generateAvatarSvg(name, size = 100) {
 	const shadowId = `shadow-${Math.abs(hash).toString(16).substring(0, 6)}`;
 
 	// 构建SVG字符串（带圆角和阴影效果）
-	let textElements = '';
-	
+	let textElements = "";
+
 	// 计算多行文本的垂直位置
 	const lineHeight = fontSize * 1.2; // 行高为字体大小的1.2倍
 	const totalHeight = lines.length * lineHeight;
 	const startY = (size - totalHeight) / 2 + fontSize / 2;
-	
+
 	// 为每行文本创建一个text元素，添加文字阴影效果
 	lines.forEach((line, index) => {
 		const yPos = startY + index * lineHeight;
@@ -111,7 +112,7 @@ function generateAvatarSvg(name, size = 100) {
           text-anchor="middle" dominant-baseline="middle" fill="${textColor}"
           filter="url(#${shadowId})">${line}</text>`;
 	});
-	
+
 	return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -119,7 +120,9 @@ function generateAvatarSvg(name, size = 100) {
             <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.3" flood-color="#000"/>
         </filter>
     </defs>
-    <rect width="${size}" height="${size}" rx="${size * 0.2}" ry="${size * 0.2}" fill="${backgroundColor}"/>${textElements}
+    <rect width="${size}" height="${size}" rx="${size * 0.2}" ry="${
+		size * 0.2
+	}" fill="${backgroundColor}"/>${textElements}
 </svg>`;
 }
 

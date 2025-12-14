@@ -180,7 +180,7 @@ class ControllerWiki extends ControllerBase {
 					ctx.websocket.send(JSON.stringify(data));
 				}
 			});
-			ctx.websocket.on("close", async () => { });
+			ctx.websocket.on("close", async () => {});
 		} catch (err) {
 			xU.applog.error(err);
 		}

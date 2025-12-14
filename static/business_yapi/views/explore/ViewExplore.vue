@@ -62,35 +62,160 @@
   }
   
   .toolbar {
-    height: 42px;
-    width: 100%;
-    display: flex;
-    padding: 0 10px 5px 10px;
-    margin-top: 3px;
-    align-items: center;
-    border-bottom: 1px solid #e0e0e0;
-    
-    .search-box {
-      margin-left: auto;
-      min-width: 170px;
-      width: 26%;
-      max-width: 400px;
+      height: auto;
+      width: 100%;
+      display: flex;
+      padding: 0 10px 5px 10px;
+      margin-top: 3px;
+      align-items: center;
+      border-bottom: 1px solid #e0e0e0;
+      transition: all 0.2s ease;
       
-      .input {
-        border-radius: var(--border-radius);
-        border: 1px solid #ddd;
-        padding: 6px 10px;
-        width: 100%;
-        font-size: 14px;
+      .toolbar-toggle {
+        border-radius: 4px;
+        border: 1px solid transparent;
+        padding: 5px 8px;
+        font-size: 13px;
+        background-color: transparent;
+        color: #333;
+        cursor: pointer;
+        transition: all 100ms ease;
+        margin-right: 5px;
+        
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+          border-color: rgba(0, 0, 0, 0.1);
+        }
         
         &:focus {
           outline: none;
-          border-color: #4a90e2;
-          box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+          background-color: rgba(74, 144, 226, 0.1);
+          border-color: rgba(74, 144, 226, 0.3);
+        }
+      }
+      
+      .toolbar-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        transition: all 0.2s ease;
+        
+        &.collapsed {
+          display: none;
+        }
+        
+        .sort-controls {
+          display: flex;
+          align-items: center;
+          margin-right: 15px;
+          gap: 5px;
+          
+          .sort-description {
+            font-size: 13px;
+            color: #666;
+          }
+          
+          .sort-btn {
+            border-radius: 4px;
+            border: 1px solid transparent;
+            padding: 5px 8px;
+            font-size: 13px;
+            background-color: transparent;
+            color: #333;
+            cursor: pointer;
+            transition: all 100ms ease;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            
+            &:hover {
+              background-color: rgba(0, 0, 0, 0.05);
+              border-color: rgba(0, 0, 0, 0.1);
+            }
+            
+            &:focus {
+              outline: none;
+              background-color: rgba(74, 144, 226, 0.1);
+              border-color: rgba(74, 144, 226, 0.3);
+            }
+            
+            &.active {
+              background-color: rgba(74, 144, 226, 0.15);
+              border-color: rgba(74, 144, 226, 0.4);
+              color: #4a90e2;
+            }
+            
+            &.sort-level-1 {
+              box-shadow: 0 0 0 1px #4a90e2;
+            }
+            
+            &.sort-level-2 {
+              box-shadow: 0 0 0 1px #5cb85c;
+            }
+            
+            .sort-order-indicator {
+              font-size: 11px;
+            }
+          }
+        }
+        
+        .search-box {
+          margin-left: auto;
+          min-width: 170px;
+          width: 26%;
+          max-width: 400px;
+          
+          .input {
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+            width: 100%;
+            font-size: 14px;
+            
+            &:focus {
+              outline: none;
+              border-color: #4a90e2;
+              box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+            }
+          }
         }
       }
     }
-  }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .toolbar {
+        flex-wrap: wrap;
+        padding-bottom: 10px;
+        height: auto;
+        
+        .toolbar-content {
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-top: 5px;
+          
+          .sort-controls {
+            width: 100%;
+            margin-right: 0;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            
+            .sort-btn {
+              flex: 1;
+              min-width: 70px;
+              text-align: center;
+            }
+          }
+          
+          .search-box {
+            width: 100%;
+            min-width: auto;
+            max-width: none;
+          }
+        }
+      }
+    }
   
   .resource-list {
     flex-grow: 1;
@@ -98,48 +223,56 @@
     padding: 10px;
     
     .resource-item {
-      width: 100%;
-      padding: 2px 5px;
-      border-radius: 5px;
-      display: flex;
-      border: 1.5px solid transparent;
-      font-size: 14px;
-      align-items: center;
-      height: 30px;
-      transition: 50ms;
-      cursor: pointer;
-      
-      &:hover {
-        background-color: var(--hover-bg);
-        box-shadow: var(--shadow);
-      }
-      
-      &.file {
-        color: #555;
-      }
-      
-      img {
-        width: 25px;
-        height: 25px;
-        margin-right: 5px;
-      }
-      
-      &.file img {
-        width: 22px;
-        height: 22px;
-        margin-left: 2px;
-        margin-right: 7px;
-      }
-      
-      .name {
-        flex-grow: 1;
-      }
-      
-      .type {
-        font-size: 12px;
-        color: #888;
-        margin-right: 10px;
-      }
+        width: 100%;
+        padding: 4px 5px;
+        border-radius: 5px;
+        display: flex;
+        border: 1.5px solid transparent;
+        font-size: 14px;
+        align-items: flex-start;
+        min-height: 30px;
+        height: auto;
+        transition: 50ms;
+        cursor: pointer;
+        
+        &:hover {
+          background-color: var(--hover-bg);
+          box-shadow: var(--shadow);
+        }
+        
+        &.file {
+          color: #555;
+        }
+        
+        img {
+          width: 25px;
+          height: 25px;
+          margin-right: 5px;
+          margin-top: 1px;
+          flex-shrink: 0;
+        }
+        
+        &.file img {
+          width: 22px;
+          height: 22px;
+          margin-left: 2px;
+          margin-right: 7px;
+          margin-top: 3px;
+        }
+        
+        .name {
+          flex-grow: 1;
+          margin-right: 10px;
+          word-break: break-all;
+        }
+        
+        .type {
+          font-size: 12px;
+          color: #888;
+          min-width: 60px;
+          flex-shrink: 0;
+          padding-top: 2px;
+        }
     }
   }
   
@@ -204,8 +337,27 @@
     
     <!-- 工具栏 -->
     <div class="toolbar">
-      <div class="search-box">
-        <input v-model.lazy="searchKey" placeholder="搜索" clearable class="input" />
+      <button class="toolbar-toggle" @click="toggleToolbar" title="切换工具栏">
+        {{ toolbarCollapsed ? '▼' : '▲' }}
+      </button>
+      <div class="toolbar-content" :class="{ collapsed: toolbarCollapsed }">
+        <div class="sort-controls">
+          <div class="sort-description">排序方式：</div>
+          <div v-for="option in sortOptions" :key="option.value" class="sort-btn-group">
+            <button 
+              class="sort-btn"
+              :class="getSortBtnClass(option.value)"
+              @click="toggleSortField(option.value)"
+              :title="option.label + '排序'"
+            >
+              {{ option.label }}
+              <span class="sort-order-indicator">{{ getSortOrderIndicator(option.value) }}</span>
+            </button>
+          </div>
+        </div>
+        <div class="search-box">
+          <input v-model.lazy="searchKey" placeholder="搜索" clearable class="input" />
+        </div>
       </div>
     </div>
     
@@ -491,31 +643,104 @@ export default async function () {
 			};
 		},
 		data() {
+			// 从localStorage读取排序设置，如果没有则使用默认值
+			const savedSortConfig = _.$lStorage["VIEW_EXPLORE_SORT_CONFIG"];
+			const defaultSortConfig = [
+				{ field: "type", order: "asc" },
+				{ field: "name", order: "asc" }
+			];
+			
 			return {
 				resource: _.$lStorage["VIEW_EXPLORE_PATH_STACK"] || [],
 				pathStack: _.$lStorage["VIEW_EXPLORE_RESOURCE"] || [],
-				searchKey: ""
+				searchKey: "",
+				sortConfig: savedSortConfig ? JSON.parse(savedSortConfig) : defaultSortConfig, // 排序配置：支持多个字段
+				sortOptions: [
+					{ label: "名称", value: "name" },
+					{ label: "类型", value: "type" },
+					{ label: "大小", value: "size" },
+					{ label: "修改时间", value: "mtime" }
+				],
+				toolbarCollapsed: _.$lStorage["VIEW_EXPLORE_TOOLBAR_COLLAPSED"] === 'true' || false
 			};
 		},
 		computed: {
-			cptResource() {
-				if (this.searchKey) {
-					return _.filter(this.resource, item =>
-						_.lowerCase(item.name).includes(this.searchKey)
-					);
+				cptResource() {
+					let filtered = this.resource;
+					// 搜索过滤
+					if (this.searchKey) {
+						filtered = _.filter(filtered, item =>
+							_.lowerCase(item.name || '').includes(this.searchKey)
+						);
+					}
+					// 组合排序处理
+					return [...filtered].sort((a, b) => {
+						// 按sortConfig中的字段顺序依次比较
+						for (const { field, order } of this.sortConfig) {
+							let compareResult = 0;
+							// 处理名称字段的自然排序
+							if (field === 'name') {
+								const aName = String(a.name || '');
+								const bName = String(b.name || '');
+								const aParts = aName.split(/(\d+)/);
+								const bParts = bName.split(/(\d+)/);
+								
+								// 比较每一部分
+								for (let i = 0; i < Math.min(aParts.length, bParts.length); i++) {
+									const aPart = aParts[i];
+									const bPart = bParts[i];
+									
+									// 如果都是数字，按数值比较
+									if (/^\d+$/.test(aPart) && /^\d+$/.test(bPart)) {
+										const aInt = parseInt(aPart);
+										const bInt = parseInt(bPart);
+										if (aInt !== bInt) {
+											compareResult = order === 'asc' ? aInt - bInt : bInt - aInt;
+											break;
+										}
+									} else {
+										// 否则按字符串比较
+										const compare = aPart.localeCompare(bPart);
+										if (compare !== 0) {
+											compareResult = order === 'asc' ? compare : -compare;
+											break;
+										}
+									}
+								}
+								
+								// 如果一个是另一个的前缀，比较长度
+								if (compareResult === 0) {
+									compareResult = order === 'asc' ? 
+										aParts.length - bParts.length : 
+										bParts.length - aParts.length;
+								}
+							} else {
+								// 其他字段（type/size/mtime）直接比较
+								const aValue = a[field] || '';
+								const bValue = b[field] || '';
+								if (aValue !== bValue) {
+									compareResult = aValue > bValue ? 1 : -1;
+									compareResult = order === 'asc' ? compareResult : -compareResult;
+								}
+							}
+							
+							// 如果当前字段比较结果不为0，则返回该结果
+							if (compareResult !== 0) return compareResult;
+						}
+						// 所有字段都相同，保持原顺序
+						return 0;
+					});
+				},
+				cptResourceOnlyAudio() {
+					return _.filter(this.cptResource, { type: "audio" });
 				}
-				return this.resource;
 			},
-			cptResourceOnlyAudio() {
-				return _.filter(this.cptResource, { type: "audio" });
-			}
-		},
 		mounted() {
 			this.getResource();
 		},
 		methods: {
       isShow(item) {
-        return ['audio', 'video'].includes(item.type);
+        return ['audio', 'video','img'].includes(item.type);
       },
       back(index) {
         if (index === -1) {
@@ -524,19 +749,71 @@ export default async function () {
           this.getResource({ path: this.pathStack.slice(0, index + 1) });
         }
       },
+      // 获取排序按钮的CSS类
+      getSortBtnClass(field) {
+        const sortIndex = this.sortConfig.findIndex(item => item.field === field);
+        if (sortIndex === -1) {
+          return {};
+        }
+        return {
+          'sort-btn': true,
+          'active': true,
+          [`sort-level-${sortIndex + 1}`]: true
+        };
+      },
+      // 获取排序方向指示器
+      getSortOrderIndicator(field) {
+        const sortItem = this.sortConfig.find(item => item.field === field);
+        if (!sortItem) {
+          return '';
+        }
+        return sortItem.order === 'asc' ? '↑' : '↓';
+      },
+      // 切换排序字段
+      toggleSortField(field) {
+        const existingIndex = this.sortConfig.findIndex(item => item.field === field);
+        
+        if (existingIndex === -1) {
+          // 如果字段不在排序配置中，添加到末尾
+          this.sortConfig.push({ field, order: 'asc' });
+        } else if (existingIndex === 0 && this.sortConfig.length === 1) {
+          // 如果是唯一的排序字段，切换排序方向
+          this.sortConfig[existingIndex].order = this.sortConfig[existingIndex].order === 'asc' ? 'desc' : 'asc';
+        } else {
+          // 如果字段已在排序配置中，调整其优先级
+          const [sortItem] = this.sortConfig.splice(existingIndex, 1);
+          this.sortConfig.unshift(sortItem);
+        }
+        
+        // 限制最大排序字段数为2
+        if (this.sortConfig.length > 2) {
+          this.sortConfig.pop();
+        }
+        
+        // 保存排序配置到localStorage
+        this.saveSortConfig();
+      },
+      // 保存排序配置到localStorage
+      saveSortConfig() {
+        _.$lStorage["VIEW_EXPLORE_SORT_CONFIG"] = JSON.stringify(this.sortConfig);
+      },
       async getResource(item = {}) {
         this.pathStack = _.isArray(item?.path) ? item.path : [];
         _.$loading(true);
         try {
           const res = await _api.yapi.resourceLs({ path: this.pathStack });
           if (!res.errcode) {
-            this.resource = _.orderBy(res.data, ['type']);
+            this.resource = res.data;
           }
         } catch (error) {
           console.error(error);
         } finally {
           _.$loading(false);
         }
+      },
+      toggleToolbar() {
+        this.toolbarCollapsed = !this.toolbarCollapsed;
+        _.$lStorage["VIEW_EXPLORE_TOOLBAR_COLLAPSED"] = this.toolbarCollapsed;
       },
       getIcon(item) {
         if (item.type === "folder") {

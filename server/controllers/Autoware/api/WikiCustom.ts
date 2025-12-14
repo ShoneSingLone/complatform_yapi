@@ -331,7 +331,7 @@ module.exports = {
 						/* 排序的顺序 */
 						const { order } =
 							(await orm.WikiOrder.detail(queryConditions)) || {};
-							
+
 						ctx.body = xU.$response({
 							list: await orm.wiki.menu({
 								belong_type,

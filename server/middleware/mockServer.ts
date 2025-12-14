@@ -482,7 +482,8 @@ const middlewareMockServer = () => async (ctx, next) => {
 		try {
 			if (current_request_interface_data_in_yapi_db.res_body_type === "json") {
 				const isUseJsonSchema =
-					current_request_interface_data_in_yapi_db.res_body_is_json_schema === true;
+					current_request_interface_data_in_yapi_db.res_body_is_json_schema ===
+					true;
 
 				if (isUseJsonSchema) {
 					//json-schema
@@ -589,7 +590,9 @@ const middlewareMockServer = () => async (ctx, next) => {
 			/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
 			/* isUseBackup */
 			(() => {
-				if (current_request_interface_data_in_yapi_db.res_body_type === "backup") {
+				if (
+					current_request_interface_data_in_yapi_db.res_body_type === "backup"
+				) {
 					try {
 						const getJsonFn = new Function(
 							`return ${current_request_interface_data_in_yapi_db.resBackupJson}`
@@ -598,7 +601,8 @@ const middlewareMockServer = () => async (ctx, next) => {
 					} catch (error) {
 						/* 直接使用备份数据，不需要添加额外的 */
 						ctx.type = "html";
-						responseByMock = current_request_interface_data_in_yapi_db.resBackupJson;
+						responseByMock =
+							current_request_interface_data_in_yapi_db.resBackupJson;
 						return;
 					}
 				} else if (xU._.isPlainObject(context.mockJson)) {
