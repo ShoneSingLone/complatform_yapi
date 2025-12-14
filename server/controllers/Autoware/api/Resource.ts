@@ -159,15 +159,39 @@ module.exports = {
 							description: "资源id",
 							required: true,
 							type: "integer"
+						},
+						uri: {
+							description:
+								"资源uri;资源管理器，直接读取磁盘文件,explore接口使用",
+							type: "string"
+						},
+						preview: {
+							description: "是否是预览,会返回大小适合预览的图片",
+							type: "boolean"
 						}
 					}
 				},
 				async handler(ctx) {
 					try {
+						let { uri, preview } = ctx.query;
+						if (uri) {
+							const uri_array = JSON.parse(uri);
+							if (xU._.isArray(uri_array)) {
+								const resource_path = path.resolve.apply(path, uri_array);
+								let isExist = xU.fileExist(resource_path);
+								if (isExist) {
+									/* 返回文件形式存储的文件 */
+									return returnFileByPath(resource_path, {
+										path: resource_path
+									});
+								}
+							}
+						}
 						const targetResource = await orm.Resource.getResourceById(
 							ctx.query.id
 						);
 						var type;
+						debugger;
 						if (targetResource?.basecode) {
 							/* 返回base64形式存储的文件 */
 							return returnFileByBase64(targetResource);

@@ -31,6 +31,8 @@
         margin-right: 5px;
         margin-top: 1px;
         flex-shrink: 0;
+        object-fit: cover;
+        border-radius: 3px;
     }
 
     &.file img {
@@ -39,6 +41,16 @@
         margin-left: 2px;
         margin-right: 7px;
         margin-top: 3px;
+    }
+
+    &.file img[alt="preview"] {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        margin-right: 8px;
+        margin-top: 0;
     }
 
     .name {
@@ -57,7 +69,16 @@
 }
 </style>
 <template>
+    <div
+        v-if="resource.type === 'img'"
+        class="resource-item file"
+        @click="clickItem">
+        <img :src="cpt_img_preview_src" alt="preview" />
+		<div class="name">{{ resource.name }}</div>
+		<div class="type">{{ resource.type }}</div>
+    </div>
 	<div
+        v-else
 		class="resource-item"
 		:class="{ file: isShow(resource) }"
 		@click="clickItem">
@@ -75,6 +96,17 @@ export default async function () {
 		data() {
 			return { THIS_FILE_URL };
 		},
+        computed:{
+                        cpt_img_preview_src(){
+                            				let uri = encodeURIComponent(JSON.stringify(this.resource.path));
+
+                return Vue._common_utils.appendToken(
+                    _.$ajax.urlWrapper(`/api/resource/get?uri=${uri}&preview=true`)
+                );
+
+
+            },
+        },
 		methods: {
 			isShow(item) {
 				return ["audio", "video", "img"].includes(item.type);

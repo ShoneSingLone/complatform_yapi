@@ -5,19 +5,26 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "start",
+			"request": "launch",
+			"runtimeArgs": [
+				"run",
+				"start"
+			],
+			"runtimeExecutable": "npm",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"type": "node"
+		},
+		{
 			"type": "node",
 			"request": "launch",
 			"name": "insertResource",
-			"skipFiles": ["<node_internals>/**"],
+			"skipFiles": [
+				"<node_internals>/**"
+			],
 			"program": "${workspaceFolder}/server/insertResource.ts"
-		},
-		{
-			"name": "DEV",
-			"request": "launch",
-			"runtimeArgs": ["run", "start"],
-			"runtimeExecutable": "npm",
-			"skipFiles": ["<node_internals>/**"],
-			"type": "node"
 		}
 	]
 }
