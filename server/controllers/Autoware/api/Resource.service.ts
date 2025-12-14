@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { getType } = require("mime");
 
 function returnBase64Body(basecode) {
 	if (basecode.indexOf("base64") > -1) {
@@ -13,16 +14,14 @@ exports.returnBase64Body = returnBase64Body;
 /**
  * 判断给定路径是文件还是目录，并返回对应信息
  * @param fileOrDirPath 目标目录名或文件名。
- * @param absolutePathPrefix 相对或绝对的基础路径。
  * @param relativePathArray 记录路径的数组，用于构建返回结果中的路径信息。
  * @returns 返回一个对象，包含文件或目录的类型、路径和名称；如果路径不存在或无法访问，则返回undefined；如果路径是音频文件，返回特定的音频信息。
  */
-async function asyncResolvePathFileOrDir(
-	fileOrDirPath,
-	absolutePathPrefix,
-	relativePathArray
-) {
-	const absolutePath = path.resolve(absolutePathPrefix, fileOrDirPath); // 将基础路径和目录名解析为绝对路径
+async function asyncResolvePathFileOrDir(fileOrDirPath, relativePathArray) {
+	const absolutePath = path.resolve.apply(path, [
+		...relativePathArray,
+		fileOrDirPath
+	]); // 将基础路径和目录名解析为绝对路径
 	let stat;
 	try {
 		stat = await fs.promises.stat(absolutePath); // 尝试获取绝对路径的文件状态
@@ -58,12 +57,12 @@ async function asyncResolvePathFileOrDir(
 				name: fileOrDirPath
 			};
 		}
-		types[type] = type;
-		console.log("🚀 ~ type:", JSON.stringify(types, null, 2));
+		asyncResolvePathFileOrDir.types[type] = type;
 	}
 
 	return null; // 如果不是目录也不是音频文件，则返回null
 }
+asyncResolvePathFileOrDir.types = {};
 
 exports.asyncResolvePathFileOrDir = asyncResolvePathFileOrDir;
 

@@ -46,7 +46,7 @@ const yapi_configs = require("../../../yapi_configs.js");
 /* 基本的配置信息 */
 /* yapi_configs.js */
 module.exports = {
-	RESOURCE_ASSETS_REMOTE: "********",
+	CLOUD_DISK_ROOT: "********",
 	cors: {
 		allow: ["****************"]
 	},
@@ -104,3 +104,9 @@ db.col.update(
 Ajv 接口校验 scheme 的参数
 
 [如何使用 JavaScript 嵌套函数从 jsDoc 创建类型定义(.d.ts)文件。](https://www.volcengine.com/theme/4203294-R-7-1)
+
+
+
+RESOURCE_ASSETS_REMOTE 重命名为CLOUD_DISK_ROOT，为单个地址
+
+RESOURCE_ASSETS_REMOTE 用于资源管理器，支持多个根目录

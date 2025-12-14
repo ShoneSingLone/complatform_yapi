@@ -7,7 +7,8 @@ declare global {
 	var yapi_configs: {
 		INSERT_RESOURCE_ENTRY_PATH: string;
 		INSERT_RESOURCE_ENTRY_PATH_PARENT: string;
-		RESOURCE_ASSETS_REMOTE: string;
+		RESOURCE_ASSETS_REMOTE: string[];
+		CLOUD_DISK_ROOT: string;
 		passsalt?: string;
 		isCloseRegister?: boolean;
 		/*如果有 对象属性为plugin名称 value也是一个object ，是配置信息*/

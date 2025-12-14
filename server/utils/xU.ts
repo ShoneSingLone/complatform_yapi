@@ -307,7 +307,7 @@ const STATIC_VAR = {
 };
 
 const TARGET_PREFIX = path.join(
-	yapi_configs.RESOURCE_ASSETS_REMOTE,
+	yapi_configs.CLOUD_DISK_ROOT,
 	STATIC_VAR.UPLOADS,
 	STATIC_VAR.RESOURCE_ASSETS
 );

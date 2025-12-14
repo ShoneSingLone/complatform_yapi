@@ -6,7 +6,11 @@ const path = require("path");
 const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
 const { TARGET_PREFIX } = xU;
-const { returnBase64Body, isAudioType } = require("./Resource.service");
+const {
+	returnBase64Body,
+	isAudioType,
+	asyncResolvePathFileOrDir
+} = require("./Resource.service");
 
 let types = {};
 
@@ -257,23 +261,32 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						if (this.$user?.role === "admin") {
-							let { path: pathArray } = ctx.payload;
-							pathArray = xU._.isArray(pathArray) ? pathArray : [];
+							let { path: pathStack } = ctx.payload;
+							pathStack = xU._.isArray(pathStack) ? pathStack : [];
+							const path_full_string = pathStack.join(path.sep);
 
-							if (pathArray[0] === "/") {
-								throw new Error("auth");
-							}
-							let targetPath = path.resolve.apply(path, [
-								yapi_configs.RESOURCE_ASSETS_REMOTE,
-								...pathArray
-							]);
-							let dirlsArray = await fs.promises.readdir(targetPath);
+							let dirOrFileArray = [];
 
-							let dirOrFileArray = await Promise.all(
-								xU._.map(dirlsArray, dirname =>
-									asyncResolvePathFileOrDir(dirname, targetPath, pathArray)
+							/* 如果路径不在预设的路径中，则返回设定的根目录路径 */
+							if (
+								!xU._.some(yapi_configs.RESOURCE_ASSETS_REMOTE, item =>
+									xU._.startsWith(path_full_string, item)
 								)
-							);
+							) {
+								dirOrFileArray = await Promise.all(
+									xU._.map(yapi_configs.RESOURCE_ASSETS_REMOTE, dirname =>
+										asyncResolvePathFileOrDir(dirname, [])
+									)
+								);
+							} else {
+								let dirlsArray = await fs.promises.readdir(path_full_string);
+
+								dirOrFileArray = await Promise.all(
+									xU._.map(dirlsArray, dirname => {
+										return asyncResolvePathFileOrDir(dirname, pathStack);
+									})
+								);
+							}
 
 							ctx.body = xU.$response(
 								xU._.filter(dirOrFileArray, item => item?.type)
@@ -309,7 +322,7 @@ module.exports = {
 							}
 							dirpath = dirpath.replace(/^\//, "");
 							let targetPath = path.resolve(
-								yapi_configs.RESOURCE_ASSETS_REMOTE,
+								yapi_configs.CLOUD_DISK_ROOT,
 								dirpath || ""
 							);
 
@@ -317,9 +330,7 @@ module.exports = {
 							if (stat.isDirectory()) {
 								const dirlsArray = await fs.promises.readdir(targetPath);
 								const dirname = path.dirname(targetPath);
-								const rootDirName = path.resolve(
-									yapi_configs.RESOURCE_ASSETS_REMOTE
-								);
+								const rootDirName = path.resolve(yapi_configs.CLOUD_DISK_ROOT);
 
 								let parentDir;
 								if (dirname.length < rootDirName.length) {
@@ -383,9 +394,7 @@ module.exports = {
 
 					if (uri) {
 						try {
-							const rootDirName = path.resolve(
-								yapi_configs.RESOURCE_ASSETS_REMOTE
-							);
+							const rootDirName = path.resolve(yapi_configs.CLOUD_DISK_ROOT);
 							resourcePath = path.resolve.apply(path, [
 								rootDirName,
 								...JSON.parse(uri)
@@ -472,9 +481,7 @@ module.exports = {
 						}
 					} else if (uri) {
 						try {
-							const rootDirName = path.resolve(
-								yapi_configs.RESOURCE_ASSETS_REMOTE
-							);
+							const rootDirName = path.resolve(yapi_configs.CLOUD_DISK_ROOT);
 							resourcePath = path.resolve.apply(path, [
 								rootDirName,
 								...JSON.parse(uri)
