@@ -2,6 +2,14 @@
 export default async function () {
 	if (!Vue._common_utils) {
 		Vue._common_utils = {
+			avatar_url(id, usedBy = "") {
+				let href = `/api/user/avatar?uid=${id}`;
+
+				if (usedBy) {
+					href += `&usedBy=${usedBy}`;
+				}
+				return this.appendToken(`${window._AJAX_URL_PREFIX || ""}${href}`);
+			},
 			RequestCode: function RequestCode({
 				basepath,
 				title,
@@ -26,12 +34,18 @@ async ${camelCase(path)}(data) {
 `;
 			},
 			appendToken(url) {
-				const _url = new URL(String(url).replace("#", ""), location.origin);
-				_.each(_.$lStorage.x_token, (v, k) => {
-					_url.searchParams.set(k, v);
-				});
-				const { href } = _url;
-				return href;
+				try {
+					const _url = new URL(String(url).replace("#", ""), location.origin);
+					const tokenArray = _.map(_.$lStorage.x_token, (v, k) => ({ v, k }));
+					const tokenArraySorted = tokenArray.sort((a, b) => a.k - b.k);
+					/*转换为prop尽量保持一致*/
+					_.each(tokenArraySorted, ({ v, k }) => _url.searchParams.set(k, v));
+					const { href } = _url;
+					return href;
+				} catch (e) {
+					console.error(e);
+					return url;
+				}
 			},
 			diffMessage(jsondiffpatch, formattersHtml, curDiffData) {
 				const json5_parse = json => {

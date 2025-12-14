@@ -10,17 +10,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		"@/utils/api.vue"
 	);
 
-	const _$TRIGGER_EVENT_NAME = "USER_WS_MESSAGE";
-
-	PRIVATE_GLOBAL._$TRIGGER_EVENT_NAME = _$TRIGGER_EVENT_NAME;
-
 	_.each(
 		{
 			/* 涉及具体的上传接口，不能做通用的处理 */
 			TuiEditor: "@/components/TuiEditor/TuiEditor.vue",
 			YapiItemInterfaceImportType: "@/components/YapiItemInterfaceImportType.vue",
 			YapiApiRequestBodyPreviewer: "@/components/YapiApiRequestBodyPreviewer.vue",
-			xItemMonaco: "@/components/xItemMonaco.vue",
 			yapiItemReqBodyParams: "@/components/yapiItemReqBodyParams.vue",
 			YapiItemProxyEnv: "@/components/YapiItemProxyEnv.vue",
 			YapiItemAvatar: "@/components/YapiItemAvatar.vue",
@@ -61,7 +56,18 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	/*  */
 	_.$yapiRouter = router;
 
-	// router.beforeEach(function (to, from) {});
+	router.beforeEach(function (to, from, next) {
+		if (to.path === "/404" && !to.params?.from) {
+			return next({
+				...to,
+				params: {
+					from
+				}
+			});
+		} else {
+			return next();
+		}
+	});
 
 	var rootApp = new Vue({
 		el: "#app",
@@ -128,6 +134,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				globalSize: "",
 				isFooterFold: false,
 				urlHash: window.location.hash,
+				current_online_user: {},
 				user: {
 					add_time: "",
 					email: "",
@@ -135,7 +142,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					study: false,
 					type: "",
 					up_time: "",
-					username: "",
 					_id: "",
 					isLogin: false,
 					isLDAP: false,
@@ -195,20 +201,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				if (!isLogin) {
 					return;
 				}
-				this.user._id && vm.initWebsocket(this.user._id);
+				const { initWebsocket } = await _.$importVue("@/utils/websocket.vue");
 
+				this.user._id && initWebsocket({ vm, user: vm.user });
 				// await vm.initSSE();
-			},
-			async initWebsocket(uid) {
-				return new Promise(async resolve => {
-					const wsOptions = {
-						TRIGGER_EVENT_NAME: _$TRIGGER_EVENT_NAME,
-						onConnection: ({ id }) => resolve(id),
-						namespace: `/ws_yapi?uid=${uid}`
-					};
-
-					this.WS = await _.$importVue("/common/libs/socket.io.vue", wsOptions);
-				});
 			},
 			initSSE() {
 				return new Promise(resolve => {

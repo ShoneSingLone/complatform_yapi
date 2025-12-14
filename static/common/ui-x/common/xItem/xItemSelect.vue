@@ -3,11 +3,8 @@ export default async function () {
 	const { mixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
 	return defineComponent({
 		mixins: [mixins],
-		props: ["value", "options", "configs", "readonly"],
+		props: ["value", "options", "configs"],
 		computed: {
-			cptReadonly() {
-				return this.readonly;
-			},
 			selectOptions() {
 				return this.options || _.$val(this, "configs.options") || [];
 			}
@@ -26,7 +23,7 @@ export default async function () {
 					on: vm.mixin_listeners,
 					/* configs,value */
 					onChange(val) {
-						vm.mixin_value = val;
+						vm.x_item_value = val;
 					}
 				},
 				_.$val(vm, "$vnode.data")
@@ -47,9 +44,12 @@ export default async function () {
 				}
 			})();
 
-			if (vm.cptReadonly) {
-				const item = _.find(vm.selectOptions, { value: vm.mixin_value });
-				return hDiv([_.$val(item, "label") || vm.mixin_value]);
+			if (vm.readonly) {
+				const item = _.find(vm.selectOptions, { value: vm.x_item_value });
+				return h("xInput", {
+					readonly: true,
+					value: _.$val(item, "label") || vm.x_item_value
+				});
 			}
 
 			return h("xSelect", selectProps, children);

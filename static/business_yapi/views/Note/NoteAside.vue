@@ -1,5 +1,5 @@
 <style lang="less">
-.GroupAside {
+.NoteAside {
 	background-color: white;
 	.wiki-tree-wrapper {
 		.aside-tree-item {
@@ -28,7 +28,7 @@
 </style>
 
 <template>
-	<aside class="GroupAside x-sider_wrapper" :style="stateStyle">
+	<aside class="NoteAside x-sider_wrapper" :style="stateStyle">
 		<div class="x-sider_wrapper_tree flex vertical">
 			<div class="group-operate flex start middle mb10 left-tree box-shadow">
 				<xItem :configs="configsSearch" class="flex1" />
@@ -44,7 +44,7 @@
 				<xTree
 					ref="refTree"
 					:contentRender="treeContentRender"
-					:data="cptMenuTree"
+					:data="inject_note.tree_data"
 					:expandedKeys.sync="inject_note.expandedKeys"
 					:props="treeProps"
 					:dragAndDrop="handleDragAndDrop" />
@@ -105,22 +105,7 @@ export default async function () {
 				}
 			};
 		},
-		computed: {
-			cptMenuTree() {
-				if (this.configsSearch.value) {
-					let newTree = [];
-					_.$traverse(this.inject_note.treeData, node => {
-						const isOk = new RegExp(this.configsSearch.value, "i").test(node.title);
-						if (isOk) {
-							newTree.push(node);
-						}
-					});
-					return newTree;
-				}
-
-				return this.inject_note.treeData;
-			}
-		},
+		computed: {},
 		watch: {
 			"inject_note.currentWiki": {
 				handler(wiki) {
@@ -133,18 +118,30 @@ export default async function () {
 		},
 		data() {
 			const vm = this;
-			const onQueryChanged = _.debounce(query => {
-				if (vm.$refs.refTree?.filter) {
-					vm.$refs.refTree.filter(query);
-				}
-			}, 1000);
+
 			return {
 				configsSearch: defItem({
 					isSearch: false,
 					value: "",
 					placeholder: "搜索文档",
-					onEmitValue({ val: query }) {
-						onQueryChanged(query);
+					onEnter() {
+						return vm.inject_note.update_wiki_menu_list({
+							content: vm.configsSearch.value
+						});
+					},
+					itemSlots: {
+						afterController() {
+							return hxBtn({
+								configs: {
+									class: "ml4",
+									label: "查询",
+									preset: "primary",
+									onClick() {
+										return vm.configsSearch.onEnter();
+									}
+								}
+							});
+						}
 					},
 					clearable: true
 				}),
@@ -155,7 +152,7 @@ export default async function () {
 			async initExpandedKeys() {
 				let id = await _.$ensure(() => this.inject_note?.currentWiki?._id);
 				const ALL_NODE_MAP = new Map();
-				_.$traverse(this.inject_note.treeData, node => {
+				_.$traverse(this.inject_note.tree_data, node => {
 					ALL_NODE_MAP.set(node._id, node);
 				});
 				const expandedKeys = [];
@@ -181,11 +178,11 @@ export default async function () {
 				if (dragItem._id == dropItem._id) {
 					return;
 				}
-				const menuOrderArray = getTreeOrder(inject_note.treeData);
+				const menuOrderArray = getTreeOrder(inject_note.tree_data);
 				const dragIndex = menuOrderArray.indexOf(dragItem._id);
 				/* drag不能放在drap的子级 */
 				/* 获取drop的所有父级 */
-				const parents = getParents(dropItem._id, inject_note.allWiki);
+				const parents = getParents(dropItem._id, inject_note.all_wiki);
 				/* drag不在drop的祖级上 */
 				if (_.find(parents, parent => parent._id === dragItem._id)) {
 					_.$msgError("不能把父级拖到子级上");
@@ -223,7 +220,7 @@ export default async function () {
 							return /* s_map[inject_note.belongType] */ "";
 						})()
 					});
-					await inject_note.updateWikiMenuList();
+					await inject_note.update_wiki_menu_list();
 					_.$msg(i18n("更新成功"));
 				} catch (error) {
 					_.$msgError(error.message);

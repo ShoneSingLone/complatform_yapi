@@ -1,5 +1,5 @@
 <template>
-	<xSelect v-model="mixin_value" v-bind="$attrs" v-on="mixin_listeners">
+	<xSelect v-model="x_item_value" v-bind="$attrs" v-on="mixin_listeners">
 		<xOption
 			v-for="item in selectOptions"
 			:key="item.value || item.label"
@@ -43,7 +43,7 @@ export default async function () {
 						on: vm.mixin_listeners,
 						/* configs,value */
 						onChange(val) {
-							vm.mixin_value = val;
+							vm.x_item_value = val;
 						}
 					},
 					vm?.$vnode?.data

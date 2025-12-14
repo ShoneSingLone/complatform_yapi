@@ -6,10 +6,12 @@
 	}
 
 	background-color: white;
+
 	.tree-wrapper {
 		.aside-tree-item {
 			width: 1px;
 		}
+
 		.is-current {
 			.el-tree-node__content {
 				color: var(--el-color-primary);
@@ -22,6 +24,7 @@
 			.xIcon._add {
 				display: none;
 			}
+
 			&:hover {
 				.xIcon._add {
 					display: block;
@@ -43,7 +46,7 @@
 					:item-size="48"
 					ref="refTree"
 					:contentRender="treeContentRender"
-					:data="cptMenuTree"
+					:data="cpt_menu_tree"
 					:props="treeProps" />
 			</div>
 		</div>
@@ -92,15 +95,13 @@ export default async function () {
 				return _.sortBy(
 					_.map(this.APP.all_user, user =>
 						_.merge(user, {
-							avatar: Vue._common_utils.appendToken(
-								`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${user.uid}&usedBy=user`
-							)
+							avatar: _common_utils.avatar_url(user.uid)
 						})
 					),
 					"username"
 				);
 			},
-			cptMenuTree() {
+			cpt_menu_tree() {
 				if (this.configsSearch.value) {
 					let newTree = [];
 					_.$traverse(this.cptUserTreeData, node => {
@@ -163,6 +164,7 @@ export default async function () {
 							},
 							[
 								hxIcon({
+									key: data.uid,
 									img: data.avatar,
 									iscache: true,
 									class: "imAside-user-list-avatar mr8"

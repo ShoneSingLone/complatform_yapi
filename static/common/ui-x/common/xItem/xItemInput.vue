@@ -13,10 +13,8 @@ export default async function () {
 		},
 		render(h) {
 			const vm = this;
+
 			let tag = "xInput";
-			if (this.isNumber) {
-				tag = "xInputNumber";
-			}
 			let attrs = {
 				...vm.$attrs,
 				showWordLimit: "",
@@ -24,6 +22,16 @@ export default async function () {
 				autocomplete: "on",
 				type: vm.$attrs.type || _.$val(vm, "configs.type") || "text"
 			};
+			if (vm.readonly) {
+				if (vm.isShowPassword) {
+					return h("xInput", { readonly: true, value: "······", type: attrs.type });
+				}
+				return h("xInput", { readonly: true, value: vm.x_item_value, type: attrs.type });
+			}
+			if (this.isNumber) {
+				tag = "xInputNumber";
+			}
+
 			if (_.isFunction(_.$val(_xUtils, "globalConfigs.xItemInput.defaultProps"))) {
 				attrs = _xUtils.globalConfigs.xItemInput.defaultProps(this, attrs);
 			}
@@ -64,7 +72,7 @@ export default async function () {
 							on: vm.mixin_listeners,
 							/* configs,value */
 							onInput(val) {
-								vm.mixin_value = val;
+								vm.x_item_value = val;
 							}
 						},
 						_.$val(this, "$vnode.data")
@@ -81,7 +89,7 @@ export default async function () {
 						on: vm.mixin_listeners,
 						/* configs,value */
 						onInput(val) {
-							vm.mixin_value = val;
+							vm.x_item_value = val;
 						}
 					},
 					_.$val(this, "$vnode.data")

@@ -1,7 +1,7 @@
 <template>
 	<xSlider
 		class="xItemSlider"
-		v-model="mixin_value"
+		v-model="x_item_value"
 		v-bind="$attrs"
 		:show-input-controls="showInputControls"
 		:format-tooltip="formatTooltip"
@@ -56,8 +56,10 @@ export default async function () {
 		width: var(--xItem-slider-width, 100%);
 	}
 }
+
 .xItemSlider {
-	margin: 0 48px;
+	margin: 0 10px;
+
 	.el-slider__runway.show-input {
 		margin-bottom: 32px;
 	}

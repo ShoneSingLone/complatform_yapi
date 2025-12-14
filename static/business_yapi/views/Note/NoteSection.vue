@@ -97,7 +97,7 @@ export default async function () {
 					async onClick() {
 						vm.inject_note.isShowEditor = false;
 						vm.inject_note.currentWiki = {};
-						await vm.inject_note.updateWikiMenuList();
+						await vm.inject_note.update_wiki_menu_list();
 						await vm.inject_note.updateCurrentWiki();
 					}
 				};
@@ -121,7 +121,7 @@ export default async function () {
 					);
 					await _api.yapi.wiki_upsert_one(params);
 					vm.inject_note.currentWiki = {};
-					await vm.inject_note.updateWikiMenuList();
+					await vm.inject_note.update_wiki_menu_list();
 					await vm.inject_note.updateCurrentWiki();
 					_.$msg("保存成功");
 				} catch (error) {

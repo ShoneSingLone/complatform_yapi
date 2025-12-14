@@ -1,6 +1,7 @@
 <template>
 	<div class="xItemSwitch flex middle">
-		<xSwitch v-model="mixin_value" v-bind="mixin_attrs" v-on="mixin_listeners" />
+		<div v-if="readonly">{{ cpt_readonly_label }}</div>
+		<xSwitch v-else v-model="x_item_value" v-bind="mixin_attrs" v-on="mixin_listeners" />
 		<xGap f />
 	</div>
 </template>
@@ -10,7 +11,21 @@ export default async function () {
 	return defineComponent({
 		mixins: [ItemMixins],
 		setup() {
-			return {};
+			const vm = this;
+			const cpt_activeText = computed(() => {
+				return _.$val(vm, "mixin_attrs.activeText") || i18n("是");
+			});
+			const cpt_inactiveText = computed(() => {
+				return _.$val(vm, "mixin_attrs.inactiveText") || i18n("否");
+			});
+			const cpt_readonly_label = computed(() => {
+				if (this.readonly) {
+					return vm.x_item_value ? cpt_activeText.value : cpt_inactiveText.value;
+				} else {
+					return "";
+				}
+			});
+			return { cpt_readonly_label };
 		}
 	});
 }

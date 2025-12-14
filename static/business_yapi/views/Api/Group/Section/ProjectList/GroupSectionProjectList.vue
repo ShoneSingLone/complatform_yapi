@@ -154,11 +154,7 @@ export default async function () {
 								(_list, groupItem) => {
 									if (!group_at_least_one_project.has(groupItem._id)) {
 										group_at_least_one_project.add(groupItem._id);
-										console.log(
-											"🚀 ~ onQuery ~ groupItem._id:",
-											Array.from(group_at_least_one_project),
-											groupItem._id
-										);
+
 										_list.push({
 											group_id: groupItem._id,
 											group_desc: groupItem.group_desc || "",
@@ -242,15 +238,11 @@ export default async function () {
 								}
 								return hDiv({ class: "flex vertical width100" }, [
 									hDiv({ class: "flex middle" }, [
-										hxItem({
-											style: "--xItem-wrapper-width:32px",
+										hxIcon({
+											key: rowData._id,
 											class: "mr4",
-											configs: {
-												value: rowData._id || "",
-												usedBy: "project",
-												itemType: "YapiItemAvatar",
-												disabled: true
-											}
+											style: "width: 32px; height: 32px;",
+											img: _common_utils.avatar_url(rowData._id, "project")
 										}),
 										hLink({
 											class: "flex1",

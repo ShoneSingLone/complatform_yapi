@@ -1,12 +1,12 @@
 <script lang="ts">
-export default async function () {
+export default async function ({ PRIVATE_GLOBAL }) {
 	return function render() {
 		const vm = this;
 		/* 使用slots，不需要传递controller参数 */
 		return h(
 			"div",
 			{
-				vIf: !vm.cpt_isHide,
+				vIf: !vm.cpt_is_hide,
 				staticClass: "xItem-wrapper flex vertical",
 				attrs: {
 					"data-form-item-type": vm.itemType,
@@ -20,7 +20,7 @@ export default async function () {
 				h(
 					"div",
 					{
-						staticClass: "xItem-label_controller_wrapper"
+						staticClass: "x-item-label-controller-wrapper"
 					},
 					[
 						/* label */
@@ -35,7 +35,7 @@ export default async function () {
 								h(
 									"span",
 									{
-										vIf: vm.cpt_isRequired,
+										vIf: vm.cpt_is_required,
 										staticClass: "xItem_label-required"
 									},
 									["*"]
@@ -85,7 +85,8 @@ export default async function () {
 							},
 							[
 								h("xIcon", {
-									icon: "exclamationMark",
+									icon:
+										PRIVATE_GLOBAL.x_item_error_tips_icon || "exclamationMark",
 									staticClass: "xItem_error-msg ml4"
 								})
 							]

@@ -22,12 +22,7 @@ export default async function () {
 		},
 		computed: {
 			cptAvatarUrl() {
-				return (
-					this.imageUrl ||
-					Vue._common_utils.appendToken(
-						`${window._AJAX_URL_PREFIX || ""}/api/user/avatar?uid=${this.projectData._id}&usedBy=project`
-					)
-				);
+				return this.imageUrl || _common_utils.avatar_url(this.projectData._id, "project");
 			},
 			followIcon() {
 				return h(

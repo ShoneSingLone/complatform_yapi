@@ -4,6 +4,8 @@
 	const IS_USE_MIN = localStorage.isUseMin === "USE_MIN";
 	const camelizeRE = /\/|\.|_|-(\w)/g;
 
+	window.IS_DEV = IS_DEV;
+
 	const {
 		Libs,
 		srcRoot,
@@ -507,7 +509,18 @@
 	};
 
 	var $ensure = (() => {
-		const logEnsure = () => null;
+		// 添加节流控制变量
+		let lastLogTime = 0;
+		const LOG_INTERVAL = 1000; // 日志打印间隔，单位：毫秒
+
+		const logEnsure = (fnStr, count) => {
+			const now = Date.now();
+			// 只有在上次日志打印后的指定时间间隔后才打印
+			if (now - lastLogTime >= LOG_INTERVAL) {
+				console.log(`$ensure: 正在等待条件满足 (尝试次数: ${count})`, fnStr);
+				lastLogTime = now;
+			}
+		};
 
 		/**
 		 *
@@ -701,11 +714,7 @@
 
 			/* 一般依赖 */
 			const depends = [
-				[
-					Libs("/jquery/jquery-3.7.0.min.js"),
-					null,
-					() => $("body").addClass("x-app-body")
-				],
+				[Libs("/jquery/jquery-3.7.0.min.js"), null, () => $("body").addClass("x-app-body")],
 				[
 					Libs("/lodash.js"),
 					null,
@@ -779,7 +788,7 @@
 									const preloadArray = getPreload();
 									preloadArray.forEach(url => $loadText(url));
 								}
-							} catch (error) { }
+							} catch (error) {}
 						}
 					}
 				],
@@ -856,7 +865,11 @@
 		console.log("APP end");
 		console.timeEnd("APP");
 		if (IS_DEV) {
-			window.HMR_APP = APP;
+			if (APP.$forceUpdate) {
+				window.HMR_APP = APP;
+			} else {
+				throw new Error("APP.$forceUpdate is not defined");
+			}
 		}
 	})();
 })();

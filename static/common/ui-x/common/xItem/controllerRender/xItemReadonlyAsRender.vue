@@ -5,7 +5,7 @@ export default async function () {
 		return h(
 			"div",
 			{
-				vIf: !vm.cpt_isHide,
+				vIf: !vm.cpt_is_hide,
 				staticClass: "xItem-wrapper flex vertical",
 				attrs: {
 					"data-form-item-type": vm.itemType,
@@ -20,7 +20,7 @@ export default async function () {
 				h(
 					"div",
 					{
-						staticClass: "xItem-label_controller_wrapper"
+						staticClass: "x-item-label-controller-wrapper"
 					},
 					[
 						/* label */
@@ -35,7 +35,7 @@ export default async function () {
 								h(
 									"span",
 									{
-										vIf: vm.cpt_isRequired,
+										vIf: vm.cpt_is_required,
 										staticClass: "xItem_label-required"
 									},
 									["*"]

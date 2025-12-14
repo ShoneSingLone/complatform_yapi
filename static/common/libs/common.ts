@@ -5,6 +5,10 @@
 		console.log("common.js");
 	}
 
+	_.mixin({
+		$$clean: obj => _.omitBy(obj, v => _.isUndefined(v) || _.isNull(v))
+	});
+
 	/**
 	 * 验证参数
 	 * @param "fn" type
@@ -15,6 +19,12 @@
 		if (type === "fn") {
 			if (!_.isFunction(_.$val(target, name))) {
 				throw new Error(`参数 ${name} 必须是函数`);
+			}
+		}
+
+		if (type === "prop") {
+			if (!_.$isInput(_.$val(target, name))) {
+				throw new Error(`缺少属性 ${name} `);
 			}
 		}
 	};
@@ -113,7 +123,7 @@
 		{
 			set(privateGlobal, prop, val) {
 				if (privateGlobal[prop]) {
-					alert(`PRIVATE_GLOBAL ${prop} 重复`);
+					console.error(`PRIVATE_GLOBAL ${prop} 重复`);
 				} else {
 					privateGlobal[prop] = val;
 					return true;
@@ -460,15 +470,15 @@
 	 * 打开文件选择器
 	 * @returns
 	 */
-	/* @typescriptDeclare (options:{accept?:string,multiple?:boolean})=>Promise<File[]> */
+	/* @typescriptDeclare (options:{accept?:string,multiple?:boolean,limit_size_max?:number})=>Promise<File[]> */
 	_.$openFileSelector = function (options = {}) {
 		/* 可选文件的过滤 */
-		let { accept, multiple } = options;
+		let { accept, multiple, limit_size_max } = options;
 		accept = accept || "*";
 		multiple = multiple || false;
 
 		let lock = false;
-		return new Promise(resolve => {
+		return new Promise((resolve, reject) => {
 			try {
 				// create input file
 				let el = document.createElement("input");
@@ -476,7 +486,7 @@
 				el.setAttribute("type", "file");
 				el.setAttribute("accept", accept);
 				if (multiple) {
-					el.setAttribute("multiple", multiple);
+					el.setAttribute("multiple", "multiple");
 				}
 				document.body.appendChild(el);
 
@@ -484,6 +494,18 @@
 
 				$el.one("change.openFileSelector", function handleOk() {
 					lock = true;
+					if (limit_size_max) {
+						if (
+							_.some(el.files, file => {
+								if (file.size > limit_size_max) {
+									return true;
+								}
+							})
+						) {
+							_.$msgError(`文件大小不能超过${_.$bytesToSize(limit_size_max)}`);
+							return resolve([]);
+						}
+					}
 					resolve(el.files);
 					$el.remove();
 					$el = null;
@@ -498,6 +520,7 @@
 						el = null;
 					}
 				}, 1000 * 1);
+
 				_.$single.win.one("focus.openFileSelector", handleCancel);
 
 				el.click();
@@ -1023,6 +1046,8 @@
 		};
 	}
 
+	_.$transToUrl = transToUrl;
+
 	(() => {
 		/**
 		 * 将一个url转换为VueRouter使用的a标签href
@@ -1157,7 +1182,6 @@
 
 	_.$lStorage = new Proxy(localStorage, {
 		set(_localStorage, prop, value) {
-			console.log("🚀 ~ set ~ _localStorage:", prop, value);
 			if (_.isPlainObject(value) || _.isArray(value)) {
 				_localStorage[prop] = JSON.stringify(value);
 			} else {
@@ -1353,32 +1377,70 @@
 	/* @typescriptDeclare (vm:any, fn:Function, wait:number)=>any */
 	_.$asyncDebounce = (vm, func, delay = 1000) => {
 		let timer;
-		let promise;
-		let _resolve, _reject;
-		return async function (...args) {
-			const runFn = () => {
-				return setTimeout(() => {
-					func.apply(vm, args).then(_resolve, _reject);
-				}, delay);
-			};
+		let promise = null;
+		let _resolve = null;
+		let _reject = null;
 
+		return async function (...args) {
+			// 清除之前的定时器
 			if (timer) {
-				/* 重新计时 */
 				clearTimeout(timer);
-				timer = runFn();
 			}
+
+			// 如果已经有promise在等待，返回该promise
 			if (promise) {
+				// 重设定时器，确保函数会在最后一次调用后延迟执行
+				timer = setTimeout(() => {
+					// 执行异步函数并正确处理结果
+					func.apply(vm, args)
+						.then(result => {
+							if (_resolve) {
+								_resolve(result);
+								// 重置状态，准备下一次防抖
+								resetState();
+							}
+						})
+						.catch(error => {
+							if (_reject) {
+								_reject(error);
+								// 出错时也要重置状态
+								resetState();
+							}
+						});
+				}, delay);
 				return promise;
 			} else {
+				// 创建新的promise
 				promise = new Promise((resolve, reject) => {
 					_resolve = resolve;
 					_reject = reject;
 
-					timer = runFn();
+					timer = setTimeout(() => {
+						// 执行异步函数并正确处理结果
+						func.apply(vm, args)
+							.then(result => {
+								resolve(result);
+								// 重置状态，准备下一次防抖
+								resetState();
+							})
+							.catch(error => {
+								reject(error);
+								// 出错时也要重置状态
+								resetState();
+							});
+					}, delay);
 				});
 				return promise;
 			}
 		};
+
+		// 重置状态函数
+		function resetState() {
+			timer = null;
+			promise = null;
+			_resolve = null;
+			_reject = null;
+		}
 	};
 	const windowConsole = window.console;
 	/**
@@ -1526,7 +1588,7 @@
 	 * @param {*} options
 	 * @returns
 	 */
-	/* @typescriptDeclare (title:string,options?:any)=>Promise<any> */
+	/* @typescriptDeclare (msg:string)=>Promise<any> */
 	_.$msgSuccess = msg => {
 		return _.$notify.success({
 			title: i18n("tips"),
@@ -1546,7 +1608,7 @@
 			if (!tipsInfo) {
 				return;
 			}
-			console.log("🚀 ERROR: ", tipsInfo);
+			console.log("🚀 $msgError: ", tipsInfo);
 			/*如果返回的是一個對象，且对象status为200，则不提示*/
 			if (_.isPlainObject(tipsInfo)) {
 				/* @ts-ignore */
@@ -1587,7 +1649,7 @@
 			}
 
 			return _.$notify.error({
-				title: i18n("错误"),
+				title: i18n("error"),
 				message: tipsInfo
 			});
 		};
@@ -1739,62 +1801,84 @@
 			templateSourceCode,
 			payload
 		}) {
+			payload = payload || {};
+
+			/* app-use-bable 会加载babel，兼容低版本浏览器*/
+			if (window.Babel) {
+				scritpSourceCode = window.Babel.babelTransformCode(scritpSourceCode);
+			}
+
+			scritpSourceCode = scritpSourceCode.replace("export default", "");
+
+			const isShowTemplate = templateSourceCode && IS_DEV;
+			const innerCode = [
+				`console.info("${resolvedURL}");`,
+				isShowTemplate ? `(()=>\`${templateSourceCode}\`)();` : ``,
+				`try{const ${_.camelCase(resolvedURL)} = ${scritpSourceCode};return ${_.camelCase(
+					resolvedURL
+				)}.call({THIS_FILE_URL:"${resolvedURL}"},payload);}catch(e){console.error(e)}`
+			].join("\n");
+
+			let scfObjAsyncFn;
+			let component = {};
+
 			try {
-				payload = payload || {};
-
-				/* app-use-bable 会加载babel，兼容低版本浏览器*/
-				if (window.Babel) {
-					scritpSourceCode = window.Babel.babelTransformCode(scritpSourceCode);
+				scfObjAsyncFn = new Function(
+					"payload",
+					"PRIVATE_GLOBAL",
+					`with ({...PRIVATE_GLOBAL,..._,...Vue,}){${innerCode};}`
+				);
+			} catch (e) {
+				console.error(e);
+			}
+			const fnPayload = new Proxy(payload, {
+				get(obj, prop) {
+					if (prop === "PRIVATE_GLOBAL") {
+						return PRIVATE_GLOBAL;
+					}
+					if (obj[prop] !== undefined) {
+						return obj[prop];
+					}
+					return Vue[prop];
 				}
+			});
 
-				scritpSourceCode = scritpSourceCode.replace("export default", "");
-
-				const isShowTemplate = templateSourceCode && IS_DEV;
-				const innerCode = [
-					`console.info("${resolvedURL}");`,
-					isShowTemplate ? `(()=>\`${templateSourceCode}\`)();` : ``,
-					`try{const ${_.camelCase(
-						resolvedURL
-					)} = ${scritpSourceCode};return ${_.camelCase(
-						resolvedURL
-					)}.call({THIS_FILE_URL:"${resolvedURL}"},payload);}catch(e){console.error(e)}`
-				].join("\n");
-
-				let scfObjAsyncFn;
-				let component = {};
-
-				try {
+			try {
+				component = await scfObjAsyncFn(fnPayload, PRIVATE_GLOBAL);
+			} catch (error) {
+				if (IS_DEV) {
 					scfObjAsyncFn = new Function(
 						"payload",
 						"PRIVATE_GLOBAL",
-						`with ({...PRIVATE_GLOBAL,..._,...Vue,}){${innerCode};}`
+						`with ({...PRIVATE_GLOBAL,..._,...Vue,}){
+							return defineComponent({
+								template: "<pre @click='copy' style='max-height: 400px;color: green;background-color: black;overflow: auto;'><code>{{code}}</code></pre>",
+								data(vm) {
+									return {
+										code: ${JSON.stringify(innerCode)}
+									};
+								},
+								methods:{
+									copy(){
+										_.$copyToClipboard(this.code).then(()=>_.$msg('错误代码已复制到粘贴板'))
+									}
+								}
+							});
+					}`
 					);
-				} catch (e) {
-					console.error(innerCode);
-					throw e;
+					component = await scfObjAsyncFn(fnPayload, PRIVATE_GLOBAL);
+					templateSourceCode = "";
+				} else {
+					console.error(e);
 				}
-				const fnPayload = new Proxy(payload, {
-					get(obj, prop) {
-						if (prop === "PRIVATE_GLOBAL") {
-							return PRIVATE_GLOBAL;
-						}
-						if (obj[prop] !== undefined) {
-							return obj[prop];
-						}
-						return Vue[prop];
-					}
-				});
-				component = await scfObjAsyncFn(fnPayload, PRIVATE_GLOBAL);
-				/* 可以不返回对象，只执行外层 wrapper层的function */
-				/* template */
-				if (templateSourceCode) {
-					component.template = templateSourceCode;
-				}
-				return component;
-			} catch (error) {
-				console.error(scritpSourceCode);
-				console.error(error);
 			}
+			/* 可以不返回对象，只执行外层 wrapper层的function */
+			/* template */
+			if (templateSourceCode) {
+				component.template = templateSourceCode;
+			}
+
+			return component;
 		};
 		_.$GenComponentOptions.optionsSets = new Set();
 
@@ -2224,6 +2308,7 @@
 				vm = _.$val(Vue, `_X_ITEM_VM_S.${formItemId || "________No"}`) || {};
 			}
 		} catch (error) {
+			console.log("🚀 ~ error:", error);
 		} finally {
 			return vm;
 		}
@@ -2242,7 +2327,7 @@
 				if (prop === "_$item") {
 					return value => {
 						if (value === undefined) {
-							value = obj.p_value;
+							value = obj.cpt_value;
 						}
 						return _.$callFn(obj, "configs.options.find")(i => i.value === value) || {};
 					};
@@ -2314,24 +2399,89 @@
 		 * @param {any} options
 		 * 1.FIRST_OPTION_AS_VALUE 如果values的值为undefined，默认取options第一个值
 		 */
-		_.$asyncSetFormValues = async function (xItemFormConfigs, values, options = {}) {
-			return Promise.all(
-				_.map(values, async (value, prop) => {
-					/* 允许null，代表使用configs.value */
-					if (_.isPlainObject(xItemFormConfigs[prop])) {
-						if (_.includes(["xItemSelect"], xItemFormConfigs[prop]?.itemType)) {
-							await _.$ensure(() => xItemFormConfigs[prop]?.options?.length);
-							if (_.isUndefined(value)) {
-								if (options.FIRST_OPTION_AS_VALUE) {
-									value = _.first(xItemFormConfigs[prop]?.options).value;
-								}
-							}
-						}
-						/*TODO:other type*/
-						xItemFormConfigs[prop].value = value;
-					}
-				})
+		/* @typescriptDeclare (
+			xItemFormConfigs: object,
+			values: object,
+			options?: { FIRST_OPTION_AS_VALUE: boolean; [key: string]: any }
+		) => Promise<void[]> */
+		_.$xItemsValue = async function (xItemFormConfigs, values, options = {}) {
+			let logValues = _.reduce(
+				values,
+				(_logValues, value, prop) => {
+					_logValues[prop] = value;
+					return _logValues;
+				},
+				{}
 			);
+			try {
+				return await Promise.all(
+					_.map(values, async (value, prop) => {
+						try {
+							/* 允许null，代表使用configs.value */
+							if (_.isPlainObject(xItemFormConfigs[prop])) {
+								if (
+									["xItemSelect", "xItemRadioGroup"].includes(
+										xItemFormConfigs[prop].itemType
+									)
+								) {
+									const ignore = (() => {
+										if (_.isBoolean(xItemFormConfigs[prop].isHide)) {
+											return xItemFormConfigs[prop].isHide;
+										}
+
+										if (_.isFunction(xItemFormConfigs[prop].isHide)) {
+											return xItemFormConfigs[prop].isHide();
+										}
+
+										return false;
+									})();
+
+									if (!ignore) {
+										await _.$ensure(
+											() => xItemFormConfigs[prop]?.options?.length
+										);
+
+										if (_.isUndefined(value)) {
+											if (options.FIRST_OPTION_AS_VALUE) {
+												try {
+													value = _.first(
+														xItemFormConfigs[prop].options
+													).value;
+												} catch (ensureError) {
+													console.error(
+														`$xItemsValue: Await处理超时或失败 for prop '${prop}'`,
+														ensureError
+													);
+													console.error(
+														`属性配置:`,
+														xItemFormConfigs[prop]
+													);
+													console.error(`选项:`, options);
+													throw ensureError;
+												}
+											}
+										}
+									}
+								}
+								/*TODO:other type*/
+								xItemFormConfigs[prop].value = value;
+								logValues[prop] = value;
+							}
+						} catch (propError) {
+							console.error(`$xItemsValue: 处理属性 '${prop}' 时出错`, propError);
+							throw propError;
+						} finally {
+							console.log("xItemsValue", logValues);
+						}
+					})
+				);
+			} catch (error) {
+				console.error(`$xItemsValue: 批量设置表单值失败`, error);
+				console.error(`表单配置:`, xItemFormConfigs);
+				console.error(`表单值:`, values);
+				console.error(`选项:`, options);
+				throw error;
+			}
 		};
 		_.$setFormValuesDelay = function (xItemFormConfigs, values, delay = 100) {
 			setTimeout(() => {
@@ -2379,18 +2529,27 @@
 		 * @param {*} xItemConfigs
 		 * @returns
 		 */
-		_.$getSelectedItemFrom = function (xItemConfigs) {
+		_.$xItemSelected = function (xItemConfigs) {
 			let defaultValue = { value: "", label: "", labelKey: "" };
 			try {
 				const { options, value } = xItemConfigs;
 				if (_.$isArrayFill(options) && _.$isInput(value)) {
-					const item = _.find(options, { value });
-					if (item) {
-						defaultValue = item;
+					if (_.isArray(value)) {
+						const item = _.filter(options, option => {
+							return _.includes(value, option.value);
+						});
+						if (!_.isEmpty(item)) {
+							defaultValue = item;
+						}
+					} else {
+						const item = _.find(options, { value });
+						if (item) {
+							defaultValue = item;
+						}
 					}
 				}
 			} catch (error) {
-				console.log("_.$getSelectedItemFrom", error);
+				console.log("_.$xItemSelected", error);
 			} finally {
 				return defaultValue;
 			}
@@ -2490,10 +2649,10 @@
 				o = "",
 				n = 16777216;
 			for (t = 0; t < 4; t++)
-				(o = 0 === t ? o : o + "."),
+				((o = 0 === t ? o : o + "."),
 					(o += parseInt(e / n)),
 					(e -= parseInt(e / n) * n),
-					(n /= 256);
+					(n /= 256));
 			return o;
 		}
 	})();

@@ -4,11 +4,14 @@ export default async function ({
 	size,
 	zIndex,
 	bootstrap,
+	x_table_vir_cell_no_data_placeholder,
 	x_table_vir_empty_component,
 	x_table_vir_empty_component_icon,
+	x_table_vir_column_row_cell_align,
 	x_switch_width,
 	x_page_title_back_icon,
 	x_item_is_show_item_colon,
+	x_item_error_tips_icon,
 	x_modal_close_icon,
 	x_pagination_pagination_component,
 	x_pagination_position,
@@ -25,13 +28,19 @@ export default async function ({
 		};
 		PRIVATE_GLOBAL.x_open_modal_do_some_thing_before_open =
 			x_open_modal_do_some_thing_before_open;
+		PRIVATE_GLOBAL.x_table_vir_cell_no_data_placeholder =
+			x_table_vir_cell_no_data_placeholder || "--";
 		PRIVATE_GLOBAL.x_tooltip_effect = x_tooltip_effect || "dark";
+		/*列表 cell格 居中方式 center right*/
+		PRIVATE_GLOBAL.x_table_vir_column_row_cell_align = x_table_vir_column_row_cell_align || "";
 		PRIVATE_GLOBAL.x_table_vir_empty_component = x_table_vir_empty_component;
 		PRIVATE_GLOBAL.x_table_vir_empty_component_icon =
 			x_table_vir_empty_component_icon || "icon_no_data";
+		/****************/
 		PRIVATE_GLOBAL.x_switch_width = x_switch_width || 40;
 		PRIVATE_GLOBAL.x_page_title_back_icon = x_page_title_back_icon || "icon_back";
 		PRIVATE_GLOBAL.x_item_is_show_item_colon = x_item_is_show_item_colon || false;
+		PRIVATE_GLOBAL.x_item_error_tips_icon = x_item_error_tips_icon || "exclamationMark";
 		PRIVATE_GLOBAL.x_modal_close_icon = x_modal_close_icon || "icon_close";
 		PRIVATE_GLOBAL.x_pagination_pagination_component =
 			x_pagination_pagination_component || "PrivatePagination";
@@ -223,19 +232,23 @@ export default async function ({
 
 					let prop = props[level];
 					let sortBy = Number;
+					let _groupBy = _.groupBy;
+					let _sortedKeys;
 
 					// Handle object format prop with custom sort
 					if (typeof prop === "object") {
-						const [key, sort] = Object.entries(prop)[0];
+						const { key, sort, sortedKeys, groupBy } = prop;
 						prop = key;
-						sortBy = sort;
+						sortBy = sort || Number;
+						_groupBy = groupBy;
+						_sortedKeys = sortedKeys && sortedKeys({ rows });
 					}
 
 					// Group rows by current prop
-					const groups = _.groupBy(rows, prop);
-					const sortedKeys = _.sortBy(Object.keys(groups), sortBy);
+					const groups = _groupBy(rows, prop);
+					_sortedKeys = _sortedKeys || _.sortBy(Object.keys(groups), sortBy);
 					// Process each group
-					return _.flatMap(sortedKeys, key => {
+					const result = _.flatMap(_sortedKeys, key => {
 						const groupRows = groups[key];
 
 						// Set row spans for current group
@@ -247,6 +260,7 @@ export default async function ({
 						// Process next level recursively
 						return processGroup(rowsWithSpan, props, level + 1);
 					});
+					return result;
 				}
 
 				// Start processing from first group level
@@ -325,6 +339,8 @@ export default async function ({
 
 	(function setDataTipsShowWhenHover() {
 		/*  ellipsis */
+		/* 在有省略号的情况下，是否添加title作为hover的提示信息 如果不需要，可以使用.ellipsis-no-title */
+		/* 多用在表格中 */
 		var inArea = {};
 		$(document).on("mouseenter.setDataTipsShowWhenHover", ".ellipsis", function (event) {
 			try {

@@ -23,14 +23,14 @@ export default async function () {
 		mixins: [mixins],
 		methods: {
 			changeExample(example, index) {
-				const _value = _.cloneDeep(this.mixin_value);
+				const _value = _.cloneDeep(this.x_item_value);
 				_value[index].example = example;
-				this.mixin_value = [..._value];
+				this.x_item_value = [..._value];
 			},
 			changeDesc(desc, index) {
-				const _value = _.cloneDeep(this.mixin_value);
+				const _value = _.cloneDeep(this.x_item_value);
 				_value[index].desc = desc;
-				this.mixin_value = [..._value];
+				this.x_item_value = [..._value];
 			}
 		}
 	});

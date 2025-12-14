@@ -102,7 +102,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return false;
 			},
 			cptDisabledTips() {
-				// return hDiv( { style: { color: "red" } }, [123]);
 				if (this.cptDisabled) {
 					if (_.isString(this.cptDisabled) || this.cptDisabled.TYPE_IS_VNODE) {
 						return this.cptDisabled;
@@ -189,10 +188,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						}
 					});
 				}
-				// if (this.cptDisabledTips) {
-				// 	/* disabled提示 */
-				// 	directives.push({ name: "xtips", value: { content: this.cptDisabledTips, trigger: "hover", placement: "top", style: "--min-width:unset;" } });
-				// }
 
 				if (_.$isArrayFill(this.$vnode.data.directives)) {
 					directives.push(...this.$vnode.data.directives);
@@ -206,17 +201,24 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				if (this.buttonDisabled || this.privateLoading) {
 					return;
 				}
-				try {
-					this.privateLoading = true;
-					if (_.isFunction(this.$listeners.click)) {
+				if (_.isFunction(this.$listeners.click)) {
+					try {
+						this.privateLoading = true;
 						await this.$listeners.click.apply(this, args);
-					} else if (_.isFunction(_.$val(this, "configs.onClick"))) {
-						await this.configs.onClick.apply(this, args);
+					} catch (error) {
+						console.error(error);
+					} finally {
+						this.privateLoading = false;
 					}
-				} catch (error) {
-					console.error(error);
-				} finally {
-					this.privateLoading = false;
+				} else if (_.isFunction(_.$val(this, "configs.onClick"))) {
+					try {
+						this.privateLoading = true;
+						await this.configs.onClick.apply(this, args);
+					} catch (error) {
+						console.error(error);
+					} finally {
+						this.privateLoading = false;
+					}
 				}
 			}
 		},

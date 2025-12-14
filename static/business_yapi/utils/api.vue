@@ -79,8 +79,8 @@ export default async function () {
 				 *  wiki左侧的菜单
 				 *  http://192.168.0.107:3002/static/business_yapi/yapi.html#/api/project?project_id=319&group_id=431&project_tab_name=%E6%8E%A5%E5%8F%A3&interface_type=interface&interface_id=591&project_interface_tab=1&project_setting_tab=3/#/api/project?project_id=319&group_id=431&interface_type=interface&interface_id=591&project_interface_tab=1&project_setting_tab=3&project_tab_name=接口
 				 */
-				wikiMenu(data) {
-					return _.$ajax.get("/api/wiki/menu", {
+				wiki_menu(data) {
+					return _.$ajax.post("/api/wiki/menu", {
 						data
 					});
 				},

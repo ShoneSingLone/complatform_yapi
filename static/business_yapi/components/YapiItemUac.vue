@@ -4,7 +4,7 @@
 		filterable
 		remote
 		remote-show-suffix
-		v-model="mixin_value"
+		v-model="x_item_value"
 		:remoteMethod="onSearch"
 		placeholder="请输入用户名">
 		<xOption

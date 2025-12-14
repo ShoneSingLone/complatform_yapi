@@ -857,7 +857,10 @@
 		: function (error, suppressed, message) {
 				var e = new Error(message);
 				return (
-					(e.name = "SuppressedError"), (e.error = error), (e.suppressed = suppressed), e
+					(e.name = "SuppressedError"),
+					(e.error = error),
+					(e.suppressed = suppressed),
+					e
 				);
 			};
 
@@ -2758,7 +2761,7 @@
 	function mergeDefaults(raw, defaults) {
 		var props = isArray(raw)
 			? raw.reduce(function (normalized, p) {
-					return (normalized[p] = {}), normalized;
+					return ((normalized[p] = {}), normalized);
 				}, {})
 			: raw;
 		for (var key in defaults) {
@@ -13042,50 +13045,45 @@
 			};
 		}
 
-		return propsArray.reduce(function (preProps, afterProps) {
-			for (var prop in afterProps)
-				if (!preProps[prop]) {
-					preProps[prop] = afterProps[prop];
-				} else if (~normalMerge.indexOf(prop)) {
-					preProps[prop] = _.merge({}, preProps[prop], afterProps[prop]);
-				} else if (~toArrayMerge.indexOf(prop)) {
-					var d = preProps[prop] instanceof Array ? preProps[prop] : [preProps[prop]],
-						e =
-							afterProps[prop] instanceof Array
-								? afterProps[prop]
-								: [afterProps[prop]];
-					preProps[prop] = [].concat(d, e);
-				} else if (~functionalMerge.indexOf(prop)) {
-					for (var f in afterProps[prop]) {
-						/* 如果已存在 */
-						/* if (preProps[prop][f]) {
-          	  var g = _.isArray(preProps[prop][f])
-          			  ? preProps[prop][f]
-          			  : [preProps[prop][f]],
-          		  h = _.isArray(afterProps[prop][f])
-          			  ? afterProps[prop][f]
-          			  : [afterProps[prop][f]];
-          	  preProps[prop][f] = [].concat(g, h);
-          } else {
-          	  preProps[prop][f] = afterProps[prop][f];
-          } */
-						for (var i in afterProps[prop]) {
-							preProps[prop][i] = preProps[prop][i]
-								? mergeFn(preProps[prop][i], afterProps[prop][i])
-								: afterProps[prop][i];
+		return _.reduce(
+			propsArray,
+			function (targetProps, currentProps) {
+				_.each(currentProps, (propertyValue, propertyName) => {
+					const oldPropertyValue = targetProps[propertyName];
+
+					if (!oldPropertyValue) {
+						targetProps[propertyName] = propertyValue;
+					} else if (~_.indexOf(normalMerge, propertyName)) {
+						targetProps[propertyName] = _.merge({}, oldPropertyValue, propertyValue);
+					} else if (~_.indexOf(toArrayMerge, propertyName)) {
+						const ensureArray = mayArrayValue =>
+							_.isArray(mayArrayValue) ? mayArrayValue : [mayArrayValue];
+
+						var old_properties = ensureArray(oldPropertyValue);
+						var new_properties = ensureArray(propertyValue);
+
+						targetProps[propertyName] = _.concat(old_properties, new_properties);
+					} else if (~_.indexOf(functionalMerge, propertyName)) {
+						for (var i in propertyValue) {
+							oldPropertyValue[i] = oldPropertyValue[i]
+								? mergeFn(oldPropertyValue[i], propertyValue[i])
+								: propertyValue[i];
 						}
+					} else if ("hook" === propertyName) {
+						for (var i in propertyValue) {
+							oldPropertyValue[i] = oldPropertyValue[i]
+								? mergeFn(oldPropertyValue[i], propertyValue[i])
+								: propertyValue[i];
+						}
+					} else {
+						targetProps[propertyName] = propertyValue;
 					}
-				} else if ("hook" === prop) {
-					for (var i in afterProps[prop]) {
-						preProps[prop][i] = preProps[prop][i]
-							? mergeFn(preProps[prop][i], afterProps[prop][i])
-							: afterProps[prop][i];
-					}
-				} else {
-					preProps[prop] = afterProps[prop];
-				}
-			return preProps;
-		}, {});
+				});
+
+				return targetProps;
+			},
+			{}
+		);
 	}
 
 	function dispatch(componentName, eventName, eventPayload) {

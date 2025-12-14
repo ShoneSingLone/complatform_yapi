@@ -39,7 +39,7 @@ export default async function () {
 				title && (document.title = `文档-${title}`);
 			})();
 
-			await this.updateWikiMenuList();
+			await this.update_wiki_menu_list();
 			await this.updateCurrentWiki();
 		},
 		provide() {
@@ -75,7 +75,7 @@ export default async function () {
 
 			return {
 				isCollapse: true,
-				treeData: [],
+				tree_data: [],
 				currentWiki: {},
 				expandedKeys: [],
 				isShowEditor: false
@@ -91,27 +91,31 @@ export default async function () {
 					}
 				});
 			},
-			async updateWikiMenuList() {
+			async update_wiki_menu_list(search_params = {}) {
 				_.$loading(true);
 				try {
-					let payload = { belong_type: this.cptBelongType, belong_id: this.cptBelongId };
-					const { data } = await _api.yapi.wikiMenu(payload);
+					let payload = {
+						belong_type: this.cptBelongType,
+						belong_id: this.cptBelongId,
+						search_params
+					};
+					const { data } = await _api.yapi.wiki_menu(payload);
 					const { list, orderArray } = data;
-					this.treeData = this.buildTree(list, orderArray);
+					this.tree_data = this.buildTree(list, orderArray);
 
 					(() => {
 						const wikiId = this.$route.query.wiki;
 
 						if (wikiId) {
-							const wiki = this.allWiki[wikiId];
+							const wiki = this.all_wiki[wikiId];
 							if (wiki) {
 								this.APP.routerUpsertQuery({ wiki: wikiId });
 								return;
 							}
 						}
 
-						if (this.treeData[0]) {
-							this.APP.routerUpsertQuery({ wiki: this.treeData[0]._id });
+						if (this.tree_data[0]) {
+							this.APP.routerUpsertQuery({ wiki: this.tree_data[0]._id });
 							return;
 						}
 
@@ -125,45 +129,74 @@ export default async function () {
 			},
 			buildTree(dataArray, orderArray) {
 				console.time("buildTree");
-				/* findChildren */
-				this.allWiki = _.reduce(
+
+				// 将数据数组转换为以_id为键的对象，便于查找
+				this.all_wiki = _.reduce(
 					dataArray,
-					(target, i) => {
-						target[i._id] = i;
+					(target, item) => {
+						target[item._id] = item;
 						return target;
 					},
 					{}
 				);
 
-				_.each(this.allWiki, item => {
+				// 构建树结构，为每个节点添加子节点
+				const rootNodes = [];
+				_.each(this.all_wiki, item => {
 					if (!item) return;
-					const parent = this.allWiki[item.p_id];
+					const parent = this.all_wiki[item.p_id];
 					if (parent) {
 						if (!_.isArray(parent.children)) {
 							parent.children = [];
 						}
 						parent.children.push(item);
+					} else {
+						// 找不到父节点，视为根节点
+						rootNodes.push(item);
 					}
 				});
-				window.allWiki = this.allWiki;
 
-				let tree = _.filter(this.allWiki, item => item.p_id === 0);
-				if (_.$isArrayFill(orderArray)) {
+				// 使用找到的根节点，而不是仅依赖p_id === 0
+				let tree = rootNodes;
+
+				// 检查orderArray是否有效且适用
+				if (this.isValidOrderArray(tree, orderArray)) {
 					tree = this.sortTreeByOrder(tree, orderArray);
 				}
+
 				console.timeEnd("buildTree");
 				return tree;
 			},
-			sortTreeByOrder(treeData, orderArray = []) {
-				treeData = _.cloneDeep(treeData);
 
-				treeData.sort((nowItem, nextItem) => {
+			// 验证orderArray有效性的方法
+			isValidOrderArray(tree, orderArray) {
+				// 检查是否为有效的非空数组
+				if (!Array.isArray(orderArray) || orderArray.length === 0) {
+					return false;
+				}
+
+				// 获取树中所有根节点的ID
+				const treeIds = tree.map(item => item._id);
+
+				// 检查长度是否匹配
+				if (orderArray.length !== treeIds.length) {
+					return false;
+				}
+
+				// 检查orderArray中的ID是否与树中根节点ID完全匹配
+				const orderSet = new Set(orderArray);
+				return treeIds.every(id => orderSet.has(id));
+			},
+			sortTreeByOrder(tree_data, orderArray = []) {
+				tree_data = _.cloneDeep(tree_data);
+
+				tree_data.sort((nowItem, nextItem) => {
 					const nowIndex = orderArray.indexOf(nowItem._id);
 					const nextIndex = orderArray.indexOf(nextItem._id);
 					return nowIndex - nextIndex;
 				});
 
-				return _.map(treeData, item => {
+				return _.map(tree_data, item => {
 					if (_.$isArrayFill(item.children)) {
 						item.children = this.sortTreeByOrder(item.children, orderArray);
 					}

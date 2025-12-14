@@ -26,7 +26,7 @@ export default async function ({}) {
 					{
 						label: i18n("添加"),
 						onClick() {
-							vm.mixin_value.push({
+							vm.x_item_value.push({
 								_uniqueId: _.uniqueId("disk_"),
 								key: "",
 								value: ""
@@ -95,7 +95,7 @@ export default async function ({}) {
 		},
 		computed: {
 			cptConfigsTaintsDataList() {
-				return _.map(this.mixin_value, row => {
+				return _.map(this.x_item_value, row => {
 					return {
 						...row
 					};
@@ -104,7 +104,7 @@ export default async function ({}) {
 		},
 		methods: {
 			removeItem(index) {
-				this.mixin_value.splice(index, 1);
+				this.x_item_value.splice(index, 1);
 			},
 			setValue(index, { key, value, _uniqueId }) {
 				console.log("🚀 ~ setValue ~  key, value, _uniqueId :", key, value, _uniqueId);
@@ -119,7 +119,7 @@ export default async function ({}) {
 
 				if (!_.isEqual(OLD_VALUE, NEW_VALUE)) {
 					dataList[index] = NEW_VALUE;
-					this.mixin_value = [...dataList];
+					this.x_item_value = [...dataList];
 				}
 			}
 		}

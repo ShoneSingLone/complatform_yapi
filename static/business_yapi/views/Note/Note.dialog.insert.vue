@@ -64,7 +64,7 @@ export default async function ({ parentDocId, belong_type, belong_id, hide }) {
 							};
 							const res = await _api.yapi.wiki_upsert_one(params);
 							if (!res.errcode) {
-								await vm.inject_note.updateWikiMenuList();
+								await vm.inject_note.update_wiki_menu_list();
 								await vm.inject_note.setCurrentWiki(res.data.msg);
 								vm.closeModal();
 							}

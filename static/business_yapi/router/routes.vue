@@ -42,16 +42,21 @@ export default async function () {
 		_.$newRoute("/hoppscotch", "@/views/hoppscotch/ViewHoppscotch.vue"),
 		_.$newRoute("/explore", "@/views/explore/ViewExplore.vue"),
 		_.$newRoute("/login", "@/views/Login/Login.vue"),
+		_.$newRoute("/", ComponentRouterView, {
+			redirect: "/api/group"
+		}),
 		_.$newRoute("/api", "@/views/Api/Api.vue", {
+			redirect: "/api/group",
 			children: [
 				_.$newRoute("/api/group", "@/views/Api/Group/Group.vue"),
 				_.$newRoute("/api/project", "@/views/Api/Project/Project.vue")
 			]
 		}),
+		_.$newRoute("/404", "@/views/NotFound.vue"),
 		{
-			/* 本来应该是NotFound，但是没有必要 */
+			/* 兜底 */
 			path: "*",
-			redirect: "/login"
+			redirect: "/404"
 		}
 	];
 }

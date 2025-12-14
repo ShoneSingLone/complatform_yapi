@@ -11,8 +11,6 @@ module.exports = {
 
 	apply_immediately: ["立即申请", "Apply Now"],
 
-	close_operation: ["关闭", "close"],
-
 	input_service_name: ["请输入服务名称", "Please enter the service name"],
 
 	ok: ["确定", "OK"],

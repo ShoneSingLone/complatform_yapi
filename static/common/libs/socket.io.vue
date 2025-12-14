@@ -4902,7 +4902,7 @@ export default async function ({
 							function yeast() {
 								var now = encode(+new Date());
 
-								if (now !== prev) return (seed = 0), (prev = now);
+								if (now !== prev) return ((seed = 0), (prev = now));
 								return now + "." + encode(seed++);
 							}
 
@@ -8692,10 +8692,16 @@ export default async function ({
 	const websocketURL = `${host}${namespace}`;
 	var ws = window.io(websocketURL);
 	ws.on("connection", payload => {
-		onConnection({ id: payload.id });
+		onConnection({ ...payload, ws });
 	});
 	ws.on("message", payload => {
 		$(window).trigger(TRIGGER_EVENT_NAME, payload);
+	});
+	ws.on("error", payload => {
+		$(window).trigger("error" + TRIGGER_EVENT_NAME, payload);
+	});
+	ws.on("disconnect" + TRIGGER_EVENT_NAME, payload => {
+		$(window).trigger("disconnect" + TRIGGER_EVENT_NAME, payload);
 	});
 	return ws;
 }

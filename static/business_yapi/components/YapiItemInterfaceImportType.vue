@@ -1,12 +1,12 @@
 <template>
 	<div class="flex vertical" id="YapiItemInterfaceImportType">
-		<xItem :configs="radio" v-model="mixin_value" />
+		<xItem :configs="radio" v-model="x_item_value" />
 		<div
 			class="upload-container mt8"
 			@dragover.prevent
 			@drop.prevent="onDrop"
 			@click="openFileSelector"
-			v-if="_.$isSame(mixin_value, 1)">
+			v-if="_.$isSame(x_item_value, 1)">
 			<div class="upload-content">
 				<xIcon class="icon-upload" icon="_upload"></xIcon>
 				<div class="upload-text">将JSON文件拖放到此处或点击上传</div>

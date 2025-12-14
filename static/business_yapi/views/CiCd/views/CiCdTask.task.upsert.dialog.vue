@@ -10,7 +10,7 @@
 					:configs="form.task_action"
 					style="
 						height: 300px;
-						--xItem-label_controller_wrapper-height: 100%;
+						--x-item-label-controller-wrapper-height: 100%;
 						--xItem-controller-height: 100%;
 						--xItemMonaco-height: 100%;
 					" />
