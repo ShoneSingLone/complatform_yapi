@@ -651,10 +651,10 @@ export default async function () {
 			];
 			
 			return {
-				resource: _.$lStorage["VIEW_EXPLORE_PATH_STACK"] || [],
-				pathStack: _.$lStorage["VIEW_EXPLORE_RESOURCE"] || [],
+				resource: _.$lStorage["VIEW_EXPLORE_RESOURCE"] || [],
+				pathStack: _.$lStorage["VIEW_EXPLORE_PATH_STACK"] || [],
 				searchKey: "",
-				sortConfig: savedSortConfig ? JSON.parse(savedSortConfig) : defaultSortConfig, // 排序配置：支持多个字段
+				sortConfig: savedSortConfig || defaultSortConfig, // 排序配置：支持多个字段
 				sortOptions: [
 					{ label: "名称", value: "name" },
 					{ label: "类型", value: "type" },
@@ -794,9 +794,9 @@ export default async function () {
         this.saveSortConfig();
       },
       // 保存排序配置到localStorage
-      saveSortConfig() {
-        _.$lStorage["VIEW_EXPLORE_SORT_CONFIG"] = JSON.stringify(this.sortConfig);
-      },
+			saveSortConfig() {
+				_.$lStorage["VIEW_EXPLORE_SORT_CONFIG"] = this.sortConfig;
+			},
       async getResource(item = {}) {
         this.pathStack = _.isArray(item?.path) ? item.path : [];
         _.$loading(true);
