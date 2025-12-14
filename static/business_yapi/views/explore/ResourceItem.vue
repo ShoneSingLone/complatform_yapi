@@ -1,84 +1,84 @@
 <style lang="less">
 .resource-item {
-    --card-bg: #f5f5f5;
-    --hover-bg: #e8e8e8;
-    --shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.1);
-    --border-radius: 8px;
-    width: 100%;
-    padding: 4px 5px;
-    border-radius: 5px;
-    display: flex;
-    border: 1.5px solid transparent;
-    font-size: 14px;
-    align-items: flex-start;
-    min-height: 30px;
-    height: auto;
-    transition: 50ms;
-    cursor: pointer;
+	--card-bg: #f5f5f5;
+	--hover-bg: #e8e8e8;
+	--shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.1);
+	--border-radius: 8px;
+	width: 100%;
+	padding: 4px 5px;
+	border-radius: 5px;
+	display: flex;
+	border: 1.5px solid transparent;
+	font-size: 14px;
+	align-items: flex-start;
+	min-height: 30px;
+	height: auto;
+	transition: 50ms;
+	cursor: pointer;
 
-    &:hover {
-        background-color: var(--hover-bg);
-        box-shadow: var(--shadow);
-    }
+	&:hover {
+		background-color: var(--hover-bg);
+		box-shadow: var(--shadow);
+	}
 
-    &.file {
-        color: #555;
-    }
+	&.file {
+		color: #555;
+	}
 
-    img {
-        width: 25px;
-        height: 25px;
-        margin-right: 5px;
-        margin-top: 1px;
-        flex-shrink: 0;
-        object-fit: cover;
-        border-radius: 3px;
-    }
+	img {
+		width: 25px;
+		height: 25px;
+		margin-right: 5px;
+		margin-top: 1px;
+		flex-shrink: 0;
+		object-fit: cover;
+		border-radius: 3px;
+	}
 
-    &.file img {
-        width: 22px;
-        height: 22px;
-        margin-left: 2px;
-        margin-right: 7px;
-        margin-top: 3px;
-    }
+	&.file img {
+		width: 22px;
+		height: 22px;
+		margin-left: 2px;
+		margin-right: 7px;
+		margin-top: 3px;
+	}
 
-    &.file img[alt="preview"] {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-        margin-right: 8px;
-        margin-top: 0;
-    }
+	&.file img[alt="preview"] {
+		width: 40px;
+		height: 40px;
+		object-fit: cover;
+		border: 1px solid #e0e0e0;
+		border-radius: 4px;
+		margin-right: 8px;
+		margin-top: 0;
+	}
 
-    .name {
-        flex-grow: 1;
-        margin-right: 10px;
-        word-break: break-all;
-    }
+	.name {
+		flex-grow: 1;
+		margin-right: 10px;
+		word-break: break-all;
+	}
 
-    .type {
-        font-size: 12px;
-        color: #888;
-        min-width: 60px;
-        flex-shrink: 0;
-        padding-top: 2px;
-    }
+	.type {
+		font-size: 12px;
+		color: #888;
+		min-width: 60px;
+		flex-shrink: 0;
+		padding-top: 2px;
+	}
 }
 </style>
 <template>
-    <div
-        v-if="resource.type === 'img'"
-        class="resource-item file"
-        @click="clickItem">
-        <img :src="cpt_img_preview_src" alt="preview" />
+	<div
+		v-if="resource.type === 'img'"
+		class="resource-item file"
+		@click="clickItem">
+		<img :src="cpt_img_preview_src" alt="preview" />
 		<div class="name">{{ resource.name }}</div>
 		<div class="type">{{ resource.type }}</div>
-    </div>
+	</div>
 	<div
-        v-else
+		v-else
 		class="resource-item"
 		:class="{ file: isShow(resource) }"
 		@click="clickItem">
@@ -88,7 +88,6 @@
 	</div>
 </template>
 <script lang="ts">
-
 export default async function () {
 	const { THIS_FILE_URL } = this;
 	return defineComponent({
@@ -96,17 +95,15 @@ export default async function () {
 		data() {
 			return { THIS_FILE_URL };
 		},
-        computed:{
-                        cpt_img_preview_src(){
-                            				let uri = encodeURIComponent(JSON.stringify(this.resource.path));
+		computed: {
+			cpt_img_preview_src() {
+				let uri = encodeURIComponent(JSON.stringify(this.resource.path));
 
-                return Vue._common_utils.appendToken(
-                    _.$ajax.urlWrapper(`/api/resource/get?uri=${uri}&preview=true`)
-                );
-
-
-            },
-        },
+				return Vue._common_utils.appendToken(
+					_.$ajax.urlWrapper(`/api/resource/get?uri=${uri}&preview=true`)
+				);
+			}
+		},
 		methods: {
 			isShow(item) {
 				return ["audio", "video", "img"].includes(item.type);

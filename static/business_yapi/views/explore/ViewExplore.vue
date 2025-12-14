@@ -521,15 +521,19 @@ export default async function () {
 				}
 			}
 
-			async function playImg(record) {
-				const { path, name } = record;
-				let uri = encodeURIComponent(JSON.stringify(path));
+			async function playImg(current_resource) {
+				const { name } = current_resource;
+				const urlList = _.filter(vm.cptResource, { type: "img" });
+				const index = _.findIndex(urlList, { name });
 
-				return _.$openModal({
-					title: "video player",
-					url: "@/views/explore/execTools/video/VideoPlayer.dialog.vue",
-					uri,
-					item: record
+				_.$previewImgs({
+					urlList: _.map(urlList, resource => {
+						const uri = encodeURIComponent(JSON.stringify(resource.path));
+						return Vue._common_utils.appendToken(
+							_.$ajax.urlWrapper(`/api/resource/get?uri=${uri}`)
+						);
+					}),
+					index
 				});
 			}
 			async function playVideo(record) {
@@ -819,7 +823,7 @@ export default async function () {
 					// 如果字段已在排序配置中，切换排序方向
 					this.sortConfig[existingIndex].order =
 						this.sortConfig[existingIndex].order === "asc" ? "desc" : "asc";
-					
+
 					// 如果不是唯一的排序字段且不在首位，调整其优先级到首位
 					if (this.sortConfig.length > 1 && existingIndex !== 0) {
 						const [sortItem] = this.sortConfig.splice(existingIndex, 1);
