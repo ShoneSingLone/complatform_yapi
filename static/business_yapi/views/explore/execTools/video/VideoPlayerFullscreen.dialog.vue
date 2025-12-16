@@ -49,8 +49,7 @@ export default async function ({ item, all_video_array, current_index, current_r
 				currentIndex: current_index || 0,
 				all_video_array: all_video_array || [],
 				isFullscreen: false,
-				xItemPlaybackRate() {
-					return {
+				xItemPlaybackRate: {
 						value: 1,
 						itemType: "xItemSelect",
 						options: [
@@ -64,8 +63,7 @@ export default async function ({ item, all_video_array, current_index, current_r
 						onEmitValue(val) {
 							vm.changePlaybackRate();
 						}
-					};
-				}
+					}
 			};
 		},
 		computed: {
