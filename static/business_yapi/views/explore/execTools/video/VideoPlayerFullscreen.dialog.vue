@@ -44,11 +44,28 @@ export default async function ({ item, all_video_array, current_index, current_r
 			this.setErrorHandler();
 			this.setupFullscreenListeners();
 		},
-		data() {
+		data(vm) {
 			return {
 				currentIndex: current_index || 0,
 				all_video_array: all_video_array || [],
-				isFullscreen: false
+				isFullscreen: false,
+				xItemPlaybackRate() {
+					return {
+						value: 1,
+						itemType: "xItemSelect",
+						options: [
+							{ label: "0.5x", value: 0.5 },
+							{ label: "0.75x", value: 0.75 },
+							{ label: "1x", value: 1 },
+							{ label: "1.25x", value: 1.25 },
+							{ label: "1.5x", value: 1.5 },
+							{ label: "2x", value: 2 }
+						],
+						onEmitValue(val) {
+							vm.changePlaybackRate();
+						}
+					};
+				}
 			};
 		},
 		computed: {
@@ -84,23 +101,6 @@ export default async function ({ item, all_video_array, current_index, current_r
 				return {
 					label: this.isFullscreen ? "退出全屏" : "全屏",
 					onClick: this.toggleFullscreen
-				};
-			},
-			xItemPlaybackRate() {
-				return {
-					value: 1,
-					itemType: "xItemSelect",
-					options: [
-						{ label: "0.5x", value: 0.5 },
-						{ label: "0.75x", value: 0.75 },
-						{ label: "1x", value: 1 },
-						{ label: "1.25x", value: 1.25 },
-						{ label: "1.5x", value: 1.5 },
-						{ label: "2x", value: 2 }
-					],
-					onEmitValue(val) {
-						this.changePlaybackRate();
-					}
 				};
 			}
 		},
