@@ -24,7 +24,8 @@
 			flex-grow: 1;
 			height: 100%;
 
-			.toolbar-toggle {
+			.toolbar-toggle,
+			.refresh-btn {
 				border-radius: 4px;
 				border: 1px solid transparent;
 				padding: 4px 8px;
@@ -79,11 +80,13 @@
 			}
 
 			.separator {
-				opacity: 0.4;
-				font-size: 14px;
+				opacity: 0.8;
+				font-size: 16px;
+				font-weight: bold;
 				line-height: 1;
-				height: 14px;
-				margin: 0 4px;
+				height: 16px;
+				margin: 0 8px;
+				color: #4a90e2;
 			}
 		}
 	}
@@ -300,15 +303,14 @@
 				<button class="toolbar-toggle" @click="toggleToolbar" title="切换工具栏">
 					{{ toolbarCollapsed ? "▼" : "▲" }}
 				</button>
+				<button class="refresh-btn" @click="refreshResource" title="刷新资源列表">↻</button>
 				<div class="breadcrumb-item" @click="back(-1)">root</div>
-				<span class="separator">/</span>
-				<div
-					v-for="(item, index) in pathStack"
-					:key="index"
-					class="breadcrumb-item"
-					@click="back(index)">
-					{{ item }}
-				</div>
+				<template v-for="(item, index) in pathStack" :key="index">
+					<span class="separator">/</span>
+					<div class="breadcrumb-item" @click="back(index)">
+						{{ item }}
+					</div>
+				</template>
 			</div>
 		</div>
 
@@ -517,15 +519,27 @@ export default async function () {
 					index
 				});
 			}
-			async function playVideo(record) {
-				const { path, name } = record;
-				let uri = encodeURIComponent(JSON.stringify(path));
-
+			async function playVideo(current_resource) {
+				const { name } = current_resource;
+				const all_video_array = _.filter(vm.cptResource, { type: "video" }).map(item => {
+					const uri = encodeURIComponent(JSON.stringify(item.path));
+					return {
+						...item,
+						download_uri: Vue._common_utils.appendToken(
+							_.$ajax.urlWrapper(`/api/resource/get?uri=${uri}`)
+						),
+						uri: Vue._common_utils.appendToken(
+							_.$ajax.urlWrapper(`/api/resource/video?uri=${uri}`)
+						)
+					};
+				});
+				const current_index = _.findIndex(all_video_array, { name });
 				return _.$openModal({
-					title: "video player",
-					url: "@/views/explore/execTools/video/VideoPlayer.dialog.vue",
-					uri,
-					item: record
+					title: "Player",
+					url: "@/views/explore/execTools/video/VideoPlayerFullscreen.dialog.vue",
+					current_index,
+					current_resource,
+					all_video_array
 				});
 			}
 
@@ -734,7 +748,18 @@ export default async function () {
 			}
 		},
 		mounted() {
-			this.getResource();
+			// 从localStorage获取保存的路径和资源数据
+			const savedPathStack = _.$lStorage["VIEW_EXPLORE_PATH_STACK"] || [];
+			const savedResource = _.$lStorage["VIEW_EXPLORE_RESOURCE"] || [];
+
+			// 如果不是根目录且有保存的资源数据，则使用保存的数据
+			if (savedPathStack.length > 0 && savedResource.length > 0) {
+				this.pathStack = savedPathStack;
+				this.resource = savedResource;
+			} else {
+				// 根目录或没有保存的数据，重新获取
+				this.getResource();
+			}
 		},
 		methods: {
 			back(index) {
@@ -829,6 +854,10 @@ export default async function () {
 			toggleToolbar() {
 				this.toolbarCollapsed = !this.toolbarCollapsed;
 				_.$lStorage["VIEW_EXPLORE_TOOLBAR_COLLAPSED"] = this.toolbarCollapsed;
+			},
+			// 刷新当前路径的资源数据
+			refreshResource() {
+				this.getResource({ path: this.pathStack });
 			}
 		},
 		watch: {
