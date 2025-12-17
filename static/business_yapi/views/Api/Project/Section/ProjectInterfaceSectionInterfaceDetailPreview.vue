@@ -196,7 +196,9 @@ export default async function () {
 					/\/\//g,
 					"/"
 				);
-				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${this.APP?.cptProject?._id}${apiURL}`;
+				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${
+					this.APP?.cptProject?._id
+				}${apiURL}`;
 
 				return {
 					接口名称: {

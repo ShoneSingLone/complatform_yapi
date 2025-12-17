@@ -5,6 +5,22 @@
 		}
 	],
 	"settings": {
+		"files.exclude": {
+			".idea": true,
+		},
+		"explorer.autoOpenDroppedFile": true,
+		"explorer.excludeGitIgnore": false,
+		"explorer.autoRevealExclude": {},
+		"search.exclude": {},
+		"search.useIgnoreFiles": false,
+		"search.useGlobalIgnoreFiles": false,
+		"search.useParentIgnoreFiles": false,
+		"git.autoRepositoryDetection": true,
+		"git.detectSubmodules": true,
 		"git.repositoryScanMaxDepth": 3,
+		"git-graph.maxDepthOfRepoSearch": 2,
+		"gitflow.disableOnRepo": true,
+		"editor.fontFamily": "Fira Code, monospace, Cascadia Code, Courier New, Consolas",
+		"editor.fontLigatures": true,
 	}
 }

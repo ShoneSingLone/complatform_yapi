@@ -228,7 +228,9 @@ export default async function () {
 					"/"
 				);
 
-				const mockHref = `${protocol}//${hostname}${port ? `:${port}` : ""}/mock/${project_id}${apiURL}`;
+				const mockHref = `${protocol}//${hostname}${
+					port ? `:${port}` : ""
+				}/mock/${project_id}${apiURL}`;
 
 				try {
 					const { data } = await _api.yapi.interface_usecase_get_all(interface_id);

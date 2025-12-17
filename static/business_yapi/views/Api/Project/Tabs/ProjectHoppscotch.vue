@@ -5,8 +5,7 @@
 			:src="hoppscotchUrl"
 			class="height100 width100 border0"
 			frameborder="0"
-			allowfullscreen
-		></iframe>
+			allowfullscreen></iframe>
 	</div>
 </template>
 
@@ -32,10 +31,10 @@ export default async function () {
 		methods: {
 			setupHoppscotchCommunication() {
 				// 监听来自 Hoppscotch 的消息
-				window.addEventListener('message', (event) => {
-					if (event.origin === 'https://hoppscotch.io') {
+				window.addEventListener("message", event => {
+					if (event.origin === "https://hoppscotch.io") {
 						// 处理来自 Hoppscotch 的消息
-						console.log('Message from Hoppscotch:', event.data);
+						console.log("Message from Hoppscotch:", event.data);
 					}
 				});
 
@@ -43,16 +42,16 @@ export default async function () {
 				const sendMessageToHoppscotch = (data: any) => {
 					const frame = this.$refs.hoppscotchFrame as HTMLIFrameElement;
 					if (frame && frame.contentWindow) {
-						frame.contentWindow.postMessage(data, 'https://hoppscotch.io');
+						frame.contentWindow.postMessage(data, "https://hoppscotch.io");
 					}
 				};
 
 				// 示例：发送当前项目信息
 				setTimeout(() => {
 					sendMessageToHoppscotch({
-						type: 'YAPI_PROJECT_INFO',
+						type: "YAPI_PROJECT_INFO",
 						projectId: this.projectId,
-						source: 'yapi'
+						source: "yapi"
 					});
 				}, 1000);
 			}

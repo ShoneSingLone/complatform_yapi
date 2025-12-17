@@ -804,7 +804,9 @@ export default async function () {
 					return `${this.sortOptions.find(opt => opt.value === field).label}排序`;
 				}
 				const orderText = this.sortConfig[sortIndex].order === "asc" ? "升序" : "降序";
-				return `${this.sortOptions.find(opt => opt.value === field).label}${orderText} (优先级${sortIndex + 1})`;
+				return `${
+					this.sortOptions.find(opt => opt.value === field).label
+				}${orderText} (优先级${sortIndex + 1})`;
 			},
 			// 切换排序字段
 			toggleSortField(field) {
