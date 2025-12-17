@@ -36,6 +36,10 @@ export default async function () {
 					{
 						icon: "_ci",
 						label: "CI"
+					},
+					{
+						icon: "_icon_test",
+						label: "测试"
 					}
 				],
 

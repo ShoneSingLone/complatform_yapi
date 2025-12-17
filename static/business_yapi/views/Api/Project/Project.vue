@@ -34,7 +34,8 @@ export default async function () {
 			ProjectDoc: () => _.$importVue("@/views/Api/Project/Tabs/ProjectDoc.vue"),
 			ProjectInterface: () => _.$importVue("@/views/Api/Project/Tabs/ProjectInterface.vue"),
 			ProjectSetting: () => _.$importVue("@/views/Api/Project/Tabs/ProjectSetting.vue"),
-			ProjectCi: () => _.$importVue("@/views/Api/Project/Tabs/ProjectCi.vue")
+			ProjectCi: () => _.$importVue("@/views/Api/Project/Tabs/ProjectCi.vue"),
+			ProjectHoppscotch: () => _.$importVue("@/views/Api/Project/Tabs/ProjectHoppscotch.vue")
 		},
 		provide() {
 			return {
