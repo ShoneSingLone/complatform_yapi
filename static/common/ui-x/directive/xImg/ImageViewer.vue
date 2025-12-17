@@ -53,16 +53,16 @@
 			<!-- CANVAS -->
 			<div class="el-image-viewer__canvas">
 				<img
-				ref="img"
-				class="el-image-viewer__img"
-				:src="currentImg"
-				:style="imgStyle"
-				@load="handleImgLoad"
-				@error="handleImgError"
-				@mousedown="handleMouseDown"
-				@touchstart="handleTouchStart"
-				@touchmove="handleTouchMove"
-				@touchend="handleTouchEnd" />
+					ref="img"
+					class="el-image-viewer__img"
+					:src="currentImg"
+					:style="imgStyle"
+					@load="handleImgLoad"
+					@error="handleImgError"
+					@mousedown="handleMouseDown"
+					@touchstart="handleTouchStart"
+					@touchmove="handleTouchMove"
+					@touchend="handleTouchEnd" />
 			</div>
 		</div>
 	</transition>
@@ -105,24 +105,24 @@ export default async function () {
 				loading: false,
 				mode: Mode.CONTAIN,
 				transform: {
-				scale: 1,
-				deg: 0,
-				offsetX: 0,
-				offsetY: 0,
-				enableTransition: false
-			},
-			// 触摸相关状态
-			touchState: {
-				isDragging: false,
-				startX: 0,
-				startY: 0,
-				offsetX: 0,
-				offsetY: 0,
-				// 双指缩放相关
-				isPinching: false,
-				startDistance: 0,
-				startScale: 1
-			}
+					scale: 1,
+					deg: 0,
+					offsetX: 0,
+					offsetY: 0,
+					enableTransition: false
+				},
+				// 触摸相关状态
+				touchState: {
+					isDragging: false,
+					startX: 0,
+					startY: 0,
+					offsetX: 0,
+					offsetY: 0,
+					// 双指缩放相关
+					isPinching: false,
+					startDistance: 0,
+					startScale: 1
+				}
 			};
 		},
 		computed: {
@@ -297,18 +297,20 @@ export default async function () {
 				if (touches.length === 1 && this.touchState.isDragging) {
 					const currentX = touches[0].pageX;
 					const currentY = touches[0].pageY;
-					this.transform.offsetX = this.touchState.offsetX + (currentX - this.touchState.startX);
-					this.transform.offsetY = this.touchState.offsetY + (currentY - this.touchState.startY);
+					this.transform.offsetX =
+						this.touchState.offsetX + (currentX - this.touchState.startX);
+					this.transform.offsetY =
+						this.touchState.offsetY + (currentY - this.touchState.startY);
 				}
 				// 双指缩放
 				else if (touches.length === 2 && this.touchState.isPinching) {
 					const currentDistance = this.getDistance(touches[0], touches[1]);
 					const scaleRatio = currentDistance / this.touchState.startDistance;
 					let newScale = this.touchState.startScale * scaleRatio;
-					
+
 					// 限制缩放范围
 					newScale = Math.max(0.2, Math.min(newScale, 10));
-					
+
 					this.transform.scale = parseFloat(newScale.toFixed(3));
 					this.transform.enableTransition = false;
 				}
@@ -347,12 +349,12 @@ export default async function () {
 				this.reset();
 			},
 			prev() {
-				if (this.isFirst && !this.infinite) return;
+				if (this.loading || (this.isFirst && !this.infinite)) return;
 				const len = this.urlList.length;
 				this.index = (this.index - 1 + len) % len;
 			},
 			next() {
-				if (this.isLast && !this.infinite) return;
+				if (this.loading || (this.isLast && !this.infinite)) return;
 				const len = this.urlList.length;
 				this.index = (this.index + 1) % len;
 			},
