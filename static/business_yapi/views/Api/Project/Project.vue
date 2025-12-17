@@ -18,6 +18,10 @@
 				:style="wrapperStyle.transition_wrapper"
 				key="ProjectCi"
 				v-if="isShow('CI')" />
+			<ProjectHoppscotch
+				:style="wrapperStyle.transition_wrapper"
+				key="ProjectHoppscotch"
+				v-if="isShow('测试')" />
 		</xAutoResizer>
 	</div>
 </template>
