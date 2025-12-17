@@ -1,28 +1,48 @@
 /*
 {
-
-	isCloseRegister:false,
-	passsalt:"xxxxxx",
-	port: "0000",
-	adminAccount: "xxx@xxx.xxx",
+	//资源管理器 根目录（共享目录）
+	RESOURCE_ASSETS_REMOTE: ["********"],
+	//云盘物理目录
+	CLOUD_DISK_ROOT: "********",
+	cors: {
+		allow: ["*****"]
+	},
+	port: "3001",
+	adminAccount: "****",
 	db: {
-		servername: "xx.xx.xx.xx",
-		DATABASE: "xx",
-		port: "xxxx",
-		user
+		servername: "****",
+		DATABASE: "****",
+		port: "****"
 	},
 	mail: {
 		enable: true,
 		host: "smtp.qq.com",
-		port: 0,
-		from: "xxxxxx",
+		port: **,
+		from: "****",
 		auth: {
-			user: "xxxxxxx",
-			pass: "xxxxxx"
+			user: "****",
+			pass: "*****"
+		}
+	},
+	baiduTranslate: {
+		appId: "****",
+		appKey: "*******"
+	},
+	proxyOptions: {
+		targets: {
+			"(.*)/dev-api/(.*)": {
+				target: `*******`,
+				secure: false,
+				changeOrigin: true,
+				pathRewrite(url, req) {
+					const [_, target] = url.split("/dev-api");
+					return `/prod-api${target}`;
+				}
+			}
 		}
 	}
-};
-*/
+}
+	*/
 
 /**
  *
