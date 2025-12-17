@@ -37,8 +37,7 @@
     yarn install
     ```
 
-3. **配置数据库**：
-   确保 MongoDB 已安装并运行，然后在项目根目录下创建 `.env` 文件，配置数据库连接：
+3. **配置数据库**：确保 MongoDB 已安装并运行，然后在项目根目录下创建 `.env` 文件，配置数据库连接：
 
     ```env
     MONGO_URI=mongodb://localhost:27017/yapi
@@ -52,8 +51,7 @@
     yarn dev
     ```
 
-5. **访问项目**：
-   打开浏览器，访问 `http://localhost:3000`，即可看到 YAPI 的界面。
+5. **访问项目**：打开浏览器，访问 `http://localhost:3000`，即可看到 YAPI 的界面。
 
 ## 使用说明
 

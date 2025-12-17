@@ -513,11 +513,7 @@
 					</div>
 					<div class="search-box">
 						<span class="search-icon">🔍</span>
-						<input
-							type="text"
-							class="search-input"
-							placeholder="搜索资源..."
-							oninput="searchFiles(this.value)" />
+						<input type="text" class="search-input" placeholder="搜索资源..." oninput="searchFiles(this.value)" />
 					</div>
 				</div>
 
@@ -574,11 +570,7 @@
 				<div class="editor-header">
 					<div class="header-top">
 						<div style="display: flex; align-items: center; gap: 12px">
-							<input
-								type="text"
-								class="document-title"
-								value="无标题文档"
-								onchange="updateTitle(this.value)" />
+							<input type="text" class="document-title" value="无标题文档" onchange="updateTitle(this.value)" />
 							<span class="status-badge">已保存</span>
 						</div>
 
@@ -602,9 +594,7 @@
 							<div style="width: 1px; height: 24px; background: #d1d5db"></div>
 
 							<button class="action-btn" onclick="shareDocument()">🔗 分享</button>
-							<button class="action-btn primary" onclick="saveDocument()">
-								💾 保存
-							</button>
+							<button class="action-btn primary" onclick="saveDocument()"> 💾 保存 </button>
 						</div>
 					</div>
 
@@ -616,10 +606,7 @@
 							<button class="toolbar-btn" onclick="formatText('italic')" title="斜体">
 								<em>I</em>
 							</button>
-							<button
-								class="toolbar-btn"
-								onclick="formatText('underline')"
-								title="下划线">
+							<button class="toolbar-btn" onclick="formatText('underline')" title="下划线">
 								<u>U</u>
 							</button>
 						</div>
@@ -627,36 +614,22 @@
 						<div class="toolbar-separator"></div>
 
 						<div class="toolbar-group">
-							<button class="toolbar-btn" onclick="alignText('left')" title="左对齐">
-								⬅️
-							</button>
-							<button class="toolbar-btn" onclick="alignText('center')" title="居中">
-								↔️
-							</button>
-							<button class="toolbar-btn" onclick="alignText('right')" title="右对齐">
-								➡️
-							</button>
+							<button class="toolbar-btn" onclick="alignText('left')" title="左对齐"> ⬅️ </button>
+							<button class="toolbar-btn" onclick="alignText('center')" title="居中"> ↔️ </button>
+							<button class="toolbar-btn" onclick="alignText('right')" title="右对齐"> ➡️ </button>
 						</div>
 
 						<div class="toolbar-separator"></div>
 
 						<div class="toolbar-group">
-							<button class="toolbar-btn" onclick="insertList('ul')" title="无序列表">
-								•
-							</button>
-							<button class="toolbar-btn" onclick="insertList('ol')" title="有序列表">
-								1.
-							</button>
+							<button class="toolbar-btn" onclick="insertList('ul')" title="无序列表"> • </button>
+							<button class="toolbar-btn" onclick="insertList('ol')" title="有序列表"> 1. </button>
 						</div>
 
 						<div class="toolbar-separator"></div>
 
-						<button class="toolbar-btn" onclick="insertLink()" title="插入链接">
-							🔗
-						</button>
-						<button class="toolbar-btn" onclick="insertImage()" title="插入图片">
-							🖼️
-						</button>
+						<button class="toolbar-btn" onclick="insertLink()" title="插入链接"> 🔗 </button>
+						<button class="toolbar-btn" onclick="insertImage()" title="插入图片"> 🖼️ </button>
 					</div>
 				</div>
 
@@ -701,13 +674,7 @@
 					<button class="action-btn" style="margin-top: 12px">选择文件</button>
 				</div>
 				<div>
-					<div
-						style="
-							display: flex;
-							justify-content: space-between;
-							font-size: 14px;
-							margin-bottom: 8px;
-						">
+					<div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px">
 						<span>上传进度</span>
 						<span>75%</span>
 					</div>
@@ -765,9 +732,7 @@
 
 			// 选择文件
 			function selectFile(element) {
-				document
-					.querySelectorAll(".file-item")
-					.forEach(item => item.classList.remove("active"));
+				document.querySelectorAll(".file-item").forEach(item => item.classList.remove("active"));
 				element.classList.add("active");
 			}
 
@@ -800,8 +765,7 @@
 						break;
 				}
 
-				editor.value =
-					editor.value.substring(0, start) + formattedText + editor.value.substring(end);
+				editor.value = editor.value.substring(0, start) + formattedText + editor.value.substring(end);
 				updateWordCount();
 			}
 
@@ -816,16 +780,9 @@
 				const cursor = editor.selectionStart;
 				const listItem = type === "ul" ? "• " : "1. ";
 
-				editor.value =
-					editor.value.substring(0, cursor) +
-					"\n" +
-					listItem +
-					editor.value.substring(cursor);
+				editor.value = editor.value.substring(0, cursor) + "\n" + listItem + editor.value.substring(cursor);
 				editor.focus();
-				editor.setSelectionRange(
-					cursor + listItem.length + 1,
-					cursor + listItem.length + 1
-				);
+				editor.setSelectionRange(cursor + listItem.length + 1, cursor + listItem.length + 1);
 				updateWordCount();
 			}
 
@@ -837,10 +794,7 @@
 					const cursor = editor.selectionStart;
 					const linkText = `[链接](${url})`;
 
-					editor.value =
-						editor.value.substring(0, cursor) +
-						linkText +
-						editor.value.substring(cursor);
+					editor.value = editor.value.substring(0, cursor) + linkText + editor.value.substring(cursor);
 					editor.focus();
 					updateWordCount();
 				}
@@ -854,10 +808,7 @@
 					const cursor = editor.selectionStart;
 					const imageText = `![图片](${url})`;
 
-					editor.value =
-						editor.value.substring(0, cursor) +
-						imageText +
-						editor.value.substring(cursor);
+					editor.value = editor.value.substring(0, cursor) + imageText + editor.value.substring(cursor);
 					editor.focus();
 					updateWordCount();
 				}

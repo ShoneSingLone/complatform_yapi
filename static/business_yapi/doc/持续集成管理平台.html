@@ -491,24 +491,12 @@
 					<div class="logo">🚀 CI/CD Platform</div>
 				</div>
 				<div class="nav-menu">
-					<a href="#" class="nav-item active" onclick="showTab('dashboard')">
-						<i>📊</i> 仪表板
-					</a>
-					<a href="#" class="nav-item" onclick="showTab('projects')">
-						<i>📁</i> 项目配置
-					</a>
-					<a href="#" class="nav-item" onclick="showTab('builds')">
-						<i>🔨</i> 构建历史
-					</a>
-					<a href="#" class="nav-item" onclick="showTab('artifacts')">
-						<i>📦</i> 产出物管理
-					</a>
-					<a href="#" class="nav-item" onclick="showTab('webhooks')">
-						<i>🔗</i> Webhook配置
-					</a>
-					<a href="#" class="nav-item" onclick="showTab('settings')">
-						<i>⚙️</i> 系统设置
-					</a>
+					<a href="#" class="nav-item active" onclick="showTab('dashboard')"> <i>📊</i> 仪表板 </a>
+					<a href="#" class="nav-item" onclick="showTab('projects')"> <i>📁</i> 项目配置 </a>
+					<a href="#" class="nav-item" onclick="showTab('builds')"> <i>🔨</i> 构建历史 </a>
+					<a href="#" class="nav-item" onclick="showTab('artifacts')"> <i>📦</i> 产出物管理 </a>
+					<a href="#" class="nav-item" onclick="showTab('webhooks')"> <i>🔗</i> Webhook配置 </a>
+					<a href="#" class="nav-item" onclick="showTab('settings')"> <i>⚙️</i> 系统设置 </a>
 				</div>
 			</nav>
 
@@ -530,57 +518,25 @@
 						">
 						<div class="card">
 							<div class="card-content" style="text-align: center">
-								<div
-									style="
-										font-size: 32px;
-										font-weight: 700;
-										color: #3182ce;
-										margin-bottom: 8px;
-									">
-									12
-								</div>
+								<div style="font-size: 32px; font-weight: 700; color: #3182ce; margin-bottom: 8px"> 12 </div>
 								<div style="color: #718096">活跃项目</div>
 							</div>
 						</div>
 						<div class="card">
 							<div class="card-content" style="text-align: center">
-								<div
-									style="
-										font-size: 32px;
-										font-weight: 700;
-										color: #38a169;
-										margin-bottom: 8px;
-									">
-									156
-								</div>
+								<div style="font-size: 32px; font-weight: 700; color: #38a169; margin-bottom: 8px"> 156 </div>
 								<div style="color: #718096">成功构建</div>
 							</div>
 						</div>
 						<div class="card">
 							<div class="card-content" style="text-align: center">
-								<div
-									style="
-										font-size: 32px;
-										font-weight: 700;
-										color: #e53e3e;
-										margin-bottom: 8px;
-									">
-									8
-								</div>
+								<div style="font-size: 32px; font-weight: 700; color: #e53e3e; margin-bottom: 8px"> 8 </div>
 								<div style="color: #718096">失败构建</div>
 							</div>
 						</div>
 						<div class="card">
 							<div class="card-content" style="text-align: center">
-								<div
-									style="
-										font-size: 32px;
-										font-weight: 700;
-										color: #805ad5;
-										margin-bottom: 8px;
-									">
-									3
-								</div>
+								<div style="font-size: 32px; font-weight: 700; color: #805ad5; margin-bottom: 8px"> 3 </div>
 								<div style="color: #718096">运行中</div>
 							</div>
 						</div>
@@ -589,9 +545,7 @@
 					<div class="card">
 						<div class="card-header">
 							<h3 class="card-title">最近构建</h3>
-							<button class="btn btn-primary" onclick="triggerBuild()">
-								<span>🔨</span> 触发构建
-							</button>
+							<button class="btn btn-primary" onclick="triggerBuild()"> <span>🔨</span> 触发构建 </button>
 						</div>
 						<div class="card-content">
 							<div class="build-item">
@@ -603,9 +557,7 @@
 									</div>
 								</div>
 								<div class="build-actions">
-									<span class="status-badge status-running">
-										<span class="spinning">⚡</span> 构建中
-									</span>
+									<span class="status-badge status-running"> <span class="spinning">⚡</span> 构建中 </span>
 								</div>
 							</div>
 
@@ -616,11 +568,7 @@
 								</div>
 								<div class="build-actions">
 									<span class="status-badge status-success">✅ 成功</span>
-									<button
-										class="btn btn-sm btn-secondary"
-										onclick="downloadArtifact(1233)">
-										下载
-									</button>
+									<button class="btn btn-sm btn-secondary" onclick="downloadArtifact(1233)"> 下载 </button>
 								</div>
 							</div>
 
@@ -631,11 +579,7 @@
 								</div>
 								<div class="build-actions">
 									<span class="status-badge status-error">❌ 失败</span>
-									<button
-										class="btn btn-sm btn-secondary"
-										onclick="viewLogs(1232)">
-										查看日志
-									</button>
+									<button class="btn btn-sm btn-secondary" onclick="viewLogs(1232)"> 查看日志 </button>
 								</div>
 							</div>
 						</div>
@@ -675,20 +619,10 @@
 										value="https://github.com/example/frontend-app.git" />
 								</div>
 
-								<div
-									style="
-										display: grid;
-										grid-template-columns: 1fr 1fr;
-										gap: 16px;
-									">
+								<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
 									<div class="form-group">
 										<label class="form-label">默认分支</label>
-										<input
-											type="text"
-											class="form-input"
-											id="defaultBranch"
-											placeholder="main"
-											value="main" />
+										<input type="text" class="form-input" id="defaultBranch" placeholder="main" value="main" />
 									</div>
 									<div class="form-group">
 										<label class="form-label">构建环境</label>
@@ -703,10 +637,7 @@
 
 								<div class="form-group">
 									<label class="form-label">构建脚本</label>
-									<textarea
-										class="form-input form-textarea"
-										id="buildScript"
-										placeholder="输入构建脚本...">
+									<textarea class="form-input form-textarea" id="buildScript" placeholder="输入构建脚本...">
 #!/bin/bash
 # 安装依赖
 npm install
@@ -737,12 +668,7 @@ BUILD_VERSION=1.0.0</textarea
 
 								<div style="display: flex; gap: 12px">
 									<button type="submit" class="btn btn-primary">保存配置</button>
-									<button
-										type="button"
-										class="btn btn-secondary"
-										onclick="testConnection()">
-										测试连接
-									</button>
+									<button type="button" class="btn btn-secondary" onclick="testConnection()"> 测试连接 </button>
 								</div>
 							</form>
 						</div>
@@ -760,18 +686,13 @@ BUILD_VERSION=1.0.0</textarea
 						<div class="card-header">
 							<h3 class="card-title">构建记录</h3>
 							<div style="display: flex; gap: 12px">
-								<select
-									class="form-select"
-									style="width: auto"
-									onchange="filterBuilds(this.value)">
+								<select class="form-select" style="width: auto" onchange="filterBuilds(this.value)">
 									<option value="all">所有状态</option>
 									<option value="success">成功</option>
 									<option value="error">失败</option>
 									<option value="running">运行中</option>
 								</select>
-								<button class="btn btn-primary" onclick="refreshBuilds()">
-									刷新
-								</button>
+								<button class="btn btn-primary" onclick="refreshBuilds()"> 刷新 </button>
 							</div>
 						</div>
 						<div class="card-content">
@@ -795,23 +716,13 @@ BUILD_VERSION=1.0.0</textarea
 										<td>main</td>
 										<td>张三</td>
 										<td>
-											<span class="status-badge status-running"
-												><span class="spinning">⚡</span> 构建中</span
-											>
+											<span class="status-badge status-running"><span class="spinning">⚡</span> 构建中</span>
 										</td>
 										<td>2024-01-15 14:30</td>
 										<td>2m 15s</td>
 										<td>
-											<button
-												class="btn btn-sm btn-secondary"
-												onclick="viewLogs(1234)">
-												日志
-											</button>
-											<button
-												class="btn btn-sm btn-danger"
-												onclick="cancelBuild(1234)">
-												取消
-											</button>
+											<button class="btn btn-sm btn-secondary" onclick="viewLogs(1234)"> 日志 </button>
+											<button class="btn btn-sm btn-danger" onclick="cancelBuild(1234)"> 取消 </button>
 										</td>
 									</tr>
 									<tr>
@@ -825,16 +736,8 @@ BUILD_VERSION=1.0.0</textarea
 										<td>2024-01-15 14:15</td>
 										<td>3m 42s</td>
 										<td>
-											<button
-												class="btn btn-sm btn-secondary"
-												onclick="viewLogs(1233)">
-												日志
-											</button>
-											<button
-												class="btn btn-sm btn-success"
-												onclick="downloadArtifact(1233)">
-												下载
-											</button>
+											<button class="btn btn-sm btn-secondary" onclick="viewLogs(1233)"> 日志 </button>
+											<button class="btn btn-sm btn-success" onclick="downloadArtifact(1233)"> 下载 </button>
 										</td>
 									</tr>
 									<tr>
@@ -848,16 +751,8 @@ BUILD_VERSION=1.0.0</textarea
 										<td>2024-01-15 13:45</td>
 										<td>1m 28s</td>
 										<td>
-											<button
-												class="btn btn-sm btn-secondary"
-												onclick="viewLogs(1232)">
-												日志
-											</button>
-											<button
-												class="btn btn-sm btn-primary"
-												onclick="rebuildProject(1232)">
-												重新构建
-											</button>
+											<button class="btn btn-sm btn-secondary" onclick="viewLogs(1232)"> 日志 </button>
+											<button class="btn btn-sm btn-primary" onclick="rebuildProject(1232)"> 重新构建 </button>
 										</td>
 									</tr>
 								</tbody>
@@ -876,9 +771,7 @@ BUILD_VERSION=1.0.0</textarea
 					<div class="card">
 						<div class="card-header">
 							<h3 class="card-title">产出物列表</h3>
-							<button class="btn btn-secondary" onclick="cleanupArtifacts()">
-								清理过期文件
-							</button>
+							<button class="btn btn-secondary" onclick="cleanupArtifacts()"> 清理过期文件 </button>
 						</div>
 						<div class="card-content">
 							<div class="file-list">
@@ -886,24 +779,16 @@ BUILD_VERSION=1.0.0</textarea
 									<div class="file-icon">📦</div>
 									<div class="file-info">
 										<div class="file-name">frontend-app-v1.2.3.tar.gz</div>
-										<div class="file-size">
-											构建 #1233 • 15.2 MB • 2024-01-15 14:18
-										</div>
+										<div class="file-size"> 构建 #1233 • 15.2 MB • 2024-01-15 14:18 </div>
 									</div>
 									<div style="display: flex; gap: 8px">
-										<button
-											class="btn btn-sm btn-success"
-											onclick="downloadFile('frontend-app-v1.2.3.tar.gz')">
+										<button class="btn btn-sm btn-success" onclick="downloadFile('frontend-app-v1.2.3.tar.gz')">
 											📥 下载
 										</button>
-										<button
-											class="btn btn-sm btn-secondary"
-											onclick="viewFileInfo('frontend-app-v1.2.3.tar.gz')">
+										<button class="btn btn-sm btn-secondary" onclick="viewFileInfo('frontend-app-v1.2.3.tar.gz')">
 											ℹ️ 详情
 										</button>
-										<button
-											class="btn btn-sm btn-danger"
-											onclick="deleteFile('frontend-app-v1.2.3.tar.gz')">
+										<button class="btn btn-sm btn-danger" onclick="deleteFile('frontend-app-v1.2.3.tar.gz')">
 											🗑️ 删除
 										</button>
 									</div>
@@ -913,24 +798,16 @@ BUILD_VERSION=1.0.0</textarea
 									<div class="file-icon">📱</div>
 									<div class="file-info">
 										<div class="file-name">mobile-app-release.apk</div>
-										<div class="file-size">
-											构建 #1231 • 28.7 MB • 2024-01-15 12:45
-										</div>
+										<div class="file-size"> 构建 #1231 • 28.7 MB • 2024-01-15 12:45 </div>
 									</div>
 									<div style="display: flex; gap: 8px">
-										<button
-											class="btn btn-sm btn-success"
-											onclick="downloadFile('mobile-app-release.apk')">
+										<button class="btn btn-sm btn-success" onclick="downloadFile('mobile-app-release.apk')">
 											📥 下载
 										</button>
-										<button
-											class="btn btn-sm btn-secondary"
-											onclick="viewFileInfo('mobile-app-release.apk')">
+										<button class="btn btn-sm btn-secondary" onclick="viewFileInfo('mobile-app-release.apk')">
 											ℹ️ 详情
 										</button>
-										<button
-											class="btn btn-sm btn-danger"
-											onclick="deleteFile('mobile-app-release.apk')">
+										<button class="btn btn-sm btn-danger" onclick="deleteFile('mobile-app-release.apk')">
 											🗑️ 删除
 										</button>
 									</div>
@@ -940,24 +817,16 @@ BUILD_VERSION=1.0.0</textarea
 									<div class="file-icon">🐳</div>
 									<div class="file-info">
 										<div class="file-name">backend-api:latest.docker</div>
-										<div class="file-size">
-											构建 #1230 • 156.3 MB • 2024-01-15 11:20
-										</div>
+										<div class="file-size"> 构建 #1230 • 156.3 MB • 2024-01-15 11:20 </div>
 									</div>
 									<div style="display: flex; gap: 8px">
-										<button
-											class="btn btn-sm btn-success"
-											onclick="downloadFile('backend-api:latest.docker')">
+										<button class="btn btn-sm btn-success" onclick="downloadFile('backend-api:latest.docker')">
 											📥 下载
 										</button>
-										<button
-											class="btn btn-sm btn-secondary"
-											onclick="viewFileInfo('backend-api:latest.docker')">
+										<button class="btn btn-sm btn-secondary" onclick="viewFileInfo('backend-api:latest.docker')">
 											ℹ️ 详情
 										</button>
-										<button
-											class="btn btn-sm btn-danger"
-											onclick="deleteFile('backend-api:latest.docker')">
+										<button class="btn btn-sm btn-danger" onclick="deleteFile('backend-api:latest.docker')">
 											🗑️ 删除
 										</button>
 									</div>
@@ -967,26 +836,12 @@ BUILD_VERSION=1.0.0</textarea
 									<div class="file-icon">📊</div>
 									<div class="file-info">
 										<div class="file-name">test-report.html</div>
-										<div class="file-size">
-											构建 #1233 • 2.1 MB • 2024-01-15 14:18
-										</div>
+										<div class="file-size"> 构建 #1233 • 2.1 MB • 2024-01-15 14:18 </div>
 									</div>
 									<div style="display: flex; gap: 8px">
-										<button
-											class="btn btn-sm btn-success"
-											onclick="downloadFile('test-report.html')">
-											📥 下载
-										</button>
-										<button
-											class="btn btn-sm btn-info"
-											onclick="previewFile('test-report.html')">
-											👁️ 预览
-										</button>
-										<button
-											class="btn btn-sm btn-danger"
-											onclick="deleteFile('test-report.html')">
-											🗑️ 删除
-										</button>
+										<button class="btn btn-sm btn-success" onclick="downloadFile('test-report.html')"> 📥 下载 </button>
+										<button class="btn btn-sm btn-info" onclick="previewFile('test-report.html')"> 👁️ 预览 </button>
+										<button class="btn btn-sm btn-danger" onclick="deleteFile('test-report.html')"> 🗑️ 删除 </button>
 									</div>
 								</div>
 							</div>
@@ -998,46 +853,17 @@ BUILD_VERSION=1.0.0</textarea
 							<h3 class="card-title">存储统计</h3>
 						</div>
 						<div class="card-content">
-							<div
-								style="
-									display: grid;
-									grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-									gap: 16px;
-								">
-								<div
-									style="
-										text-align: center;
-										padding: 16px;
-										background: #f7fafc;
-										border-radius: 8px;
-									">
-									<div style="font-size: 24px; font-weight: 700; color: #3182ce">
-										2.3 GB
-									</div>
+							<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+								<div style="text-align: center; padding: 16px; background: #f7fafc; border-radius: 8px">
+									<div style="font-size: 24px; font-weight: 700; color: #3182ce"> 2.3 GB </div>
 									<div style="color: #718096; font-size: 14px">总存储使用</div>
 								</div>
-								<div
-									style="
-										text-align: center;
-										padding: 16px;
-										background: #f7fafc;
-										border-radius: 8px;
-									">
-									<div style="font-size: 24px; font-weight: 700; color: #38a169">
-										47
-									</div>
+								<div style="text-align: center; padding: 16px; background: #f7fafc; border-radius: 8px">
+									<div style="font-size: 24px; font-weight: 700; color: #38a169"> 47 </div>
 									<div style="color: #718096; font-size: 14px">产出物数量</div>
 								</div>
-								<div
-									style="
-										text-align: center;
-										padding: 16px;
-										background: #f7fafc;
-										border-radius: 8px;
-									">
-									<div style="font-size: 24px; font-weight: 700; color: #805ad5">
-										7天
-									</div>
+								<div style="text-align: center; padding: 16px; background: #f7fafc; border-radius: 8px">
+									<div style="font-size: 24px; font-weight: 700; color: #805ad5"> 7天 </div>
 									<div style="color: #718096; font-size: 14px">平均保留时间</div>
 								</div>
 							</div>
@@ -1055,9 +881,7 @@ BUILD_VERSION=1.0.0</textarea
 					<div class="card">
 						<div class="card-header">
 							<h3 class="card-title">Webhook设置</h3>
-							<button class="btn btn-primary" onclick="addWebhook()">
-								添加Webhook
-							</button>
+							<button class="btn btn-primary" onclick="addWebhook()"> 添加Webhook </button>
 						</div>
 						<div class="card-content">
 							<div class="form-group">
@@ -1069,9 +893,7 @@ BUILD_VERSION=1.0.0</textarea
 										id="webhookUrl"
 										value="https://ci.example.com/webhook/trigger"
 										readonly />
-									<button class="btn btn-secondary" onclick="copyWebhookUrl()">
-										复制
-									</button>
+									<button class="btn btn-secondary" onclick="copyWebhookUrl()"> 复制 </button>
 								</div>
 								<small style="color: #718096; margin-top: 4px; display: block">
 									将此URL添加到您的Git仓库的Webhook设置中
@@ -1080,12 +902,7 @@ BUILD_VERSION=1.0.0</textarea
 
 							<div class="form-group">
 								<label class="form-label">触发事件</label>
-								<div
-									style="
-										display: grid;
-										grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-										gap: 12px;
-									">
+								<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
 									<label style="display: flex; align-items: center; gap: 8px">
 										<input type="checkbox" checked /> Push事件
 									</label>
@@ -1103,11 +920,7 @@ BUILD_VERSION=1.0.0</textarea
 
 							<div class="form-group">
 								<label class="form-label">分支过滤</label>
-								<input
-									type="text"
-									class="form-input"
-									placeholder="main,develop,feature/*"
-									value="main,develop" />
+								<input type="text" class="form-input" placeholder="main,develop,feature/*" value="main,develop" />
 								<small style="color: #718096; margin-top: 4px; display: block">
 									只有匹配的分支才会触发构建，支持通配符
 								</small>
@@ -1116,14 +929,8 @@ BUILD_VERSION=1.0.0</textarea
 							<div class="form-group">
 								<label class="form-label">Secret密钥</label>
 								<div style="display: flex; gap: 12px">
-									<input
-										type="password"
-										class="form-input"
-										id="webhookSecret"
-										value="your-secret-key" />
-									<button class="btn btn-secondary" onclick="generateSecret()">
-										生成
-									</button>
+									<input type="password" class="form-input" id="webhookSecret" value="your-secret-key" />
+									<button class="btn btn-secondary" onclick="generateSecret()"> 生成 </button>
 								</div>
 							</div>
 
@@ -1154,16 +961,10 @@ BUILD_VERSION=1.0.0</textarea
 										<td>main</td>
 										<td>feat: 添加用户登录功能</td>
 										<td>
-											<span class="status-badge status-success"
-												>✅ 已触发</span
-											>
+											<span class="status-badge status-success">✅ 已触发</span>
 										</td>
 										<td>
-											<button
-												class="btn btn-sm btn-secondary"
-												onclick="viewWebhookDetails()">
-												详情
-											</button>
+											<button class="btn btn-sm btn-secondary" onclick="viewWebhookDetails()"> 详情 </button>
 										</td>
 									</tr>
 									<tr>
@@ -1175,11 +976,7 @@ BUILD_VERSION=1.0.0</textarea
 											<span class="status-badge status-error">❌ 失败</span>
 										</td>
 										<td>
-											<button
-												class="btn btn-sm btn-secondary"
-												onclick="viewWebhookDetails()">
-												详情
-											</button>
+											<button class="btn btn-sm btn-secondary" onclick="viewWebhookDetails()"> 详情 </button>
 										</td>
 									</tr>
 								</tbody>
@@ -1203,42 +1000,22 @@ BUILD_VERSION=1.0.0</textarea
 							<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
 								<div class="form-group">
 									<label class="form-label">最大并发构建数</label>
-									<input
-										type="number"
-										class="form-input"
-										value="5"
-										min="1"
-										max="20" />
+									<input type="number" class="form-input" value="5" min="1" max="20" />
 								</div>
 								<div class="form-group">
 									<label class="form-label">构建超时时间(分钟)</label>
-									<input
-										type="number"
-										class="form-input"
-										value="30"
-										min="5"
-										max="120" />
+									<input type="number" class="form-input" value="30" min="5" max="120" />
 								</div>
 							</div>
 
 							<div class="form-group">
 								<label class="form-label">产出物保留天数</label>
-								<input
-									type="number"
-									class="form-input"
-									value="30"
-									min="1"
-									max="365" />
+								<input type="number" class="form-input" value="30" min="1" max="365" />
 							</div>
 
 							<div class="form-group">
 								<label class="form-label">构建日志保留天数</label>
-								<input
-									type="number"
-									class="form-input"
-									value="90"
-									min="7"
-									max="365" />
+								<input type="number" class="form-input" value="90" min="7" max="365" />
 							</div>
 
 							<button class="btn btn-primary">保存设置</button>
@@ -1422,9 +1199,7 @@ BUILD_VERSION=1.0.0</textarea
 			}
 
 			function generateSecret() {
-				const secret =
-					Math.random().toString(36).substring(2, 15) +
-					Math.random().toString(36).substring(2, 15);
+				const secret = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 				document.getElementById("webhookSecret").value = secret;
 				showNotification("新的Secret密钥已生成");
 			}
