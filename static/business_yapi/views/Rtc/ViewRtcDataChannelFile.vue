@@ -195,7 +195,9 @@ export default async function () {
 						vm.onAddIceCandidateError(vm.remoteConnection, e);
 					}
 					console.log(
-						`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`
+						`IceCandidate数据:\n${
+							event.candidate ? event.candidate.candidate : "(null)"
+						}`
 					);
 				};
 				//Candidate事件回调方法
@@ -210,7 +212,9 @@ export default async function () {
 						vm.onAddIceCandidateError(vm.localConnection, e);
 					}
 					console.log(
-						`IceCandidate数据:\n${event.candidate ? event.candidate.candidate : "(null)"}`
+						`IceCandidate数据:\n${
+							event.candidate ? event.candidate.candidate : "(null)"
+						}`
 					);
 				};
 				//添加Candidate成功

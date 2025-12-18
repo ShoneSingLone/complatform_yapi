@@ -10,84 +10,140 @@
 	height: 100%;
 
 	.path-bar {
-		height: 35px;
 		width: 100%;
-		display: flex;
-		padding: 4px 10px 0 10px;
-		align-items: center;
+	}
+
+	/* M3 折叠式路径栏容器 */
+	.m3-path-bar-container {
+		position: relative;
+		width: 100%;
+		background-color: #ffffff;
 		border-bottom: 1px solid #e0e0e0;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+		z-index: 100;
+	}
 
-		.breadcrumb {
-			display: flex;
-			align-items: center;
-			overflow-x: auto;
-			flex-grow: 1;
-			height: 100%;
+	/* 外部操作按钮组 */
+	.m3-path-bar-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		padding: 8px 16px;
+		gap: 8px;
+		background-color: #f8f9fa;
+	}
 
-			.toolbar-toggle,
-			.refresh-btn {
-				border-radius: 4px;
-				border: 1px solid transparent;
-				padding: 4px 8px;
-				font-size: 12px;
-				background-color: transparent;
-				color: #666;
-				cursor: pointer;
-				transition: all 100ms ease;
-				margin-right: 5px;
-				height: 26px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
+	/* M3 图标按钮 */
+	.m3-icon-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border: none;
+		border-radius: 50%;
+		background-color: transparent;
+		color: #5f6368;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		font-size: 16px;
+		padding: 0;
+	}
 
-				&:hover {
-					background-color: rgba(0, 0, 0, 0.05);
-					border-color: rgba(0, 0, 0, 0.1);
-				}
+	.m3-icon-btn:hover {
+		background-color: rgba(66, 133, 244, 0.08);
+	}
 
-				&:focus {
-					outline: none;
-					background-color: rgba(74, 144, 226, 0.1);
-					border-color: rgba(74, 144, 226, 0.3);
-				}
-			}
+	.m3-icon-btn:focus {
+		outline: none;
+		background-color: rgba(66, 133, 244, 0.12);
+	}
 
-			&::-webkit-scrollbar {
-				height: 2px;
-			}
+	/* 折叠式路径抽屉 */
+	.m3-path-drawer {
+		max-height: 0;
+		overflow: hidden;
+		transition: max-height 0.3s ease;
+		background-color: #ffffff;
+		border-bottom: 1px solid #e0e0e0;
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+	}
 
-			&::-webkit-scrollbar-thumb {
-				background: #7f7f7f70;
-				background-clip: padding-box;
-				border: 0px solid transparent;
-				border-radius: 10px;
-			}
+	.m3-path-drawer.is-open {
+		max-height: 200px;
+		overflow: auto;
+	}
 
-			.breadcrumb-item {
-				display: block;
-				height: 100%;
-				white-space: nowrap;
-				padding: 2px 5px;
-				height: min-content;
-				border-radius: 5px;
-				font-size: 15px;
-				transition: 50ms;
-				cursor: pointer;
+	/* 路径抽屉头部 */
+	.m3-path-drawer-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 12px 16px;
+		background-color: #f1f3f4;
+		border-bottom: 1px solid #e0e0e0;
+	}
 
-				&:hover {
-					background-color: var(--hover-bg);
-				}
-			}
+	.m3-path-drawer-title {
+		font-size: 14px;
+		font-weight: 600;
+		color: #202124;
+		text-transform: uppercase;
+		letter-spacing: 0.0125em;
+	}
 
-			.separator {
-				opacity: 0.8;
-				font-size: 16px;
-				font-weight: bold;
-				line-height: 1;
-				height: 16px;
-				margin: 0 8px;
-				color: #4a90e2;
-			}
+	/* 路径抽屉内容 */
+	.m3-path-drawer-content {
+		padding: 16px;
+	}
+
+	/* 面包屑样式 */
+	.m3-breadcrumb {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 4px;
+		font-size: 14px;
+	}
+
+	.m3-breadcrumb-item {
+		display: flex;
+		align-items: center;
+		padding: 6px 12px;
+		background-color: #e8f0fe;
+		color: #1967d2;
+		border-radius: 16px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		font-weight: 500;
+		gap: 6px;
+	}
+
+	.m3-breadcrumb-item:hover {
+		background-color: #d0e3ff;
+	}
+
+	.m3-breadcrumb-separator {
+		color: #5f6368;
+		font-weight: 600;
+		margin: 0 4px;
+	}
+
+	/* 响应式设计 */
+	@media (max-width: 768px) {
+		.m3-path-bar-actions {
+			padding: 6px 12px;
+		}
+		
+		.m3-icon-btn {
+			width: 32px;
+			height: 32px;
+			font-size: 14px;
+		}
+		
+		.m3-path-drawer-header,
+		.m3-path-drawer-content {
+			padding: 10px 12px;
 		}
 	}
 
@@ -297,25 +353,56 @@
 </style>
 <template>
 	<div id="ViewExplore">
-		<!-- 路径栏 -->
-		<div class="path-bar">
-			<div class="breadcrumb">
-				<button class="toolbar-toggle" @click="toggleToolbar" title="切换工具栏">
-					{{ toolbarCollapsed ? "▼" : "▲" }}
+		<!-- 路径栏 - 折叠式路径导航 -->
+		<div class="m3-path-bar-container">
+			<!-- 外部操作按钮 -->
+			<div class="m3-path-bar-actions flex middle">
+				
+				<button 
+					class="m3-icon-btn toolbar-toggle" 
+					@click="toggleToolbar" 
+					title="切换工具栏"
+				>
+					<span class="m3-icon"> <xIcon icon="_sort"/> </span>
+
 				</button>
-				<button class="refresh-btn" @click="refreshResource" title="刷新资源列表">↻</button>
-				<div class="breadcrumb-item" @click="back(-1)">root</div>
-				<template v-for="(item, index) in pathStack" :key="index">
-					<span class="separator">/</span>
-					<div class="breadcrumb-item" @click="back(index)">
-						{{ item }}
+				<button 
+					class="m3-icon-btn path-toggle" 
+					@click="togglePathDrawer" 
+					title="{{ isPathDrawerOpen ? '收起路径' : '展开路径' }}"
+				>
+					<span class="m3-icon"> <xIcon icon="_path"/> </span>
+				</button>
+				<xGap f/>
+				<button 
+					class="m3-icon-btn refresh-btn" 
+					@click="refreshResource" 
+					title="刷新资源列表"
+				>
+					<span class="m3-icon"> <xIcon icon="_refresh_explor"/> </span>
+				</button>
+			</div>
+			
+			<!-- 折叠式路径抽屉 -->
+			<div class="m3-path-drawer" :class="{ 'is-open': isPathDrawerOpen }">
+				<div class="m3-path-drawer-content">
+					<div class="m3-breadcrumb">
+						<div class="m3-breadcrumb-item" @click="back(-1)">
+							<span class="m3-breadcrumb-text">root</span>
+						</div>
+						<template v-for="(item, index) in pathStack" :key="index">
+							<span class="m3-breadcrumb-separator">/</span>
+							<div class="m3-breadcrumb-item" @click="back(index)">
+								{{ item }}
+							</div>
+						</template>
 					</div>
-				</template>
+				</div>
 			</div>
 		</div>
 
 		<!-- 工具栏 -->
-		<div class="toolbar">
+		<div class="toolbar" v-if="!toolbarCollapsed">
 			<div class="toolbar-content" :class="{ collapsed: toolbarCollapsed }">
 				<div class="sort-controls">
 					<div class="sort-description">排序方式：</div>
@@ -517,6 +604,8 @@ export default async function () {
 						);
 					}),
 					index
+				},{
+					autoPlay:true
 				});
 			}
 			async function playVideo(current_resource) {
@@ -672,7 +761,8 @@ export default async function () {
 					{ label: "大小", value: "size" },
 					{ label: "修改时间", value: "mtime" }
 				],
-				toolbarCollapsed: _.$lStorage["VIEW_EXPLORE_TOOLBAR_COLLAPSED"] === "true" || false
+				toolbarCollapsed: _.$lStorage["VIEW_EXPLORE_TOOLBAR_COLLAPSED"] === "true" || false,
+				isPathDrawerOpen: _.$lStorage["VIEW_EXPLORE_PATH_DRAWER_OPEN"] === "true" || false // 路径抽屉的展开状态，使用localStorage持久化
 			};
 		},
 		computed: {
@@ -769,6 +859,12 @@ export default async function () {
 					this.getResource({ path: this.pathStack.slice(0, index + 1) });
 				}
 			},
+			// 切换路径抽屉的展开/收起状态
+			togglePathDrawer() {
+				this.isPathDrawerOpen = !this.isPathDrawerOpen;
+				// 保存到localStorage
+				_.$lStorage["VIEW_EXPLORE_PATH_DRAWER_OPEN"] = this.isPathDrawerOpen;
+			},
 			// 获取排序按钮的CSS类
 			getSortBtnClass(field) {
 				const sortIndex = this.sortConfig.findIndex(item => item.field === field);
@@ -804,7 +900,9 @@ export default async function () {
 					return `${this.sortOptions.find(opt => opt.value === field).label}排序`;
 				}
 				const orderText = this.sortConfig[sortIndex].order === "asc" ? "升序" : "降序";
-				return `${this.sortOptions.find(opt => opt.value === field).label}${orderText} (优先级${sortIndex + 1})`;
+				return `${
+					this.sortOptions.find(opt => opt.value === field).label
+				}${orderText} (优先级${sortIndex + 1})`;
 			},
 			// 切换排序字段
 			toggleSortField(field) {

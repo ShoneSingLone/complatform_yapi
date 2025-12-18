@@ -140,7 +140,7 @@ export default async function () {
 					// preset: "blue",
 					label: i18n("获取验证码"),
 					disabled() {
-						return !_reg.email().test(vm.configsForm.email.value);
+						return !_rules._reg.email().test(vm.configsForm.email.value);
 					},
 					async onClick() {
 						try {

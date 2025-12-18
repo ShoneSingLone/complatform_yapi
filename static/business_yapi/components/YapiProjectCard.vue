@@ -220,9 +220,7 @@ export default async function () {
 			.ui-logo {
 				border-radius: 50%;
 				&:hover {
-					box-shadow:
-						0 6px 6px -3px #0003,
-						0 10px 14px 1px #00000024,
+					box-shadow: 0 6px 6px -3px #0003, 0 10px 14px 1px #00000024,
 						0 4px 18px 3px #0000001f !important;
 					cursor: pointer;
 				}

@@ -152,7 +152,11 @@ export default async function () {
 										if (findExist) {
 											reqParams.push(findExist);
 										} else {
-											reqParams.push({ name: name, desc: "", example: "" });
+											reqParams.push({
+												name: name,
+												desc: "",
+												example: ""
+											});
 										}
 									};
 

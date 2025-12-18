@@ -39,16 +39,12 @@
 		height: 13px;
 		border-radius: 50%;
 		background-color: #4a90e2;
-		box-shadow:
-			0 0 0 2px #fff,
-			0 0 0 4px #4a90e2;
+		box-shadow: 0 0 0 2px #fff, 0 0 0 4px #4a90e2;
 	}
 
 	.log-item:nth-child(odd)::before {
 		background-color: #50e3c2;
-		box-shadow:
-			0 0 0 2px #fff,
-			0 0 0 4px #50e3c2;
+		box-shadow: 0 0 0 2px #fff, 0 0 0 4px #50e3c2;
 	}
 
 	.log-item:nth-child(odd) {
@@ -165,7 +161,9 @@ export default async function () {
 									return resource;
 								}
 								const file_url = Vue._common_utils.appendToken(
-									`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${resource._id}`
+									`${window._AJAX_URL_PREFIX || ""}/api/resource/get?id=${
+										resource._id
+									}`
 								);
 
 								return hDiv([

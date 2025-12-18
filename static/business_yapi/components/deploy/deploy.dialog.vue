@@ -119,9 +119,7 @@ export default async function ({ row }) {
 	border-radius: 100%;
 	background: linear-gradient(#7d7871 0%, #595953 100%);
 	text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2);
-	box-shadow:
-		0px 0px 1px 0px #41403a,
-		0px 1px 1px 0px #474642;
+	box-shadow: 0px 0px 1px 0px #41403a, 0px 1px 1px 0px #474642;
 }
 
 .btn-color {

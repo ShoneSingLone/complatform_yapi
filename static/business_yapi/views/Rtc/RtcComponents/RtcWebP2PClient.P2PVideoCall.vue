@@ -401,7 +401,10 @@ export default async function () {
 													//自己的Id
 													from: this.userId,
 													//SDP信息
-													description: { sdp: desc.sdp, type: desc.type },
+													description: {
+														sdp: desc.sdp,
+														type: desc.type
+													},
 													//会话Id
 													sessionId: this.sessionId,
 													//房间Id
