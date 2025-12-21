@@ -7,11 +7,7 @@ const Jimp = require("jimp");
 const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
 const { TARGET_PREFIX } = xU;
-const {
-	returnBase64Body,
-	isAudioType,
-	asyncResolvePathFileOrDir
-} = require("./Resource.service");
+const { returnBase64Body, isAudioType, asyncResolvePathFileOrDir } = require("./Resource.service");
 
 let types = {};
 
@@ -161,8 +157,7 @@ module.exports = {
 							type: "integer"
 						},
 						uri: {
-							description:
-								"资源uri;资源管理器，直接读取磁盘文件,explore接口使用",
+							description: "资源uri;资源管理器，直接读取磁盘文件,explore接口使用",
 							type: "string"
 						},
 						preview: {
@@ -222,9 +217,7 @@ module.exports = {
 								}
 							}
 						}
-						const targetResource = await orm.Resource.getResourceById(
-							ctx.query.id
-						);
+						const targetResource = await orm.Resource.getResourceById(ctx.query.id);
 						var type;
 						if (targetResource?.basecode) {
 							/* 返回base64形式存储的文件 */
@@ -238,9 +231,7 @@ module.exports = {
 								/* 返回文件形式存储的文件 */
 								return returnFileByPath(targetResource.path, targetResource);
 							}
-							let targetPath = path.resolve(
-								`${TARGET_PREFIX}${targetResource.path}`
-							);
+							let targetPath = path.resolve(`${TARGET_PREFIX}${targetResource.path}`);
 							isExist = xU.fileExist(targetPath);
 							if (isExist) {
 								/* 返回文件形式存储的文件 */
@@ -276,10 +267,7 @@ module.exports = {
 						}
 
 						if (!DEFAULT_NOT_FOUND_IMG) {
-							const bitmapPath = path.resolve(
-								__dirname,
-								"../../../assets/404.svg"
-							);
+							const bitmapPath = path.resolve(__dirname, "../../../assets/404.svg");
 							var bitmap = fs.readFileSync(bitmapPath);
 							const basecode = new Buffer(bitmap).toString("base64");
 
@@ -395,10 +383,7 @@ module.exports = {
 									parentDir = "";
 								} else {
 									parentDir = dirname.substring(rootDirName.length);
-									parentDir = parentDir
-										.split(path.sep)
-										.filter(Boolean)
-										.join("/");
+									parentDir = parentDir.split(path.sep).filter(Boolean).join("/");
 								}
 
 								const current = dirpath;
@@ -583,7 +568,7 @@ module.exports = {
 							ctx.set({
 								"Content-Range": "bytes " + start + "-" + end + "/" + total,
 								"Accept-Ranges": "bytes",
-								"Content-Length": chunksize,
+								"Content-Length": String(chunksize),
 								"Content-Type": contentType
 							});
 							ctx.body = fs.createReadStream(resourcePath, { start, end });
@@ -591,7 +576,7 @@ module.exports = {
 							ctx.set({
 								"Content-Type": contentType,
 								"Accept-Ranges": "bytes",
-								"Content-Length": total
+								"Content-Length": String(total)
 							});
 							ctx.body = fs.createReadStream(resourcePath);
 						}
@@ -1067,12 +1052,7 @@ module.exports = {
 						}
 						const chunks = await orm.ResourceChunk.findByMd5(md5);
 
-						let dirPathChuncks = path.resolve(
-							TARGET_PREFIX,
-							"user",
-							this.$uid,
-							md5
-						);
+						let dirPathChuncks = path.resolve(TARGET_PREFIX, "user", this.$uid, md5);
 
 						let response = {
 							chunks,
