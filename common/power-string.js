@@ -97,14 +97,8 @@ const _handleValue = function (str) {
 	}
 	return handleValue(
 		str
-			.replace(
-				new RegExp(aUniqueVerticalStringNotFoundInData, "g"),
-				segmentSeparateChar
-			)
-			.replace(
-				new RegExp(aUniqueCommaStringNotFoundInData, "g"),
-				argsSeparateChar
-			)
+			.replace(new RegExp(aUniqueVerticalStringNotFoundInData, "g"), segmentSeparateChar)
+			.replace(new RegExp(aUniqueCommaStringNotFoundInData, "g"), argsSeparateChar)
 	);
 };
 
@@ -167,9 +161,7 @@ function handleSegment(str, index) {
 	if (str.indexOf(methodAndArgsSeparateChar) > 0) {
 		str = str.split(methodAndArgsSeparateChar);
 		method = str[0].trim();
-		args = str[1]
-			.split(argsSeparateChar)
-			.map(item => _handleValue(item.trim()));
+		args = str[1].split(argsSeparateChar).map(item => _handleValue(item.trim()));
 	} else {
 		method = str;
 	}

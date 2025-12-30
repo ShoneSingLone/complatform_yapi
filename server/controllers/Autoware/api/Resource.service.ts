@@ -18,10 +18,7 @@ exports.returnBase64Body = returnBase64Body;
  * @returns 返回一个对象，包含文件或目录的类型、路径和名称；如果路径不存在或无法访问，则返回undefined；如果路径是音频文件，返回特定的音频信息。
  */
 async function asyncResolvePathFileOrDir(fileOrDirPath, relativePathArray) {
-	const absolutePath = path.resolve.apply(path, [
-		...relativePathArray,
-		fileOrDirPath
-	]); // 将基础路径和目录名解析为绝对路径
+	const absolutePath = path.resolve.apply(path, [...relativePathArray, fileOrDirPath]); // 将基础路径和目录名解析为绝对路径
 	let stat;
 	try {
 		stat = await fs.promises.stat(absolutePath); // 尝试获取绝对路径的文件状态
@@ -65,11 +62,7 @@ async function asyncResolvePathFileOrDir(fileOrDirPath, relativePathArray) {
 			};
 		}
 		asyncResolvePathFileOrDir.types[type] = type;
-		console.log(
-			"🚀 ~ asyncResolvePathFileOrDir ~ types.type:",
-			type,
-			fileOrDirPath
-		);
+		console.log("🚀 ~ asyncResolvePathFileOrDir ~ types.type:", type, fileOrDirPath);
 	}
 
 	return null; // 如果不是目录也不是音频文件，则返回null
@@ -79,10 +72,7 @@ asyncResolvePathFileOrDir.types = {};
 exports.asyncResolvePathFileOrDir = asyncResolvePathFileOrDir;
 
 function isAudioType(type) {
-	return (
-		/^audio/.test(type) ||
-		["audio/mpeg", "audio/x-flac", "audio/mp4"].includes(type)
-	);
+	return /^audio/.test(type) || ["audio/mpeg", "audio/x-flac", "audio/mp4"].includes(type);
 }
 
 exports.isAudioType = isAudioType;

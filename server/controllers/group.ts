@@ -115,8 +115,7 @@ class groupController extends ControllerBase {
 	async addMember(ctx) {
 		let params = ctx.params;
 
-		params.role =
-			["owner", "dev", "guest"].find(v => v === params.role) || "dev";
+		params.role = ["owner", "dev", "guest"].find(v => v === params.role) || "dev";
 		let add_members = [];
 		let exist_members = [];
 		let no_members = [];
@@ -182,14 +181,9 @@ class groupController extends ControllerBase {
 			return (ctx.body = xU.$response(null, 405, "没有权限"));
 		}
 
-		params.role =
-			["owner", "dev", "guest"].find(v => v === params.role) || "dev";
+		params.role = ["owner", "dev", "guest"].find(v => v === params.role) || "dev";
 
-		let result = await orm.group.changeMemberRole(
-			params.id,
-			params.member_uid,
-			params.role
-		);
+		let result = await orm.group.changeMemberRole(params.id, params.member_uid, params.role);
 		let username = this.getUsername();
 
 		let groupUserdata = await xU.getUserdata(params.member_uid, params.role);

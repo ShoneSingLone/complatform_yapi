@@ -90,8 +90,7 @@ const interfaceUpsertRequest = {
 			}
 		},
 		req_body_form: {
-			description:
-				"请求参数,如果请求方式是form，参数是Array数组，其他格式请求参数是字符串",
+			description: "请求参数,如果请求方式是form，参数是Array数组，其他格式请求参数是字符串",
 			type: "array",
 			items: {
 				type: "object",
@@ -126,8 +125,7 @@ const interfaceUpsertRequest = {
 		},
 		res_body: {
 			type: "string",
-			description:
-				"响应信息，可填写任意字符串，如果res_body_type是json,则会调用mock功能"
+			description: "响应信息，可填写任意字符串，如果res_body_type是json,则会调用mock功能"
 		},
 		resBackupJson: {
 			type: "string",
@@ -270,9 +268,7 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 407, "不存在的项目"));
 					}
 					if (project.project_type === "private") {
-						if (
-							(await this.checkAuth(project._id, "project", "view")) !== true
-						) {
+						if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 							return (ctx.body = xU.$response(null, 406, "没有权限"));
 						}
 					}
@@ -302,11 +298,7 @@ module.exports = {
 								}
 							}
 
-							result = await orm.interface.listByOptionWithPage(
-								option,
-								page,
-								limit
-							);
+							result = await orm.interface.listByOptionWithPage(option, page, limit);
 							count = await orm.interface.listCount(option);
 						}
 
@@ -348,9 +340,7 @@ module.exports = {
 					}
 
 					if (project.project_type === "private") {
-						if (
-							(await this.checkAuth(project._id, "project", "view")) !== true
-						) {
+						if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 							return (ctx.body = xU.$response(null, 406, "没有权限"));
 						}
 					}
@@ -361,9 +351,7 @@ module.exports = {
 						const interfaceMenuTree = [];
 						for (const categoryMongoose of categoryArray) {
 							let category = categoryMongoose.toObject();
-							let interfaceArray = await orm.interface.listByCatid(
-								category._id
-							);
+							let interfaceArray = await orm.interface.listByCatid(category._id);
 							category.list = [];
 							for (const interfaceMongooose of interfaceArray) {
 								let interface = interfaceMongooose.toObject();
@@ -491,12 +479,10 @@ module.exports = {
 						}
 						xU.save_log({
 							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 
-								更新了分类 <a href="/project/${cate.project_id}/interface/api/cat_${
-								data.catid
-							}">${cate.name}</a> 
-								下的接口 <a href="/project/${cate.project_id}/interface/api/${id}">${
-								interfaceData.title
-							}</a><p>${params.message}</p>`,
+								更新了分类 <a href="/project/${cate.project_id}/interface/api/cat_${data.catid}">${cate.name}</a> 
+								下的接口 <a href="/project/${cate.project_id}/interface/api/${id}">${interfaceData.title}</a><p>${
+								params.message
+							}</p>`,
 							type: "project",
 							uid: this.getUid(),
 							username: username,
@@ -525,9 +511,7 @@ module.exports = {
 							"utf8"
 						);
 
-						let project = await orm.project.getBaseInfo(
-							interfaceData.project_id
-						);
+						let project = await orm.project.getBaseInfo(interfaceData.project_id);
 
 						let interfaceUrl = `${ctx.request.origin}/project/${interfaceData.project_id}/interface/api/${id}`;
 
@@ -648,11 +632,7 @@ module.exports = {
 					let payload = ctx.payload;
 
 					if (!this.$tokenAuth) {
-						let auth = await this.checkAuth(
-							payload.project_id,
-							"project",
-							"edit"
-						);
+						let auth = await this.checkAuth(payload.project_id, "project", "edit");
 						if (!auth) {
 							return (ctx.body = xU.$response(null, 40033, "没有权限"));
 						}
@@ -705,11 +685,7 @@ module.exports = {
 								}
 								await orm.interface.up(interfaceInfo._id, data.params);
 							} else {
-								return (ctx.body = xU.$response(
-									null,
-									400,
-									validResult.message
-								));
+								return (ctx.body = xU.$response(null, 400, validResult.message));
 							}
 						});
 					} else {
@@ -779,9 +755,7 @@ module.exports = {
 						let userinfo = await orm.user.findById(result.uid);
 						let project = await orm.project.getBaseInfo(result.project_id);
 						if (project.project_type === "private") {
-							if (
-								(await this.checkAuth(project._id, "project", "view")) !== true
-							) {
+							if ((await this.checkAuth(project._id, "project", "view")) !== true) {
 								return (ctx.body = xU.$response(null, 406, "没有权限"));
 							}
 						}

@@ -98,10 +98,7 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
 					}
 
-					let count = await orm.follow.checkProjectRepeat(
-						uid,
-						payload.projectid
-					);
+					let count = await orm.follow.checkProjectRepeat(uid, payload.projectid);
 
 					if (count) {
 						return (ctx.body = xU.$response(null, 401, "项目已关注"));

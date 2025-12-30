@@ -145,9 +145,7 @@ async function handle(
 			}
 			if (count === len) {
 				callback({ showLoading: false });
-				messageSuccess(
-					`成功导入接口 ${successNum} 个, 已存在的接口 ${existNum} 个`
-				);
+				messageSuccess(`成功导入接口 ${successNum} 个, 已存在的接口 ${existNum} 个`);
 				return;
 			}
 

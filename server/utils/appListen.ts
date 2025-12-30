@@ -1,20 +1,13 @@
-module.exports = function appListen(
-	app,
-	tips = "服务已启动，请打开下面链接访问:"
-) {
+module.exports = function appListen(app, tips = "服务已启动，请打开下面链接访问:") {
 	let currPort = Number(yapi_configs.port) || "80";
 	app.listen(currPort);
 	if (process.send) {
 		process.send(JSON.stringify({ type: "CHANGE_PORT", PORT: currPort }));
 	}
-	console.log(
-		`${tips}\nhttp://127.0.0.1${currPort == "80" ? "" : ":" + currPort}/ `
-	);
+	console.log(`${tips}\nhttp://127.0.0.1${currPort == "80" ? "" : ":" + currPort}/ `);
 	var interfaces = require("os").networkInterfaces();
 	const content = JSON.stringify(interfaces);
-	const contentArray = content
-		.split(`",`)
-		.filter(s => s.match(/"address":"(.*)/));
+	const contentArray = content.split(`",`).filter(s => s.match(/"address":"(.*)/));
 	contentArray.forEach(s => {
 		const res = s.match(/address":"192.(.*)/);
 		if (res) {

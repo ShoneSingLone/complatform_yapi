@@ -56,9 +56,7 @@ exports.handleSocket = function handleSocket(client, request) {
 		}
 
 		log("WebSocket connection");
-		log(
-			"Version " + client.protocolVersion + ", subprotocol: " + client.protocol
-		);
+		log("Version " + client.protocolVersion + ", subprotocol: " + client.protocol);
 
 		if (ARGV_RECORD) {
 			var rs = fs.createWriteStream(

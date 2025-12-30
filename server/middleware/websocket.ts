@@ -84,9 +84,7 @@ const wsHandler = {
 	},
 	SendUserInfoAndNoticeAllClient: ({ ctx, vm }) => {
 		/* 自己 */
-		ctx.websocket.send(
-			newWsPayload("connected", { username: vm.$user.username })
-		);
+		ctx.websocket.send(newWsPayload("connected", { username: vm.$user.username }));
 		/* 所有人（包括自己） */
 		const users = Array.from(ONLINE_USERS, ([uid, payload]) => {
 			const { currentVM: onlineVM } = payload;
@@ -147,8 +145,7 @@ const old_middlewareWebsocket = () => async (ctx, next) => {
 				try {
 					cps.get(vm.handleProcessUseage);
 					console.log("🚀:", "ctx.websocket.onMessage", paramsString);
-					const { handler, wsPayload, payload } =
-						getWsHanderAndPayloadBy(paramsString);
+					const { handler, wsPayload, payload } = getWsHanderAndPayloadBy(paramsString);
 					handler({ vm, ctx, wsPayload, payload });
 				} catch (error) {
 					console.error(error);
@@ -221,15 +218,7 @@ function addPluginRouter(config) {
 		throw new Error("Plugin Route path conflict, please try rename the path");
 	}
 	pluginsRouterPath.push(routerPath);
-	xU.createAction(
-		wsRouter,
-		"/api",
-		config.controller,
-		config.action,
-		routerPath,
-		method,
-		true
-	);
+	xU.createAction(wsRouter, "/api", config.controller, config.action, routerPath, method, true);
 }
 
 exports.old_appSetupWebsocket = function ({ app, appSocket }) {

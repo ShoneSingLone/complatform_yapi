@@ -5,7 +5,8 @@
 v1.3.23+ 增加数据导入的 3 种同步方式 normal, good, mergin
 
 1. 普通模式(normal)：不导入已存在的接口；
-2. 智能合并(good)：已存在的接口，将合并返回数据的 response，适用于导入了 swagger 数据，保留对数据结构的改动；例如，用户对字段 code 添加了 mock 信息, 当再次数据导入的时候 mock 字段将不会被覆盖
+2. 智能合并(good)：已存在的接口，将合并返回数据的 response，适用于导入了 swagger 数据，保留对数据结构的改动；例如，用户
+   对字段 code 添加了 mock 信息, 当再次数据导入的时候 mock 字段将不会被覆盖
 3. 完全覆盖(mergin)：不保留旧数据，完全使用新数据，适用于接口定义完全交给后端定义， 默认为 normal
 
 ## Postman 数据导入
@@ -18,7 +19,8 @@ v1.3.23+ 增加数据导入的 3 种同步方式 normal, good, mergin
 
 <div><img  class="doc-img"  style="width:70%"  src="./images/usage/postman-2.jpg" /></div>
 
-3.打开 yapi 平台，进入到项目页面，点击数据管理，选择相应的分组和 postman 导入  方式， 选择刚才保存的文件路径，开始导入数据
+3.打开 yapi 平台，进入到项目页面，点击数据管理，选择相应的分组和 postman 导入  方式， 选择刚才保存的文件路径，开始导入数
+据
 
 <div><img  class="doc-img"  style="width:90%"  src="./images/usage/postman-3.jpg" /></div>
 

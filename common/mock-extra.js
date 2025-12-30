@@ -49,10 +49,7 @@ function mock(mockJSON, context) {
 								newFilters.splice(index, 1);
 							}
 							delete c[i];
-							c[newFilters.join(mockSplit)] = filtersMap[filters[f]].call(
-								p,
-								p[i]
-							);
+							c[newFilters.join(mockSplit)] = filtersMap[filters[f]].call(p, p[i]);
 						}
 					}
 				}

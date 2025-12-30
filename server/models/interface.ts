@@ -232,10 +232,7 @@ class ModelInterface extends ModelBase {
 			.sort({ title: 1 })
 			.skip((page - 1) * limit)
 			.limit(limit)
-			.select(
-				BASE_SELECT.join(" ") +
-					" api_opened edit_uid status add_time up_time tag"
-			)
+			.select(BASE_SELECT.join(" ") + " api_opened edit_uid status add_time up_time tag")
 			.exec();
 	}
 
@@ -278,8 +275,7 @@ class ModelInterface extends ModelBase {
 			.skip((page - 1) * limit)
 			.limit(limit)
 			.select(
-				BASE_SELECT.join(" ") +
-					" edit_uid api_opened status add_time up_time, index, tag"
+				BASE_SELECT.join(" ") + " edit_uid api_opened status add_time up_time, index, tag"
 			)
 			.exec();
 	}
@@ -293,8 +289,7 @@ class ModelInterface extends ModelBase {
 			.skip((page - 1) * limit)
 			.limit(limit)
 			.select(
-				BASE_SELECT.join(" ") +
-					" edit_uid api_opened status add_time up_time, index, tag"
+				BASE_SELECT.join(" ") + " edit_uid api_opened status add_time up_time, index, tag"
 			)
 			.exec();
 	}
@@ -385,10 +380,7 @@ class ModelInterface extends ModelBase {
 	search(keyword) {
 		return this.model
 			.find({
-				$or: [
-					{ title: new RegExp(keyword, "ig") },
-					{ path: new RegExp(keyword, "ig") }
-				]
+				$or: [{ title: new RegExp(keyword, "ig") }, { path: new RegExp(keyword, "ig") }]
 			})
 			.limit(10);
 	}

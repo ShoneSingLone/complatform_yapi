@@ -68,11 +68,9 @@ function escapeStr(str, isToc) {
 
 function createBaseMessage(basepath, inter) {
 	// 基本信息
-	let baseMessage = `### 基本信息\n\n**Path：** ${
-		basepath + inter.path
-	}\n\n**Method：** ${inter.method}\n\n**接口描述：**\n${
-		_.isUndefined(inter.desc) ? "" : inter.desc
-	}\n`;
+	let baseMessage = `### 基本信息\n\n**Path：** ${basepath + inter.path}\n\n**Method：** ${
+		inter.method
+	}\n\n**接口描述：**\n${_.isUndefined(inter.desc) ? "" : inter.desc}\n`;
 	return baseMessage;
 }
 
@@ -82,11 +80,11 @@ function createReqHeaders(req_headers) {
 		let headersTable = `**Headers**\n\n`;
 		headersTable += `| 参数名称  | 参数值  |  是否必须 | 示例  | 备注  |\n| ------------ | ------------ | ------------ | ------------ | ------------ |\n`;
 		for (let j = 0; j < req_headers.length; j++) {
-			headersTable += `| ${req_headers[j].name || ""}  |  ${
-				req_headers[j].value || ""
-			} | ${req_headers[j].required == 1 ? "是" : "否"}  |  ${
-				handleWrap(req_headers[j].example) || ""
-			} |  ${handleWrap(req_headers[j].desc) || ""} |\n`;
+			headersTable += `| ${req_headers[j].name || ""}  |  ${req_headers[j].value || ""} | ${
+				req_headers[j].required == 1 ? "是" : "否"
+			}  |  ${handleWrap(req_headers[j].example) || ""} |  ${
+				handleWrap(req_headers[j].desc) || ""
+			} |\n`;
 		}
 		return headersTable;
 	}
@@ -123,22 +121,15 @@ function createReqQuery(req_query) {
 	return "";
 }
 
-function createReqBody(
-	req_body_type,
-	req_body_form,
-	req_body_other,
-	req_body_is_json_schema
-) {
+function createReqBody(req_body_type, req_body_form, req_body_other, req_body_is_json_schema) {
 	if (req_body_type === "form" && req_body_form.length) {
 		let bodyTable = `**Body**\n\n`;
 		bodyTable += `| 参数名称  | 参数类型  |  是否必须 | 示例  | 备注  |\n| ------------ | ------------ | ------------ | ------------ | ------------ |\n`;
 		let req_body = req_body_form;
 		for (let j = 0; j < req_body.length; j++) {
-			bodyTable += `| ${req_body[j].name || ""} | ${
-				req_body[j].type || ""
-			}  |  ${req_body[j].required == 1 ? "是" : "否"} |  ${
-				req_body[j].example || ""
-			}  |  ${req_body[j].desc || ""} |\n`;
+			bodyTable += `| ${req_body[j].name || ""} | ${req_body[j].type || ""}  |  ${
+				req_body[j].required == 1 ? "是" : "否"
+			} |  ${req_body[j].example || ""}  |  ${req_body[j].desc || ""} |\n`;
 		}
 		return `${bodyTable}\n\n`;
 	} else if (req_body_other) {
@@ -147,9 +138,7 @@ function createReqBody(
 			return `**Body**\n\n` + reqBody;
 		} else {
 			//other
-			return (
-				`**Body**\n\n` + "```javascript" + `\n${req_body_other || ""}` + "\n```"
-			);
+			return `**Body**\n\n` + "```javascript" + `\n${req_body_other || ""}` + "\n```";
 		}
 	}
 	return "";
@@ -207,9 +196,7 @@ function tableCol(col, columns, level) {
 					: `<span style="white-space: pre-wrap">${col.childrenDesc}</span>`;
 				break;
 			case "name":
-				text = `<span style="padding-left: ${
-					20 * level
-				}px"><span style="color: #8c8a8a">${
+				text = `<span style="padding-left: ${20 * level}px"><span style="color: #8c8a8a">${
 					level > 0 ? "├─" : ""
 				}</span> ${value}</span>`;
 				break;
@@ -248,11 +235,7 @@ function createSchemaTable(body) {
     </tr>
   </thead>`;
 
-	template += `<tbody className="ant-table-tbody">${tableBody(
-		dataSource,
-		columns,
-		0
-	)}
+	template += `<tbody className="ant-table-tbody">${tableBody(dataSource, columns, 0)}
                </tbody>
               </table>
             `;
@@ -333,11 +316,7 @@ function createClassMarkdown(curProject, list, isToc) {
 		for (let i = 0; i < item.list.length; i++) {
 			//循环拼接 接口
 			// 接口内容
-			mdTemplate += createInterMarkdown(
-				curProject.basepath,
-				item.list[i],
-				isToc
-			);
+			mdTemplate += createInterMarkdown(curProject.basepath, item.list[i], isToc);
 		}
 	});
 	return mdTemplate;

@@ -703,16 +703,8 @@ declare module "node-id3" {
 			options: Object,
 			fn: (err: NodeJS.ErrnoException | null, tags: Tags | null) => void
 		): void;
-		export function update(
-			tags: Tags,
-			filebuffer: Buffer,
-			options?: Object
-		): Buffer;
-		export function update(
-			tags: Tags,
-			filepath: string,
-			options?: Object
-		): true | Error;
+		export function update(tags: Tags, filebuffer: Buffer, options?: Object): Buffer;
+		export function update(tags: Tags, filepath: string, options?: Object): true | Error;
 		export function update(
 			tags: Tags,
 			filepath: string,

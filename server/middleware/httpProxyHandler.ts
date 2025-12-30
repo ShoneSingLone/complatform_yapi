@@ -34,20 +34,14 @@ exports.httpProxyHandler = ctx => {
 		if (ctx.request.body) {
 			console.log(ctx.request.header["content-type"]);
 			if (
-				ctx.request.header["content-type"].indexOf(
-					"application/x-www-form-urlencoded"
-				) > -1
+				ctx.request.header["content-type"].indexOf("application/x-www-form-urlencoded") > -1
 			) {
 				requestBody = JSON.stringify(ctx.request.body);
 				options.headers["Content-Length"] = Buffer.byteLength(requestBody);
-			} else if (
-				ctx.request.header["content-type"].indexOf("application/json") > -1
-			) {
+			} else if (ctx.request.header["content-type"].indexOf("application/json") > -1) {
 				requestBody = JSON.stringify(ctx.request.body);
 				options.headers["Content-Length"] = Buffer.byteLength(requestBody);
-			} else if (
-				ctx.request.header["content-type"].indexOf("multipart/form-data") > -1
-			) {
+			} else if (ctx.request.header["content-type"].indexOf("multipart/form-data") > -1) {
 				fileFields = ctx.request.body.fields;
 				files = ctx.request.body.files;
 				boundaryKey = Math.random().toString(16);
@@ -61,15 +55,11 @@ exports.httpProxyHandler = ctx => {
 
 				Object.keys(files).forEach(key => {
 					requestBody += `${boundary}Content-Type: application/octet-stream\r\nContent-Disposition: form-data; name="${key}";filename="${files[key].name}"\r\nContent-Transfer-Encoding: binary\r\n\r\n`;
-					filesLength +=
-						Buffer.byteLength(requestBody, "utf-8") + files[key].size;
+					filesLength += Buffer.byteLength(requestBody, "utf-8") + files[key].size;
 				});
 
-				options.headers[
-					"Content-Type"
-				] = `multipart/form-data; boundary=--${boundaryKey}`;
-				options.headers[`Content-Length`] =
-					filesLength + Buffer.byteLength(endData);
+				options.headers["Content-Type"] = `multipart/form-data; boundary=--${boundaryKey}`;
+				options.headers[`Content-Length`] = filesLength + Buffer.byteLength(endData);
 			} else {
 				requestBody = JSON.stringify(ctx.request.body);
 				options.headers["Content-Length"] = Buffer.byteLength(requestBody);

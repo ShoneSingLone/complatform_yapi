@@ -7,10 +7,7 @@ const _ = require("lodash");
 const path = require("path");
 const lib = require(path.resolve(xU.var.APP_ROOT_DIR, "common/lib"));
 const Mock = require("mockjs");
-const mockExtra = require(path.resolve(
-	xU.var.APP_ROOT_DIR,
-	"common/mock-extra"
-));
+const mockExtra = require(path.resolve(xU.var.APP_ROOT_DIR, "common/mock-extra"));
 
 function arrToObj(arr) {
 	let obj = { "Set-Cookie": [] };
@@ -190,11 +187,7 @@ module.exports = function () {
 					mockExtra(context.mockJson, {
 						query: context.ctx.query,
 						body: context.ctx.request.body,
-						params: Object.assign(
-							{},
-							context.ctx.query,
-							context.ctx.request.body
-						)
+						params: Object.assign({}, context.ctx.query, context.ctx.request.body)
 					})
 				);
 			} catch (err) {

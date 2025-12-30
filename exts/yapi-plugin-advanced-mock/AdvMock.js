@@ -49,9 +49,7 @@ class AdvMock extends Component {
 
 	async getAdvMockData() {
 		let interfaceId = this.props.match.params.actionId;
-		let result = await axios.get(
-			"/api/plugin/advmock/get?interface_id=" + interfaceId
-		);
+		let result = await axios.get("/api/plugin/advmock/get?interface_id=" + interfaceId);
 		if (result.data.errcode === 0) {
 			let mockData = result.data.data;
 			this.setState({

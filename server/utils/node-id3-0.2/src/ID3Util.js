@@ -14,20 +14,14 @@ module.exports.SplitBuffer = class SplitBuffer {
  * Expects a buffer containing a string at the beginning that is terminated by a \0 character.
  * Returns a split buffer containing the bytes before and after null termination.
  */
-module.exports.splitNullTerminatedBuffer = function (
-	buffer,
-	encodingByte = 0x00
-) {
+module.exports.splitNullTerminatedBuffer = function (buffer, encodingByte = 0x00) {
 	// UTF-16/BE always uses two bytes per character.
 	// \0 is therefore encoded as [0x00, 0x00] instead of just [0x00].
 	// We'll do a sliding window search, window size depends on encoding.
 	const charSize = [0x01, 0x02].includes(encodingByte) ? 2 : 1;
 	for (let pos = 0; pos + charSize - 1 < buffer.length; pos += charSize) {
 		if (buffer.readUIntBE(pos, charSize) === 0) {
-			return new this.SplitBuffer(
-				buffer.subarray(0, pos),
-				buffer.subarray(pos + charSize)
-			);
+			return new this.SplitBuffer(buffer.subarray(0, pos), buffer.subarray(pos + charSize));
 		}
 	}
 
@@ -57,9 +51,7 @@ module.exports.stringToEncodedBuffer = function (str, encodingByte) {
 };
 
 module.exports.bufferToDecodedString = function (buffer, encodingByte) {
-	return iconv
-		.decode(buffer, this.encodingFromStringOrByte(encodingByte))
-		.replace(/\0/g, "");
+	return iconv.decode(buffer, this.encodingFromStringOrByte(encodingByte)).replace(/\0/g, "");
 };
 
 module.exports.getSpecOptions = function (frameIdentifier) {
@@ -111,11 +103,7 @@ module.exports.getFramePosition = function (buffer) {
  */
 module.exports.isValidEncodedSize = function (encodedSize) {
 	// The size must not have the bit 7 set
-	return (
-		((encodedSize[0] | encodedSize[1] | encodedSize[2] | encodedSize[3]) &
-			128) ===
-		0
-	);
+	return ((encodedSize[0] | encodedSize[1] | encodedSize[2] | encodedSize[3]) & 128) === 0;
 };
 
 /**
@@ -137,12 +125,7 @@ module.exports.encodeSize = function (size) {
  * @return {number} Return the decoded size
  */
 module.exports.decodeSize = function (encodedSize) {
-	return (
-		(encodedSize[0] << 21) +
-		(encodedSize[1] << 14) +
-		(encodedSize[2] << 7) +
-		encodedSize[3]
-	);
+	return (encodedSize[0] << 21) + (encodedSize[1] << 14) + (encodedSize[2] << 7) + encodedSize[3];
 };
 
 module.exports.getFrameSize = function (buffer, decode, ID3Version) {

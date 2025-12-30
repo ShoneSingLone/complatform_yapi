@@ -19,12 +19,7 @@ if (ARGV_CERT && ARGV_KEY) {
 	var cert = fs.readFileSync(ARGV_CERT);
 	var key = fs.readFileSync(ARGV_KEY);
 	webServer = https.createServer({ cert: cert, key: key }, handleHttp);
-	console.log(
-		"Running in encrypted HTTPS (wss://) mode using: " +
-			ARGV_CERT +
-			", " +
-			ARGV_KEY
-	);
+	console.log("Running in encrypted HTTPS (wss://) mode using: " + ARGV_CERT + ", " + ARGV_KEY);
 } else {
 	/* http */
 	webServer = http.createServer(handleHttp);

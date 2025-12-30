@@ -145,16 +145,8 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					let {
-						name,
-						basepath,
-						group_id,
-						group_name,
-						project_type,
-						desc,
-						icon,
-						color
-					} = ctx.payload;
+					let { name, basepath, group_id, group_name, project_type, desc, icon, color } =
+						ctx.payload;
 
 					if ((await this.checkAuth(group_id, "group", "edit")) !== true) {
 						return (ctx.body = xU.$response(null, 405, "没有权限"));
@@ -450,9 +442,7 @@ module.exports = {
 						let { payload } = ctx;
 						// 拷贝项目的ID
 						let copyId = payload._id;
-						if (
-							(await this.checkAuth(payload.group_id, "group", "edit")) !== true
-						) {
+						if ((await this.checkAuth(payload.group_id, "group", "edit")) !== true) {
 							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
 
@@ -463,9 +453,7 @@ module.exports = {
 							uid: this.getUid(),
 							add_time: xU.time(),
 							up_time: xU.time(),
-							env: payload.env || [
-								{ name: "local", domain: "http://127.0.0.1" }
-							]
+							env: payload.env || [{ name: "local", domain: "http://127.0.0.1" }]
 						});
 
 						delete data._id;
@@ -499,9 +487,7 @@ module.exports = {
 								let catResult = await catInst.save(catDate);
 
 								// 获取每个集合中的interface
-								let interfaceData = await orm.interface.listByInterStatus(
-									item._id
-								);
+								let interfaceData = await orm.interface.listByInterStatus(item._id);
 
 								// 将interfaceData存到新的catID中
 								for (let key = 0; key < interfaceData.length; key++) {
@@ -648,9 +634,7 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						let { id: project_id, role, member_uids } = ctx.payload;
-						if (
-							(await this.checkAuth(project_id, "project", "edit")) !== true
-						) {
+						if ((await this.checkAuth(project_id, "project", "edit")) !== true) {
 							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
 
@@ -662,10 +646,7 @@ module.exports = {
 
 						for (let i = 0, len = member_uids.length; i < len; i++) {
 							let member_uid = member_uids[i];
-							let check = await orm.project.checkMemberRepeat(
-								project_id,
-								member_uid
-							);
+							let check = await orm.project.checkMemberRepeat(project_id, member_uid);
 							let userdata = await xU.getUserdata(member_uid, role);
 							if (check > 0) {
 								exist_members.push(userdata);
@@ -726,17 +707,12 @@ module.exports = {
 				async handler(ctx) {
 					try {
 						let { id: project_id, member_uid } = ctx.payload;
-						var check = await orm.project.checkMemberRepeat(
-							project_id,
-							member_uid
-						);
+						var check = await orm.project.checkMemberRepeat(project_id, member_uid);
 						if (check === 0) {
 							return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
 						}
 
-						if (
-							(await this.checkAuth(project_id, "project", "danger")) !== true
-						) {
+						if ((await this.checkAuth(project_id, "project", "danger")) !== true) {
 							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
 
@@ -790,16 +766,11 @@ module.exports = {
 						let params = ctx.request.body;
 						let { id: project_id, member_uid, role } = ctx.payload;
 
-						var check = await orm.project.checkMemberRepeat(
-							project_id,
-							member_uid
-						);
+						var check = await orm.project.checkMemberRepeat(project_id, member_uid);
 						if (check === 0) {
 							return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
 						}
-						if (
-							(await this.checkAuth(project_id, "project", "danger")) !== true
-						) {
+						if ((await this.checkAuth(project_id, "project", "danger")) !== true) {
 							return (ctx.body = xU.$response(null, 405, "没有权限"));
 						}
 

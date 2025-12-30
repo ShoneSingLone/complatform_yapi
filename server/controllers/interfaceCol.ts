@@ -42,9 +42,7 @@ class interfaceColController extends ControllerBase {
 
 				for (let j = 0; j < caseList.length; j++) {
 					let item = caseList[j].toObject();
-					let interfaceData = await this.modelInterface.getBaseinfo(
-						item.interface_id
-					);
+					let interfaceData = await this.modelInterface.getBaseinfo(item.interface_id);
 					item.path = interfaceData.path;
 					caseList[j] = item;
 				}
@@ -344,18 +342,16 @@ class interfaceColController extends ControllerBase {
 						params.project_id
 					}/interface/col/${params.col_id}">${
 						col.name
-					}</a> 下添加了测试用例 <a href="/project/${
-						params.project_id
-					}/interface/case/${result._id}">${params.casename}</a>`,
+					}</a> 下添加了测试用例 <a href="/project/${params.project_id}/interface/case/${
+						result._id
+					}">${params.casename}</a>`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
 					typeid: params.project_id
 				});
 			});
-			orm.project
-				.up(params.project_id, { up_time: new Date().getTime() })
-				.then();
+			orm.project.up(params.project_id, { up_time: new Date().getTime() }).then();
 
 			ctx.body = xU.$response(result);
 		} catch (e) {
@@ -397,9 +393,7 @@ class interfaceColController extends ControllerBase {
 			};
 
 			for (let i = 0; i < params.interface_list.length; i++) {
-				let interfaceData = await this.modelInterface.get(
-					params.interface_list[i]
-				);
+				let interfaceData = await this.modelInterface.get(params.interface_list[i]);
 				data.interface_id = params.interface_list[i];
 				data.casename = interfaceData.title;
 
@@ -439,9 +433,7 @@ class interfaceColController extends ControllerBase {
 				});
 			}
 
-			orm.project
-				.up(params.project_id, { up_time: new Date().getTime() })
-				.then();
+			orm.project.up(params.project_id, { up_time: new Date().getTime() }).then();
 
 			ctx.body = xU.$response("ok");
 		} catch (e) {
@@ -537,9 +529,7 @@ class interfaceColController extends ControllerBase {
 				newCaseList.push(newCase._id);
 			}
 
-			orm.project
-				.up(params.project_id, { up_time: new Date().getTime() })
-				.then();
+			orm.project.up(params.project_id, { up_time: new Date().getTime() }).then();
 			ctx.body = xU.$response("ok");
 		} catch (e) {
 			ctx.body = xU.$response(null, 402, e.message);
@@ -601,11 +591,9 @@ class interfaceColController extends ControllerBase {
 						caseData.project_id
 					}/interface/col/${caseData.col_id}">${
 						col.name
-					}</a> 更新了测试用例 <a href="/project/${
-						caseData.project_id
-					}/interface/case/${params.id}">${
-						params.casename || caseData.casename
-					}</a>`,
+					}</a> 更新了测试用例 <a href="/project/${caseData.project_id}/interface/case/${
+						params.id
+					}">${params.casename || caseData.casename}</a>`,
 					type: "project",
 					uid: this.getUid(),
 					username: username,
@@ -613,9 +601,7 @@ class interfaceColController extends ControllerBase {
 				});
 			});
 
-			orm.project
-				.up(caseData.project_id, { up_time: new Date().getTime() })
-				.then();
+			orm.project.up(caseData.project_id, { up_time: new Date().getTime() }).then();
 
 			ctx.body = xU.$response(result);
 		} catch (e) {
@@ -644,11 +630,7 @@ class interfaceColController extends ControllerBase {
 			result = result.toObject();
 			let data = await this.modelInterface.get(result.interface_id);
 			if (!data) {
-				return (ctx.body = xU.$response(
-					null,
-					400,
-					"找不到对应的接口，请联系管理员"
-				));
+				return (ctx.body = xU.$response(null, 400, "找不到对应的接口，请联系管理员"));
 			}
 			data = data.toObject();
 
@@ -656,21 +638,12 @@ class interfaceColController extends ControllerBase {
 			result.path = projectData.basepath + data.path;
 			result.method = data.method;
 			result.req_body_type = data.req_body_type;
-			result.req_headers = xU.handleParamsValue(
-				data.req_headers,
-				result.req_headers
-			);
+			result.req_headers = xU.handleParamsValue(data.req_headers, result.req_headers);
 			result.res_body = data.res_body;
 			result.res_body_type = data.res_body_type;
-			result.req_body_form = xU.handleParamsValue(
-				data.req_body_form,
-				result.req_body_form
-			);
+			result.req_body_form = xU.handleParamsValue(data.req_body_form, result.req_body_form);
 			result.req_query = xU.handleParamsValue(data.req_query, result.req_query);
-			result.req_params = xU.handleParamsValue(
-				data.req_params,
-				result.req_params
-			);
+			result.req_params = xU.handleParamsValue(data.req_params, result.req_params);
 			result.interface_up_time = data.up_time;
 			result.req_body_is_json_schema = data.req_body_is_json_schema;
 			result.res_body_is_json_schema = data.res_body_is_json_schema;
@@ -814,11 +787,7 @@ class interfaceColController extends ControllerBase {
 			}
 
 			if (colData.uid !== this.getUid()) {
-				let auth = await this.checkAuth(
-					colData.project_id,
-					"project",
-					"danger"
-				);
+				let auth = await this.checkAuth(colData.project_id, "project", "danger");
 				if (!auth) {
 					return (ctx.body = xU.$response(null, 400, "没有权限"));
 				}
@@ -855,11 +824,7 @@ class interfaceColController extends ControllerBase {
 			}
 
 			if (caseData.uid !== this.getUid()) {
-				let auth = await this.checkAuth(
-					caseData.project_id,
-					"project",
-					"danger"
-				);
+				let auth = await this.checkAuth(caseData.project_id, "project", "danger");
 				if (!auth) {
 					return (ctx.body = xU.$response(null, 400, "没有权限"));
 				}
@@ -882,9 +847,7 @@ class interfaceColController extends ControllerBase {
 				});
 			});
 
-			orm.project
-				.up(caseData.project_id, { up_time: new Date().getTime() })
-				.then();
+			orm.project.up(caseData.project_id, { up_time: new Date().getTime() }).then();
 			return (ctx.body = xU.$response(result));
 		} catch (e) {
 			xU.$response(null, 400, e.message);
@@ -905,9 +868,7 @@ class interfaceColController extends ControllerBase {
 	unique(array, compare) {
 		let hash = {};
 		let arr = array.reduce(function (item, next) {
-			hash[next[compare]]
-				? ""
-				: (hash[next[compare]] = true && item.push(next));
+			hash[next[compare]] ? "" : (hash[next[compare]] = true && item.push(next));
 			// console.log('item',item.project_id)
 			return item;
 		}, []);

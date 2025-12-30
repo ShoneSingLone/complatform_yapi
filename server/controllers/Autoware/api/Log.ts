@@ -42,8 +42,7 @@ module.exports = {
 					}
 				},
 				async handler(ctx) {
-					const { typeid, type, selectValue, page, size, query_params } =
-						ctx.payload;
+					const { typeid, type, selectValue, page, size, query_params } = ctx.payload;
 
 					if (!typeid) {
 						return (ctx.body = xU.$response(null, 400, "typeid不能为空"));
@@ -156,10 +155,7 @@ module.exports = {
 					try {
 						let { typeid, type, apis } = ctx.payload;
 						let list = [];
-						let projectDatas = await orm.project.getBaseInfo(
-							typeid,
-							"basepath"
-						);
+						let projectDatas = await orm.project.getBaseInfo(typeid, "basepath");
 
 						let basePath = projectDatas.toObject().basepath;
 

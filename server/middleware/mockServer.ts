@@ -120,6 +120,11 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 				ctx.set(prop, value);
 			});
 
+			// 设置响应状态码为被代理服务器返回的状态码
+			if (response.statusCode) {
+				ctx.status = response.statusCode;
+			}
+
 			try {
 				/* yapi 接口请求参数 */
 				ctx.set("httpRequestOptions", JSON.stringify(response.httpRequestOptions));

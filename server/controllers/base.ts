@@ -62,8 +62,7 @@ class ControllerBase {
 		// 如果前缀是 /api/open，执行 parse token 逻辑
 		if (
 			token &&
-			(openApiRouter.indexOf(ctx.path) > -1 ||
-				ctx.path.indexOf("/api/open/") === 0)
+			(openApiRouter.indexOf(ctx.path) > -1 || ctx.path.indexOf("/api/open/") === 0)
 		) {
 			let tokens = parseToken(token);
 
@@ -308,12 +307,7 @@ class ControllerBase {
 				return true;
 			}
 		} else if (action === "view") {
-			if (
-				role === "admin" ||
-				role === "owner" ||
-				role === "dev" ||
-				role === "guest"
-			) {
+			if (role === "admin" || role === "owner" || role === "dev" || role === "guest") {
 				return true;
 			}
 		}

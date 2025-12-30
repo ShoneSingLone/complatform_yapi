@@ -215,10 +215,7 @@ function bindHook(name, listener) {
 function emitHook(name) {
 	if (hooks[name] && typeof hooks[name] === "object") {
 		let args = Array.prototype.slice.call(arguments, 1);
-		if (
-			hooks[name].type === "single" &&
-			typeof hooks[name].listener === "function"
-		) {
+		if (hooks[name].type === "single" && typeof hooks[name].listener === "function") {
 			return Promise.resolve(hooks[name].listener.apply(xU, args));
 		}
 		let promiseAll = [];
@@ -237,39 +234,22 @@ xU.emitHookSync = emitHook;
 
 let pluginsConfig = initPlugins(yapi_configs.plugins, "plugin");
 pluginsConfig.forEach(plugin => {
-	if (!plugin || plugin.enable === false || plugin.server === false)
-		return null;
+	if (!plugin || plugin.enable === false || plugin.server === false) return null;
 
-	if (
-		!xU.fileExist(
-			path.join(PLUGIN_PATH, "yapi-plugin-" + plugin.name + "/server")
-		)
-	) {
-		throw new Error(
-			`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`
-		);
+	if (!xU.fileExist(path.join(PLUGIN_PATH, "yapi-plugin-" + plugin.name + "/server"))) {
+		throw new Error(`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`);
 	}
-	let pluginModule = require(path.join(
-		PLUGIN_PATH,
-		"yapi-plugin-" + plugin.name + "/server.js"
-	));
+	let pluginModule = require(path.join(PLUGIN_PATH, "yapi-plugin-" + plugin.name + "/server.js"));
 	pluginModule.call(xU, plugin.options);
 });
 
 extConfig = initPlugins(extConfig, "ext");
 
 extConfig.forEach(plugin => {
-	if (!plugin || plugin.enable === false || plugin.server === false)
-		return null;
+	if (!plugin || plugin.enable === false || plugin.server === false) return null;
 
-	if (
-		!xU.fileExist(
-			path.join(PLUGIN_SYSTEM_PATH, "yapi-plugin-" + plugin.name + "/server.js")
-		)
-	) {
-		throw new Error(
-			`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`
-		);
+	if (!xU.fileExist(path.join(PLUGIN_SYSTEM_PATH, "yapi-plugin-" + plugin.name + "/server.js"))) {
+		throw new Error(`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`);
 	}
 	let pluginModule = require(path.join(
 		PLUGIN_SYSTEM_PATH,

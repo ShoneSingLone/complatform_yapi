@@ -24,8 +24,7 @@ function postman(importDataModule) {
 		let arr = [];
 		for (let item in interData) {
 			// console.log(interData[item].url + "-" + interData[item].method);
-			let key =
-				interData[item].request.url + "|" + interData[item].request.method;
+			let key = interData[item].request.url + "|" + interData[item].request.method;
 			if (!obj[key]) {
 				arr.push(interData[item]);
 				obj[key] = true;
@@ -144,10 +143,7 @@ function postman(importDataModule) {
 			header;
 		data.request.headers.forEach(item => {
 			if (!item || !item.name || !item.value) return null;
-			if (
-				/content-type/i.test(item.name) &&
-				item.value.indexOf("application/json") === 0
-			) {
+			if (/content-type/i.test(item.name) && item.value.indexOf("application/json") === 0) {
 				reqType = "json";
 				header = "application/json";
 			} else if (
@@ -169,11 +165,7 @@ function postman(importDataModule) {
 			item = key[item];
 			if (item === "req_query") {
 				res[item] = handleReq_query.bind(this)(data.request[reflect[item]]);
-			} else if (
-				item === "req_body_form" &&
-				reqType === "form" &&
-				data.request.postData
-			) {
+			} else if (item === "req_body_form" && reqType === "form" && data.request.postData) {
 				if (header === "application/x-www-form-urlencoded") {
 					res[item] = handleReq_body_form.bind(this)(
 						data.request.postData[reflect[item]]
@@ -181,11 +173,7 @@ function postman(importDataModule) {
 				} else if (header === "multipart/form-data") {
 					res[item] = [];
 				}
-			} else if (
-				item === "req_body_other" &&
-				reqType === "json" &&
-				data.request.postData
-			) {
+			} else if (item === "req_body_other" && reqType === "json" && data.request.postData) {
 				res.req_body_is_json_schema = true;
 				res[item] = transformJsonToSchema(data.request.postData.text);
 			} else if (item === "req_headers") {
@@ -213,14 +201,9 @@ function postman(importDataModule) {
 				res[item] = "json";
 			} else if (item === "res_body") {
 				res.res_body_is_json_schema = true;
-				if (
-					data.response.content.encoding &&
-					data.response.content.encoding == "base64"
-				) {
+				if (data.response.content.encoding && data.response.content.encoding == "base64") {
 					//base64
-					res[item] = transformJsonToSchema(
-						unbase64(data.response.content.text)
-					);
+					res[item] = transformJsonToSchema(unbase64(data.response.content.text));
 				} else {
 					res[item] = transformJsonToSchema(data.response.content.text);
 				}

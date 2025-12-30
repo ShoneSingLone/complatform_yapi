@@ -138,8 +138,7 @@ function diffView(jsondiffpatch, formattersHtml, curDiffData) {
 			content: diffArray(old.req_headers, current.req_headers)
 		});
 
-		let oldValue =
-			current.req_body_type === "form" ? old.req_body_form : old.req_body_other;
+		let oldValue = current.req_body_type === "form" ? old.req_body_form : old.req_body_other;
 		if (current.req_body_type !== old.req_body_type) {
 			diffView.push({
 				title: "Request Type",

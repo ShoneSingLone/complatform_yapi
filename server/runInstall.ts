@@ -21,10 +21,7 @@
 		let passsalt = xU.randStr();
 		let result = userInst.save({
 			nickname: yapi_configs.adminAccount.indexOf("@"),
-			username: yapi_configs.adminAccount.substr(
-				0,
-				yapi_configs.adminAccount.indexOf("@")
-			),
+			username: yapi_configs.adminAccount.substr(0, yapi_configs.adminAccount.indexOf("@")),
 			email: yapi_configs.adminAccount,
 			password: xU.$saltIt(yapi_configs.adminPwd, passsalt),
 			passsalt: passsalt,
@@ -94,8 +91,7 @@
 				project_id: 1
 			});
 
-			let interfaceCaseCol =
-				mongoose.connection.db.collection("interface_case");
+			let interfaceCaseCol = mongoose.connection.db.collection("interface_case");
 			interfaceCaseCol.createIndex({
 				uid: 1
 			});

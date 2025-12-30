@@ -27,8 +27,7 @@ class statisMockController extends ControllerBase {
 			let groupCount = await orm.group.getGroupListCount();
 			let projectCount = await orm.project.getProjectListCount();
 			let interfaceCount = await orm.interface.getInterfaceListCount();
-			let interfaceCaseCount =
-				await orm.interfaceCase.getInterfaceCaseListCount();
+			let interfaceCaseCount = await orm.interfaceCase.getInterfaceCaseListCount();
 
 			return (ctx.body = xU.$response({
 				groupCount,

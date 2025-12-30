@@ -35,12 +35,9 @@ const middlewareWhenDev = () => async (ctx, next) => {
 		const duration = Date.now() - start;
 		xU.applog.info(ctx.path, ctx.ip, ctx.ips.join(","), `${duration}ms`);
 
-		xU._.each(
-			flattenDeep(yapiTips, { "response-time": `${duration}ms` }),
-			(value, key) => {
-				ctx.set(key, value);
-			}
-		);
+		xU._.each(flattenDeep(yapiTips, { "response-time": `${duration}ms` }), (value, key) => {
+			ctx.set(key, value);
+		});
 	} catch (error) {
 		console.error(error);
 		ctx.body = xU.$response(null, 503, error.message);

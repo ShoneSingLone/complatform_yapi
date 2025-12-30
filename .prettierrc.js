@@ -49,10 +49,7 @@ module.exports = {
 		},
 		{
 			// TypeScript文件
-			files: [
-				"*.ts",
-				"*.tsx"
-			],
+			files: ["*.ts", "*.tsx"],
 			options: {
 				// 语句末尾添加分号
 				semi: true,
@@ -64,10 +61,7 @@ module.exports = {
 		},
 		{
 			// JavaScript文件
-			files: [
-				"*.js",
-				"*.jsx"
-			],
+			files: ["*.js", "*.jsx"],
 			options: {
 				// 语句末尾添加分号
 				semi: true,
@@ -98,18 +92,12 @@ module.exports = {
 				// 总是换行以适应printWidth
 				proseWrap: "always",
 				// 制表符宽度为4
-				tabWidth: 4,
-				// 列表项缩进使用制表符
-				listItemIndent: "tab"
+				tabWidth: 4
 			}
 		},
 		{
 			// CSS相关文件
-			files: [
-				"*.css",
-				"*.less",
-				"*.scss"
-			],
+			files: ["*.css", "*.less", "*.scss"],
 			options: {
 				// 每行最大字符数120
 				printWidth: 120,

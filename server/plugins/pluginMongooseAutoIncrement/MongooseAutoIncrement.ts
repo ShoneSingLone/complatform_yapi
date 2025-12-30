@@ -105,9 +105,7 @@ exports.plugin = function (schema, options) {
 				if (err) return callback(err);
 				callback(
 					null,
-					counter === null
-						? settings.startAt
-						: counter.count + settings.incrementBy
+					counter === null ? settings.startAt : counter.count + settings.incrementBy
 				);
 			}
 		);

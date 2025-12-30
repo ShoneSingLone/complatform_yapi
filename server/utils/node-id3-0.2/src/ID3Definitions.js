@@ -181,19 +181,13 @@ const FRAME_IDENTIFIERS = {
 /**
  * Contains FRAME_IDENTIFIERS but frame alias / name swapped.
  */
-const FRAME_INTERNAL_IDENTIFIERS = Object.keys(FRAME_IDENTIFIERS).reduce(
-	(acc, versionKey) => {
-		acc[versionKey] = Object.keys(FRAME_IDENTIFIERS[versionKey]).reduce(
-			(acc, tagKey) => {
-				acc[FRAME_IDENTIFIERS[versionKey][tagKey]] = tagKey;
-				return acc;
-			},
-			{}
-		);
+const FRAME_INTERNAL_IDENTIFIERS = Object.keys(FRAME_IDENTIFIERS).reduce((acc, versionKey) => {
+	acc[versionKey] = Object.keys(FRAME_IDENTIFIERS[versionKey]).reduce((acc, tagKey) => {
+		acc[FRAME_IDENTIFIERS[versionKey][tagKey]] = tagKey;
 		return acc;
-	},
-	{}
-);
+	}, {});
+	return acc;
+}, {});
 
 const ID3_FRAME_OPTIONS = {
 	PIC: {

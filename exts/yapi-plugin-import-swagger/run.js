@@ -35,11 +35,7 @@ function openapi2swagger(data) {
 					Object.assign(res, res.content["application/hal+json"]);
 					delete res.content;
 				}
-				if (
-					res.content &&
-					res.content["*/*"] &&
-					typeof res.content["*/*"] === "object"
-				) {
+				if (res.content && res.content["*/*"] && typeof res.content["*/*"] === "object") {
 					Object.assign(res, res.content["*/*"]);
 					delete res.content;
 				}
@@ -213,12 +209,7 @@ function handleSwagger(data, originTags = []) {
 	}
 	//处理参数
 	function simpleJsonPathParse(key, json) {
-		if (
-			!key ||
-			typeof key !== "string" ||
-			key.indexOf("#/") !== 0 ||
-			key.length <= 2
-		) {
+		if (!key || typeof key !== "string" || key.indexOf("#/") !== 0 || key.length <= 2) {
 			return null;
 		}
 		let keys = key.substr(2).split("/");

@@ -124,10 +124,6 @@ const BABEL_PARSER = require("@babel/parser");
     ${types.join("\n\n")}
     `;
 
-	await fs.promises.writeFile(
-		path.resolve(__dirname, "customType.ts"),
-		content,
-		"utf-8"
-	);
+	await fs.promises.writeFile(path.resolve(__dirname, "customType.ts"), content, "utf-8");
 	throw new Error("🚀");
 })();

@@ -95,11 +95,7 @@ class openController extends ControllerBase {
 		}
 
 		if (!content && !ctx.params.url) {
-			return (ctx.body = xU.$response(
-				null,
-				40022,
-				"json 或者 url 参数，不能都为空"
-			));
+			return (ctx.body = xU.$response(null, 40022, "json 或者 url 参数，不能都为空"));
 		}
 		try {
 			let request = require("request"); // let Promise = require('Promise');
@@ -116,10 +112,7 @@ class openController extends ControllerBase {
 			};
 			if (ctx.params.url) {
 				content = await syncGet(ctx.params.url);
-			} else if (
-				content.indexOf("http://") === 0 ||
-				content.indexOf("https://") === 0
-			) {
+			} else if (content.indexOf("http://") === 0 || content.indexOf("https://") === 0) {
 				content = await syncGet(content);
 			}
 			content = JSON.parse(content);
@@ -231,9 +224,7 @@ class openController extends ControllerBase {
 				return key.project_id == item.project_id;
 			});
 
-			item.case_env = curEnvItem
-				? curEnvItem.curEnv || item.case_env
-				: item.case_env;
+			item.case_env = curEnvItem ? curEnvItem.curEnv || item.case_env : item.case_env;
 			item.req_headers = this.handleReqHeader(
 				item.req_headers,
 				projectEvn.env,
@@ -338,11 +329,7 @@ class openController extends ControllerBase {
 				options,
 				interfaceData.pre_script,
 				interfaceData.after_script,
-				createContex(
-					this.getUid(),
-					interfaceData.project_id,
-					interfaceData.interface_id
-				)
+				createContex(this.getUid(), interfaceData.project_id, interfaceData.interface_id)
 			);
 			let res = data.res;
 
@@ -372,12 +359,7 @@ class openController extends ControllerBase {
 				}
 			);
 
-			await this.handleScriptTest(
-				interfaceData,
-				responseData,
-				validRes,
-				requestParams
-			);
+			await this.handleScriptTest(interfaceData, responseData, validRes, requestParams);
 			result.params = requestParams;
 			if (validRes.length === 0) {
 				result.code = 0;

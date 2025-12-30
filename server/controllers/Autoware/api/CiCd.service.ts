@@ -102,17 +102,8 @@ async function initRepo({ git_repo, uid }) {
 			emit(`克隆仓库地址: \n${git_address}`);
 
 			// 执行克隆命令
-			xU.applog.info(
-				"[exeCmdCloneRepo] 执行命令: git clone",
-				AUTH_URL,
-				git_repo_root
-			);
-			await xU.executeCommand(
-				"git",
-				["clone", AUTH_URL, git_repo_root],
-				{},
-				emit
-			);
+			xU.applog.info("[exeCmdCloneRepo] 执行命令: git clone", AUTH_URL, git_repo_root);
+			await xU.executeCommand("git", ["clone", AUTH_URL, git_repo_root], {}, emit);
 			xU.applog.info("[exeCmdCloneRepo] 仓库克隆成功");
 			emit("克隆成功");
 		} catch (error) {
@@ -184,20 +175,12 @@ async function initRepo({ git_repo, uid }) {
 }
 
 async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
-	const {
-		_id: task_id,
-		cicd_id,
-		task_action,
-		task_output_type,
-		task_name
-	} = task;
+	const { _id: task_id, cicd_id, task_action, task_output_type, task_name } = task;
 	let task_log = [];
 	const emit = msg => {
 		const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
 		task_log.push(
-			`- ***${time}***  ${
-				xU._.isObject(msg) ? JSON.stringify(msg, null, 2) : String(msg)
-			}`
+			`- ***${time}***  ${xU._.isObject(msg) ? JSON.stringify(msg, null, 2) : String(msg)}`
 		);
 		const currentSocket = global.APP.socket.yapi.socket;
 		if (currentSocket) {
@@ -320,18 +303,12 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 			emit(TargetDirArray);
 
 			const repo_name = _n._.snakeCase(git_address);
-			const git_repo_archive_path = path.join(
-				TARGET_PREFIX,
-				"git_repo_archive",
-				repo_name
-			);
+			const git_repo_archive_path = path.join(TARGET_PREFIX, "git_repo_archive", repo_name);
 			_n.asyncSafeMakeDir(git_repo_archive_path);
 
 			var zip = new adm_zip();
 
-			const archive_name = `${commit_hash}_${task_name}_${dayjs().format(
-				"YYYYMMDD_HHmmss"
-			)}`;
+			const archive_name = `${commit_hash}_${task_name}_${dayjs().format("YYYYMMDD_HHmmss")}`;
 
 			xU._.each(TargetDirArray, ({ source, target }) => {
 				zip.addLocalFolder(path.resolve(git_repo_root, source), target);

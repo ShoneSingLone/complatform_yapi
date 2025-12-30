@@ -149,10 +149,7 @@ class CaseDesForm extends Component {
 				keys.push(item.name);
 			});
 
-		if (
-			constants.HTTP_METHOD[method.toUpperCase()].request_body &&
-			req_body_type === "form"
-		) {
+		if (constants.HTTP_METHOD[method.toUpperCase()].request_body && req_body_type === "form") {
 			req_body_form &&
 				Array.isArray(req_body_form) &&
 				req_body_form.forEach(item => {
@@ -479,11 +476,7 @@ class CaseDesForm extends Component {
 							<Icon type="plus" /> 添加 HTTP 头
 						</Button>
 					</FormItem>
-					<FormItem
-						{...formItemLayout}
-						wrapperCol={{ span: 17 }}
-						label="Body"
-						required>
+					<FormItem {...formItemLayout} wrapperCol={{ span: 17 }} label="Body" required>
 						<FormItem>
 							<AceEditor
 								className="pretty-editor"
