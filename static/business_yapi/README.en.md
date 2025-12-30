@@ -6,21 +6,21 @@ test tools, Mock services, and more.
 
 ## Key Features
 
--   **API Management**: Supports creating, editing, deleting, and categorizing APIs.
--   **Documentation Generation**: Automatically generates API documentation in Markdown and HTML formats.
--   **Testing Tools**: Provides API testing capabilities supporting multiple request methods and parameter types.
--   **Mock Services**: Supports generating Mock data, facilitating front-end development and testing.
--   **Multi-language Support**: Offers interface language switching for multiple languages.
--   **Permission Management**: Supports user permission management to ensure data security.
--   **Integration Tools**: Integrated with CI/CD tools for automated deployment and build processes.
+- **API Management**: Supports creating, editing, deleting, and categorizing APIs.
+- **Documentation Generation**: Automatically generates API documentation in Markdown and HTML formats.
+- **Testing Tools**: Provides API testing capabilities supporting multiple request methods and parameter types.
+- **Mock Services**: Supports generating Mock data, facilitating front-end development and testing.
+- **Multi-language Support**: Offers interface language switching for multiple languages.
+- **Permission Management**: Supports user permission management to ensure data security.
+- **Integration Tools**: Integrated with CI/CD tools for automated deployment and build processes.
 
 ## Installation Guide
 
 ### System Requirements
 
--   Node.js (v14.x or higher)
--   npm or yarn
--   MongoDB (for data storage)
+- Node.js (v14.x or higher)
+- npm or yarn
+- MongoDB (for data storage)
 
 ### Installation Steps
 
@@ -60,37 +60,36 @@ test tools, Mock services, and more.
 
 ### API Management
 
--   **Creating an API**: On the project page, click the "New API" button and fill in the basic information, request
-    parameters, response examples, etc.
--   **Editing an API**: Click the API name to enter the API detail page, where you can edit different sections of the
-    API.
--   **Deleting an API**: On the API detail page, click the "Delete" button to remove the API.
+- **Creating an API**: On the project page, click the "New API" button and fill in the basic information, request
+  parameters, response examples, etc.
+- **Editing an API**: Click the API name to enter the API detail page, where you can edit different sections of the API.
+- **Deleting an API**: On the API detail page, click the "Delete" button to remove the API.
 
 ### Documentation Generation
 
--   **Export Documentation**: On the API detail page, click the "Export" button and choose to export as Markdown or HTML
-    format.
--   **Online Viewing**: On the project page, click the "Documentation" button to view the generated API documentation
-    online.
+- **Export Documentation**: On the API detail page, click the "Export" button and choose to export as Markdown or HTML
+  format.
+- **Online Viewing**: On the project page, click the "Documentation" button to view the generated API documentation
+  online.
 
 ### Testing Features
 
--   **API Testing**: On the API detail page, click the "Test" button to send requests and view response results.
--   **Mock Services**: On the API detail page, click the "Mock" button to generate Mock data and perform tests.
+- **API Testing**: On the API detail page, click the "Test" button to send requests and view response results.
+- **Mock Services**: On the API detail page, click the "Mock" button to generate Mock data and perform tests.
 
 ### Multi-language Support
 
--   **Switching Languages**: On the top-right corner of the project page, click the language switch button to select a
-    different interface language.
+- **Switching Languages**: On the top-right corner of the project page, click the language switch button to select a
+  different interface language.
 
 ### Permission Management
 
--   **User Management**: In the project settings, you can manage user permissions and assign different roles and access
-    rights.
+- **User Management**: In the project settings, you can manage user permissions and assign different roles and access
+  rights.
 
 ### Integration Tools
 
--   **CI/CD Integration**: In the project settings, you can configure CI/CD tools for automated deployment and building.
+- **CI/CD Integration**: In the project settings, you can configure CI/CD tools for automated deployment and building.
 
 ## Contribution Guide
 
