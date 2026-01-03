@@ -301,37 +301,42 @@ module.exports = {
 							description: "文件夹路径",
 							type: "array",
 							items: "strig"
+						},
+						search_key: {
+							description: "搜索关键词",
+							type: "string",
+							optional: true
 						}
 					}
 				},
 				async handler(ctx) {
 					try {
 						if (this.$user?.role === "admin") {
-							let { path: pathStack } = ctx.payload;
+							let { path: pathStack, search_key } = ctx.payload;
 							pathStack = xU._.isArray(pathStack) ? pathStack : [];
 							const path_full_string = pathStack.join(path.sep);
 
 							let dirOrFileArray = [];
 
-							/* 如果路径不在预设的路径中，则返回设定的根目录路径 */
 							if (
 								!xU._.some(yapi_configs.RESOURCE_ASSETS_REMOTE, item =>
 									xU._.startsWith(path_full_string, item)
 								)
 							) {
-								dirOrFileArray = await Promise.all(
-									xU._.map(yapi_configs.RESOURCE_ASSETS_REMOTE, dirname =>
-										asyncResolvePathFileOrDir(dirname, [])
-									)
-								);
+								/* 如果路径不在预设的路径中，则返回设定的根目录路径 */
+								dirOrFileArray = await asyncResolvePathFileOrDir({
+									fileOrDirPath: yapi_configs.RESOURCE_ASSETS_REMOTE,
+									relativePathArray: [],
+									search_key
+								});
 							} else {
 								let dirlsArray = await fs.promises.readdir(path_full_string);
 
-								dirOrFileArray = await Promise.all(
-									xU._.map(dirlsArray, dirname => {
-										return asyncResolvePathFileOrDir(dirname, pathStack);
-									})
-								);
+								dirOrFileArray = await asyncResolvePathFileOrDir({
+									fileOrDirPath: dirlsArray,
+									relativePathArray: pathStack,
+									search_key
+								});
 							}
 
 							ctx.body = xU.$response(

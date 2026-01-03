@@ -366,7 +366,7 @@
 				<button
 					class="m3-icon-btn path-toggle"
 					@click="togglePathDrawer"
-					title="{{ isPathDrawerOpen ? '收起路径' : '展开路径' }}">
+					:title="isPathDrawerOpen ? '收起路径' : '展开路径'">
 					<span class="m3-icon"> <xIcon icon="_path" /> </span>
 				</button>
 				<xGap f />
@@ -385,9 +385,9 @@
 						<div class="m3-breadcrumb-item" @click="back(-1)">
 							<span class="m3-breadcrumb-text">root</span>
 						</div>
-						<template v-for="(item, index) in pathStack" :key="index">
-							<span class="m3-breadcrumb-separator">/</span>
-							<div class="m3-breadcrumb-item" @click="back(index)">
+						<template v-for="(item, index) in pathStack" >
+							<span class="m3-breadcrumb-separator" :key="item.name"> /</span>
+							<div class="m3-breadcrumb-item" @click="back(index)"  :key="item.name">
 								{{ item }}
 							</div>
 						</template>
@@ -423,7 +423,7 @@
 					>
 				</div>
 				<div class="search-box">
-					<input v-model.lazy="searchKey" placeholder="搜索" clearable class="input" />
+					<xItem v-model.lazy="searchKey" :configs="searchKeyConfigs" class="input" />
 				</div>
 			</div>
 		</div>
@@ -752,6 +752,10 @@ export default async function () {
 				resource: _.$lStorage["VIEW_EXPLORE_RESOURCE"] || [],
 				pathStack: _.$lStorage["VIEW_EXPLORE_PATH_STACK"] || [],
 				searchKey: "",
+				searchKeyConfigs: defItem({
+					placeholder: "搜索",
+					clearable: true
+				}),
 				sortConfig: savedSortConfig || defaultSortConfig, // 排序配置：支持多个字段
 				sortOptions: [
 					{ label: "名称", value: "name" },
@@ -766,12 +770,6 @@ export default async function () {
 		computed: {
 			cptResource() {
 				let filtered = this.resource;
-				// 搜索过滤
-				if (this.searchKey) {
-					filtered = _.filter(filtered, item =>
-						_.lowerCase(item.name || "").includes(this.searchKey)
-					);
-				}
 				// 组合排序处理
 				return [...filtered].sort((a, b) => {
 					// 按sortConfig中的字段顺序依次比较
@@ -851,11 +849,15 @@ export default async function () {
 		},
 		methods: {
 			back(index) {
+				// 保存当前搜索关键词
+				const currentSearchKey = this.searchKey;
 				if (index === -1) {
 					this.getResource({ path: [] });
 				} else {
 					this.getResource({ path: this.pathStack.slice(0, index + 1) });
 				}
+				// 恢复搜索关键词
+				this.searchKey = currentSearchKey;
 			},
 			// 切换路径抽屉的展开/收起状态
 			togglePathDrawer() {
@@ -934,10 +936,17 @@ export default async function () {
 				_.$lStorage["VIEW_EXPLORE_SORT_CONFIG"] = this.sortConfig;
 			},
 			async getResource(item = {}) {
-				this.pathStack = _.isArray(item?.path) ? item.path : [];
-				_.$loading(true);
+				 _.$loading(true);
 				try {
-					const res = await _api.yapi.resourceLs({ path: this.pathStack });
+					this.pathStack = item.path;
+					const is_directory = item.type === "directory"
+					// 检查是否是从搜索结果中点击的文件夹
+					// 如果是通过subdir事件调用（文件夹点击），则不携带搜索参数
+					const res = await _api.yapi.resourceLs({ 
+						path: this.pathStack,
+						search_key: is_directory?"":this.searchKey // 从搜索结果点击文件夹时不携带搜索参数
+					});
+
 					if (!res.errcode) {
 						this.resource = res.data;
 					}
@@ -962,7 +971,11 @@ export default async function () {
 			},
 			resource(val) {
 				_.$lStorage["VIEW_EXPLORE_RESOURCE"] = val;
-			}
+			},
+			// 监听搜索关键词变化，重新获取资源
+			searchKey: _.debounce(function() {
+				this.getResource({ path: this.pathStack });
+			}, 3000)
 		}
 	});
 }
