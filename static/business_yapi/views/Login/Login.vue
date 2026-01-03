@@ -65,7 +65,9 @@ body.app-mobile {
 		padding: 32px;
 		background-color: var(--color-white);
 		border-radius: var(--border-radius);
-		box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+		box-shadow:
+			0 4px 6px rgba(50, 50, 93, 0.11),
+			0 1px 3px rgba(0, 0, 0, 0.08);
 
 		.xTabs__nav-wrap::after {
 			opacity: 0;
@@ -108,7 +110,9 @@ body.app-mobile {
 		background-image: linear-gradient(-20deg, #21d4fd 0%, #b721ff 100%);
 		padding: 8px;
 		border-radius: 50%;
-		box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+		box-shadow:
+			0 4px 6px rgba(50, 50, 93, 0.11),
+			0 1px 3px rgba(0, 0, 0, 0.08);
 		animation: spin 5s linear infinite;
 
 		.yapi_logo {

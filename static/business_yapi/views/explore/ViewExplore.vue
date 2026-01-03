@@ -134,13 +134,13 @@
 		.m3-path-bar-actions {
 			padding: 6px 12px;
 		}
-		
+
 		.m3-icon-btn {
 			width: 32px;
 			height: 32px;
 			font-size: 14px;
 		}
-		
+
 		.m3-path-drawer-header,
 		.m3-path-drawer-content {
 			padding: 10px 12px;
@@ -357,32 +357,27 @@
 		<div class="m3-path-bar-container">
 			<!-- 外部操作按钮 -->
 			<div class="m3-path-bar-actions flex middle">
-				
-				<button 
-					class="m3-icon-btn toolbar-toggle" 
-					@click="toggleToolbar" 
-					title="切换工具栏"
-				>
-					<span class="m3-icon"> <xIcon icon="_sort"/> </span>
-
+				<button
+					class="m3-icon-btn toolbar-toggle"
+					@click="toggleToolbar"
+					title="切换工具栏">
+					<span class="m3-icon"> <xIcon icon="_sort" /> </span>
 				</button>
-				<button 
-					class="m3-icon-btn path-toggle" 
-					@click="togglePathDrawer" 
-					title="{{ isPathDrawerOpen ? '收起路径' : '展开路径' }}"
-				>
-					<span class="m3-icon"> <xIcon icon="_path"/> </span>
+				<button
+					class="m3-icon-btn path-toggle"
+					@click="togglePathDrawer"
+					title="{{ isPathDrawerOpen ? '收起路径' : '展开路径' }}">
+					<span class="m3-icon"> <xIcon icon="_path" /> </span>
 				</button>
-				<xGap f/>
-				<button 
-					class="m3-icon-btn refresh-btn" 
-					@click="refreshResource" 
-					title="刷新资源列表"
-				>
-					<span class="m3-icon"> <xIcon icon="_refresh_explor"/> </span>
+				<xGap f />
+				<button
+					class="m3-icon-btn refresh-btn"
+					@click="refreshResource"
+					title="刷新资源列表">
+					<span class="m3-icon"> <xIcon icon="_refresh_explor" /> </span>
 				</button>
 			</div>
-			
+
 			<!-- 折叠式路径抽屉 -->
 			<div class="m3-path-drawer" :class="{ 'is-open': isPathDrawerOpen }">
 				<div class="m3-path-drawer-content">
@@ -596,17 +591,20 @@ export default async function () {
 				const urlList = _.filter(vm.cptResource, { type: "img" });
 				const index = _.findIndex(urlList, { name });
 
-				_.$previewImgs({
-					urlList: _.map(urlList, resource => {
-						const uri = encodeURIComponent(JSON.stringify(resource.path));
-						return Vue._common_utils.appendToken(
-							_.$ajax.urlWrapper(`/api/resource/get?uri=${uri}`)
-						);
-					}),
-					index
-				},{
-					autoPlay:true
-				});
+				_.$previewImgs(
+					{
+						urlList: _.map(urlList, resource => {
+							const uri = encodeURIComponent(JSON.stringify(resource.path));
+							return Vue._common_utils.appendToken(
+								_.$ajax.urlWrapper(`/api/resource/get?uri=${uri}`)
+							);
+						}),
+						index
+					},
+					{
+						autoPlay: true
+					}
+				);
 			}
 			async function playVideo(current_resource) {
 				const { name } = current_resource;
