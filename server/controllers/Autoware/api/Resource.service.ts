@@ -182,7 +182,7 @@ async function asyncResolvePathFileOrDir({
 			relativePathArray
 		});
 		// 确保始终返回数组
-		return xU._.uniqBy(result ? [result] : [] /* path去重 */);
+		return xU._.uniqBy(result ? [result] : [], "path");
 	}
 }
 asyncResolvePathFileOrDir.types = {};

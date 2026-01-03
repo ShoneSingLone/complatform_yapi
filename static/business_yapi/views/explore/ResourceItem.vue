@@ -59,6 +59,15 @@
 		word-break: break-all;
 	}
 
+	.path {
+		flex-grow: 1;
+		margin-right: 10px;
+		word-break: break-all;
+		font-size: 12px;
+		color: #666;
+		margin-top: 2px;
+	}
+
 	.type {
 		font-size: 12px;
 		color: #888;
@@ -72,11 +81,13 @@
 	<div v-if="resource.type === 'img'" class="resource-item file" @click="clickItem">
 		<img :src="cpt_img_preview_src" alt="preview" />
 		<div class="name">{{ resource.name }}</div>
+		<div class="path">{{ resource.path.join('/') }}</div>
 		<div class="type">{{ resource.type }}</div>
 	</div>
 	<div v-else class="resource-item" :class="{ file: isShow(resource) }" @click="clickItem">
 		<img :src="getIcon(resource)" alt="icon" />
 		<div class="name">{{ resource.name }}</div>
+		<div class="path">{{ resource.path.join('/') }}</div>
 		<div class="type">{{ resource.type }}</div>
 	</div>
 </template>

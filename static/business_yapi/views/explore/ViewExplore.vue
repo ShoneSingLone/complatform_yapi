@@ -748,9 +748,15 @@ export default async function () {
 				{ field: "name", order: "asc" }
 			];
 
+			let pathStack = [];
+			if(_.$lStorage["VIEW_EXPLORE_PATH_STACK"]==="undefined"){
+				pathStack = [];
+			}
+
+
 			return {
 				resource: _.$lStorage["VIEW_EXPLORE_RESOURCE"] || [],
-				pathStack: _.$lStorage["VIEW_EXPLORE_PATH_STACK"] || [],
+				pathStack,
 				searchKey: "",
 				searchKeyConfigs: defItem({
 					placeholder: "搜索",

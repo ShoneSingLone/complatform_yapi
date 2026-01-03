@@ -53,12 +53,17 @@ export default async function ({ item, all_video_array, current_index, current_r
 					value: 1,
 					itemType: "xItemSelect",
 					options: [
+						{ label: "0.0625x", value: 0.0625 },
+						{ label: "0.25x", value: 0.25 },
 						{ label: "0.5x", value: 0.5 },
 						{ label: "0.75x", value: 0.75 },
 						{ label: "1x", value: 1 },
 						{ label: "1.25x", value: 1.25 },
 						{ label: "1.5x", value: 1.5 },
-						{ label: "2x", value: 2 }
+						{ label: "2x", value: 2 },
+						{ label: "4x", value: 4 },
+						{ label: "8x", value: 8 },
+						{ label: "16x", value: 16 },
 					],
 					onEmitValue(val) {
 						vm.changePlaybackRate();
@@ -117,6 +122,11 @@ export default async function ({ item, all_video_array, current_index, current_r
 					_.$msgError(item.name + ": " + this.videoSrc);
 				});
 
+				// 添加视频播放结束事件监听器，自动播放下一个视频
+				video.addEventListener("ended", event => {
+					this.playNext();
+				});
+
 				// 确保allVideos数据正确初始化
 				if (all_video_array.length > 0) {
 					video.src = this.videoSrc;
@@ -129,6 +139,8 @@ export default async function ({ item, all_video_array, current_index, current_r
 					console.log("updateVideoSrc - newSrc:", newSrc);
 					// 直接更新视频源并播放，这是更可靠的方式
 					video.src = newSrc;
+					// 应用当前播放速率
+					video.playbackRate = this.xItemPlaybackRate.value;
 					video.play().catch(error => {
 						console.warn("Autoplay failed:", error);
 					});
@@ -150,7 +162,11 @@ export default async function ({ item, all_video_array, current_index, current_r
 			changePlaybackRate() {
 				const video = this.$refs.refVideo;
 				if (video) {
-					video.playbackRate = this.xItemPlaybackRate.value;
+					// 限制播放速率在有效范围内（0.5到2之间）
+					const validRate = Math.max(0.5, Math.min(2, this.xItemPlaybackRate.value));
+					video.playbackRate = validRate;
+					// 更新值以保持同步
+					this.xItemPlaybackRate.value = validRate;
 				}
 			},
 			toggleFullscreen() {
