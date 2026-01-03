@@ -13,11 +13,7 @@ const { execProxyRequest } = require("./requestProxy");
  * 	ctx, modelInterface, interfaceData
  * }
  */
-async function ifSuccessfulStoreResponse({
-	ctx,
-	modelInterface,
-	interfaceData
-}) {
+async function ifSuccessfulStoreResponse({ ctx, modelInterface, interfaceData }) {
 	if (interfaceData.resBackupJson) {
 		return;
 	}
@@ -118,18 +114,20 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 			xU._.each(response.headers, (value, prop) => {
 				/* TODO: */
 				/* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
-				if (prop === "transfer-encoding") {
+				if (prop === "transfer-encoding" || prop === "content-length") {
 					return;
 				}
 				ctx.set(prop, value);
 			});
 
+			// 设置响应状态码为被代理服务器返回的状态码
+			if (response.statusCode) {
+				ctx.status = response.statusCode;
+			}
+
 			try {
 				/* yapi 接口请求参数 */
-				ctx.set(
-					"httpRequestOptions",
-					JSON.stringify(response.httpRequestOptions)
-				);
+				ctx.set("httpRequestOptions", JSON.stringify(response.httpRequestOptions));
 			} catch (error) {
 				console.error(error);
 			}
@@ -216,14 +214,8 @@ function parseCookie(str) {
 function handleCorsRequest(ctx) {
 	let header = ctx.request.header;
 	ctx.set("Access-Control-Allow-Origin", header.origin);
-	ctx.set(
-		"Access-Control-Allow-Methods",
-		"GET, POST, PUT, DELETE, HEADER, PATCH, OPTIONS"
-	);
-	ctx.set(
-		"Access-Control-Allow-Headers",
-		header["access-control-request-headers"]
-	);
+	ctx.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, HEADER, PATCH, OPTIONS");
+	ctx.set("Access-Control-Allow-Headers", header["access-control-request-headers"]);
 	ctx.set("Access-Control-Allow-Credentials", true);
 	ctx.set("Access-Control-Max-Age", 1728000);
 	ctx.body = "ok";
@@ -247,10 +239,7 @@ function mockValidator(interfaceData, ctx) {
 		}
 	}
 	// form 表单判断
-	if (
-		xU.var.HTTP_METHOD[method].request_body &&
-		interfaceData.req_body_type === "form"
-	) {
+	if (xU.var.HTTP_METHOD[method].request_body && interfaceData.req_body_type === "form") {
 		for (j = 0, len = interfaceData.req_body_form.length; j < len; j++) {
 			let curForm = interfaceData.req_body_form[j];
 			if (curForm && typeof curForm === "object" && curForm.required === "1") {
@@ -279,14 +268,9 @@ function mockValidator(interfaceData, ctx) {
 	}
 	if (noRequiredArr.length > 0 || (validResult && !validResult.valid)) {
 		let message = `错误信息：`;
+		message += noRequiredArr.length > 0 ? `缺少必须字段 ${noRequiredArr.join(",")}  ` : "";
 		message +=
-			noRequiredArr.length > 0
-				? `缺少必须字段 ${noRequiredArr.join(",")}  `
-				: "";
-		message +=
-			validResult && !validResult.valid
-				? `schema 验证请求参数 ${validResult.message}`
-				: "";
+			validResult && !validResult.valid ? `schema 验证请求参数 ${validResult.message}` : "";
 
 		return {
 			valid: false,
@@ -361,11 +345,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			return String(_path).replace(/\/\//g, "/");
 		})();
 		/*直接通过url获取接口信息*/
-		interface_array = await orm.interface.getByPath(
-			project._id,
-			REAL_URL_PATH,
-			ctx.method
-		);
+		interface_array = await orm.interface.getByPath(project._id, REAL_URL_PATH, ctx.method);
 
 		//处理query_path情况  url 中有 ?params=xxx
 		if (!interface_array) {
@@ -427,10 +407,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 		// 必填字段是否填写好
 		if (project.strice) {
-			const validResult = mockValidator(
-				current_request_interface_data_in_yapi_db,
-				ctx
-			);
+			const validResult = mockValidator(current_request_interface_data_in_yapi_db, ctx);
 			if (!validResult.valid) {
 				return (ctx.body = xU.$response(
 					null,
@@ -443,8 +420,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		/* 是否启用代理，在局域网中访问其他主机 */
 		const isRunWithYapiProxy = (() => {
 			return (
-				current_request_interface_data_in_yapi_db?.isProxy ||
-				ctx.headers["yapi-run-test"]
+				current_request_interface_data_in_yapi_db?.isProxy || ctx.headers["yapi-run-test"]
 			);
 		})();
 
@@ -482,8 +458,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		try {
 			if (current_request_interface_data_in_yapi_db.res_body_type === "json") {
 				const isUseJsonSchema =
-					current_request_interface_data_in_yapi_db.res_body_is_json_schema ===
-					true;
+					current_request_interface_data_in_yapi_db.res_body_is_json_schema === true;
 
 				if (isUseJsonSchema) {
 					//json-schema
@@ -499,8 +474,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 					if (
 						xU._.isString(ctx.request.header["content-type"]) &&
-						ctx.request.header["content-type"].indexOf("multipart/form-data") >
-							-1
+						ctx.request.header["content-type"].indexOf("multipart/form-data") > -1
 					) {
 						ctx.request.body = ctx.request.body.fields;
 					}
@@ -554,10 +528,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 				for (let i in context.resHeader) {
 					let cookie;
 					if (i === "Set-Cookie") {
-						if (
-							context.resHeader[i] &&
-							typeof context.resHeader[i] === "string"
-						) {
+						if (context.resHeader[i] && typeof context.resHeader[i] === "string") {
 							cookie = parseCookie(context.resHeader[i]);
 							if (cookie && typeof cookie === "object") {
 								customCookies(ctx, cookie.name, cookie.value, {
@@ -565,10 +536,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 									httpOnly: false
 								});
 							}
-						} else if (
-							context.resHeader[i] &&
-							Array.isArray(context.resHeader[i])
-						) {
+						} else if (context.resHeader[i] && Array.isArray(context.resHeader[i])) {
 							context.resHeader[i].forEach(item => {
 								cookie = parseCookie(item);
 								if (cookie && typeof cookie === "object") {
@@ -590,9 +558,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 			/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
 			/* isUseBackup */
 			(() => {
-				if (
-					current_request_interface_data_in_yapi_db.res_body_type === "backup"
-				) {
+				if (current_request_interface_data_in_yapi_db.res_body_type === "backup") {
 					try {
 						const getJsonFn = new Function(
 							`return ${current_request_interface_data_in_yapi_db.resBackupJson}`
@@ -601,8 +567,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 					} catch (error) {
 						/* 直接使用备份数据，不需要添加额外的 */
 						ctx.type = "html";
-						responseByMock =
-							current_request_interface_data_in_yapi_db.resBackupJson;
+						responseByMock = current_request_interface_data_in_yapi_db.resBackupJson;
 						return;
 					}
 				} else if (xU._.isPlainObject(context.mockJson)) {

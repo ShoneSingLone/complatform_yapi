@@ -69,8 +69,7 @@ class WikiPage extends Component {
 	// 处理多人编辑冲突问题
 	handleConflict = () => {
 		// console.log(location)
-		let domain =
-			location.hostname + (location.port !== "" ? ":" + location.port : "");
+		let domain = location.hostname + (location.port !== "" ? ":" + location.port : "");
 		let s;
 		//因后端 node 仅支持 ws， 暂不支持 wss
 		let wsProtocol = location.protocol === "https:" ? "wss" : "ws";
@@ -205,16 +204,8 @@ class WikiPage extends Component {
 	};
 
 	render() {
-		const {
-			isEditor,
-			username,
-			editorTime,
-			notice,
-			uid,
-			status,
-			editUid,
-			editName
-		} = this.state;
+		const { isEditor, username, editorTime, notice, uid, status, editUid, editName } =
+			this.state;
 		const editorEable =
 			this.props.projectMsg.role === "admin" ||
 			this.props.projectMsg.role === "owner" ||

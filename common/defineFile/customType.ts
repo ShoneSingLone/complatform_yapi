@@ -254,11 +254,7 @@ export type t_orm = {
 
 */
 
-		search: (
-			condition: object,
-			orderBy?: object,
-			select?: string
-		) => Promise<any>;
+		search: (condition: object, orderBy?: object, select?: string) => Promise<any>;
 	};
 	Redis: {
 		getName: (...args: any) => Promise<any>;

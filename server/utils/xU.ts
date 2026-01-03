@@ -1,10 +1,7 @@
 const { SparkMD5 } = require("./SparkMD5");
 const { async_get_local_repo_branch_info } = require("./git_local_branch_info");
 const { spawn } = require("child_process");
-const {
-	SOCKET_TYPE_HANDLERS,
-	SSE_TYPE
-} = require("../middleware/websocket.handlers");
+const { SOCKET_TYPE_HANDLERS, SSE_TYPE } = require("../middleware/websocket.handlers");
 const _ = require("lodash");
 const CryptoJS = require("crypto-js");
 const dayjs = require("dayjs");
@@ -297,12 +294,10 @@ const STATIC_VAR = {
 		{ name: "打乱数组", mock: "@shuffle" },
 		{ name: "协议", mock: "@protocol" }
 	],
-	IP_REGEXP:
-		/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/,
+	IP_REGEXP: /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/,
 	docHref: {
 		adv_mock_case: "https://hellosean1025.github.io/yapi/documents/mock.html",
-		adv_mock_script:
-			"https://hellosean1025.github.io/yapi/documents/adv_mock.html"
+		adv_mock_script: "https://hellosean1025.github.io/yapi/documents/adv_mock.html"
 	}
 };
 
@@ -336,12 +331,9 @@ async function getSystemDiskSize() {
 					total = aDrives[i].blocks;
 					//总量
 					const total_label =
-						"total " +
-						(aDrives[i].blocks / 1024 / 1024 / 1024).toFixed(2) +
-						"gb";
+						"total " + (aDrives[i].blocks / 1024 / 1024 / 1024).toFixed(2) + "gb";
 					//已使用
-					var used =
-						"used " + (aDrives[i].used / 1024 / 1024 / 1024).toFixed(0) + "gb";
+					var used = "used " + (aDrives[i].used / 1024 / 1024 / 1024).toFixed(0) + "gb";
 					//可用
 					var available =
 						"available " +
@@ -502,10 +494,7 @@ function log(msg, type = "info") {
 	/* let date = new Date(); let year = date.getFullYear();
   let month = date.getMonth() + 1; */
 	const date = Date.now();
-	let logfile = path.join(
-		APP_LOG_DIR,
-		`${dayjs(date).format("YYYY-MM-DD_HH")}.log`
-	);
+	let logfile = path.join(APP_LOG_DIR, `${dayjs(date).format("YYYY-MM-DD_HH")}.log`);
 	const errorContent = `===\n【${dayjs(date).format(
 		"YYYY-MM-DD HH:mm:ss"
 	)}-${date}】：【${type}】：${msg} ${errorThrowAt}\n===`;
@@ -563,9 +552,7 @@ function randStr() {
 function getIp(ctx) {
 	let ip;
 	try {
-		ip = ctx.ip.match(/\d+.\d+.\d+.\d+/)
-			? ctx.ip.match(/\d+.\d+.\d+.\d+/)[0]
-			: "localhost";
+		ip = ctx.ip.match(/\d+.\d+.\d+.\d+/) ? ctx.ip.match(/\d+.\d+.\d+.\d+/)[0] : "localhost";
 	} catch (e) {
 		ip = null;
 	}
@@ -748,12 +735,7 @@ function rtrim(str) {
  * @return Object {a: 'ab', b: 123}
  */
 function ensureParamsType(params, keys) {
-	if (
-		!params ||
-		typeof params !== "object" ||
-		!keys ||
-		typeof keys !== "object"
-	) {
+	if (!params || typeof params !== "object" || !keys || typeof keys !== "object") {
 		return false;
 	}
 
@@ -825,30 +807,13 @@ async function save_log(params) {
  * @param {*} ws enable ws
  */
 
-function createAction(
-	router,
-	baseurl,
-	routerController,
-	action,
-	path,
-	method,
-	ws
-) {
+function createAction(router, baseurl, routerController, action, path, method, ws) {
 	router[method](baseurl + path, async ctx => {
 		let inst = new routerController(ctx);
 		try {
 			await inst.init(ctx);
-			ctx.params = Object.assign(
-				{},
-				ctx.request.query,
-				ctx.request.body,
-				ctx.params
-			);
-			if (
-				inst.schemaMap &&
-				typeof inst.schemaMap === "object" &&
-				inst.schemaMap[action]
-			) {
+			ctx.params = Object.assign({}, ctx.request.query, ctx.request.body, ctx.params);
+			if (inst.schemaMap && typeof inst.schemaMap === "object" && inst.schemaMap[action]) {
 				let validResult = xU.validateParams(inst.schemaMap[action], ctx.params);
 
 				if (!validResult.valid) {
@@ -920,15 +885,9 @@ async function getCaseList(id) {
 		result.method = data.method;
 		result.title = data.title;
 		result.req_body_type = data.req_body_type;
-		result.req_headers = handleParamsValue(
-			data.req_headers,
-			result.req_headers
-		);
+		result.req_headers = handleParamsValue(data.req_headers, result.req_headers);
 		result.res_body_type = data.res_body_type;
-		result.req_body_form = handleParamsValue(
-			data.req_body_form,
-			result.req_body_form
-		);
+		result.req_body_form = handleParamsValue(data.req_body_form, result.req_body_form);
 		result.req_query = handleParamsValue(data.req_query, result.req_query);
 		result.req_params = handleParamsValue(data.req_params, result.req_params);
 		resultList[index] = result;

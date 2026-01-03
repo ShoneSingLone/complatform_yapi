@@ -207,10 +207,7 @@ class projectController extends ControllerBase {
 		try {
 			let params = ctx.request.body;
 
-			var check = await orm.project.checkMemberRepeat(
-				params.id,
-				params.member_uid
-			);
+			var check = await orm.project.checkMemberRepeat(params.id, params.member_uid);
 			if (check === 0) {
 				return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
 			}

@@ -27,10 +27,7 @@ function removeTagsFromBuffer(data) {
 
 	if (data.length >= framePosition + 10) {
 		const size = ID3Util.decodeSize(encodedSize);
-		return Buffer.concat([
-			data.slice(0, framePosition),
-			data.slice(framePosition + size + 10)
-		]);
+		return Buffer.concat([data.slice(0, framePosition), data.slice(framePosition + size + 10)]);
 	}
 
 	return data;
@@ -186,11 +183,7 @@ function update(tags, filebuffer, options, fn) {
 		Object.keys(rawTags).map(frameIdentifier => {
 			const options = ID3Util.getSpecOptions(frameIdentifier, 3);
 			const cCompare = {};
-			if (
-				options.multiple &&
-				currentTags[frameIdentifier] &&
-				rawTags[frameIdentifier]
-			) {
+			if (options.multiple && currentTags[frameIdentifier] && rawTags[frameIdentifier]) {
 				if (options.updateCompareKey) {
 					currentTags[frameIdentifier].forEach((cTag, index) => {
 						cCompare[cTag[options.updateCompareKey]] = index;
@@ -316,8 +309,7 @@ function makePromise(fn, reorderParameters = fn => (a, b) => fn(a, b)) {
 const PromiseExport = {
 	create: tags => makePromise(create.bind(null, tags), makeSwapParameters),
 	write: (tags, file) => makePromise(write.bind(null, tags, file)),
-	update: (tags, file, options) =>
-		makePromise(update.bind(null, tags, file, options)),
+	update: (tags, file, options) => makePromise(update.bind(null, tags, file, options)),
 	read: (file, options) => makePromise(read.bind(null, file, options)),
 	removeTags: filepath => makePromise(removeTags.bind(null, filepath))
 };

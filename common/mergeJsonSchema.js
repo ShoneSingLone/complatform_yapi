@@ -1,7 +1,5 @@
 function isPlainObject(obj) {
-	return obj
-		? typeof obj === "object" && Object.getPrototypeOf(obj) === Object.prototype
-		: false;
+	return obj ? typeof obj === "object" && Object.getPrototypeOf(obj) === Object.prototype : false;
 }
 
 function handleProperties(sourceProperties, mergeProperties) {
@@ -12,10 +10,7 @@ function handleProperties(sourceProperties, mergeProperties) {
 		return mergeProperties;
 	}
 	Object.keys(mergeProperties).forEach(key => {
-		mergeProperties[key] = handleSchema(
-			sourceProperties[key],
-			mergeProperties[key]
-		);
+		mergeProperties[key] = handleSchema(sourceProperties[key], mergeProperties[key]);
 	});
 	return mergeProperties;
 }

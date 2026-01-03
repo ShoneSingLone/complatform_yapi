@@ -15,9 +15,7 @@ async function main() {
 		Object.entries(res).map(async ([key, targetResource]) => {
 			try {
 				if (!targetResource.basecode) {
-					let targetPath = path.resolve(
-						`${TARGET_PREFIX}${targetResource.path}`
-					);
+					let targetPath = path.resolve(`${TARGET_PREFIX}${targetResource.path}`);
 					const isExist = xU.fileExist(targetPath);
 					if (isExist) {
 						console.log("targetPath", targetPath);

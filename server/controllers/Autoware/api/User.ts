@@ -163,10 +163,7 @@ module.exports = {
 						return (ctx.body = xU.$response(null, 402, "没有权限"));
 					}
 
-					if (
-						this.getRole() !== "admin" ||
-						userWhoWillBeModifyPwd.role === "admin"
-					) {
+					if (this.getRole() !== "admin" || userWhoWillBeModifyPwd.role === "admin") {
 						if (!old_password) {
 							return (ctx.body = xU.$response(null, 400, "旧密码不能为空"));
 						}
@@ -371,11 +368,7 @@ module.exports = {
 						let verifyCode = await verifyCodeInst.findByEmail(email);
 						if (verifyCode?.code) {
 							/* 验证码未使用 */
-							return (ctx.body = xU.$response(
-								null,
-								405,
-								"验证码未使用，请检查邮箱"
-							));
+							return (ctx.body = xU.$response(null, 405, "验证码未使用，请检查邮箱"));
 						} else {
 							try {
 								const msg = await sendNewVarifyCode();
@@ -421,11 +414,7 @@ module.exports = {
 				async handler(ctx) {
 					//注册
 					if (yapi_configs.isCloseRegister) {
-						return (ctx.body = xU.$response(
-							null,
-							400,
-							"禁止注册，请联系管理员"
-						));
+						return (ctx.body = xU.$response(null, 400, "禁止注册，请联系管理员"));
 					}
 					let userInst = orm.user;
 					//获取请求的参数,检查是否存在用户名和密码
@@ -439,11 +428,7 @@ module.exports = {
 					if (payload.email) {
 						let result = await orm.user.findByEmail(payload.email);
 						if (result) {
-							return (ctx.body = xU.$response(
-								null,
-								405,
-								"用户已存在，请直接登录"
-							));
+							return (ctx.body = xU.$response(null, 405, "用户已存在，请直接登录"));
 						}
 					} else {
 						return (ctx.body = xU.$response(null, 400, "邮箱不能为空"));
@@ -460,11 +445,7 @@ module.exports = {
 						let verifyCode = await verifyCodeInst.findByEmail(payload.email);
 						if (verifyCode) {
 							if (verifyCode.code !== payload.code) {
-								return (ctx.body = xU.$response(
-									null,
-									400,
-									"验证码不匹配，请确认"
-								));
+								return (ctx.body = xU.$response(null, 400, "验证码不匹配，请确认"));
 							}
 						} else {
 							return (ctx.body = xU.$response(null, 400, "请重新获取验证码"));
@@ -555,11 +536,7 @@ module.exports = {
 							let result = await userInst.del(id);
 							ctx.body = xU.$response(result);
 						} else {
-							return (ctx.body = xU.$response(
-								null,
-								402,
-								"Without permission."
-							));
+							return (ctx.body = xU.$response(null, 402, "Without permission."));
 						}
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);
@@ -788,11 +765,7 @@ module.exports = {
 						}
 						let strLength = basecode.length;
 						if (parseInt(strLength - (strLength / 8) * 2) > 200000) {
-							return (ctx.body = xU.$response(
-								null,
-								400,
-								"图片大小不能超过200kb"
-							));
+							return (ctx.body = xU.$response(null, 400, "图片大小不能超过200kb"));
 						}
 
 						let result = await orm.avatar.upsert({

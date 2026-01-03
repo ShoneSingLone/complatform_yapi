@@ -30,9 +30,7 @@ module.exports.GENERIC_URL = {
 			return null;
 		}
 
-		return new ID3FrameBuilder(frameIdentifier)
-			.appendStaticValue(data)
-			.getBuffer();
+		return new ID3FrameBuilder(frameIdentifier).appendStaticValue(data).getBuffer();
 	},
 	read: buffer => {
 		const reader = new ID3FrameReader(buffer);
@@ -281,9 +279,7 @@ module.exports.PRIV = {
 				new ID3FrameBuilder("PRIV")
 					.appendNullTerminatedValue(priv.ownerIdentifier)
 					.appendStaticValue(
-						priv.data instanceof Buffer
-							? priv.data
-							: Buffer.from(priv.data, "utf8")
+						priv.data instanceof Buffer ? priv.data : Buffer.from(priv.data, "utf8")
 					)
 					.getBuffer()
 			)
@@ -413,9 +409,7 @@ module.exports.CTOC = {
 						builder.appendNullTerminatedValue(el);
 					});
 					if (toc.tags) {
-						builder.appendStaticValue(
-							ID3Helpers.createBufferFromTags(toc.tags)
-						);
+						builder.appendStaticValue(ID3Helpers.createBufferFromTags(toc.tags));
 					}
 					return builder.getBuffer();
 				})
@@ -470,14 +464,9 @@ module.exports.WXXX = {
 
 module.exports.ETCO = {
 	create: data => {
-		const builder = new ID3FrameBuilder("ETCO").appendStaticNumber(
-			data.timeStampFormat,
-			1
-		);
+		const builder = new ID3FrameBuilder("ETCO").appendStaticNumber(data.timeStampFormat, 1);
 		data.keyEvents.forEach(keyEvent => {
-			builder
-				.appendStaticNumber(keyEvent.type, 1)
-				.appendStaticNumber(keyEvent.timeStamp, 4);
+			builder.appendStaticNumber(keyEvent.type, 1).appendStaticNumber(keyEvent.timeStamp, 4);
 		});
 
 		return builder.getBuffer();
@@ -549,8 +538,7 @@ module.exports.COMR = {
 						picture = fs.readFileSync(comr.sellerLogo.picture);
 					}
 					let mimeType =
-						comr.sellerLogo.mimeType ||
-						ID3Util.getPictureMimeTypeFromBuffer(picture);
+						comr.sellerLogo.mimeType || ID3Util.getPictureMimeTypeFromBuffer(picture);
 					// Only image/png and image/jpeg allowed
 					if (mimeType !== "image/png" && "image/jpeg") {
 						mimeType = "image/";

@@ -119,8 +119,7 @@ exports.swaggerJSON = {
 			get: {
 				tags: ["pet"],
 				summary: "Finds Pets by status",
-				description:
-					"Multiple status values can be provided with comma separated strings",
+				description: "Multiple status values can be provided with comma separated strings",
 				operationId: "findPetsByStatus",
 				produces: ["application/json", "application/xml"],
 				parameters: [
@@ -413,8 +412,7 @@ exports.swaggerJSON = {
 					{
 						name: "username",
 						in: "path",
-						description:
-							"The name that needs to be fetched. Use user1 for testing. ",
+						description: "The name that needs to be fetched. Use user1 for testing. ",
 						required: true,
 						type: "string"
 					}

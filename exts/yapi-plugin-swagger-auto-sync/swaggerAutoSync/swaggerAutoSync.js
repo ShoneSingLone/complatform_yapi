@@ -2,16 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { formatTime } from "client/common.js";
-import {
-	Form,
-	Switch,
-	Button,
-	Icon,
-	Tooltip,
-	message,
-	Input,
-	Select
-} from "antd";
+import { Form, Switch, Button, Icon, Tooltip, message, Input, Select } from "antd";
 import { handleSwaggerUrlData } from "client/reducer/modules/project";
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -115,9 +106,7 @@ export default class ProjectInterfaceSync extends Component {
 
 	async getSyncData() {
 		let projectId = this.props.projectMsg._id;
-		let result = await axios.get(
-			"/api/plugin/autoSync/get?project_id=" + projectId
-		);
+		let result = await axios.get("/api/plugin/autoSync/get?project_id=" + projectId);
 		if (result.data.errcode === 0) {
 			if (result.data.data) {
 				this.setState({
@@ -181,8 +170,9 @@ export default class ProjectInterfaceSync extends Component {
 												<br />
 												<h3 style={{ color: "white" }}>智能合并</h3>
 												<p>
-													已存在的接口，将合并返回数据的 response，适用于导入了
-													swagger 数据，保留对数据结构的改动
+													已存在的接口，将合并返回数据的
+													response，适用于导入了 swagger
+													数据，保留对数据结构的改动
 												</p>
 												<br />
 												<h3 style={{ color: "white" }}>完全覆盖</h3>

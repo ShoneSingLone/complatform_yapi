@@ -96,10 +96,7 @@ const SchemaObject = (data, key) => {
 			required: required.indexOf(name) != -1
 		};
 
-		if (
-			value.type === "object" ||
-			(_.isUndefined(value.type) && _.isArray(optionForm))
-		) {
+		if (value.type === "object" || (_.isUndefined(value.type) && _.isArray(optionForm))) {
 			item = Object.assign({}, item, { type: "object", children: optionForm });
 			delete item.sub;
 		} else {

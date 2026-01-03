@@ -82,10 +82,7 @@ class exportSwaggerController extends ControllerBase {
 					let data = this.handleExistId(list);
 					let model = await convertToSwaggerV2Model(data);
 					tp = JSON.stringify(model, null, 2);
-					ctx.set(
-						"Content-Disposition",
-						`attachment; filename=swaggerApi.json`
-					);
+					ctx.set("Content-Disposition", `attachment; filename=swaggerApi.json`);
 					return (ctx.body = tp);
 				}
 				default: {

@@ -75,11 +75,7 @@ function CompareObj(objA, objB, flag) {
 exports.jsonEqual = Compare;
 
 exports.isDeepMatch = function (obj, properties) {
-	if (
-		!properties ||
-		typeof properties !== "object" ||
-		Object.keys(properties).length === 0
-	) {
+	if (!properties || typeof properties !== "object" || Object.keys(properties).length === 0) {
 		return true;
 	}
 

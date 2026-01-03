@@ -46,9 +46,8 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 			const FORM_DATA_LABEL = "multipart/form-data";
 
 			if (CONTENT_TYPE) {
-				const isApplication = xU._.some(
-					[URLENCODED_LABEL, APPLICATION_JSON_LABEL],
-					label => CONTENT_TYPE.includes(label)
+				const isApplication = xU._.some([URLENCODED_LABEL, APPLICATION_JSON_LABEL], label =>
+					CONTENT_TYPE.includes(label)
 				);
 
 				if (isApplication) {
@@ -72,18 +71,11 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 
 					xU._.each(bodyFiles, (content, key) => {
 						requestBody += `${boundary}Content-Type: application/octet-stream\r\nContent-Disposition: form-data; name="${key}";filename="${content.name}"\r\nContent-Transfer-Encoding: binary\r\n\r\n`;
-						filesLength +=
-							Buffer.byteLength(requestBody, "utf-8") + content.size;
+						filesLength += Buffer.byteLength(requestBody, "utf-8") + content.size;
 					});
 
-					upsertHeader(
-						"Content-Type",
-						`multipart/form-data; boundary=--${boundaryKey}`
-					);
-					upsertHeader(
-						`Content-Length`,
-						filesLength + Buffer.byteLength(endData)
-					);
+					upsertHeader("Content-Type", `multipart/form-data; boundary=--${boundaryKey}`);
+					upsertHeader(`Content-Length`, filesLength + Buffer.byteLength(endData));
 					return;
 				}
 			}
@@ -119,7 +111,8 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 				resolve({
 					httpRequestOptions: request_url_obj.headers,
 					headers: response.headers,
-					body: Buffer.concat(chunks, totallength)
+					body: Buffer.concat(chunks, totallength),
+					statusCode: response.statusCode
 				});
 			};
 			response.on("data", handleResponseOnData);

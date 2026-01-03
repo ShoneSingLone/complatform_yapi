@@ -66,9 +66,7 @@ class SyncUtils {
 
 	//同步接口
 	async syncInterface(projectId, swaggerUrl, syncMode, uid, projectToken) {
-		console.log(
-			"定时器触发, syncJsonUrl:" + swaggerUrl + ",合并模式:" + syncMode
-		);
+		console.log("定时器触发, syncJsonUrl:" + swaggerUrl + ",合并模式:" + syncMode);
 		let oldPorjectData;
 		try {
 			oldPorjectData = await orm.project.get(projectId);
@@ -230,16 +228,14 @@ class SyncUtils {
 			let response = await axios.get(swaggerUrl);
 			if (response.status > 400) {
 				throw new Error(
-					`http status "${response.status}"` +
-						"获取数据失败，请确认 swaggerUrl 是否正确"
+					`http status "${response.status}"` + "获取数据失败，请确认 swaggerUrl 是否正确"
 				);
 			}
 			return response.data;
 		} catch (e) {
 			let response = e.response || { status: e.message || "error" };
 			throw new Error(
-				`http status "${response.status}"` +
-					"获取数据失败，请确认 swaggerUrl 是否正确"
+				`http status "${response.status}"` + "获取数据失败，请确认 swaggerUrl 是否正确"
 			);
 		}
 	}

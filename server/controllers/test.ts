@@ -92,13 +92,9 @@ class interfaceColController extends ControllerBase {
 					chunk.copy(data, pos);
 					pos += chunk.length;
 				}
-				fs.writeFileSync(
-					path.join(xU.var.APP_ROOT_DIR, "test.text"),
-					data,
-					function (err) {
-						return (ctx.body = xU.$response(null, 402, "写入失败"));
-					}
-				);
+				fs.writeFileSync(path.join(xU.var.APP_ROOT_DIR, "test.text"), data, function (err) {
+					return (ctx.body = xU.$response(null, 402, "写入失败"));
+				});
 			});
 
 			ctx.body = xU.$response({ res: "上传成功" });

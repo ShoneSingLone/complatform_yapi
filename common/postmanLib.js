@@ -1,10 +1,4 @@
-const {
-	isJson5,
-	json_parse,
-	handleJson,
-	joinPath,
-	safeArray
-} = require("./utils");
+const { isJson5, json_parse, handleJson, joinPath, safeArray } = require("./utils");
 const _ = require("lodash");
 const URL = require("url");
 const utils = require("./power-string").utils;
@@ -69,10 +63,7 @@ async function httpRequestByServer(options, defaultOptions, context) {
 	} else {
 		const { pathname, projectId } = context;
 		const domain = defaultOptions.url.split(pathname)[0];
-		url = defaultOptions.url.replace(
-			domain,
-			`${location.origin}/mock/${projectId}`
-		);
+		url = defaultOptions.url.replace(domain, `${location.origin}/mock/${projectId}`);
 	}
 
 	const axiosConfigs = {
@@ -132,10 +123,7 @@ async function httpRequestByNode(options) {
 			Object.keys(options.headers).forEach(key => {
 				if (/content-type/i.test(key)) {
 					if (options.headers[key]) {
-						contentTypeItem = options.headers[key]
-							.split(";")[0]
-							.trim()
-							.toLowerCase();
+						contentTypeItem = options.headers[key].split(";")[0].trim().toLowerCase();
 					}
 				}
 				if (!options.headers[key]) delete options.headers[key];
@@ -254,11 +242,7 @@ async function sandbox(context = {}, script) {
 	} else {
 		context = sandboxByBrowser(context, script);
 	}
-	if (
-		context.promise &&
-		typeof context.promise === "object" &&
-		context.promise.then
-	) {
+	if (context.promise && typeof context.promise === "object" && context.promise.then) {
 		try {
 			await context.promise;
 		} catch (err) {
@@ -304,12 +288,7 @@ function sandboxByBrowser(context = {}, script) {
  * @param {*} afterScript
  * @param {*} commonContext  负责传递一些业务信息，crossRequest 不关注具体传什么，只负责当中间人
  */
-async function crossRequest(
-	defaultOptions,
-	preScript,
-	afterScript,
-	commonContext = {}
-) {
+async function crossRequest(defaultOptions, preScript, afterScript, commonContext = {}) {
 	/* TODO: */
 	let options = Object.assign({}, defaultOptions);
 	const taskId = options.taskId || Math.random() + "";
@@ -446,10 +425,7 @@ function handleParams(interfaceData, handleValue, requestParams) {
 		protocol: urlObj.protocol || "http",
 		host: urlObj.host,
 		pathname: urlObj.pathname,
-		query: Object.assign(
-			urlObj.query,
-			paramsToObjectWithEnable(interfaceRunData.req_query)
-		)
+		query: Object.assign(urlObj.query, paramsToObjectWithEnable(interfaceRunData.req_query))
 	});
 
 	let headers = paramsToObjectUnWithEnable(interfaceRunData.req_headers);
@@ -465,11 +441,7 @@ function handleParams(interfaceData, handleValue, requestParams) {
 	try {
 		if (interfaceRunData.req_body_type === "raw") {
 			if (headers && headers["Content-Type"]) {
-				if (
-					headers["Content-Type"].indexOf(
-						"application/x-www-form-urlencoded"
-					) >= 0
-				) {
+				if (headers["Content-Type"].indexOf("application/x-www-form-urlencoded") >= 0) {
 					interfaceRunData.req_body_type = "form";
 					let reqData = json_parse(interfaceRunData.req_body_other);
 					if (reqData && typeof reqData === "object") {
@@ -507,9 +479,7 @@ function handleParams(interfaceData, handleValue, requestParams) {
 				if (requestParams) {
 					requestParams = Object.assign(requestParams, reqBody);
 				}
-				requestBody = handleJson(reqBody, val =>
-					handleValue(val, currDomain.global)
-				);
+				requestBody = handleJson(reqBody, val => handleValue(val, currDomain.global));
 			}
 		} else {
 			requestBody = interfaceRunData.req_body_other;

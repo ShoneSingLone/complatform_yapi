@@ -39,11 +39,7 @@ function createBuffersFromTags(tags) {
 		if (ID3Frames[frameIdentifier] !== undefined) {
 			frame = ID3Frames[frameIdentifier].create(rawObject[frameIdentifier], 3);
 		} else if (frameIdentifier.startsWith("T")) {
-			frame = ID3Frames.GENERIC_TEXT.create(
-				frameIdentifier,
-				rawObject[frameIdentifier],
-				3
-			);
+			frame = ID3Frames.GENERIC_TEXT.create(frameIdentifier, rawObject[frameIdentifier], 3);
 		} else if (frameIdentifier.startsWith("W")) {
 			if (
 				ID3Util.getSpecOptions(frameIdentifier, 3).multiple &&
@@ -90,9 +86,7 @@ module.exports.getTagsFromBuffer = function (filebuffer, options) {
 		return getTagsFromFrames([], 3, options);
 	}
 	const frameSize =
-		ID3Util.decodeSize(
-			filebuffer.slice(framePosition + 6, framePosition + 10)
-		) + 10;
+		ID3Util.decodeSize(filebuffer.slice(framePosition + 6, framePosition + 10)) + 10;
 	const ID3Frame = Buffer.alloc(frameSize + 1);
 	filebuffer.copy(ID3Frame, 0, framePosition);
 	//ID3 version e.g. 3 if ID3v2.3.0
@@ -115,17 +109,11 @@ module.exports.getTagsFromBuffer = function (filebuffer, options) {
 };
 
 function isFrameDiscardedByOptions(frameIdentifier, options) {
-	if (
-		options.exclude instanceof Array &&
-		options.exclude.includes(frameIdentifier)
-	) {
+	if (options.exclude instanceof Array && options.exclude.includes(frameIdentifier)) {
 		return true;
 	}
 
-	return (
-		options.include instanceof Array &&
-		!options.include.includes(frameIdentifier)
-	);
+	return options.include instanceof Array && !options.include.includes(frameIdentifier);
 }
 
 function getFramesFromID3Body(ID3TagBody, ID3Version, options = {}) {
@@ -138,26 +126,12 @@ function getFramesFromID3Body(ID3TagBody, ID3Version, options = {}) {
 	const frameIdentifierSize = ID3Version === 2 ? 3 : 4;
 	const frameHeaderSize = ID3Version === 2 ? 6 : 10;
 
-	while (
-		currentPosition < ID3TagBody.length &&
-		ID3TagBody[currentPosition] !== 0x00
-	) {
-		const frameHeader = ID3TagBody.subarray(
-			currentPosition,
-			currentPosition + frameHeaderSize
-		);
+	while (currentPosition < ID3TagBody.length && ID3TagBody[currentPosition] !== 0x00) {
+		const frameHeader = ID3TagBody.subarray(currentPosition, currentPosition + frameHeaderSize);
 
-		const frameIdentifier = frameHeader.toString(
-			"utf8",
-			0,
-			frameIdentifierSize
-		);
+		const frameIdentifier = frameHeader.toString("utf8", 0, frameIdentifierSize);
 		const decodeSize = ID3Version === 4;
-		const frameBodySize = ID3Util.getFrameSize(
-			frameHeader,
-			decodeSize,
-			ID3Version
-		);
+		const frameBodySize = ID3Util.getFrameSize(frameHeader, decodeSize, ID3Version);
 		// It's possible to discard frames via options.exclude/options.include
 		// If that is the case, skip this frame and continue with the next
 		if (isFrameDiscardedByOptions(frameIdentifier, options)) {
@@ -169,10 +143,7 @@ function getFramesFromID3Body(ID3TagBody, ID3Version, options = {}) {
 			break;
 		}
 
-		const frameHeaderFlags = ID3Util.parseFrameHeaderFlags(
-			frameHeader,
-			ID3Version
-		);
+		const frameHeaderFlags = ID3Util.parseFrameHeaderFlags(frameHeader, ID3Version);
 		// Frames may have a 32-bit data length indicator appended after their header,
 		// if that is the case, the real body starts after those 4 bytes.
 		const frameBodyOffset = frameHeaderFlags.dataLengthIndicator ? 4 : 0;
@@ -190,9 +161,7 @@ function getFramesFromID3Body(ID3TagBody, ID3Version, options = {}) {
 				: frameBody
 		};
 		if (frameHeaderFlags.dataLengthIndicator) {
-			frame.dataLengthIndicator = ID3TagBody.readInt32BE(
-				currentPosition + frameHeaderSize
-			);
+			frame.dataLengthIndicator = ID3TagBody.readInt32BE(currentPosition + frameHeaderSize);
 		}
 		frames.push(frame);
 

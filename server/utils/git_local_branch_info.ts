@@ -5,17 +5,13 @@ const fs = require("fs-extra");
 // 获取当前目录下的Git分支信息
 async function getCurrentBranch(git_repo_root) {
 	return new Promise((resolve, reject) => {
-		exec(
-			"git rev-parse --abbrev-ref HEAD",
-			{ cwd: git_repo_root },
-			(error, stdout, stderr) => {
-				if (error) {
-					reject(new Error(`获取分支信息失败: ${stderr}`));
-					return;
-				}
-				resolve(stdout.trim());
+		exec("git rev-parse --abbrev-ref HEAD", { cwd: git_repo_root }, (error, stdout, stderr) => {
+			if (error) {
+				reject(new Error(`获取分支信息失败: ${stderr}`));
+				return;
 			}
-		);
+			resolve(stdout.trim());
+		});
 	});
 }
 

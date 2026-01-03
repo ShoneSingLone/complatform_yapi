@@ -66,8 +66,7 @@ class userController extends ControllerBase {
 			const emailParams =
 				ldapInfo[yapi_configs.ldapLogin.emailKey || "mail"] ||
 				(emailPostfix ? emailPrefix + emailPostfix : email);
-			const username =
-				ldapInfo[yapi_configs.ldapLogin.usernameKey] || emailPrefix;
+			const username = ldapInfo[yapi_configs.ldapLogin.usernameKey] || emailPrefix;
 
 			let login = await this.handleThirdLogin(emailParams, username);
 

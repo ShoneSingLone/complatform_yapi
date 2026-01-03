@@ -23,15 +23,7 @@ function addPluginRouter(config) {
 		throw new Error("Plugin Route path conflict, please try rename the path");
 	}
 	pluginsRouterPath.push(routerPath);
-	xU.createAction(
-		wsRouter,
-		"/api",
-		config.controller,
-		config.action,
-		routerPath,
-		method,
-		true
-	);
+	xU.createAction(wsRouter, "/api", config.controller, config.action, routerPath, method, true);
 }
 
 const router = koaRouter();
@@ -547,15 +539,7 @@ function addPluginRouter(config) {
 		throw new Error("Plugin Route path conflict, please try rename the path");
 	}
 	pluginsRouterPath.push(routerPath);
-	xU.createAction(
-		router,
-		"/api",
-		config.controller,
-		config.action,
-		routerPath,
-		method,
-		false
-	);
+	xU.createAction(router, "/api", config.controller, config.action, routerPath, method, false);
 }
 
 xU.emitHookSync("add_router", addPluginRouter);
@@ -565,14 +549,7 @@ for (let ctrl in routerConfig) {
 	actions.forEach(item => {
 		let routerController = INTERFACE_CONFIG[ctrl].controller;
 		let routerPath = INTERFACE_CONFIG[ctrl].prefix + item.path;
-		xU.createAction(
-			router,
-			"/api",
-			routerController,
-			item.action,
-			routerPath,
-			item.method
-		);
+		xU.createAction(router, "/api", routerController, item.action, routerPath, item.method);
 	});
 }
 

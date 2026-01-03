@@ -1,8 +1,6 @@
 const { _n } = require("@ventose/utils-node");
 const { newSwaggerJSON } = require("./swagger.json");
-const swaggerJSON = newSwaggerJSON(
-	yapi_configs?.isUsePlugin?.AutowareRoutes?.swaggerInfo
-);
+const swaggerJSON = newSwaggerJSON(yapi_configs?.isUsePlugin?.AutowareRoutes?.swaggerInfo);
 const routes = [];
 async function scanAllAutowareController(app) {
 	try {
@@ -45,7 +43,7 @@ async function scanAllAutowareController(app) {
 					controller_parent_dir: controllerInfo[2]
 				});
 			} catch (error) {
-				console.error(error)
+				console.error(error);
 				xU.applog.error(error);
 			}
 		}
@@ -59,11 +57,7 @@ async function scanAllAutowareController(app) {
 	};
 }
 
-function handle_each_controller_info({
-	controller_info,
-	controller_name,
-	controller_parent_dir
-}) {
+function handle_each_controller_info({ controller_info, controller_name, controller_parent_dir }) {
 	if (controller_info.isHideInSwagger) {
 		return;
 	}
@@ -75,10 +69,7 @@ function handle_each_controller_info({
 	});
 	/* 各个controller definitions合并,所以除了通用的定义，命名需要加上命名空间 */
 	if (controller_info.definitions) {
-		swaggerJSON.definitions = _n.merge(
-			swaggerJSON.definitions,
-			controller_info.definitions
-		);
+		swaggerJSON.definitions = _n.merge(swaggerJSON.definitions, controller_info.definitions);
 	}
 	_n.each(controller_info.paths, (api_info, url) => {
 		/* 将文件夹的名称作为路由前缀 */

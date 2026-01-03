@@ -7,16 +7,9 @@ function ID3FrameBuilder(identifier) {
 	this._buffer = Buffer.alloc(0);
 }
 
-ID3FrameBuilder.prototype.appendStaticValue = function (
-	value,
-	size,
-	encoding = 0x00
-) {
+ID3FrameBuilder.prototype.appendStaticValue = function (value, size, encoding = 0x00) {
 	const convertedValue = convertValue(value, encoding);
-	this._buffer = Buffer.concat([
-		this._buffer,
-		staticValueToBuffer(convertedValue, size)
-	]);
+	this._buffer = Buffer.concat([this._buffer, staticValueToBuffer(convertedValue, size)]);
 	return this;
 };
 
@@ -35,10 +28,7 @@ ID3FrameBuilder.prototype.appendStaticNumber = function (value, size) {
 	return this;
 };
 
-ID3FrameBuilder.prototype.appendNullTerminatedValue = function (
-	value,
-	encoding = 0x00
-) {
+ID3FrameBuilder.prototype.appendNullTerminatedValue = function (value, encoding = 0x00) {
 	value = value || "";
 	const convertedValue = convertValue(value, encoding);
 	this._buffer = Buffer.concat([

@@ -21,10 +21,7 @@ const WikiView = props => {
 					</div>
 				)}
 			</div>
-			<div
-				className="tui-editor-contents"
-				dangerouslySetInnerHTML={{ __html: desc }}
-			/>
+			<div className="tui-editor-contents" dangerouslySetInnerHTML={{ __html: desc }} />
 		</div>
 	);
 };

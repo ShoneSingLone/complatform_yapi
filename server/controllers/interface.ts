@@ -22,18 +22,14 @@ function handleHeaders(values) {
 
 		values.req_headers.map(item => {
 			if (item.name === "Content-Type") {
-				item.value = isfile
-					? "multipart/form-data"
-					: "application/x-www-form-urlencoded";
+				item.value = isfile ? "multipart/form-data" : "application/x-www-form-urlencoded";
 				isHaveContentType = true;
 			}
 		});
 		if (isHaveContentType === false) {
 			values.req_headers.unshift({
 				name: "Content-Type",
-				value: isfile
-					? "multipart/form-data"
-					: "application/x-www-form-urlencoded"
+				value: isfile ? "multipart/form-data" : "application/x-www-form-urlencoded"
 			});
 		}
 	} else if (values.req_body_type === "json") {
@@ -172,11 +168,7 @@ class ControllerInterface extends ControllerBase {
 			let projectData = await orm.project.get(params.project_id);
 			let tagsInProject = projectData.tag;
 			let needUpdate = false;
-			if (
-				tagsInProject &&
-				Array.isArray(tagsInProject) &&
-				tagsInProject.length > 0
-			) {
+			if (tagsInProject && Array.isArray(tagsInProject) && tagsInProject.length > 0) {
 				tags.forEach(tag => {
 					if (
 						!xU._.find(tagsInProject, item => {
@@ -329,11 +321,7 @@ class ControllerInterface extends ControllerBase {
 			}
 
 			if (catData.uid !== this.getUid()) {
-				let auth = await this.checkAuth(
-					catData.project_id,
-					"project",
-					"danger"
-				);
+				let auth = await this.checkAuth(catData.project_id, "project", "danger");
 				if (!auth) {
 					return (ctx.body = xU.$response(null, 400, "没有权限"));
 				}

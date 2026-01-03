@@ -40,11 +40,7 @@ class ModelI18n extends ModelBase {
 				$in: ids
 			};
 		}
-		return this.model
-			.find(condition)
-			.sort({ key: -1 })
-			.select("key valueArray")
-			.exec();
+		return this.model.find(condition).sort({ key: -1 }).select("key valueArray").exec();
 	}
 	detail(_id) {
 		return this.model.findOne({ _id }).exec();
@@ -64,12 +60,7 @@ class ModelI18n extends ModelBase {
 				if (existedRecord?._id) {
 					const diffRes = diff(
 						record,
-						xU._.pick(existedRecord, [
-							"key",
-							"isRectified",
-							"desc",
-							"valueArray"
-						])
+						xU._.pick(existedRecord, ["key", "isRectified", "desc", "valueArray"])
 					);
 					if (diffRes) {
 						different.push({ existedRecord, diffRes });

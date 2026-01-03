@@ -47,11 +47,7 @@ exports.handleHttp = async function handleHttp(request, response) {
 			const vnc_token = postParmas["vnc_token"];
 
 			if (!vnc_ip || !vnc_por || !vnc_token) {
-				return responseError(
-					response,
-					401,
-					"vnc_ip vnc_por vnc_token required!!"
-				);
+				return responseError(response, 401, "vnc_ip vnc_por vnc_token required!!");
 			}
 
 			fs.writeFileSync(

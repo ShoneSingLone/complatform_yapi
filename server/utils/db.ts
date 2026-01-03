@@ -36,8 +36,7 @@ async function setMongooseAsync() {
 		} else {
 			connectString = `mongodb://${yapi_configs.db.servername}:${yapi_configs.db.port}/${yapi_configs.db.DATABASE}`;
 			if (yapi_configs.db.authSource) {
-				connectString =
-					connectString + `?authSource=${yapi_configs.db.authSource}`;
+				connectString = connectString + `?authSource=${yapi_configs.db.authSource}`;
 			}
 		}
 

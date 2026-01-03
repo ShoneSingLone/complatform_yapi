@@ -141,9 +141,7 @@ class ModelGroup extends ModelBase {
 			.find({
 				type: "public"
 			})
-			.select(
-				"group_name _id group_desc add_time up_time type uid custom_field1"
-			)
+			.select("group_name _id group_desc add_time up_time type uid custom_field1")
 			.exec();
 	}
 
@@ -170,9 +168,7 @@ class ModelGroup extends ModelBase {
 					}
 				]
 			})
-			.select(
-				" _id group_name group_desc add_time up_time type uid custom_field1"
-			)
+			.select(" _id group_name group_desc add_time up_time type uid custom_field1")
 			.exec();
 	}
 

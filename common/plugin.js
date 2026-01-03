@@ -9,9 +9,7 @@ function getPluginConfig(name, type) {
 	}
 
 	if (!pluginConfig || typeof pluginConfig !== "object") {
-		throw new Error(
-			`Plugin ${name} Config 配置错误，请检查 yapi-plugin-${name}/index.js`
-		);
+		throw new Error(`Plugin ${name} Config 配置错误，请检查 yapi-plugin-${name}/index.js`);
 	}
 
 	return {

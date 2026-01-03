@@ -172,10 +172,7 @@ function postman(importDataModule) {
 				} else if (item === "req_body_form") {
 					res[item] = handleReq_body_form.bind(this)(data[reflect[item]]);
 				} else if (item === "req_body_type") {
-					if (
-						data[reflect[item]] === "urlencoded" ||
-						data[reflect[item]] === "params"
-					) {
+					if (data[reflect[item]] === "urlencoded" || data[reflect[item]] === "params") {
 						res[item] = "form";
 					} else {
 						if (
@@ -188,10 +185,7 @@ function postman(importDataModule) {
 						}
 					}
 				} else if (item === "req_body_other") {
-					if (
-						_.isString(data.headers) &&
-						data.headers.indexOf("application/json") > -1
-					) {
+					if (_.isString(data.headers) && data.headers.indexOf("application/json") > -1) {
 						res.req_body_is_json_schema = true;
 						res[item] = transformJsonToSchema(data[reflect[item]]);
 					} else {
@@ -200,9 +194,7 @@ function postman(importDataModule) {
 				} else if (item === "path") {
 					res[item] = handlePath.bind(this)(data[reflect[item]]);
 					if (res[item] && res[item].indexOf("/:") > -1) {
-						let params = res[item]
-							.substr(res[item].indexOf("/:") + 2)
-							.split("/:");
+						let params = res[item].substr(res[item].indexOf("/:") + 2).split("/:");
 						// res[item] = res[item].substr(0,res[item].indexOf("/:"));
 						let arr = [];
 						for (let i in params) {
@@ -228,9 +220,7 @@ function postman(importDataModule) {
 						return item.id === data.folder;
 					});
 					res[item] =
-						found && Array.isArray(found) && found.length > 0
-							? found[0].name
-							: null;
+						found && Array.isArray(found) && found.length > 0 ? found[0].name : null;
 				} else if (item === "res") {
 					let response = handleResponses(data["responses"]);
 					if (response) {

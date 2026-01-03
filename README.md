@@ -8,14 +8,14 @@
 
 提供公司局域网内部，代理后端服务
 
-- 前端开发人员只需要代理到对应项目的 mock 地址
-- 后端开发人员可以针对接口提供 mock 数据、开发机环境、测试环境等
+-   前端开发人员只需要代理到对应项目的 mock 地址
+-   后端开发人员可以针对接口提供 mock 数据、开发机环境、测试环境等
 
-  - ![代理后端](docs/assets/img/image.png)
+    -   ![代理后端](docs/assets/img/image.png)
 
-  - ![mock数据](docs/assets/img/image-1.png)
+    -   ![mock数据](docs/assets/img/image-1.png)
 
-- 启用内网穿透，外网的同事也能如同本地开发一样访问本地服务
+-   启用内网穿透，外网的同事也能如同本地开发一样访问本地服务
 
 ```mermaid
 flowchart TD
@@ -32,9 +32,9 @@ flowchart TD
 
 ## 启动
 
-- mongodb **必要**
-- 入口文件 server/app.js
-  - server\utils\onFirstLine.ts
+-   mongodb **必要**
+-   入口文件 server/app.js
+    -   server\utils\onFirstLine.ts
 
 ```js
 /* server\utils\onFirstLine.ts */
@@ -84,21 +84,16 @@ module.exports = {
 
 ## 开发记录
 
-- xU.js configs
-  xU.validateParams
+-   xU.js configs xU.validateParams
 
 只接受限定的参数，多余的会被过滤掉 => model 里面 schemaMap
 
-- 跨域+Nginx+frp 导致携带 cookies 很麻烦
+-   跨域+Nginx+frp 导致携带 cookies 很麻烦
 
 mongodb
 
 ```js
-db.col.update(
-	{ title: "MongoDB 教程" },
-	{ $set: { title: "MongoDB" } },
-	{ multi: true }
-);
+db.col.update({ title: "MongoDB 教程" }, { $set: { title: "MongoDB" } }, { multi: true });
 ```
 
 Ajv 接口校验 scheme 的参数

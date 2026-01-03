@@ -76,9 +76,7 @@ export default class Services extends Component {
   (./node_modules/.bin/)sm2tsservice --clear
   `}</pre>
 					</div>
-					<a href="https://github.com/gogoyqj/sm2tsservice">
-						更多说明 sm2tsservice
-					</a>
+					<a href="https://github.com/gogoyqj/sm2tsservice">更多说明 sm2tsservice</a>
 				</section>
 			</div>
 		);

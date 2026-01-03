@@ -157,9 +157,7 @@ const getWikiDetail = {
 				const isReturnWiki = await (async () => {
 					function isMember(members = []) {
 						// if ($user.role === "admin") { return true; }
-						return xU._.find(members, member =>
-							xU.isSame(currentUid, member.uid)
-						);
+						return xU._.find(members, member => xU.isSame(currentUid, member.uid));
 					}
 
 					/**
@@ -329,8 +327,7 @@ module.exports = {
 							queryConditions.belong_id = belong_id;
 						}
 						/* 排序的顺序 */
-						const { order } =
-							(await orm.WikiOrder.detail(queryConditions)) || {};
+						const { order } = (await orm.WikiOrder.detail(queryConditions)) || {};
 
 						ctx.body = xU.$response({
 							list: await orm.wiki.menu({

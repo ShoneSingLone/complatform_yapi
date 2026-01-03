@@ -14,7 +14,8 @@
 
 项目 -> 接口编辑 -> 返回数据设置
 
-返回数据设置有两种方式，最新版本默认是基于 `json+注释` 的方式，另外一种是基于 `json-schema` 定义数据结构,请根据实际情况灵活选择使用。
+返回数据设置有两种方式，最新版本默认是基于 `json+注释` 的方式，另外一种是基于 `json-schema` 定义数据结构,请根据实际情况
+灵活选择使用。
 
 ## 方式 1. mockjs
 
@@ -22,7 +23,8 @@
 
 ### 原理
 
-基于 [mockjs](http://mockjs.com)，跟 Mockjs 区别是 yapi 基于 json + 注释 定义 mock 数据，无法使用 mockjs 原有的函数功能。
+基于 [mockjs](http://mockjs.com)，跟 Mockjs 区别是 yapi 基于 json + 注释 定义 mock 数据，无法使用 mockjs 原有的函数功能
+。
 
 1. 正则表达式需要基于 rule 书写，示例如下：
 
@@ -79,9 +81,8 @@
 
 ### 集成 mockjs
 
-基本书写方式为 mock 的数据占位符@xxx, 具体字段详见<a href="http://mockjs.com/examples.html" target="_blank">Mockjs 官网</a>
-<img src="./images/schema-mock-2.png" />
-<img src="./images/schema-mock-1.png" />
+基本书写方式为 mock 的数据占位符@xxx, 具体字段详见<a href="http://mockjs.com/examples.html" target="_blank">Mockjs 官
+网</a> <img src="./images/schema-mock-2.png" /> <img src="./images/schema-mock-1.png" />
 
 > 如果不是以@字符开头的话或者匹配不到 Mockjs 中的占位符就会直接生成输入的值
 
@@ -122,8 +123,7 @@ proxy_pass   http://yapi.xxx.com/mock/2817/baseapi; #baseapi后面没有"/"
 版本 v1.3.22 新增 mock 接口请求字段参数验证功能，具体使用方法如下：
 
 1. 打开 项目 -> 设置 开启 mock 严格模式
-2. 针对 query, form 中设置的必须字段会进行必填校验
-   <img src="./images/mock-strice.png"/>
+2. 针对 query, form 中设置的必须字段会进行必填校验 <img src="./images/mock-strice.png"/>
 
 3. 针对 req_body_type 是 json schema 格式的数据进行校验
 

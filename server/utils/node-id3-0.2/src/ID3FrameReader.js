@@ -2,18 +2,12 @@ module.exports = ID3FrameReader;
 
 const ID3Util = require("./ID3Util");
 
-function ID3FrameReader(
-	buffer,
-	encodingBytePosition,
-	consumeEncodingByte = true
-) {
+function ID3FrameReader(buffer, encodingBytePosition, consumeEncodingByte = true) {
 	if (!buffer || !(buffer instanceof Buffer)) {
 		buffer = Buffer.alloc(0);
 	}
 	if (Number.isInteger(encodingBytePosition)) {
-		this._encoding = buffer[encodingBytePosition]
-			? buffer[encodingBytePosition]
-			: 0x00;
+		this._encoding = buffer[encodingBytePosition] ? buffer[encodingBytePosition] : 0x00;
 		if (consumeEncodingByte) {
 			buffer =
 				encodingBytePosition === 0
@@ -29,11 +23,7 @@ function ID3FrameReader(
 	this._splitBuffer = new ID3Util.SplitBuffer(null, buffer.slice(0));
 }
 
-ID3FrameReader.prototype.consumeStaticValue = function (
-	dataType,
-	size,
-	encoding = this._encoding
-) {
+ID3FrameReader.prototype.consumeStaticValue = function (dataType, size, encoding = this._encoding) {
 	return this._consumeByFunction(
 		() => staticValueFromBuffer(this._splitBuffer.remainder, size),
 		dataType,
@@ -52,15 +42,8 @@ ID3FrameReader.prototype.consumeNullTerminatedValue = function (
 	);
 };
 
-ID3FrameReader.prototype._consumeByFunction = function (
-	fn,
-	dataType,
-	encoding
-) {
-	if (
-		!this._splitBuffer.remainder ||
-		this._splitBuffer.remainder.length === 0
-	) {
+ID3FrameReader.prototype._consumeByFunction = function (fn, dataType, encoding) {
+	if (!this._splitBuffer.remainder || this._splitBuffer.remainder.length === 0) {
 		return undefined;
 	}
 	this._splitBuffer = fn();

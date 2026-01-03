@@ -19,9 +19,7 @@ async function upsertInterface(ctx) {
 
 	payload.method = payload.method.toUpperCase();
 	payload.req_params = payload.req_params || [];
-	payload.res_body_type = payload.res_body_type
-		? payload.res_body_type.toLowerCase()
-		: "backup";
+	payload.res_body_type = payload.res_body_type ? payload.res_body_type.toLowerCase() : "backup";
 
 	let http_path = urlParse(payload.path, true);
 
@@ -47,11 +45,7 @@ async function upsertInterface(ctx) {
 		});
 	});
 
-	let count = await orm.interface.count(
-		payload.project_id,
-		payload.path,
-		payload.method
-	);
+	let count = await orm.interface.count(payload.project_id, payload.path, payload.method);
 
 	if (count) {
 		return (response = xU.$response(
@@ -95,11 +89,9 @@ async function upsertInterface(ctx) {
 		let username = this.getUsername();
 		let title = `<a href="/user/profile/${this.getUid()}">${username}</a> 为分类 <a href="/project/${
 			payload.project_id
-		}/interface/api/cat_${payload.catid}">${
-			cate.name
-		}</a> 添加了接口 <a href="/project/${payload.project_id}/interface/api/${
-			result._id
-		}">${data.title}</a> `;
+		}/interface/api/cat_${payload.catid}">${cate.name}</a> 添加了接口 <a href="/project/${
+			payload.project_id
+		}/interface/api/${result._id}">${data.title}</a> `;
 
 		xU.save_log({
 			content: title,
@@ -108,9 +100,7 @@ async function upsertInterface(ctx) {
 			username: username,
 			typeid: payload.project_id
 		});
-		orm.project
-			.up(payload.project_id, { up_time: new Date().getTime() })
-			.then();
+		orm.project.up(payload.project_id, { up_time: new Date().getTime() }).then();
 	});
 
 	await autoAddTag(payload);
@@ -127,11 +117,7 @@ async function autoAddTag(params) {
 		let projectData = await orm.project.get(params.project_id);
 		let tagsInProject = projectData.tag;
 		let needUpdate = false;
-		if (
-			tagsInProject &&
-			Array.isArray(tagsInProject) &&
-			tagsInProject.length > 0
-		) {
+		if (tagsInProject && Array.isArray(tagsInProject) && tagsInProject.length > 0) {
 			tags.forEach(tag => {
 				if (
 					!xU._.find(tagsInProject, item => {
@@ -179,18 +165,14 @@ function handleHeaders(values) {
 
 		values.req_headers.map(item => {
 			if (item.name === "Content-Type") {
-				item.value = isfile
-					? "multipart/form-data"
-					: "application/x-www-form-urlencoded";
+				item.value = isfile ? "multipart/form-data" : "application/x-www-form-urlencoded";
 				isHaveContentType = true;
 			}
 		});
 		if (isHaveContentType === false) {
 			values.req_headers.unshift({
 				name: "Content-Type",
-				value: isfile
-					? "multipart/form-data"
-					: "application/x-www-form-urlencoded"
+				value: isfile ? "multipart/form-data" : "application/x-www-form-urlencoded"
 			});
 		}
 	} else if (values.req_body_type === "json") {

@@ -29,9 +29,7 @@ function execCmd(cmd, options) {
 		result.stdout.on("data", msg => log(msg, options));
 		result.stderr.on("data", msg => log(msg, options));
 		result.on("close", code => {
-			const msg = `==============:exec ${cmd} spend time ${
-				(Date.now() - startTime) / 1000
-			}s`;
+			const msg = `==============:exec ${cmd} spend time ${(Date.now() - startTime) / 1000}s`;
 			log(msg, options);
 			resolve();
 		});
@@ -51,12 +49,7 @@ exports.execCmd = execCmd;
  * @returns
  */
 function simpleJsonPathParse(key, json) {
-	if (
-		!key ||
-		typeof key !== "string" ||
-		key.indexOf("$.") !== 0 ||
-		key.length <= 2
-	) {
+	if (!key || typeof key !== "string" || key.indexOf("$.") !== 0 || key.length <= 2) {
 		return null;
 	}
 	let keys = key.substr(2).split(".");
@@ -83,8 +76,7 @@ function simpleJsonPathParse(key, json) {
 // 全局变量 {{ global.value }}
 // value 是在环境变量中定义的字段
 function handleGlobalWord(word, json) {
-	if (!word || typeof word !== "string" || word.indexOf("global.") !== 0)
-		return word;
+	if (!word || typeof word !== "string" || word.indexOf("global.") !== 0) return word;
 	let keys = word.split(".");
 	keys = keys.filter(item => {
 		return item;
@@ -301,8 +293,7 @@ exports.schemaValidator = function (schema, params) {
 		let metaSchema = require("ajv/lib/refs/json-schema-draft-04.json");
 		ajv.addMetaSchema(metaSchema);
 		ajv._opts.defaultMeta = metaSchema.id;
-		ajv._refs["http://json-schema.org/schema"] =
-			"http://json-schema.org/draft-04/schema";
+		ajv._refs["http://json-schema.org/schema"] = "http://json-schema.org/draft-04/schema";
 		var localize = require("ajv-i18n");
 
 		schema = schema || {

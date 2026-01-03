@@ -12,9 +12,7 @@ describe("NodeID3", function () {
 		it("empty tags", function () {
 			assert.strictEqual(
 				NodeID3.create({}).compare(
-					Buffer.from([
-						0x49, 0x44, 0x33, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-					])
+					Buffer.from([0x49, 0x44, 0x33, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
 				),
 				0
 			);
@@ -92,10 +90,7 @@ describe("NodeID3", function () {
 				}
 			};
 			let buffer = NodeID3.create(tags).slice(10);
-			const descEncoded = iconv.encode(
-				tags.userDefinedText.description + "\0",
-				"UTF-16"
-			);
+			const descEncoded = iconv.encode(tags.userDefinedText.description + "\0", "UTF-16");
 			const valueEncoded = iconv.encode(tags.userDefinedText.value, "UTF-16");
 
 			assert.strictEqual(
@@ -126,22 +121,10 @@ describe("NodeID3", function () {
 				]
 			};
 			buffer = NodeID3.create(tags).slice(10);
-			const desc1Encoded = iconv.encode(
-				tags.userDefinedText[0].description + "\0",
-				"UTF-16"
-			);
-			const value1Encoded = iconv.encode(
-				tags.userDefinedText[0].value,
-				"UTF-16"
-			);
-			const desc2Encoded = iconv.encode(
-				tags.userDefinedText[1].description + "\0",
-				"UTF-16"
-			);
-			const value2Encoded = iconv.encode(
-				tags.userDefinedText[1].value,
-				"UTF-16"
-			);
+			const desc1Encoded = iconv.encode(tags.userDefinedText[0].description + "\0", "UTF-16");
+			const value1Encoded = iconv.encode(tags.userDefinedText[0].value, "UTF-16");
+			const desc2Encoded = iconv.encode(tags.userDefinedText[1].description + "\0", "UTF-16");
+			const value2Encoded = iconv.encode(tags.userDefinedText[1].value, "UTF-16");
 
 			assert.strictEqual(
 				Buffer.compare(
@@ -451,8 +434,7 @@ describe("NodeID3", function () {
 					},
 					validUntil: { year: 999, month: 9, day: 1 },
 					contactUrl: "https://example.com",
-					receivedAs:
-						NodeID3.TagConstants.CommercialFrame.ReceivedAs.AS_NOTE_SHEETS,
+					receivedAs: NodeID3.TagConstants.CommercialFrame.ReceivedAs.AS_NOTE_SHEETS,
 					nameOfSeller: "Someone",
 					description: "Something",
 					sellerLogo: {
@@ -465,9 +447,7 @@ describe("NodeID3", function () {
 
 			tags.commercialFrame.sellerLogo.picture = __dirname + "/smallimg";
 			const resultWithPictureString = NodeID3.create(tags);
-			tags.commercialFrame.sellerLogo.picture = fs.readFileSync(
-				__dirname + "/smallimg"
-			);
+			tags.commercialFrame.sellerLogo.picture = fs.readFileSync(__dirname + "/smallimg");
 			const resultWithPictureBuffer = NodeID3.create(tags);
 
 			assert.deepStrictEqual(resultWithPictureBuffer, resultWithPictureString);
@@ -522,10 +502,7 @@ describe("NodeID3", function () {
 			const newFileBuffer = fs.readFileSync(filepath);
 			fs.unlinkSync(filepath);
 			assert.strictEqual(
-				Buffer.compare(
-					newFileBuffer,
-					Buffer.concat([NodeID3.create(tags), buffer])
-				),
+				Buffer.compare(newFileBuffer, Buffer.concat([NodeID3.create(tags), buffer])),
 				0
 			);
 		});
@@ -535,10 +512,8 @@ describe("NodeID3", function () {
 				const newFileBuffer = fs.readFileSync(filepath);
 				fs.unlinkSync(filepath);
 				if (
-					Buffer.compare(
-						newFileBuffer,
-						Buffer.concat([NodeID3.create(tags), buffer])
-					) === 0
+					Buffer.compare(newFileBuffer, Buffer.concat([NodeID3.create(tags), buffer])) ===
+					0
 				) {
 					done();
 				} else {
@@ -556,10 +531,7 @@ describe("NodeID3", function () {
 			const newFileBuffer = fs.readFileSync(filepath);
 			fs.unlinkSync(filepath);
 			assert.strictEqual(
-				Buffer.compare(
-					newFileBuffer,
-					Buffer.concat([NodeID3.create(tags), buffer])
-				),
+				Buffer.compare(newFileBuffer, Buffer.concat([NodeID3.create(tags), buffer])),
 				0
 			);
 		});
@@ -569,10 +541,8 @@ describe("NodeID3", function () {
 				const newFileBuffer = fs.readFileSync(filepath);
 				fs.unlinkSync(filepath);
 				if (
-					Buffer.compare(
-						newFileBuffer,
-						Buffer.concat([NodeID3.create(tags), buffer])
-					) === 0
+					Buffer.compare(newFileBuffer, Buffer.concat([NodeID3.create(tags), buffer])) ===
+					0
 				) {
 					done();
 				} else {
@@ -723,10 +693,7 @@ describe("NodeID3", function () {
 					]
 				}
 			];
-			assert.deepStrictEqual(
-				NodeID3.read(frameBuf).synchronisedLyrics,
-				synchronisedLyrics
-			);
+			assert.deepStrictEqual(NodeID3.read(frameBuf).synchronisedLyrics, synchronisedLyrics);
 		});
 
 		it("read COMM frame", function () {
@@ -754,10 +721,7 @@ describe("NodeID3", function () {
 				counter: 12
 			};
 
-			assert.deepStrictEqual(
-				NodeID3.read(frameBuf).popularimeter,
-				popularimeter
-			);
+			assert.deepStrictEqual(NodeID3.read(frameBuf).popularimeter, popularimeter);
 		});
 
 		it("read PRIV frame", function () {
@@ -837,10 +801,7 @@ describe("NodeID3", function () {
 				}
 			];
 
-			assert.deepStrictEqual(
-				NodeID3.read(frameBuf).userDefinedUrl,
-				userDefinedUrl
-			);
+			assert.deepStrictEqual(NodeID3.read(frameBuf).userDefinedUrl, userDefinedUrl);
 		});
 
 		it("read URL frame", function () {
@@ -851,10 +812,7 @@ describe("NodeID3", function () {
 			const commercialUrl = ["https://example.com"];
 			const fileUrl = "https://example2.com";
 
-			assert.deepStrictEqual(
-				NodeID3.read(frameBuf).commercialUrl,
-				commercialUrl
-			);
+			assert.deepStrictEqual(NodeID3.read(frameBuf).commercialUrl, commercialUrl);
 			assert.deepStrictEqual(NodeID3.read(frameBuf).fileUrl, fileUrl);
 		});
 
@@ -872,10 +830,7 @@ describe("NodeID3", function () {
 				]
 			};
 
-			assert.deepStrictEqual(
-				NodeID3.read(frameBuf).eventTimingCodes,
-				eventTimingCodes
-			);
+			assert.deepStrictEqual(NodeID3.read(frameBuf).eventTimingCodes, eventTimingCodes);
 		});
 
 		it("read COMR frame", function () {
@@ -901,10 +856,8 @@ describe("NodeID3", function () {
 			};
 
 			tags.commercialFrame.sellerLogo.mimeType = "image/";
-			tags.commercialFrame.prices["EUR"] =
-				tags.commercialFrame.prices["EUR"].toString();
-			tags.commercialFrame.prices["DKK"] =
-				tags.commercialFrame.prices["DKK"].toString();
+			tags.commercialFrame.prices["EUR"] = tags.commercialFrame.prices["EUR"].toString();
+			tags.commercialFrame.prices["DKK"] = tags.commercialFrame.prices["DKK"].toString();
 
 			assert.deepStrictEqual(
 				NodeID3.read(frameBufRandomImage).commercialFrame[0],
@@ -1020,10 +973,7 @@ describe("ID3 helper functions", function () {
 
 		it("tags at start", function () {
 			const buffer = Buffer.from([0x22, 0x73, 0x72]);
-			const bufferWithID3 = Buffer.concat([
-				NodeID3.create({ title: "abc" }),
-				buffer
-			]);
+			const bufferWithID3 = Buffer.concat([NodeID3.create({ title: "abc" }), buffer]);
 			assert.strictEqual(
 				Buffer.compare(NodeID3.removeTagsFromBuffer(bufferWithID3), buffer),
 				0
@@ -1032,11 +982,7 @@ describe("ID3 helper functions", function () {
 
 		it("tags in middle/end", function () {
 			const buffer = Buffer.from([0x22, 0x73, 0x72]);
-			const bufferWithID3 = Buffer.concat([
-				buffer,
-				NodeID3.create({ title: "abc" }),
-				buffer
-			]);
+			const bufferWithID3 = Buffer.concat([buffer, NodeID3.create({ title: "abc" }), buffer]);
 			assert.strictEqual(
 				Buffer.compare(
 					NodeID3.removeTagsFromBuffer(bufferWithID3),
@@ -1320,8 +1266,7 @@ describe("Cross tests jsmediatags", function () {
 		read.comment.text = parseInt(read.comment.text);
 		delete read.image.type;
 		read.private[0].data = read.private[0].data.toString();
-		if (!read.unsynchronisedLyrics.shortText)
-			delete read.unsynchronisedLyrics.shortText;
+		if (!read.unsynchronisedLyrics.shortText) delete read.unsynchronisedLyrics.shortText;
 		assert.deepStrictEqual(nodeTagsFull, read);
 	});
 
@@ -1339,18 +1284,14 @@ describe("Cross tests jsmediatags", function () {
 		assert.strictEqual(read.popularimeter.rating, 0);
 		delete read.popularimeter.rating;
 		read.private[0].data = read.private[0].data.toString();
-		if (read.private[0].ownerIdentifier === undefined)
-			delete read.private[0].ownerIdentifier;
-		if (read.private[1].ownerIdentifier === undefined)
-			delete read.private[1].ownerIdentifier;
+		if (read.private[0].ownerIdentifier === undefined) delete read.private[0].ownerIdentifier;
+		if (read.private[1].ownerIdentifier === undefined) delete read.private[1].ownerIdentifier;
 		assert.strictEqual(read.tableOfContents[0].isOrdered, false);
 		assert.deepStrictEqual(read.tableOfContents[0].tags.raw, {});
 		delete read.tableOfContents[0].tags;
 		delete read.tableOfContents[0].isOrdered;
-		if (!read.userDefinedText[0].description)
-			delete read.userDefinedText[0].description;
-		if (!read.userDefinedText[1].description)
-			delete read.userDefinedText[1].description;
+		if (!read.userDefinedText[0].description) delete read.userDefinedText[0].description;
+		if (!read.userDefinedText[1].description) delete read.userDefinedText[1].description;
 		assert.deepStrictEqual(nodeTagsMissingValues, read);
 	});
 });

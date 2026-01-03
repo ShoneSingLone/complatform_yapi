@@ -14,15 +14,10 @@ test("handleParamsValue", t => {
 	t.is(handleParamsValue("{{aaaa |upper }}"), "AAAA");
 	t.is(handleParamsValue(json), json);
 	t.is(handleParamsValue("   {{ dkkdjf }}"), "dkkdjf");
-	t.is(
-		handleParamsValue("   {{ dkkdjf | upper | kkk }}"),
-		"{{ dkkdjf | upper | kkk }}"
-	);
+	t.is(handleParamsValue("   {{ dkkdjf | upper | kkk }}"), "{{ dkkdjf | upper | kkk }}");
 	t.is(handleParamsValue("aaa   {{ aaaa | upper }} bbbb"), "aaa   AAAA bbbb");
 	t.is(
-		handleParamsValue(
-			"aaa   {{ aaaa | upper }} bbbb,aaa   {{ aaaa | upper }} bbbb"
-		),
+		handleParamsValue("aaa   {{ aaaa | upper }} bbbb,aaa   {{ aaaa | upper }} bbbb"),
 		"aaa   AAAA bbbb,aaa   AAAA bbbb"
 	);
 	t.is(handleParamsValue("{{aaaa | length}}"), 4);

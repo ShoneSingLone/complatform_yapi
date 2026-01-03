@@ -89,17 +89,15 @@ export default class MockCol extends Component {
 		if (!this.state.isAdd) {
 			caseData.id = currcase._id;
 		}
-		await axios
-			.post("/api/plugin/advmock/case/save", caseData)
-			.then(async res => {
-				if (res.data.errcode === 0) {
-					message.success(this.state.isAdd ? "添加成功" : "保存成功");
-					await this.props.fetchMockCol(interface_id);
-					this.setState({ caseDesModalVisible: false });
-				} else {
-					message.error(res.data.message);
-				}
-			});
+		await axios.post("/api/plugin/advmock/case/save", caseData).then(async res => {
+			if (res.data.errcode === 0) {
+				message.success(this.state.isAdd ? "添加成功" : "保存成功");
+				await this.props.fetchMockCol(interface_id);
+				this.setState({ caseDesModalVisible: false });
+			} else {
+				message.error(res.data.message);
+			}
+		});
 	};
 
 	deleteCase = async id => {
@@ -264,12 +262,7 @@ export default class MockCol extends Component {
 						</Tooltip>
 					</a>
 				</div>
-				<Table
-					columns={columns}
-					dataSource={data}
-					pagination={false}
-					rowKey="_id"
-				/>
+				<Table columns={columns} dataSource={data} pagination={false} rowKey="_id" />
 				{caseDesModalVisible && (
 					<CaseDesModal
 						visible={caseDesModalVisible}

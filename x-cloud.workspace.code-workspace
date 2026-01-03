@@ -18,7 +18,7 @@
 		"git.autoRepositoryDetection": true,
 		"git.detectSubmodules": true,
 		"git.repositoryScanMaxDepth": 3,
-		"git-graph.maxDepthOfRepoSearch": 2,
+		"git-graph.maxDepthOfRepoSearch": 4,
 		"gitflow.disableOnRepo": true,
 		"editor.fontFamily": "Fira Code, monospace, Cascadia Code, Courier New, Consolas",
 		"editor.fontLigatures": true,

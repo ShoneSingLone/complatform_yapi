@@ -16,24 +16,7 @@
 var add32 = function (a, b) {
 		return (a + b) & 0xffffffff;
 	},
-	hex_chr = [
-		"0",
-		"1",
-		"2",
-		"3",
-		"4",
-		"5",
-		"6",
-		"7",
-		"8",
-		"9",
-		"a",
-		"b",
-		"c",
-		"d",
-		"e",
-		"f"
-	];
+	hex_chr = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
 
 function cmn(q, a, b, x, s, t) {
 	a = add32(add32(a, q), add32(x, t));
@@ -203,8 +186,7 @@ function md5blk_array(a) {
 		i; /* Andy King said do it this way. */
 
 	for (i = 0; i < 64; i += 4) {
-		md5blks[i >> 2] =
-			a[i] + (a[i + 1] << 8) + (a[i + 2] << 16) + (a[i + 3] << 24);
+		md5blks[i >> 2] = a[i] + (a[i + 1] << 8) + (a[i + 2] << 16) + (a[i + 3] << 24);
 	}
 	return md5blks;
 }
@@ -651,10 +633,7 @@ SparkMD5.ArrayBuffer.prototype.append = function (arr) {
 		md5cycle(this._hash, md5blk_array(buff.subarray(i - 64, i)));
 	}
 
-	this._buff =
-		i - 64 < length
-			? new Uint8Array(buff.buffer.slice(i - 64))
-			: new Uint8Array(0);
+	this._buff = i - 64 < length ? new Uint8Array(buff.buffer.slice(i - 64)) : new Uint8Array(0);
 
 	return this;
 };

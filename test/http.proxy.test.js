@@ -47,8 +47,7 @@ const httpRequest = https.request(
 		rejectUnauthorized: false,
 		headers: {
 			host: "localhost:3001",
-			"sec-ch-ua":
-				'"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+			"sec-ch-ua": '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
 			"x-request-from": "Framework",
 			cftk: "6239cbdb28bc2dd3af92a1d6c24ef204",
 			"x-language": "zh-cn",
@@ -69,8 +68,7 @@ const httpRequest = https.request(
 				"https://console.821type1.com/vdun/?agencyId=72055c6c87bd46b0a8e3dd981a48813e&region=ghca_test_project&locale=zh-cn",
 			"accept-encoding": "gzip, br",
 			"accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
-			cookie:
-				"locale=zh-cn; popup_max_time=1440; SID=Set2; agencyID=72055c6c87bd46b0a8e3dd981a48813e; CF2_SESSION_ID=VN-7UiSGVCIHORkcuiHI2w..|dtlnUKTI7ErFcr7Q0gjefA..; selectedRegion=ghca-test-region; projectName=ghca_test_project; projectId=497d0d0674cc49828431445349e43294; cfRefreshFlag=1725000911075",
+			cookie: "locale=zh-cn; popup_max_time=1440; SID=Set2; agencyID=72055c6c87bd46b0a8e3dd981a48813e; CF2_SESSION_ID=VN-7UiSGVCIHORkcuiHI2w..|dtlnUKTI7ErFcr7Q0gjefA..; selectedRegion=ghca-test-region; projectName=ghca_test_project; projectId=497d0d0674cc49828431445349e43294; cfRefreshFlag=1725000911075",
 			priority: "u=1, i",
 			connection: "close",
 			"x-auth-token":

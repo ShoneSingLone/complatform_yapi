@@ -54,8 +54,7 @@ module.exports = {
 		},
 		"/cicd/git_init_repo": {
 			post: {
-				summary:
-					"根据git仓库地址初始化git仓库（clone repo到服务器特定地址，方便后续操作）",
+				summary: "根据git仓库地址初始化git仓库（clone repo到服务器特定地址，方便后续操作）",
 				description:
 					"根据git仓库地址初始化git仓库（clone repo到服务器特定地址，方便后续操作）",
 				request: {
@@ -119,8 +118,7 @@ module.exports = {
 					});
 
 					try {
-						const { project_id, alias, git_address, username, password } =
-							payload;
+						const { project_id, alias, git_address, username, password } = payload;
 
 						if (!project_id) {
 							return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
@@ -322,11 +320,7 @@ module.exports = {
 							return (ctx.body = xU.$response(null, 400, "任务不存在"));
 						}
 
-						if (
-							xU._.some(task.task_triggers, trigger =>
-								message.includes(trigger)
-							)
-						) {
+						if (xU._.some(task.task_triggers, trigger => message.includes(trigger))) {
 							/* 在commit里面自定义的特殊字段，只要推送的commit信息有，则通过 */
 							if (task.task_token === task_token) {
 								runTask({

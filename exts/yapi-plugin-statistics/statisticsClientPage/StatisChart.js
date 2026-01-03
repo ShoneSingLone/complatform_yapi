@@ -4,15 +4,7 @@
 import React, { Component } from "react";
 // import PropTypes from 'prop-types'
 import axios from "axios";
-import {
-	LineChart,
-	Line,
-	XAxis,
-	YAxis,
-	CartesianGrid,
-	Tooltip,
-	Legend
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { Spin } from "antd";
 class StatisChart extends Component {
 	static propTypes = {};
