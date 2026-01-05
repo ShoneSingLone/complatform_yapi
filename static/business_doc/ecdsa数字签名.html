@@ -5,9 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>前端 ECDSA 示例</title>
 		<script src="https://cdn.tailwindcss.com"></script>
-		<link
-			href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
-			rel="stylesheet" />
+		<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 		<script>
 			tailwind.config = {
 				theme: {
@@ -47,29 +45,17 @@
 	</head>
 	<body class="bg-gray-50 font-inter min-h-screen flex flex-col">
 		<!-- 导航栏 -->
-		<header
-			class="bg-white shadow-md sticky top-0 z-50 transition-all duration-300"
-			id="navbar">
+		<header class="bg-white shadow-md sticky top-0 z-50 transition-all duration-300" id="navbar">
 			<div class="container mx-auto px-4 py-3 flex justify-between items-center">
 				<div class="flex items-center space-x-2">
 					<i class="fa fa-shield text-primary text-2xl"></i>
-					<h1 class="text-xl font-bold text-dark">
-						ECDSA <span class="text-primary">前端示例</span>
-					</h1>
+					<h1 class="text-xl font-bold text-dark"> ECDSA <span class="text-primary">前端示例</span> </h1>
 				</div>
 				<nav class="hidden md:flex space-x-6">
-					<a href="#generate" class="text-gray-600 hover:text-primary transition-colors"
-						>生成密钥</a
-					>
-					<a href="#sign" class="text-gray-600 hover:text-primary transition-colors"
-						>签名消息</a
-					>
-					<a href="#verify" class="text-gray-600 hover:text-primary transition-colors"
-						>验证签名</a
-					>
-					<a href="#about" class="text-gray-600 hover:text-primary transition-colors"
-						>关于 ECDSA</a
-					>
+					<a href="#generate" class="text-gray-600 hover:text-primary transition-colors">生成密钥</a>
+					<a href="#sign" class="text-gray-600 hover:text-primary transition-colors">签名消息</a>
+					<a href="#verify" class="text-gray-600 hover:text-primary transition-colors">验证签名</a>
+					<a href="#about" class="text-gray-600 hover:text-primary transition-colors">关于 ECDSA</a>
 				</nav>
 				<button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle">
 					<i class="fa fa-bars text-xl"></i>
@@ -78,22 +64,10 @@
 			<!-- 移动端菜单 -->
 			<div class="md:hidden hidden bg-white shadow-lg absolute w-full" id="mobile-menu">
 				<div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
-					<a
-						href="#generate"
-						class="text-gray-600 hover:text-primary py-2 transition-colors"
-						>生成密钥</a
-					>
-					<a href="#sign" class="text-gray-600 hover:text-primary py-2 transition-colors"
-						>签名消息</a
-					>
-					<a
-						href="#verify"
-						class="text-gray-600 hover:text-primary py-2 transition-colors"
-						>验证签名</a
-					>
-					<a href="#about" class="text-gray-600 hover:text-primary py-2 transition-colors"
-						>关于 ECDSA</a
-					>
+					<a href="#generate" class="text-gray-600 hover:text-primary py-2 transition-colors">生成密钥</a>
+					<a href="#sign" class="text-gray-600 hover:text-primary py-2 transition-colors">签名消息</a>
+					<a href="#verify" class="text-gray-600 hover:text-primary py-2 transition-colors">验证签名</a>
+					<a href="#about" class="text-gray-600 hover:text-primary py-2 transition-colors">关于 ECDSA</a>
 				</div>
 			</div>
 		</header>
@@ -102,9 +76,7 @@
 		<main class="flex-grow container mx-auto px-4 py-8">
 			<!-- 英雄区域 -->
 			<section class="mb-16 text-center">
-				<h2 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-4 text-gradient">
-					前端 ECDSA 数字签名
-				</h2>
+				<h2 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-4 text-gradient"> 前端 ECDSA 数字签名 </h2>
 				<p class="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
 					使用椭圆曲线数字签名算法在浏览器中实现安全的消息签名和验证
 				</p>
@@ -128,8 +100,7 @@
 				<section
 					id="generate"
 					class="bg-white rounded-xl p-6 card-shadow transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-					<div
-						class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+					<div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
 						<i class="fa fa-key text-primary text-xl"></i>
 					</div>
 					<h3 class="text-xl font-bold mb-4 text-dark">生成密钥对</h3>
@@ -141,9 +112,7 @@
 					</button>
 					<div class="mt-6">
 						<div class="mb-4">
-							<label class="block text-sm font-medium text-gray-700 mb-1"
-								>公钥 (PEM 格式)</label
-							>
+							<label class="block text-sm font-medium text-gray-700 mb-1">公钥 (PEM 格式)</label>
 							<div class="relative">
 								<textarea
 									id="public-key"
@@ -157,9 +126,7 @@
 							</div>
 						</div>
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-1"
-								>私钥 (PEM 格式)</label
-							>
+							<label class="block text-sm font-medium text-gray-700 mb-1">私钥 (PEM 格式)</label>
 							<div class="relative">
 								<textarea
 									id="private-key"
@@ -179,8 +146,7 @@
 				<section
 					id="sign"
 					class="bg-white rounded-xl p-6 card-shadow transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-					<div
-						class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+					<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
 						<i class="fa fa-pencil-square-o text-secondary text-xl"></i>
 					</div>
 					<h3 class="text-xl font-bold mb-4 text-dark">签名消息</h3>
@@ -212,9 +178,7 @@
 						<i class="fa fa-pencil mr-2"></i> 签名消息
 					</button>
 					<div class="mt-6">
-						<label class="block text-sm font-medium text-gray-700 mb-1"
-							>签名结果 (Base64)</label
-						>
+						<label class="block text-sm font-medium text-gray-700 mb-1">签名结果 (Base64)</label>
 						<div class="relative">
 							<textarea
 								id="signature-result"
@@ -233,8 +197,7 @@
 				<section
 					id="verify"
 					class="bg-white rounded-xl p-6 card-shadow transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-					<div
-						class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-4">
+					<div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-4">
 						<i class="fa fa-check-circle-o text-accent text-xl"></i>
 					</div>
 					<h3 class="text-xl font-bold mb-4 text-dark">验证签名</h3>
@@ -261,9 +224,7 @@
 						</div>
 					</div>
 					<div class="mb-4">
-						<label class="block text-sm font-medium text-gray-700 mb-1"
-							>签名 (Base64)</label
-						>
+						<label class="block text-sm font-medium text-gray-700 mb-1">签名 (Base64)</label>
 						<textarea
 							id="signature-to-verify"
 							class="w-full h-16 p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary resize-none text-sm"
@@ -275,9 +236,7 @@
 						<i class="fa fa-check mr-2"></i> 验证签名
 					</button>
 					<div class="mt-6 text-center">
-						<div
-							id="verification-result"
-							class="py-3 px-4 rounded-lg font-medium"></div>
+						<div id="verification-result" class="py-3 px-4 rounded-lg font-medium"></div>
 					</div>
 				</section>
 			</div>
@@ -289,19 +248,16 @@
 					<div>
 						<h3 class="text-xl font-semibold mb-4 text-primary">什么是 ECDSA？</h3>
 						<p class="text-gray-700 mb-4">
-							ECDSA（Elliptic Curve Digital Signature
-							Algorithm）是一种基于椭圆曲线密码学的数字签名算法。 它提供了与 RSA
+							ECDSA（Elliptic Curve Digital Signature Algorithm）是一种基于椭圆曲线密码学的数字签名算法。 它提供了与 RSA
 							相当的安全性，但使用更短的密钥长度，因此在性能和效率上更具优势。
 						</p>
 						<p class="text-gray-700 mb-4">
-							ECDSA 广泛应用于各种安全场景，包括加密货币（如比特币和以太坊）、SSL/TLS
-							证书、 代码签名和身份验证系统等。
+							ECDSA 广泛应用于各种安全场景，包括加密货币（如比特币和以太坊）、SSL/TLS 证书、 代码签名和身份验证系统等。
 						</p>
 						<h3 class="text-xl font-semibold mb-4 text-primary">工作原理</h3>
 						<p class="text-gray-700 mb-4">
 							ECDSA 使用一对密钥：私钥和公钥。私钥用于生成签名，而公钥用于验证签名。
-							签名过程涉及对消息的哈希值进行数学运算，生成两个大整数（r 和
-							s）作为签名。
+							签名过程涉及对消息的哈希值进行数学运算，生成两个大整数（r 和 s）作为签名。
 						</p>
 						<p class="text-gray-700">
 							验证过程使用公钥、原始消息和签名值，通过椭圆曲线运算验证签名的有效性。
@@ -317,71 +273,50 @@
 							</li>
 							<li class="flex items-start">
 								<i class="fa fa-exchange text-primary mt-1 mr-2"></i>
-								<span
-									>签名和验证过程涉及复杂的数学运算，可能会影响性能，尤其是在移动设备上。</span
-								>
+								<span>签名和验证过程涉及复杂的数学运算，可能会影响性能，尤其是在移动设备上。</span>
 							</li>
 							<li class="flex items-start">
 								<i class="fa fa-shield text-primary mt-1 mr-2"></i>
-								<span
-									>建议使用经过审计的密码学库，如 Web Crypto API 或
-									elliptic.js，避免自行实现底层算法。</span
-								>
+								<span>建议使用经过审计的密码学库，如 Web Crypto API 或 elliptic.js，避免自行实现底层算法。</span>
 							</li>
 							<li class="flex items-start">
 								<i class="fa fa-exclamation-triangle text-primary mt-1 mr-2"></i>
-								<span
-									>在实际应用中，考虑结合 HTTPS
-									和其他安全措施，提供更全面的安全保障。</span
-								>
+								<span>在实际应用中，考虑结合 HTTPS 和其他安全措施，提供更全面的安全保障。</span>
 							</li>
 							<li class="flex items-start">
 								<i class="fa fa-link text-primary mt-1 mr-2"></i>
-								<span
-									>ECDSA
-									签名通常与消息哈希一起使用，确保消息完整性和防篡改。</span
-								>
+								<span>ECDSA 签名通常与消息哈希一起使用，确保消息完整性和防篡改。</span>
 							</li>
 						</ul>
-						<h3 class="text-xl font-semibold mt-8 mb-4 text-primary">
-							为什么选择 ECDSA？
-						</h3>
+						<h3 class="text-xl font-semibold mt-8 mb-4 text-primary"> 为什么选择 ECDSA？ </h3>
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div class="bg-gray-50 p-4 rounded-lg">
 								<div class="text-primary text-2xl mb-2">
 									<i class="fa fa-bolt"></i>
 								</div>
 								<h4 class="font-semibold mb-1">更高性能</h4>
-								<p class="text-sm text-gray-600">
-									与 RSA 相比，相同安全级别下密钥更短，计算效率更高。
-								</p>
+								<p class="text-sm text-gray-600"> 与 RSA 相比，相同安全级别下密钥更短，计算效率更高。 </p>
 							</div>
 							<div class="bg-gray-50 p-4 rounded-lg">
 								<div class="text-primary text-2xl mb-2">
 									<i class="fa fa-shield"></i>
 								</div>
 								<h4 class="font-semibold mb-1">同等安全</h4>
-								<p class="text-sm text-gray-600">
-									在相同密钥长度下，提供与 RSA 相当的安全性。
-								</p>
+								<p class="text-sm text-gray-600"> 在相同密钥长度下，提供与 RSA 相当的安全性。 </p>
 							</div>
 							<div class="bg-gray-50 p-4 rounded-lg">
 								<div class="text-primary text-2xl mb-2">
 									<i class="fa fa-mobile"></i>
 								</div>
 								<h4 class="font-semibold mb-1">移动友好</h4>
-								<p class="text-sm text-gray-600">
-									更小的密钥和更快的计算速度，适合资源受限的设备。
-								</p>
+								<p class="text-sm text-gray-600"> 更小的密钥和更快的计算速度，适合资源受限的设备。 </p>
 							</div>
 							<div class="bg-gray-50 p-4 rounded-lg">
 								<div class="text-primary text-2xl mb-2">
 									<i class="fa fa-globe"></i>
 								</div>
 								<h4 class="font-semibold mb-1">广泛应用</h4>
-								<p class="text-sm text-gray-600">
-									被众多安全标准和协议采纳，包括 TLS、PGP 和加密货币。
-								</p>
+								<p class="text-sm text-gray-600"> 被众多安全标准和协议采纳，包括 TLS、PGP 和加密货币。 </p>
 							</div>
 						</div>
 					</div>
@@ -418,32 +353,16 @@
 						<h4 class="text-lg font-semibold mb-4">快速链接</h4>
 						<ul class="space-y-2">
 							<li>
-								<a
-									href="#generate"
-									class="text-gray-400 hover:text-primary transition-colors"
-									>生成密钥对</a
-								>
+								<a href="#generate" class="text-gray-400 hover:text-primary transition-colors">生成密钥对</a>
 							</li>
 							<li>
-								<a
-									href="#sign"
-									class="text-gray-400 hover:text-primary transition-colors"
-									>签名消息</a
-								>
+								<a href="#sign" class="text-gray-400 hover:text-primary transition-colors">签名消息</a>
 							</li>
 							<li>
-								<a
-									href="#verify"
-									class="text-gray-400 hover:text-primary transition-colors"
-									>验证签名</a
-								>
+								<a href="#verify" class="text-gray-400 hover:text-primary transition-colors">验证签名</a>
 							</li>
 							<li>
-								<a
-									href="#about"
-									class="text-gray-400 hover:text-primary transition-colors"
-									>关于 ECDSA</a
-								>
+								<a href="#about" class="text-gray-400 hover:text-primary transition-colors">关于 ECDSA</a>
 							</li>
 						</ul>
 					</div>
@@ -531,192 +450,166 @@
 			// ECDSA 功能实现
 			document.addEventListener("DOMContentLoaded", function () {
 				// 生成密钥对
-				document
-					.getElementById("generate-keys")
-					.addEventListener("click", async function () {
-						try {
-							// 使用 Web Crypto API 生成 ECDSA 密钥对
-							const keyPair = await window.crypto.subtle.generateKey(
-								{
-									name: "ECDSA",
-									namedCurve: "P-256" // 可以选择 P-256, P-384 或 P-521
-								},
-								true, // 可导出
-								["sign", "verify"]
-							);
+				document.getElementById("generate-keys").addEventListener("click", async function () {
+					try {
+						// 使用 Web Crypto API 生成 ECDSA 密钥对
+						const keyPair = await window.crypto.subtle.generateKey(
+							{
+								name: "ECDSA",
+								namedCurve: "P-256" // 可以选择 P-256, P-384 或 P-521
+							},
+							true, // 可导出
+							["sign", "verify"]
+						);
 
-							// 导出公钥为 SPKI 格式
-							const publicKey = await window.crypto.subtle.exportKey(
-								"spki",
-								keyPair.publicKey
-							);
+						// 导出公钥为 SPKI 格式
+						const publicKey = await window.crypto.subtle.exportKey("spki", keyPair.publicKey);
 
-							// 导出私钥为 PKCS8 格式
-							const privateKey = await window.crypto.subtle.exportKey(
-								"pkcs8",
-								keyPair.privateKey
-							);
+						// 导出私钥为 PKCS8 格式
+						const privateKey = await window.crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
 
-							// 转换为 PEM 格式
-							const publicKeyPEM = arrayBufferToPem(publicKey, "PUBLIC KEY");
-							const privateKeyPEM = arrayBufferToPem(privateKey, "PRIVATE KEY");
+						// 转换为 PEM 格式
+						const publicKeyPEM = arrayBufferToPem(publicKey, "PUBLIC KEY");
+						const privateKeyPEM = arrayBufferToPem(privateKey, "PRIVATE KEY");
 
-							// 显示密钥
-							document.getElementById("public-key").value = publicKeyPEM;
-							document.getElementById("private-key").value = privateKeyPEM;
+						// 显示密钥
+						document.getElementById("public-key").value = publicKeyPEM;
+						document.getElementById("private-key").value = privateKeyPEM;
 
-							showNotification("密钥对生成成功！", "success");
-						} catch (error) {
-							console.error("生成密钥对时出错:", error);
-							showNotification("生成密钥对失败: " + error.message, "error");
-						}
-					});
+						showNotification("密钥对生成成功！", "success");
+					} catch (error) {
+						console.error("生成密钥对时出错:", error);
+						showNotification("生成密钥对失败: " + error.message, "error");
+					}
+				});
 
 				// 签名消息
-				document
-					.getElementById("sign-message")
-					.addEventListener("click", async function () {
-						const message = document.getElementById("message-to-sign").value.trim();
-						const privateKeyPEM = document
-							.getElementById("private-key-sign")
-							.value.trim();
+				document.getElementById("sign-message").addEventListener("click", async function () {
+					const message = document.getElementById("message-to-sign").value.trim();
+					const privateKeyPEM = document.getElementById("private-key-sign").value.trim();
 
-						if (!message) {
-							showNotification("请输入要签名的消息", "warning");
-							return;
-						}
+					if (!message) {
+						showNotification("请输入要签名的消息", "warning");
+						return;
+					}
 
-						if (!privateKeyPEM) {
-							showNotification("请提供私钥", "warning");
-							return;
-						}
+					if (!privateKeyPEM) {
+						showNotification("请提供私钥", "warning");
+						return;
+					}
 
-						try {
-							// 将 PEM 格式的私钥转换为 CryptoKey
-							const privateKey = await importPrivateKey(privateKeyPEM);
+					try {
+						// 将 PEM 格式的私钥转换为 CryptoKey
+						const privateKey = await importPrivateKey(privateKeyPEM);
 
-							// 计算消息的哈希值
-							const encoder = new TextEncoder();
-							const data = encoder.encode(message);
-							const digest = await window.crypto.subtle.digest("SHA-256", data);
+						// 计算消息的哈希值
+						const encoder = new TextEncoder();
+						const data = encoder.encode(message);
+						const digest = await window.crypto.subtle.digest("SHA-256", data);
 
-							// 签名哈希值
-							const signature = await window.crypto.subtle.sign(
-								{
-									name: "ECDSA",
-									hash: { name: "SHA-256" }
-								},
-								privateKey,
-								digest
-							);
+						// 签名哈希值
+						const signature = await window.crypto.subtle.sign(
+							{
+								name: "ECDSA",
+								hash: { name: "SHA-256" }
+							},
+							privateKey,
+							digest
+						);
 
-							// 将签名转换为 Base64 格式
-							const signatureBase64 = arrayBufferToBase64(signature);
+						// 将签名转换为 Base64 格式
+						const signatureBase64 = arrayBufferToBase64(signature);
 
-							// 显示签名结果
-							document.getElementById("signature-result").value = signatureBase64;
+						// 显示签名结果
+						document.getElementById("signature-result").value = signatureBase64;
 
-							showNotification("消息签名成功！", "success");
-						} catch (error) {
-							console.error("签名消息时出错:", error);
-							showNotification("签名消息失败: " + error.message, "error");
-						}
-					});
+						showNotification("消息签名成功！", "success");
+					} catch (error) {
+						console.error("签名消息时出错:", error);
+						showNotification("签名消息失败: " + error.message, "error");
+					}
+				});
 
 				// 验证签名
-				document
-					.getElementById("verify-signature")
-					.addEventListener("click", async function () {
-						const message = document.getElementById("message-to-verify").value.trim();
-						const publicKeyPEM = document
-							.getElementById("public-key-verify")
-							.value.trim();
-						const signatureBase64 = document
-							.getElementById("signature-to-verify")
-							.value.trim();
+				document.getElementById("verify-signature").addEventListener("click", async function () {
+					const message = document.getElementById("message-to-verify").value.trim();
+					const publicKeyPEM = document.getElementById("public-key-verify").value.trim();
+					const signatureBase64 = document.getElementById("signature-to-verify").value.trim();
 
-						if (!message) {
-							showNotification("请输入原始消息", "warning");
-							return;
+					if (!message) {
+						showNotification("请输入原始消息", "warning");
+						return;
+					}
+
+					if (!publicKeyPEM) {
+						showNotification("请提供公钥", "warning");
+						return;
+					}
+
+					if (!signatureBase64) {
+						showNotification("请提供签名", "warning");
+						return;
+					}
+
+					try {
+						// 将 PEM 格式的公钥转换为 CryptoKey
+						const publicKey = await importPublicKey(publicKeyPEM);
+
+						// 将 Base64 格式的签名转换为 ArrayBuffer
+						const signature = base64ToArrayBuffer(signatureBase64);
+
+						// 计算消息的哈希值
+						const encoder = new TextEncoder();
+						const data = encoder.encode(message);
+						const digest = await window.crypto.subtle.digest("SHA-256", data);
+
+						// 验证签名
+						const isValid = await window.crypto.subtle.verify(
+							{
+								name: "ECDSA",
+								hash: { name: "SHA-256" }
+							},
+							publicKey,
+							signature,
+							digest
+						);
+
+						// 显示验证结果
+						const resultElement = document.getElementById("verification-result");
+						if (isValid) {
+							resultElement.textContent = "签名验证成功！消息未被篡改，且确实由私钥持有者签名。";
+							resultElement.className = "py-3 px-4 rounded-lg font-medium bg-green-100 text-green-800";
+						} else {
+							resultElement.textContent = "签名验证失败！消息可能被篡改，或者签名无效。";
+							resultElement.className = "py-3 px-4 rounded-lg font-medium bg-red-100 text-red-800";
 						}
 
-						if (!publicKeyPEM) {
-							showNotification("请提供公钥", "warning");
-							return;
-						}
-
-						if (!signatureBase64) {
-							showNotification("请提供签名", "warning");
-							return;
-						}
-
-						try {
-							// 将 PEM 格式的公钥转换为 CryptoKey
-							const publicKey = await importPublicKey(publicKeyPEM);
-
-							// 将 Base64 格式的签名转换为 ArrayBuffer
-							const signature = base64ToArrayBuffer(signatureBase64);
-
-							// 计算消息的哈希值
-							const encoder = new TextEncoder();
-							const data = encoder.encode(message);
-							const digest = await window.crypto.subtle.digest("SHA-256", data);
-
-							// 验证签名
-							const isValid = await window.crypto.subtle.verify(
-								{
-									name: "ECDSA",
-									hash: { name: "SHA-256" }
-								},
-								publicKey,
-								signature,
-								digest
-							);
-
-							// 显示验证结果
-							const resultElement = document.getElementById("verification-result");
-							if (isValid) {
-								resultElement.textContent =
-									"签名验证成功！消息未被篡改，且确实由私钥持有者签名。";
-								resultElement.className =
-									"py-3 px-4 rounded-lg font-medium bg-green-100 text-green-800";
-							} else {
-								resultElement.textContent =
-									"签名验证失败！消息可能被篡改，或者签名无效。";
-								resultElement.className =
-									"py-3 px-4 rounded-lg font-medium bg-red-100 text-red-800";
-							}
-
-							showNotification("签名验证完成！", "info");
-						} catch (error) {
-							console.error("验证签名时出错:", error);
-							showNotification("验证签名失败: " + error.message, "error");
-						}
-					});
+						showNotification("签名验证完成！", "info");
+					} catch (error) {
+						console.error("验证签名时出错:", error);
+						showNotification("验证签名失败: " + error.message, "error");
+					}
+				});
 
 				// 使用生成的私钥进行签名
-				document
-					.getElementById("use-generated-private-key")
-					.addEventListener("click", function () {
-						const privateKey = document.getElementById("private-key").value;
-						if (privateKey) {
-							document.getElementById("private-key-sign").value = privateKey;
-						} else {
-							showNotification("请先生成密钥对", "warning");
-						}
-					});
+				document.getElementById("use-generated-private-key").addEventListener("click", function () {
+					const privateKey = document.getElementById("private-key").value;
+					if (privateKey) {
+						document.getElementById("private-key-sign").value = privateKey;
+					} else {
+						showNotification("请先生成密钥对", "warning");
+					}
+				});
 
 				// 使用生成的公钥进行验证
-				document
-					.getElementById("use-generated-public-key")
-					.addEventListener("click", function () {
-						const publicKey = document.getElementById("public-key").value;
-						if (publicKey) {
-							document.getElementById("public-key-verify").value = publicKey;
-						} else {
-							showNotification("请先生成密钥对", "warning");
-						}
-					});
+				document.getElementById("use-generated-public-key").addEventListener("click", function () {
+					const publicKey = document.getElementById("public-key").value;
+					if (publicKey) {
+						document.getElementById("public-key-verify").value = publicKey;
+					} else {
+						showNotification("请先生成密钥对", "warning");
+					}
+				});
 
 				// 复制功能
 				document.getElementById("copy-public-key").addEventListener("click", function () {
