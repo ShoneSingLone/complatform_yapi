@@ -385,9 +385,9 @@
 						<div class="m3-breadcrumb-item" @click="back(-1)">
 							<span class="m3-breadcrumb-text">root</span>
 						</div>
-						<template v-for="(item, index) in pathStack" >
+						<template v-for="(item, index) in pathStack">
 							<span class="m3-breadcrumb-separator" :key="item.name"> /</span>
-							<div class="m3-breadcrumb-item" @click="back(index)"  :key="item.name">
+							<div class="m3-breadcrumb-item" @click="back(index)" :key="item.name">
 								{{ item }}
 							</div>
 						</template>
@@ -423,7 +423,7 @@
 					>
 				</div>
 				<div class="search-box">
-					<xItem v-model.lazy="searchKey" :configs="searchKeyConfigs" class="input" />
+					<xItem v-model.lazy="searchKey" :configs="searchKeyConfigs" />
 				</div>
 			</div>
 		</div>
@@ -749,10 +749,9 @@ export default async function () {
 			];
 
 			let pathStack = [];
-			if(_.$lStorage["VIEW_EXPLORE_PATH_STACK"]==="undefined"){
+			if (_.$lStorage["VIEW_EXPLORE_PATH_STACK"] === "undefined") {
 				pathStack = [];
 			}
-
 
 			return {
 				resource: _.$lStorage["VIEW_EXPLORE_RESOURCE"] || [],
@@ -942,15 +941,15 @@ export default async function () {
 				_.$lStorage["VIEW_EXPLORE_SORT_CONFIG"] = this.sortConfig;
 			},
 			async getResource(item = {}) {
-				 _.$loading(true);
+				_.$loading(true);
 				try {
 					this.pathStack = item.path;
-					const is_directory = item.type === "directory"
+					const is_directory = item.type === "directory";
 					// 检查是否是从搜索结果中点击的文件夹
 					// 如果是通过subdir事件调用（文件夹点击），则不携带搜索参数
-					const res = await _api.yapi.resourceLs({ 
+					const res = await _api.yapi.resourceLs({
 						path: this.pathStack,
-						search_key: is_directory?"":this.searchKey // 从搜索结果点击文件夹时不携带搜索参数
+						search_key: is_directory ? "" : this.searchKey // 从搜索结果点击文件夹时不携带搜索参数
 					});
 
 					if (!res.errcode) {
@@ -979,7 +978,7 @@ export default async function () {
 				_.$lStorage["VIEW_EXPLORE_RESOURCE"] = val;
 			},
 			// 监听搜索关键词变化，重新获取资源
-			searchKey: _.debounce(function() {
+			searchKey: _.debounce(function () {
 				this.getResource({ path: this.pathStack });
 			}, 3000)
 		}

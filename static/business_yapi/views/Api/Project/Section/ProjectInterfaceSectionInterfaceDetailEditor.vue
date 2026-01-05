@@ -1,7 +1,5 @@
 <style lang="less">
 #ProjectInterfaceSectionInterfaceDetailEditor {
-	height: 1px;
-	overflow: hidden;
 }
 </style>
 <template>
@@ -57,12 +55,18 @@
 				</xForm>
 			</xCard>
 			<xGap t />
-			<xCard header="描述">
-				<TuiEditor
-					:value="{ md: formData.desc || '' }"
-					:asRender="false"
-					style="height: 400px"
-					@change="onMarkdownChange" />
+			<xCard>
+				<template #header>
+					<div class="flex middle justify-between">
+						<div class="mr">描述</div>
+						<xBtn :configs="configs_btn_add_desc" />
+					</div>
+				</template>
+				<xItem
+					:configs="form.desc"
+					v-model="formData.desc"
+					style="--xItem-wrapper-width: 100%"
+					ref="ref_desc" />
 			</xCard>
 		</div>
 		<xGap t />
@@ -241,11 +245,24 @@ export default async function () {
 					resBackupJson: {
 						label: i18n("备份数据"),
 						itemType: "xItemMonaco"
+					},
+					desc: {
+						label: i18n(""),
+						itemType: "ProjectInterfaceSectionInterfaceDetailEditorDesc"
 					}
 				})
 			};
 		},
 		computed: {
+			configs_btn_add_desc() {
+				return {
+					preset: "green",
+					icon: "plus",
+					onClick: () => {
+						this.$refs.ref_desc.childVm.showAddInput();
+					}
+				};
+			},
 			cptFormDataResBackupJson: {
 				get() {
 					return this.formData.resBackupJson || "";

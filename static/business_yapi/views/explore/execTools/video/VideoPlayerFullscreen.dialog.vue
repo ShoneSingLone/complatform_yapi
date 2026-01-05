@@ -63,7 +63,7 @@ export default async function ({ item, all_video_array, current_index, current_r
 						{ label: "2x", value: 2 },
 						{ label: "4x", value: 4 },
 						{ label: "8x", value: 8 },
-						{ label: "16x", value: 16 },
+						{ label: "16x", value: 16 }
 					],
 					onEmitValue(val) {
 						vm.changePlaybackRate();
