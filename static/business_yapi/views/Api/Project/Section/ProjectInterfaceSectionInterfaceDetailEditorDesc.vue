@@ -22,6 +22,15 @@
     color: var(--el-color-primary-active);
   }
 }
+
+.delete-btn {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.x-card:hover .delete-btn {
+  opacity: 1;
+}
 </style>
 <template>
   <section class="x-page-view flex1 flash-when" id="ProjectInterfaceSectionInterfaceDetailEditorDesc">
@@ -29,8 +38,7 @@
       <!-- 左侧记录栏 -->
       <div class="log-sidebar">
         <div class="p-4 border-bottom flex justify-between items-center">
-          <h3 class="font-bold">历史记录</h3>
-          <xBtn size="small" icon="plus" @click="showAddInput">添加</xBtn>
+          <xBtn  icon="plus" @click="showAddInput"/>
         </div>
         <div class="log-wrapper">
           <!-- 添加文件输入框 -->
@@ -51,14 +59,17 @@
               :key="index">
               <xCard size="small">
                 <template #header>
-                  <div class="logtype flex middle">
-                    <span class="logHead">{{ getTitle(logItem.type) }}</span>
-                    <span class="logtime ml mr">
-                      {{ getTimeAgo(logItem.add_time) }}
-                    </span>
-                    <xBtn size="small" @click="showDiff(logItem.data)" v-if="hasDiff(logItem.data)">
-                      改动详情
-                    </xBtn>
+                  <div class="logtype flex middle justify-between">
+                    <div class="flex items-center">
+                      <span class="logHead">{{ getTitle(logItem.type) }}</span>
+                      <span class="logtime ml mr">
+                        {{ getTimeAgo(logItem.add_time) }}
+                      </span>
+                      <xBtn size="small" @click="showDiff(logItem.data)" v-if="hasDiff(logItem.data)">
+                        改动详情
+                      </xBtn>
+                    </div>
+                    <xBtn size="small" icon="delete" class="delete-btn" @click="deleteLogItem(logItem)" title="删除">删除</xBtn>
                   </div>
                 </template>
                 <span class="logcontent" v-html="logItem.content" />
@@ -100,9 +111,11 @@ export default async function () {
     inject: ["APP"],
     data() {
       const vm = this;
+      // 将x_item_value解析为对象
+      const parsedItemValue = typeof vm.x_item_value === 'string' ? JSON.parse(vm.x_item_value) : vm.x_item_value || {};
       return {
-        markdown: vm.x_item_value?.markdown || "",
-        title: vm.x_item_value?.title || "",
+        markdown: parsedItemValue.markdown || "",
+        title: parsedItemValue.title || "",
         editingTitle: "",
         isShowEditor: false,
         // 新增属性：控制添加输入框
@@ -143,8 +156,10 @@ export default async function () {
     watch: {
       x_item_value() {
         const vm = this;
-        vm.markdown = vm.x_item_value?.markdown || "";
-        vm.title = vm.x_item_value?.title || "";
+        // 将x_item_value解析为对象
+        const parsedItemValue = typeof vm.x_item_value === 'string' ? JSON.parse(vm.x_item_value) : vm.x_item_value || {};
+        vm.markdown = parsedItemValue.markdown || "";
+        vm.title = parsedItemValue.title || "";
         // 当文档变化时重新加载日志
         vm.getLogList();
       }
@@ -187,6 +202,58 @@ export default async function () {
     methods: {
       onMarkdownChange({ md }) {
         this.markdown = md;
+      },
+      // 添加文件相关方法
+      showAddInput() {
+        this.isShowAddInput = true;
+        this.newFileName = "";
+      },
+      hideAddInput() {
+        this.isShowAddInput = false;
+        this.newFileName = "";
+      },
+      async addNewFile() {
+        const vm = this;
+        if (!vm.newFileName.trim()) {
+          _.$msgError("请输入文件名");
+          return;
+        }
+        
+        try {
+          _.$loading(true);
+          // 这里可以调用API创建新文件
+          // 假设API接口是：_api.yapi.create_new_file
+          await _api.yapi.create_new_file({
+            interface_id: vm.x_item_value?._id,
+            title: vm.newFileName.trim(),
+            markdown: ""
+          });
+          
+          _.$msg("添加成功");
+          // 隐藏输入框
+          vm.hideAddInput();
+          // 重新加载日志列表
+          vm.getLogList();
+          // 切换到新创建的文件
+          vm.loadFile(vm.newFileName.trim());
+        } catch (error) {
+          console.error("添加文件失败:", error);
+          _.$msgError("添加失败");
+        } finally {
+          _.$loading(false);
+        }
+      },
+      loadFile(title) {
+        const vm = this;
+        // 找到对应的日志项
+        const logItem = vm.logList.find(item => item.content.includes(title));
+        if (logItem && logItem.data) {
+          // 更新当前编辑器内容
+          vm.title = title;
+          vm.markdown = logItem.data.markdown || "";
+          vm.editingTitle = title;
+          vm.isShowEditor = true;
+        }
       },
       async save() {
         const vm = this;
@@ -270,6 +337,34 @@ export default async function () {
       },
       getTitle(type) {
         return `${Vue._yapi_var.LOG_TYPE[type]}动态`;
+      },
+      async deleteLogItem(logItem) {
+        const vm = this;
+        try {
+          _.$loading(true);
+          // 这里可以调用API删除日志条目
+          // 假设API接口是：_api.yapi.delete_log_item
+          await _api.yapi.delete_log_item({
+            log_id: logItem._id
+          });
+          
+          _.$msg("删除成功");
+          // 删除后右侧编辑器变为可编辑状态
+          vm.isShowEditor = true;
+          // 如果当前正在查看被删除的文档，需要更新编辑器内容
+          if (logItem.content && logItem.content.includes(vm.title)) {
+            // 清空当前编辑器内容或加载默认内容
+            vm.markdown = "";
+            vm.editingTitle = "";
+          }
+          // 重新加载日志列表
+          await vm.getLogList();
+        } catch (error) {
+          console.error("删除日志失败:", error);
+          _.$msgError("删除失败");
+        } finally {
+          _.$loading(false);
+        }
       },
       hasDiff(data) {
         return _.isPlainObject(data);
