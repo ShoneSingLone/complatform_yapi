@@ -1,25 +1,12 @@
 <template>
-	<div class="x-page-view flex1" id="ProjectInterfaceSectionInterfaceDetail">
+	<div class="x-page-view flex1 height100" id="ProjectInterfaceSectionInterfaceDetail">
 		<xTabs v-model="cptProjectInterfaceTab" :slotHeaderOpr="renderCloseIcon">
 			<xTabPane label="预览" name="preview"> </xTabPane>
 			<xTabPane label="编辑" name="editor"> </xTabPane>
 			<xTabPane label="测试" name="run_test"> </xTabPane>
 		</xTabs>
-		<!--
-		dialog-fade
-		msgbox-fade
-		fade-in-linear
-		el-fade-in-linear
-		el-fade-in
-		el-zoom-in-center
-		el-zoom-in-top
-		el-zoom-in-bottom
-		el-zoom-in-left
-		el-list
-		viewer-fade
-		el-drawer-fade
-		-->
-		<transition name="fade" mode="out-in">
+		<div class="flex1 height1px overflow-auto">
+			<transition name="fade" mode="out-in" tag="div" class="flex vertical flex1 height100">
 			<ProjectInterfaceSectionInterfaceDetailPreview
 				v-if="cptProjectInterfaceTab === 'preview'"
 				:interfaceInfo="interfaceInfo" />
@@ -30,6 +17,8 @@
 				v-if="cptProjectInterfaceTab === 'run_test' && interfaceInfo"
 				:interfaceInfo="interfaceInfo" />
 		</transition>
+		</div>
+		
 	</div>
 </template>
 

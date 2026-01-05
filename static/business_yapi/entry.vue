@@ -23,7 +23,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			YapiItemKeyValTable: "@/components/YapiItemKeyValTable.vue",
 			YapiItemPathParams: "@/components/YapiItemPathParams.vue",
 			YapiProjectCard: "@/components/YapiProjectCard.vue",
-			YapiPlaceholderView: "@/components/YapiPlaceholderView.vue"
+			YapiPlaceholderView: "@/components/YapiPlaceholderView.vue",
+			ProjectInterfaceSectionInterfaceDetailEditorDesc:
+				"@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetailEditorDesc.vue"
 		},
 		(componentURL, name) => Vue.component(name, () => _.$importVue(componentURL))
 	);

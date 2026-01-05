@@ -1,7 +1,5 @@
 <style lang="less">
 #ProjectInterfaceSectionInterfaceDetailEditor {
-	height: 1px;
-	overflow: hidden;
 }
 </style>
 <template>
@@ -58,6 +56,7 @@
 			</xCard>
 			<xGap t />
 			<xCard header="描述">
+				<xItem :configs="form.desc" v-model="formData.desc" style="--xItem-wrapper-width:100%"/>
 				<TuiEditor
 					:value="{ md: formData.desc || '' }"
 					:asRender="false"
@@ -73,6 +72,7 @@
 </template>
 <script lang="ts">
 export default async function () {
+
 	return defineComponent({
 		inject: ["APP", "inject_project", "inject_interface_section_interface_detail"],
 		props: {
@@ -241,6 +241,10 @@ export default async function () {
 					resBackupJson: {
 						label: i18n("备份数据"),
 						itemType: "xItemMonaco"
+					},
+					desc: {
+						label: i18n(""),
+						itemType: "ProjectInterfaceSectionInterfaceDetailEditorDesc"
 					}
 				})
 			};
