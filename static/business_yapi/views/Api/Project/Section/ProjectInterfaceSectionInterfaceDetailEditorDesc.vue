@@ -1,19 +1,37 @@
 <style lang="less">
 #ProjectInterfaceSectionInterfaceDetailEditorDesc {
 	width: 1px;
-	height: 500px;
+	height: 100%;
+	min-height: 500px;
 }
 .log-sidebar {
-	width: 300px;
+	width: 320px;
 	border-right: 1px solid #e9ecef;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+	background-color: #ffffff;
 }
 .log-wrapper {
 	flex: 1;
 	height: 1px;
 	overflow: auto;
+	padding: 8px 0;
+	/* 美化滚动条 */
+	&::-webkit-scrollbar {
+		width: 6px;
+	}
+	&::-webkit-scrollbar-track {
+		background: #f1f1f1;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: #c1c1c1;
+		border-radius: 3px;
+	}
+	&::-webkit-scrollbar-thumb:hover {
+		background: #a8a8a8;
+	}
 }
 .logcontent {
 	line-height: 24px;
@@ -21,16 +39,144 @@
 	padding: 0px 16px;
 	a {
 		color: var(--el-color-primary-active);
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 }
 
-.delete-btn {
-	opacity: 0;
-	transition: opacity 0.3s ease;
+/* Sidebar list items */
+ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
 }
 
-.x-card:hover .delete-btn {
-	opacity: 1;
+li {
+	padding: 14px 16px;
+	border-bottom: 1px solid #f5f7fa;
+	transition: all 0.2s ease;
+	cursor: pointer;
+	position: relative;
+	&:last-child {
+		border-bottom: none;
+	}
+	&:hover {
+		background-color: #f0f5ff;
+		transform: translateX(2px);
+	}
+	&.active {
+		background-color: #ecf5ff;
+		border-left: 3px solid var(--el-color-primary);
+		font-weight: 500;
+	}
+}
+
+.logHead {
+	font-size: 14px;
+	font-weight: 400;
+	color: #303133;
+	margin-right: 8px;
+	flex: 1;
+	transition: color 0.2s ease;
+	&:hover {
+		color: var(--el-color-primary);
+	}
+}
+
+/* Add input section */
+.p-4 {
+	padding: 16px 16px;
+}
+
+.border-b {
+	border-bottom: 1px solid #f0f2f5;
+}
+
+/* Header section */
+.flex.mb10.middle {
+	margin-bottom: 16px;
+	padding: 16px 0;
+	align-items: center;
+}
+
+/* Empty state */
+.text-gray-500 {
+	color: #909399;
+	font-size: 14px;
+	padding: 32px 16px;
+	text-align: center;
+	line-height: 1.5;
+}
+
+/* Sidebar Header */
+.p-4.border-bottom.bg-white.flex.justify-between.items-center {
+	border-bottom: 1px solid #e9ecef;
+	padding: 14px 16px;
+	background-color: #fafafa;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.text-base.font-semibold.text-gray-800.m-0 {
+	font-size: 16px;
+	font-weight: 600;
+	color: #303133;
+	margin: 0;
+}
+
+/* Buttons */
+.x-btn {
+	transition: all 0.2s ease;
+	&:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	}
+	&:active {
+		transform: translateY(0);
+	}
+}
+
+/* Add input container */
+.p-4.border-b.bg-white {
+	padding: 14px 16px;
+	border-bottom: 1px solid #f0f2f5;
+	background-color: #fafafa;
+}
+
+/* Editor area */
+.x-page-view.flex1.flash-when {
+	background-color: #ffffff;
+}
+
+/* Ensure proper spacing in the right editor */
+.x-page-content {
+	padding: 20px;
+}
+
+/* Title styles */
+span[style*="font-weight:700;font-size:18px;"] {
+	font-size: 18px;
+	font-weight: 600;
+	color: #303133;
+	line-height: 1.4;
+}
+
+/* Form items */
+.x-item {
+	margin-bottom: 0;
+}
+
+/* Delete button */
+.text-gray-400.hover\:text-red-500.transition-colors {
+	transition: color 0.2s ease;
+	color: #909399;
+	&:hover {
+		color: #f56c6c;
+	}
+	&:active {
+		color: #e64949;
+	}
 }
 </style>
 <template>
@@ -40,33 +186,44 @@
 		<div class="flex height100">
 			<!-- 左侧记录栏 -->
 			<div class="log-sidebar" v-if="!isShowEditor">
-				<div class="p-4 border-bottom flex justify-between items-center">
-					<xBtn icon="plus" @click="showAddInput" />
+				<!-- Sidebar Header -->
+				<div class="p-4 border-bottom bg-white flex justify-between items-center">
+					<h3 class="text-base font-semibold text-gray-800 m-0">文档列表</h3>
+					<xBtn  icon="plus" @click="showAddInput" size="small" preset="primary">
+						添加
+					</xBtn>
 				</div>
 				<div class="log-wrapper">
 					<!-- 添加文件输入框 -->
-					<div v-if="isShowAddInput" class="p-4 border-b">
+					<div v-if="isShowAddInput" class="p-4 border-b bg-white">
 						<div class="flex items-center gap-2">
-							<xItem
-								style="flex: 1"
-								:configs="form.newFileConfigs"
-								:value="new_file_name" />
-							<xBtn size="small" @click="addNewFile" :disabled="!new_file_name.trim()"
-								>保存</xBtn
-							>
-							<xBtn size="small" @click="hide_add_input">取消</xBtn>
+							<xItem style="flex: 1" :configs="form.newFileConfigs" :value="new_file_name" />
+							<xBtn  @click="addNewFile" :disabled="!new_file_name.trim()" class="ml" preset="primary" size="small">保存</xBtn>
+							<xBtn  @click="hide_add_input" preset="default" size="small">取消</xBtn>
 						</div>
 					</div>
 
 					<ul>
-						<li class="flex middle" v-for="({ title }, index) in cpt_desc_list" :key="title">
+						<li 
+							class="flex items-center justify-between" 
+							v-for="({ title }, index) in cpt_desc_list" 
+							:key="title"
+							:class="{ active: index === current_desc_index }"
+						>
 							<span class="logHead" @click="load_desc_by_index(index)">{{ title }}</span>
-							<xBtn preset="text" icon="delete" @click="delete_desc(index)" />
+							<xBtn 
+								preset="text" 
+								icon="delete" 
+								@click="delete_desc(index)" 
+								size="small"
+								class="text-gray-400 hover:text-red-500 transition-colors"
+								title="删除文档"
+							/>
 						</li>
 					</ul>
 					<!-- 空状态 -->
-					<div v-if="cpt_desc_list.length === 0" class="p-4 text-center text-gray-500">
-						请点击“+”添加描述
+					<div v-if="cpt_desc_list.length === 0" class="p-4 text-center text-gray-500 bg-white">
+						请点击顶部的“添加”按钮添加描述
 					</div>
 				</div>
 			</div>
@@ -127,15 +284,24 @@ export default async function () {
 				get() {
 					try {
 						/* [{title,markdown}] */
+						if (!this.x_item_value) {
+							// 提供默认的空数组，确保始终返回正确的格式
+							return [];
+						}
 						const descArray = JSON.parse(this.x_item_value);
+						// 确保返回的是数组格式
+						if (!Array.isArray(descArray)) {
+							return [];
+						}
 						return _.map(descArray, ({ title, markdown }, _index) => {
 							return {
-								title,
-								markdown,
+								title: title || `未命名文档${_index + 1}`,
+								markdown: markdown || '',
 								_index
 							};
 						});
 					} catch (error) {
+						// 解析失败时返回空数组
 						return [];
 					}
 				},
@@ -258,7 +424,7 @@ export default async function () {
 				const vm = this;
 				if (vm.isShowEditor) {
 					const itemProps = {
-						style: "flex1",
+						class: "flex1",
 						configs: vm.form.titleConfigs,
 						value: vm.editingTitle || ""
 					};
