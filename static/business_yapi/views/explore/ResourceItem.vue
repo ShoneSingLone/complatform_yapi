@@ -84,7 +84,11 @@
 		<div class="path">{{ resource.path.join("/") }}</div>
 		<div class="type">{{ resource.type }}</div>
 	</div>
-	<div v-else class="resource-item flex middle" :class="{ file: isShow(resource) }" @click="clickItem">
+	<div
+		v-else
+		class="resource-item flex middle"
+		:class="{ file: isShow(resource) }"
+		@click="clickItem">
 		<img :src="getIcon(resource)" alt="icon" />
 		<div class="name flex vertical">
 			<div>{{ resource.name }}</div>

@@ -233,15 +233,11 @@
 		<div class="hanoi-app__tiny-vue">
 			<p>
 				Hanoi-3D:
-				<a href="https://github.com/kagol/hanoi" target="_blank"
-					>https://github.com/kagol/hanoi</a
-				>
+				<a href="https://github.com/kagol/hanoi" target="_blank">https://github.com/kagol/hanoi</a>
 			</p>
 			<p>
 				TinyVue:
-				<a href="https://github.com/opentiny/tiny-vue" target="_blank"
-					>https://github.com/opentiny/tiny-vue</a
-				>
+				<a href="https://github.com/opentiny/tiny-vue" target="_blank">https://github.com/opentiny/tiny-vue</a>
 			</p>
 		</div>
 
@@ -278,16 +274,7 @@
 					nums: 1, // 盘子数量
 					maxPlateNums: 8,
 					height: 0.5,
-					colors: [
-						"#c186e0",
-						"#997feb",
-						"#59b1ff",
-						"#36cfc9",
-						"#bae637",
-						"#e7d558",
-						"#ff9c6e",
-						"#ff6b6b"
-					]
+					colors: ["#c186e0", "#997feb", "#59b1ff", "#36cfc9", "#bae637", "#e7d558", "#ff9c6e", "#ff6b6b"]
 				},
 
 				font: null,
@@ -405,11 +392,7 @@
 					directLight.shadow.camera.top = directionZ;
 					directLight.shadow.camera.bottom = -directionZ;
 
-					const directLightHelper = new THREE.DirectionalLightHelper(
-						directLight,
-						1,
-						"#f00"
-					);
+					const directLightHelper = new THREE.DirectionalLightHelper(directLight, 1, "#f00");
 
 					return [ambientLight, spotLight, directLight];
 				}
@@ -422,8 +405,7 @@
 					const material = new THREE.MeshLambertMaterial({
 						color: "#eeeec0"
 					});
-					const url =
-						"https://cdn.pixabay.com/photo/2016/12/26/13/47/fresno-1932211_1280.jpg";
+					const url = "https://cdn.pixabay.com/photo/2016/12/26/13/47/fresno-1932211_1280.jpg";
 
 					// 动态更新材质纹理
 					new THREE.TextureLoader().load(url, texture => {
@@ -631,9 +613,7 @@
 						new THREE.Vector2(sideRadius, height / 4),
 						new THREE.Vector2(sideRadius, 0)
 					];
-					const bottomPoints = topPoints
-						.map(vector => vector.clone().setY(vector.y * -1))
-						.reverse();
+					const bottomPoints = topPoints.map(vector => vector.clone().setY(vector.y * -1)).reverse();
 					const points = [...topPoints, ...bottomPoints];
 
 					return new THREE.LatheGeometry(points, 64);

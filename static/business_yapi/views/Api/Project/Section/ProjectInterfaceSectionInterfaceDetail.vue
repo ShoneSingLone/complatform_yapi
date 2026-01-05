@@ -7,18 +7,17 @@
 		</xTabs>
 		<div class="flex1 height1px overflow-auto">
 			<transition name="fade" mode="out-in" tag="div" class="flex vertical flex1 height100">
-			<ProjectInterfaceSectionInterfaceDetailPreview
-				v-if="cptProjectInterfaceTab === 'preview'"
-				:interfaceInfo="interfaceInfo" />
-			<ProjectInterfaceSectionInterfaceDetailEditor
-				v-if="cptProjectInterfaceTab === 'editor' && interfaceInfo"
-				:interfaceInfo="interfaceInfo" />
-			<ProjectInterfaceSectionInterfaceDetailRunTest
-				v-if="cptProjectInterfaceTab === 'run_test' && interfaceInfo"
-				:interfaceInfo="interfaceInfo" />
-		</transition>
+				<ProjectInterfaceSectionInterfaceDetailPreview
+					v-if="cptProjectInterfaceTab === 'preview'"
+					:interfaceInfo="interfaceInfo" />
+				<ProjectInterfaceSectionInterfaceDetailEditor
+					v-if="cptProjectInterfaceTab === 'editor' && interfaceInfo"
+					:interfaceInfo="interfaceInfo" />
+				<ProjectInterfaceSectionInterfaceDetailRunTest
+					v-if="cptProjectInterfaceTab === 'run_test' && interfaceInfo"
+					:interfaceInfo="interfaceInfo" />
+			</transition>
 		</div>
-		
 	</div>
 </template>
 

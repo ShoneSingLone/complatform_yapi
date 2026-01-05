@@ -56,12 +56,7 @@
 			</xCard>
 			<xGap t />
 			<xCard header="描述">
-				<xItem :configs="form.desc" v-model="formData.desc" style="--xItem-wrapper-width:100%"/>
-				<TuiEditor
-					:value="{ md: formData.desc || '' }"
-					:asRender="false"
-					style="height: 400px"
-					@change="onMarkdownChange" />
+				<xItem :configs="form.desc" v-model="formData.desc" style="--xItem-wrapper-width: 100%" />
 			</xCard>
 		</div>
 		<xGap t />
@@ -72,7 +67,6 @@
 </template>
 <script lang="ts">
 export default async function () {
-
 	return defineComponent({
 		inject: ["APP", "inject_project", "inject_interface_section_interface_detail"],
 		props: {

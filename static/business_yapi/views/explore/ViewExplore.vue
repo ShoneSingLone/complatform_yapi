@@ -423,7 +423,7 @@
 					>
 				</div>
 				<div class="search-box">
-					<xItem v-model.lazy="searchKey" :configs="searchKeyConfigs"  />
+					<xItem v-model.lazy="searchKey" :configs="searchKeyConfigs" />
 				</div>
 			</div>
 		</div>
