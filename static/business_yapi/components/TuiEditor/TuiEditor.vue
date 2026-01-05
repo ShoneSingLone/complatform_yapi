@@ -1332,26 +1332,6 @@ img.ProseMirror-separator {
 	background-size: 30px 30px;
 }
 
-.toastui-editor-contents .toastui-editor-ww-code-block:after {
-	content: attr(data-language);
-	position: absolute;
-	display: inline-block;
-	top: 10px;
-	right: 10px;
-	height: 24px;
-	padding: 3px 35px 0 10px;
-	font-weight: 700;
-	font-size: 13px;
-	color: #333;
-	background: #e5e9ea
-		url(/common/ui-x/components/other/TuiEditor/imgs/toastui-editor-custom-block-view-button.svg)
-		no-repeat;
-	background-position: right;
-	border-radius: 2px;
-	background-size: 30px 30px;
-	cursor: pointer;
-}
-
 .toastui-editor-contents .toastui-editor-md-preview-highlight {
 	position: relative;
 	z-index: 0;
@@ -1944,25 +1924,25 @@ table.ProseMirror-selectednode,
 	position: relative;
 }
 
-.toastui-editor-contents .toastui-editor-ww-code-block:after {
-	content: attr(data-language);
-	position: absolute;
-	display: inline-block;
-	top: 10px;
-	right: 10px;
-	height: 24px;
-	padding: 3px 35px 0 10px;
-	font-weight: 700;
-	font-size: 13px;
-	color: #333;
-	background: #e5e9ea
-		url(/common/ui-x/components/other/TuiEditor/imgs/toastui-editor-custom-block-view-button.svg)
-		no-repeat;
-	background-position: right;
-	border-radius: 2px;
-	background-size: 30px 30px;
-	cursor: pointer;
-}
+// .toastui-editor-contents .toastui-editor-ww-code-block:after {
+// 	content: attr(data-language);
+// 	position: absolute;
+// 	display: inline-block;
+// 	top: 10px;
+// 	right: 10px;
+// 	height: 24px;
+// 	padding: 3px 35px 0 10px;
+// 	font-weight: 700;
+// 	font-size: 13px;
+// 	color: #333;
+// 	background: #e5e9ea
+// 		url(/common/ui-x/components/other/TuiEditor/imgs/toastui-editor-custom-block-view-button.svg)
+// 		no-repeat;
+// 	background-position: right;
+// 	border-radius: 2px;
+// 	background-size: 30px 30px;
+// 	cursor: pointer;
+// }
 
 .toastui-editor-ww-code-block-language {
 	position: fixed;

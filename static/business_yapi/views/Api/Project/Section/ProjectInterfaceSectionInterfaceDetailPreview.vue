@@ -74,14 +74,14 @@
 			</xCard>
 		</xCard>
 		<xGap t />
+
 		<xCard header="描述">
-			<TuiEditor :value="{ md: interfaceInfo.desc }" :asRender="true" style="height: 400px" />
+			<xItem
+				:configs="form.desc"
+				v-model="interfaceInfo.desc"
+				style="--xItem-wrapper-width: 100%"
+				ref="ref_desc" />
 		</xCard>
-		<!-- <xCard header="源数据">
-	<xForm col="1" style="--xItem-label-width: 100px">
-		<xItem :configs="form.source" />
-	</xForm>
-</xCard> -->
 	</div>
 </template>
 <script lang="ts">
@@ -98,6 +98,11 @@ export default async function () {
 				sourceReqHeaders: [],
 				sourceReqBodyOther: {},
 				form: defItems({
+					desc: {
+						label: i18n(""),
+						readonly: true,
+						itemType: "ProjectInterfaceSectionInterfaceDetailEditorDesc"
+					},
 					source: {
 						label: i18n("源数据"),
 						itemType: "xItemMonaco",

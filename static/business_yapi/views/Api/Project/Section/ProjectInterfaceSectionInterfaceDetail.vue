@@ -24,7 +24,6 @@
 <script lang="ts">
 export default async function () {
 	const { useTabName } = await _.$importVue("/common/utils/hooks.vue");
-
 	return {
 		inject: ["APP", "inject_project"],
 		provide() {

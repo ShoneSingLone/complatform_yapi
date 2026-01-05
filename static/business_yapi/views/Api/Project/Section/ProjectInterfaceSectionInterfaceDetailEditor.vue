@@ -55,14 +55,18 @@
 				</xForm>
 			</xCard>
 			<xGap t />
-			<xCard >
+			<xCard>
 				<template #header>
 					<div class="flex middle justify-between">
 						<div class="mr">描述</div>
-						<xBtn :configs="configs_btn_add_desc"/>
+						<xBtn :configs="configs_btn_add_desc" />
 					</div>
 				</template>
-				<xItem :configs="form.desc" v-model="formData.desc" style="--xItem-wrapper-width: 100%" ref="ref_desc"/>
+				<xItem
+					:configs="form.desc"
+					v-model="formData.desc"
+					style="--xItem-wrapper-width: 100%"
+					ref="ref_desc" />
 			</xCard>
 		</div>
 		<xGap t />
@@ -250,7 +254,7 @@ export default async function () {
 			};
 		},
 		computed: {
-			configs_btn_add_desc(){
+			configs_btn_add_desc() {
 				return {
 					preset: "green",
 					icon: "plus",

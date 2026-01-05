@@ -16,7 +16,6 @@
 .log-wrapper {
 	flex: 1;
 	height: 1px;
-	overflow: auto;
 	padding: 8px 0;
 	/* 美化滚动条 */
 	&::-webkit-scrollbar {
@@ -54,7 +53,7 @@ ul {
 }
 
 li {
-	padding: 14px 16px;
+	padding: 2px 16px;
 	border-bottom: 1px solid #f5f7fa;
 	transition: all 0.2s ease;
 	cursor: pointer;
@@ -74,6 +73,9 @@ li {
 }
 
 .logHead {
+	display: flex;
+	align-content: center;
+	justify-items: flex-start;
 	font-size: 14px;
 	font-weight: 400;
 	color: #303133;
@@ -183,65 +185,71 @@ span[style*="font-weight:700;font-size:18px;"] {
 	<section
 		class="x-page-view flex1 flash-when"
 		id="ProjectInterfaceSectionInterfaceDetailEditorDesc">
-		<div class="flex height100">
-			<!-- 左侧记录栏 -->
+		<!-- 左侧记录栏 -->
+		<div class="flex flex1 height1px">
 			<div class="log-sidebar" v-if="!isShowEditor">
-				<!-- Sidebar Header -->
-				<div class="p-4 border-bottom bg-white flex justify-between items-center">
-					<h3 class="text-base font-semibold text-gray-800 m-0">文档列表</h3>
-					<xBtn  icon="plus" @click="showAddInput" size="small" preset="primary">
-						添加
-					</xBtn>
-				</div>
 				<div class="log-wrapper">
 					<!-- 添加文件输入框 -->
 					<div v-if="isShowAddInput" class="p-4 border-b bg-white">
 						<div class="flex items-center gap-2">
-							<xItem style="flex: 1" :configs="form.newFileConfigs" :value="new_file_name" />
-							<xBtn  @click="addNewFile" :disabled="!new_file_name.trim()" class="ml" preset="primary" size="small">保存</xBtn>
-							<xBtn  @click="hide_add_input" preset="default" size="small">取消</xBtn>
+							<xItem
+								style="flex: 1"
+								:configs="form.newFileConfigs"
+								:value="new_file_name" />
+							<xBtn
+								v-if="!readonly"
+								@click="addNewFile"
+								:disabled="!new_file_name.trim()"
+								class="ml"
+								preset="primary"
+								size="small"
+								>保存</xBtn
+							>
+							<xBtn
+								@click="hide_add_input"
+								preset="default"
+								size="small"
+								v-if="!readonly"
+								>取消</xBtn
+							>
 						</div>
 					</div>
 
-					<ul>
-						<li 
-							class="flex items-center justify-between" 
-							v-for="({ title }, index) in cpt_desc_list" 
+					<ul class="flex1 vertical flex">
+						<li
+							class="flex middle overflow-hidden"
+							v-for="({ title }, index) in cpt_desc_list"
 							:key="title"
-							:class="{ active: index === current_desc_index }"
-						>
-							<span class="logHead" @click="load_desc_by_index(index)">{{ title }}</span>
-							<xBtn 
-								preset="text" 
-								icon="delete" 
-								@click="delete_desc(index)" 
+							:class="{ active: index === current_desc_index }">
+							<span class="logHead" @click="load_desc_by_index(index)">{{
+								title
+							}}</span>
+							<xBtn
+								v-if="!readonly"
+								preset="text"
+								icon="delete"
+								@click="delete_desc(index)"
 								size="small"
 								class="text-gray-400 hover:text-red-500 transition-colors"
-								title="删除文档"
-							/>
+								title="删除文档" />
 						</li>
 					</ul>
-					<!-- 空状态 -->
-					<div v-if="cpt_desc_list.length === 0" class="p-4 text-center text-gray-500 bg-white">
-						请点击顶部的“添加”按钮添加描述
-					</div>
 				</div>
 			</div>
 
 			<!-- 右侧编辑器区域 -->
-			<div class="flex1">
-				<xPageContent>
-					<div class="flex mb10 middle" style="height: 48px">
-						<xRender :render="vDomTitle" class="flex1" />
-						<xGap l />
-						<xBtn :configs="btnSaveOrModify" />
-						<xBtn :configs="btnCancel" />
-					</div>
-					<TuiEditor
-						:value="{md:markdown}"
-						:asRender="!isShowEditor"
-						@change="onMarkdownChange" />
-				</xPageContent>
+			<div class="flex vertical flex1 x-padding">
+				<div class="flex mb10 middle" style="height: 48px">
+					<xRender :render="vDomTitle" class="flex1" />
+					<xGap l />
+					<xBtn :configs="btnSaveOrModify" v-if="!readonly" />
+					<xBtn :configs="btnCancel" />
+				</div>
+				<TuiEditor
+					class="flex1"
+					:value="{ md: markdown }"
+					:asRender="!isShowEditor"
+					@change="onMarkdownChange" />
 			</div>
 		</div>
 	</section>
@@ -249,9 +257,13 @@ span[style*="font-weight:700;font-size:18px;"] {
 <script lang="ts">
 export default async function () {
 	const { mixins } = await _.$importVue("/common/ui-x/common/ItemMixins.vue");
+
 	return defineComponent({
 		mixins: [mixins],
 		inject: ["APP"],
+		mounted() {
+			this.load_desc_by_index(0);
+		},
 		data() {
 			const vm = this;
 			return {
@@ -296,7 +308,7 @@ export default async function () {
 						return _.map(descArray, ({ title, markdown }, _index) => {
 							return {
 								title: title || `未命名文档${_index + 1}`,
-								markdown: markdown || '',
+								markdown: markdown || "",
 								_index
 							};
 						});
@@ -310,7 +322,7 @@ export default async function () {
 				}
 			},
 			btnSaveOrModify() {
-        const vm = this;
+				const vm = this;
 				// 将x_item_value解析为对象
 				return {
 					label: vm.isShowEditor ? "保存" : "修改",
