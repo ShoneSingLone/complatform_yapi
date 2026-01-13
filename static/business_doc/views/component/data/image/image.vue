@@ -61,11 +61,11 @@ export default async function () {
 6. **状态记忆**：路径折叠状态和排序配置会保存到localStorage
 
 #### 工具函数调用
-通过 `_.$previewImgs(options)` 函数可以直接调用图片预览功能，支持以下选项：
-- `urlList`: 图片URL列表
-- `index`: 初始显示的图片索引
-- `currentUrl`: 当前图片URL（优先级高于index）
-- `autoPlay`: 是否自动播放幻灯片（默认false）`
+通过 \`_.$previewImgs(options)\` 函数可以直接调用图片预览功能，支持以下选项：
+- \`urlList\`: 图片URL列表
+- \`index\`: 初始显示的图片索引
+- \`currentUrl\`: 当前图片URL（优先级高于index）
+- \`autoPlay\`: 是否自动播放幻灯片（默认false）`
 			};
 		}
 	};
