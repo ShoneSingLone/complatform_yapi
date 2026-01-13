@@ -2,13 +2,13 @@
 	<div class="card-JiChuYongFa">
 		<xMd :md="mdTitle" />
 		<xBtnGroup>
-			<xBtn preset="primary" icon="el-icon-arrow-left">上一页</xBtn>
+			<xBtn preset="primary" icon="arrow-left">上一页</xBtn>
 			<xBtn preset="primary">下一页<i class="el-icon-arrow-right el-icon--right"></i></xBtn>
 		</xBtnGroup>
 		<xBtnGroup>
-			<xBtn preset="primary" icon="el-icon-edit"></xBtn>
-			<xBtn preset="primary" icon="el-icon-share"></xBtn>
-			<xBtn preset="primary" icon="el-icon-delete"></xBtn>
+			<xBtn preset="primary" icon="edit"></xBtn>
+			<xBtn preset="primary" icon="share"></xBtn>
+			<xBtn preset="primary" icon="delete"></xBtn>
 		</xBtnGroup>
 	</div>
 </template>

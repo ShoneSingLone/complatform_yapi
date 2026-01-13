@@ -9,8 +9,8 @@
 			:height="500"
 			:expandedRowKeys.sync="configsTable.data.expandedRowKeys"
 			:estimated-row-height="100"
-			:slotsRow="customRowRender"
-			:expandColumnKey="'detail'" />
+			:slotsCell="customRowRender"
+			:expandColumnKey="'current_row_is_expand'" />
 	</div>
 </template>
 <script lang="ts">
@@ -36,13 +36,13 @@ export default async function () {
 								/* children关键字用于子级数据 */
 								children: _.map(new Array(1), (i, subRowIndex) => {
 									return {
+										/* 特定字段用于展示 */
+										current_row_is_expand: true,
 										parentId: rowIndex,
 										id: `${rowIndex}-${subRowIndex}`,
 										column1: `sub_row_${rowIndex + 1}_${subRowIndex + 1}`,
 										column2: `sub_row_${rowIndex + 1}_${subRowIndex + 1}`,
-										column3: `sub_row_${rowIndex + 1}_${subRowIndex + 1}`,
-										/* 特定字段用于展示 */
-										detail: true
+										column3: `sub_row_${rowIndex + 1}_${subRowIndex + 1}`
 									};
 								})
 							};
@@ -63,7 +63,29 @@ export default async function () {
 						}),
 						{ prop: "column1", label: i18n("column1") },
 						{ prop: "column2", label: i18n("column2") },
-						{ prop: "column3", label: i18n("column3") }
+						{ prop: "column3", label: i18n("column3") },
+						defTable.colActions({
+							width: 300,
+							cellRenderer({ rowData }) {
+								if (rowData.current_row_is_expand) {
+									return hDiv(["asdfasdfdddddddddd"]);
+								}
+								return hBtnWithMore({
+									children: [
+										{
+											label: "notification",
+											icon: "_icon_notification",
+											onClick() {}
+										},
+										{
+											label: "layout",
+											icon: "_icon_layout",
+											async onClick() {}
+										}
+									]
+								});
+							}
+						})
 					]
 				})
 			};
@@ -72,21 +94,25 @@ export default async function () {
 			customCellRenderer({ rowData, column }) {
 				return hDiv({ style: { width: "100px" } }, rowData[column.prop] + "asdfasdfas");
 			},
-			customRowRender(props) {
-				const { cells, rowData } = props;
-				if (rowData.detail) {
-					/* 带有特定样式类div作为 wrapper */
-					return hTableExpandRow([
-						hDiv(JSON.stringify(rowData)),
-						hDiv(JSON.stringify(rowData)),
-						hDiv(JSON.stringify(rowData)),
-						hDiv(JSON.stringify(rowData)),
-						hDiv(JSON.stringify(rowData)),
-						hDiv(JSON.stringify(rowData)),
-						hDiv(JSON.stringify(rowData))
-					]);
+			customRowRender(props, { defaultCell }) {
+				const { rowData, columnIndex } = props;
+				if (rowData.current_row_is_expand) {
+					if (columnIndex === 1) {
+						/* 带有特定样式类div作为 wrapper */
+						return hTableExpandRow({ style: "border:1px solid red;" }, [
+							(hDiv(JSON.stringify(rowData)),
+							hDiv(JSON.stringify(rowData)),
+							hDiv(JSON.stringify(rowData)),
+							hDiv(JSON.stringify(rowData)),
+							hDiv(JSON.stringify(rowData)),
+							hDiv(JSON.stringify(rowData)),
+							hDiv(JSON.stringify(rowData)))
+						]);
+					} else {
+						return null;
+					}
 				} else {
-					return cells;
+					return defaultCell;
 				}
 			}
 		}

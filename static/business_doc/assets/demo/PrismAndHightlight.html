@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<title>手动调用Prism行号插件</title>
+		<!-- 1. 引入Prism核心样式 -->
+		<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" rel="stylesheet" />
+		<!-- 2. 引入行号插件的样式（必须） -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.css"
+			rel="stylesheet" />
+	</head>
+	<body>
+		<h2>手动调用行号插件示例</h2>
+		<!-- 原有代码块 -->
+		<pre id="js-pre"><code class="language-js" id="js-code">
+        // 这是一段JavaScript代码
+        function sayHello(name) {
+            console.log(`Hello, ${name}!`);
+        }
+        sayHello("Prism Line Numbers");
+    </code></pre>
+
+		<!-- 按钮：触发手动添加行号 -->
+		<button onclick="addLineNumbers()">手动添加行号</button>
+		<!-- 按钮：动态生成代码块并添加行号 -->
+		<button onclick="createNewCodeBlock()">动态生成代码块+行号</button>
+
+		<!-- 3. 引入Prism核心JS，添加data-manual禁止自动初始化 -->
+		<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" data-manual></script>
+		<!-- 4. 引入行号插件的JS（必须） -->
+		<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+		<script>
+			// 方法1：为已有代码块手动添加行号
+			function addLineNumbers() {
+				// 步骤1：获取<code>元素，先执行代码高亮
+				const codeElement = document.getElementById("js-code");
+				Prism.highlightElement(codeElement); // 手动高亮代码
+
+				// 步骤2：获取对应的<pre>元素，调用行号插件API添加行号
+				const preElement = document.getElementById("js-pre");
+				// 核心调用：lineNumbersElement，支持配置项（如起始行号start: 5）
+				Prism.plugins.lineNumbers.lineNumbersElement(preElement, {
+					start: 1 // 起始行号，默认1
+				});
+
+				console.log("行号已添加");
+			}
+
+			// 方法2：动态生成代码块并手动添加行号（实战常用）
+			function createNewCodeBlock() {
+				// 1. 动态创建pre和code元素
+				const pre = document.createElement("pre");
+				const code = document.createElement("code");
+				// 设置语言类名，用于语法高亮
+				code.className = "language-python";
+				// 代码内容
+				code.textContent = `# 动态生成的Python代码
+def add(a, b):
+    return a + b
+
+def multiply(a, b):
+    return a * b
+
+print(add(1, 2))
+print(multiply(3, 4))`;
+				pre.appendChild(code);
+				// 将元素添加到页面
+				document.body.appendChild(pre);
+
+				// 2. 手动高亮代码
+				Prism.highlightElement(code);
+
+				// 3. 手动调用行号插件，为pre元素添加行号（配置起始行号为3）
+				Prism.plugins.lineNumbers.lineNumbersElement(pre, {
+					start: 3
+				});
+			}
+		</script>
+	</body>
+</html>

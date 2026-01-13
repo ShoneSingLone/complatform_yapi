@@ -51,6 +51,14 @@ export default async function () {
 					"@/views/xComponent/DemoxItemInput/DemoxItemInput.vue"
 				),
 				_.$newRoute(
+					"/x-component/x-item-autocomplate",
+					"@/views/xComponent/DemoxItemAutocomplate/DemoxItemAutocomplate.vue"
+				),
+				_.$newRoute(
+					"/x-component/x-item-radio-group",
+					"@/views/xComponent/DemoxItemRadioGroup/DemoxItemRadioGroup.vue"
+				),
+				_.$newRoute(
 					"/x-component/x-item-switch",
 					"@/views/xComponent/DemoxItemSwitch/DemoxItemSwitch.vue"
 				),
@@ -171,6 +179,10 @@ export default async function () {
 							"@/views/component/data/virtualizedTable/virtualizedTable.vue"
 						),
 						_.$newRoute(
+							"/component/data/x-table-easy",
+							"@/views/component/data/xTableEasy/xTableEasy.vue"
+						),
+						_.$newRoute(
 							"/component/data/pagination",
 							"@/views/component/data/pagination/pagination.vue"
 						),
@@ -232,7 +244,8 @@ export default async function () {
 				_.$newRoute("/other/calendar", "@/views/other/calendar/DemoCalendar.vue"),
 				_.$newRoute("/other/divider", "@/views/other/divider/DemoDivider.vue"),
 				_.$newRoute("/other/open_window", "@/views/other/dialog/dialog.vue"),
-				_.$newRoute("/other/drawer", "@/views/other/drawer/DemoDrawer.vue")
+				_.$newRoute("/other/drawer", "@/views/other/drawer/DemoDrawer.vue"),
+				_.$newRoute("/other/x_dev", "@/views/other/xDev/xDev.vue")
 			]
 		}),
 		_.$newRoute("/dev", ComponentPageRouterView, {

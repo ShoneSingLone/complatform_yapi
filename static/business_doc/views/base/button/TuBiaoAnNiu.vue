@@ -1,10 +1,10 @@
 <template>
 	<div class="card-JiChuYongFa">
 		<xMd :md="mdTitle" />
-		<xBtn preset="primary" icon="el-icon-edit"></xBtn>
-		<xBtn preset="primary" icon="el-icon-share"></xBtn>
-		<xBtn preset="primary" icon="el-icon-delete"></xBtn>
-		<xBtn preset="primary" icon="el-icon-search">搜索</xBtn>
+		<xBtn preset="primary" icon="edit"></xBtn>
+		<xBtn preset="primary" icon="share"></xBtn>
+		<xBtn preset="primary" icon="delete"></xBtn>
+		<xBtn preset="primary" icon="search">搜索</xBtn>
 		<xBtn preset="primary">上传<i class="el-icon-upload el-icon--right"></i></xBtn>
 	</div>
 </template>
