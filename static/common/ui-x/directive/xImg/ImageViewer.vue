@@ -66,6 +66,7 @@
 			<!-- CANVAS -->
 			<div class="el-image-viewer__canvas">
 				<img
+					v-xloading="loading"
 					ref="img"
 					class="el-image-viewer__img"
 					:src="currentImg"
@@ -73,15 +74,20 @@
 					@load="handleImgLoad"
 					@error="handleImgError"
 					@mousedown="handleMouseDown"
+					@dblclick="handleDoubleClick"
 					@touchstart="handleTouchStart"
 					@touchmove="handleTouchMove"
 					@touchend="handleTouchEnd" />
+				<!-- 图片加载时的毛玻璃效果 -->
+				<!-- <div class="el-image-viewer__img-blur" v-if="loading"></div> -->
 			</div>
 		</div>
 	</transition>
 </template>
 <script lang="ts">
 export default async function () {
+	const isMobile = /Mobile/gi.test(window.navigator.userAgent)
+
 	let prevOverflow = "";
 
 	const KEY_DOWN = "keydown.xImgVue";
@@ -136,7 +142,9 @@ export default async function () {
 					// 双指缩放相关
 					isPinching: false,
 					startDistance: 0,
-					startScale: 1
+					startScale: 1,
+					// 双击检测相关
+					lastTap: 0
 				},
 				// 幻灯片相关状态
 				isAutoPlay: false,
@@ -166,7 +174,7 @@ export default async function () {
 					"margin-top": `${offsetY}px`
 				};
 				if (this.mode === Mode.CONTAIN) {
-					style.maxWidth = style.maxHeight = "80%";
+					style.maxWidth = style.maxHeight = isMobile?"100%":"80%";
 				}
 				return style;
 			}
@@ -338,16 +346,44 @@ export default async function () {
 			},
 			// 触摸结束事件处理
 			handleTouchEnd(e) {
-				// 重置触摸状态
-				this.touchState.isDragging = false;
-				this.touchState.isPinching = false;
-				e.preventDefault();
-			},
+					// 检测双击
+					const now = Date.now();
+					const lastTap = this.touchState.lastTap;
+					this.touchState.lastTap = now;
+					
+					if (now - lastTap < 300 && now - lastTap > 0) {
+						// 双击事件
+						this.handleDoubleClick();
+					}
+					
+					// 重置触摸状态
+					this.touchState.isDragging = false;
+					this.touchState.isPinching = false;
+					e.preventDefault();
+				},
 			handleMaskClick() {
-				if (this.maskClosable) {
-					this.hide();
-				}
-			},
+					// 在移动端，只能通过关闭按钮关闭弹窗，点击背景不关闭
+					const isMobile = window.innerWidth <= 768;
+					if (this.maskClosable && !isMobile) {
+						this.hide();
+					}
+				},
+				// 处理双击事件
+				handleDoubleClick() {
+					if (this.loading) return;
+					this.stopAutoPlay();
+					
+					// 在移动端，允许双击切换模式
+					const isMobile = window.innerWidth <= 768;
+					if (isMobile) {
+						const modeNames = Object.keys(Mode);
+						const modeValues = Object.values(Mode);
+						const index = modeValues.indexOf(this.mode);
+						const nextIndex = (index + 1) % modeNames.length;
+						this.mode = Mode[modeNames[nextIndex]];
+						this.reset();
+					}
+				},
 			reset() {
 				this.transform = {
 					scale: 1,
@@ -489,5 +525,26 @@ export default async function () {
 	.speed-text {
 		-size: var(--ui--size, 16px);
 	}
+}
+
+/* 图片加载时的毛玻璃效果 */
+.el-image-viewer__canvas {
+	position: relative;
+}
+
+.el-image-viewer__img-blur {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.3);
+	backdrop-filter: blur(20px);
+	border-radius: 12px;
+	z-index: 10;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	transition: all 0.3s ease;
 }
 </style>

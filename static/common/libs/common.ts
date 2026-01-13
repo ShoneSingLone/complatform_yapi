@@ -5,9 +5,53 @@
 		console.log("common.js");
 	}
 
+	/*  */
 	_.mixin({
+		/**
+		 * 删除对象中的空值
+		 * @param {Object} obj
+		 * @returns
+		 */
 		$$clean: obj => _.omitBy(obj, v => _.isUndefined(v) || _.isNull(v))
 	});
+
+	/**
+	 * 获取数组中所有相同字符串的对应索引（全部分组）
+	 * @param {Array} arr 原数组(字符串数组)
+	 * @returns {Object} 键=字符串，值=该字符串所有索引组成的数组
+	 */
+	_.$findSameStrIndex = function findSameStrIndex(arr = []) {
+		const indexMap = {};
+		arr.forEach((item, index) => {
+			// 如果当前字符串已存在，则追加索引；否则初始化数组存入第一个索引
+			if (indexMap[item]) {
+				indexMap[item].push(index);
+			} else {
+				indexMap[item] = [index];
+			}
+		});
+		return indexMap;
+	};
+
+	/**
+	 * 节流打印
+	 * @param {Number} count
+	 * @param {Object} callerInfo
+	 */
+	_.$ensure_inner_print = _.throttle(function (count, callerInfo) {
+		console.groupCollapsed(`_.$ensure_inner_print:${count}
+${callerInfo.message}:`);
+		console.log(callerInfo);
+		console.groupEnd();
+	}, 3000);
+
+	/**
+	 * 一个占位的函数，方便搜索，（暂时没有确定的需求）
+	 * 在项目的entry.vue文件中重写即可，
+	 * @param i
+	 * @returns
+	 */
+	_.$stamp = i => i;
 
 	/**
 	 * 验证参数
@@ -2598,29 +2642,29 @@
 									})();
 
 									if (!ignore) {
-										await _.$ensure(
-											() => xItemFormConfigs[prop]?.options?.length
-										);
-
-										if (_.isUndefined(value)) {
-											if (options.FIRST_OPTION_AS_VALUE) {
-												try {
-													value = _.first(
-														xItemFormConfigs[prop].options
-													).value;
-												} catch (ensureError) {
-													console.error(
-														`$xItemsValue: Await处理超时或失败 for prop '${prop}'`,
-														ensureError
-													);
-													console.error(
-														`属性配置:`,
-														xItemFormConfigs[prop]
-													);
-													console.error(`选项:`, options);
-													throw ensureError;
-												}
+										if (options.FIRST_OPTION_AS_VALUE && _.isUndefined(value)) {
+											await _.$ensure(
+												() => xItemFormConfigs[prop]?.options?.length
+											);
+											try {
+												value = _.first(
+													xItemFormConfigs[prop].options
+												).value;
+											} catch (ensureError) {
+												console.error(
+													`$xItemsValue: Await处理超时或失败 for prop '${prop}'`,
+													ensureError
+												);
+												console.error(`属性配置:`, xItemFormConfigs[prop]);
+												console.error(`选项:`, options);
+												throw ensureError;
 											}
+										}
+
+										if (_.$isInput(value)) {
+											await _.$ensure(
+												() => xItemFormConfigs[prop]?.options?.length
+											);
 										}
 									}
 								}

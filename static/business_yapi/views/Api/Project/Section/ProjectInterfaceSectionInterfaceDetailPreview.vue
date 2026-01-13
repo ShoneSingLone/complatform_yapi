@@ -1,5 +1,6 @@
 <style lang="less">
 #ProjectInterfaceSectionInterfaceDetailPreviewForm {
+	/* 响应数据 */
 	.xItemDesc-wrapper {
 		padding: 0;
 	}
@@ -74,11 +75,10 @@
 			</xCard>
 		</xCard>
 		<xGap t />
-
-		<xCard header="描述">
+		<xCard header="描述" v-if="interfaceInfo.desc">
 			<xItem
 				:configs="form.desc"
-				v-model="interfaceInfo.desc"
+				v-model="interfaceInfo.desc || ''"
 				style="--xItem-wrapper-width: 100%"
 				ref="ref_desc" />
 		</xCard>

@@ -100,7 +100,7 @@ module.exports = {
 		"Starting with a lowercase English letter or number and containing only letters, numbers, or-"
 	],
 
-	ruleEnterValidIPAddress: ["ruleEnterValidIPAddress", "ruleEnter ValidIPadress"],
+	enter_ip_address: ["enter_ip_address", "ruleEnter ValidIPadress"],
 
 	添加: ["添加", "Add"],
 

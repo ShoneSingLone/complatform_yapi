@@ -2,8 +2,34 @@
 export default async function ({ PRIVATE_GLOBAL }) {
 	const _reg = await _.$importVue("/common/utils/regexp.vue");
 	if (!PRIVATE_GLOBAL._rules) {
-		PRIVATE_GLOBAL._rules = {
+		let _rules = {
 			_reg,
+			/* 操作符 */
+			_opr: {
+				or: validatorArray => {
+					return {
+						name: "opration_or",
+						async validator(...args) {
+							const vm = this;
+							const _validata_array = _.cloneDeep(validatorArray);
+							/* 或关系的校验 */
+							let result_array = [];
+							let rule;
+							while ((rule = _validata_array.shift())) {
+								const _result = await rule.validator.apply(vm, args);
+								if (!_result) {
+									/* zhi yao you yi ge ok jiu ok */
+									return "";
+								} else {
+									result_array.push(_result);
+								}
+							}
+							return _.first(result_array) || "";
+						},
+						trigger: ["change", "blur"]
+					};
+				}
+			},
 			/* @typescriptDeclare  (validatorFn: any, options?: {}) => { name: string; validator: any; trigger: string[]; }*/
 			validator(validatorFn, options = {}) {
 				validatorFn = validatorFn || (() => "");
@@ -226,62 +252,99 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					trigger: ["change", "blur"]
 				};
 			},
-			Range: (min, max) => {
+			port_in_range: (default_min, default_max, msg = `请输入{min}~{max}范围内的整数`) => {
 				return {
 					async validator({ val }) {
 						try {
-							if (!_.$isInput(val)) return;
-							let val1 = val;
-							val = _.toNumber(val);
-							if (!_.$isNumber(val)) {
-								return `请输入${min}~${max}范围内的整数`;
+							if (!_.$isInput(val)) {
+								return;
 							}
-							if (!/^\d+$/.test(val1) || val > max || val < min) {
-								return `请输入${min}~${max}范围内的整数`;
+
+							if (!_reg.numberValue().test(val)) {
+								return i18n(msg, { max: default_max, min: default_min });
+							}
+
+							val = _.toNumber(val);
+
+							if (val > default_max || val < default_min) {
+								return i18n(msg, { max: default_max, min: default_min });
 							}
 							return "";
 						} catch (error) {
-							return `请输入${min}~${max}范围内的整数`;
+							return i18n(msg, { max: default_max, min: default_min });
 						}
 					},
 					trigger: ["change", "blur"]
 				};
 			},
-			onlyNumber: () => {
+			/**
+			 * 范围这种形式的值 1-65535
+			 * @param default_min
+			 * @param default_max
+			 * @param msg
+			 * @returns
+			 */
+			port_use_range: (default_min, default_max, msg = `请输入{min}~{max}范围内的整数`) => {
 				return {
-					name: "onlyNumber",
+					async validator({ val }) {
+						try {
+							if (!_.$isInput(val)) {
+								/* 必须输入 */
+								return;
+							}
+							let [minVal, maxVal] = _.split(val, "-");
+
+							if (
+								!_reg.numberValue().test(minVal) ||
+								!_reg.numberValue().test(maxVal)
+							) {
+								return i18n(msg, { max: default_max, min: default_min });
+							}
+
+							minVal = _.toNumber(minVal);
+							maxVal = _.toNumber(maxVal);
+
+							if (maxVal < minVal || maxVal > default_max || minVal < default_min) {
+								return i18n(msg, { max: default_max, min: default_min });
+							}
+							return "";
+						} catch (error) {
+							return i18n(msg, { max: default_max, min: default_min });
+						}
+					},
+					trigger: ["change", "blur"]
+				};
+			},
+
+			numberCharacter: () => {
+				return {
+					name: "numberCharacter",
 					async validator({ val }) {
 						if (!_.$isInput(val)) return;
-						if (/^\d+$/.test(val)) {
+
+						if (_reg.numberCharacter().test(val)) {
 							return "";
 						}
-						return i18n("only_enter_numbers");
+						return i18n("enter_number_characters");
 					},
 					trigger: ["change", "blur"]
 				};
 			},
-			portRange: (min, max) => {
+			numberValue: () => {
 				return {
+					name: "numberValue",
 					async validator({ val }) {
-						try {
-							if (!_.$isInput(val)) return;
-							val = _.toNumber(val);
-							if (!_.$isNumber(val)) {
-								return `请输入${min}~${max}范围内的整数`;
-							}
-							if (!/^\d+$/.test(val) || val > max || val < min) {
-								return `请输入${min}~${max}范围内的整数`;
-							}
+						if (!_.$isInput(val)) return;
+						if (_reg.numberValue().test(val)) {
 							return "";
-						} catch (error) {
-							return `请输入${min}~${max}范围内的整数`;
 						}
+						return i18n("enter_number_value");
 					},
 					trigger: ["change", "blur"]
 				};
 			},
-			port165535: () => {
-				return _rules.portRange(1, 65535);
+			port_1_65535: () => {
+				return _rules.port_in_range(1, 65535);
 			},
 			ipV4: size => {
 				return {
@@ -322,8 +385,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				return {
 					name: "inetUrl",
 					async validator({ val }) {
-						let ipAddress = new RegExp("[a-zA-z]+://[^\\s]*");
-						if (ipAddress.test(val)) {
+						let UrlFormat = new RegExp("[a-zA-z]+://[^\\s]*");
+						if (UrlFormat.test(val)) {
 							return "";
 						}
 						return msg;
@@ -387,7 +450,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					trigger: ["change", "input", "blur"]
 				};
 			},
-			ipAddress(msg = i18n("ruleEnterValidIPAddress")) {
+			ipAddress(msg = i18n("enter_ip_address")) {
 				return {
 					name: "ipAddress",
 					async validator({ val: value }) {
@@ -491,7 +554,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				};
 			}
 		};
+
+		PRIVATE_GLOBAL._rules = _rules;
 	}
-	return _rules;
+	return PRIVATE_GLOBAL._rules;
 }
 </script>
