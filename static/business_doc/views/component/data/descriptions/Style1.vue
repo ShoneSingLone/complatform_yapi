@@ -9,17 +9,17 @@
 			border-right: 1px solid var(--el-border-color);
 			margin-top: 0;
 			margin-right: 0;
-			.xItemDesc-wrapper {
+			.xDesc-wrapper {
 				padding: 0 16px;
 				height: 100%;
 				> div {
 					height: 100%;
 					line-height: 48px;
-					&.xItemDesc-wrapper_label {
+					&.xDesc-wrapper_label {
 						padding-left: var(--ui-one);
 						border-right: 1px solid var(--el-border-color);
 					}
-					&.xItemDesc-wrapper_content {
+					&.xDesc-wrapper_content {
 						padding-left: var(--ui-one);
 					}
 				}
@@ -32,7 +32,7 @@
 	<div>
 		<xMd :md="md" />
 		<xForm col="3" class="descriptions-style1">
-			<xItemDesc
+			<xDesc
 				v-for="(item, index) in DemoDescriptions.items"
 				:key="index"
 				:item="item"

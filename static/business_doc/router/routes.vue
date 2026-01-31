@@ -14,7 +14,7 @@ export default async function () {
 	};
 
 	return [
-		_.$newRoute("/all", "@/views/ViewAllProject.vue"),
+		_.$newRoute("/all", "@/views/DocDemoViewAllProject.vue"),
 		_.$newRoute("/test", ComponentRouterView, {
 			redirect: "/test/babel",
 			children: [_.$newRoute("/test/babel", "@/views/test/test/UseBabel.vue")]
@@ -35,10 +35,13 @@ export default async function () {
 		/* 指令 */
 		_.$newRoute("/directive", ComponentPageRouterView, {
 			children: [
-				_.$newRoute("/directive/ripple", "@/views/directive/directive/ripple/ripple.vue"),
+				_.$newRoute(
+					"/directive/ripple",
+					"@/views/directive/directive/ripple/DocDemoRipple.vue"
+				),
 				_.$newRoute(
 					"/directive/infinite_scroll",
-					"@/views/directive/directive/infinite_scroll/infinite_scroll.vue"
+					"@/views/directive/directive/infinite_scroll/DocDemoInfiniteScroll.vue"
 				)
 			]
 		}),
@@ -86,10 +89,13 @@ export default async function () {
 			children: [
 				_.$newRoute("/component/base", ComponentRouterView, {
 					children: [
-						_.$newRoute("/component/base/button", "@/views/base/button/button.vue"),
+						_.$newRoute(
+							"/component/base/button",
+							"@/views/base/button/DocDemoButton.vue"
+						),
 						_.$newRoute(
 							"/component/base/layout",
-							"@/views/component/base/layout/layout.vue"
+							"@/views/component/base/layout/DocDemoLayout.vue"
 						)
 					]
 				}),
@@ -101,23 +107,23 @@ export default async function () {
 						),
 						_.$newRoute(
 							"/component/form/input",
-							"@/views/component/form/input/input.vue"
+							"@/views/component/form/input/DocDemoInput.vue"
 						),
 						_.$newRoute(
 							"/component/form/input-number",
-							"@/views/component/form/inputNumber/inputNumber.vue"
+							"@/views/component/form/inputNumber/DocDemoInputNumber.vue"
 						),
 						_.$newRoute(
 							"/component/form/radio",
-							"@/views/component/form/radio/radio.vue"
+							"@/views/component/form/radio/DocDemoRadio.vue"
 						),
 						_.$newRoute(
 							"/component/form/checkbox",
-							"@/views/component/form/checkbox/checkbox.vue"
+							"@/views/component/form/checkbox/DocDemoCheckbox.vue"
 						),
 						_.$newRoute(
 							"/component/form/switch",
-							"@/views/component/form/switch/switch.vue"
+							"@/views/component/form/switch/DocDemoSwitch.vue"
 						),
 						_.$newRoute(
 							"/component/form/slider",
@@ -125,7 +131,7 @@ export default async function () {
 						),
 						_.$newRoute(
 							"/component/form/select",
-							"@/views/component/form/select/select.vue"
+							"@/views/component/form/select/DocDemoSelect.vue"
 						),
 						_.$newRoute(
 							"/component/form/cascader",
@@ -155,17 +161,26 @@ export default async function () {
 							"/component/data/chart",
 							"@/views/component/data/chart/demo_chart.vue"
 						),
-						_.$newRoute("/component/data/icon", "@/views/component/data/icon/icon.vue"),
+						_.$newRoute(
+							"/component/data/icon",
+							"@/views/component/data/icon/DocDemoIcon.vue"
+						),
 						_.$newRoute(
 							"/component/data/avatar",
 							"@/views/component/data/avatar/DemoAvatar.vue"
 						),
 						_.$newRoute(
 							"/component/data/image",
-							"@/views/component/data/image/image.vue"
+							"@/views/component/data/image/DocDemoImage.vue"
 						),
-						_.$newRoute("/component/data/card", "@/views/component/data/card/card.vue"),
-						_.$newRoute("/component/data/tag", "@/views/component/data/tag/tag.vue"),
+						_.$newRoute(
+							"/component/data/card",
+							"@/views/component/data/card/DocDemoCard.vue"
+						),
+						_.$newRoute(
+							"/component/data/tag",
+							"@/views/component/data/tag/DocDemoTag.vue"
+						),
 						_.$newRoute(
 							"/component/data/tree",
 							"@/views/component/data/tree/DemoTree.vue"
@@ -176,11 +191,291 @@ export default async function () {
 						),
 						_.$newRoute(
 							"/component/data/virtualized-table",
-							"@/views/component/data/virtualizedTable/virtualizedTable.vue"
+							"@/views/component/data/virtualizedTable/DocDemoVirtualizedTable.vue"
 						),
 						_.$newRoute(
 							"/component/data/x-table-easy",
-							"@/views/component/data/xTableEasy/xTableEasy.vue"
+							"@/views/component/data/xTableEasy/DocDemoXTableEasy.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/table_width",
+							"@/views/component/data/xTableEasy/xTableEasy.TableWidth.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/table_height",
+							"@/views/component/data/xTableEasy/xTableEasy.TableHeight.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/table_border",
+							"@/views/component/data/xTableEasy/xTableEasy.TableBorder.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/column_width",
+							"@/views/component/data/xTableEasy/xTableEasy.ColumnWidth.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/column_width_dragging",
+							"@/views/component/data/xTableEasy/xTableEasy.ColumnWidth.Dragging.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/column_fixed",
+							"@/views/component/data/xTableEasy/xTableEasy.Column.Fixed.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/column_hidden",
+							"@/views/component/data/xTableEasy/xTableEasy.Column.Hidden.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/header_fixed",
+							"@/views/component/data/xTableEasy/xTableEasy.Header.Fixed.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/header_group",
+							"@/views/component/data/xTableEasy/xTableEasy.Header.Group.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/header_hidden",
+							"@/views/component/data/xTableEasy/xTableEasy.Header.Hidden.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/filter",
+							"@/views/component/data/xTableEasy/xTableEasy.Filter.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/filter_custom",
+							"@/views/component/data/xTableEasy/xTableEasy.Filter.Custom.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/sort",
+							"@/views/component/data/xTableEasy/xTableEasy.Sort.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_align",
+							"@/views/component/data/xTableEasy/xTableEasy.Cell.Align.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_style",
+							"@/views/component/data/xTableEasy/xTableEasy.Cell.Style.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_custom",
+							"@/views/component/data/xTableEasy/xTableEasy.Cell.Custom.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_merge",
+							"@/views/component/data/xTableEasy/xTableEasy.Cell.Merge.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/action_column",
+							"@/views/component/data/xTableEasy/xTableEasy.Action.Column.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_selection",
+							"@/views/component/data/xTableEasy/xTableEasy.Cell.Selection.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_edit",
+							"@/views/component/data/xTableEasy/xTableEasy.Cell.Edit.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/virtual_scroll",
+							"@/views/component/data/xTableEasy/xTableEasy.Virtual.Scroll.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/row_style",
+							"@/views/component/data/xTableEasy/xTableEasy.Row.Style.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/row_expand",
+							"@/views/component/data/xTableEasy/xTableEasy.Row.Expand.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/clipboard",
+							"@/views/component/data/xTableEasy/xTableEasy.Clipboard.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/contextmenu",
+							"@/views/component/data/xTableEasy/xTableEasy.Contextmenu.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_autofill",
+							"@/views/component/data/xTableEasy/xTableEasy.Cell.Autofill.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/row_expand",
+							"@/views/component/data/xTableEasy/examples/HangZhanKai.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/virtual_scroll",
+							"@/views/component/data/xTableEasy/XuNiGunDong.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/action_column",
+							"@/views/component/data/xTableEasy/CaoZuoLie.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_selection",
+							"@/views/component/data/xTableEasy/DaiYouXuanZeDeBiaoGe.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_edit",
+							"@/views/component/data/xTableEasy/DanYuanGeBianJi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/row_style",
+							"@/views/component/data/xTableEasy/XingYangShiDingZhi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_align",
+							"@/views/component/data/xTableEasy/DanYuanGeDuiQi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_style",
+							"@/views/component/data/xTableEasy/DanYuanGeYangShi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_custom",
+							"@/views/component/data/xTableEasy/ZiDingYiDanYuanGeXuanRan.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_merge",
+							"@/views/component/data/xTableEasy/DanYuanGeHeBing.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/sort",
+							"@/views/component/data/xTableEasy/PaiXu.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/filter",
+							"@/views/component/data/xTableEasy/ShaiXuan.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/filter_custom",
+							"@/views/component/data/xTableEasy/ShaiXuanZiDingYi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/header_group",
+							"@/views/component/data/xTableEasy/BiaoTouFenZu.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/header_fixed",
+							"@/views/component/data/xTableEasy/BiaoTouGuDing.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/header_hidden",
+							"@/views/component/data/xTableEasy/BiaoTouYinCang.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/column_hidden",
+							"@/views/component/data/xTableEasy/LieYinCang.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/base_usage",
+							"@/views/component/data/xTableEasy/JiChuYongFa.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/table_border",
+							"@/views/component/data/xTableEasy/BiaoGeBianKuang.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/table_height",
+							"@/views/component/data/xTableEasy/BiaoGeGaoDu.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/table_width",
+							"@/views/component/data/xTableEasy/BiaoGeKuanDu.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/column_width_setting",
+							"@/views/component/data/xTableEasy/LieKuanSheZhi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/column_width_dragging",
+							"@/views/component/data/xTableEasy/LieKuanTuoDong.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/column_fixed",
+							"@/views/component/data/xTableEasy/LieGuDing.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_style",
+							"@/views/component/data/xTableEasy/DanYuanGeYangShi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_merge",
+							"@/views/component/data/xTableEasy/DanYuanGeHeBing.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_custom",
+							"@/views/component/data/xTableEasy/ZiDingYiDanYuanGeXuanRan.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_selection",
+							"@/views/component/data/xTableEasy/DaiYouXuanZeDeBiaoGe.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_edit",
+							"@/views/component/data/xTableEasy/DanYuanGeBianJi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/virtual_scroll",
+							"@/views/component/data/xTableEasy/XuNiGunDong.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/action_column",
+							"@/views/component/data/xTableEasy/CaoZuoLie.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/row_style",
+							"@/views/component/data/xTableEasy/XingYangShiDingZhi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/row_expand",
+							"@/views/component/data/xTableEasy/examples/HangZhanKai.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/sort",
+							"@/views/component/data/xTableEasy/PaiXu.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/filter",
+							"@/views/component/data/xTableEasy/ShaiXuan.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/filter_custom",
+							"@/views/component/data/xTableEasy/ShaiXuanZiDingYi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/header_group",
+							"@/views/component/data/xTableEasy/BiaoTouFenZu.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/header_fixed",
+							"@/views/component/data/xTableEasy/BiaoTouGuDing.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/header_hidden",
+							"@/views/component/data/xTableEasy/BiaoTouYinCang.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/column_hidden",
+							"@/views/component/data/xTableEasy/LieYinCang.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_align",
+							"@/views/component/data/xTableEasy/DanYuanGeDuiQi.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_custom",
+							"@/views/component/data/xTableEasy/ZiDingYiDanYuanGeXuanRan.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/cell_merge",
+							"@/views/component/data/xTableEasy/DanYuanGeHeBing.vue"
+						),
+						_.$newRoute(
+							"/component/data/x-table-easy/base_usage",
+							"@/views/component/data/xTableEasy/JiChuYongFa.vue"
 						),
 						_.$newRoute(
 							"/component/data/pagination",
@@ -205,23 +500,23 @@ export default async function () {
 						),
 						_.$newRoute(
 							"/component/navigation/tabs",
-							"@/views/component/navigation/tabs/tabs.vue"
+							"@/views/component/navigation/tabs/DocDemoTabs.vue"
 						),
 						_.$newRoute(
 							"/component/navigation/step",
-							"@/views/component/navigation/step/demo_step.vue"
+							"@/views/component/navigation/step/DocDemoStep.vue"
 						),
 						_.$newRoute(
 							"/component/navigation/dropdown",
-							"@/views/component/navigation/dropdown/dropdown.vue"
+							"@/views/component/navigation/dropdown/DocDemoDropdown.vue"
 						),
 						_.$newRoute(
 							"/component/navigation/breadcrumb",
-							"@/views/component/navigation/breadcrumb/breadcrumb.vue"
+							"@/views/component/navigation/breadcrumb/DocDemoBreadcrumb.vue"
 						),
 						_.$newRoute(
 							"/component/navigation/pageheader",
-							"@/views/component/navigation/pageheader/pageheader.vue"
+							"@/views/component/navigation/pageheader/DocDemoPageheader.vue"
 						)
 					]
 				})
@@ -230,22 +525,22 @@ export default async function () {
 		/* other */
 		_.$newRoute("/other", ComponentPageRouterView, {
 			children: [
-				_.$newRoute("/other/affix", "@/views/other/affix/DemoAffix.vue"),
-				_.$newRoute("/other/message", "@/views/other/message/DemoMessage.vue"),
-				_.$newRoute("/other/notification", "@/views/other/notification/Notification.vue"),
-				_.$newRoute("/other/alert", "@/views/other/alert/DemoAlert.vue"),
-				_.$newRoute("/other/progress", "@/views/other/progress/DemoProgress.vue"),
-				_.$newRoute("/other/collapse", "@/views/other/collapse/DemoCollapse.vue"),
-				_.$newRoute("/other/layer", "@/views/other/layer/layer.vue"),
-				_.$newRoute("/other/move", "@/views/other/move/move.vue"),
-				_.$newRoute("/other/popover", "@/views/other/popover/popover.vue"),
-				_.$newRoute("/other/tooltip", "@/views/other/tooltip/tooltip.vue"),
-				_.$newRoute("/other/timeline", "@/views/other/timeline/DemoTimeline.vue"),
-				_.$newRoute("/other/calendar", "@/views/other/calendar/DemoCalendar.vue"),
-				_.$newRoute("/other/divider", "@/views/other/divider/DemoDivider.vue"),
-				_.$newRoute("/other/open_window", "@/views/other/dialog/dialog.vue"),
-				_.$newRoute("/other/drawer", "@/views/other/drawer/DemoDrawer.vue"),
-				_.$newRoute("/other/x_dev", "@/views/other/xDev/xDev.vue")
+				_.$newRoute("/other/affix", "@/views/other/affix/DocDemoAffix.vue"),
+				_.$newRoute("/other/message", "@/views/other/message/DocDemoMessage.vue"),
+				_.$newRoute("/other/notification", "@/views/other/notification/DocDemoNotification.vue"),
+				_.$newRoute("/other/alert", "@/views/other/alert/DocDemoAlert.vue"),
+				_.$newRoute("/other/progress", "@/views/other/progress/DocDemoProgress.vue"),
+				_.$newRoute("/other/collapse", "@/views/other/collapse/DocDemoCollapse.vue"),
+				_.$newRoute("/other/layer", "@/views/other/layer/DocDemoLayer.vue"),
+				_.$newRoute("/other/move", "@/views/other/move/DocDemoMove.vue"),
+				_.$newRoute("/other/popover", "@/views/other/popover/DocDemoPopover.vue"),
+				_.$newRoute("/other/tooltip", "@/views/other/tooltip/DocDemoTooltip.vue"),
+				_.$newRoute("/other/timeline", "@/views/other/timeline/DocDemoTimeline.vue"),
+				_.$newRoute("/other/calendar", "@/views/other/calendar/DocDemoCalendar.vue"),
+				_.$newRoute("/other/divider", "@/views/other/divider/DocDemoDivider.vue"),
+				_.$newRoute("/other/open_window", "@/views/other/dialog/DocDemoDialog.vue"),
+				_.$newRoute("/other/drawer", "@/views/other/drawer/DocDemoDrawer.vue"),
+				_.$newRoute("/other/x_dev", "@/views/other/xDev/DocDemoXDev.vue")
 			]
 		}),
 		_.$newRoute("/dev", ComponentPageRouterView, {

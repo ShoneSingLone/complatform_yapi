@@ -75,12 +75,9 @@ export default async function () {
 			},
 			search: _.debounce(function (value) {}, 1000),
 			checkMenuActive(item) {
-				const routeNameArray = String(this.$route.name).split("/");
-				const hrefName = String(item.href).split("/");
-				return _.every(hrefName, (value, index) => {
-					return routeNameArray[index] === value;
-				});
-			},
+					// 只需要当前地址对应的菜单高亮，不需要父菜单高亮
+					return this.$route.path === item.href;
+				},
 			getURL(item) {
 				var url = "";
 				if (item.href) {

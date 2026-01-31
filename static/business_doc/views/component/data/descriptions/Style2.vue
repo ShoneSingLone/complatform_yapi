@@ -9,18 +9,18 @@
 			border-right: 1px solid var(--el-border-color);
 			margin-top: 0;
 			margin-right: 0;
-			.xItemDesc-wrapper {
+			.xDesc-wrapper {
 				padding: 0;
 				height: 100%;
 				> div {
 					height: 100%;
 					line-height: 48px;
-					&.xItemDesc-wrapper_label {
+					&.xDesc-wrapper_label {
 						padding-left: var(--ui-one);
 						border-right: 1px solid var(--el-border-color);
 						background-color: var(--el-fill-color-lighter);
 					}
-					&.xItemDesc-wrapper_content {
+					&.xDesc-wrapper_content {
 						padding-left: var(--ui-one);
 					}
 				}
@@ -33,14 +33,14 @@
 	<div>
 		<xMd :md="md" />
 		<xForm col="3" class="descriptions-style2">
-			<xItemDesc
+			<xDesc
 				v-for="(item, index) in DemoDescriptions.items"
 				:key="index"
 				:item="item"
 				:span="item.span" />
-			<xItemDesc :item="DemoDescriptions.items[0]" />
-			<xItemDesc :item="DemoDescriptions.items[1]" />
-			<xItemDesc :item="{ isEmpty: true }" />
+			<xDesc :item="DemoDescriptions.items[0]" />
+			<xDesc :item="DemoDescriptions.items[1]" />
+			<xDesc :item="{ isEmpty: true }" />
 		</xForm>
 	</div>
 </template>

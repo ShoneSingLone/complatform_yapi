@@ -1,5 +1,7 @@
 <template>
-	<xTableEasy :columns="columns" :tableData="tableData" :maxHeight="400" borderX borderY />
+	<div style="height: 400px; width: 100%">
+		<xTableEasy :columns="columns" :tableData="tableData" :maxHeight="400" borderX borderY />
+	</div>
 </template>
 <script lang="ts">
 export default async function () {
