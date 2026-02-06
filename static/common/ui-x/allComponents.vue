@@ -33,7 +33,6 @@ export default async function () {
 		"components/navigation/xTabs/xTabPane",
 		"components/data/xTag/xTag",
 		"components/data/xDesc/xDesc",
-		"components/data/xDesc/xItemDesc",
 		"components/data/xTableEasy/xTableEasy",
 		"components/data/xTableVir/xTableVir",
 		"components/data/xVirtualList/xFixedSizeList",
@@ -44,6 +43,7 @@ export default async function () {
 		"components/data/xTree/xNodeContent",
 		"components/form/xAdvancedSearch/xAdvancedSearch",
 		"components/form/xInput/xInput",
+		"components/form/xInput/xNumberWithUnit",
 		"components/form/xInputNumber/xInputNumber",
 		"components/form/xIpAddress/xIpAddress",
 		"components/form/xAutocomplete/xAutocomplete",
@@ -139,6 +139,7 @@ export default async function () {
 		/* xItem */
 		/* xItemXXXXXXXX */
 		"common/xItem/xItem",
+		"common/xItem/xItemAdvanceWrapper",
 		"common/xItem/xItem/xItemMonaco",
 		"common/xItem/xItemAutocomplate",
 		"common/xItem/xItemCheck",
