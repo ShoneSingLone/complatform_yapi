@@ -5,16 +5,24 @@
 ### 1.1 business_yapi 项目架构
 
 **技术栈：**
-- 前端：Vue 2.x + TypeScript
+- 前端：Vue 2.x + TypeScript（仅为 IDE 识别，不经过构建处理）
 - 后端：Node.js + Koa + MongoDB
 - 编辑器：Toast UI Editor
 - 状态管理：Vue 实例状态
 - 路由：Vue Router
+- 模块加载：`_.$importVue()` 动态加载机制
 
 **核心模块：**
 - `entry.vue`：应用入口，负责组件注册和路由初始化
 - `TuiEditor.vue`：Toast UI Editor 实现，支持 Markdown 编辑和图片上传
 - 组件体系：完整的 Vue 组件库，包括接口管理、项目管理等功能
+
+**前端代码规则：**
+- 所有 .vue 文件使用 `export default async function ({ PRIVATE_GLOBAL })` 结构
+- 使用 `<script lang="ts">` 仅为 IDE 识别，不经过构建处理
+- 只能使用浏览器原生支持的 JavaScript 语法
+- 无法使用需要编译的 TypeScript 特性（如泛型、命名空间、装饰器）
+- 没有标准 package.json，使用 `_.$importVue()` 动态加载模块
 
 ### 1.2 现有编辑器功能
 
@@ -49,8 +57,9 @@
 **前端架构调整：**
 1. **编辑器升级**：从 Toast UI Editor 迁移到 Tiptap + ProseMirror
 2. **组件体系**：构建块级组件系统，支持扩展
-3. **状态管理**：引入 Pinia 管理编辑器状态
-4. **AI 集成**：实现 SSE 流式响应处理
+3. **模块加载**：使用 `_.$importVue()` 动态加载机制
+4. **状态管理**：使用 Vue 实例状态管理（保持与现有架构一致）
+5. **AI 集成**：实现 SSE 流式响应处理
 
 **后端架构调整：**
 1. **协作服务**：集成 Hocuspocus 服务器
@@ -85,29 +94,36 @@
 </template>
 
 <script lang="ts">
-import { useEditor, EditorContent } from '@tiptap/vue-2'
-import StarterKit from '@tiptap/starter-kit'
-import DragDrop from '@tiptap/extension-drag-drop'
+export default async function ({ PRIVATE_GLOBAL }) {
+  // 动态加载 Tiptap 相关模块
+  const [useEditor, EditorContent, StarterKit, DragDrop] = await _.$importVue([
+    '@/components/TiptapEditor/useEditor.vue',
+    '@/components/TiptapEditor/EditorContent.vue',
+    '@/components/TiptapEditor/StarterKit.vue',
+    '@/components/TiptapEditor/DragDrop.vue'
+  ]);
 
-export default defineComponent({
-  setup() {
-    const editor = useEditor({
-      extensions: [
-        StarterKit,
-        DragDrop,
-        // 自定义扩展
-      ],
-      content: '',
-      onUpdate: ({ editor }) => {
-        // 处理内容更新
+  return {
+    data() {
+      return {
+        editor: null
       }
-    })
-
-    return {
-      editor
+    },
+    mounted() {
+      this.editor = useEditor({
+        extensions: [
+          StarterKit,
+          DragDrop,
+          // 自定义扩展
+        ],
+        content: '',
+        onUpdate: ({ editor }) => {
+          // 处理内容更新
+        }
+      });
     }
   }
-})
+}
 </script>
 ```
 
@@ -119,10 +135,11 @@ export default defineComponent({
 - 功能：头脑风暴、文本润色、文档续写
 
 **实现步骤：**
-1. **创建 AI 服务模块**：`services/ai.ts`
+1. **创建 AI 服务模块**：`@/utils/ai.vue`（使用 .vue 格式，符合项目规范）
 2. **实现 SSE 客户端**：处理流式响应
 3. **添加 AI 工具栏**：编辑器顶部的 AI 功能入口
 4. **集成现有 API 系统**：复用 `_api.yapi` 调用方式
+5. **遵循前端代码规则**：使用 `export default async function ({ PRIVATE_GLOBAL })` 结构
 
 ### 3.3 实时协作实现（可选）
 
@@ -133,18 +150,18 @@ export default defineComponent({
 
 **实现步骤：**
 1. **搭建 Hocuspocus 服务**：`server/services/hocuspocus.ts`
-2. **集成 Yjs**：`@tiptap/extension-collaboration`
+2. **集成 Yjs**：通过 `_.$importVue()` 动态加载 `@tiptap/extension-collaboration`
 3. **实现用户状态管理**：在线用户、光标跟踪
 4. **添加协作状态显示**：编辑器顶部的用户头像显示
+5. **遵循前端代码规则**：使用 `export default async function ({ PRIVATE_GLOBAL })` 结构
 
 ## 4. 实施步骤
 
 ### 4.1 准备阶段
 
-1. **依赖安装**：
-   ```bash
-   npm install @tiptap/vue-2 @tiptap/starter-kit @tiptap/extension-drag-drop yjs @tiptap/extension-collaboration
-   ```
+1. **依赖引入**：
+   - 通过 CDN 或公共库引入 Tiptap 相关依赖
+   - 创建本地包装模块，使用 `_.$importVue()` 动态加载
 
 2. **创建编辑器组件目录**：
    ```
@@ -155,27 +172,34 @@ export default defineComponent({
    └── tools/                    # 工具栏组件
    ```
 
+3. **模块包装**：
+   - 为 Tiptap 核心模块创建 Vue 包装组件
+   - 确保所有模块符合 `export default async function ({ PRIVATE_GLOBAL })` 结构
+
 ### 4.2 核心实现阶段
 
 **阶段 1：块级编辑器基础**
-1. 创建 `TiptapEditor.vue` 核心组件
+1. 创建 `TiptapEditor.vue` 核心组件（使用 `export default async function ({ PRIVATE_GLOBAL })` 结构）
 2. 实现基础块类型：文本、标题、列表、代码
-3. 集成图片上传功能
+3. 集成图片上传功能（复用现有的 `_api.yapi` 上传接口）
+4. 使用 `_.$importVue()` 动态加载 Tiptap 核心模块
 
 **阶段 2：高级功能**
-1. 实现拖拽排序功能
+1. 实现拖拽排序功能（使用原生 Drag & Drop API）
 2. 添加表格编辑能力
-3. 集成文件上传功能
+3. 集成文件上传功能（复用现有的文件上传逻辑）
 
 **阶段 3：AI 功能**
-1. 创建 AI 服务模块
+1. 创建 `@/utils/ai.vue` 服务模块（符合项目规范）
 2. 实现 AI 工具栏
 3. 集成头脑风暴和文本润色功能
+4. 实现 SSE 流式响应处理
 
 **阶段 4：实时协作（可选）**
 1. 搭建 Hocuspocus 服务
-2. 实现 Yjs 协作集成
+2. 实现 Yjs 协作集成（通过 `_.$importVue()` 动态加载）
 3. 添加用户状态管理
+4. 实现 WebSocket 通信
 
 ### 4.3 集成与测试阶段
 
@@ -195,6 +219,9 @@ export default defineComponent({
 | 后端服务压力 | 高 | 优化 AI 调用频率，添加缓存 |
 | 数据迁移 | 中 | 实现 Markdown 到块级内容的转换 |
 | 用户体验一致性 | 中 | 保持与现有界面风格一致 |
+| 动态模块加载复杂度 | 中 | 合理设计模块包装，确保 `_.$importVue()` 正确加载 |
+| TypeScript 限制 | 低 | 避免使用需要编译的 TypeScript 特性，仅使用浏览器原生支持的语法 |
+| 依赖管理 | 中 | 通过 CDN 或公共库引入依赖，确保版本兼容性 |
 
 ### 5.2 解决方案
 
@@ -212,6 +239,16 @@ export default defineComponent({
    - 实现 AI 内容过滤机制
    - 加强文件上传安全校验
    - 保护用户协作数据
+
+4. **模块加载优化**：
+   - 合理设计模块依赖关系，避免循环依赖
+   - 实现模块懒加载，提高首屏性能
+   - 为 Tiptap 核心模块创建轻量级包装组件
+
+5. **TypeScript 兼容性**：
+   - 仅使用浏览器原生支持的 JavaScript 语法
+   - 利用 JSDoc 提供类型提示
+   - 确保代码可在浏览器中直接运行，不依赖编译过程
 
 ## 6. 预期效果
 
