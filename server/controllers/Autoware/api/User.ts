@@ -345,11 +345,109 @@ module.exports = {
 								{
 									subject: "验证码",
 									to: email,
-									contents: `<h3>亲爱的用户：</h3>
-<p>您好，感谢使用YApi可视化接口平台</p>
-<p>验证码为：</p>
-<h1 style="color:#34ff34;background-color:black;padding:16px;"> ${code} </h1>
-<p>请在24小时内填写，如非本人操作，请忽略此邮件。</p>`
+									// contents: `<h3>亲爱的用户：</h3> <p>您好，感谢使用YApi可视化接口平台</p> <p>验证码为：</p> <h1 style="color:#34ff34;background-color:black;padding:16px;"> ${code} </h1> <p>请在24小时内填写，如非本人操作，请忽略此邮件。</p>`
+									contents: `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YApi可视化接口平台 - 验证码通知</title>
+    <style>
+        /* 重置邮件客户端默认样式 */
+        body, p, div {
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #333333;
+        }
+        /* 容器样式，适配不同设备 */
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        /* 邮件内容主体 */
+        .email-content {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        /* 标题样式 */
+        .email-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eeeeee;
+            text-align: left;
+        }
+        /* 段落缩进 */
+        .email-p {
+            text-indent: 2em; /* 中文标准首行缩进2字符 */
+            margin-bottom: 12px;
+        }
+        /* 验证码样式，突出显示 */
+        .verification-code {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4299e1;
+            background-color: #f5f8ff;
+            padding: 12px 20px;
+            margin: 25px 2em; /* 验证码区域与正文缩进对齐 */
+            border-radius: 4px;
+            word-break: break-all;
+            letter-spacing: 1px;
+        }
+        /* 提示信息样式 */
+        .tips {
+            color: #718096;
+            margin-top: 18px;
+            text-indent: 2em;
+        }
+        /* 强调文本样式 */
+        .highlight {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        /* 底部版权信息 */
+        .email-footer {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
+            color: #999999;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-content">
+            <div class="email-title">可视化接口平台-验证码通知</div>
+            
+            <p class="email-p">亲爱的用户：</p>
+            <p class="email-p">您好！感谢您使用可视化接口平台，您本次操作的验证码如下：</p>
+            
+            <!-- 验证码区域（带缩进） -->
+            <div class="verification-code">
+                ${code}
+            </div>
+            
+            <p class="email-p">请在<span class="highlight">24小时内</span>填写该验证码完成操作。</p>
+            <p class="tips">如非本人操作，请忽略此邮件，我们会全力保障您的账户安全。</p>
+            
+            <div class="email-footer">
+                <p>© GHCA 可视化接口平台 版权所有</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`
 								},
 								error => {
 									if (error) {

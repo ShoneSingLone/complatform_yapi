@@ -41,7 +41,9 @@ global.orm = new Proxy(
 
 const mail = (function () {
 	if (yapi_configs.mail) {
-		return nodemailer.createTransport(yapi_configs.mail);
+		const transporter = nodemailer.createTransport(yapi_configs.mail);
+		// transporter.verify(function (error, success) { debugger; });
+		return transporter;
 	} else {
 		return () => null;
 	}
@@ -589,7 +591,7 @@ function sendMail(options, cb) {
 		if (options.subject) {
 			return "Y-API_" + options.subject;
 		}
-		return "Y-API";
+		return "X-API";
 	})();
 
 	cb = cb || defaultSendmailCallback;
