@@ -1011,40 +1011,14 @@
    ```javascript
    // UI 组件库工具函数
    const uiUtils = {
-     // 加载常用 UI 组件
-     async loadCommonComponents() {
-       try {
-         const [xDialog, xItem, xItemInput, xItemSelect] = await _.$importVue([
-           '/common/ui-x/common/xDialog.vue',
-           '/common/ui-x/common/xItem/xItem.vue',
-           '/common/ui-x/common/xItem/xItemInput.vue',
-           '/common/ui-x/common/xItem/xItemSelect.vue'
-         ]);
-         
-         return {
-           xDialog,
-           xItem,
-           xItemInput,
-           xItemSelect
-         };
-       } catch (error) {
-         console.error('加载 UI 组件失败:', error);
-         return {};
-       }
-     },
-
-     // 创建对话框
-     async createDialog(options = {}) {
-       const { xDialog } = await this.loadCommonComponents();
-       
-       return {
-         open() {
-           // 实现对话框打开逻辑
-         },
-         close() {
-           // 实现对话框关闭逻辑
-         }
-       };
+     // 打开模态框
+     openModal(options = {}) {
+       return _.$openModal({
+         title: options.title || '提示',
+         url: options.url,
+         parent: options.parent,
+         ...options
+       });
      },
 
      // 创建表单项
@@ -1074,9 +1048,7 @@
      // 动态加载依赖
      await _.$importVue([
        '/common/tiptap/tiptap-core.js',
-       '/common/tiptap/tiptap-starter-kit.js',
-       // 加载 UI 组件
-       '/common/ui-x/common/xDialog.vue'
+       '/common/tiptap/tiptap-starter-kit.js'
      ]);
 
      return {
@@ -1088,8 +1060,7 @@
        },
        data() {
          return {
-           editor: null,
-           showDialog: false
+           editor: null
          };
        },
        methods: {
@@ -1099,7 +1070,15 @@
          
          // 打开设置对话框
          openSettingsDialog() {
-           this.showDialog = true;
+           _.$openModal({
+             title: '文档设置',
+             url: '@/components/DocFlow/Settings.dialog.vue',
+             parent: this,
+             editor: this.editor,
+             onSave: (settings) => {
+               console.log('保存设置:', settings);
+             }
+           });
          }
        }
      };
@@ -1117,12 +1096,9 @@
    ```vue
    <script lang="ts">
    export default async function ({ PRIVATE_GLOBAL }) {
-     // 动态加载 AI 服务和 UI 组件
-     const [AIService, xDialog, xItem, xItemInput] = await _.$importVue([
-       '@/utils/ai/ai.vue',
-       '/common/ui-x/common/xDialog.vue',
-       '/common/ui-x/common/xItem/xItem.vue',
-       '/common/ui-x/common/xItem/xItemInput.vue'
+     // 动态加载 AI 服务
+     const [AIService] = await _.$importVue([
+       '@/utils/ai/ai.vue'
      ]);
 
      return {
@@ -1133,16 +1109,20 @@
            userInput: '',
            aiResponse: '',
            aiStatus: 'idle',
-           aiService: new AIService(),
-           showSettingsDialog: false
+           aiService: new AIService()
          };
        },
        methods: {
-         // 现有方法...
-         
          // 打开设置对话框
          openSettingsDialog() {
-           this.showSettingsDialog = true;
+           _.$openModal({
+             title: 'AI 助手设置',
+             url: '@/components/DocFlow/AISettings.dialog.vue',
+             parent: this,
+             onSave: (settings) => {
+               console.log('保存 AI 设置:', settings);
+             }
+           });
          }
        }
      };
@@ -1163,149 +1143,98 @@
 
 **使用示例：**
 
-```vue
+```javascript
+// 打开文档设置模态框
+function openDocumentSettings() {
+  _.$openModal({
+    title: '文档设置',
+    url: '@/components/DocFlow/Settings.dialog.vue',
+    parent: this,
+    documentTitle: this.documentTitle,
+    documentType: this.documentType,
+    onSave: (settings) => {
+      this.documentTitle = settings.documentTitle;
+      this.documentType = settings.documentType;
+    }
+  });
+}
+
+// 标准对话框组件 (Settings.dialog.vue)
 <template>
-  <div class="docflow-editor">
-    <!-- 使用 xDialog 组件 -->
-    <xDialog title="文档设置" v-if="showSettingsDialog">
-      <div class="settings-content">
-        <!-- 使用 xItem 组件 -->
-        <xItem label="文档标题" :value="documentTitle" @change="updateTitle">
-          <xItemInput placeholder="请输入文档标题" />
-        </xItem>
-        
-        <xItem label="文档类型" :value="documentType" @change="updateType">
-          <xItemSelect>
-            <option value="document">文档</option>
-            <option value="article">文章</option>
-            <option value="report">报告</option>
-          </xItemSelect>
-        </xItem>
-      </div>
-      <template #footer>
-        <button @click="saveSettings">保存</button>
-        <button @click="cancelSettings">取消</button>
-      </template>
-    </xDialog>
-  </div>
+  <xDialog style="--xDialog-wrapper-width: 800px">
+    <!-- 使用 xForm 组件 -->
+    <xForm col="1">
+      <!-- 使用 xItem 组件 -->
+      <xItem :configs="form.documentTitle" />
+      <xItem :configs="form.documentType" />
+    </xForm>
+    
+    <!-- 对话框底部按钮 -->
+    <template #footer>
+      <!-- 使用 xBtn 组件 -->
+      <xBtn :configs="btnOk" />
+      <xBtn @click="closeModal">{{ i18n("cancel") }}</xBtn>
+    </template>
+  </xDialog>
 </template>
 
 <script lang="ts">
-export default async function ({ PRIVATE_GLOBAL }) {
-  // 动态加载 UI 组件
-  const [xDialog, xItem, xItemInput, xItemSelect] = await _.$importVue([
-    '/common/ui-x/common/xDialog.vue',
-    '/common/ui-x/common/xItem/xItem.vue',
-    '/common/ui-x/common/xItem/xItemInput.vue',
-    '/common/ui-x/common/xItem/xItemSelect.vue'
-  ]);
+export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, documentType, onSave }) {
+  /* 必要，混入"closeModal", "$layerMax", "$layerMin", "$layerRestore" */
+  const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 
-  return {
+  return defineComponent({
+    inject: ["APP"],
+    props: useDialogProps(),
     data() {
+      const vm = this;
       return {
-        showSettingsDialog: false,
-        documentTitle: '新文档',
-        documentType: 'document'
+        form: defItems({
+          documentTitle: {
+            label: i18n("文档标题"),
+            value: documentTitle || '',
+            rules: [_rules.required()]
+          },
+          documentType: {
+            label: i18n("文档类型"),
+            type: "select",
+            value: documentType || 'document',
+            options: [
+              { label: i18n("文档"), value: "document" },
+              { label: i18n("文章"), value: "article" },
+              { label: i18n("报告"), value: "report" }
+            ],
+            rules: [_rules.required()]
+          }
+        }),
+        btnOk: {
+          label: i18n("ok"),
+          preset: "blue",
+          async onClick() {
+            const [atLestOne] = await _.$validateForm(vm.$el);
+            if (atLestOne) return;
+            
+            const formData = _.$pickFormValues(vm.form);
+            if (onSave) {
+              onSave(formData);
+            }
+            closeModal();
+          }
+        }
       };
-    },
-    methods: {
-      updateTitle(value) {
-        this.documentTitle = value;
-      },
-      updateType(value) {
-        this.documentType = value;
-      },
-      saveSettings() {
-        // 保存设置
-        this.showSettingsDialog = false;
-      },
-      cancelSettings() {
-        // 取消设置
-        this.showSettingsDialog = false;
-      }
     }
-  };
+  });
 }
 </script>
 ```
 
-   .collaboration-header h3 {
-     margin: 0;
-     font-size: 16px;
-     color: #333;
-   }
-
-   .collaboration-status {
-     font-size: 14px;
-   }
-
-   .collaboration-status span {
-     padding: 4px 8px;
-     border-radius: 12px;
-     background: #e9ecef;
-     color: #6c757d;
-   }
-
-   .collaboration-status span.active {
-     background: #d4edda;
-     color: #155724;
-   }
-
-   .collaboration-users {
-     padding: 16px;
-     border-bottom: 1px solid #ddd;
-   }
-
-   .collaboration-users h4 {
-     margin: 0 0 12px 0;
-     font-size: 14px;
-     color: #333;
-   }
-
-   .user-list {
-     display: flex;
-     flex-wrap: wrap;
-     gap: 12px;
-   }
-
-   .user-item {
-     display: flex;
-     align-items: center;
-     gap: 8px;
-     padding: 8px 12px;
-     background: #f8f9fa;
-     border-radius: 16px;
-     font-size: 14px;
-   }
-
-   .user-avatar {
-     width: 24px;
-     height: 24px;
-     border-radius: 50%;
-     background: #007bff;
-     color: white;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     font-size: 12px;
-     font-weight: bold;
-   }
-
-   .user-name {
-     font-weight: 500;
-     color: #333;
-   }
-
-   .user-status {
-     font-size: 12px;
-     color: #6c757d;
-   }
-
-   .collaboration-editor {
-     padding: 16px;
-   }
-   </style>
-   ```
+**注意**：
+1. UI 组件已经在框架初始化时通过 `useXui.vue` 被全局注册和懒加载，因此在业务组件中无需再显式引入这些组件，可以直接在模板中使用。
+2. 对话框组件通常使用 `<xDialog>` 作为根容器，通过 `#footer` 插槽添加底部按钮。
+3. 表单组件通常使用 `<xForm>` 作为容器，内部使用 `<xItem>` 作为表单项。
+4. 按钮组件通常使用 `<xBtn>` 组件，通过 `configs` 属性传递配置。
+5. 表单项通常使用 `<xItem>` 组件，通过 `configs` 属性传递配置，包括 label、value、rules、type、options 等。
+6. 对话框组件需要使用 `useDialogProps()` 混入必要的属性和方法。
 
 ## 3. 菜单与路由集成
 
