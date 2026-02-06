@@ -848,8 +848,8 @@
 				updateResult({ nums, times, steps }) {
 					const ms = times / 1000;
 					const hours = (ms / 3600) | 0;
-					const minutes = ((ms / 60) % 60) | 0;
-					const seconds = (ms % 60) | 0;
+					const minutes = (ms / 60) % 60 | 0;
+					const seconds = ms % 60 | 0;
 					const timeStr = [
 						hours ? `<b>${hours}</b>小时` : "",
 						minutes ? `<b>${minutes}</b>分` : "",

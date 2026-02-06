@@ -1,6 +1,25 @@
 <template>
-	<div style="height: 400px; width: 100%">
-		<xTableEasy :columns="columns" :tableData="tableData" :maxHeight="400" borderX borderY />
+	<div>
+		<h3>表格宽度</h3>
+		<p>通过配置 scrollWidth 属性，可以设置表格的宽度。</p>
+
+		<h4>固定宽度</h4>
+		<xTableEasy
+			:columns="columns"
+			:tableData="tableData"
+			:maxHeight="300"
+			:scrollWidth="800"
+			borderX
+			borderY />
+
+		<h4 style="margin-top: 20px">百分比宽度</h4>
+		<xTableEasy
+			:columns="columns"
+			:tableData="tableData"
+			:maxHeight="300"
+			:scrollWidth="'100%'"
+			borderX
+			borderY />
 	</div>
 </template>
 <script lang="ts">
@@ -25,30 +44,6 @@ export default async function () {
 						sex: "女",
 						phone: "13800000002",
 						address: "上海市浦东新区张江高科技园区"
-					},
-					{
-						id: 3,
-						name: "王五",
-						age: 22,
-						sex: "男",
-						phone: "13800000003",
-						address: "北京市海淀区中关村大街 1 号"
-					},
-					{
-						id: 4,
-						name: "赵六",
-						age: 25,
-						sex: "女",
-						phone: "13800000004",
-						address: "广州市天河区天河路 385 号"
-					},
-					{
-						id: 5,
-						name: "钱七",
-						age: 28,
-						sex: "男",
-						phone: "13800000005",
-						address: "深圳市南山区科技园南区"
 					}
 				],
 				// 列配置
@@ -101,4 +96,22 @@ export default async function () {
 	};
 }
 </script>
-<style lang="less"></style>
+<style lang="less">
+h3 {
+	margin: 0 0 10px 0;
+	font-size: 16px;
+	font-weight: 500;
+}
+
+h4 {
+	margin: 15px 0 10px 0;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+p {
+	margin: 0 0 15px 0;
+	color: #606266;
+	font-size: 14px;
+}
+</style>

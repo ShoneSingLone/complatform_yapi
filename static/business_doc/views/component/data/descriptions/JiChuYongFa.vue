@@ -1,6 +1,6 @@
 <template>
 	<xForm col="3" id="descriptions-JiChuYongFa">
-		<xItemDesc
+		<xDesc
 			v-for="(item, index) in DemoDescriptions.items"
 			:key="index"
 			:item="item"
