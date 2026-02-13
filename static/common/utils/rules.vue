@@ -6,25 +6,71 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			_reg,
 			/* 操作符 */
 			_opr: {
+				/* 通用操作函数：预处理结果，然后可以组合 or and这些组合函数 */
+				preprocess: (processorFn, validatorFn, options = {}) => {
+					return {
+						name: "opration_preprocess",
+						async validator(...args) {
+							const vm = this;
+							const val = args[0];
+
+							// 预处理数据
+							let processedValue = val;
+							if (processorFn && typeof processorFn === "function") {
+								processedValue = processorFn.call(vm, val, ...args.slice(1));
+							}
+
+							// 使用预处理后的值进行验证
+							if (validatorFn && typeof validatorFn === "function") {
+								return await validatorFn.call(vm, processedValue, ...args.slice(1));
+							}
+
+							return "";
+						},
+						trigger: ["change", "blur"]
+					};
+				},
+				/* 或关系验证：只要有一个验证通过就通过 */
 				or: validatorArray => {
 					return {
 						name: "opration_or",
 						async validator(...args) {
 							const vm = this;
-							const _validata_array = _.cloneDeep(validatorArray);
-							/* 或关系的校验 */
-							let result_array = [];
+							const _validate_array = _.cloneDeep(validatorArray);
+							const all_validaters = _validate_array.length;
 							let rule;
-							while ((rule = _validata_array.shift())) {
-								const _result = await rule.validator.apply(vm, args);
-								if (!_result) {
-									/* zhi yao you yi ge ok jiu ok */
+							let error_array = [];
+							while ((rule = _validate_array.shift())) {
+								const error_message = await rule.validator.apply(vm, args);
+								if (!error_message) {
+									/* 任意一个没有问题就可以 */
 									return "";
 								} else {
-									result_array.push(_result);
+									error_array.push(error_message);
 								}
 							}
-							return _.first(result_array) || "";
+							return error_array.length < all_validaters ? "" : _.first(error_array);
+						},
+						trigger: ["change", "blur"]
+					};
+				},
+				/* 与关系验证：所有验证都通过才通过 */
+				and: validatorArray => {
+					return {
+						name: "opration_and",
+						async validator(...args) {
+							const vm = this;
+							const _validate_array = _.cloneDeep(validatorArray);
+							/* 与关系的校验 */
+							let rule;
+							while ((rule = _validate_array.shift())) {
+								const _result = await rule.validator.apply(vm, args);
+								if (_result) {
+									/* 只要有一个不通过就返回错误 */
+									return _result;
+								}
+							}
+							return "";
 						},
 						trigger: ["change", "blur"]
 					};
@@ -243,7 +289,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						let msg = "";
 
 						if (String(val).length > size) {
-							msg = i18n("form.rules.msg.wordLessThan", { size });
+							msg = i18n("form_rules_msg_word_less_than", { size });
 						}
 						/* 返回提示信息即error */
 						/* 返回""为success */
