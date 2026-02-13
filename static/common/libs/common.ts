@@ -776,7 +776,7 @@ ${callerInfo.message}:`);
 			};
 		};
 		window.defTable.colMultiple = ({ by, getConfigs, disabled, isHide }) => {
-			const { h } = Vue;p
+			const { h } = Vue;
 			const checkbox = {
 				prop: "COL_MULTIPLE",
 				label: i18n("checkbox"),
