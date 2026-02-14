@@ -224,10 +224,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		},
 		render(h) {
 			const vm = this;
-
-			if (_.isFunction(this.configs)) {
-				return this.configs.apply(this);
-			}
 			if (this.cptIsHide) {
 				return null;
 			}

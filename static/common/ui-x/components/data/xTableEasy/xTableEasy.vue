@@ -4,88 +4,99 @@
 			:class="tableContainerClass"
 			:style="tableContainerWrapperStyle"
 			ref="tableContainerWrapperRef">
-			<!-- 左固定列容器 -->
 			<div
-				v-if="hasLeftFixedColumn"
-				:class="['fixed-left-container', tableContainerClass]"
-				:style="fixedLeftContainerStyle">
-				<div ref="fixedLeftTableRef" class="fixed-table">
-					<table :class="tableClass" :style="tableStyle">
-						<!-- 左固定列表头 -->
-						<xTableEasyHeader
-							:show-header="showHeader"
-							:group-columns="leftFixedGroupColumns"
-							:header-rows="headerRows"
-							:enable-column-resize="enableColumnResize" />
-
-						<!-- 左固定列表体 -->
-						<xTableEasyBody
-							:actual-render-table-data="actualRenderTableData"
-							:colgroups="[leftFixedColgroups]"
-							:row-key-field-name="rowKeyFieldName"
-							:expand-option="expandOption"
-							:is-virtual-scroll="isVirtualScroll"
-							:show-virtual-scrolling-placeholder="false"
-							:virtual-scroll-placeholder-height="virtualScrollPlaceholderHeight"
-							:table-body-class="tableBodyClass" />
-					</table>
-				</div>
-			</div>
-
-			<!-- 主表格容器 -->
-			<div
-				:class="[
-					'table-container',
-					tableContainerClass,
-					{ 'has-fixed-left': hasLeftFixedColumn, 'has-fixed-right': hasRightFixedColumn }
-				]"
+				:class="['table-container', tableContainerClass]"
 				:style="tableContainerStyle"
-				ref="tableContainerRef"
-				@scroll="handleTableContainerScroll">
-				<div ref="tableContentWrapperRef" class="table-content-wrapper-ref">
+				ref="tableContainerRef">
+				<div ref="tableContentWrapperRef">
 					<table :class="tableClass" :style="tableStyle" ref="tableRef">
 						<!-- 表列定义 -->
-						<xTableEasyColgroup :colgroups="colgroups" />
+						<colgroup v-for="(colgroup, index) in colgroups" :key="index">
+							<col
+								v-for="(col, colIndex) in colgroup"
+								:key="colIndex"
+								:width="col.width"
+								:name="col.colKey" />
+						</colgroup>
 
 						<!-- 表头 -->
-						<xTableEasyHeader
-							:show-header="showHeader"
-							:group-columns="groupColumns"
-							:header-rows="headerRows"
-							:enable-column-resize="enableColumnResize"
-							@column-width-change="handleColumnWidthChange"
-							@column-width-resize-end="handleColumnWidthResizeEnd" />
+						<thead v-if="showHeader">
+							<tr
+								v-for="(headerRow, rowIndex) in headerRows"
+								:key="rowIndex"
+								:style="{ height: headerRow.rowHeight + 'px' }">
+								<th
+									v-for="(column, colIndex) in colgroups[rowIndex]"
+									:key="colIndex"
+									:width="column.width"
+									:class="column.class"
+									:col-key="column.colKey"
+									:col-index="colIndex"
+									:row-index="rowIndex"
+									:row-key="''">
+									{{ column.title }}
+								</th>
+							</tr>
+						</thead>
 
 						<!-- 表体 -->
-						<xTableEasyBody
-							:actual-render-table-data="actualRenderTableData"
-							:colgroups="colgroups"
-							:row-key-field-name="rowKeyFieldName"
-							:expand-option="expandOption"
-							:is-virtual-scroll="isVirtualScroll"
-							:show-virtual-scrolling-placeholder="showVirtualScrollingPlaceholder"
-							:virtual-scroll-placeholder-height="virtualScrollPlaceholderHeight"
-							:table-body-class="tableBodyClass"
-							:expanded-row-keys="expandedRowKeys"
-							:highlight-row-key="highlightRowKey"
-							:row-style-option="rowStyleOption"
-							:editing-cell="editingCell"
-							:cell-selection-range-data="cellSelectionRangeData"
-							@row-click="handleRowClick"
-							@row-dblclick="handleRowDblClick"
-							@row-contextmenu="handleRowContextmenu"
-							@row-expand="handleRowExpand"
-							@row-collapse="handleRowCollapse"
-							@expand-change="handleExpandChange"
-							@cell-click="handleCellClick"
-							@cell-dblclick="handleCellDblClick"
-							@cell-contextmenu="handleCellContextmenu" />
+						<tbody :class="tableBodyClass" ref="tableBodyRef">
+							<!-- 虚拟滚动占位符 -->
+							<tr
+								v-if="isVirtualScroll && showVirtualScrollingPlaceholder"
+								:class="['virtual-placeholder']"
+								:style="{ height: virtualScrollPlaceholderHeight + 'px' }">
+								<td :colspan="colgroups[0].length"></td>
+							</tr>
+
+							<!-- 数据行 -->
+							<tr
+								v-for="(row, rowIndex) in actualRenderTableData"
+								:key="rowIndex"
+								:row-key="row[rowKeyFieldName]"
+								:class="getRowClass(row, rowIndex)"
+								@click="handleRowClick(row, rowIndex)"
+								@dblclick="handleRowDblClick(row, rowIndex)"
+								@contextmenu="handleRowContextmenu(row, rowIndex, $event)">
+								<td
+									v-for="(column, colIndex) in colgroups[0]"
+									:key="colIndex"
+									:width="column.width"
+									:col-key="column.colKey"
+									:col-index="colIndex"
+									:row-index="rowIndex"
+									:row-key="row[rowKeyFieldName]"
+									:class="getColumnClass(column, row, rowIndex, colIndex)"
+									@click="handleCellClick(row, rowIndex, column, colIndex)"
+									@dblclick="handleCellDblClick(row, rowIndex, column, colIndex)"
+									@contextmenu="
+										handleCellContextmenu(
+											row,
+											rowIndex,
+											column,
+											colIndex,
+											$event
+										)
+									">
+									{{ row[column.field] }}
+								</td>
+							</tr>
+						</tbody>
 
 						<!-- 表尾 -->
-						<xTableEasyFooter
-							:footer-data="footerData"
-							:footer-rows="footerRows"
-							:colgroups="colgroups" />
+						<tfoot v-if="footerData.length > 0">
+							<tr
+								v-for="(footerRow, rowIndex) in footerRows"
+								:key="rowIndex"
+								:style="{ height: footerRow.rowHeight + 'px' }">
+								<td
+									v-for="(column, colIndex) in colgroups[rowIndex]"
+									:key="colIndex"
+									:width="column.width">
+									{{ footerData[rowIndex][column.field] }}
+								</td>
+							</tr>
+						</tfoot>
 					</table>
 				</div>
 
@@ -110,80 +121,15 @@
 					:class="['column-resizer-indicator']"
 					:style="columnResizerIndicatorStyle"></div>
 			</div>
-
-			<!-- 右固定列容器 -->
-			<div
-				v-if="hasRightFixedColumn"
-				:class="['fixed-right-container', tableContainerClass]"
-				:style="fixedRightContainerStyle">
-				<div ref="fixedRightTableRef" class="fixed-table">
-					<table :class="tableClass" :style="tableStyle">
-						<!-- 右固定列表头 -->
-						<xTableEasyHeader
-							:show-header="showHeader"
-							:group-columns="rightFixedGroupColumns"
-							:header-rows="headerRows"
-							:enable-column-resize="enableColumnResize" />
-
-						<!-- 右固定列表体 -->
-						<xTableEasyBody
-							:actual-render-table-data="actualRenderTableData"
-							:colgroups="[rightFixedColgroups]"
-							:row-key-field-name="rowKeyFieldName"
-							:expand-option="expandOption"
-							:is-virtual-scroll="isVirtualScroll"
-							:show-virtual-scrolling-placeholder="false"
-							:virtual-scroll-placeholder-height="virtualScrollPlaceholderHeight"
-							:table-body-class="tableBodyClass" />
-					</table>
-				</div>
-			</div>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
 export default async function () {
-	// 导入子组件和指令
-	const [
-		xTableEasyColgroup,
-		xTableEasyHeader,
-		xTableEasyBody,
-		xTableEasyFooter,
-		// 导入指令
-		Clickoutside,
-		// 导入常量和工具
-		constant,
-		clipboard,
-		store,
-		util
-	] = await Promise.all([
-		_.$importVue("/common/ui-x/components/data/xTableEasy/src/colgroup/index.vue"),
-		_.$importVue("/common/ui-x/components/data/xTableEasy/src/header/index.vue"),
-		_.$importVue("/common/ui-x/components/data/xTableEasy/src/body/index.vue"),
-		_.$importVue("/common/ui-x/components/data/xTableEasy/src/footer/index.vue"),
-		// 导入指令
-		_.$importVue("/common/ui-x/directive/clickoutside.vue"),
-		// 导入常量和工具
-		_.$importVue("/common/ui-x/components/data/xTableEasy/src/util/constant.vue"),
-		_.$importVue("/common/ui-x/components/data/xTableEasy/src/util/clipboard.vue"),
-		_.$importVue("/common/ui-x/components/data/xTableEasy/src/util/store.vue"),
-		_.$importVue("/common/ui-x/components/data/xTableEasy/src/util/index.vue")
-	]);
-
 	return {
 		name: "xTableEasy",
-		components: {
-			xTableEasyColgroup,
-			xTableEasyHeader,
-			xTableEasyBody,
-			xTableEasyFooter
-		},
-		created() {
-			// 表格组件创建逻辑
-			this.initColumns();
-		},
-		directives: { "click-outside": Clickoutside },
+		directives: { "click-outside": null },
 		mixins: [],
 		props: {
 			tableData: { required: true, type: Array },
@@ -200,8 +146,8 @@ export default async function () {
 			maxHeight: { type: [Number, String], default: null },
 			fixedHeader: { type: Boolean, default: true },
 			fixedFooter: { type: Boolean, default: true },
-			borderAround: { type: Boolean, default: false },
-			borderX: { type: Boolean, default: false },
+			borderAround: { type: Boolean, default: true },
+			borderX: { type: Boolean, default: true },
 			borderY: { type: Boolean, default: false },
 			eventCustomOption: {
 				type: Object,
@@ -269,49 +215,6 @@ export default async function () {
 				default: function () {
 					return null;
 				}
-			},
-			// 列隐藏配置
-			columnHiddenOption: {
-				type: Object,
-				default: function () {
-					return null;
-				}
-			},
-			// 表头上下文菜单配置
-			contextmenuHeaderOption: {
-				type: Object,
-				default: function () {
-					return null;
-				}
-			},
-			// 表体上下文菜单配置
-			contextmenuBodyOption: {
-				type: Object,
-				default: function () {
-					return null;
-				}
-			},
-			// 剪贴板配置
-			clipboardOption: {
-				type: Object,
-				default: function () {
-					return null;
-				}
-			},
-			// 列宽调整配置
-			columnWidthResizeOption: {
-				type: Object,
-				default: function () {
-					return null;
-				}
-			},
-			// 文本换行模式
-			wordBreakMode: {
-				type: String,
-				default: "normal",
-				validator: function (value) {
-					return ["normal", "keep-all", "break-all", "break-word"].indexOf(value) !== -1;
-				}
 			}
 		},
 		data() {
@@ -330,8 +233,6 @@ export default async function () {
 				editInputRef: "editInputRef",
 				cellSelectionRef: "cellSelectionRef",
 				contextmenuRef: "contextmenuRef",
-				fixedLeftTableRef: "fixedLeftTableRef",
-				fixedRightTableRef: "fixedRightTableRef",
 				cloneColumns: [],
 				isGroupHeader: false,
 				headerRows: [],
@@ -396,8 +297,9 @@ export default async function () {
 				isColumnResizerHover: false,
 				isColumnResizing: false,
 				columnResizerPosition: 0,
-				// 展开行相关
-				expandedRowKeys: new Set()
+				contextmenuHeaderOption: null,
+				contextmenuBodyOption: null,
+				columnWidthResizeOption: null
 			};
 		},
 		computed: {
@@ -465,10 +367,8 @@ export default async function () {
 						: console.error(
 								"maxHeight prop is required when 'virtualScrollOption.enable = true'"
 							)
-					: ((t2 = e2 || "auto"),
-						this.hasXScrollBar &&
-							typeof t2 === "number" &&
-							(t2 += this.getScrollBarWidth()),
+					: ((t2 = this.tableHeight),
+						this.hasXScrollBar && (t2 += this.getScrollBarWidth()),
 						(t2 = typeof t2 === "number" ? t2 + "px" : t2));
 				return { "max-height": typeof e2 === "number" ? e2 + "px" : e2, height: t2 };
 			},
@@ -482,13 +382,7 @@ export default async function () {
 			},
 			tableClass: function () {
 				var e2 = {};
-				return (
-					(e2["border-x"] = this.borderX),
-					(e2["border-y"] = this.borderY),
-					(e2["border-around"] = this.borderAround),
-					(e2["word-break-" + this.wordBreakMode] = true),
-					e2
-				);
+				return ((e2["border-x"] = this.borderX), (e2["border-y"] = this.borderY), e2);
 			},
 			tableContainerClass: function () {
 				var e2 = {},
@@ -628,58 +522,6 @@ export default async function () {
 				return {
 					left: this.columnResizerPosition + "px"
 				};
-			},
-			// 左固定列
-			leftFixedColgroups: function () {
-				return this.colgroups[0].filter(function (column) {
-					return column.fixed === "left";
-				});
-			},
-			// 右固定列
-			rightFixedColgroups: function () {
-				return this.colgroups[0].filter(function (column) {
-					return column.fixed === "right";
-				});
-			},
-			// 左固定列的分组列
-			leftFixedGroupColumns: function () {
-				return this.groupColumns.map(function (rowColumns) {
-					return rowColumns.filter(function (column) {
-						return column.fixed === "left";
-					});
-				});
-			},
-			// 右固定列的分组列
-			rightFixedGroupColumns: function () {
-				return this.groupColumns.map(function (rowColumns) {
-					return rowColumns.filter(function (column) {
-						return column.fixed === "right";
-					});
-				});
-			},
-			// 左固定列容器样式
-			fixedLeftContainerStyle: function () {
-				var width = 0;
-				this.leftFixedColgroups.forEach(function (column) {
-					width += parseInt(column.width) || 100;
-				});
-				return {
-					width: width + "px",
-					maxHeight:
-						typeof this.maxHeight === "number" ? this.maxHeight + "px" : this.maxHeight
-				};
-			},
-			// 右固定列容器样式
-			fixedRightContainerStyle: function () {
-				var width = 0;
-				this.rightFixedColgroups.forEach(function (column) {
-					width += parseInt(column.width) || 100;
-				});
-				return {
-					width: width + "px",
-					maxHeight:
-						typeof this.maxHeight === "number" ? this.maxHeight + "px" : this.maxHeight
-				};
 			}
 		},
 		watch: {
@@ -775,57 +617,34 @@ export default async function () {
 		methods: {
 			// 核心初始化方法
 			initColumns: function () {
-				// 初始化列隐藏配置
-				var e2 = this.columnHiddenOption;
-				if (e2) {
-					var t2 = e2.defaultHiddenColumnKeys;
-					Array.isArray(t2) && t2.length && (this.hiddenColumns = t2);
-				}
-				this.showOrHideColumns();
+				// 初始化列配置
+				this.cloneColumns = JSON.parse(JSON.stringify(this.columns));
+				this.initColgroups();
 			},
-			// 显示或隐藏列
-			showOrHideColumns: function () {
-				var e2 = JSON.parse(JSON.stringify(this.columns));
-				e2 = e2.map(function (e3) {
-					return (e3.operationColumn && (e3.fixed = "left"), e3);
-				});
-				var t2 = this.hiddenColumns;
-				if (Array.isArray(t2) && t2.length) {
-					t2.forEach(function (t3) {
-						e2 = this.recursiveRemoveColumnByKey(e2, t3);
-					}, this);
-				}
-				((this.cloneColumns = e2), this.initColgroups());
-			},
-			// 递归根据key移除列
-			recursiveRemoveColumnByKey: function (columns, key) {
-				// 使用工具函数递归移除列
-				return util.recursiveRemoveColumnByKey(columns, key);
-			},
-			// 初始化列组
 			initColgroups: function () {
 				// 初始化列组
 				if (!this.cloneColumns || this.cloneColumns.length === 0) {
 					this.colgroups = [];
-					this.groupColumns = [];
 					return;
 				}
 
-				// 处理分组列
-				const result = util.initGroupColumns(this.cloneColumns);
-				this.isGroupHeader = result.isGroupHeader;
-				this.colgroups = result.colgroups;
-				this.groupColumns = result.groupColumns;
+				this.isGroupHeader = this.cloneColumns.some(
+					column => column.children && column.children.length > 0
+				);
+
+				if (this.isGroupHeader) {
+					// 处理分组表头
+					this.initGroupColumns();
+				} else {
+					// 处理普通表头
+					this.colgroups = [this.cloneColumns];
+				}
 			},
-			// 初始化分组列
 			initGroupColumns: function () {
-				// 使用工具函数初始化分组列
-				const result = util.initGroupColumns(this.cloneColumns);
-				this.isGroupHeader = result.isGroupHeader;
-				this.colgroups = result.colgroups;
-				this.groupColumns = result.groupColumns;
+				// 初始化分组列
+				this.groupColumns = [];
+				// 实现分组列逻辑
 			},
-			// 初始化表头行
 			initHeaderRows: function () {
 				var e2 = this.groupColumns;
 				Array.isArray(e2) &&
@@ -833,7 +652,6 @@ export default async function () {
 						return { rowHeight: 0 };
 					}));
 			},
-			// 初始化表尾行
 			initFooterRows: function () {
 				var e2 = this.footerData;
 				Array.isArray(e2) &&
@@ -841,333 +659,152 @@ export default async function () {
 						return { rowHeight: 0 };
 					}));
 			},
-			// 表头行高调整
-			headerRowHeightChange: function (e2) {
-				var t2 = e2.rowIndex,
-					n2 = e2.height;
-				this.headerRows.splice(t2, 1, { rowHeight: n2 });
-			},
-			// 表尾行高调整
-			footRowHeightChange: function (e2) {
-				var t2 = e2.rowIndex,
-					n2 = e2.height;
-				this.footerRows.splice(t2, 1, { rowHeight: n2 });
-			},
-			// 单元格宽度变化
-			bodyCellWidthChange: function (e2) {
-				this.colgroups = this.colgroups.map(function (t2) {
-					return ((t2._realTimeWidth = e2.get(t2.key)), t2);
-				});
-			},
-			// 设置列宽
-			setColumnWidth: function (e2) {
-				var t2 = e2.colKey,
-					n2 = e2.width;
-				this.colgroups = this.colgroups.map(function (e3) {
-					return (e3.key === t2 && (e3._columnResizeWidth = n2), e3);
-				});
-				this.$nextTick(this.setScrollBarStatus);
-			},
-			// 更新滚动条状态
-			setScrollBarStatus: function () {
-				// 实现滚动条状态更新
-			},
-			// 更新分组列排序
-			updateColgroupsBySortChange: function (e2) {
-				this.colgroups = this.colgroups.map(function (t2) {
-					return (
-						Object.keys(e2).indexOf(t2.field) > -1 && (t2.sortBy = e2[t2.field]),
-						t2
-					);
-				});
-			},
-			// 单元格选择相关方法
-			cellSelectionCurrentCellChange: function (e2) {
-				var t2 = e2.rowKey,
-					n2 = e2.colKey;
-				this.cellSelectionData.currentCell.colKey = n2;
-				this.cellSelectionData.currentCell.rowKey = t2;
-				this.cellSelectionData.currentCell.rowIndex = this.allRowKeys.indexOf(t2);
-			},
-			// 单元格选择结束单元格变化
-			cellSelectionNormalEndCellChange: function (e2) {
-				var t2 = e2.rowKey,
-					n2 = e2.colKey;
-				this.cellSelectionData.normalEndCell.colKey = n2;
-				this.cellSelectionData.normalEndCell.rowKey = t2;
-				this.cellSelectionData.normalEndCell.rowIndex = this.allRowKeys.indexOf(t2);
-			},
-			// 清除单元格选择结束单元格
-			clearCellSelectionNormalEndCell: function () {
-				this.cellSelectionData.normalEndCell = { rowKey: "", colKey: "", rowIndex: -1 };
-			},
-			// 清除当前单元格选择
-			clearCellSelectionCurrentCell: function () {
-				this.cellSelectionData.currentCell = { rowKey: "", colKey: "", rowIndex: -1 };
-			},
-			// 清除自动填充结束单元格
-			clearCellSelectionAutofillEndCell: function () {
-				this.cellSelectionData.autoFillEndCell = { rowKey: "", colKey: "" };
-			},
-			// 设置自动填充后的单元格选择
-			setCellSelectionByAutofill: function () {
-				// 通过自动填充设置单元格选择
-			},
-			// 设置当前单元格选择类型
-			setCurrentCellSelectionType: function () {
-				// 设置当前单元格选择类型
-			},
-			// 表头指示器列键变化
-			headerIndicatorColKeysChange: function (e2) {
-				var t2 = e2.startColKey,
-					n2 = e2.endColKey;
-				var o2 = this.colgroups;
-				this.headerIndicatorColKeys.startColKey = t2;
-				this.headerIndicatorColKeys.startColKeyIndex = o2.findIndex(function (e3) {
-					return e3.key === t2;
-				});
-				this.headerIndicatorColKeys.endColKey = n2;
-				this.headerIndicatorColKeys.endColKeyIndex = o2.findIndex(function (e3) {
-					return e3.key === n2;
-				});
-			},
-			// 清除表头指示器列键
-			clearHeaderIndicatorColKeys: function () {
-				this.headerIndicatorColKeys.startColKey = "";
-				this.headerIndicatorColKeys.startColKeyIndex = -1;
-				this.headerIndicatorColKeys.endColKey = "";
-				this.headerIndicatorColKeys.endColKeyIndex = -1;
-			},
-			// 设置通过表头指示器的范围单元格选择
-			setRangeCellSelectionByHeaderIndicator: function () {
-				// 通过表头指示器设置范围单元格选择
-			},
-			// 表体指示器行键变化
-			bodyIndicatorRowKeysChange: function (e2) {
-				var t2 = e2.startRowKey,
-					n2 = e2.endRowKey;
-				var o2 = this.allRowKeys;
-				this.bodyIndicatorRowKeys.startRowKey = t2;
-				this.bodyIndicatorRowKeys.startRowKeyIndex = o2.indexOf(t2);
-				this.bodyIndicatorRowKeys.endRowKey = n2;
-				this.bodyIndicatorRowKeys.endRowKeyIndex = o2.indexOf(n2);
-			},
-			// 清除表体指示器行键
-			clearBodyIndicatorRowKeys: function () {
-				this.bodyIndicatorRowKeys.startRowKey = "";
-				this.bodyIndicatorRowKeys.startRowKeyIndex = -1;
-				this.bodyIndicatorRowKeys.endRowKey = "";
-				this.bodyIndicatorRowKeys.endRowKeyIndex = -1;
-			},
-			// 设置通过表体指示器的范围单元格选择
-			setRangeCellSelectionByBodyIndicator: function () {
-				// 通过表体指示器设置范围单元格选择
-			},
-			// 初始化列宽调整
-			initColumnWidthByColumnResize: function () {
-				var e2 = this.enableColumnResize;
-				var t2 = 50;
-				if (e2) {
-					this.colgroups = this.colgroups.map(function (e3) {
-						var n2 = t2;
-						typeof e3.width === "number" && (n2 = e3.width);
-						return Object.assign({}, e3, { _columnResizeWidth: n2 });
-					});
-				}
-			},
-			// 初始化滚动
-			initScrolling: function () {
-				// 初始化滚动
-			},
-			// 初始化虚拟滚动
 			initVirtualScroll: function () {
 				// 初始化虚拟滚动
-				if (!this.isVirtualScroll) return;
-
-				this.initVirtualScrollPositions();
-				this.bindScrollEvent();
 			},
-			// 初始化虚拟滚动位置
 			initVirtualScrollPositions: function () {
 				// 初始化虚拟滚动位置
 				if (!this.isVirtualScroll) return;
 
-				const visibleCount = this.virtualScrollVisibleCount;
-				const bufferCount = this.virtualScrollBufferCount;
-				const totalCount = this.tableData.length;
-
-				// 计算可见数据范围
-				const startIndex = Math.max(0, this.virtualScrollStartIndex);
-				const endIndex = Math.min(
-					totalCount - 1,
-					startIndex + visibleCount + bufferCount * 2
+				this.virtualScrollVisibleData = this.tableData.slice(
+					0,
+					this.virtualScrollVisibleCount + this.virtualScrollBufferCount
 				);
-
-				this.virtualScrollVisibleData = this.tableData.slice(startIndex, endIndex + 1);
 				this.virtualScrollVisibleIndexs = {
-					start: startIndex,
-					end: endIndex
+					start: 0,
+					end:
+						Math.min(
+							this.virtualScrollVisibleCount + this.virtualScrollBufferCount,
+							this.tableData.length
+						) - 1
 				};
-				this.virtualScrollEndIndex = endIndex;
+				this.virtualScrollStartIndex = 0;
+				this.virtualScrollEndIndex = this.virtualScrollVisibleIndexs.end;
 			},
-			// 绑定滚动事件
-			bindScrollEvent: function () {
-				// 绑定滚动事件
-				const container = this.$refs.tableContainerRef;
-				if (!container) return;
-
-				// 移除之前的事件监听器，避免重复绑定
-				container.removeEventListener("scroll", this.handleScroll);
-				container.addEventListener("scroll", this.handleScroll);
+			initScrolling: function () {
+				// 初始化滚动
 			},
-			// 处理滚动事件
-			handleScroll: function (event) {
-				// 处理滚动事件
-				const container = event.target;
-				const scrollTop = container.scrollTop;
+			initColumnWidthByColumnResize: function () {
+				// 初始化列宽调整
+			},
+			// 行相关方法
+			getRowClass: function (row, rowIndex) {
+				// 获取行样式类
+				var rowClass = {};
+				var rowKey = this.rowKeyFieldName ? row[this.rowKeyFieldName] : rowIndex;
 
-				if (this.isVirtualScroll) {
-					this.updateVirtualScrollData(scrollTop);
+				// 高亮行
+				if (rowKey === this.highlightRowKey) {
+					rowClass["row-highlighted"] = true;
 				}
 
-				// 同步固定列的滚动位置
-				this.syncFixedColumnsScroll(scrollTop);
-
-				// 触发滚动事件
-				this.$emit("scroll", { scrollTop, scrollLeft: container.scrollLeft });
-			},
-			// 处理表格容器滚动
-			handleTableContainerScroll: function (event) {
-				this.handleScroll(event);
-			},
-			// 同步固定列的滚动位置
-			syncFixedColumnsScroll: function (scrollTop) {
-				// 同步左固定列的滚动位置
-				if (this.hasLeftFixedColumn && this.$refs.fixedLeftTableRef) {
-					const fixedLeftTable = this.$refs.fixedLeftTableRef;
-					fixedLeftTable.scrollTop = scrollTop;
+				// 斑马纹
+				if (this.rowStyleOption && this.rowStyleOption.stripe) {
+					rowClass["row-stripe"] = rowIndex % 2 === 1;
 				}
 
-				// 同步右固定列的滚动位置
-				if (this.hasRightFixedColumn && this.$refs.fixedRightTableRef) {
-					const fixedRightTable = this.$refs.fixedRightTableRef;
-					fixedRightTable.scrollTop = scrollTop;
-				}
+				return rowClass;
 			},
-			// 更新虚拟滚动数据
-			updateVirtualScrollData: function (scrollTop) {
-				// 更新虚拟滚动数据
-				if (!this.isVirtualScroll) return;
+			// 列相关方法
+			getColumnClass: function (column, row, rowIndex, colIndex) {
+				// 获取列样式类
+				var colClass = {};
+				var rowKey = this.rowKeyFieldName ? row[this.rowKeyFieldName] : rowIndex;
 
-				const minRowHeight =
-					this.virtualScrollOption?.minRowHeight || this.defaultVirtualScrollMinRowHeight;
-				const visibleCount = this.virtualScrollVisibleCount;
-				const bufferCount = this.virtualScrollBufferCount;
-				const totalCount = this.tableData.length;
-
-				// 计算当前可见区域的起始行索引
-				let startIndex = Math.floor(scrollTop / minRowHeight) - bufferCount;
-				startIndex = Math.max(0, startIndex);
-
-				// 计算结束行索引
-				let endIndex = startIndex + visibleCount + bufferCount * 2;
-				endIndex = Math.min(totalCount - 1, endIndex);
-
-				// 只有当可见范围变化时才更新数据
+				// 当前编辑单元格
 				if (
-					startIndex !== this.virtualScrollStartIndex ||
-					endIndex !== this.virtualScrollEndIndex
+					this.editingCell.rowKey === rowKey &&
+					this.editingCell.colKey === column.colKey
 				) {
-					this.virtualScrollStartIndex = startIndex;
-					this.virtualScrollEndIndex = endIndex;
-					this.initVirtualScrollPositions();
-
-					// 触发虚拟滚动事件
-					this.$emit("virtual-scroll", {
-						startIndex,
-						endIndex,
-						visibleCount: endIndex - startIndex + 1
-					});
+					colClass["cell-editing"] = true;
 				}
+
+				// 选择的单元格
+				if (this.isCellInSelectionRange(rowKey, column.colKey)) {
+					colClass["cell-selected"] = true;
+				}
+
+				return colClass;
 			},
-			// 设置表格内容顶部值
-			setTableContentTopValue: function (e2) {
-				// 设置表格内容顶部值
-			},
-			// 行相关事件处理
-			handleRowClick(row, rowIndex, event) {
+			// 事件处理方法
+			handleRowClick: function (row, rowIndex, event) {
+				// 处理行点击事件
 				this.$emit("row-click", { row, rowIndex, event });
 			},
-
-			handleRowDblClick(row, rowIndex, event) {
+			handleRowDblClick: function (row, rowIndex, event) {
+				// 处理行双击事件
 				this.$emit("row-dblclick", { row, rowIndex, event });
 			},
-
-			handleRowContextmenu(row, rowIndex, event) {
+			handleRowContextmenu: function (row, rowIndex, event) {
+				// 处理行右键菜单事件
+				event.preventDefault();
 				this.$emit("row-contextmenu", { row, rowIndex, event });
 			},
-
-			handleRowExpand(row, rowIndex) {
-				this.$emit("row-expand", { row, rowIndex });
-			},
-
-			handleRowCollapse(row, rowIndex) {
-				this.$emit("row-collapse", { row, rowIndex });
-			},
-
-			handleExpandChange(params) {
-				this.$emit("expand-change", params);
-			},
-
-			handleCellClick(row, rowIndex, column, colIndex, event) {
+			handleCellClick: function (row, rowIndex, column, colIndex, event) {
+				// 处理单元格点击事件
 				this.$emit("cell-click", { row, rowIndex, column, colIndex, event });
 			},
-
-			handleCellDblClick(row, rowIndex, column, colIndex, event) {
+			handleCellDblClick: function (row, rowIndex, column, colIndex, event) {
+				// 处理单元格双击事件
 				this.$emit("cell-dblclick", { row, rowIndex, column, colIndex, event });
 			},
-
-			handleCellContextmenu(row, rowIndex, column, colIndex, event) {
+			handleCellContextmenu: function (row, rowIndex, column, colIndex, event) {
+				// 处理单元格右键菜单事件
+				event.preventDefault();
 				this.$emit("cell-contextmenu", { row, rowIndex, column, colIndex, event });
+			},
+			// 单元格选择相关方法
+			isCellInSelectionRange: function (rowKey, colKey) {
+				// 检查单元格是否在选择范围内
+				var range = this.cellSelectionRangeData;
+				if (
+					!range ||
+					!range.leftColKey ||
+					!range.rightColKey ||
+					!range.topRowKey ||
+					!range.bottomRowKey
+				) {
+					return false;
+				}
+
+				// 实现单元格选择范围检查逻辑
+				return false;
+			},
+			clearCellSelectionCurrentCell: function () {
+				// 清除当前单元格选择
+				this.cellSelectionData.currentCell = { rowKey: "", colKey: "", rowIndex: -1 };
+			},
+			setCellSelectionByAutofill: function () {
+				// 通过自动填充设置单元格选择
+			},
+			clearCellSelectionAutofillEndCell: function () {
+				// 清除自动填充结束单元格选择
+				this.cellSelectionData.autoFillEndCell = { rowKey: "", colKey: "" };
+			},
+			setCurrentCellSelectionType: function () {
+				// 设置当前单元格选择类型
+			},
+			setRangeCellSelectionByHeaderIndicator: function () {
+				// 通过表头指示器设置范围单元格选择
+			},
+			setRangeCellSelectionByBodyIndicator: function () {
+				// 通过表体指示器设置范围单元格选择
+			},
+			// 虚拟滚动相关方法
+			setTableContentTopValue: function (e2) {
+				// 设置表格内容顶部值
 			},
 			// 滚动条相关方法
 			getScrollBarWidth: function () {
 				// 获取滚动条宽度
 				return this.scrollBarWidth || 0;
-			},
-			// 处理列宽变化
-			handleColumnWidthChange: function (params) {
-				const { column, width } = params;
-				this.setColumnWidth({ colKey: column.key, width });
-			},
-			// 处理列宽调整结束
-			handleColumnWidthResizeEnd: function () {
-				this.$nextTick(this.setScrollBarStatus);
 			}
 		},
 		mounted() {
 			// 表格组件挂载逻辑
-			this.$nextTick(() => {
-				if (this.isVirtualScroll) {
-					this.initVirtualScroll();
-				}
-				// 初始化列宽调整
-				this.initColumnWidthByColumnResize();
-				// 触发表格就绪事件
-				this.$emit("ready", this);
-			});
 		},
 		beforeDestroy() {
 			// 表格组件销毁逻辑
-			// 移除滚动事件监听器
-			const container = this.$refs.tableContainerRef;
-			if (container) {
-				container.removeEventListener("scroll", this.handleScroll);
-			}
-			// 清理定时器
-			if (this.disablePointerEventsTimeoutId) {
-				clearTimeout(this.disablePointerEventsTimeoutId);
-			}
 		}
 	};
 }
@@ -1209,78 +846,80 @@ export default async function () {
 /* 表格边框样式 */
 .x-table-easy .border-x th,
 .x-table-easy .border-x td {
-	border-bottom: 1px solid #e8e8e8;
-}
-
-.x-table-easy .border-x tr:first-child > th,
-.x-table-easy .border-x tr.ve-table-footer-tr:first-child > td {
-	border-top: 1px solid #e8e8e8;
+	border-right: 1px solid #e8e8e8;
 }
 
 .x-table-easy .border-y th,
 .x-table-easy .border-y td {
-	border-right: 1px solid #e8e8e8;
+	border-bottom: 1px solid #e8e8e8;
 }
 
-.x-table-easy .border-y th:first-child,
-.x-table-easy .border-y td:first-child {
-	border-left: 1px solid #e8e8e8;
+/* 表头样式 */
+.x-table-easy th {
+	background-color: #fafafa;
+	font-weight: 500;
+	text-align: left;
+	padding: 12px 16px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	user-select: none;
+	box-sizing: border-box;
+	transition: background-color 0.3s;
+	cursor: default;
+	position: relative;
 }
 
-.x-table-easy .border-around {
-	border: 1px solid #e8e8e8;
-	border-radius: 4px;
-}
-
-.x-table-easy .border-around table {
-	&.border-x {
-		tr:last-child > td {
-			border-bottom: 0px;
-		}
-		tr:first-child > th {
-			border-top: 0px;
-		}
-	}
-
-	&.border-y {
-		th:last-child,
-		table.border-y td:last-child {
-			border-right: 0px;
-		}
-
-		th:first-child,
-		table.border-y td:first-child {
-			border-left: 0px;
-		}
-	}
+.x-table-easy th:hover {
+	background-color: #f0f2f5;
 }
 
 /* 表体样式 */
 .x-table-easy td {
 	padding: 12px 16px;
-	/* white-space: pre-wrap; */
+	white-space: nowrap;
 	overflow: hidden;
-	word-break: inherit;
+	text-overflow: ellipsis;
 	box-sizing: border-box;
 	transition: background-color 0.3s;
 	position: relative;
 }
 
-/* word-break模式样式 */
-.x-table-easy.word-break-normal td {
-	word-break: normal;
+/* 行样式 */
+.x-table-easy .row-hover tr:hover {
+	background-color: #f5f7fa;
 }
 
-.x-table-easy.word-break-keep-all td {
-	word-break: keep-all;
+.x-table-easy .row-highlight tr[row-key="highlightRowKey"],
+.x-table-easy tr.row-highlighted {
+	background-color: #e6f7ff;
 }
 
-.x-table-easy.word-break-break-all td {
-	word-break: break-all;
+.x-table-easy .stripe tr:nth-child(even),
+.x-table-easy tr.row-stripe {
+	background-color: #fafafa;
 }
 
-.x-table-easy.word-break-break-word td {
-	word-break: break-word;
+/* 虚拟滚动样式 */
+.x-table-easy .virtual-scroll {
+	overflow: auto;
+}
+
+/* 虚拟滚动占位符样式 */
+.x-table-easy .virtual-placeholder {
+	overflow: hidden;
+	background: linear-gradient(90deg, rgba(240, 242, 245, 0.8), rgba(248, 249, 250, 0.8));
+	background-size: 200% 100%;
+	animation: placeholderShimmer 1.5s infinite;
+}
+
+@keyframes placeholderShimmer {
+	0% {
+		background-position: -200px 0;
+	}
+	100% {
+		background-position: 200px 0;
+	}
 }
 
 /* 容器滚动样式 */
@@ -1365,51 +1004,6 @@ export default async function () {
 	pointer-events: none;
 }
 
-/* 展开行样式 */
-.x-table-easy .expand-column {
-	width: 30px;
-	text-align: center;
-	cursor: pointer;
-	user-select: none;
-	padding: 0;
-}
-
-.x-table-easy .expand-icon {
-	display: inline-block;
-	width: 16px;
-	height: 16px;
-	line-height: 16px;
-	text-align: center;
-	font-size: 12px;
-	color: #999;
-	transition:
-		transform 0.3s,
-		color 0.3s;
-}
-
-.x-table-easy .expand-icon::before {
-	content: "";
-}
-
-.x-table-easy .expand-icon.expanded::before {
-	content: "";
-}
-
-.x-table-easy .expand-icon:hover {
-	color: #1890ff;
-}
-
-.x-table-easy .expand-content-row {
-	background-color: #fafafa;
-}
-
-.x-table-easy .expand-content-cell {
-	padding: 16px;
-	border-top: 1px solid #e8e8e8;
-	border-bottom: 1px solid #e8e8e8;
-	background-color: #fafafa;
-}
-
 /* 滚动条样式 */
 .x-table-easy ::-webkit-scrollbar {
 	width: 8px;
@@ -1429,64 +1023,6 @@ export default async function () {
 
 .x-table-easy ::-webkit-scrollbar-thumb:hover {
 	background-color: #a8a8a8;
-}
-
-/* 固定列样式 */
-.x-table-easy .fixed-left-container,
-.x-table-easy .fixed-right-container {
-	position: absolute;
-	top: 0;
-	height: 100%;
-	overflow: hidden;
-	z-index: 10;
-	background-color: #fff;
-	box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
-}
-
-.x-table-easy .fixed-left-container {
-	left: 0;
-}
-
-.x-table-easy .fixed-right-container {
-	right: 0;
-	box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
-}
-
-.x-table-easy .fixed-table {
-	height: 100%;
-	overflow: hidden;
-}
-
-.x-table-easy .fixed-table table {
-	border-collapse: collapse;
-	border-spacing: 0;
-	table-layout: fixed;
-}
-
-/* 主表格容器与固定列的间距 */
-.x-table-easy .table-container.has-fixed-left {
-	margin-left: 0;
-}
-
-.x-table-easy .table-container.has-fixed-right {
-	margin-right: 0;
-}
-
-/* 固定列与主表格的边框处理 */
-.x-table-easy .fixed-left-container table.border-x tr:last-child > td {
-	border-bottom: 0;
-}
-
-.x-table-easy .fixed-right-container table.border-x tr:last-child > td {
-	border-bottom: 0;
-}
-
-.x-table-easy .fixed-left-container table.border-y td:last-child {
-	border-right: 1px solid #e8e8e8;
-}
-
-.x-table-easy .fixed-right-container table.border-y td:first-child {
-	border-left: 1px solid #e8e8e8;
 }
 
 /* 表头排序指示器样式 */

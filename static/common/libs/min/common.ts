@@ -195,7 +195,7 @@
 						n.readAsArrayBuffer(a));
 				});
 			}),
-			(_.$convertByteUnit = function (e) {
+			(_.$bytesToSize = function (e) {
 				var t, r;
 				return e
 					? ((r =

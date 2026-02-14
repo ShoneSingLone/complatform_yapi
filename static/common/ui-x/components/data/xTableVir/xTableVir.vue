@@ -1923,7 +1923,7 @@ export default async function ({ PRIVATE_GLOBAL, mergeProps4h }) {
 						}
 					}
 				]),
-				[hDiv({ class: "el-table-v2-row-cell-inner ellipsis" }, [IconOrPlaceholder, Cell])]
+				[IconOrPlaceholder, Cell]
 			);
 		}
 	};

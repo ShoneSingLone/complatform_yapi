@@ -1,5 +1,5 @@
 <script lang="ts">
-export default async function ({ _URL_PREFIX_MO, PRIVATE_GLOBAL }) {
+export default async function ({ _URL_PREFIX_MO }) {
 	let [region, locale, agencyId] = _.$urlSearch(["region", "locale", "agencyId"]);
 
 	_.each(
@@ -214,7 +214,7 @@ export default async function ({ _URL_PREFIX_MO, PRIVATE_GLOBAL }) {
 		if (response && response.code === 500 && response.message) {
 			return _.$msgError(response.message);
 		}
-		/*
+		/* 
     {
     "exceptionId": "mosub-00013",
     "exceptionType": "ROA_EXFRAME_EXCEPTION",
@@ -286,18 +286,22 @@ export default async function ({ _URL_PREFIX_MO, PRIVATE_GLOBAL }) {
 		let serviceId = "";
 		try {
 			serviceId = await new Promise(async (resolve, reject) => {
-				_.$openModal({
-					parent: Vue.forceUpdate.getVM(),
-					title: i18n("select_service_item"),
-					url: "/common/type_mo/components/DialogProductServiceList.vue",
-
-					service_type,
-					icon,
-					onSelect(serviceId) {
-						resolve(serviceId);
-					},
-					onCancel() {
-						reject("");
+				const DialogTypeVueSFC = await _.$importVue(
+					"/common/type_mo/components/DialogProductServiceList.vue",
+					{
+						parent: Vue.forceUpdate.getVM(),
+						service_type,
+						icon,
+						onSelect(serviceId) {
+							resolve(serviceId);
+						}
+					}
+				);
+				_.$openWindow_deprecated(i18n("select_service_item"), DialogTypeVueSFC, {
+					cancel() {
+						setTimeout(() => {
+							reject("");
+						}, 100);
 					}
 				});
 			});
@@ -412,14 +416,12 @@ export default async function ({ _URL_PREFIX_MO, PRIVATE_GLOBAL }) {
 			const vm = await _.$openModal({
 				title: i18n("jump_action"),
 				url: "/common/ui-x/msg/WindowConfirm.vue",
-				content() {
-					const { hDiv, hxBtn } = PRIVATE_GLOBAL;
+				content: () => {
 					return hDiv({ style: `height:220px;`, staticClass: "flex middle center" }, [
 						hDiv({ staticClass: "flex middle center vertical" }, [
-							h("xIcon", {
-								icon: "success-filled",
+							h("i", {
 								staticClass: "el-message__icon el-icon-success",
-								style: "height:64px;width:64px;color:var(--ui-success);"
+								style: "font-size:64px;color:var(--ui-success);"
 							}),
 							h(
 								"div",
@@ -432,38 +434,35 @@ export default async function ({ _URL_PREFIX_MO, PRIVATE_GLOBAL }) {
 					]);
 				},
 				renderFooter(vm) {
-					const { hDiv, hxBtn } = PRIVATE_GLOBAL;
-
-					return h(
-						"div",
-						{
-							style: `border-top: 1px solid var(--el-border-color);padding-top:var(--ui-one);width:100%;text-align:center;`
-						},
-						[
-							hxBtn({
-								staticClass: "mr",
-								configs: {
-									label: i18n("view_order"),
-									preset: "blue",
-									onClick() {
-										location.href = `/motenantconsolehomewebsite#/userCenter/manager/applyDetail?orderId=${response && response.purchases && response.purchases[0] && response.purchases[0].subscription_id}`;
+					return () => {
+						return h(
+							"div",
+							{
+								style: `border-top: 1px solid var(--el-border-color);padding-top:var(--ui-one);width:100%;text-align:center;`
+							},
+							[
+								hxBtn({
+									staticClass: "mr",
+									configs: {
+										label: i18n("view_order"),
+										preset: "blue",
+										onClick() {
+											location.href = `/motenantconsolehomewebsite#/userCenter/manager/applyDetail?orderId=${response && response.purchases && response.purchases[0] && response.purchases[0].subscription_id}`;
+										}
 									}
-								}
-							}),
-							hxBtn({
-								configs: {
-									label: i18n("return_to_list_action"),
-									isHide() {
-										return !goBack;
-									},
-									onClick() {
-										goBack();
-										vm.closeModal();
+								}),
+								hxBtn({
+									configs: {
+										label: i18n("return_to_list_action"),
+										onClick() {
+											goBack();
+											vm.closeModal();
+										}
 									}
-								}
-							})
-						]
-					);
+								})
+							]
+						);
+					};
 				}
 			});
 
