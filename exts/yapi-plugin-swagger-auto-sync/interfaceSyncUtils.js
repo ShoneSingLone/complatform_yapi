@@ -12,10 +12,10 @@ const jobMap = new Map();
 class SyncUtils {
 	constructor(ctx) {
 		console.log(
-			"-------------------------------------swaggerSyncUtils constructor-----------------------------------------------"
+			"-------------------------------------yapi-plugin-swagger-auto-sync.js constructor-----------------------------------------------"
 		);
 		this.ctx = ctx;
-		this.openController = xU.$orm(openController);
+		this.openController = new openController(ctx);
 		this.syncModel = xU.$orm(syncModel);
 		this.tokenModel = orm.token;
 
