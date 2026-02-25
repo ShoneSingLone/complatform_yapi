@@ -267,7 +267,30 @@ export default async function () {
 </xPopover>`,
 														data() {
 															return {
-																archive_files: rowData.archiveFiles
+																archive_files: _.sortBy(
+																	rowData.archiveFiles,
+																	item => {
+																		// 尝试从文件名中提取时间信息
+																		const name = item.name;
+																		// 匹配常见的时间格式，包括用户提供的 YYYY_MM_DD_HH_MM_SS 格式
+																		// 匹配：YYYY-MM-DD, YYYYMMDD, YYYY-MM-DD HH:MM:SS, YYYYMMDDHHMMSS, YYYY_MM_DD_HH_MM_SS
+																		const timeRegex =
+																			/(\d{4}[-_/]?\d{2}[-_/]?\d{2}([-_]\d{2}[-_]?\d{2}[-_]?\d{2})?|\d{12,14})/;
+																		const match =
+																			name.match(timeRegex);
+																		if (match) {
+																			// 提取时间字符串并转换为时间戳
+																			const timeStr =
+																				match[0].replace(
+																					/[-_/\s:]/g,
+																					""
+																				);
+																			return -Number(timeStr);
+																		}
+																		// 如果没有时间信息，按原名称排序
+																		return name;
+																	}
+																)
 															};
 														},
 														methods: {
@@ -282,6 +305,11 @@ export default async function () {
 											},
 											{
 												label: i18n("open"),
+												isHide() {
+													return !String(location.href).includes(
+														"localhost"
+													);
+												},
 												onClick() {
 													return _api.doc.cmd({
 														action: "cmd",

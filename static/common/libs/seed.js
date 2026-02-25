@@ -544,7 +544,7 @@
 				let exeCount = 0;
 
 				const checkValue = async () => {
-					const value = await fn_get_value({ exeCount });
+					const value = await fn_get_value();
 					_ensure_inner_print(++exeCount, callerInfo);
 					if (value) {
 						clearTimeout(timer);
@@ -764,7 +764,7 @@
 
 								if (i18nString === undefined) {
 									/* i18n wenjian zhong wei ding yi guo ji hua wen jian  */
-									window.i18n_unset[key] = true;
+									console.warn(`[i18n:unset] ${key}`);
 									i18nString = key;
 								}
 
@@ -814,7 +814,6 @@
 						const i18n = await _.$newI18n({ lang: I18N_LANGUAGE });
 						/* vue加载之后才能使用国际化属性 */
 						window.i18n = i18n;
-						window.i18n_unset = {};
 						Vue.prototype.i18n = i18n;
 					}
 				],

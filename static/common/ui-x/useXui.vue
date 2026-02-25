@@ -11,7 +11,6 @@ export default async function ({
 	x_switch_width,
 	x_page_title_back_icon,
 	x_item_is_show_item_colon,
-	x_item_input_is_number_default_attrs,
 	x_item_error_tips_icon,
 	x_modal_close_icon,
 	x_pagination_pagination_component,
@@ -42,8 +41,6 @@ export default async function ({
 		PRIVATE_GLOBAL.x_page_title_back_icon = x_page_title_back_icon || "icon_back";
 		PRIVATE_GLOBAL.x_item_is_show_item_colon = x_item_is_show_item_colon || false;
 		PRIVATE_GLOBAL.x_item_error_tips_icon = x_item_error_tips_icon || "exclamationMark";
-		PRIVATE_GLOBAL.x_item_input_is_number_default_attrs =
-			x_item_input_is_number_default_attrs || {};
 		PRIVATE_GLOBAL.x_modal_close_icon = x_modal_close_icon || "icon_close";
 		PRIVATE_GLOBAL.x_pagination_pagination_component =
 			x_pagination_pagination_component || "PrivatePagination";
@@ -348,9 +345,6 @@ export default async function ({
 		$(document).on("mouseenter.setDataTipsShowWhenHover", ".ellipsis", function (event) {
 			try {
 				var $ele = $(this);
-				if ($ele.children().hasClass("ellipsis-no-title")) {
-					return;
-				}
 				var width = $ele.width();
 				var $child = $(`<span style="opacity:0;position:absolute;z-index:-1;"></span>`)
 					.appendTo($("body"))

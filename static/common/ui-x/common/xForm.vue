@@ -105,7 +105,7 @@ export default async function () {
 		margin-right: var(--ui-one);
 
 		> .xItem-wrapper,
-		> .xDesc-wrapper {
+		> .xItemDesc-wrapper {
 			--xItem-wrapper-width: var(--xForm-xItem-wrapper-width, 100%);
 		}
 	}
