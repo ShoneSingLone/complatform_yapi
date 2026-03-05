@@ -439,17 +439,48 @@ ${callerInfo.message}:`);
 
 	/**
 	 * 该函数用于将字节大小转换为可读性更好的格式，如KB、MB、GB等
-	 * @param {*} bytes
+	 * @param {*} bytes - 字节数或指定单位的数值
+	 * @param {*} unitConversion - 可选，单位转换字符串，如"MB-GB"表示输入为MB，输出为GB
 	 * @returns
 	 */
-	/* @typescriptDeclare (bytes:number)=>string */
-	_.$bytesToSize = function (bytes) {
-		if (!bytes) return "0 KB";
-		var k = 1024;
-		var sizes = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-		var i = Math.floor(Math.log(bytes) / Math.log(k));
-		const unit = sizes[i - 1] || "Byte";
-		return (bytes / Math.pow(k, i)).toPrecision(3) + " " + unit;
+	/* @typescriptDeclare (bytes:number, unitConversion?:string)=>string */
+	_.$convertByteUnit = function (bytes, unitConversion) {
+		// 统一处理空值、0 和非数字的情况
+		const numBytes = Number(bytes);
+		if (!numBytes || isNaN(numBytes)) return "0 KB";
+
+		const k = 1024;
+		const sizes = ["Byte", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+		// 处理单位转换
+		if (unitConversion && typeof unitConversion === "string") {
+			const [inputUnit, outputUnit] = unitConversion.split("-");
+			if (inputUnit && outputUnit) {
+				const inputIndex = sizes.indexOf(inputUnit);
+				const outputIndex = sizes.indexOf(outputUnit);
+				// 检查单位是否有效
+				if (inputIndex !== -1 && outputIndex !== -1) {
+					// 将输入值转换为字节
+					const bytesValue = numBytes * Math.pow(k, inputIndex);
+					// 转换为目标单位
+					const result = bytesValue / Math.pow(k, outputIndex);
+					// 使用 toFixed 替代 toPrecision，避免科学计数法
+					return result.toFixed(2) + " " + outputUnit;
+				}
+			}
+		}
+
+		// 默认算法（处理字节）- 修复索引和边界问题
+		// 避免 log(0) 错误，同时处理小于1字节的情况
+		if (numBytes < 1) {
+			return "0 Byte";
+		}
+		const i = Math.floor(Math.log(numBytes) / Math.log(k));
+		// 修复索引错误：使用 i 而不是 i+1
+		const unit = sizes[i] || sizes[0];
+		// 计算转换后的值并格式化
+		const formattedValue = (numBytes / Math.pow(k, i)).toFixed(2);
+		return formattedValue + " " + unit;
 	};
 
 	/**
@@ -546,7 +577,7 @@ ${callerInfo.message}:`);
 								}
 							})
 						) {
-							_.$msgError(`文件大小不能超过${_.$bytesToSize(limit_size_max)}`);
+							_.$msgError(`文件大小不能超过${_.$convertByteUnit(limit_size_max)}`);
 							return resolve([]);
 						}
 					}
@@ -784,6 +815,17 @@ ${callerInfo.message}:`);
 				fixed: "left",
 				headerCellRenderer(_props) {
 					const tableConfigs = getConfigs();
+					let isDisabled = (() => {
+						const check = rowData => {
+							if (_.isFunction(disabled)) {
+								return disabled({ rowData });
+							}
+							return false;
+						};
+
+						return _.some(tableConfigs.data.list, check);
+					})();
+
 					const isChecked =
 						tableConfigs.data.list.length > 0 &&
 						tableConfigs.data.set.size === tableConfigs.data.list.length;
@@ -791,6 +833,7 @@ ${callerInfo.message}:`);
 						tableConfigs.data.set.size > 0 &&
 						tableConfigs.data.set.size < tableConfigs.data.list.length;
 					const checkBoxProps = {
+						disabled: isDisabled,
 						indeterminate: isIndeterminate,
 						value: isChecked,
 						onChange() {
@@ -2598,11 +2641,13 @@ ${callerInfo.message}:`);
 		/**
 		 * 如果有下拉项，要等到下拉有数据再回填
 		 * 适用于xItem不使用v-mode，form的configs带有value form.xxx.value, {xxx:"value"}
-		 *
-		 * @param {any} xItemFormConfigs xItem 配置信息，config带有value属性
 		 * @param {any} values
 		 * @param {any} options
 		 * 1.FIRST_OPTION_AS_VALUE 如果values的值为undefined，默认取options第一个值
+		 * 批量设置 xItem 表单控件的值，支持异步等待下拉数据加载完成
+		 * @param xItemFormConfigs 表单配置对象,使用此函数，需要带有value属性
+		 * @param values 要设置的值对象
+		 * @param options.FIRST_OPTION_AS_VALUE 若值为 undefined 是否默认取第一项
 		 */
 		/* @typescriptDeclare (
 			xItemFormConfigs: object,
@@ -2610,84 +2655,44 @@ ${callerInfo.message}:`);
 			options?: { FIRST_OPTION_AS_VALUE: boolean; [key: string]: any }
 		) => Promise<void[]> */
 		_.$xItemsValue = async function (xItemFormConfigs, values, options = {}) {
-			let logValues = _.reduce(
-				values,
-				(_logValues, value, prop) => {
-					_logValues[prop] = value;
-					return _logValues;
-				},
-				{}
-			);
-			try {
-				return await Promise.all(
-					_.map(values, async (value, prop) => {
-						try {
-							/* 允许null，代表使用configs.value */
-							if (_.isPlainObject(xItemFormConfigs[prop])) {
-								if (
-									["xItemSelect", "xItemRadioGroup"].includes(
-										xItemFormConfigs[prop].itemType
-									)
-								) {
-									const ignore = (() => {
-										if (_.isBoolean(xItemFormConfigs[prop].isHide)) {
-											return xItemFormConfigs[prop].isHide;
-										}
+			/* 只要values 有可用值（null亦可支持响应，undefined不行），configs有匹配项，则进行赋值 */
+			return Promise.all(
+				_.map(values, async (value, prop) => {
+					const cfg = xItemFormConfigs[prop];
+					if (!_.isPlainObject(cfg)) {
+						return;
+					}
 
-										if (_.isFunction(xItemFormConfigs[prop].isHide)) {
-											return xItemFormConfigs[prop].isHide();
-										}
+					/* 如果有异步支持的选型，判断是否需要等待下拉有值 */
+					if (["xItemSelect", "xItemRadioGroup"].includes(cfg.itemType)) {
+						/* 需要下拉项的 */
+						const is_value_default_first =
+							options.FIRST_OPTION_AS_VALUE && _.isUndefined(value);
 
-										return false;
-									})();
+						/* 被隐藏项无需处理 */
+						const isHide = _.isFunction(cfg.isHide) ? cfg.isHide() : !!cfg.isHide;
 
-									if (!ignore) {
-										if (options.FIRST_OPTION_AS_VALUE && _.isUndefined(value)) {
-											await _.$ensure(
-												() => xItemFormConfigs[prop]?.options?.length
-											);
-											try {
-												value = _.first(
-													xItemFormConfigs[prop].options
-												).value;
-											} catch (ensureError) {
-												console.error(
-													`$xItemsValue: Await处理超时或失败 for prop '${prop}'`,
-													ensureError
-												);
-												console.error(`属性配置:`, xItemFormConfigs[prop]);
-												console.error(`选项:`, options);
-												throw ensureError;
-											}
-										}
-
-										if (_.$isInput(value)) {
-											await _.$ensure(
-												() => xItemFormConfigs[prop]?.options?.length
-											);
-										}
-									}
-								}
-								/*TODO:other type*/
-								xItemFormConfigs[prop].value = value;
-								logValues[prop] = value;
-							}
-						} catch (propError) {
-							console.error(`$xItemsValue: 处理属性 '${prop}' 时出错`, propError);
-							throw propError;
-						} finally {
-							console.log("xItemsValue", logValues);
+						if (is_value_default_first || _.$isInput(value) || !isHide) {
+							/* 需要等待下拉数据 */
+							await _.$ensure(({ exeCount }) => {
+								!(exeCount % 100) && console.log(cfg);
+								return cfg?.options?.length;
+							});
 						}
-					})
-				);
-			} catch (error) {
-				console.error(`$xItemsValue: 批量设置表单值失败`, error);
-				console.error(`表单配置:`, xItemFormConfigs);
-				console.error(`表单值:`, values);
-				console.error(`选项:`, options);
-				throw error;
-			}
+
+						/* 处理 FIRST_OPTION_AS_VALUE */
+						if (is_value_default_first) {
+							value = cfg.options[0].value;
+						}
+					}
+
+					if (!_.isUndefined(value)) {
+						cfg.value = value;
+					}
+				})
+			);
 		};
+
 		_.$setFormValuesDelay = function (xItemFormConfigs, values, delay = 100) {
 			setTimeout(() => {
 				_.$setFormValues(xItemFormConfigs, values);
@@ -2734,10 +2739,11 @@ ${callerInfo.message}:`);
 		 * @param {*} xItemConfigs
 		 * @returns
 		 */
-		_.$xItemSelected = function (xItemConfigs) {
+		_.$xItemSelected = function (xItemConfigs, vModelValue = "") {
 			let defaultValue = { value: "", label: "", labelKey: "" };
 			try {
-				const { options, value } = xItemConfigs;
+				let { options, value } = xItemConfigs;
+				value = _.$isInput(value) ? value : vModelValue;
 				if (_.$isArrayFill(options) && _.$isInput(value)) {
 					if (_.isArray(value)) {
 						const item = _.filter(options, option => {
