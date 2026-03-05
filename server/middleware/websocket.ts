@@ -202,47 +202,7 @@ const middlewareWebsocket = () => async (ctx, next) => {
 	}
 };
 
-const koaRouter = require("koa-router");
-const { ControllerInterface } = require("server/controllers/interface");
 
-const wsRouter = koaRouter();
-let pluginsRouterPath = [];
-
-function addPluginRouter(config) {
-	if (!config.path || !config.controller || !config.action) {
-		throw new Error("Plugin Route config Error");
-	}
-	let method = config.method || "GET";
-	let routerPath = "/ws_plugin/" + config.path;
-	if (pluginsRouterPath.indexOf(routerPath) > -1) {
-		throw new Error("Plugin Route path conflict, please try rename the path");
-	}
-	pluginsRouterPath.push(routerPath);
-	xU.createAction(wsRouter, "/api", config.controller, config.action, routerPath, method, true);
-}
-
-exports.old_appSetupWebsocket = function ({ app, appSocket }) {
-	xU.createAction(
-		wsRouter,
-		"/api",
-		ControllerInterface,
-		"solveConflict",
-		"/interface/solve_conflict",
-		"get"
-	);
-	xU.emitHookSync("add_ws_router", addPluginRouter);
-	app.ws.use(middlewareWebsocket());
-	app.ws.use(wsRouter.routes());
-	app.ws.use(wsRouter.allowedMethods());
-	app.ws.use((ctx, next) => {
-		return ctx.websocket.send(
-			JSON.stringify({
-				errcode: 404,
-				message: "No Fount."
-			})
-		);
-	});
-};
 
 exports.appSetupWebsocket = function (app) {
 	const { namespace_yapi } = require("./websocket.ns.yapi");

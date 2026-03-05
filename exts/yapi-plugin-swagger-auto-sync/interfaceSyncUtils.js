@@ -1,8 +1,9 @@
 const schedule = require("node-schedule");
-const openController = require("server/controllers/open");
+const openApi = require("server/controllers/Autoware/api/Open");
 const ModelProject = require("server/models/project");
 const syncModel = require("./syncModel");
 const tokenModel = require("server/models/token");
+const ControllerBase = require("server/controllers/base");
 
 const sha = require("sha.js");
 const md5 = require("md5");
@@ -15,7 +16,6 @@ class SyncUtils {
 			"-------------------------------------yapi-plugin-swagger-auto-sync.js constructor-----------------------------------------------"
 		);
 		this.ctx = ctx;
-		this.openController = new openController(ctx);
 		this.syncModel = xU.$orm(syncModel);
 		this.tokenModel = orm.token;
 
@@ -113,20 +113,27 @@ class SyncUtils {
 			return;
 		}
 
-		let _params = {
-			type: "swagger",
-			json: newSwaggerJsonData,
-			project_id: projectId,
-			merge: syncMode,
-			token: projectToken
+		// 创建模拟的 ctx 对象
+		let mockCtx = {
+			payload: {
+				type: "swagger",
+				json: newSwaggerJsonData,
+				project_id: projectId,
+				merge: syncMode,
+				token: projectToken
+			},
+			body: {}
 		};
-		let requestObj = {
-			params: _params
-		};
-		await this.openController.importData(requestObj);
+
+		// 创建 ControllerBase 实例，因为 handler 函数需要 this 上下文
+		let controllerBase = new ControllerBase(mockCtx);
+		await controllerBase.init(mockCtx);
+
+		// 调用新的 import_data handler 函数
+		await openApi.paths["/open/import_data"].post.handler.call(controllerBase, mockCtx);
 
 		//同步成功就更新同步表的数据
-		if (requestObj.body.errcode == 0) {
+		if (mockCtx.body.errcode == 0) {
 			//修改sync_model的属性
 			oldSyncJob.last_sync_time = xU.time();
 			oldSyncJob.old_swagger_content = md5(newSwaggerJsonData);
@@ -134,9 +141,9 @@ class SyncUtils {
 		}
 		//记录日志
 		this.saveSyncLog(
-			requestObj.body.errcode,
+			mockCtx.body.errcode,
 			syncMode,
-			requestObj.body.message,
+			mockCtx.body.message,
 			uid,
 			projectId
 		);

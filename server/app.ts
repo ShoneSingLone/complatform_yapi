@@ -36,8 +36,7 @@ async function main() {
 	/* - 路由 autoware */
 	/* - boundless vue project */
 	await require("./plugins/usePlugin")(app);
-	/* 原来yapi的路由 TODO: 移除*/
-	await require("./router")(app);
+	/* 原来yapi的路由已移除，使用新的Autoware路由系统 */
 
 	/* 启动 */
 	/* await require("./middleware/historyMode")(app); */
