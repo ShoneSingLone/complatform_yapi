@@ -1,5 +1,24 @@
-const ModelGroup = require("server/models/group");
-const ModelProject = require("server/models/project");
+const ROLE_NAME = {
+	owner: "组长",
+	dev: "开发者",
+	guest: "访客"
+};
+
+async function getUserdata(uid, role) {
+	role = role || "dev";
+	let userInst = orm.user;
+	let userData = await userInst.findById(uid);
+	if (!userData) {
+		return null;
+	}
+	return {
+		_role: userData.role,
+		role: role,
+		uid: userData._id,
+		username: userData.username,
+		email: userData.email
+	};
+}
 
 async function getMineGroup(ctx) {
 	var groupInst = orm.group;
@@ -345,6 +364,249 @@ module.exports = {
 					let { id } = ctx.payload;
 					let group = await orm.group.get(id);
 					ctx.body = xU.$response(group.members);
+				}
+			}
+		},
+		/* 添加项目分组成员 */
+		"/group/add_member": {
+			post: {
+				summary: "添加项目分组成员",
+				description: "添加项目分组成员",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目分组id",
+							type: "string"
+						},
+						member_uids: {
+							required: true,
+							description: "项目分组成员[uid]",
+							type: "array",
+							items: {
+								type: "number"
+							}
+						},
+						role: {
+							description: "成员角色，owner or dev or guest",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let params = ctx.payload;
+
+					params.role = ["owner", "dev", "guest"].find(v => v === params.role) || "dev";
+					let add_members = [];
+					let exist_members = [];
+					let no_members = [];
+					for (let i = 0, len = params.member_uids.length; i < len; i++) {
+						let id = params.member_uids[i];
+						let check = await orm.group.checkMemberRepeat(params.id, id);
+						let userdata = await getUserdata(id, params.role);
+						if (check > 0) {
+							exist_members.push(userdata);
+						} else if (!userdata) {
+							no_members.push(id);
+						} else {
+							userdata.role !== "admin" && add_members.push(userdata);
+							delete userdata._role;
+						}
+					}
+
+					let result = await orm.group.addMember(params.id, add_members);
+					let username = this.getUsername();
+					if (add_members.length) {
+						let members = add_members.map(item => {
+							return `<a href = "/user/profile/${item.uid}">${item.username}</a>`;
+						});
+						members = members.join("、");
+						xU.save_log({
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 新增了分组成员 ${members} 为 ${
+								ROLE_NAME[params.role]
+							}`,
+							type: "group",
+							uid: this.getUid(),
+							username: username,
+							typeid: params.id
+						});
+					}
+					ctx.body = xU.$response({
+						result,
+						add_members,
+						exist_members,
+						no_members
+					});
+				}
+			}
+		},
+		/* 修改项目分组成员角色 */
+		"/group/change_member_role": {
+			post: {
+				summary: "修改项目分组成员角色",
+				description: "修改项目分组成员角色",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目分组id",
+							type: "string"
+						},
+						member_uid: {
+							required: true,
+							description: "项目分组成员uid",
+							type: "string"
+						},
+						role: {
+							description: "权限 ['owner'|'dev']",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let params = ctx.payload;
+
+					var check = await orm.group.checkMemberRepeat(params.id, params.member_uid);
+					if (check === 0) {
+						return (ctx.body = xU.$response(null, 400, "分组成员不存在"));
+					}
+					if ((await this.checkAuth(params.id, "group", "danger")) !== true) {
+						return (ctx.body = xU.$response(null, 405, "没有权限"));
+					}
+
+					params.role = ["owner", "dev", "guest"].find(v => v === params.role) || "dev";
+
+					let result = await orm.group.changeMemberRole(
+						params.id,
+						params.member_uid,
+						params.role
+					);
+					let username = this.getUsername();
+
+					let groupUserdata = await getUserdata(params.member_uid, params.role);
+					xU.save_log({
+						content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更改了分组成员 <a href="/user/profile/${
+							params.member_uid
+						}">${groupUserdata ? groupUserdata.username : ""}</a> 的权限为 "${
+							ROLE_NAME[params.role]
+						}"`,
+						type: "group",
+						uid: this.getUid(),
+						username: username,
+						typeid: params.id
+					});
+					ctx.body = xU.$response(result);
+				}
+			}
+		},
+		/* 获取项目分组列表 */
+		"/group/list": {
+			get: {
+				summary: "获取项目分组列表",
+				description: "获取项目分组列表",
+				async handler(ctx) {
+					let privateGroup = await orm.group.getByPrivateUid(this.getUid());
+					let newResult = [];
+
+					/* 固定的个人中心，不可修改名称，如果不存在就添加 */
+					if (!privateGroup) {
+						privateGroup = await orm.group.save({
+							uid: this.getUid(),
+							group_name: "User-" + this.getUid(),
+							add_time: xU.time(),
+							up_time: xU.time(),
+							type: "private"
+						});
+					}
+
+					/* 可查看所有分组 */
+					if (this.getRole() === "admin") {
+						let result = await orm.group.list();
+						if (result && result.length > 0) {
+							for (let i = 0; i < result.length; i++) {
+								result[i] = result[i].toObject();
+								newResult.unshift(result[i]);
+							}
+						}
+					} else {
+						/* 只能查看自己参与的分组 */
+						let result = await orm.group.getAuthList(this.getUid());
+						if (result && result.length > 0) {
+							for (let i = 0; i < result.length; i++) {
+								result[i] = result[i].toObject();
+								newResult.unshift(result[i]);
+							}
+						}
+
+						const groupIds = newResult.map(item => item._id);
+						const newGroupIds = [];
+
+						/* 从项目里面直接加的人，但是没有在group中添加member， */
+						let groupByProject = await orm.project.getAuthList(this.getUid());
+						if (groupByProject && groupByProject.length > 0) {
+							groupByProject.forEach(_data => {
+								const _temp = [...groupIds, ...newGroupIds];
+								/* 不在已确认的分组中则添加进来 */
+								if (!xU._.find(_temp, id => id === _data.group_id)) {
+									newGroupIds.push(_data.group_id);
+								}
+							});
+						}
+						/* 根据group_id获取group */
+						let newData = await orm.group.findByGroups(newGroupIds);
+						newData.forEach(_data => {
+							_data = _data.toObject();
+							newResult.push(_data);
+						});
+					}
+
+					if (privateGroup) {
+						privateGroup = privateGroup.toObject();
+						privateGroup.group_name = "个人空间";
+						privateGroup.role = "owner";
+						newResult.unshift(privateGroup);
+					}
+
+					ctx.body = xU.$response(newResult);
+				}
+			}
+		},
+		/* 删除项目分组 */
+		"/group/del": {
+			post: {
+				summary: "删除项目分组",
+				description: "删除项目分组",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目分组id",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					if (this.getRole() !== "admin") {
+						return (ctx.body = xU.$response(null, 401, "没有权限"));
+					}
+
+					let interfaceInst = orm.interface;
+					let interfaceColInst = orm.interfaceCol;
+					let interfaceCaseInst = orm.interfaceCase;
+					let id = ctx.payload.id;
+
+					let projectList = await orm.project.list(id, true);
+					projectList.forEach(async p => {
+						await interfaceInst.delByProjectId(p._id);
+						await interfaceCaseInst.delByProjectId(p._id);
+						await interfaceColInst.delByProjectId(p._id);
+					});
+					if (projectList.length > 0) {
+						await orm.project.delByGroupid(id);
+					}
+
+					let result = await orm.group.del(id);
+					ctx.body = xU.$response(result);
 				}
 			}
 		}

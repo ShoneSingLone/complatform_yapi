@@ -3,12 +3,20 @@ const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
 const mergeJsonSchema = require("../../../../common/mergeJsonSchema");
 const { parse: urlParse } = require("url");
+const fs = require("fs-extra");
+const path = require("path");
 const {
 	upsertInterface,
 	handleHeaders,
 	autoAddTag,
 	interface_add_cat
 } = require("./Interface.service");
+
+function requiredSort(params) {
+	return params.sort((item1, item2) => {
+		return item2.required - item1.required;
+	});
+}
 
 function diffHTML(html) {
 	if (html.length === 0) {
@@ -916,6 +924,481 @@ module.exports = {
 				async handler(ctx) {
 					const response = await interface_add_cat.call(this, ctx);
 					return (ctx.body = response);
+				}
+			}
+		},
+		/* 下载扩展 */
+		"/interface/download_crx": {
+			get: {
+				summary: "下载扩展",
+				description: "下载扩展",
+				async handler(ctx) {
+					let filename = "crossRequest.zip";
+					let dataBuffer = xU.fs.readFileSync(
+						path.join(xU.var.APP_ROOT_DIR, "static/attachment/cross-request.zip")
+					);
+					ctx.set("Content-disposition", "attachment; filename=" + filename);
+					ctx.set("Content-Type", "application/zip");
+					ctx.body = dataBuffer;
+				}
+			}
+		},
+		/* 按分类列出接口 */
+		"/interface/list_by_cat": {
+			get: {
+				summary: "按分类列出接口",
+				description: "按分类列出接口",
+				request: {
+					query: {
+						catid: {
+							required: true,
+							description: "分类id",
+							type: "string"
+						},
+						page: {
+							description: "分页页码",
+							type: "number"
+						},
+						limit: {
+							description: "分页大小",
+							type: "number"
+						},
+						status: {
+							description: "状态",
+							type: "string"
+						},
+						tag: {
+							description: "标签",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let catid = ctx.payload.catid;
+					let page = ctx.payload.page || 1,
+						limit = ctx.payload.limit || 10;
+					let status = ctx.payload.status,
+						tag = ctx.payload.tag;
+
+					if (!catid) {
+						return (ctx.body = xU.$response(null, 400, "catid不能为空"));
+					}
+					try {
+						let catdata = await orm.interfaceCategory.get(catid);
+
+						let project = await orm.project.getBaseInfo(catdata.project_id);
+						if (project.project_type === "private") {
+							if ((await this.checkAuth(project._id, "project", "view")) !== true) {
+								return (ctx.body = xU.$response(null, 406, "没有权限"));
+							}
+						}
+
+						let option = { catid };
+						if (status) {
+							if (Array.isArray(status)) {
+								option.status = { $in: status };
+							} else {
+								option.status = status;
+							}
+						}
+						if (tag) {
+							if (Array.isArray(tag)) {
+								option.tag = { $in: tag };
+							} else {
+								option.tag = tag;
+							}
+						}
+
+						let result = await orm.interface.listByOptionWithPage(option, page, limit);
+
+						let count = await orm.interface.listCount(option);
+
+						ctx.body = xU.$response({
+							total: count,
+							list: result
+						});
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, err.message + "1");
+					}
+				}
+			}
+		},
+		/* 处理编辑冲突 */
+		"/interface/solve_conflict": {
+			get: {
+				summary: "处理编辑冲突",
+				description: "处理编辑冲突",
+				request: {
+					query: {
+						id: {
+							required: true,
+							description: "接口id",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let id = parseInt(ctx.payload.id, 10),
+							result,
+							userInst,
+							userinfo,
+							data;
+						if (!id) {
+							return ctx.websocket.send("id 参数有误");
+						}
+						result = await orm.interface.get(id);
+
+						if (result.edit_uid !== 0 && result.edit_uid !== this.$uid) {
+							userInst = orm.user;
+							userinfo = await userInst.findById(result.edit_uid);
+							data = {
+								errno: result.edit_uid,
+								data: { uid: result.edit_uid, username: userinfo.username }
+							};
+						} else {
+							await orm.interface.upEditUid(id, this.getUid()).then();
+							data = {
+								errno: 0,
+								data: result
+							};
+						}
+						ctx.websocket.send(JSON.stringify(data));
+						ctx.websocket.on("close", () => {
+							orm.interface.upEditUid(id, 0).then();
+						});
+					} catch (err) {
+						xU.applog.error(err);
+					}
+				}
+			}
+		},
+		/* 删除分类 */
+		"/interface/del_cat": {
+			post: {
+				summary: "删除分类",
+				description: "删除分类",
+				request: {
+					body: {
+						catid: {
+							required: true,
+							description: "分类id",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let id = ctx.payload.catid;
+						let catData = await orm.interfaceCategory.get(id);
+						if (!catData) {
+							ctx.body = xU.$response(null, 400, "不存在的分类");
+						}
+
+						if (catData.uid !== this.getUid()) {
+							let auth = await this.checkAuth(
+								catData.project_id,
+								"project",
+								"danger"
+							);
+							if (!auth) {
+								return (ctx.body = xU.$response(null, 400, "没有权限"));
+							}
+						}
+
+						let username = this.getUsername();
+						xU.save_log({
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 删除了分类 "${
+								catData.name
+							}" 及该分类下的接口`,
+							type: "project",
+							uid: this.getUid(),
+							username: username,
+							typeid: catData.project_id
+						});
+
+						let interfaceData = await orm.interface.listByCatid(id);
+
+						interfaceData.forEach(async item => {
+							try {
+								xU.emitHook("interface_del", item._id).then();
+								await orm.interfaceCase.delByInterfaceId(item._id);
+							} catch (e) {
+								xU.applog.error(e.message);
+							}
+						});
+						await orm.interfaceCategory.del(id);
+						let r = await orm.interface.delByCatid(id);
+						return (ctx.body = xU.$response(r));
+					} catch (e) {
+						xU.$response(null, 400, e.message);
+					}
+				}
+			}
+		},
+		/* 获取分类列表 */
+		"/interface/get_cat_menu": {
+			get: {
+				summary: "获取分类列表",
+				description: "获取分类列表",
+				request: {
+					query: {
+						project_id: {
+							required: true,
+							description: "项目id，不能为空",
+							type: "number"
+						}
+					}
+				},
+				async handler(ctx) {
+					let project_id = ctx.payload.project_id;
+
+					if (!project_id || isNaN(project_id)) {
+						return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
+					}
+
+					try {
+						let project = await orm.project.getBaseInfo(project_id);
+						if (project.project_type === "private") {
+							if ((await this.checkAuth(project._id, "project", "edit")) !== true) {
+								return (ctx.body = xU.$response(null, 406, "没有权限"));
+							}
+						}
+						let res = await orm.interfaceCategory.list(project_id);
+						return (ctx.body = xU.$response(res));
+					} catch (e) {
+						xU.$response(null, 400, e.message);
+					}
+				}
+			}
+		},
+		/* 获取自定义接口字段数据 */
+		"/interface/get_custom_field": {
+			get: {
+				summary: "获取自定义接口字段数据",
+				description: "获取自定义接口字段数据",
+				request: {
+					query: {
+						app_code: {
+							description: "app_code",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let params = ctx.payload;
+
+					if (Object.keys(params).length !== 1) {
+						return (ctx.body = xU.$response(null, 400, "参数数量错误"));
+					}
+					let customFieldName = Object.keys(params)[0];
+					let customFieldValue = params[customFieldName];
+
+					try {
+						//  查找有customFieldName的分组（group）
+						let groups = await orm.group.getcustomFieldName(customFieldName);
+						if (groups.length === 0) {
+							return (ctx.body = xU.$response(null, 404, "没有找到对应自定义接口"));
+						}
+
+						// 在每个分组（group）下查找对应project的id值
+						let interfaces = [];
+						for (let i = 0; i < groups.length; i++) {
+							let projects = await orm.project.list(groups[i]._id);
+
+							// 在每个项目（project）中查找interface下的custom_field_value
+							for (let j = 0; j < projects.length; j++) {
+								let data = {};
+								let inter = await orm.interface.getcustomFieldValue(
+									projects[j]._id,
+									customFieldValue
+								);
+								if (inter.length > 0) {
+									data.project_name = projects[j].name;
+									data.project_id = projects[j]._id;
+									inter = inter.map((item, i) => {
+										item = inter[i] = inter[i].toObject();
+										item.res_body = xU.json_parse(item.res_body);
+										item.req_body_other = xU.json_parse(item.req_body_other);
+
+										return item;
+									});
+
+									data.list = inter;
+									interfaces.push(data);
+								}
+							}
+						}
+						return (ctx.body = xU.$response(interfaces));
+					} catch (e) {
+						xU.$response(null, 400, e.message);
+					}
+				}
+			}
+		},
+		/* 更新多个接口case index */
+		"/interface/up_index": {
+			post: {
+				summary: "更新多个接口case index",
+				description: "更新多个接口case index",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "接口id",
+							type: "number"
+						},
+						index: {
+							required: true,
+							description: "索引",
+							type: "number"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let params = ctx.payload;
+						if (!params || !Array.isArray(params)) {
+							ctx.body = xU.$response(null, 400, "请求参数必须是数组");
+						}
+						await Promise.all(
+							params.map(item => {
+								if (item.id) {
+									return orm.interface.upIndex(item.id, item.index);
+								}
+							})
+						);
+
+						return (ctx.body = xU.$response("成功！"));
+					} catch (e) {
+						xU.applog.error(e.message);
+						ctx.body = xU.$response(null, 400, e.message);
+					}
+				}
+			}
+		},
+		/* 更新多个接口cat index */
+		"/interface/up_cat_index": {
+			post: {
+				summary: "更新多个接口cat index",
+				description: "更新多个接口cat index",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "分类id",
+							type: "number"
+						},
+						index: {
+							required: true,
+							description: "索引",
+							type: "number"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let params = ctx.payload;
+						if (!params || !Array.isArray(params)) {
+							ctx.body = xU.$response(null, 400, "请求参数必须是数组");
+						}
+						await Promise.all(
+							params.map(item => {
+								if (item.id) {
+									return orm.interfaceCategory.upCatIndex(item.id, item.index);
+								}
+							})
+						);
+						/* ???? 都没有保证事务，能返回成功？ */
+						return (ctx.body = xU.$response("成功！"));
+					} catch (e) {
+						xU.applog.error(e.message);
+						ctx.body = xU.$response(null, 400, e.message);
+					}
+				}
+			}
+		},
+		/* 模式转JSON */
+		"/interface/schema2json": {
+			post: {
+				summary: "模式转JSON",
+				description: "模式转JSON",
+				request: {
+					body: {
+						schema: {
+							required: true,
+							description: "模式",
+							type: "string"
+						},
+						required: {
+							description: "是否必填",
+							type: "boolean"
+						}
+					}
+				},
+				async handler(ctx) {
+					let schema = ctx.payload.schema;
+					let required = ctx.payload.required;
+
+					let res = xU.schemaToJson(schema, {
+						alwaysFakeOptionals: xU._.isUndefined(required) ? true : required
+					});
+					// console.log('res',res)
+					return (ctx.body = res);
+				}
+			}
+		},
+		/* 获取开放接口数据 */
+		"/interface/list_by_open": {
+			get: {
+				summary: "获取开放接口数据",
+				description: "获取开放接口数据",
+				request: {
+					query: {
+						project_id: {
+							required: true,
+							description: "项目id不能为空",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let project_id = ctx.payload.project_id;
+
+					if (!project_id) {
+						return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
+					}
+
+					let project = await orm.project.getBaseInfo(project_id);
+					if (!project) {
+						return (ctx.body = xU.$response(null, 406, "不存在的项目"));
+					}
+					if (project.project_type === "private") {
+						if ((await this.checkAuth(project._id, "project", "view")) !== true) {
+							return (ctx.body = xU.$response(null, 406, "没有权限"));
+						}
+					}
+
+					let basepath = project.basepath;
+					try {
+						let result = await orm.interfaceCategory.list(project_id),
+							newResult = [];
+
+						for (let i = 0, item, list; i < result.length; i++) {
+							item = result[i].toObject();
+							list = await orm.interface.listByInterStatus(item._id, "open");
+							for (let j = 0; j < list.length; j++) {
+								list[j] = list[j].toObject();
+								list[j].basepath = basepath;
+							}
+
+							newResult = [].concat(newResult, list);
+						}
+
+						ctx.body = xU.$response(newResult);
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, err.message);
+					}
 				}
 			}
 		}

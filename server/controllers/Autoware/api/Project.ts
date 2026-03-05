@@ -1,5 +1,7 @@
 const axios = require("axios");
 const https = require("https");
+const { getToken } = require("../../../utils/token");
+const sha = require("sha.js");
 async function checkProjectName(name, groupId) {
 	if (!name) {
 		return "项目名不能为空";
@@ -9,6 +11,41 @@ async function checkProjectName(name, groupId) {
 	if (count > 0) {
 		return "已存在的项目名";
 	}
+}
+
+function handleBasepath(basepath) {
+  if (!basepath) {
+    return "";
+  }
+  if (basepath === "/") {
+    return "";
+  }
+  if (basepath[0] !== "/") {
+    basepath = "/" + basepath;
+  }
+  if (basepath[basepath.length - 1] === "/") {
+    basepath = basepath.substr(0, basepath.length - 1);
+  }
+  if (!/^\/[a-zA-Z0-9\-\/\._]+$/.test(basepath)) {
+    return false;
+  }
+  return basepath;
+}
+
+function verifyDomain(domain) {
+  if (!domain) {
+    return false;
+  }
+  if (/^[a-zA-Z0-9\-_\.]+?\.[a-zA-Z0-9\-_\.]*?[a-zA-Z]{2,6}$/.test(domain)) {
+    return true;
+  }
+  return false;
+}
+
+function arrRepeat(arr, key) {
+  const s = new Set();
+  arr.forEach(item => s.add(item[key]));
+  return s.size !== arr.length;
 }
 
 module.exports = {
@@ -803,6 +840,504 @@ module.exports = {
 					} catch (e) {
 						ctx.body = xU.$response(null, 402, e.message);
 					}
+				}
+			}
+		},
+		/* 获取项目成员列表 */
+		"/project/get_member_list": {
+			get: {
+				summary: "获取项目成员列表",
+				description: "获取项目成员列表",
+				request: {
+					query: {
+						id: {
+							required: true,
+							description: "项目id，不能为空",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let params = ctx.payload;
+					if (!params.id) {
+						return (ctx.body = xU.$response(null, 400, "项目id不能为空"));
+					}
+
+					let project = await orm.project.get(params.id);
+					ctx.body = xU.$response(project.members);
+				}
+			}
+		},
+		/* 获取项目信息 */
+		"/project/get": {
+			get: {
+				summary: "获取项目信息",
+				description: "获取项目信息",
+				request: {
+					query: {
+						id: {
+							description: "项目id，不能为空",
+							type: "string"
+						},
+						project_id: {
+							description: "项目id，不能为空",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					let params = ctx.payload;
+					let project_id = params.id || params.project_id; // 通过 token 访问
+					let result = await orm.project.getBaseInfo(project_id);
+
+					if (!result) {
+						return (ctx.body = xU.$response(null, 400, "不存在的项目"));
+					}
+					if (result.project_type === "private") {
+						if ((await this.checkAuth(result._id, "project", "view")) !== true) {
+							return (ctx.body = xU.$response(null, 406, "没有权限"));
+						}
+					}
+					result = result.toObject();
+					let catInst = orm.interfaceCategory;
+					let cat = await catInst.list(params.id);
+					result.cat = cat;
+					if (result.env.length === 0) {
+						result.env.push({ name: "local", domain: "http://127.0.0.1" });
+					}
+					result.role = await this.getProjectRole(params.id, "project");
+
+					xU.emitHook("project_get", result).then();
+					ctx.body = xU.$response(result);
+				}
+			}
+		},
+		/* 修改项目成员是否收到邮件通知 */
+		"/project/change_member_email_notice": {
+			post: {
+				summary: "修改项目成员是否收到邮件通知",
+				description: "修改项目成员是否收到邮件通知",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目id",
+							type: "string"
+						},
+						member_uid: {
+							required: true,
+							description: "项目成员uid",
+							type: "string"
+						},
+						notice: {
+							required: true,
+							description: "是否通知",
+							type: "boolean"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let params = ctx.payload;
+
+						var check = await orm.project.checkMemberRepeat(params.id, params.member_uid);
+						if (check === 0) {
+							return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
+						}
+
+						let result = await orm.project.changeMemberEmailNotice(
+							params.id,
+							params.member_uid,
+							params.notice
+						);
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		/* 项目头像设置 */
+		"/project/upset": {
+			post: {
+				summary: "项目头像设置",
+				description: "项目头像设置",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目id，不能为空",
+							type: "number"
+						},
+						icon: {
+							description: "项目icon",
+							type: "string"
+						},
+						color: {
+							description: "项目color",
+							type: "array"
+						}
+					}
+				},
+				async handler(ctx) {
+					let id = ctx.payload.id;
+					let data = {};
+					if ((await this.checkAuth(id, "project", "danger")) !== true) {
+						return (ctx.body = xU.$response(null, 405, "没有权限"));
+					}
+					data.color = ctx.payload.color;
+					data.icon = ctx.payload.icon;
+					if (!id) {
+						return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
+					}
+					try {
+						let result = await orm.project.up(id, data);
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+					try {
+						orm.follow.updateById(this.getUid(), id, data).then(() => {
+							let username = this.getUsername();
+							xU.save_log({
+								content: `<a href="/user/profile/${this.getUid()}">${username}</a> 修改了项目图标、颜色`,
+								type: "project",
+								uid: this.getUid(),
+								username: username,
+								typeid: id
+							});
+						});
+					} catch (e) {
+						xU.applog.error(e); // eslint-disable-line
+					}
+				}
+			}
+		},
+		/* 编辑项目环境 */
+		"/project/up_env": {
+			post: {
+				summary: "编辑项目环境",
+				description: "编辑项目环境",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目id，不能为空",
+							type: "number"
+						},
+						env: {
+							required: true,
+							description: "项目环境配置",
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									name: {
+										description: "环境名称",
+										type: "string"
+									},
+									domain: {
+										description: "环境域名",
+										type: "string"
+									},
+									header: {
+										description: "header",
+										type: "array"
+									}
+								}
+							}
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let id = ctx.payload.id;
+						let params = ctx.payload;
+						if (!id) {
+							return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
+						}
+
+						if ((await this.checkAuth(id, "project", "edit")) !== true) {
+							return (ctx.body = xU.$response(null, 405, "没有权限"));
+						}
+
+						if (!params.env || !Array.isArray(params.env)) {
+							return (ctx.body = xU.$response(null, 405, "env参数格式有误"));
+						}
+
+						let projectData = await orm.project.get(id);
+						let data = {
+							up_time: xU.time()
+						};
+
+						data.env = params.env;
+						let isRepeat = arrRepeat(data.env, "name");
+						if (isRepeat) {
+							return (ctx.body = xU.$response(null, 405, "环境变量名重复"));
+						}
+						let result = await orm.project.up(id, data);
+						let username = this.getUsername();
+						xU.save_log({
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${projectData.name}</a> 的环境`,
+							type: "project",
+							uid: this.getUid(),
+							username: username,
+							typeid: id
+						});
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		/* 编辑项目标签 */
+		"/project/up_tag": {
+			post: {
+				summary: "编辑项目标签",
+				description: "编辑项目标签",
+				request: {
+					body: {
+						id: {
+							required: true,
+							description: "项目id，不能为空",
+							type: "number"
+						},
+						tag: {
+							required: true,
+							description: "项目tag配置",
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									name: {
+										description: "tag名称",
+										type: "string"
+									},
+									desc: {
+										description: "tag描述",
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let id = ctx.payload.id;
+						let params = ctx.payload;
+						if (!id) {
+							return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
+						}
+
+						if ((await this.checkAuth(id, "project", "edit")) !== true) {
+							return (ctx.body = xU.$response(null, 405, "没有权限"));
+						}
+
+						if (!params.tag || !Array.isArray(params.tag)) {
+							return (ctx.body = xU.$response(null, 405, "tag参数格式有误"));
+						}
+
+						let projectData = await orm.project.get(id);
+						let data = {
+							up_time: xU.time()
+						};
+						data.tag = params.tag;
+
+						let result = await orm.project.up(id, data);
+						let username = this.getUsername();
+						xU.save_log({
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${projectData.name}</a> 的tag`,
+							type: "project",
+							uid: this.getUid(),
+							username: username,
+							typeid: id
+						});
+						ctx.body = xU.$response(result);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		/* 获取项目的环境变量值 */
+		"/project/get_env": {
+			get: {
+				summary: "获取项目的环境变量值",
+				description: "获取项目的环境变量值",
+				request: {
+					query: {
+						project_id: {
+							required: true,
+							description: "项目id，不能为空",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						// console.log(ctx.request.query.project_id)
+						let project_id = ctx.payload.project_id;
+						// let params = ctx.request.body;
+						if (!project_id) {
+							return (ctx.body = xU.$response(null, 405, "项目id不能为空"));
+						}
+
+						// 去掉权限判断
+						// if ((await this.checkAuth(project_id, 'project', 'edit')) !== true) {
+						//   return (ctx.body = xU.$response(null, 405, '没有权限'));
+						// }
+
+						let env = await orm.project.getByEnv(project_id);
+
+						ctx.body = xU.$response(env);
+					} catch (e) {
+						ctx.body = xU.$response(null, 402, e.message);
+					}
+				}
+			}
+		},
+		/* 获取token数据 */
+		"/project/token": {
+			get: {
+				summary: "获取token数据",
+				description: "获取token数据",
+				request: {
+					query: {
+						project_id: {
+							required: true,
+							description: "项目id，不能为空",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let project_id = ctx.payload.project_id;
+						let data = await orm.token.get(project_id);
+						let token;
+						if (!data) {
+							let passsalt = xU.randStr();
+							token = sha("sha1").update(passsalt).digest("hex").substr(0, 20);
+
+							await orm.token.save({ project_id, token });
+						} else {
+							token = data.token;
+						}
+
+						token = getToken(token, this.getUid());
+
+						ctx.body = xU.$response(token);
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, err.message);
+					}
+				}
+			}
+		},
+		/* 更新token数据 */
+		"/project/update_token": {
+			get: {
+				summary: "更新token数据",
+				description: "更新token数据",
+				request: {
+					query: {
+						project_id: {
+							required: true,
+							description: "项目id，不能为空",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					try {
+						let project_id = ctx.payload.project_id;
+						let data = await orm.token.get(project_id);
+						let token, result;
+						if (data && data.token) {
+							let passsalt = xU.randStr();
+							token = sha("sha1").update(passsalt).digest("hex").substr(0, 20);
+							result = await orm.token.up(project_id, token);
+							token = getToken(token);
+							result.token = token;
+						} else {
+							ctx.body = xU.$response(null, 402, "没有查到token信息");
+						}
+
+						ctx.body = xU.$response(result);
+					} catch (err) {
+						ctx.body = xU.$response(null, 402, err.message);
+					}
+				}
+			}
+		},
+		/* 模糊搜索项目名称或者分组名称或接口名称 */
+		"/project/search": {
+			get: {
+				summary: "模糊搜索项目名称或者分组名称或接口名称",
+				description: "模糊搜索项目名称或者分组名称或接口名称",
+				request: {
+					query: {
+						q: {
+							required: true,
+							description: "搜索关键词",
+							type: "string"
+						}
+					}
+				},
+				async handler(ctx) {
+					const { q } = ctx.payload;
+
+					if (!q) {
+						return (ctx.body = xU.$response(void 0, 400, "No keyword."));
+					}
+
+					if (!xU.validateSearchKeyword(q)) {
+						return (ctx.body = xU.$response(void 0, 400, "Bad query."));
+					}
+
+					let projectList = await orm.project.search(q);
+					let groupList = await orm.group.search(q);
+					let interfaceList = await orm.interface.search(q);
+
+					let projectRules = [
+						"_id",
+						"name",
+						"basepath",
+						"uid",
+						"env",
+						"members",
+						{ key: "group_id", alias: "groupId" },
+						{ key: "up_time", alias: "upTime" },
+						{ key: "add_time", alias: "addTime" }
+					];
+					let groupRules = [
+						"_id",
+						"uid",
+						{ key: "group_name", alias: "groupName" },
+						{ key: "group_desc", alias: "groupDesc" },
+						{ key: "add_time", alias: "addTime" },
+						{ key: "up_time", alias: "upTime" }
+					];
+					let interfaceRules = [
+						"_id",
+						"uid",
+						{ key: "title", alias: "title" },
+						{ key: "project_id", alias: "project_id" },
+						{ key: "add_time", alias: "addTime" },
+						{ key: "up_time", alias: "upTime" }
+					];
+
+					projectList = xU.filterRes(projectList, projectRules);
+					groupList = xU.filterRes(groupList, groupRules);
+					interfaceList = xU.filterRes(interfaceList, interfaceRules);
+					let queryList = {
+						project: projectList,
+						group: groupList,
+						interface: interfaceList
+					};
+
+					return (ctx.body = xU.$response(queryList, 0, "ok"));
 				}
 			}
 		}
