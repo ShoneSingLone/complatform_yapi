@@ -1,8 +1,22 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-	return Vue.defineComponent({
-		name: Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE_BODY_TR,
-		mixins: [Vue._X_TABLE_EASY_MIXINS.emitter],
+	// 使用 _.$importVue() 加载依赖
+	const [
+		{ default: BodyTd },
+		{ clsName },
+		{ COMPS_NAME, EMIT_EVENTS, COMPS_CUSTOM_ATTRS },
+		{ default: VueDomResizeObserver },
+		{ isEmptyValue }
+	] = await Promise.all([
+		_.$importVue("/common/ui-x/components/data/xTableEasy/body/body-td.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/index.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/constant.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/helper/comps/resize-observer.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/utils/index.vue")
+	]);
+
+	return {
+		name: COMPS_NAME.VE_TABLE_BODY_TR,
 		props: {
 			rowData: {
 				type: Object,
@@ -29,8 +43,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				required: true
 			},
 			/*
-        expand
-        */
+            expand
+            */
 			// expand row option
 			expandOption: {
 				type: Object,
@@ -57,8 +71,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			/*
-        checkbox
-        */
+            checkbox
+            */
 			// checkbox option
 			checkboxOption: {
 				type: Object,
@@ -74,8 +88,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			/*
-        radio
-        */
+            radio
+            */
 			radioOption: {
 				type: Object,
 				default: function () {
@@ -147,27 +161,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		},
 		computed: {
 			// current row key
-			cpt_current_row_key() {
+			currentRowKey() {
 				const { rowKeyFieldName } = this;
 				return rowKeyFieldName ? this.rowData[rowKeyFieldName] : null;
 			},
 			// tr class
-			cpt_tr_class() {
+			trClass() {
 				let result = null;
 
-				const { highlightRowKey, cpt_current_row_key } = this;
+				const { highlightRowKey, currentRowKey } = this;
 
 				let isHighlight = false;
 
-				if (!Vue._X_TABLE_EASY_UTILS.isEmptyValue(highlightRowKey)) {
-					if (highlightRowKey === cpt_current_row_key) {
+				if (!isEmptyValue(highlightRowKey)) {
+					if (highlightRowKey === currentRowKey) {
 						isHighlight = true;
 					}
 				}
 
 				result = {
-					[Vue._X_TABLE_EASY_UTILS.clsName("body-tr")]: true,
-					[Vue._X_TABLE_EASY_UTILS.clsName("tr-highlight")]: isHighlight
+					[clsName("body-tr")]: true,
+					[clsName("tr-highlight")]: isHighlight
 				};
 
 				return result;
@@ -181,14 +195,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 				const { rowData, rowIndex } = this;
 
-				this.dispatch(
-					Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE_BODY,
-					Vue._X_TABLE_EASY_EMIT_EVENTS.BODY_ROW_CLICK,
-					{
-						rowData,
-						rowIndex
-					}
-				);
+				this.dispatch(COMPS_NAME.VE_TABLE_BODY, EMIT_EVENTS.BODY_ROW_CLICK, {
+					rowData,
+					rowIndex
+				});
 			},
 			// dblclick
 			rowDblclick(e, fn) {
@@ -246,6 +256,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			const getTdContent = () => {
 				return colgroups.map(column => {
 					const tdProps = {
+						key: column.key,
 						props: {
 							rowIndex,
 							rowData,
@@ -270,11 +281,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							editOption: this.editOption
 						},
 						on: {
-							[Vue._X_TABLE_EASY_EMIT_EVENTS.EXPAND_ROW_CHANGE]: () =>
+							[EMIT_EVENTS.EXPAND_ROW_CHANGE]: () =>
 								expandRowChange(rowData, rowIndex)
 						}
 					};
-					return h(Vue._X_TABLE_EASY_COMPONENTS.BodyTd, tdProps);
+					return h(BodyTd, tdProps);
 				});
 			};
 
@@ -331,41 +342,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			if (this.isVirtualScroll) {
 				const props = {
-					class: this.cpt_tr_class,
+					class: this.trClass,
 					props: {
 						tagName: "tr",
-						id: this.cpt_current_row_key
+						id: this.currentRowKey
 					},
 					attrs: {
-						[Vue._X_TABLE_EASY_CONSTANTS.COMPS_CUSTOM_ATTRS.BODY_ROW_KEY]:
-							this.cpt_current_row_key
+						[COMPS_CUSTOM_ATTRS.BODY_ROW_KEY]: this.currentRowKey
 					},
 					on: {
 						"on-dom-resize-change": ({ key, height }) => {
-							this.dispatch(
-								Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE,
-								Vue._X_TABLE_EASY_EMIT_EVENTS.BODY_ROW_HEIGHT_CHANGE,
-								{
-									rowKey: key,
-									height
-								}
-							);
+							this.dispatch(COMPS_NAME.VE_TABLE, EMIT_EVENTS.BODY_ROW_HEIGHT_CHANGE, {
+								rowKey: key,
+								height
+							});
 						}
 					},
 					nativeOn: events
 				};
 
-				result = h(
-					Vue._X_TABLE_EASY_COMPONENTS.VueDomResizeObserver,
-					props,
-					getTdContent()
-				);
+				result = h(VueDomResizeObserver, props, getTdContent());
 			} else {
 				const props = {
-					class: this.cpt_tr_class,
+					class: this.trClass,
 					attrs: {
-						[Vue._X_TABLE_EASY_CONSTANTS.COMPS_CUSTOM_ATTRS.BODY_ROW_KEY]:
-							this.cpt_current_row_key
+						[COMPS_CUSTOM_ATTRS.BODY_ROW_KEY]: this.currentRowKey
 					},
 					on: events
 				};
@@ -375,6 +376,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			return result;
 		}
-	});
+	};
 }
 </script>

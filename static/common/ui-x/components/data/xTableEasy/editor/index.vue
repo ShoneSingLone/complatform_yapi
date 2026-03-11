@@ -1,27 +1,32 @@
-<template>
-	<div :class="cpt_container_class" :style="cpt_container_style">
-		<textarea
-			ref="textareaInputRef"
-			:class="cpt_textarea_class"
-			v-focus="{ focus: isEditCellFocus }"
-			:value="rawCellValue"
-			:tabindex="-1"
-			@input="handleTextareaInput"
-			@click="handleTextareaClick"
-			@copy="handleTextareaCopy"
-			@paste="handleTextareaPaste"
-			@cut="handleTextareaCut"></textarea>
-	</div>
-</template>
-
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-	return Vue.defineComponent({
-		name: Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE_EDIT_INPUT,
+	// 使用 _.$importVue() 加载所有依赖
+	const [
+		{ clsName, getFixedTotalWidthByColumnKey },
+		{ INSTANCE_METHODS },
+		{ COMPS_NAME, EMIT_EVENTS, HOOKS_NAME },
+		focus,
+		{ autoResize },
+		{ isEmptyValue },
+		{ getCaretPosition, setCaretPosition }
+	] = await Promise.all([
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/index.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/editor/constant.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/constant.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/helper/directives/focus.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/utils/auto-resize.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/utils/index.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/utils/dom.vue")
+	]);
+
+	// 使用 lodash 的 debounce
+	const { debounce } = _;
+
+	return {
+		name: COMPS_NAME.VE_TABLE_EDIT_INPUT,
 		directives: {
-			focus: Vue._X_TABLE_EASY_DIRECTIVES.focus
+			focus: focus
 		},
-		mixins: [Vue._X_TABLE_EASY_MIXINS.emitter],
 		props: {
 			parentRendered: {
 				type: Boolean,
@@ -110,17 +115,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		},
 		computed: {
 			// current column
-			cpt_current_column() {
+			currentColumn() {
 				let result = null;
 
 				const { colgroups, cellSelectionData } = this;
 
 				const { currentCell } = cellSelectionData;
 
-				if (
-					!Vue._X_TABLE_EASY_UTILS.isEmptyValue(currentCell.rowKey) &&
-					!Vue._X_TABLE_EASY_UTILS.isEmptyValue(currentCell.colKey)
-				) {
+				if (!isEmptyValue(currentCell.rowKey) && !isEmptyValue(currentCell.colKey)) {
 					result = colgroups.find(x => x.key === currentCell.colKey);
 				}
 
@@ -128,29 +130,28 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			// container class
-			cpt_container_class() {
+			containerClass() {
 				let result = null;
 
 				const { displayTextarea, overflowViewport } = this;
 
 				result = {
-					[Vue._X_TABLE_EASY_UTILS.clsName("edit-input-container")]: true,
-					[Vue._X_TABLE_EASY_UTILS.clsName("edit-input-container-show")]:
-						displayTextarea && !overflowViewport
+					[clsName("edit-input-container")]: true,
+					[clsName("edit-input-container-show")]: displayTextarea && !overflowViewport
 				};
 
 				return result;
 			},
 
 			// container style
-			cpt_container_style() {
+			containerStyle() {
 				let result = {};
 
 				const {
 					displayTextarea,
 					overflowViewport,
 					textareaRect,
-					cpt_current_column: column
+					currentColumn: column
 				} = this;
 
 				const { top, left } = textareaRect;
@@ -178,11 +179,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			// textarea class
-			cpt_textarea_class() {
+			textareaClass() {
 				let result = null;
 
 				result = {
-					[Vue._X_TABLE_EASY_UTILS.clsName("edit-input")]: true
+					[clsName("edit-input")]: true
 				};
 
 				return result;
@@ -194,29 +195,23 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				handler: function (val) {
 					if (val) {
 						// fixed #471
-						this.cpt_set_table_el();
+						this.setTableEl();
 
 						// add table container scroll hook
-						this.hooks.addHook(
-							Vue._X_TABLE_EASY_CONSTANTS.HOOKS_NAME.TABLE_CONTAINER_SCROLL,
-							() => {
-								if (this.displayTextarea) {
-									if (!this.cellEl) {
-										this.cpt_set_cell_el();
-									}
+						this.hooks.addHook(HOOKS_NAME.TABLE_CONTAINER_SCROLL, () => {
+							if (this.displayTextarea) {
+								if (!this.cellEl) {
+									this.setCellEl();
 								}
-								this.debounceSetCellEl();
-								this.cpt_set_textarea_position();
-								this.debounceSetTextareaPosition();
 							}
-						);
+							this.debounceSetCellEl();
+							this.setTextareaPosition();
+							this.debounceSetTextareaPosition();
+						});
 						// add table size change hook
-						this.hooks.addHook(
-							Vue._X_TABLE_EASY_CONSTANTS.HOOKS_NAME.TABLE_SIZE_CHANGE,
-							() => {
-								this.cpt_set_textarea_position();
-							}
-						);
+						this.hooks.addHook(HOOKS_NAME.TABLE_SIZE_CHANGE, () => {
+							this.setTextareaPosition();
+						});
 					}
 				},
 				immediate: true
@@ -227,14 +222,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					this.isEditCellFocus = false;
 
 					const { rowKey, colKey } = val;
-					if (
-						!Vue._X_TABLE_EASY_UTILS.isEmptyValue(rowKey) &&
-						!Vue._X_TABLE_EASY_UTILS.isEmptyValue(colKey)
-					) {
-						this.cpt_set_cell_el();
+					if (!isEmptyValue(rowKey) && !isEmptyValue(colKey)) {
+						this.setCellEl();
 						// wait for selection cell rendered
 						this.$nextTick(() => {
-							this.cpt_set_textarea_position();
+							this.setTextareaPosition();
 							setTimeout(() => {
 								this.isEditCellFocus = true;
 							});
@@ -251,8 +243,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
           trigger editor(textarea) element select
           解决通过点击的区域选择，无法复制的问题
           */
-					if (!Vue._X_TABLE_EASY_UTILS.isEmptyValue(val.colKey)) {
-						this[Vue._X_TABLE_EASY_CONSTANTS.INSTANCE_METHODS.TEXTAREA_SELECT]();
+					if (!isEmptyValue(val.colKey)) {
+						this[INSTANCE_METHODS.TEXTAREA_SELECT]();
 					}
 				},
 				deep: true,
@@ -262,9 +254,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			isCellEditing: {
 				handler: function (val) {
 					if (val) {
-						this.cpt_show_textarea();
+						this.showTextarea();
 					} else {
-						this.cpt_hide_textarea();
+						this.hideTextarea();
 					}
 				},
 				deep: true,
@@ -272,7 +264,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 			inputStartValue: {
 				handler: function () {
-					this.cpt_set_raw_cell_value();
+					this.setRawCellValue();
 				},
 				immediate: true
 			}
@@ -280,7 +272,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 		methods: {
 			// set table element
-			cpt_set_table_el() {
+			setTableEl() {
 				this.$nextTick(() => {
 					const tableEl = this.$el.previousElementSibling;
 					this.tableEl = tableEl;
@@ -288,7 +280,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			// set cell element
-			cpt_set_cell_el() {
+			setCellEl() {
 				const { cellSelectionData, tableEl } = this;
 
 				const { rowKey, colKey } = cellSelectionData.currentCell;
@@ -306,14 +298,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			// set textarea position
-			cpt_set_textarea_position() {
+			setTextareaPosition() {
 				const {
 					hasXScrollBar,
 					hasYScrollBar,
 					scrollBarWidth,
 					colgroups,
 					hasRightFixedColumn,
-					cpt_current_column: column,
+					currentColumn: column,
 					cellEl,
 					tableEl
 				} = this;
@@ -349,18 +341,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							maxWidth -= scrollBarWidth;
 						}
 
-						/* 
+						/*
             If the right fixed column is included, the max width of the textarea needs to be subtracted from the sum of the right fixed columns
             如果包含右固定列，编辑框最大宽度需要去减去右固定列之和的宽度
             */
 						if (hasRightFixedColumn) {
 							if (column && !column.fixed) {
-								const rightFixedTotalWidth =
-									Vue._X_TABLE_EASY_UTILS.getFixedTotalWidthByColumnKey({
-										colgroups,
-										colKey: column.key,
-										fixed: Vue._X_TABLE_EASY_CONSTANTS.COLUMN_FIXED_TYPE.RIGHT
-									});
+								const rightFixedTotalWidth = getFixedTotalWidthByColumnKey({
+									colgroups,
+									colKey: column.key,
+									fixed: "right"
+								});
 								if (rightFixedTotalWidth) {
 									maxWidth -= rightFixedTotalWidth;
 								}
@@ -401,36 +392,36 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			// show textarea
-			cpt_show_textarea() {
-				this.cpt_set_raw_cell_value();
+			showTextarea() {
+				this.setRawCellValue();
 				this.displayTextarea = true;
 			},
 
 			// hide textarea
-			cpt_hide_textarea() {
+			hideTextarea() {
 				this.displayTextarea = false;
-				this.cpt_textarea_un_observe();
+				this.textareaUnObserve();
 			},
 
 			// textarea unObserve
-			cpt_textarea_un_observe() {
+			textareaUnObserve() {
 				if (this.autoResize) {
 					this.autoResize.unObserve();
 				}
 			},
 
 			// set raw cell value
-			cpt_set_raw_cell_value() {
+			setRawCellValue() {
 				this.rawCellValue = this.inputStartValue;
 			},
 
 			// textarea value change
-			cpt_textarea_value_change(val) {
-				this.$emit(Vue._X_TABLE_EASY_CONSTANTS.EMIT_EVENTS.EDIT_INPUT_VALUE_CHANGE, val);
+			textareaValueChange(val) {
+				this.$emit(EMIT_EVENTS.EDIT_INPUT_VALUE_CHANGE, val);
 			},
 
 			// textarea select
-			[Vue._X_TABLE_EASY_CONSTANTS.INSTANCE_METHODS.TEXTAREA_SELECT]() {
+			[INSTANCE_METHODS.TEXTAREA_SELECT]() {
 				const textareaInputEl = this.$refs[this.textareaInputRef];
 				if (textareaInputEl) {
 					textareaInputEl.select();
@@ -438,13 +429,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			// textarea add new line
-			[Vue._X_TABLE_EASY_CONSTANTS.INSTANCE_METHODS.TEXTAREA_ADD_NEW_LINE]() {
+			[INSTANCE_METHODS.TEXTAREA_ADD_NEW_LINE]() {
 				const { isCellEditing, editingCell } = this;
 
 				if (isCellEditing) {
 					const textareaInputEl = this.$refs[this.textareaInputRef];
 
-					const caretPosition = Vue._X_TABLE_EASY_UTILS.getCaretPosition(textareaInputEl);
+					const caretPosition = getCaretPosition(textareaInputEl);
 
 					let value = editingCell.row[editingCell.colKey];
 					// solve error of number slice method
@@ -456,97 +447,99 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					textareaInputEl.value = newValue;
 
 					// 手动赋值不会触发textarea 文本变化事件,需要手动更新 editingCell 值
-					this.cpt_textarea_value_change(newValue);
+					this.textareaValueChange(newValue);
 
-					Vue._X_TABLE_EASY_UTILS.setCaretPosition(textareaInputEl, caretPosition + 1);
+					setCaretPosition(textareaInputEl, caretPosition + 1);
 				}
-			},
-
-			// handle textarea input
-			handleTextareaInput(e) {
-				if (this.isCellEditing) {
-					this.cpt_textarea_value_change(e.target.value);
-					this.rawCellValue = e.target.value;
-				}
-			},
-
-			// handle textarea click
-			handleTextareaClick() {
-				this.$emit(Vue._X_TABLE_EASY_CONSTANTS.EMIT_EVENTS.EDIT_INPUT_CLICK);
-			},
-
-			// handle textarea copy
-			handleTextareaCopy(e) {
-				this.$emit(Vue._X_TABLE_EASY_CONSTANTS.EMIT_EVENTS.EDIT_INPUT_COPY, e);
-			},
-
-			// handle textarea paste
-			handleTextareaPaste(e) {
-				this.$emit(Vue._X_TABLE_EASY_CONSTANTS.EMIT_EVENTS.EDIT_INPUT_PASTE, e);
-			},
-
-			// handle textarea cut
-			handleTextareaCut(e) {
-				this.$emit(Vue._X_TABLE_EASY_CONSTANTS.EMIT_EVENTS.EDIT_INPUT_CUT, e);
 			}
 		},
 		created() {
 			// debounce set textarea position
-			this.debounceSetTextareaPosition = _.debounce(this.cpt_set_textarea_position, 210);
+			this.debounceSetTextareaPosition = debounce(this.setTextareaPosition, 210);
 			// debounce set cell el
-			this.debounceSetCellEl = _.debounce(() => {
+			this.debounceSetCellEl = debounce(() => {
 				if (this.displayTextarea) {
 					if (!this.cellEl) {
-						this.cpt_set_cell_el();
+						this.setCellEl();
 					}
 				}
 			}, 200);
 		},
 		mounted() {
-			this.autoResize = Vue._X_TABLE_EASY_UTILS.autoResize();
+			this.autoResize = autoResize();
 		},
 		destroyed() {
-			this.cpt_textarea_un_observe();
+			this.textareaUnObserve();
+		},
+		render(h) {
+			const {
+				containerClass,
+				containerStyle,
+				textareaClass,
+				rawCellValue,
+				isCellEditing,
+				isEditCellFocus
+			} = this;
+
+			// textarea 事件处理
+			const onInput = e => {
+				if (isCellEditing) {
+					this.textareaValueChange(e.target.value);
+					this.rawCellValue = e.target.value;
+				}
+			};
+
+			const onClick = () => {
+				this.$emit(EMIT_EVENTS.EDIT_INPUT_CLICK);
+			};
+
+			const onCopy = e => {
+				this.$emit(EMIT_EVENTS.EDIT_INPUT_COPY, e);
+			};
+
+			const onPaste = e => {
+				this.$emit(EMIT_EVENTS.EDIT_INPUT_PASTE, e);
+			};
+
+			const onCut = e => {
+				this.$emit(EMIT_EVENTS.EDIT_INPUT_CUT, e);
+			};
+
+			// 创建 textarea 元素
+			const textareaEl = h("textarea", {
+				ref: this.textareaInputRef,
+				class: textareaClass,
+				directives: [
+					{
+						name: "focus",
+						value: {
+							focus: isEditCellFocus
+						}
+					}
+				],
+				domProps: { value: rawCellValue },
+				attrs: {
+					tabindex: -1
+				},
+				on: {
+					input: onInput,
+					click: onClick,
+					copy: onCopy,
+					paste: onPaste,
+					cut: onCut
+				}
+			});
+
+			// 创建容器元素
+			return h(
+				"div",
+				{
+					style: containerStyle,
+					class: containerClass
+				},
+				[textareaEl]
+			);
 		}
-	});
+	};
 }
 </script>
-
-<style lang="less">
-// 编辑框样式
-@{VE_TABLE_PREFIX-cls} {
-	&-edit-input-container {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 0;
-		height: 0;
-		z-index: 100;
-		pointer-events: none;
-
-		&.@{VE_TABLE_PREFIX-cls}-edit-input-container-show {
-			pointer-events: auto;
-		}
-	}
-
-	&-edit-input {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		padding: 0;
-		margin: 0;
-		border: 1px solid #1890ff;
-		border-radius: 2px;
-		background-color: #fff;
-		font-size: 14px;
-		line-height: 1.5;
-		color: #333;
-		resize: none;
-		outline: none;
-		box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-		pointer-events: auto;
-	}
-}
-</style>

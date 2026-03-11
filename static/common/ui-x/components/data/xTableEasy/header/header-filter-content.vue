@@ -1,7 +1,22 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-	return Vue.defineComponent({
-		name: Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE_HEADER_FILTER_CONTENT,
+	// 使用 _.$importVue() 加载依赖
+	const [
+		VeDropdown,
+		{ COMPS_NAME, EMIT_EVENTS, LOCALE_COMP_NAME },
+		{ clsName },
+		VeIcon,
+		{ ICON_NAMES }
+	] = await Promise.all([
+		_.$importVue("vue-easytable/packages/ve-dropdown"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/constant.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/index.vue"),
+		_.$importVue("vue-easytable/packages/ve-icon"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/utils/constant.vue")
+	]);
+
+	return {
+		name: COMPS_NAME.VE_TABLE_HEADER_FILTER_CONTENT,
 		props: {
 			column: {
 				type: Object,
@@ -43,12 +58,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			getIcon(h) {
 				let result;
 				const { filterIcon } = this.column.filter;
-				if (Vue._X_TABLE_EASY_UTILS.isFunction(filterIcon)) {
+				if (_.isFunction(filterIcon)) {
 					result = filterIcon(h);
 				} else {
-					result = h(Vue._X_TABLE_EASY_COMPONENTS.VeIcon, {
+					// 使用 h 函数替代 JSX
+					result = h(VeIcon, {
 						props: {
-							name: Vue._X_TABLE_EASY_ICON_NAMES.FILTER
+							name: ICON_NAMES.FILTER
 						}
 					});
 				}
@@ -64,13 +80,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					showOperation: true,
 					isMultiple: isMultiple,
 					showRadio: true, // when single selection
-					confirmFilterText: Vue._X_TABLE_EASY_I18N.t("confirmFilter"),
-					resetFilterText: Vue._X_TABLE_EASY_I18N.t("resetFilter"),
+					confirmFilterText: i18n("confirmFilter"),
+					resetFilterText: i18n("resetFilter"),
 					beforeVisibleChange: beforeVisibleChange
 				},
 				on: {
-					[Vue._X_TABLE_EASY_EMIT_EVENTS.HEADER_FILTER_CONFIRM]: this.filterConfirm,
-					[Vue._X_TABLE_EASY_EMIT_EVENTS.HEADER_FILTER_RESET]: this.filterReset,
+					[EMIT_EVENTS.HEADER_FILTER_CONFIRM]: this.filterConfirm,
+					[EMIT_EVENTS.HEADER_FILTER_RESET]: this.filterReset,
 					// v-model
 					input: val => {
 						this.filterList = val;
@@ -82,18 +98,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				compProps.props.maxHeight = maxHeight;
 			}
 
-			return h(Vue._X_TABLE_EASY_COMPONENTS.VeDropdown, compProps, [
+			// 使用 h 函数替代 JSX
+			return h(VeDropdown, compProps, [
 				// icon
 				h(
 					"span",
 					{
-						class: Vue._X_TABLE_EASY_UTILS.clsName("filter")
+						class: clsName("filter")
 					},
 					[
 						h(
 							"span",
 							{
-								class: Vue._X_TABLE_EASY_UTILS.clsName("filter-icon")
+								class: clsName("filter-icon")
 							},
 							[this.getIcon(h)]
 						)
@@ -101,6 +118,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				)
 			]);
 		}
-	});
+	};
 }
 </script>

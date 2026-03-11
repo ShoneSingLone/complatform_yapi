@@ -1,8 +1,24 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-	return Vue.defineComponent({
-		name: Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE_BODY_TD,
-		mixins: [Vue._X_TABLE_EASY_MIXINS.emitter],
+	// 使用 _.$importVue() 加载依赖
+	const [
+		BodyCheckboxContent,
+		BodyRadioContent,
+		ExpandTrIcon,
+		{ clsName, getRowKeysByRangeRowKeys },
+		{ isEmptyValue },
+		{ COMPS_NAME, COLUMN_TYPES, EXPAND_TRIGGER_TYPES, EMIT_EVENTS, COMPS_CUSTOM_ATTRS }
+	] = await Promise.all([
+		_.$importVue("/common/ui-x/components/data/xTableEasy/body/body-checkbox-content.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/body/body-radio-content.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/body/expand-tr-icon.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/index.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/utils/index.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/constant.vue")
+	]);
+
+	return {
+		name: COMPS_NAME.VE_TABLE_BODY_TD,
 		props: {
 			rowData: {
 				type: Object,
@@ -33,8 +49,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				required: true
 			},
 			/*
-        expand
-        */
+      expand
+      */
 			// expand row option
 			expandOption: {
 				type: Object,
@@ -56,8 +72,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			/*
-        checkbox
-        */
+      checkbox
+      */
 			// checkbox option
 			checkboxOption: {
 				type: Object,
@@ -73,8 +89,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 
 			/*
-        radio
-        */
+      radio
+      */
 			radioOption: {
 				type: Object,
 				default: function () {
@@ -142,16 +158,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		},
 		computed: {
 			/*
-        current column collection item
-        1、Cache the style、class of each column
-        */
-			cpt_current_column_collection_item() {
+      current column collection item
+      1、Cache the style、class of each column
+      */
+			cpt_currentColumnCollectionItem() {
 				const { columnCollection, column } = this;
 				return columnCollection.find(x => x.colKey === column.key);
 			},
 
 			// current row key
-			cpt_current_row_key() {
+			cpt_currentRowKey() {
 				const { rowData, rowKeyFieldName } = this;
 				return rowData[rowKeyFieldName];
 			}
@@ -175,12 +191,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			 * @desc body td style
 			 */
 			bodyTdStyle() {
-				const { cpt_current_column_collection_item } = this;
+				const { cpt_currentColumnCollectionItem } = this;
 
 				let result = {};
 
-				if (cpt_current_column_collection_item) {
-					result = Object.assign(result, cpt_current_column_collection_item.style);
+				if (cpt_currentColumnCollectionItem) {
+					result = Object.assign(result, cpt_currentColumnCollectionItem.style);
 				}
 
 				return result;
@@ -191,12 +207,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			 * @desc body td class
 			 */
 			bodyTdClass() {
-				const { cpt_current_column_collection_item } = this;
+				const { cpt_currentColumnCollectionItem } = this;
 
 				const { fixed, operationColumn } = this.column;
 
 				let result = {
-					[Vue._X_TABLE_EASY_UTILS.clsName("body-td")]: true
+					[clsName("body-td")]: true
 				};
 
 				const {
@@ -208,18 +224,18 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					cellSelectionData,
 					cellSelectionRangeData,
 					bodyIndicatorRowKeys,
-					cpt_current_row_key
+					cpt_currentRowKey
 				} = this;
 
 				// column fixed
 				if (fixed) {
-					result[Vue._X_TABLE_EASY_UTILS.clsName("fixed-left")] = fixed === "left";
-					result[Vue._X_TABLE_EASY_UTILS.clsName("fixed-right")] = fixed === "right";
+					result[clsName("fixed-left")] = fixed === "left";
+					result[clsName("fixed-right")] = fixed === "right";
 				}
 
 				// operation column
 				if (operationColumn) {
-					result[Vue._X_TABLE_EASY_UTILS.clsName("operation-col")] = true;
+					result[clsName("operation-col")] = true;
 				}
 
 				// cell style option
@@ -237,14 +253,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				if (cellSelectionData) {
 					const { rowKey, colKey } = cellSelectionData.currentCell;
 
-					if (
-						!Vue._X_TABLE_EASY_UTILS.isEmptyValue(rowKey) &&
-						!Vue._X_TABLE_EASY_UTILS.isEmptyValue(colKey)
-					) {
-						if (cpt_current_row_key === rowKey) {
+					if (!isEmptyValue(rowKey) && !isEmptyValue(colKey)) {
+						if (cpt_currentRowKey === rowKey) {
 							// cell selection
 							if (column["key"] === colKey) {
-								result[Vue._X_TABLE_EASY_UTILS.clsName("cell-selection")] = true;
+								result[clsName("cell-selection")] = true;
 							}
 						}
 
@@ -257,32 +270,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							if (topRowKey === bottomRowKey) {
 								indicatorRowKeys = [topRowKey];
 							} else {
-								indicatorRowKeys = Vue._X_TABLE_EASY_UTILS.getRowKeysByRangeRowKeys(
-									{
-										topRowKey,
-										bottomRowKey,
-										allRowKeys
-									}
-								);
+								indicatorRowKeys = getRowKeysByRangeRowKeys({
+									topRowKey,
+									bottomRowKey,
+									allRowKeys
+								});
 							}
 
 							//  cell indicator (operation column)
-							if (indicatorRowKeys.indexOf(cpt_current_row_key) > -1) {
+							if (indicatorRowKeys.indexOf(cpt_currentRowKey) > -1) {
 								if (isIndicatorActive) {
-									result[
-										Vue._X_TABLE_EASY_UTILS.clsName("cell-indicator-active")
-									] = true;
+									result[clsName("cell-indicator-active")] = true;
 								} else {
-									result[Vue._X_TABLE_EASY_UTILS.clsName("cell-indicator")] =
-										true;
+									result[clsName("cell-indicator")] = true;
 								}
 							}
 						}
 					}
 				}
 
-				if (cpt_current_column_collection_item) {
-					result = Object.assign(result, cpt_current_column_collection_item.class);
+				if (cpt_currentColumnCollectionItem) {
+					result = Object.assign(result, cpt_currentColumnCollectionItem.class);
 				}
 
 				return result;
@@ -297,7 +305,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				if (ellipsis) {
 					const { lineClamp } = ellipsis;
 
-					let _lineClamp = Vue._X_TABLE_EASY_UTILS.isNumber(lineClamp) ? lineClamp : 1;
+					let _lineClamp = _.isNumber(lineClamp) ? lineClamp : 1;
 					result["-webkit-line-clamp"] = _lineClamp;
 				}
 
@@ -331,9 +339,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					const { showTitle } = column.ellipsis;
 
 					// default true
-					const isShowTitle = Vue._X_TABLE_EASY_UTILS.isBoolean(showTitle)
-						? showTitle
-						: true;
+					const isShowTitle = _.isBoolean(showTitle) ? showTitle : true;
 
 					content = h(
 						"span",
@@ -342,7 +348,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								title: isShowTitle ? content : ""
 							},
 							style: this.getEllipsisContentStyle(),
-							class: Vue._X_TABLE_EASY_UTILS.clsName("body-td-span-ellipsis")
+							class: clsName("body-td-span-ellipsis")
 						},
 						[content]
 					);
@@ -353,36 +359,32 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			// get chcekbox content
 			getCheckboxContent(h) {
-				if (this.column.type === Vue._X_TABLE_EASY_CONSTANTS.COLUMN_TYPES.CHECKBOX) {
+				if (this.column.type === COLUMN_TYPES.CHECKBOX) {
 					// checkbox content props
 					const checkboxProps = {
-						props: {
-							column: this.column,
-							checkboxOption: this.checkboxOption,
-							rowKey: this.rowData[this.rowKeyFieldName],
-							internalCheckboxSelectedRowKeys: this.internalCheckboxSelectedRowKeys
-						}
+						column: this.column,
+						checkboxOption: this.checkboxOption,
+						rowKey: this.rowData[this.rowKeyFieldName],
+						internalCheckboxSelectedRowKeys: this.internalCheckboxSelectedRowKeys
 					};
 
-					return h(Vue._X_TABLE_EASY_COMPONENTS.BodyCheckboxContent, checkboxProps);
+					return h(BodyCheckboxContent, { props: checkboxProps });
 				}
 				return null;
 			},
 
 			// get radio content
 			getRadioContent(h) {
-				if (this.column.type === Vue._X_TABLE_EASY_CONSTANTS.COLUMN_TYPES.RADIO) {
+				if (this.column.type === COLUMN_TYPES.RADIO) {
 					// radio props
 					const radioProps = {
-						props: {
-							column: this.column,
-							radioOption: this.radioOption,
-							rowKey: this.rowData[this.rowKeyFieldName],
-							internalRadioSelectedRowKey: this.internalRadioSelectedRowKey
-						}
+						column: this.column,
+						radioOption: this.radioOption,
+						rowKey: this.rowData[this.rowKeyFieldName],
+						internalRadioSelectedRowKey: this.internalRadioSelectedRowKey
 					};
 
-					return h(Vue._X_TABLE_EASY_COMPONENTS.BodyRadioContent, radioProps);
+					return h(BodyRadioContent, { props: radioProps });
 				}
 				return null;
 			},
@@ -412,23 +414,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 				return { rowspan, colspan };
 			},
+
 			// cell click
 			cellClick(e, fn) {
 				fn && fn(e);
 
 				const { column, expandOption, rowData } = this;
 
-				this.dispatch(
-					Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE,
-					Vue._X_TABLE_EASY_EMIT_EVENTS.BODY_CELL_CLICK,
-					{
-						event: e,
-						rowData,
-						column
-					}
-				);
+				this.dispatch(COMPS_NAME.VE_TABLE, EMIT_EVENTS.BODY_CELL_CLICK, {
+					event: e,
+					rowData,
+					column
+				});
 
-				if (column.type !== Vue._X_TABLE_EASY_CONSTANTS.COLUMN_TYPES.EXPAND) {
+				if (column.type !== COLUMN_TYPES.EXPAND) {
 					return false;
 				}
 
@@ -438,127 +437,109 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					const trigger = expandOption.trigger;
 
 					// expand row by click icon
-					if (
-						!trigger ||
-						trigger === Vue._X_TABLE_EASY_CONSTANTS.EXPAND_TRIGGER_TYPES.ICON
-					) {
+					if (!trigger || trigger === EXPAND_TRIGGER_TYPES.ICON) {
 						if (eventTargetName !== "TD") {
 							e.stopPropagation();
-							this.$emit(Vue._X_TABLE_EASY_EMIT_EVENTS.EXPAND_ROW_CHANGE);
+							this.$emit(EMIT_EVENTS.EXPAND_ROW_CHANGE);
 						}
 					}
 					// expand row by click cell(td)
-					else if (trigger === Vue._X_TABLE_EASY_CONSTANTS.EXPAND_TRIGGER_TYPES.CELL) {
+					else if (trigger === EXPAND_TRIGGER_TYPES.CELL) {
 						e.stopPropagation();
-						this.$emit(Vue._X_TABLE_EASY_EMIT_EVENTS.EXPAND_ROW_CHANGE);
+						this.$emit(EMIT_EVENTS.EXPAND_ROW_CHANGE);
 					}
 				}
 			},
+
 			// dblclick
 			cellDblclick(e, fn) {
 				fn && fn(e);
 
 				const { column, rowData } = this;
 
-				this.dispatch(
-					Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE,
-					Vue._X_TABLE_EASY_EMIT_EVENTS.BODY_CELL_DOUBLE_CLICK,
-					{
-						event: e,
-						rowData,
-						column
-					}
-				);
+				this.dispatch(COMPS_NAME.VE_TABLE, EMIT_EVENTS.BODY_CELL_DOUBLE_CLICK, {
+					event: e,
+					rowData,
+					column
+				});
 			},
+
 			// contextmenu
 			cellContextmenu(e, fn) {
 				fn && fn(e);
 
 				const { column, rowData } = this;
 
-				this.dispatch(
-					Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE,
-					Vue._X_TABLE_EASY_EMIT_EVENTS.BODY_CELL_CONTEXTMENU,
-					{
-						event: e,
-						rowData,
-						column
-					}
-				);
+				this.dispatch(COMPS_NAME.VE_TABLE, EMIT_EVENTS.BODY_CELL_CONTEXTMENU, {
+					event: e,
+					rowData,
+					column
+				});
 			},
+
 			// mouseenter
 			cellMouseenter(e, fn) {
 				fn && fn(e);
 			},
+
 			// mouseleave
 			cellMouseleave(e, fn) {
 				fn && fn(e);
 			},
+
 			// mousemove
 			cellMousemove(e, fn) {
 				fn && fn(e);
 
 				const { column, rowData } = this;
 
-				this.dispatch(
-					Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE,
-					Vue._X_TABLE_EASY_EMIT_EVENTS.BODY_CELL_MOUSEMOVE,
-					{
-						event: e,
-						rowData,
-						column
-					}
-				);
+				this.dispatch(COMPS_NAME.VE_TABLE, EMIT_EVENTS.BODY_CELL_MOUSEMOVE, {
+					event: e,
+					rowData,
+					column
+				});
 			},
+
 			// mouseover
 			cellMouseover(e, fn) {
 				fn && fn(e);
 
 				const { column, rowData } = this;
 
-				this.dispatch(
-					Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE,
-					Vue._X_TABLE_EASY_EMIT_EVENTS.BODY_CELL_MOUSEOVER,
-					{
-						event: e,
-						rowData,
-						column
-					}
-				);
+				this.dispatch(COMPS_NAME.VE_TABLE, EMIT_EVENTS.BODY_CELL_MOUSEOVER, {
+					event: e,
+					rowData,
+					column
+				});
 			},
+
 			// mousedown
 			cellMousedown(e, fn) {
 				fn && fn(e);
 
 				const { column, rowData } = this;
 
-				this.dispatch(
-					Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE,
-					Vue._X_TABLE_EASY_EMIT_EVENTS.BODY_CELL_MOUSEDOWN,
-					{
-						event: e,
-						rowData,
-						column
-					}
-				);
+				this.dispatch(COMPS_NAME.VE_TABLE, EMIT_EVENTS.BODY_CELL_MOUSEDOWN, {
+					event: e,
+					rowData,
+					column
+				});
 			},
+
 			// mouseup
 			cellMouseup(e, fn) {
 				fn && fn(e);
 
 				const { column, rowData } = this;
 
-				this.dispatch(
-					Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE,
-					Vue._X_TABLE_EASY_EMIT_EVENTS.BODY_CELL_MOUSEUP,
-					{
-						event: e,
-						rowData,
-						column
-					}
-				);
+				this.dispatch(COMPS_NAME.VE_TABLE, EMIT_EVENTS.BODY_CELL_MOUSEUP, {
+					event: e,
+					rowData,
+					column
+				});
 			}
 		},
+
 		render(h) {
 			const {
 				column,
@@ -574,14 +555,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			// expand icon props
 			const expandIconProps = {
-				props: {
-					rowData,
-					column,
-					expandOption,
-					expandedRowkeys,
-					rowKeyFieldName,
-					cellClick
-				}
+				rowData,
+				column,
+				expandOption,
+				expandedRowkeys,
+				rowKeyFieldName,
+				cellClick
 			};
 
 			const { rowspan, colspan } = this.getCellSpan();
@@ -648,22 +627,36 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				attrs: {
 					rowspan,
 					colspan,
-					[Vue._X_TABLE_EASY_CONSTANTS.COMPS_CUSTOM_ATTRS.BODY_COLUMN_KEY]: column.key
+					[COMPS_CUSTOM_ATTRS.BODY_COLUMN_KEY]: column.key
 				},
 				on: events
 			};
 
-			return h("td", tdProps, [
-				// expadn tr icon
-				isExpandRow ? h(Vue._X_TABLE_EASY_COMPONENTS.ExpandTrIcon, expandIconProps) : null,
-				// checkbox content
-				this.getCheckboxContent(h),
-				// radio content
-				this.getRadioContent(h),
-				// other cell content
-				this.getRenderContent(h)
-			]);
+			// 构建子元素数组
+			const children = [];
+
+			// expand tr icon
+			if (isExpandRow) {
+				children.push(h(ExpandTrIcon, { props: expandIconProps }));
+			}
+
+			// checkbox content
+			const checkboxContent = this.getCheckboxContent(h);
+			if (checkboxContent) {
+				children.push(checkboxContent);
+			}
+
+			// radio content
+			const radioContent = this.getRadioContent(h);
+			if (radioContent) {
+				children.push(radioContent);
+			}
+
+			// other cell content
+			children.push(this.getRenderContent(h));
+
+			return h("td", tdProps, children);
 		}
-	});
+	};
 }
 </script>

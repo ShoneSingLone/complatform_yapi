@@ -1,8 +1,13 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-	return Vue.defineComponent({
-		name: Vue._X_TABLE_EASY_COMPS_NAME.VE_TABLE_EXPAND_TR,
-		mixins: [Vue._X_TABLE_EASY_MIXINS.emitter],
+	// 使用 _.$importVue() 加载依赖
+	const [{ clsName }, { COMPS_NAME }] = await Promise.all([
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/index.vue"),
+		_.$importVue("/common/ui-x/components/data/xTableEasy/util/constant.vue")
+	]);
+
+	return {
+		name: COMPS_NAME.VE_TABLE_EXPAND_TR,
 		props: {
 			tableViewportWidth: {
 				type: Number,
@@ -75,7 +80,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			// expand row class
 			cpt_expan_row_class() {
 				let result = {
-					[Vue._X_TABLE_EASY_UTILS.clsName("expand-tr")]: true
+					[clsName("expand-tr")]: true
 				};
 				return result;
 			},
@@ -135,16 +140,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						h(
 							"td",
 							{
-								class: Vue._X_TABLE_EASY_UTILS.clsName("expand-td"),
+								class: clsName("expand-td"),
 								attrs: {
-									colspan: cpt_column_count
+									colSpan: cpt_column_count
 								}
 							},
 							[
 								h(
 									"div",
 									{
-										class: Vue._X_TABLE_EASY_UTILS.clsName("expand-td-content"),
+										class: clsName("expand-td-content"),
 										style: this.cpt_expand_td_content_style
 									},
 									[content]
@@ -157,6 +162,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			return result;
 		}
-	});
+	};
 }
 </script>
