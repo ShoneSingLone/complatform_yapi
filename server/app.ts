@@ -27,6 +27,7 @@ async function main() {
 	await require("./middleware/parseParams")(app);
 	/* middleware */
 	await require("./middleware/yapiDevHeaderInfo")(app);
+	await require("./middleware/websocket").appSetupWebsocket(app);
 	/* 跨域 */
 	await require("./middleware/cors")(app);
 	/* 转发代理 */
@@ -36,6 +37,7 @@ async function main() {
 	/* - 路由 autoware */
 	/* - boundless vue project */
 	await require("./plugins/usePlugin")(app);
+
 	/* 原来yapi的路由已移除，使用新的Autoware路由系统 */
 
 	/* 启动 */
