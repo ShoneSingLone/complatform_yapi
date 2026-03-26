@@ -140,13 +140,7 @@ class SyncUtils {
 			await this.syncModel.upById(oldSyncJob._id, oldSyncJob);
 		}
 		//记录日志
-		this.saveSyncLog(
-			mockCtx.body.errcode,
-			syncMode,
-			mockCtx.body.message,
-			uid,
-			projectId
-		);
+		this.saveSyncLog(mockCtx.body.errcode, syncMode, mockCtx.body.message, uid, projectId);
 	}
 
 	getSyncJob(projectId) {

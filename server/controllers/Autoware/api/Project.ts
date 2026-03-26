@@ -14,38 +14,38 @@ async function checkProjectName(name, groupId) {
 }
 
 function handleBasepath(basepath) {
-  if (!basepath) {
-    return "";
-  }
-  if (basepath === "/") {
-    return "";
-  }
-  if (basepath[0] !== "/") {
-    basepath = "/" + basepath;
-  }
-  if (basepath[basepath.length - 1] === "/") {
-    basepath = basepath.substr(0, basepath.length - 1);
-  }
-  if (!/^\/[a-zA-Z0-9\-\/\._]+$/.test(basepath)) {
-    return false;
-  }
-  return basepath;
+	if (!basepath) {
+		return "";
+	}
+	if (basepath === "/") {
+		return "";
+	}
+	if (basepath[0] !== "/") {
+		basepath = "/" + basepath;
+	}
+	if (basepath[basepath.length - 1] === "/") {
+		basepath = basepath.substr(0, basepath.length - 1);
+	}
+	if (!/^\/[a-zA-Z0-9\-\/\._]+$/.test(basepath)) {
+		return false;
+	}
+	return basepath;
 }
 
 function verifyDomain(domain) {
-  if (!domain) {
-    return false;
-  }
-  if (/^[a-zA-Z0-9\-_\.]+?\.[a-zA-Z0-9\-_\.]*?[a-zA-Z]{2,6}$/.test(domain)) {
-    return true;
-  }
-  return false;
+	if (!domain) {
+		return false;
+	}
+	if (/^[a-zA-Z0-9\-_\.]+?\.[a-zA-Z0-9\-_\.]*?[a-zA-Z]{2,6}$/.test(domain)) {
+		return true;
+	}
+	return false;
 }
 
 function arrRepeat(arr, key) {
-  const s = new Set();
-  arr.forEach(item => s.add(item[key]));
-  return s.size !== arr.length;
+	const s = new Set();
+	arr.forEach(item => s.add(item[key]));
+	return s.size !== arr.length;
 }
 
 module.exports = {
@@ -940,7 +940,10 @@ module.exports = {
 					try {
 						let params = ctx.payload;
 
-						var check = await orm.project.checkMemberRepeat(params.id, params.member_uid);
+						var check = await orm.project.checkMemberRepeat(
+							params.id,
+							params.member_uid
+						);
 						if (check === 0) {
 							return (ctx.body = xU.$response(null, 400, "项目成员不存在"));
 						}
@@ -1078,7 +1081,9 @@ module.exports = {
 						let result = await orm.project.up(id, data);
 						let username = this.getUsername();
 						xU.save_log({
-							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${projectData.name}</a> 的环境`,
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
+								projectData.name
+							}</a> 的环境`,
 							type: "project",
 							uid: this.getUid(),
 							username: username,
@@ -1148,7 +1153,9 @@ module.exports = {
 						let result = await orm.project.up(id, data);
 						let username = this.getUsername();
 						xU.save_log({
-							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${projectData.name}</a> 的tag`,
+							content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了项目 <a href="/project/${id}/interface/api">${
+								projectData.name
+							}</a> 的tag`,
 							type: "project",
 							uid: this.getUid(),
 							username: username,
