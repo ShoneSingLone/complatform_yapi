@@ -12,6 +12,7 @@ const definitions = {
 };
 
 const AutowareRoutes = {
+	/* 是否开启swagger的访问链接 */
 	isUseSwagger: true,
 	swaggerInfo: {
 		swagger: "2.0",

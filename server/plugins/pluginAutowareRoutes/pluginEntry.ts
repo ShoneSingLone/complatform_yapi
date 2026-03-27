@@ -14,12 +14,18 @@ function getRoute(url, method) {
 
 function appUseSwagger(app, swaggerJSON) {
 	app.use(async (ctx, next) => {
+		if (ctx.path === "/swagger.html") {
+			/* 兼容旧入口，统一跳转到当前 swagger 页面地址 */
+			ctx.redirect("/swagger");
+			return;
+		}
 		if (ctx.path === "/swagger") {
 			ctx.status = 200;
 			ctx.set("Content-Type", "text/html");
 			ctx.body = xU.fs.createReadStream(
 				xU.path.resolve(__dirname, "swagger_assets/swagger.html")
 			);
+			ctx.set("Content-Type", "text/html");
 			return;
 		}
 		if (ctx.path === "/api/swagger-doc") {
