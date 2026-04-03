@@ -118,7 +118,7 @@ var hooks = {
 
 hooks = {
   /**
-   * 第三方登录 //可参考 yapi-plugin-qsso 插件
+   * 第三方登录 //可参考 xspace-plugin-qsso 插件
    */
   third_login: {
     type: 'component',
@@ -130,7 +130,7 @@ hooks = {
    * @param Object importDataModule
    *
    * @info
-   * 可参考 vendors/exts/yapi-plugin-import-swagger插件
+   * 可参考 vendors/exts/xspace-plugin-import-swagger插件
    * importDataModule = {};
    *
    */
@@ -161,7 +161,7 @@ hooks = {
    * @param InterfaceTabs
    *
    * @info
-   * 可参考 vendors/exts/yapi-plugin-advanced-mock
+   * 可参考 vendors/exts/xspace-plugin-advanced-mock
    * let InterfaceTabs = {
       view: {
         component: View,
@@ -187,7 +187,7 @@ hooks = {
    * @param HeaderMenu
    *
    * @info
-   * 可参考 vendors/exts/yapi-plugin-statistics
+   * 可参考 vendors/exts/xspace-plugin-statistics
    * let HeaderMenu = {
   user: {
     path: '/user/profile',
@@ -227,7 +227,7 @@ hooks = {
    * @param AppRoute
    *
    * @info
-   * 可参考 vendors/exts/yapi-plugin-statistics
+   * 可参考 vendors/exts/xspace-plugin-statistics
    * 添加位置在Application.js 中
    * let AppRoute = {
   home: {

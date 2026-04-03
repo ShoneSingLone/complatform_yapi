@@ -66,18 +66,18 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 
 	const [path, proxyHOST, proxyPORT] = (() => {
 		let path, proxyHOST, proxyPORT;
-		if (headers["yapi-run-test"]) {
-			path = headers["yapi-run-test"];
+		if (headers["xspace-run-test"]) {
+			path = headers["xspace-run-test"];
 		} else {
 			path = `${domain}${targetURL}`;
 		}
 
-		if (headers["yapi-proxy-host"]) {
-			proxyHOST = headers["yapi-proxy-host"];
+		if (headers["xspace-proxy-host"]) {
+			proxyHOST = headers["xspace-proxy-host"];
 		}
 
-		if (headers["yapi-proxy-port"]) {
-			proxyPORT = headers["yapi-proxy-port"];
+		if (headers["xspace-proxy-port"]) {
+			proxyPORT = headers["xspace-proxy-port"];
 		}
 
 		return [path, proxyHOST, proxyPORT];
@@ -126,14 +126,14 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 			}
 
 			try {
-				/* yapi 接口请求参数 */
+				/* xspace 接口请求参数 */
 				ctx.set("httpRequestOptions", JSON.stringify(response.httpRequestOptions));
 			} catch (error) {
 				console.error(error);
 			}
 		}
 	} catch (error) {
-		body = xU.$response(null, 555, `错误来自yapi服务器： ${error.message}`);
+		body = xU.$response(null, 555, `错误来自xspace服务器： ${error.message}`);
 	} finally {
 		ctx.body = body || {};
 		return ctx.body;
@@ -320,7 +320,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 	/*用于初步确定Interface的中间变量*/
 	let interface_array;
 	/*具体的interfac数据*/
-	let current_request_interface_data_in_yapi_db;
+	let current_request_interface_data_in_xspace_db;
 	/**
 	 * @type ModelInterface
 	 */
@@ -403,11 +403,11 @@ const middlewareMockServer = () => async (ctx, next) => {
 		} else if (interface_array.length > 1) {
 			return (ctx.body = xU.$response(null, 405, "存在多个api，请检查数据库"));
 		}
-		current_request_interface_data_in_yapi_db = interface_array[0];
+		current_request_interface_data_in_xspace_db = interface_array[0];
 
 		// 必填字段是否填写好
 		if (project.strice) {
-			const validResult = mockValidator(current_request_interface_data_in_yapi_db, ctx);
+			const validResult = mockValidator(current_request_interface_data_in_xspace_db, ctx);
 			if (!validResult.valid) {
 				return (ctx.body = xU.$response(
 					null,
@@ -420,7 +420,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 		/* 是否启用代理，在局域网中访问其他主机 */
 		const isRunWithYapiProxy = (() => {
 			return (
-				current_request_interface_data_in_yapi_db?.isProxy || ctx.headers["yapi-run-test"]
+				current_request_interface_data_in_xspace_db?.isProxy || ctx.headers["xspace-run-test"]
 			);
 		})();
 
@@ -429,7 +429,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 				return xU._.find(project.env, i => {
 					try {
 						const id = ObjectId(i._id).toString();
-						return id === current_request_interface_data_in_yapi_db.witchEnv;
+						return id === current_request_interface_data_in_xspace_db.witchEnv;
 					} catch (error) {
 						console.log("ERROR:获取对应的代理环境", error);
 					}
@@ -440,13 +440,13 @@ const middlewareMockServer = () => async (ctx, next) => {
 			await setResponseByRunProxy(ctx, {
 				project_id: project._id,
 				ENV_VAR,
-				yapiRun: ctx.headers["yapi-run-test"]
+				xspaceRun: ctx.headers["xspace-run-test"]
 			});
 
 			ifSuccessfulStoreResponse({
 				ctx,
 				modelInterface: orm.interface,
-				interfaceData: current_request_interface_data_in_yapi_db
+				interfaceData: current_request_interface_data_in_xspace_db
 			});
 
 			return;
@@ -454,16 +454,16 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 		let res;
 		// mock 返回值处理
-		res = current_request_interface_data_in_yapi_db.res_body;
+		res = current_request_interface_data_in_xspace_db.res_body;
 		try {
-			if (current_request_interface_data_in_yapi_db.res_body_type === "json") {
+			if (current_request_interface_data_in_xspace_db.res_body_type === "json") {
 				const isUseJsonSchema =
-					current_request_interface_data_in_yapi_db.res_body_is_json_schema === true;
+					current_request_interface_data_in_xspace_db.res_body_is_json_schema === true;
 
 				if (isUseJsonSchema) {
 					//json-schema
 					const schema = xU.json_parse(
-						current_request_interface_data_in_yapi_db.res_body
+						current_request_interface_data_in_xspace_db.res_body
 					);
 					res = xU.schemaToJson(schema, {
 						alwaysFakeOptionals: true
@@ -481,7 +481,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 					// console.log('body', ctx.request.body)
 
 					res = mockExtra(
-						xU.json_parse(current_request_interface_data_in_yapi_db.res_body),
+						xU.json_parse(current_request_interface_data_in_xspace_db.res_body),
 						{
 							query: ctx.request.query,
 							body: ctx.request.body,
@@ -501,7 +501,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 
 			let context = {
 				projectData: project,
-				interfaceData: current_request_interface_data_in_yapi_db,
+				interfaceData: current_request_interface_data_in_xspace_db,
 				ctx: ctx,
 				mockJson: res,
 				resHeader: {},
@@ -558,16 +558,16 @@ const middlewareMockServer = () => async (ctx, next) => {
 			/* 使用备份的JSON数据，通过代理，如果没有，自动保存200的数据，用例的数据也可以用 */
 			/* isUseBackup */
 			(() => {
-				if (current_request_interface_data_in_yapi_db.res_body_type === "backup") {
+				if (current_request_interface_data_in_xspace_db.res_body_type === "backup") {
 					try {
 						const getJsonFn = new Function(
-							`return ${current_request_interface_data_in_yapi_db.resBackupJson}`
+							`return ${current_request_interface_data_in_xspace_db.resBackupJson}`
 						);
 						responseByMock = getJsonFn.call(null);
 					} catch (error) {
 						/* 直接使用备份数据，不需要添加额外的 */
 						ctx.type = "html";
-						responseByMock = current_request_interface_data_in_yapi_db.resBackupJson;
+						responseByMock = current_request_interface_data_in_xspace_db.resBackupJson;
 						return;
 					}
 				} else if (xU._.isPlainObject(context.mockJson)) {

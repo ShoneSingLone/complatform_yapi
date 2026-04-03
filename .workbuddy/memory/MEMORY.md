@@ -2,8 +2,8 @@
 
 ## 项目信息
 
-- **项目名称**：yapi-vendor（基于 YApi 的接口管理平台）
-- **项目位置**：d:\Users\SSL\Documents\GitHub\yapi
+- **项目名称**：xspace-vendor（基于 XSpace 的接口管理平台）
+- **项目位置**：d:\Users\SSL\Documents\GitHub\xspace
 - **Node 版本**：>= 16（使用 Volta 管理，配置为 24.12.0）
 - **包管理器**：pnpm
 
@@ -15,7 +15,7 @@
 4. **用户权限系统**：JWT 认证、邮箱验证码、角色层级（超管/组长/项目所有者/普通用户）、权限控制点
 5. **分组管理**：多级分组、个人分组（private）、成员管理、分组排序
 6. **测试集与自动化测试**：接口集、测试用例管理、自动化执行、HTML/JSON 报告、邮件通知
-7. **数据导入导出**：4 个导入插件（Postman/Swagger/HAR/YApi JSON）、3 个导出插件（Markdown/JSON/HTML/Swagger 2.0/服务代码）
+7. **数据导入导出**：4 个导入插件（Postman/Swagger/HAR/XSpace JSON）、3 个导出插件（Markdown/JSON/HTML/Swagger 2.0/服务代码）
 8. **CI/CD 持续集成**：Git 仓库关联、Webhook 管理、任务队列、自动化测试任务
 9. **Wiki 文档系统**：多级文档目录、四级权限（private/group/project/all）、版本历史、Diff 对比
 10. **资源管理**：分片上传、断点续传、云盘、媒体流（音视频 Range 请求）
@@ -35,7 +35,7 @@
 
 ## 重要配置
 
-- 使用 `yapi_configs.js`（项目根目录外）配置敏感信息
+- 使用 `xspace_configs.js`（项目根目录外）配置敏感信息
 - 配置文件包含：数据库连接、邮件服务、代理配置等
 
 ## 开发习惯

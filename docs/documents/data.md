@@ -1,6 +1,6 @@
 # 数据导入
 
-在数据管理可快速导入其他格式的接口数据，方便快速添加接口。YApi 目前支持 postman, swagger, har 数据导入。
+在数据管理可快速导入其他格式的接口数据，方便快速添加接口。XSpace 目前支持 postman, swagger, har 数据导入。
 
 v1.3.23+ 增加数据导入的 3 种同步方式 normal, good, mergin
 
@@ -19,7 +19,7 @@ v1.3.23+ 增加数据导入的 3 种同步方式 normal, good, mergin
 
 <div><img  class="doc-img"  style="width:70%"  src="./images/usage/postman-2.jpg" /></div>
 
-3.打开 yapi 平台，进入到项目页面，点击数据管理，选择相应的分组和 postman 导入  方式， 选择刚才保存的文件路径，开始导入数
+3.打开 xspace 平台，进入到项目页面，点击数据管理，选择相应的分组和 postman 导入  方式， 选择刚才保存的文件路径，开始导入数
 据
 
 <div><img  class="doc-img"  style="width:90%"  src="./images/usage/postman-3.jpg" /></div>
@@ -36,7 +36,7 @@ v1.3.23+ 增加数据导入的 3 种同步方式 normal, good, mergin
 
 <div><img  class="doc-img" style="width:70%" src="./images/usage/chrome-2.jpg" /></div>
 
-3.打开 yapi 平台，进入到项目页面，点击数据管理，选择相应的分组和 har 导入  方式， 选择刚才保存的文件路径，开始导入数据
+3.打开 xspace 平台，进入到项目页面，点击数据管理，选择相应的分组和 har 导入  方式， 选择刚才保存的文件路径，开始导入数据
 
 <div><img class="doc-img"   style="width:50%"  src="./images/usage/chrome-3.jpg" /></div>
 
@@ -53,7 +53,7 @@ v1.3.23+ 增加数据导入的 3 种同步方式 normal, good, mergin
 
 > Tips: v1.3.19 版本开始支持 swagger url 导入功能
 
-2.打开 yapi 平台，进入到项目页面，点击数据管理，选择相应的分组和 swagger 导入  方式， 选择刚才的文件，开始导入数据
+2.打开 xspace 平台，进入到项目页面，点击数据管理，选择相应的分组和 swagger 导入  方式， 选择刚才的文件，开始导入数据
 
 <div><img class="doc-img"   style="width:50%"  src="./images/usage/chrome-4.jpg" /></div>
 
@@ -61,25 +61,25 @@ v1.3.23+ 增加数据导入的 3 种同步方式 normal, good, mergin
 
 <div><img class="doc-img"   style="width:90%"  src="./images/usage/chrome-6.jpg" /></div>
 
-## YApi 接口 JSON 数据导入
+## XSpace 接口 JSON 数据导入
 
-该功能在 v1.3.12 版本上线，可导入在 yapi 平台导出的 json 接口数据。
+该功能在 v1.3.12 版本上线，可导入在 xspace 平台导出的 json 接口数据。
 
 ![](import-json-data.png)
 
 ## 通过命令行导入接口数据
 
-YApi 支持通过命令行导入接口数据，他的应用场景是做自动化集成，比如配合 swagger ，接口文档前端不用维护，交由后端生成。
+XSpace 支持通过命令行导入接口数据，他的应用场景是做自动化集成，比如配合 swagger ，接口文档前端不用维护，交由后端生成。
 
 ### 使用方法
 
-第一步，确保 `yapi-cli >= 1.2.7` 版本，如果低于此版本请升级 `yapi-cli` 工具
+第一步，确保 `xspace-cli >= 1.2.7` 版本，如果低于此版本请升级 `xspace-cli` 工具
 
 ```
-npm install -g yapi-cli
+npm install -g xspace-cli
 ```
 
-第二步，在任意一个目录下新建配置文件 `yapi-import.json`，内容如下：
+第二步，在任意一个目录下新建配置文件 `xspace-import.json`，内容如下：
 
 ```json
 {
@@ -87,7 +87,7 @@ npm install -g yapi-cli
 	"token": "17fba0027f300248b804",
 	"file": "swagger.json",
 	"merge": "normal",
-	"server": "http://yapi.local.qunar.com:3000"
+	"server": "http://xspace.local.qunar.com:3000"
 }
 ```
 
@@ -103,10 +103,10 @@ npm install -g yapi-cli
 2. 智能合并(good)：已存在的接口，将合并返回数据的 response，适用于导入了 swagger 数据，保留对数据结构的改动；
 3. 完全覆盖(mergin)：不保留旧数据，完全使用新数据，适用于接口定义完全交给后端定义， 默认为 normal
 
-`server` 是 yapi 服务器地址
+`server` 是 xspace 服务器地址
 
 第三步，在`新建配置文件的当前目录`，执行下面指令
 
 ```
-yapi import
+xspace import
 ```

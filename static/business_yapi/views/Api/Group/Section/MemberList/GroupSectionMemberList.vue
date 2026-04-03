@@ -134,7 +134,7 @@ export default async function () {
 					url: "@/views/Api/Group/Section/MemberList/GroupSectionMemberList.AddMember.vue",
 					parent: vm,
 					async onOk({ member_uids, role, dialogVm }) {
-						const { data } = await _api.yapi.groupAddMember({
+						const { data } = await _api.xspace.groupAddMember({
 							id: vm.APP.cptCurrentGroup._id,
 							member_uids,
 							role
@@ -150,7 +150,7 @@ export default async function () {
 			},
 			async removeMember(row) {
 				const vm = this;
-				const { data } = await _api.yapi.group_del_member({
+				const { data } = await _api.xspace.group_del_member({
 					id: vm.APP.cptCurrentGroup._id,
 					member_uid: row.uid
 				});
@@ -162,7 +162,7 @@ export default async function () {
 				_.$loading(true);
 				try {
 					if (role) {
-						await _api.yapi.groupChangeMemberRole({
+						await _api.xspace.groupChangeMemberRole({
 							id: group_id,
 							member_uid: uid,
 							role

@@ -135,7 +135,7 @@ export default async function () {
     - 支持 `/common/` 前缀表示公共依赖
 
 4. **API 调用方式**：
-    - 使用 `_api.yapi` 进行后端 API 调用
+    - 使用 `_api.xspace` 进行后端 API 调用
     - 遵循现有 API 调用模式
 
 ## 2. 现有编辑器功能评估

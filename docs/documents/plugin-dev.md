@@ -15,7 +15,7 @@ npm run dev #启动开发服务器
   "port": "3000",
   "db": {
     "servername": "127.0.0.1",
-    "DATABASE": "yapi"
+    "DATABASE": "xspace"
   },
   ...
   "plugins": [{
@@ -29,10 +29,10 @@ npm run dev #启动开发服务器
 
 可参考 项目 vendors/exts 目录下的插件
 
-在 vendors/node_modules 下新建 yapi-plugin-demo 目录和 npm init,最后生成的目录结构如下
+在 vendors/node_modules 下新建 xspace-plugin-demo 目录和 npm init,最后生成的目录结构如下
 
 ```
-yapi-plugin-demo
+xspace-plugin-demo
   client.js  //客户端入口文件
   server.js  //服务端入口文件
   packjson.json //插件依赖管理
@@ -60,9 +60,9 @@ hookname //钩子名
 listener //监听函数，可以是普通函数，也可以是 asyncFunction
 ```
 
-### 如何使用 YApi vendors/server 目录下的模块
+### 如何使用 XSpace vendors/server 目录下的模块
 
-可以直接 require vendors 目录下的模块，注意：后端 node 不能使用 import 关键字，只能使用 require 例如： require('yapi')
+可以直接 require vendors 目录下的模块，注意：后端 node 不能使用 import 关键字，只能使用 require 例如： require('xspace')
 
 ### controller 和 model
 

@@ -85,7 +85,7 @@ export default async function () {
 					const { page, size } = this.configsTable.pagination;
 					const {
 						data: { list, total }
-					} = await _api.yapi.get_log_list({
+					} = await _api.xspace.get_log_list({
 						typeid: this.APP.cptGroupId,
 						type: "group",
 						page,

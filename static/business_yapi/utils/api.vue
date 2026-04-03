@@ -1,6 +1,6 @@
 <script lang="ts">
 export default async function () {
-	if (!window._api.yapi) {
+	if (!window._api.xspace) {
 		(function () {
 			_.$ajax.requestInjector = function (req) {
 				req.url = Vue._common_utils.appendToken(req.url);
@@ -22,10 +22,10 @@ export default async function () {
 				return response;
 			};
 
-			window._api.yapi = {
+			window._api.xspace = {
 				async system_dicts(typeObject = {}) {
 					const typeArray = Object.keys(typeObject);
-					const _this = window._api.yapi;
+					const _this = window._api.xspace;
 					_this.typesCache = _this.typesCache || {};
 					const needRequest = [];
 					_.each(typeArray, type => {
@@ -440,6 +440,6 @@ export default async function () {
 		})();
 	}
 
-	return window._api.yapi;
+	return window._api.xspace;
 }
 </script>

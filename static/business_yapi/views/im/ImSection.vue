@@ -275,7 +275,7 @@ export default async function () {
 				try {
 					const {
 						data: { list }
-					} = await _api.yapi.wikiList(this.cptBelongParams);
+					} = await _api.xspace.wikiList(this.cptBelongParams);
 					this.contentArray = list;
 					this.setPosition();
 				} catch (error) {
@@ -301,7 +301,7 @@ export default async function () {
 						p_id: vm.pid,
 						markdown: String(vm.newChatContent)
 					});
-					await _api.yapi.wiki_upsert_one(params);
+					await _api.xspace.wiki_upsert_one(params);
 					vm.$nextTick(() => {
 						vm.newChatContent = "";
 					});

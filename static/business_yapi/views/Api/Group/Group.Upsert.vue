@@ -144,7 +144,7 @@ export default async function ({ groupInfo, onOk }) {
 									custom_field1_enable,
 									custom_field1_name
 								} = vm.cptFormData;
-								await _api.yapi.groupUpdateGroup({
+								await _api.xspace.groupUpdateGroup({
 									...groupInfo,
 									group_name: currGroupName,
 									group_desc: currGroupDesc,
@@ -156,7 +156,7 @@ export default async function ({ groupInfo, onOk }) {
 								_.$msg("分组修改成功");
 							} else {
 								const { newGroupName, newGroupDesc, owner_uids } = vm.cptFormData;
-								await _api.yapi.groupAddGroup({
+								await _api.xspace.groupAddGroup({
 									group_name: newGroupName,
 									group_desc: newGroupDesc,
 									owner_uids: owner_uids

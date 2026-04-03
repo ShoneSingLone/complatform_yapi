@@ -144,7 +144,7 @@ export default async function () {
 					},
 					async onClick() {
 						try {
-							const { data: msg } = await _api.yapi.postNewVarifyCode(
+							const { data: msg } = await _api.xspace.postNewVarifyCode(
 								vm.configsForm.email.value
 							);
 							_.$msg(msg);
@@ -173,7 +173,7 @@ export default async function () {
 							if (error) {
 								console.error("未通过验证");
 							} else {
-								const res = await _api.yapi.userReg(formData);
+								const res = await _api.xspace.userReg(formData);
 								_.$msg(i18n("注册成功"));
 								vm.$router.push({ path: "/group" });
 							}

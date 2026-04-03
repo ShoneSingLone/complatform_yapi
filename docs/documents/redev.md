@@ -1,10 +1,10 @@
-## 安装 YApi
+## 安装 XSpace
 
 1.创建工程目录
 
 ```bash
-mkdir yapi && cd yapi
-git clone https://github.com/YMFE/yapi.git vendors --depth=1 # 或者下载 zip 包解压到 vendors 目录
+mkdir xspace && cd xspace
+git clone https://github.com/YMFE/xspace.git vendors --depth=1 # 或者下载 zip 包解压到 vendors 目录
 ```
 
 2.修改配置
@@ -22,10 +22,10 @@ vi ./config.json
 	"adminAccount": "admin@admin.com",
 	"db": {
 		"servername": "127.0.0.1",
-		"DATABASE": "yapi",
+		"DATABASE": "xspace",
 		"port": 27017,
-		"user": "yapi",
-		"pass": "yapi123"
+		"user": "xspace",
+		"pass": "xspace123"
 	},
 	"mail": {
 		"enable": true,
@@ -69,7 +69,7 @@ npm run dev
 
 ```
 |-- config.json
-|-- yapi.installed
+|-- xspace.installed
 |-- log
 `-- vendors
     |-- CHANGELOG.md
@@ -88,7 +88,7 @@ npm run dev
     |-- static
     |-- test
     |-- webpack.alias.js
-    |-- yapi-base-flow.jpg
+    |-- xspace-base-flow.jpg
     |-- ydocfile.js
     `-- ykit.config.js
 ```

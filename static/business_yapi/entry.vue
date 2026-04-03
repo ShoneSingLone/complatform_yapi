@@ -94,13 +94,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			vm.refreshUserInfo = _.$asyncDebounce(vm, async function refreshUserInfo() {
 				try {
 					if (!vm.user.isLogin) {
-						const res = await _api.yapi.userStatus();
+						const res = await _api.xspace.userStatus();
 						const { data: userInfo } = res;
 						await vm._setUser(userInfo);
 					}
 
 					if (vm.user.isLogin) {
-						const res = await _api.yapi.userSearch({});
+						const res = await _api.xspace.userSearch({});
 						const { data: all_user } = res;
 						vm.all_user = all_user;
 						/* TODO: 跳转到首页 或者note应用*/
@@ -266,7 +266,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			},
 			async logoutActions() {
 				try {
-					const { data } = await _api.yapi.userLogout();
+					const { data } = await _api.xspace.userLogout();
 					if (data === "ok") {
 						_.$lStorage.x_token = "";
 						await this._setUser({
@@ -285,17 +285,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 			},
 			async updateGroupList() {
-				let { data: groupList } = await _api.yapi.groupMine();
+				let { data: groupList } = await _api.xspace.groupMine();
 				this.groupList = groupList;
 			},
 			async updateGroupProjectList() {
 				const {
 					data: { list: groupProjectList }
-				} = await _api.yapi.getProjectByGroupId(this.cptGroupId);
+				} = await _api.xspace.getProjectByGroupId(this.cptGroupId);
 				this.groupProjectList = groupProjectList;
 			},
 			async updateGroupMemberList() {
-				const { data: groupMemberList } = await _api.yapi.groupGetMemberListBy(
+				const { data: groupMemberList } = await _api.xspace.groupGetMemberListBy(
 					this.cptGroupId
 				);
 				this.groupMemberList = groupMemberList;

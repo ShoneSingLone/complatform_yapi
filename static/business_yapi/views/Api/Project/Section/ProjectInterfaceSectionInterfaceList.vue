@@ -179,7 +179,7 @@ export default async function () {
 				try {
 					await _.$confirm_important("是否删除当前选择的接口？");
 					_.$loading(true);
-					const res = await _api.yapi.interface_del_by_ids(
+					const res = await _api.xspace.interface_del_by_ids(
 						Array.from(this.inject_project_interface_section.configsTable.data.set)
 					);
 					this.inject_project.get_interface_list();

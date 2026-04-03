@@ -62,7 +62,7 @@ export default async function ({ parentDocId, belong_type, belong_id, hide }) {
 								belong_type: belong_type || "all",
 								belong_id: belong_id
 							};
-							const res = await _api.yapi.wiki_upsert_one(params);
+							const res = await _api.xspace.wiki_upsert_one(params);
 							if (!res.errcode) {
 								await vm.inject_note.update_wiki_menu_list();
 								await vm.inject_note.setCurrentWiki(res.data.msg);
@@ -102,7 +102,7 @@ export default async function ({ parentDocId, belong_type, belong_id, hide }) {
 						params.res_body_type = this.cptFormData.res_body_type;
 					}
 
-					return await _api.yapi.interface_up(params);
+					return await _api.xspace.interface_up(params);
 				} catch (error) {
 					_.$msgError("修改失败");
 				} finally {

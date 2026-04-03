@@ -367,7 +367,7 @@ const api = {
 	docflow: {
 		// 获取文档列表
 		getDocuments: () => {
-			return _api.yapi.request({
+			return _api.xspace.request({
 				url: "/api/docflow/documents",
 				method: "GET"
 			});
@@ -375,7 +375,7 @@ const api = {
 
 		// 获取文档详情
 		getDocument: id => {
-			return _api.yapi.request({
+			return _api.xspace.request({
 				url: `/api/docflow/documents/${id}`,
 				method: "GET"
 			});
@@ -383,7 +383,7 @@ const api = {
 
 		// 保存文档
 		saveDocument: document => {
-			return _api.yapi.request({
+			return _api.xspace.request({
 				url: "/api/docflow/documents",
 				method: "POST",
 				data: document
@@ -392,7 +392,7 @@ const api = {
 
 		// AI 功能调用
 		aiRequest: data => {
-			return _api.yapi.request({
+			return _api.xspace.request({
 				url: "/api/docflow/ai",
 				method: "POST",
 				data
@@ -714,7 +714,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			async saveDocument() {
 				try {
 					// 保存文档逻辑
-					const response = await _api.yapi.docflow.saveDocument(this.document);
+					const response = await _api.xspace.docflow.saveDocument(this.document);
 					if (response.success) {
 						this.$message.success("保存成功");
 					}

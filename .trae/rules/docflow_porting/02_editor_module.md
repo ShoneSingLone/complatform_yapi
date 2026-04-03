@@ -300,7 +300,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		uploadImage: async file => {
 			try {
 				// 使用项目现有的上传 API
-				const response = await _api.yapi.uploadFile({
+				const response = await _api.xspace.uploadFile({
 					file: file,
 					type: "image",
 					projectId: PRIVATE_GLOBAL.currentProjectId
@@ -322,7 +322,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		uploadFile: async file => {
 			try {
 				// 使用项目现有的文件上传 API
-				const response = await _api.yapi.uploadFile({
+				const response = await _api.xspace.uploadFile({
 					file: file,
 					type: "file",
 					projectId: PRIVATE_GLOBAL.currentProjectId
