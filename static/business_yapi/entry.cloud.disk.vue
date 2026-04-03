@@ -33,7 +33,7 @@ export default async function () {
 	const GUEST_STATUS = 1;
 	const MEMBER_STATUS = 2;
 	/*  */
-	_.$yapiRouter = router;
+	_.$xspaceRouter = router;
 
 	// router.beforeEach(function (to, from) {});
 

@@ -56,7 +56,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	const GUEST_STATUS = 1;
 	const MEMBER_STATUS = 2;
 	/*  */
-	_.$yapiRouter = router;
+	_.$xspaceRouter = router;
 
 	router.beforeEach(function (to, from, next) {
 		if (to.path === "/404" && !to.params?.from) {
