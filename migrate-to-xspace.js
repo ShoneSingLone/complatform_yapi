@@ -196,7 +196,7 @@ function processFiles() {
 
 // Verify function
 function verify() {
-  console.log('Verifying no YApi references remain...');
+  console.log('Verifying no XSpace references remain...');
   walk('.');
   
   const remainingReferences = {};
@@ -204,7 +204,7 @@ function verify() {
   for (const { fullPath, normalizedPath } of filesToProcess) {
     try {
       const content = fs.readFileSync(fullPath, 'utf8');
-      const matches = content.match(/YApi|yapi/g);
+      const matches = content.match(/XSpace|xspace/g);
       if (matches) {
         remainingReferences[normalizedPath] = matches.length;
       }
@@ -215,9 +215,9 @@ function verify() {
   
   console.log('\n=== Verification Results ===');
   if (Object.keys(remainingReferences).length === 0) {
-    console.log('✓ No YApi references found!');
+    console.log('✓ No XSpace references found!');
   } else {
-    console.log('✗ Found remaining YApi references:');
+    console.log('✗ Found remaining XSpace references:');
     for (const [filePath, count] of Object.entries(remainingReferences)) {
       console.log(`- ${filePath}: ${count} references`);
     }
