@@ -82,7 +82,7 @@ export default async function ({ onOk, userId, canModifyAvatar }) {
 						label: i18n("角色"),
 						readonly: true,
 						itemType: "xItemSelect",
-						options: _opts.yapi.role
+						options: _opts.xspace.role
 					},
 					type: {
 						value: "",

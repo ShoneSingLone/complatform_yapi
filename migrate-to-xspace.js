@@ -80,8 +80,8 @@ function walk(dir) {
         if (config.includeExtensions.includes(ext)) {
           filesToProcess.push({ fullPath, normalizedPath });
           // Check if this is one of the important files
-          if (normalizedPath.includes('static/business_xspace/entry.vue') ||
-            normalizedPath.includes('static/business_xspace/utils/api.vue')) {
+          if (normalizedPath.includes('static/business_yapi/entry.vue') ||
+            normalizedPath.includes('static/business_yapi/utils/api.vue')) {
             console.log(`Found important file: ${normalizedPath}`);
           }
         }
@@ -130,7 +130,7 @@ function processFiles() {
       // Apply replacements
       for (const [search, replace] of Object.entries(config.replaceMap)) {
         // Escape special regex characters
-        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escapedSearch = search.replace(/[.*+?^${}()|[\\[\\]\\\\]/g, '\\$&');
         const regex = new RegExp(escapedSearch, 'g');
         const matches = content.match(regex);
         if (matches) {
@@ -139,12 +139,12 @@ function processFiles() {
         }
       }
 
-      // Special case for _.\$xspaceRouter to _.\$xspaceRouter
-      const xspaceRouterRegex = /_\.\$xspaceRouter/g;
-      const xspaceRouterMatches = content.match(xspaceRouterRegex);
-      if (xspaceRouterMatches) {
-        fileChanges += xspaceRouterMatches.length;
-        modifiedContent = modifiedContent.replace(xspaceRouterRegex, '_.$xspaceRouter');
+      // Special case for _.$xspaceRouter to _.$xspaceRouter
+      const yapiRouterRegex = /_\.\$yapiRouter/g;
+      const yapiRouterMatches = content.match(yapiRouterRegex);
+      if (yapiRouterMatches) {
+        fileChanges += yapiRouterMatches.length;
+        modifiedContent = modifiedContent.replace(yapiRouterRegex, '_.$xspaceRouter');
       }
 
       if (fileChanges > 0) {
@@ -162,13 +162,13 @@ function processFiles() {
 
   // Then handle file renaming
   const filesToRename = [
-    'static/business_xspace/xspace.html',
-    'static/business_xspace/entry.xspace.html'
+    'static/business_yapi/yapi.html',
+    'static/business_yapi/entry.yapi.html'
   ];
 
   for (const oldPath of filesToRename) {
     if (fs.existsSync(oldPath)) {
-      const newPath = oldPath.replace('xspace.html', 'xspace.html');
+      const newPath = oldPath.replace('yapi.html', 'xspace.html');
       renamedFiles.push({ old: oldPath, new: newPath });
 
       if (!isDryRun && !isVerify) {
@@ -210,7 +210,7 @@ function processFiles() {
 
 // Verify function
 function verify() {
-  console.log('Verifying no XSpace references remain...');
+  console.log('Verifying no YApi references remain...');
   walk('.');
 
   const remainingReferences = {};
@@ -218,7 +218,7 @@ function verify() {
   for (const { fullPath, normalizedPath } of filesToProcess) {
     try {
       const content = fs.readFileSync(fullPath, 'utf8');
-      const matches = content.match(/XSpace|xspace/g);
+      const matches = content.match(/YApi|yapi/g);
       if (matches) {
         remainingReferences[normalizedPath] = matches.length;
       }
@@ -229,9 +229,9 @@ function verify() {
 
   console.log('\n=== Verification Results ===');
   if (Object.keys(remainingReferences).length === 0) {
-    console.log('✓ No XSpace references found!');
+    console.log('✓ No YApi references found!');
   } else {
-    console.log('✗ Found remaining XSpace references:');
+    console.log('✗ Found remaining YApi references:');
     for (const [filePath, count] of Object.entries(remainingReferences)) {
       console.log(`- ${filePath}: ${count} references`);
     }

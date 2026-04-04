@@ -123,7 +123,7 @@ export default async function () {
 							label: i18n("角色"),
 							prop: "role",
 							cellRenderer({ cellData }) {
-								return _.$val2L(cellData, _opts.yapi.role);
+								return _.$val2L(cellData, _opts.xspace.role);
 							}
 						},
 						defTable.colActions({

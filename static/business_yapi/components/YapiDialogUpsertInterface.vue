@@ -27,7 +27,7 @@ export default async function ({ categoryInfo, project_id, get_interface_list })
 					apiMethod: {
 						value: "GET",
 						itemType: "xItemSelect",
-						options: _opts.yapi.httpMethod
+						options: _opts.xspace.httpMethod
 					},
 					catid: {
 						value: "",

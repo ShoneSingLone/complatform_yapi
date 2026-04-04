@@ -121,7 +121,7 @@ export default async function () {
 					},
 					method: {
 						itemType: "xItemSelect",
-						options: _opts.yapi.httpMethod
+						options: _opts.xspace.httpMethod
 					},
 					path: {
 						$vSlots: {

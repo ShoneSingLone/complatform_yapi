@@ -14,16 +14,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		{
 			/* 涉及具体的上传接口，不能做通用的处理 */
 			TuiEditor: "@/components/TuiEditor/TuiEditor.vue",
-			YapiItemInterfaceImportType: "@/components/YapiItemInterfaceImportType.vue",
-			YapiApiRequestBodyPreviewer: "@/components/YapiApiRequestBodyPreviewer.vue",
-			yapiItemReqBodyParams: "@/components/yapiItemReqBodyParams.vue",
-			YapiItemProxyEnv: "@/components/YapiItemProxyEnv.vue",
-			YapiItemAvatar: "@/components/YapiItemAvatar.vue",
-			YapiItemUac: "@/components/YapiItemUac.vue",
-			YapiItemKeyValTable: "@/components/YapiItemKeyValTable.vue",
-			YapiItemPathParams: "@/components/YapiItemPathParams.vue",
-			YapiProjectCard: "@/components/YapiProjectCard.vue",
-			YapiPlaceholderView: "@/components/YapiPlaceholderView.vue",
+			XspaceItemInterfaceImportType: "@/components/XspaceItemInterfaceImportType.vue",
+			XspaceApiRequestBodyPreviewer: "@/components/XspaceApiRequestBodyPreviewer.vue",
+			xspaceItemReqBodyParams: "@/components/xspaceItemReqBodyParams.vue",
+			XspaceItemProxyEnv: "@/components/XspaceItemProxyEnv.vue",
+			XspaceItemAvatar: "@/components/XspaceItemAvatar.vue",
+			XspaceItemUac: "@/components/XspaceItemUac.vue",
+			XspaceItemKeyValTable: "@/components/XspaceItemKeyValTable.vue",
+			XspaceItemPathParams: "@/components/XspaceItemPathParams.vue",
+			XspaceProjectCard: "@/components/XspaceProjectCard.vue",
+			XspacePlaceholderView: "@/components/XspacePlaceholderView.vue",
 			ProjectInterfaceSectionInterfaceDetailEditorDesc:
 				"@/views/Api/Project/Section/ProjectInterfaceSectionInterfaceDetailEditorDesc.vue"
 		},
