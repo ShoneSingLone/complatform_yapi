@@ -1,6 +1,6 @@
 const { _n } = require("@ventose/utils-node");
 const { newSwaggerJSON } = require("./swagger.json");
-const swaggerJSON = newSwaggerJSON(yapi_configs?.isUsePlugin?.AutowareRoutes?.swaggerInfo);
+const swaggerJSON = newSwaggerJSON(xspace_configs?.isUsePlugin?.AutowareRoutes?.swaggerInfo);
 const routes = [];
 async function scanAllAutowareController(app) {
 	try {

@@ -255,7 +255,7 @@ module.exports = {
 
 						task_token =
 							task_token ||
-							xU.$hashCode(yapi_configs.passsalt + task_name + Date.now());
+							xU.$hashCode(xspace_configs.passsalt + task_name + Date.now());
 
 						task = await orm.CiCdTask.upsert({
 							...ctx.payload,

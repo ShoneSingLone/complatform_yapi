@@ -14,29 +14,29 @@ async function setMongooseAsync() {
 			useUnifiedTopology: true
 		};
 
-		if (yapi_configs.db.user) {
-			options.user = yapi_configs.db.user;
-			options.pass = yapi_configs.db.pass;
+		if (xspace_configs.db.user) {
+			options.user = xspace_configs.db.user;
+			options.pass = xspace_configs.db.pass;
 		}
 
-		if (yapi_configs.db.reconnectTries) {
-			options.reconnectTries = yapi_configs.db.reconnectTries;
+		if (xspace_configs.db.reconnectTries) {
+			options.reconnectTries = xspace_configs.db.reconnectTries;
 		}
 
-		if (yapi_configs.db.reconnectInterval) {
-			options.reconnectInterval = yapi_configs.db.reconnectInterval;
+		if (xspace_configs.db.reconnectInterval) {
+			options.reconnectInterval = xspace_configs.db.reconnectInterval;
 		}
 
-		options = Object.assign({}, options, yapi_configs.db.options);
+		options = Object.assign({}, options, xspace_configs.db.options);
 
 		var connectString = "";
 
-		if (yapi_configs.db.connectString) {
-			connectString = yapi_configs.db.connectString;
+		if (xspace_configs.db.connectString) {
+			connectString = xspace_configs.db.connectString;
 		} else {
-			connectString = `mongodb://${yapi_configs.db.servername}:${yapi_configs.db.port}/${yapi_configs.db.DATABASE}`;
-			if (yapi_configs.db.authSource) {
-				connectString = connectString + `?authSource=${yapi_configs.db.authSource}`;
+			connectString = `mongodb://${xspace_configs.db.servername}:${xspace_configs.db.port}/${xspace_configs.db.DATABASE}`;
+			if (xspace_configs.db.authSource) {
+				connectString = connectString + `?authSource=${xspace_configs.db.authSource}`;
 			}
 		}
 

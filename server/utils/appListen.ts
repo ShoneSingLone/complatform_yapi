@@ -1,5 +1,5 @@
 module.exports = function appListen(app, tips = "服务已启动，请打开下面链接访问:") {
-	let currPort = Number(yapi_configs.port) || "80";
+	let currPort = Number(xspace_configs.port) || "80";
 	const server = app.listen(currPort);
 	if (process.send) {
 		process.send(JSON.stringify({ type: "CHANGE_PORT", PORT: currPort }));
@@ -22,6 +22,6 @@ module.exports = function appListen(app, tips = "服务已启动，请打开下�
 			}, 100);
 		}
 	});
-	server.setTimeout(yapi_configs.timeout);
+	server.setTimeout(xspace_configs.timeout);
 	return app;
 };

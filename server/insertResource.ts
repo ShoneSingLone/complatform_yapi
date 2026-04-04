@@ -8,7 +8,7 @@
 	const { getType } = require("mime");
 	const { _n } = require("@ventose/utils-node");
 
-	const { INSERT_RESOURCE_ENTRY_PATH, INSERT_RESOURCE_ENTRY_PATH_PARENT } = yapi_configs;
+	const { INSERT_RESOURCE_ENTRY_PATH, INSERT_RESOURCE_ENTRY_PATH_PARENT } = xspace_configs;
 
 	const uploadBy = "1";
 	const SEP = path.sep;

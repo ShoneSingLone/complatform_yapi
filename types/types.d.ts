@@ -4,7 +4,7 @@ declare global {
 	var orm: t_orm;
 	var xU: t_xU;
 
-	var yapi_configs: {
+	var xspace_configs: {
 		INSERT_RESOURCE_ENTRY_PATH: string;
 		INSERT_RESOURCE_ENTRY_PATH_PARENT: string;
 		RESOURCE_ASSETS_REMOTE: string[];

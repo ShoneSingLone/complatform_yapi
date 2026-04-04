@@ -158,8 +158,8 @@ class ControllerBase {
 	}
 
 	async checkRegister() {
-		// console.log('config', yapi_configs);
-		if (yapi_configs.isCloseRegister) {
+		// console.log('config', xspace_configs);
+		if (xspace_configs.isCloseRegister) {
 			return false;
 		} else {
 			return true;
@@ -167,11 +167,11 @@ class ControllerBase {
 	}
 
 	async checkLDAP() {
-		// console.log('config', yapi_configs);
-		if (!yapi_configs.ldapLogin) {
+		// console.log('config', xspace_configs);
+		if (!xspace_configs.ldapLogin) {
 			return false;
 		} else {
-			return yapi_configs.ldapLogin.enable || false;
+			return xspace_configs.ldapLogin.enable || false;
 		}
 	}
 	/**

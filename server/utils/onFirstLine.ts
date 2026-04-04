@@ -65,11 +65,11 @@ module.exports = async function () {
 	 */
 	require.extensions[".ts"] = require.extensions[".js"];
 	/* ********************************************************************************  */
-	const yapi_configs = require("../../../yapi_configs.js");
+	const xspace_configs = require("../../../xspace_configs.js");
 	const { isUsePlugin } = require("../plugins/isUsePlugin");
-	yapi_configs.isUsePlugin = isUsePlugin;
-	/* global.yapi_configs  */
-	global.yapi_configs = yapi_configs;
+	xspace_configs.isUsePlugin = isUsePlugin;
+	/* global.xspace_configs  */
+	global.xspace_configs = xspace_configs;
 
 	/*上面的代码运行之后，server就可以直接访问到*/
 	require("server/utils/xU");
