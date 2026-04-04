@@ -947,7 +947,7 @@ export default async function () {
 					const is_directory = item.type === "directory";
 					// 检查是否是从搜索结果中点击的文件夹
 					// 如果是通过subdir事件调用（文件夹点击），则不携带搜索参数
-					const res = await _api.yapi.resourceLs({
+					const res = await _api.xspace.resourceLs({
 						path: this.pathStack,
 						search_key: is_directory ? "" : this.searchKey // 从搜索结果点击文件夹时不携带搜索参数
 					});

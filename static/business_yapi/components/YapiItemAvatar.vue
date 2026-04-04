@@ -85,7 +85,7 @@ export default async function () {
 			async uploadAvatar(basecode) {
 				_.$loading(true);
 				try {
-					await _api.yapi.uploadAvatar({
+					await _api.xspace.uploadAvatar({
 						basecode: basecode,
 						uid: this.value,
 						usedBy: this.configs.usedBy || ""

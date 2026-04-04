@@ -126,7 +126,7 @@ export default async function () {
 						try {
 							let {
 								data: { list, total }
-							} = await _api.yapi.project_page({ page: 0, size: -1 });
+							} = await _api.xspace.project_page({ page: 0, size: -1 });
 
 							const group_at_least_one_project = new Set();
 

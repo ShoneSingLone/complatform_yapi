@@ -24,7 +24,7 @@ export default async function ({ selected: interfaceIds }) {
 		project: null
 	};
 
-	dicts = await _api.yapi.system_dicts(dicts);
+	dicts = await _api.xspace.system_dicts(dicts);
 
 	return defineComponent({
 		inject: ["APP"],
@@ -77,7 +77,7 @@ export default async function ({ selected: interfaceIds }) {
 							const { page, size } = _.$setPagination(vm.configsTable, pagination);
 							const {
 								data: { list, total }
-							} = await _api.yapi.project_page({
+							} = await _api.xspace.project_page({
 								page,
 								size,
 								name: vm.searchForm.name.value
@@ -104,7 +104,7 @@ export default async function ({ selected: interfaceIds }) {
 					disabled: () => !vm.configsTable.data.set.size,
 					async onClick() {
 						const [project_id] = Array.from(vm.configsTable.data.set);
-						await _api.yapi.interface_copy_to_project({
+						await _api.xspace.interface_copy_to_project({
 							interfaceIds,
 							project_id
 						});

@@ -27,7 +27,7 @@ export default async function ({ categoryInfo, project_id, get_interface_list })
 					apiMethod: {
 						value: "GET",
 						itemType: "xItemSelect",
-						options: _opts.yapi.httpMethod
+						options: _opts.xspace.httpMethod
 					},
 					catid: {
 						value: "",
@@ -115,7 +115,7 @@ export default async function ({ categoryInfo, project_id, get_interface_list })
 			async upsertOne() {
 				const { catid, title, path, apiMethod } = this.cptFormData;
 				try {
-					const res = await _api.yapi.interface_add({
+					const res = await _api.xspace.interface_add({
 						project_id,
 						catid,
 						title,

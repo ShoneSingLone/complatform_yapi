@@ -105,7 +105,7 @@ export default async function () {
 				form: defItems({
 					method: {
 						itemType: "xItemSelect",
-						options: _opts.yapi.httpMethod
+						options: _opts.xspace.httpMethod
 					},
 					catid: {
 						label: i18n("接口分类"),
@@ -308,7 +308,7 @@ export default async function () {
 				_.$loading(true);
 				try {
 					const formData = this.formData;
-					const { data } = await _api.yapi.interface_up(formData);
+					const { data } = await _api.xspace.interface_up(formData);
 					if (data) {
 						this.inject_project.get_interface_list();
 						this.inject_interface_section_interface_detail.updateInterface();

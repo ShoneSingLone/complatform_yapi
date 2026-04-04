@@ -123,7 +123,7 @@ export default async function () {
 						icon: projectData.icon,
 						color: projectData.color
 					};
-					await _api.yapi.projectAddFollow(param);
+					await _api.xspace.projectAddFollow(param);
 				} catch (error) {
 					_.$msgError(error);
 				} finally {
@@ -133,7 +133,7 @@ export default async function () {
 			unfollow: _.debounce(async function () {
 				try {
 					const id = this.projectData._id;
-					await _api.yapi.projectDelFollow(id);
+					await _api.xspace.projectDelFollow(id);
 				} catch (error) {
 					_.$msgError(error);
 				} finally {

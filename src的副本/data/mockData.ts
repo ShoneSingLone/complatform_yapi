@@ -1,0 +1,92 @@
+import { FileNode } from '../types';
+
+export const mockFileSystem: FileNode = {
+  id: 'root',
+  name: 'Home',
+  type: 'folder',
+  updatedAt: '2026-03-31T10:00:00Z',
+  path: '/Home',
+  children: [
+    {
+      id: 'docs',
+      name: 'Documents',
+      type: 'folder',
+      updatedAt: '2026-03-30T14:20:00Z',
+      path: '/Home/Documents',
+      children: [
+        {
+          id: 'report',
+          name: 'Q1_Report.pdf',
+          type: 'document',
+          size: 1024 * 1024 * 2.5,
+          updatedAt: '2026-03-29T09:15:00Z',
+          path: '/Home/Documents/Q1_Report.pdf',
+          content: 'Quarterly report for Q1 2026. Revenue increased by 15%.',
+        },
+        {
+          id: 'notes',
+          name: 'Meeting_Notes.txt',
+          type: 'document',
+          size: 1024 * 15,
+          updatedAt: '2026-03-28T16:45:00Z',
+          path: '/Home/Documents/Meeting_Notes.txt',
+          content: 'Action items:\n1. Follow up with marketing.\n2. Review budget.',
+        },
+      ],
+    },
+    {
+      id: 'pics',
+      name: 'Pictures',
+      type: 'folder',
+      updatedAt: '2026-03-25T11:10:00Z',
+      path: '/Home/Pictures',
+      children: [
+        {
+          id: 'vacation',
+          name: 'Vacation.jpg',
+          type: 'image',
+          size: 1024 * 1024 * 4.2,
+          updatedAt: '2026-03-20T08:30:00Z',
+          path: '/Home/Pictures/Vacation.jpg',
+          url: 'https://picsum.photos/seed/vacation/800/600',
+        },
+        {
+          id: 'profile',
+          name: 'Profile.png',
+          type: 'image',
+          size: 1024 * 1024 * 1.1,
+          updatedAt: '2026-03-22T14:00:00Z',
+          path: '/Home/Pictures/Profile.png',
+          url: 'https://picsum.photos/seed/profile/400/400',
+        },
+      ],
+    },
+    {
+      id: 'projects',
+      name: 'Projects',
+      type: 'folder',
+      updatedAt: '2026-03-31T09:00:00Z',
+      path: '/Home/Projects',
+      children: [
+        {
+          id: 'app',
+          name: 'App.tsx',
+          type: 'code',
+          size: 1024 * 3,
+          updatedAt: '2026-03-31T09:00:00Z',
+          path: '/Home/Projects/App.tsx',
+          content: 'import React from "react";\n\nexport default function App() {\n  return <div>Hello World</div>;\n}',
+        },
+        {
+          id: 'styles',
+          name: 'styles.css',
+          type: 'code',
+          size: 1024 * 1.5,
+          updatedAt: '2026-03-30T10:00:00Z',
+          path: '/Home/Projects/styles.css',
+          content: 'body {\n  margin: 0;\n  padding: 0;\n  font-family: sans-serif;\n}',
+        },
+      ],
+    },
+  ],
+};

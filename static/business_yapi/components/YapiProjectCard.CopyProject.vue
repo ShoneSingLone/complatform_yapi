@@ -70,9 +70,9 @@ export default async function ({ onOk, projectData }) {
 		methods: {
 			async copyProject(newProjectName) {
 				const id = projectData._id;
-				let { data } = await _api.yapi.getProjectById(id);
+				let { data } = await _api.xspace.getProjectById(id);
 				data = _.merge({}, data, { name: newProjectName }, { preName: data.name });
-				await _api.yapi.copyProject(data);
+				await _api.xspace.copyProject(data);
 				_.$msg("项目复制成功");
 				this.$emit("change");
 			},

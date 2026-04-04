@@ -47,7 +47,7 @@ export default async function () {
 					};
 				});
 
-				let resToMerge = await _api.yapi.log_update({
+				let resToMerge = await _api.xspace.log_update({
 					type: "project",
 					typeid,
 					apis: apiCollections
@@ -93,7 +93,7 @@ export default async function () {
 				async handleImport(file) {
 					try {
 						const json = await _.$readFileAsText(file);
-						const res = await _api.yapi.getSwaggerDataByUrl({
+						const res = await _api.xspace.getSwaggerDataByUrl({
 							type: cpt_import_type.value,
 							json
 						});
@@ -111,7 +111,7 @@ export default async function () {
 						return;
 					}
 
-					const res = await _api.yapi.getSwaggerDataByUrl({
+					const res = await _api.xspace.getSwaggerDataByUrl({
 						url: encodeURI(encodeURI(vm.swaggerURL.value)),
 						type: cpt_import_type.value
 					});

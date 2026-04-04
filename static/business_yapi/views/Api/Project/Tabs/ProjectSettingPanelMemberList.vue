@@ -125,7 +125,7 @@ export default async function () {
 					url: "@/views/Api/Group/Section/MemberList/GroupSectionMemberList.AddMember.vue",
 					parent: vm,
 					async onOk({ member_uids, role, dialogVm }) {
-						const { data } = await _api.yapi.project_add_member({
+						const { data } = await _api.xspace.project_add_member({
 							id: vm.APP.cptProject?._id,
 							member_uids,
 							role
@@ -141,7 +141,7 @@ export default async function () {
 			},
 			async removeMember(row) {
 				const vm = this;
-				const { data } = await _api.yapi.project_del_member({
+				const { data } = await _api.xspace.project_del_member({
 					id: vm.APP.cptProject._id,
 					member_uid: row.uid
 				});
@@ -154,7 +154,7 @@ export default async function () {
 				_.$loading(true);
 				try {
 					if (role) {
-						await _api.yapi.project_change_member_role({
+						await _api.xspace.project_change_member_role({
 							id: group_id,
 							member_uid: uid,
 							role

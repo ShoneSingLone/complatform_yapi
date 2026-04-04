@@ -29,7 +29,7 @@ export default async function () {
 			const vm = this;
 			vm.doSearch = _.debounce(async params => {
 				try {
-					const { data } = await _api.yapi.userSearch(params);
+					const { data } = await _api.xspace.userSearch(params);
 					this.optionArray = data;
 				} catch (error) {
 					_.$msgError(error);

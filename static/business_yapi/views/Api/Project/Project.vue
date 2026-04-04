@@ -119,7 +119,7 @@ export default async function () {
 
 			async get_interface_list() {
 				const vm = this;
-				const { data } = await _api.yapi.apiInterfaceListMenu(this.APP.cptProjectId);
+				const { data } = await _api.xspace.apiInterfaceListMenu(this.APP.cptProjectId);
 				if (data) {
 					const all_category = data.map(category => {
 						const children = _.map(category.list, i => {

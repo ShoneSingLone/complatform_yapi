@@ -69,7 +69,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		async request(endpoint, data, options = {}) {
 			try {
 				const url = `${this.config.apiBaseUrl}${endpoint}`;
-				const response = await _api.yapi.aiRequest({
+				const response = await _api.xspace.aiRequest({
 					url,
 					data,
 					method: options.method || "POST",

@@ -250,7 +250,7 @@ export default async function () {
 				});
 				const {
 					data: { chunks: uploadedChunkArray, file: isMergeFile }
-				} = await _api.yapi.resourceCloudDiskCheckChunks({
+				} = await _api.xspace.resourceCloudDiskCheckChunks({
 					md5,
 					fileName: name,
 					fileId: this.APP.fileId
@@ -326,7 +326,7 @@ export default async function () {
 								chunk,
 								name
 							});
-							const { data } = await _api.yapi.resourceCloudDiskShardUpload({
+							const { data } = await _api.xspace.resourceCloudDiskShardUpload({
 								formData,
 								callback
 							});
@@ -349,7 +349,7 @@ export default async function () {
 									chunk,
 									name
 								});
-								const { data } = await _api.yapi.resourceCloudDiskShardUpload({
+								const { data } = await _api.xspace.resourceCloudDiskShardUpload({
 									formData,
 									callback
 								});
@@ -525,7 +525,7 @@ export default async function () {
 			async makeNewDir(name) {
 				_.$loading(true);
 				try {
-					await _api.yapi.resourceCloudDiskDir({
+					await _api.xspace.resourceCloudDiskDir({
 						fileId: this.APP.fileId || 0,
 						name
 					});

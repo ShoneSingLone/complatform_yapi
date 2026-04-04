@@ -125,7 +125,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			// 获取用户信息
 			async fetchUserInfo() {
 				try {
-					const { data } = await _api.yapi.getUserInfo();
+					const { data } = await _api.xspace.getUserInfo();
 					this.userInfo = data;
 				} catch (error) {
 					console.error("获取用户信息失败:", error);
@@ -135,7 +135,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			// 获取资源树数据
 			async fetchResources() {
 				try {
-					const { data } = await _api.yapi.getResourceTree();
+					const { data } = await _api.xspace.getResourceTree();
 					this.resources = this.processResources(data);
 				} catch (error) {
 					console.error("获取资源树失败:", error);

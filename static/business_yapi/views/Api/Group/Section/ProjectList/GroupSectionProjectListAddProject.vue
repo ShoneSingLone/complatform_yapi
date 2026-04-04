@@ -188,7 +188,7 @@ export default async function ({ onOk }) {
 								value: group_id
 							});
 							const group_name = group.label;
-							const { data } = await _api.yapi.project_add({
+							const { data } = await _api.xspace.project_add({
 								name,
 								basepath,
 								group_id,

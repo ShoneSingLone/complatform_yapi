@@ -182,7 +182,7 @@ async function runTask({ task, message, commit_hash, ref_trigger_this_job }) {
 		task_log.push(
 			`- ***${time}***  ${xU._.isObject(msg) ? JSON.stringify(msg, null, 2) : String(msg)}`
 		);
-		const currentSocket = global.APP.socket.yapi.socket;
+		const currentSocket = global.APP.socket.xspace.socket;
 		if (currentSocket) {
 			/* to all online users */
 			currentSocket.broadcast(socket_const.task_run_output, { task_id, msg });

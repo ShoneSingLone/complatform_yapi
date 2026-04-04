@@ -162,7 +162,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			// 获取未读消息数
 			async fetchUnreadCount() {
 				try {
-					const { data } = await _api.yapi.getUnreadCount();
+					const { data } = await _api.xspace.getUnreadCount();
 					this.unreadCount = data.count || 0;
 				} catch (error) {
 					console.error("获取未读消息失败:", error);

@@ -89,14 +89,14 @@ export default async function ({ categoryInfo, project_id, get_interface_list, a
 				const { name, desc } = this.cptFormData;
 				try {
 					if (isUpdate) {
-						await _api.yapi.interfaceUpCat({
+						await _api.xspace.interfaceUpCat({
 							...categoryInfo,
 							catid: categoryInfo._id,
 							name,
 							desc
 						});
 					} else {
-						await _api.yapi.interface_add_cat({
+						await _api.xspace.interface_add_cat({
 							project_id,
 							name,
 							desc

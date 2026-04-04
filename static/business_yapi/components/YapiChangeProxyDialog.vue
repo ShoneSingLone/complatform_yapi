@@ -94,7 +94,7 @@ export default async function ({ selected, callBack }) {
 						params.res_body_type = this.cptFormData.res_body_type;
 					}
 
-					return await _api.yapi.interface_up(params);
+					return await _api.xspace.interface_up(params);
 				} catch (error) {
 					_.$msgError("修改失败");
 				} finally {
