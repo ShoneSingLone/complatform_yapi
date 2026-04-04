@@ -367,7 +367,7 @@ components/DesktopWorkspace/
 
 ### 与现有系统集成
 
-- 复用现有的 `_api.yapi` API 调用方式
+- 复用现有的 `_api.xspace` API 调用方式
 
 - 复用现有的文件上传功能
 

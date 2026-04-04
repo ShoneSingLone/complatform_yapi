@@ -1,559 +1,312 @@
 <template>
-	<div class="desktop-workspace">
-		<!-- 顶部状态栏 -->
-		<MenuBar
-			:currentPath="currentPath"
-			:userInfo="userInfo"
-			@search="handleSearch"
-			@notification="handleNotification" />
+  <div 
+    class="desktop-workspace"
+    :style="desktopBackgroundStyle"
+    @dragover="onDragOver"
+    @drop="onDrop"
+  >
+    <!-- Top Bar -->
+    <MenuBar class="desktop-workspace__top-bar" @open-background-settings="openBackgroundSettings" />
 
-		<!-- 主工作区 -->
-		<div class="workspace-main">
-			<!-- 左侧资源树 -->
-			<ResourceTree
-				:resources="resources"
-				:expandedKeys="expandedKeys"
-				:selectedKey="selectedKey"
-				@select="handleResourceSelect"
-				@expand="handleResourceExpand"
-				@open="handleResourceOpen" />
+    <!-- Desktop Area -->
+    <div class="desktop-workspace__desktop">
+      <!-- Background Logo -->
+      <div class="desktop-workspace__desktop__background">
+        <svg class="icon" style="width: 400px; height: 400px; fill: currentColor; opacity: 0.1;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="currentColor"/>
+          <path d="M874.038 874.038c83.736-83.736 132.382-189.26 145.98-298.326l-179.596-179.596-24.834 33.326-144.284-144.284-274.23 233.738-10.344 8.044-218.388 106.654 388.42 388.42c115.74-10.096 228.698-59.398 317.276-147.976z" fill="currentColor"/>
+          <path d="M714.09 687.794c95.666 0 173.218-77.552 173.218-173.218s-77.552-173.218-173.218-173.218c-3.29 0-6.55 0.11-9.796 0.294-23.7-67.422-87.898-115.77-163.422-115.77-66.554 0-124.304 37.554-153.314 92.604a100.812 100.812 0 0 0-34.34-5.996c-51.858 0-94.566 39.07-100.352 89.382-66.23 13.108-116.17 71.504-116.17 141.58 0 79.72 64.626 144.35 144.35 144.35h433.046v-0.008z" fill="currentColor"/>
+          <path d="M714.09 341.354c-3.29 0-6.55 0.11-9.796 0.294-23.7-67.422-87.898-115.77-163.422-115.77-0.238 0-0.472 0.01-0.71 0.014v461.906h173.932c95.666 0 173.218-77.552 173.218-173.218-0.004-95.67-77.556-173.226-173.222-173.226z" fill="currentColor"/>
+          <path d="M541.254 531.118l-108.606-108.6c-16.164-16.156-42.35-16.156-58.512 0l-108.606 108.6c-16.16 16.156-16.16 42.352 0 58.512 16.152 16.154 42.346 16.16 58.512 0l37.978-37.978v187.902c0 22.848 18.526 41.374 41.374 41.374 22.848 0 41.374-18.526 41.374-41.374v-187.902l37.978 37.974a41.236 41.236 0 0 0 29.254 12.12c10.588 0 21.18-4.04 29.254-12.12 16.16-16.154 16.16-42.354 0-58.508z" fill="currentColor"/>
+          <path d="M541.254 531.118l-108.606-108.6a41.234 41.234 0 0 0-29.54-12.102v370.498c0.096 0 0.19 0.014 0.286 0.014 22.848 0 41.374-18.526 41.374-41.374v-187.902l37.978 37.974a41.236 41.236 0 0 0 29.254 12.12c10.588 0 21.18-4.04 29.254-12.12 16.16-16.154 16.16-42.354 0-58.508z" fill="currentColor"/>
+        </svg>
+      </div>
 
-			<!-- 桌面区域 -->
-			<div class="desktop-area" ref="desktopArea">
-				<!-- 桌面快捷方式 -->
-				<DesktopIcon
-					v-for="shortcut in desktopShortcuts"
-					:key="shortcut.id"
-					:shortcut="shortcut"
-					@open="handleShortcutOpen"
-					@unpin="handleShortcutUnpin" />
+      <!-- Desktop Icons Grid -->
+      <div class="desktop-workspace__desktop__icons">
+        <DesktopIcon 
+          v-for="shortcut in system.shortcuts" 
+          :key="shortcut.id" 
+          :app="shortcut" 
+          @click="system.openApp(shortcut.appId, false, shortcut.data)"
+          @unpin="system.removeShortcut(shortcut.id)"
+        />
+      </div>
 
-				<!-- 窗口管理器 -->
-				<WindowManager
-					:windows="windows"
-					:activeWindowId="activeWindowId"
-					@focus="handleWindowFocus"
-					@minimize="handleWindowMinimize"
-					@maximize="handleWindowMaximize"
-					@close="handleWindowClose"
-					@pin="handleWindowPin" />
-			</div>
-		</div>
+      <!-- Windows Layer -->
+      <div class="desktop-workspace__desktop__windows">
+        <transition-group name="window-fade">
+          <Window 
+            v-for="win in currentDesktopWindows" 
+            :key="win.id" 
+            :window="win"
+            v-show="!win.isMinimized"
+          />
+        </transition-group>
+      </div>
 
-		<!-- 底部 Dock 栏 -->
-		<Dock
-			:apps="dockApps"
-			:windowGroups="windowGroups"
-			@launch="handleAppLaunch"
-			@windowFocus="handleDockWindowFocus" />
-	</div>
+      <!-- Bottom Dock -->
+      <div class="desktop-workspace__desktop__dock">
+        <Dock />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-	const [MenuBar, ResourceTree, WindowManager, DesktopIcon, Dock] =
-		await _.$importVue([
-			"@/components/DesktopWorkspace/MenuBar.vue",
-			"@/components/DesktopWorkspace/ResourceTree.vue",
-			"@/components/DesktopWorkspace/WindowManager.vue",
-			"@/components/DesktopWorkspace/DesktopIcon.vue",
-			"@/components/DesktopWorkspace/Dock.vue"
-		]);
+  const [MenuBar, DesktopIcon, Dock, Window, SystemStore, BackgroundSettings] = await _.$importVue([
+    "@/components/DesktopWorkspace/MenuBar.vue",
+    "@/components/DesktopWorkspace/DesktopIcon.vue",
+    "@/components/DesktopWorkspace/Dock.vue",
+    "@/components/DesktopWorkspace/Window.vue",
+    "@/components/DesktopWorkspace/store/SystemStore.vue",
+    "@/components/DesktopWorkspace/BackgroundSettings.vue"
+  ]);
 
-	return {
-		components: {
-			MenuBar,
-			ResourceTree,
-			WindowManager,
-			DesktopIcon,
-			Dock
-		},
-		data() {
-			return {
-				// 当前路径
-				currentPath: "/",
-				// 用户信息
-				userInfo: null,
-				// 资源树数据
-				resources: [],
-				// 展开的节点 keys
-				expandedKeys: [],
-				// 选中的节点 key
-				selectedKey: null,
-				// 桌面快捷方式
-				desktopShortcuts: [],
-				// 窗口列表
-				windows: [],
-				// 当前活动窗口 ID
-				activeWindowId: null,
-				// Dock 应用列表
-				dockApps: [],
-				// 窗口分组（用于 Dock 堆叠）
-				windowGroups: {}
-			};
-		},
-		computed: {
-			// 窗口按资源类型分组
-			windowGroups() {
-				const groups = {};
-				this.windows.forEach(window => {
-					const type = window.resourceType;
-					if (!groups[type]) {
-						groups[type] = [];
-					}
-					groups[type].push(window);
-				});
-				return groups;
-			}
-		},
-		mounted() {
-			this.initWorkspace();
-		},
-		methods: {
-			// 初始化工作区
-			async initWorkspace() {
-				// 获取用户信息
-				await this.fetchUserInfo();
-				// 获取资源树数据
-				await this.fetchResources();
-				// 获取桌面快捷方式
-				await this.fetchDesktopShortcuts();
-				// 初始化 Dock 应用
-				this.initDockApps();
-			},
-
-			// 获取用户信息
-			async fetchUserInfo() {
-				try {
-					const { data } = await _api.xspace.getUserInfo();
-					this.userInfo = data;
-				} catch (error) {
-					console.error("获取用户信息失败:", error);
-				}
-			},
-
-			// 获取资源树数据
-			async fetchResources() {
-				try {
-					const { data } = await _api.xspace.getResourceTree();
-					this.resources = this.processResources(data);
-				} catch (error) {
-					console.error("获取资源树失败:", error);
-					// 使用模拟数据
-					this.resources = this.getMockResources();
-				}
-			},
-
-			// 处理资源数据
-			processResources(data) {
-				// 添加图标和类型信息
-				return data.map(item => ({
-					...item,
-					icon: this.getResourceIcon(item.type),
-					children: item.children
-						? this.processResources(item.children)
-						: null
-				}));
-			},
-
-			// 获取资源图标
-			getResourceIcon(type) {
-				const iconMap = {
-					group: "folder",
-					project: "project",
-					api: "api",
-					doc: "document",
-					member: "user",
-					settings: "setting",
-					folder: "folder",
-					file: "file"
-				};
-				return iconMap[type] || "file";
-			},
-
-			// 获取模拟资源数据
-			getMockResources() {
-				return [
-					{
-						id: "group-1",
-						name: "Backend Team",
-						type: "group",
-						icon: "folder",
-						children: [
-							{
-								id: "project-1",
-								name: "Main API",
-								type: "project",
-								icon: "project",
-								children: [
-									{
-										id: "folder-api",
-										name: "API Management",
-										type: "folder",
-										icon: "folder",
-										children: [
-											{
-												id: "api-1",
-												name: "GET /users",
-												type: "api",
-												icon: "api",
-												metadata: {
-													method: "GET",
-													url: "/users"
-												}
-											},
-											{
-												id: "api-2",
-												name: "POST /users",
-												type: "api",
-												icon: "api",
-												metadata: {
-													method: "POST",
-													url: "/users"
-												}
-											}
-										]
-									},
-									{
-										id: "folder-doc",
-										name: "Documentation",
-										type: "folder",
-										icon: "folder",
-										children: [
-											{
-												id: "doc-1",
-												name: "API Guide",
-												type: "doc",
-												icon: "document"
-											}
-										]
-									},
-									{
-										id: "members-1",
-										name: "Members",
-										type: "member",
-										icon: "user"
-									},
-									{
-										id: "settings-1",
-										name: "Settings",
-										type: "settings",
-										icon: "setting"
-									}
-								]
-							}
-						]
-					},
-					{
-						id: "global-resources",
-						name: "Global Resources",
-						type: "folder",
-						icon: "folder",
-						isGlobal: true,
-						children: [
-							{
-								id: "data-models",
-								name: "Data Models",
-								type: "folder",
-								icon: "folder",
-								children: [
-									{
-										id: "schema-1",
-										name: "UserSchema.json",
-										type: "file",
-										icon: "file"
-									}
-								]
-							}
-						]
-					}
-				];
-			},
-
-			// 获取桌面快捷方式
-			async fetchDesktopShortcuts() {
-				// 从本地存储或 API 获取
-				const saved = localStorage.getItem("desktop_shortcuts");
-				if (saved) {
-					this.desktopShortcuts = JSON.parse(saved);
-				}
-			},
-
-			// 初始化 Dock 应用
-			initDockApps() {
-				this.dockApps = [
-					{ id: "finder", name: "Finder", icon: "folder", isHidden: false },
-					{ id: "launcher", name: "Launcher", icon: "apps", isHidden: false }
-				];
-			},
-
-			// 处理资源选择
-			handleResourceSelect(resource) {
-				this.selectedKey = resource.id;
-				this.currentPath = resource.path || "/";
-			},
-
-			// 处理资源展开
-			handleResourceExpand(keys) {
-				this.expandedKeys = keys;
-			},
-
-			// 处理资源打开（打开新窗口）
-			handleResourceOpen(resource) {
-				// 检查是否已打开
-				const existingWindow = this.windows.find(
-					w => w.resourceId === resource.id
-				);
-
-				if (existingWindow) {
-					// 聚焦已打开的窗口
-					this.handleWindowFocus(existingWindow.id);
-					return;
-				}
-
-				// 创建新窗口
-				const newWindow = {
-					id: _.$genId(),
-					resourceId: resource.id,
-					resourceType: resource.type,
-					title: resource.name,
-					icon: resource.icon,
-					isMinimized: false,
-					isMaximized: true, // 默认全屏
-					isFocused: true,
-					position: { x: 0, y: 0 },
-					size: { width: "100%", height: "100%" },
-					zIndex: this.getNextZIndex(),
-					data: resource
-				};
-
-				// 更新其他窗口为非聚焦状态
-				this.windows.forEach(w => {
-					w.isFocused = false;
-				});
-
-				this.windows.push(newWindow);
-				this.activeWindowId = newWindow.id;
-
-				// 自动展开资源树到当前资源
-				this.expandToResource(resource.id);
-			},
-
-			// 获取下一个 z-index
-			getNextZIndex() {
-				const maxZ = Math.max(0, ...this.windows.map(w => w.zIndex));
-				return maxZ + 1;
-			},
-
-			// 展开资源树到指定资源
-			expandToResource(resourceId) {
-				// 查找资源路径
-				const path = this.findResourcePath(resourceId);
-				if (path) {
-					// 添加所有父节点到展开列表
-					path.forEach(node => {
-						if (!this.expandedKeys.includes(node.id)) {
-							this.expandedKeys.push(node.id);
-						}
-					});
-				}
-			},
-
-			// 查找资源路径
-			findResourcePath(resourceId, resources = this.resources, path = []) {
-				for (const resource of resources) {
-					if (resource.id === resourceId) {
-						return [...path, resource];
-					}
-					if (resource.children) {
-						const result = this.findResourcePath(
-							resourceId,
-							resource.children,
-							[...path, resource]
-						);
-						if (result) return result;
-					}
-				}
-				return null;
-			},
-
-			// 处理窗口聚焦
-			handleWindowFocus(windowId) {
-				this.windows.forEach(w => {
-					w.isFocused = w.id === windowId;
-					if (w.id === windowId) {
-						w.isMinimized = false;
-						w.zIndex = this.getNextZIndex();
-					}
-				});
-				this.activeWindowId = windowId;
-			},
-
-			// 处理窗口最小化
-			handleWindowMinimize(windowId) {
-				const window = this.windows.find(w => w.id === windowId);
-				if (window) {
-					window.isMinimized = true;
-					window.isFocused = false;
-				}
-				// 更新活动窗口
-				const visibleWindows = this.windows.filter(w => !w.isMinimized);
-				if (visibleWindows.length > 0) {
-					this.activeWindowId = visibleWindows[visibleWindows.length - 1].id;
-				} else {
-					this.activeWindowId = null;
-				}
-			},
-
-			// 处理窗口最大化
-			handleWindowMaximize(windowId) {
-				const window = this.windows.find(w => w.id === windowId);
-				if (window) {
-					window.isMaximized = !window.isMaximized;
-				}
-			},
-
-			// 处理窗口关闭
-			handleWindowClose(windowId) {
-				const index = this.windows.findIndex(w => w.id === windowId);
-				if (index > -1) {
-					this.windows.splice(index, 1);
-				}
-				// 更新活动窗口
-				if (this.activeWindowId === windowId) {
-					const visibleWindows = this.windows.filter(w => !w.isMinimized);
-					this.activeWindowId =
-						visibleWindows.length > 0
-							? visibleWindows[visibleWindows.length - 1].id
-							: null;
-				}
-			},
-
-			// 处理窗口 Pin
-			handleWindowPin(windowId) {
-				const window = this.windows.find(w => w.id === windowId);
-				if (!window) return;
-
-				// 检查是否已存在
-				const existingIndex = this.desktopShortcuts.findIndex(
-					s => s.resourceId === window.resourceId
-				);
-
-				if (existingIndex === -1) {
-					// 添加新快捷方式
-					const shortcut = {
-						id: _.$genId(),
-						resourceId: window.resourceId,
-						name: window.title,
-						icon: window.icon,
-						position: this.getNextDesktopPosition()
-					};
-					this.desktopShortcuts.push(shortcut);
-					this.saveDesktopShortcuts();
-				}
-			},
-
-			// 获取下一个桌面位置
-			getNextDesktopPosition() {
-				const gridSize = 80;
-				const cols = 4;
-				const index = this.desktopShortcuts.length;
-				return {
-					x: (index % cols) * gridSize + 20,
-					y: Math.floor(index / cols) * gridSize + 20
-				};
-			},
-
-			// 保存桌面快捷方式
-			saveDesktopShortcuts() {
-				localStorage.setItem(
-					"desktop_shortcuts",
-					JSON.stringify(this.desktopShortcuts)
-				);
-			},
-
-			// 处理快捷方式打开
-			handleShortcutOpen(shortcut) {
-				// 查找资源
-				const resource = this.findResourceById(shortcut.resourceId);
-				if (resource) {
-					this.handleResourceOpen(resource);
-				}
-			},
-
-			// 根据 ID 查找资源
-			findResourceById(resourceId, resources = this.resources) {
-				for (const resource of resources) {
-					if (resource.id === resourceId) {
-						return resource;
-					}
-					if (resource.children) {
-						const result = this.findResourceById(
-							resourceId,
-							resource.children
-						);
-						if (result) return result;
-					}
-				}
-				return null;
-			},
-
-			// 处理快捷方式取消固定
-			handleShortcutUnpin(shortcutId) {
-				const index = this.desktopShortcuts.findIndex(s => s.id === shortcutId);
-				if (index > -1) {
-					this.desktopShortcuts.splice(index, 1);
-					this.saveDesktopShortcuts();
-				}
-			},
-
-			// 处理搜索
-			handleSearch(query) {
-				console.log("搜索:", query);
-				// TODO: 实现搜索功能
-			},
-
-			// 处理通知
-			handleNotification() {
-				console.log("打开通知中心");
-				// TODO: 实现通知中心
-			},
-
-			// 处理应用启动
-			handleAppLaunch(appId) {
-				console.log("启动应用:", appId);
-				// TODO: 实现应用启动
-			},
-
-			// 处理 Dock 窗口聚焦
-			handleDockWindowFocus(windowId) {
-				this.handleWindowFocus(windowId);
-			}
-		}
-	};
+  return {
+    components: {
+      MenuBar,
+      DesktopIcon,
+      Dock,
+      Window
+    },
+    data() {
+      return {
+        system: SystemStore
+      };
+    },
+    computed: {
+      desktopBackgroundStyle() {
+        const currentDesktop = this.system.desktops.find(d => d.id === this.system.currentDesktopId);
+        if (!currentDesktop || !currentDesktop.background) {
+          return {};
+        }
+        
+        const { type, url, color, opacity } = currentDesktop.background;
+        const style = {
+          opacity: opacity
+        };
+        
+        if (type === 'custom' && url) {
+          style.backgroundImage = `url(${url})`;
+          style.backgroundSize = 'cover';
+          style.backgroundPosition = 'center';
+          style.backgroundRepeat = 'no-repeat';
+        } else if (type === 'color') {
+          style.backgroundColor = color;
+        } else {
+          style.backgroundColor = '#f5f8f7';
+        }
+        
+        return style;
+      },
+      currentDesktopWindows() {
+        return this.system.openWindows.filter(win => win.desktopId === this.system.currentDesktopId);
+      }
+    },
+    methods: {
+      onDragOver(e) {
+        e.preventDefault();
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = 'move';
+        }
+      },
+      onDrop(e) {
+        e.preventDefault();
+        const action = e.dataTransfer?.getData('action');
+        const appId = e.dataTransfer?.getData('text/plain');
+        
+        if (action === 'unpin' && appId) {
+          this.system.unpinApp(appId);
+        }
+      },
+      openBackgroundSettings() {
+        _.$openModal({
+          title: '桌面背景设置',
+          url: '@/components/DesktopWorkspace/BackgroundSettings.vue',
+          parent: this,
+          desktopId: this.system.currentDesktopId,
+          onSave: (background) => {
+            console.log('背景设置已保存:', background);
+          }
+        });
+      }
+    },
+    mounted() {
+      // 初始化系统状态
+      this.system.init();
+    }
+  };
 }
 </script>
 
 <style lang="less">
 .desktop-workspace {
-	width: 100%;
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
-	background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-	overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f5f8f7;
+  position: relative;
+  overflow: hidden;
 
-	.workspace-main {
-		flex: 1;
-		display: flex;
-		overflow: hidden;
-	}
+  &__top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
 
-	.desktop-area {
-		flex: 1;
-		position: relative;
-		overflow: hidden;
-		padding: 20px;
-	}
+  &__desktop {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding-top: 40px; // 为顶部栏留出空间
+
+    &__background {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    &__icons {
+      position: absolute;
+      top: 60px;
+      left: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 80px);
+      gap: 20px;
+      z-index: 10;
+    }
+
+    &__windows {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100;
+    }
+
+    &__dock {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
+  }
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+  .desktop-workspace {
+    &__desktop {
+      &__icons {
+        grid-template-columns: repeat(auto-fill, 60px);
+        gap: 15px;
+      }
+
+      &__dock {
+        bottom: 10px;
+      }
+    }
+  }
+
+  .window {
+    &__title-bar {
+      height: 36px;
+
+      &__left {
+        &__icon {
+          width: 20px;
+          height: 20px;
+        }
+
+        &__title {
+          font-size: 12px;
+        }
+      }
+
+      &__right {
+        &__button {
+          width: 28px;
+          height: 28px;
+        }
+      }
+    }
+  }
+
+  .dock {
+    min-width: 300px;
+    height: 50px;
+
+    &__item {
+      &__icon {
+        width: 36px;
+        height: 36px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .desktop-workspace {
+    &__desktop {
+      &__icons {
+        grid-template-columns: repeat(auto-fill, 50px);
+        gap: 10px;
+      }
+    }
+  }
+
+  .window {
+    &__title-bar {
+      height: 32px;
+
+      &__left {
+        &__icon {
+          width: 16px;
+          height: 16px;
+        }
+
+        &__title {
+          font-size: 10px;
+        }
+      }
+
+      &__right {
+        &__button {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+  }
+
+  .dock {
+    min-width: 250px;
+    height: 40px;
+
+    &__item {
+      &__icon {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  }
+}
+
+.window-fade-enter-active,
+.window-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.window-fade-enter,
+.window-fade-leave-to {
+  opacity: 0;
 }
 </style>

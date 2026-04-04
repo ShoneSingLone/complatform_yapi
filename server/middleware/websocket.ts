@@ -203,7 +203,7 @@ const middlewareWebsocket = () => async (ctx, next) => {
 };
 
 exports.appSetupWebsocket = function (app) {
-	const { namespace_yapi } = require("./websocket.ns.yapi");
+	const { namespace_yapi } = require("./websocket.ns.xspace");
 	namespace_yapi({ app, ioUtils });
 };
 

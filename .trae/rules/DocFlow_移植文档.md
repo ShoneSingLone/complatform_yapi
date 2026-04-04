@@ -149,7 +149,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 1. **创建 AI 服务模块**：`@/utils/ai.vue`（使用 .vue 格式，符合项目规范）
 2. **实现 SSE 客户端**：处理流式响应
 3. **添加 AI 工具栏**：编辑器顶部的 AI 功能入口
-4. **集成现有 API 系统**：复用 `_api.yapi` 调用方式
+4. **集成现有 API 系统**：复用 `_api.xspace` 调用方式
 5. **遵循前端代码规则**：使用 `export default async function ({ PRIVATE_GLOBAL })` 结构
 
 ### 3.3 实时协作实现（可选）
@@ -197,7 +197,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 1. 创建 `TiptapEditor.vue` 核心组件（使用 `export default async function ({ PRIVATE_GLOBAL })` 结构）
 2. 实现基础块类型：文本、标题、列表、代码
-3. 集成图片上传功能（复用现有的 `_api.yapi` 上传接口）
+3. 集成图片上传功能（复用现有的 `_api.xspace` 上传接口）
 4. 使用 `_.$importVue()` 动态加载 Tiptap 核心模块
 
 **阶段 2：高级功能**

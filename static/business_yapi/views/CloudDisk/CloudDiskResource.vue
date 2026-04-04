@@ -367,7 +367,7 @@ export default async function () {
 				this.APP.triggerUploadFileChange(info);
 				const { chunkTotal, uploaded, name } = info;
 				if (chunkTotal === Object.keys(uploaded).length) {
-					_api.yapi
+					_api.xspace
 						.resourceCloudDiskCheckChunks({
 							md5,
 							fileName: name,
