@@ -396,7 +396,7 @@ const middlewareMockServer = () => async (ctx, next) => {
 				return (ctx.body = xU.$response(
 					null,
 					404,
-					`当前使用yAPI代理，${ctx.method} ${REAL_URL_PATH}，但API不存在。请确认GET?POST?URL?是否正确`
+					`当前使用xspace代理，${ctx.method} ${REAL_URL_PATH}，但API不存在。请确认GET?POST?URL?是否正确`
 				));
 			}
 			interface_array = [await orm.interface.get(findInterface._id)];
@@ -418,13 +418,14 @@ const middlewareMockServer = () => async (ctx, next) => {
 		}
 
 		/* 是否启用代理，在局域网中访问其他主机 */
-		const isRunWithYapiProxy = (() => {
+		const isRunWithxspaceProxy = (() => {
 			return (
-				current_request_interface_data_in_xspace_db?.isProxy || ctx.headers["xspace-run-test"]
+				current_request_interface_data_in_xspace_db?.isProxy ||
+				ctx.headers["xspace-run-test"]
 			);
 		})();
 
-		if (isRunWithYapiProxy) {
+		if (isRunWithxspaceProxy) {
 			const ENV_VAR = ((/* 获取对应的代理环境 */) => {
 				return xU._.find(project.env, i => {
 					try {

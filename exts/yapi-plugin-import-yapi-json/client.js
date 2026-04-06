@@ -30,7 +30,7 @@ function importData(importDataModule) {
 	importDataModule.json = {
 		name: "json",
 		run: run,
-		desc: "YApi接口 json数据导入"
+		desc: "xspace接口 json数据导入"
 	};
 }
 

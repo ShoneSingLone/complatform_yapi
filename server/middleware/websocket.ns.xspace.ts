@@ -9,13 +9,13 @@ const ws_event = {
 	}
 };
 
-function namespace_yapi({ app, ioUtils }) {
+function namespace_xspace({ app, ioUtils }) {
 	const { msg } = ioUtils;
-	const appSocket = new KoaSocket("/yapi");
+	const appSocket = new KoaSocket("/xspace");
 	appSocket.attach(app);
 	global.APP.socket = global.APP.socket || {};
 	global.APP.socket.xspace = { socket: appSocket };
-	global._app_socket_yapi_connections = {
+	global._app_socket_xspace_connections = {
 		obj: [],
 		set(uid, socket) {
 			this.obj.push([uid, socket]);
@@ -49,9 +49,9 @@ function namespace_yapi({ app, ioUtils }) {
 		let { uid } = ctx.socket.request?._query;
 		if (uid) {
 			uid = String(uid);
-			global._app_socket_yapi_connections.set(uid, ctx.socket);
+			global._app_socket_xspace_connections.set(uid, ctx.socket);
 			const all_current_online_user = xU._.uniqBy(
-				global._app_socket_yapi_connections.obj,
+				global._app_socket_xspace_connections.obj,
 				i => i[0]
 			);
 			ctx.socket.emit("connection", {
@@ -64,10 +64,10 @@ function namespace_yapi({ app, ioUtils }) {
 	});
 
 	appSocket.on("disconnect", ctx => {
-		const uid = global._app_socket_yapi_connections.delete(ctx.socket.id);
+		const uid = global._app_socket_xspace_connections.delete(ctx.socket.id);
 		if (uid) {
 			/* 如果没有其他的socket在线，则广播 */
-			const user = global._app_socket_yapi_connections.get(uid);
+			const user = global._app_socket_xspace_connections.get(uid);
 			if (Array.isArray(user) && user.length === 0) {
 				appSocket.broadcast("message", {
 					type: xU.SSE_TYPE.USER_LOGOUT,
@@ -87,4 +87,4 @@ function namespace_yapi({ app, ioUtils }) {
 	});
 }
 
-exports.namespace_yapi = namespace_yapi;
+exports.namespace_xspace = namespace_xspace;

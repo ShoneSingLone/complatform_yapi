@@ -10,7 +10,7 @@ const SSE_TYPE = {
 
 const SOCKET_TYPE_HANDLERS = {
 	[SSE_TYPE.CHAT_ONE](id, { payload }) {
-		const socket = global._app_socket_yapi_connections.get(id);
+		const socket = global._app_socket_xspace_connections.get(id);
 		if (Array.isArray(socket) && socket.length > 0) {
 			/* 只给对应ID发送 */
 			socket.forEach(s => {
@@ -19,7 +19,7 @@ const SOCKET_TYPE_HANDLERS = {
 		}
 	},
 	[SSE_TYPE.CHAT_NEW_APPLY](id, { payload }) {
-		const socket = global._app_socket_yapi_connections.get(id);
+		const socket = global._app_socket_xspace_connections.get(id);
 		if (socket) {
 			/* 只给对应ID发送 */
 			if (Array.isArray(socket) && socket.length > 0) {

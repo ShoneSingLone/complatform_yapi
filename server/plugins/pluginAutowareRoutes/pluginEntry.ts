@@ -86,7 +86,7 @@ function appAddRoutes(app, routes) {
 
 						xU.applog.info(
 							ctx.path,
-							xU._.omit(vm.ctx.payload, ["_yapi_token", "_yapi_uid"])
+							xU._.omit(vm.ctx.payload, ["_xspace_token", "_xspace_uid"])
 						);
 						/* TODO: 参数校验 根据route的schema校验 */
 						/* let validResult = xU.validateParams(inst.schemaMap[action], ctx.params); */

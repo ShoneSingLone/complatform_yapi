@@ -236,10 +236,13 @@ let pluginsConfig = initPlugins(xspace_configs.plugins, "plugin");
 pluginsConfig.forEach(plugin => {
 	if (!plugin || plugin.enable === false || plugin.server === false) return null;
 
-	if (!xU.fileExist(path.join(PLUGIN_PATH, "yapi-plugin-" + plugin.name + "/server"))) {
+	if (!xU.fileExist(path.join(PLUGIN_PATH, "xspace-plugin-" + plugin.name + "/server"))) {
 		throw new Error(`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`);
 	}
-	let pluginModule = require(path.join(PLUGIN_PATH, "yapi-plugin-" + plugin.name + "/server.js"));
+	let pluginModule = require(path.join(
+		PLUGIN_PATH,
+		"xspace-plugin-" + plugin.name + "/server.js"
+	));
 	pluginModule.call(xU, plugin.options);
 });
 
@@ -248,12 +251,14 @@ extConfig = initPlugins(extConfig, "ext");
 extConfig.forEach(plugin => {
 	if (!plugin || plugin.enable === false || plugin.server === false) return null;
 
-	if (!xU.fileExist(path.join(PLUGIN_SYSTEM_PATH, "yapi-plugin-" + plugin.name + "/server.js"))) {
+	if (
+		!xU.fileExist(path.join(PLUGIN_SYSTEM_PATH, "xspace-plugin-" + plugin.name + "/server.js"))
+	) {
 		throw new Error(`config.json配置了插件${plugin},但plugins目录没有找到此插件，请安装此插件`);
 	}
 	let pluginModule = require(path.join(
 		PLUGIN_SYSTEM_PATH,
-		"yapi-plugin-" + plugin.name + "/server.js"
+		"xspace-plugin-" + plugin.name + "/server.js"
 	));
 	pluginModule.call(xU, plugin.options);
 });

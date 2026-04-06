@@ -707,7 +707,7 @@ const server = Server.configure({
 	hostname: "0.0.0.0",
 	extensions: [
 		new MongoDB({
-			url: "mongodb://localhost:27017/yapi",
+			url: "mongodb://localhost:27017/xspace",
 			collection: "docflow_documents"
 		})
 	],
@@ -1342,7 +1342,7 @@ module.exports = router;
 
     ```bash
     # 启动主服务器
-    pm2 start server/app.js --name yapi
+    pm2 start server/app.js --name xspace
 
     # 启动 Hocuspocus 服务器
     pm2 start server/plugins/hocuspocus.js --name hocuspocus
@@ -1402,7 +1402,7 @@ module.exports = router;
 
     - 前端：实现了 Yjs 客户端、协作编辑器、用户状态管理等核心模块
     - 后端：实现了 Hocuspocus 服务器、WebSocket 服务、文档存储等核心模块
-    - 集成：与现有 business_yapi 系统无缝集成，保持了系统的一致性
+    - 集成：与现有 business_xspace 系统无缝集成，保持了系统的一致性
 
 4. **测试验证**：通过功能测试、性能测试、兼容性测试，确保实时协作功能的稳定性和可靠性。
 
@@ -1412,5 +1412,5 @@ module.exports = router;
 
 7. **部署维护**：提供了完整的部署架构和维护策略，确保系统的稳定运行。
 
-通过实时协作功能的移植，business_yapi 项目将获得现代化的文档协作能力，为用户提供更加高效、便捷的文档编辑体验，提升团队协
-作效率。
+通过实时协作功能的移植，business_xspace 项目将获得现代化的文档协作能力，为用户提供更加高效、便捷的文档编辑体验，提升团队
+协作效率。

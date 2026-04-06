@@ -1,6 +1,6 @@
 # 项目分析与规划
 
-## 1. business_yapi 项目架构分析
+## 1. business_xspace 项目架构分析
 
 ### 1.1 技术栈
 
@@ -40,7 +40,7 @@
 
 #### 1.3.1 实现方式
 
-business_yapi 项目使用 Vue 的原生 `provide/inject` API 进行组件间状态传递，主要特点如下：
+business_xspace 项目使用 Vue 的原生 `provide/inject` API 进行组件间状态传递，主要特点如下：
 
 1. **层级传递**：通过组件树的层级关系，父组件使用 `provide()` 方法提供状态，子组件使用 `inject` 选项接收状态
 2. **全局 APP 实例**：顶层组件通常会 provide `APP` 实例，子组件通过 inject 接收，实现全局状态访问
@@ -250,9 +250,9 @@ export default async function () {
 
 ## 5. 总结
 
-通过对 business_yapi 项目的详细分析，我们确定了移植 DocFlow 核心功能的可行性和具体方案。采用 Tiptap + ProseMirror 作为编
-辑器核心，结合 SSE 流式响应实现 AI 功能，可选集成 Yjs + Hocuspocus 实现实时协作，能够显著提升 business_yapi 项目的编辑体
-验和功能能力。
+通过对 business_xspace 项目的详细分析，我们确定了移植 DocFlow 核心功能的可行性和具体方案。采用 Tiptap + ProseMirror 作为
+编辑器核心，结合 SSE 流式响应实现 AI 功能，可选集成 Yjs + Hocuspocus 实现实时协作，能够显著提升 business_xspace 项目的编
+辑体验和功能能力。
 
 实施过程中，我们将严格遵循项目现有的前端代码规则，使用 `_.$importVue()` 动态加载机制，确保与现有架构的一致性和兼容性。通
 过分阶段实施策略，确保系统稳定性和用户体验的平滑过渡。

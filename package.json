@@ -1,11 +1,11 @@
 {
-	"name": "yapi-vendor",
+	"name": "xspace-vendor",
 	"version": "1.10.2",
-	"description": "YAPI",
+	"description": "xspace",
 	"types": "./types/types.d.ts",
 	"scripts": {
 		"runUpdateMongoose": "node ./server/runUpdateMongoose.ts",
-		"redeploy": "git pull && pnpm i && pm2 restart yapi",
+		"redeploy": "git pull && pnpm i && pm2 restart xspace",
 		"d.ts": "node ./common/defineFile/genDefineFiles.js",
 		"start": "cross-env NODE_ENV=production node server/app.ts",
 		"lint": "prettier --write .",
@@ -52,7 +52,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:YMFE/yapi.git"
+		"url": "git@github.com:YMFE/xspace.git"
 	},
 	"author": "",
 	"license": "Apache-2.0",
@@ -129,8 +129,8 @@
 		"tslib": "1.8.0",
 		"url": "0.11.0",
 		"vm2": "^3.9.19",
-		"yapi-plugin-qsso": "^1.1.1",
-		"yapi-vendor": "file:"
+		"xspace-plugin-qsso": "^1.1.1",
+		"xspace-vendor": "file:"
 	},
 	"engines": {
 		"node": ">= 7.6.0",

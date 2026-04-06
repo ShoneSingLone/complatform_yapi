@@ -13,7 +13,7 @@ const middlewareWhenDev = () => async (ctx, next) => {
 
 		const start = Date.now();
 		await next();
-		const yapiTips = {
+		const xspaceTips = {
 			...xU._.pick(ctx, ["headers", "method", "url"])
 		};
 
@@ -24,7 +24,7 @@ const middlewareWhenDev = () => async (ctx, next) => {
 					if (xU._.isPlainObject(value)) {
 						return flattenDeep(value, target);
 					} else {
-						target[`yapi-${key}`] = value;
+						target[`xspace-${key}`] = value;
 					}
 					return target;
 				},
@@ -35,7 +35,7 @@ const middlewareWhenDev = () => async (ctx, next) => {
 		const duration = Date.now() - start;
 		xU.applog.info(ctx.path, ctx.ip, ctx.ips.join(","), `${duration}ms`);
 
-		xU._.each(flattenDeep(yapiTips, { "response-time": `${duration}ms` }), (value, key) => {
+		xU._.each(flattenDeep(xspaceTips, { "response-time": `${duration}ms` }), (value, key) => {
 			ctx.set(key, value);
 		});
 	} catch (error) {

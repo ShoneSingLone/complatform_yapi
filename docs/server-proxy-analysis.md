@@ -1,8 +1,8 @@
-# YAPI 服务器代理过程分析
+# xspace 服务器代理过程分析
 
 ## 1. 代理整体流程
 
-YAPI 的代理功能主要通过以下几个模块实现：
+xspace 的代理功能主要通过以下几个模块实现：
 
 1. **中间件拦截**：`mockServer.ts` 中间件拦截所有 `/mock/` 开头的请求
 2. **代理判断**：根据接口配置或请求头决定是否启用代理
@@ -12,7 +12,7 @@ YAPI 的代理功能主要通过以下几个模块实现：
 ### 核心流程示意图
 
 ```
-客户端 → YAPI 服务器 → 代理中间件 → 目标服务器 → 响应返回
+客户端 → xspace 服务器 → 代理中间件 → 目标服务器 → 响应返回
 ```
 
 ## 2. 代理触发条件
@@ -20,7 +20,7 @@ YAPI 的代理功能主要通过以下几个模块实现：
 代理功能在以下情况被触发：
 
 1. **接口配置**：接口设置了 `isProxy` 为 true
-2. **请求头**：请求中包含 `yapi-run-test` 头
+2. **请求头**：请求中包含 `xspace-run-test` 头
 
 ## 3. 核心代码分析
 
@@ -28,17 +28,17 @@ YAPI 的代理功能主要通过以下几个模块实现：
 
 ```typescript
 // 检查是否启用代理
-const isRunWithYapiProxy = (() => {
-	return current_request_interface_data_in_yapi_db?.isProxy || ctx.headers["yapi-run-test"];
+const isRunWithxspaceProxy = (() => {
+	return current_request_interface_data_in_xspace_db?.isProxy || ctx.headers["xspace-run-test"];
 })();
 
-if (isRunWithYapiProxy) {
+if (isRunWithxspaceProxy) {
 	// 获取代理环境配置
 	const ENV_VAR = ((/* 获取对应的代理环境 */) => {
 		return xU._.find(project.env, i => {
 			try {
 				const id = ObjectId(i._id).toString();
-				return id === current_request_interface_data_in_yapi_db.witchEnv;
+				return id === current_request_interface_data_in_xspace_db.witchEnv;
 			} catch (error) {
 				console.log("ERROR:获取对应的代理环境", error);
 			}
@@ -50,14 +50,14 @@ if (isRunWithYapiProxy) {
 	await setResponseByRunProxy(ctx, {
 		project_id: project._id,
 		ENV_VAR,
-		yapiRun: ctx.headers["yapi-run-test"]
+		xspaceRun: ctx.headers["xspace-run-test"]
 	});
 
 	// 备份成功响应
 	ifSuccessfulStoreResponse({
 		ctx,
 		modelInterface: orm.interface,
-		interfaceData: current_request_interface_data_in_yapi_db
+		interfaceData: current_request_interface_data_in_xspace_db
 	});
 
 	return;
@@ -91,18 +91,18 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 	// 解析代理路径和配置
 	const [path, proxyHOST, proxyPORT] = (() => {
 		let path, proxyHOST, proxyPORT;
-		if (headers["yapi-run-test"]) {
-			path = headers["yapi-run-test"];
+		if (headers["xspace-run-test"]) {
+			path = headers["xspace-run-test"];
 		} else {
 			path = `${domain}${targetURL}`;
 		}
 
-		if (headers["yapi-proxy-host"]) {
-			proxyHOST = headers["yapi-proxy-host"];
+		if (headers["xspace-proxy-host"]) {
+			proxyHOST = headers["xspace-proxy-host"];
 		}
 
-		if (headers["yapi-proxy-port"]) {
-			proxyPORT = headers["yapi-proxy-port"];
+		if (headers["xspace-proxy-port"]) {
+			proxyPORT = headers["xspace-proxy-port"];
 		}
 
 		return [path, proxyHOST, proxyPORT];
@@ -327,16 +327,16 @@ function handleFilesUpload({ bodyFiles, httpRequest, endData, requestBody }) {
 
 ### 4.1 接口级配置
 
-1. 在 YAPI 接口编辑页面，开启「启用代理」选项
+1. 在 xspace 接口编辑页面，开启「启用代理」选项
 2. 选择对应的「环境」，环境中需配置正确的域名
 
 ### 4.2 请求头配置
 
-| 请求头            | 说明                 | 示例                           |
-| ----------------- | -------------------- | ------------------------------ |
-| `yapi-run-test`   | 直接指定代理目标 URL | `https://api.example.com/user` |
-| `yapi-proxy-host` | 指定代理服务器主机   | `127.0.0.1`                    |
-| `yapi-proxy-port` | 指定代理服务器端口   | `8888`                         |
+| 请求头              | 说明                 | 示例                           |
+| ------------------- | -------------------- | ------------------------------ |
+| `xspace-run-test`   | 直接指定代理目标 URL | `https://api.example.com/user` |
+| `xspace-proxy-host` | 指定代理服务器主机   | `127.0.0.1`                    |
+| `xspace-proxy-port` | 指定代理服务器端口   | `8888`                         |
 
 ## 5. 代理支持的请求类型
 
@@ -443,13 +443,13 @@ curl -X POST "http://localhost:3000/mock/123/user/login" \
 
 # 使用请求头指定代理目标
 curl -X GET "http://localhost:3000/mock/123/api" \
-  -H "yapi-run-test: https://api.example.com/api"
+  -H "xspace-run-test: https://api.example.com/api"
 
 # 使用代理服务器
 curl -X GET "http://localhost:3000/mock/123/api" \
-  -H "yapi-run-test: https://api.example.com/api" \
-  -H "yapi-proxy-host: 127.0.0.1" \
-  -H "yapi-proxy-port: 8888"
+  -H "xspace-run-test: https://api.example.com/api" \
+  -H "xspace-proxy-host: 127.0.0.1" \
+  -H "xspace-proxy-port: 8888"
 ```
 
 ### 输出：
@@ -473,7 +473,7 @@ curl -X GET "http://localhost:3000/mock/123/api" \
 
 ## 10. 总结
 
-YAPI 的代理功能通过 `mockServer.ts` 和 `requestProxy.ts` 实现，支持以下特性：
+xspace 的代理功能通过 `mockServer.ts` 和 `requestProxy.ts` 实现，支持以下特性：
 
 -   **灵活的代理配置**：支持接口级配置和请求头配置
 -   **多种请求类型**：支持 JSON、表单和文件上传
@@ -482,13 +482,13 @@ YAPI 的代理功能通过 `mockServer.ts` 和 `requestProxy.ts` 实现，支持
 -   **响应备份**：自动备份成功的响应数据
 -   **错误处理**：完善的错误处理机制
 
-代理功能为 YAPI 提供了强大的接口测试能力，使开发者可以轻松地在开发环境中测试真实的 API 接口。
+代理功能为 xspace 提供了强大的接口测试能力，使开发者可以轻松地在开发环境中测试真实的 API 接口。
 
 ## 11. 代理模式扩展：支持真实转发与自定义响应
 
 ### 11.1 两种代理模式
 
-YAPI 代理功能现在支持两种模式：
+xspace 代理功能现在支持两种模式：
 
 1. **真实转发模式**：
 
@@ -565,18 +565,18 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 	// 解析代理路径和配置
 	const [path, proxyHOST, proxyPORT] = (() => {
 		let path, proxyHOST, proxyPORT;
-		if (headers["yapi-run-test"]) {
-			path = headers["yapi-run-test"];
+		if (headers["xspace-run-test"]) {
+			path = headers["xspace-run-test"];
 		} else {
 			path = `${domain}${targetURL}`;
 		}
 
-		if (headers["yapi-proxy-host"]) {
-			proxyHOST = headers["yapi-proxy-host"];
+		if (headers["xspace-proxy-host"]) {
+			proxyHOST = headers["xspace-proxy-host"];
 		}
 
-		if (headers["yapi-proxy-port"]) {
-			proxyPORT = headers["yapi-proxy-port"];
+		if (headers["xspace-proxy-port"]) {
+			proxyPORT = headers["xspace-proxy-port"];
 		}
 
 		return [path, proxyHOST, proxyPORT];
@@ -595,7 +595,7 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 		};
 
 		// 执行代理请求（仅当不忽略代理时）
-		if (!headers["yapi-ignore-proxy"]) {
+		if (!headers["xspace-ignore-proxy"]) {
 			response = await execProxyRequest(ResponseThroghProxyOptions);
 		}
 	} catch (error) {
@@ -612,17 +612,17 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 
 	try {
 		// 检查是否需要返回自定义响应（优先级最高）
-		if (headers["yapi-custom-response"]) {
+		if (headers["xspace-custom-response"]) {
 			try {
 				// 从请求头获取自定义响应
-				body = JSON.parse(headers["yapi-custom-response"]);
+				body = JSON.parse(headers["xspace-custom-response"]);
 			} catch (error) {
 				console.error("自定义响应解析失败:", error);
 				body = xU.$response(null, 400, "自定义响应格式错误");
 			}
-		} else if (headers["yapi-response-template"]) {
+		} else if (headers["xspace-response-template"]) {
 			// 使用预定义的响应模板
-			const template = headers["yapi-response-template"];
+			const template = headers["xspace-response-template"];
 			body = getResponseTemplate(template);
 		} else if (response) {
 			// 使用真实代理响应（默认行为）
@@ -637,16 +637,16 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 		}
 
 		// 设置响应状态码
-		if (headers["yapi-status-code"]) {
-			ctx.status = parseInt(headers["yapi-status-code"]);
+		if (headers["xspace-status-code"]) {
+			ctx.status = parseInt(headers["xspace-status-code"]);
 		} else if (response && response.statusCode) {
 			ctx.status = response.statusCode;
 		}
 
 		// 设置自定义响应头
-		if (headers["yapi-custom-headers"]) {
+		if (headers["xspace-custom-headers"]) {
 			try {
-				const customHeaders = JSON.parse(headers["yapi-custom-headers"]);
+				const customHeaders = JSON.parse(headers["xspace-custom-headers"]);
 				Object.keys(customHeaders).forEach(key => {
 					ctx.set(key, customHeaders[key]);
 				});
@@ -657,7 +657,7 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 			// 已经在上面设置了代理响应头
 		}
 	} catch (error) {
-		body = xU.$response(null, 555, `错误来自yapi服务器： ${error.message}`);
+		body = xU.$response(null, 555, `错误来自xspace服务器： ${error.message}`);
 	} finally {
 		ctx.body = body || {};
 		return ctx.body;
@@ -721,7 +721,7 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 		setOptions("headers", headers);
 
 		// 检查是否忽略 body
-		const ignoreBody = headers["yapi-ignore-body"] === "true";
+		const ignoreBody = headers["xspace-ignore-body"] === "true";
 		const hasRequestBody = !ignoreBody && JSON.stringify(ctx.request?.body) != "{}";
 		const CONTENT_TYPE = String(ctx.request?.header["content-type"] || "");
 
@@ -883,23 +883,23 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 
 #### 11.5.1 模式选择
 
-| 模式       | 说明                               | 配置方式                                                       |
-| ---------- | ---------------------------------- | -------------------------------------------------------------- |
-| 真实转发   | 转发请求到真实后端                 | 默认行为，无需特殊配置                                         |
-| 自定义响应 | 返回自定义数据                     | 使用 `yapi-custom-response` 或 `yapi-response-template` 请求头 |
-| 混合模式   | 执行真实请求但返回自定义响应       | 不使用 `yapi-ignore-proxy`，但使用自定义响应头                 |
-| 完全模拟   | 不执行真实请求，直接返回自定义响应 | 使用 `yapi-ignore-proxy: true`                                 |
+| 模式       | 说明                               | 配置方式                                                           |
+| ---------- | ---------------------------------- | ------------------------------------------------------------------ |
+| 真实转发   | 转发请求到真实后端                 | 默认行为，无需特殊配置                                             |
+| 自定义响应 | 返回自定义数据                     | 使用 `xspace-custom-response` 或 `xspace-response-template` 请求头 |
+| 混合模式   | 执行真实请求但返回自定义响应       | 不使用 `xspace-ignore-proxy`，但使用自定义响应头                   |
+| 完全模拟   | 不执行真实请求，直接返回自定义响应 | 使用 `xspace-ignore-proxy: true`                                   |
 
 #### 11.5.2 请求头配置
 
-| 请求头                   | 说明                 | 示例                               | 适用模式        |
-| ------------------------ | -------------------- | ---------------------------------- | --------------- |
-| `yapi-ignore-body`       | 是否忽略 body 参数   | `true`                             | 所有模式        |
-| `yapi-custom-response`   | 自定义响应 JSON      | `{"code": 0, "data": {"id": 123}}` | 自定义响应/混合 |
-| `yapi-response-template` | 使用预定义响应模板   | `success`                          | 自定义响应/混合 |
-| `yapi-status-code`       | 自定义响应状态码     | `200`                              | 自定义响应/混合 |
-| `yapi-custom-headers`    | 自定义响应头         | `{"X-Custom": "value"}`            | 自定义响应/混合 |
-| `yapi-ignore-proxy`      | 是否完全忽略代理请求 | `true`                             | 完全模拟        |
+| 请求头                     | 说明                 | 示例                               | 适用模式        |
+| -------------------------- | -------------------- | ---------------------------------- | --------------- |
+| `xspace-ignore-body`       | 是否忽略 body 参数   | `true`                             | 所有模式        |
+| `xspace-custom-response`   | 自定义响应 JSON      | `{"code": 0, "data": {"id": 123}}` | 自定义响应/混合 |
+| `xspace-response-template` | 使用预定义响应模板   | `success`                          | 自定义响应/混合 |
+| `xspace-status-code`       | 自定义响应状态码     | `200`                              | 自定义响应/混合 |
+| `xspace-custom-headers`    | 自定义响应头         | `{"X-Custom": "value"}`            | 自定义响应/混合 |
+| `xspace-ignore-proxy`      | 是否完全忽略代理请求 | `true`                             | 完全模拟        |
 
 #### 11.5.3 预定义响应模板
 
@@ -930,7 +930,7 @@ curl -X POST "http://localhost:3000/mock/123/user/login" \
 # 忽略传入的body，转发空请求
 curl -X POST "http://localhost:3000/mock/123/user/login" \
   -H "Content-Type: application/json" \
-  -H "yapi-ignore-body: true" \
+  -H "xspace-ignore-body: true" \
   -d '{"username": "test", "password": "123456"}'
 ```
 
@@ -940,7 +940,7 @@ curl -X POST "http://localhost:3000/mock/123/user/login" \
 # 执行真实请求，但返回自定义响应
 curl -X POST "http://localhost:3000/mock/123/user/login" \
   -H "Content-Type: application/json" \
-  -H "yapi-custom-response: {\"code\": 0, \"data\": {\"token\": \"mock-token\"}}" \
+  -H "xspace-custom-response: {\"code\": 0, \"data\": {\"token\": \"mock-token\"}}" \
   -d '{"username": "test", "password": "123456"}'
 ```
 
@@ -949,7 +949,7 @@ curl -X POST "http://localhost:3000/mock/123/user/login" \
 ```bash
 # 返回错误响应模板
 curl -X GET "http://localhost:3000/mock/123/api" \
-  -H "yapi-response-template: error"
+  -H "xspace-response-template: error"
 ```
 
 **5. 完全模拟模式**
@@ -957,8 +957,8 @@ curl -X GET "http://localhost:3000/mock/123/api" \
 ```bash
 # 不执行真实请求，直接返回自定义响应
 curl -X GET "http://localhost:3000/mock/123/api" \
-  -H "yapi-ignore-proxy: true" \
-  -H "yapi-custom-response: {\"code\": 200, \"data\": {\"message\": \"direct response\"}}"
+  -H "xspace-ignore-proxy: true" \
+  -H "xspace-custom-response: {\"code\": 200, \"data\": {\"message\": \"direct response\"}}"
 ```
 
 **6. 自定义状态码和响应头**
@@ -966,10 +966,10 @@ curl -X GET "http://localhost:3000/mock/123/api" \
 ```bash
 # 自定义状态码和响应头
 curl -X GET "http://localhost:3000/mock/123/api" \
-  -H "yapi-ignore-proxy: true" \
-  -H "yapi-custom-response: {\"code\": 200, \"data\": {\"message\": \"custom\"}}" \
-  -H "yapi-status-code: 201" \
-  -H "yapi-custom-headers: {\"X-API-Version\": \"1.0\", \"X-Request-ID\": \"12345\"}"
+  -H "xspace-ignore-proxy: true" \
+  -H "xspace-custom-response: {\"code\": 200, \"data\": {\"message\": \"custom\"}}" \
+  -H "xspace-status-code: 201" \
+  -H "xspace-custom-headers: {\"X-API-Version\": \"1.0\", \"X-Request-ID\": \"12345\"}"
 ```
 
 ### 11.6 实现细节与注意事项
@@ -978,8 +978,8 @@ curl -X GET "http://localhost:3000/mock/123/api" \
 
 响应处理的优先级顺序：
 
-1. `yapi-custom-response` 请求头（最高优先级）
-2. `yapi-response-template` 请求头
+1. `xspace-custom-response` 请求头（最高优先级）
+2. `xspace-response-template` 请求头
 3. 真实代理响应（默认行为）
 
 #### 11.6.2 错误处理
@@ -1021,7 +1021,7 @@ curl -X GET "http://localhost:3000/mock/123/api" \
 
 ### 11.8 预期效果
 
-通过以上实现，YAPI 将具备以下能力：
+通过以上实现，xspace 将具备以下能力：
 
 **真实转发模式**：
 
@@ -1042,4 +1042,4 @@ curl -X GET "http://localhost:3000/mock/123/api" \
 -   简化调试过程：可以模拟各种错误情况
 -   保持向后兼容：不影响现有功能
 
-这些功能将使 YAPI 成为一个更加全面和强大的 API 管理和测试工具。
+这些功能将使 xspace 成为一个更加全面和强大的 API 管理和测试工具。

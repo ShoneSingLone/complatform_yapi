@@ -56,7 +56,7 @@ class ControllerBase {
 		let token = params.token;
 
 		if (!token) {
-			token = customCookies(ctx, "_yapi_token");
+			token = customCookies(ctx, "_xspace_token");
 		}
 
 		// 如果前缀是 /api/open，执行 parse token 逻辑
@@ -106,8 +106,8 @@ class ControllerBase {
 		}
 	}
 	async checkLogin(ctx) {
-		let token = customCookies(ctx, "_yapi_token");
-		let uid = customCookies(ctx, "_yapi_uid");
+		let token = customCookies(ctx, "_xspace_token");
+		let uid = customCookies(ctx, "_xspace_uid");
 
 		try {
 			/* 未携带认证信息 */

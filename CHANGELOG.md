@@ -1,15 +1,15 @@
-## [1.10.2](https://github.com/YMFE/yapi/compare/v1.10.1...v1.10.2) (2021-10-13)
+## [1.10.2](https://github.com/YMFE/xspace/compare/v1.10.1...v1.10.2) (2021-10-13)
 
 ### Bug Fixes
 
 -   [2361] 修复所有分类被删除时,同步问题. 解决方案: 增加 "默认分类"
-    ([01207e2](https://github.com/YMFE/yapi/commit/01207e29cdceba2ea783d6e06b983cc34b283d51))
--   issues 2357 ([5bab76c](https://github.com/YMFE/yapi/commit/5bab76c14429e7fb46f16d7b0d06851cf98b82e1))
+    ([01207e2](https://github.com/YMFE/xspace/commit/01207e29cdceba2ea783d6e06b983cc34b283d51))
+-   issues 2357 ([5bab76c](https://github.com/YMFE/xspace/commit/5bab76c14429e7fb46f16d7b0d06851cf98b82e1))
 
 ### Features
 
--   add nonexistent tags from `/interface/(add/up/save)` ([#1918](https://github.com/YMFE/yapi/issues/1918))
-    ([4d24c39](https://github.com/YMFE/yapi/commit/4d24c397483d2703e85c6977236270f52edf2d70))
+-   add nonexistent tags from `/interface/(add/up/save)` ([#1918](https://github.com/YMFE/xspace/issues/1918))
+    ([4d24c39](https://github.com/YMFE/xspace/commit/4d24c397483d2703e85c6977236270f52edf2d70))
 
 ## 1.10.1
 
@@ -45,7 +45,7 @@
 
 ## v1.8.7
 
--   因 chrome 官方下架了 yapi 扩展，整理了本地安装教程
+-   因 chrome 官方下架了 xspace 扩展，整理了本地安装教程
 
 ## v1.8.6
 
@@ -156,7 +156,7 @@
 
 -   优化 restful api 动态路由权重匹配算法，匹配更加精确
 -   openapi 新增 `/api/interface/list_cat`，获取某个分类下所有接口
--   新增了 rap 数据导入到 yapi 插件 [rap2yapi](https://github.com/wxxcarl/yapi-plugin-import-rap)
+-   新增了 rap 数据导入到 xspace 插件 [rap2xspace](https://github.com/wxxcarl/xspace-plugin-import-rap)
 
 ### v1.5.0
 
@@ -301,7 +301,7 @@
 
 ### v1.3.15
 
--   增强跨域请求安全性，只允许 YApi 网站进行跨域请求
+-   增强跨域请求安全性，只允许 xspace 网站进行跨域请求
 -   优化文档
 -   修复 schema 描述信息展示 bug
 -   增加禁止普通用户注册功能
@@ -463,8 +463,8 @@
 
 #### Feature
 
--   yapi 默认集成 ldap 登录方式
--   yapi 做一个 sso 登录插件，基于现有的 qsso 改造成大多数公司可用的
+-   xspace 默认集成 ldap 登录方式
+-   xspace 做一个 sso 登录插件，基于现有的 qsso 改造成大多数公司可用的
 -   环境设置支持全局 header
 -   接口运行页面选择环境增加管理环境的弹层
 -   接口运行支持加工运行前后的 request 和 response ，主要是处理加密的接口或各种 token 参数问题
@@ -633,7 +633,7 @@
 
 #### Features
 
--   新增个人空间功能，拥有这个分组的全部权限，可以在这个分组里探索 YApi 的功能
+-   新增个人空间功能，拥有这个分组的全部权限，可以在这个分组里探索 xspace 的功能
 -   新增分组动态功能
 -   优化接口运行页面交互
 -   CrossRequest 扩展支持 https

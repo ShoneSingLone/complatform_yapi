@@ -9,7 +9,7 @@ class exportSwaggerController extends ControllerBase {
 	}
 
 	/*
-	   handleListClass,handleExistId is same as the exportController(yapi-plugin-export-data).
+	   handleListClass,handleExistId is same as the exportController(xspace-plugin-export-data).
 	   No DRY,but i have no idea to optimize it.
 	*/
 

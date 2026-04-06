@@ -1385,7 +1385,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 ## 5. 总结
 
-通过详细的入口菜单与集成规划，我们成功将 DocFlow 核心功能集成到 business_yapi 项目中。主要完成了以下工作：
+通过详细的入口菜单与集成规划，我们成功将 DocFlow 核心功能集成到 business_xspace 项目中。主要完成了以下工作：
 
 1. **菜单系统集成**：
 
@@ -1412,5 +1412,5 @@ export default async function ({ PRIVATE_GLOBAL }) {
     - 实现了功能测试和集成测试
     - 提供了问题排查方案
 
-通过这些工作，我们确保了 DocFlow 功能与 business_yapi 项目的无缝集成，为用户提供了现代化的文档编辑与协作体验。集成过程中
-，我们严格遵循了项目现有的代码规范和架构设计，确保了系统的稳定性和一致性。
+通过这些工作，我们确保了 DocFlow 功能与 business_xspace 项目的无缝集成，为用户提供了现代化的文档编辑与协作体验。集成过程
+中，我们严格遵循了项目现有的代码规范和架构设计，确保了系统的稳定性和一致性。

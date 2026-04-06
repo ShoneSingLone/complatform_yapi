@@ -39,7 +39,7 @@ module.exports = async function (app) {
 				}
 			} else if (!dirname && !entryName) {
 				ctx.status = 301;
-				ctx.redirect("/yapi");
+				ctx.redirect("/xspace");
 			}
 
 			return false;

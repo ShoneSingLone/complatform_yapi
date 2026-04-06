@@ -629,7 +629,7 @@ module.exports = {
 						}
 
 						if (type === "swagger") {
-							const swaggerParse = require("exts/yapi-plugin-import-swagger/run");
+							const swaggerParse = require("exts/xspace-plugin-import-swagger/run");
 							res = await swaggerParse(data);
 						}
 

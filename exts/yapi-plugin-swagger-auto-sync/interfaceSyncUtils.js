@@ -13,7 +13,7 @@ const jobMap = new Map();
 class SyncUtils {
 	constructor(ctx) {
 		console.log(
-			"-------------------------------------yapi-plugin-swagger-auto-sync.js constructor-----------------------------------------------"
+			"-------------------------------------xspace-plugin-swagger-auto-sync.js constructor-----------------------------------------------"
 		);
 		this.ctx = ctx;
 		this.syncModel = xU.$orm(syncModel);

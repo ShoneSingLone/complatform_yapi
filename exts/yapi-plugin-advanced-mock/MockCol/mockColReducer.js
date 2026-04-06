@@ -3,7 +3,7 @@ import axios from "axios";
 import { message } from "antd";
 
 // Actions
-const FETCH_MOCK_COL = "yapi/mockCol/FETCH_MOCK_COL";
+const FETCH_MOCK_COL = "xspace/mockCol/FETCH_MOCK_COL";
 
 // Reducer
 const initialState = {

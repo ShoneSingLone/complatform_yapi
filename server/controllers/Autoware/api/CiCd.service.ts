@@ -74,7 +74,7 @@ async function initRepo({ git_repo, uid }) {
 	});
 
 	const emit = msg => {
-		const currentSocket = global._app_socket_yapi_connections.get(uid);
+		const currentSocket = global._app_socket_xspace_connections.get(uid);
 		if (Array.isArray(currentSocket) && currentSocket.length > 0) {
 			currentSocket.forEach(socket => {
 				try {

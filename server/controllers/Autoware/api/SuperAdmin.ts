@@ -16,7 +16,7 @@ module.exports = {
 		"/super_admin/deploy": {
 			post: {
 				summary: "部署",
-				description: "git pull && pnpm i && pm2 restart yapi",
+				description: "git pull && pnpm i && pm2 restart xspace",
 				request: {
 					body: {
 						id: {

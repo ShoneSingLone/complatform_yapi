@@ -52,9 +52,9 @@ const mail = (function () {
 const MAP_ORM = new Map();
 const APP_ROOT_DIR = path.resolve(__dirname, "../.."); //路径
 const APP_ROOT_SERVER_DIR = path.resolve(__dirname, "..");
-const YAPI_LOGS_DIR = "yapi_logs";
+const xspace_LOGS_DIR = "xspace_logs";
 
-const APP_LOG_DIR = path.join(APP_ROOT_SERVER_DIR, YAPI_LOGS_DIR);
+const APP_LOG_DIR = path.join(APP_ROOT_SERVER_DIR, xspace_LOGS_DIR);
 fs.ensureDirSync(APP_LOG_DIR);
 
 const STATIC_VAR = {
@@ -298,8 +298,8 @@ const STATIC_VAR = {
 	],
 	IP_REGEXP: /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/,
 	docHref: {
-		adv_mock_case: "https://hellosean1025.github.io/yapi/documents/mock.html",
-		adv_mock_script: "https://hellosean1025.github.io/yapi/documents/adv_mock.html"
+		adv_mock_case: "https://hellosean1025.github.io/xspace/documents/mock.html",
+		adv_mock_script: "https://hellosean1025.github.io/xspace/documents/adv_mock.html"
 	},
 	UPLOADS: "uploads",
 	RESOURCE_ASSETS: "resource_assets"

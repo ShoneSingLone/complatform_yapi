@@ -3,13 +3,13 @@ const _ = require("lodash");
 function getPluginConfig(name, type) {
 	let pluginConfig;
 	if (type === "ext") {
-		pluginConfig = require("../exts/yapi-plugin-" + name);
+		pluginConfig = require("../exts/xspace-plugin-" + name);
 	} else {
-		pluginConfig = require("yapi-plugin-" + name);
+		pluginConfig = require("xspace-plugin-" + name);
 	}
 
 	if (!pluginConfig || typeof pluginConfig !== "object") {
-		throw new Error(`Plugin ${name} Config 配置错误，请检查 yapi-plugin-${name}/index.js`);
+		throw new Error(`Plugin ${name} Config 配置错误，请检查 xspace-plugin-${name}/index.js`);
 	}
 
 	return {

@@ -43,13 +43,13 @@ export default class Services extends Component {
 						<pre>
 							{`
   {
-    "url": "yapi-swagger.json",
+    "url": "xspace-swagger.json",
     "remoteUrl": "${location.protocol}//${location.hostname}${
 								location.port ? `:${location.port}` : ""
 							}/api/open/plugin/export-full?type=json&pid=${id}&status=all&token=${
 								this.props.token
 							}",
-    "type": "yapi",
+    "type": "xspace",
     "swaggerParser": {}
   }
   `}
@@ -66,7 +66,7 @@ export default class Services extends Component {
 							}/api/open/plugin/export-full?type=json&pid=${id}&status=all&token=${
 								this.props.token
 							}",
-    "type": "yapi",
+    "type": "xspace",
     "swaggerParser": {}
   }
   `}

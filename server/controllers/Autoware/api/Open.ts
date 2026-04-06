@@ -453,7 +453,7 @@ module.exports = {
 					if (ctx.payload.email === true && reportsResult.message.failedNum !== 0) {
 						let autoTestUrl = `${ctx.request.origin}/api/open/run_auto_test?id=${id}&token=${token}&mode=${ctx.payload.mode}`;
 						xU.sendNotice(project_id, {
-							title: `YApi自动化测试报告`,
+							title: `xspace自动化测试报告`,
 							content: `
         <html>
         <head>

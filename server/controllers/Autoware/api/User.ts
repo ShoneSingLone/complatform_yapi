@@ -239,8 +239,8 @@ module.exports = {
 							httpOnly: true
 						};
 
-						customCookies(this.ctx, "_yapi_token", TOKEN, COOKIES_OPTIONS);
-						customCookies(this.ctx, "_yapi_uid", uid, COOKIES_OPTIONS);
+						customCookies(this.ctx, "_xspace_token", TOKEN, COOKIES_OPTIONS);
+						customCookies(this.ctx, "_xspace_uid", uid, COOKIES_OPTIONS);
 
 						ctx.body = xU.$response(
 							{
@@ -253,8 +253,8 @@ module.exports = {
 								type: "site",
 								study: userInfo.study,
 								x_token: {
-									_yapi_token: TOKEN,
-									_yapi_uid: uid
+									_xspace_token: TOKEN,
+									_xspace_uid: uid
 								}
 							},
 							null,
@@ -273,8 +273,8 @@ module.exports = {
 				summary: "用户退出接口",
 				description: "",
 				async handler(ctx) {
-					customCookies(ctx, "_yapi_token", null);
-					customCookies(ctx, "_yapi_uid", null);
+					customCookies(ctx, "_xspace_token", null);
+					customCookies(ctx, "_xspace_uid", null);
 					ctx.body = xU.$response("ok");
 				}
 			}
@@ -345,13 +345,13 @@ module.exports = {
 								{
 									subject: "验证码",
 									to: email,
-									// contents: `<h3>亲爱的用户：</h3> <p>您好，感谢使用YApi可视化接口平台</p> <p>验证码为：</p> <h1 style="color:#34ff34;background-color:black;padding:16px;"> ${code} </h1> <p>请在24小时内填写，如非本人操作，请忽略此邮件。</p>`
+									// contents: `<h3>亲爱的用户：</h3> <p>您好，感谢使用xspace可视化接口平台</p> <p>验证码为：</p> <h1 style="color:#34ff34;background-color:black;padding:16px;"> ${code} </h1> <p>请在24小时内填写，如非本人操作，请忽略此邮件。</p>`
 									contents: `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YApi可视化接口平台 - 验证码通知</title>
+    <title>xspace可视化接口平台 - 验证码通知</title>
     <style>
         /* 重置邮件客户端默认样式 */
         body, p, div {
@@ -579,7 +579,7 @@ module.exports = {
 						xU.sendMail({
 							subject: "注册成功",
 							to: user.email,
-							contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您已经注册成功</p>
+							contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用xspace可视化接口平台,您已经注册成功</p>
 							<pre>
 								<code>${JSON.stringify(payload)}</code>
 							</pre>`

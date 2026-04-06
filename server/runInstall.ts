@@ -5,11 +5,11 @@
 	const fs = require("fs-extra");
 
 	function install() {
-		const fileExistURL = path.join(xU.var.APP_ROOT_DIR, "..", "yapi.installed");
+		const fileExistURL = path.join(xU.var.APP_ROOT_DIR, "..", "xspace.installed");
 		let isExist = xU.fileExist(fileExistURL);
 		if (isExist) {
 			throw new Error(
-				`${fileExistURL} 存在，代表已安装。如果需要重新安装，请删掉yapi.installed文件`
+				`${fileExistURL} 存在，代表已安装。如果需要重新安装，请删掉xspace.installed文件`
 			);
 		}
 
@@ -21,7 +21,10 @@
 		let passsalt = xU.randStr();
 		let result = userInst.save({
 			nickname: xspace_configs.adminAccount.indexOf("@"),
-			username: xspace_configs.adminAccount.substr(0, xspace_configs.adminAccount.indexOf("@")),
+			username: xspace_configs.adminAccount.substr(
+				0,
+				xspace_configs.adminAccount.indexOf("@")
+			),
 			email: xspace_configs.adminAccount,
 			password: xU.$saltIt(xspace_configs.adminPwd, passsalt),
 			passsalt: passsalt,
@@ -140,7 +143,7 @@
 
 			result.then(
 				function () {
-					fs.ensureFileSync(path.join(xU.var.APP_ROOT_DIR, "yapi.installed"));
+					fs.ensureFileSync(path.join(xU.var.APP_ROOT_DIR, "xspace.installed"));
 					console.log(
 						`初始化管理员账号成功,账号名："${xspace_configs.adminAccount}"，密码："${xspace_configs.adminPwd}"`
 					);

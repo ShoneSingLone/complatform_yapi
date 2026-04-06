@@ -69,7 +69,7 @@ async function httpRequestByServer(options, defaultOptions, context) {
 	const axiosConfigs = {
 		method: options.method,
 		url: url,
-		headers: { ...options.headers, "yapi-run-test": defaultOptions.url }
+		headers: { ...options.headers, "xspace-run-test": defaultOptions.url }
 	};
 	if (options.data) {
 		axiosConfigs.data = options.data;
@@ -87,7 +87,7 @@ async function httpRequestByServer(options, defaultOptions, context) {
 				headers: {},
 				status: null,
 				data: err.message,
-				yapiNodeRequestError: err
+				xspaceNodeRequestError: err
 			});
 		}
 		return handleRes(err.response, defaultOptions);
@@ -159,7 +159,7 @@ async function httpRequestByNode(options) {
 				headers: {},
 				status: null,
 				data: err.message,
-				yapiNodeRequestError: err
+				xspaceNodeRequestError: err
 			});
 		}
 		return handleRes(err.response);

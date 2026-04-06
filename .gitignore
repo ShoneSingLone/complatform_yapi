@@ -53,7 +53,7 @@ server/uploads/db*
 server/uploads/upload_*
 server/uploads/resourceAssets
 server/uploads/RESOURCE_ASSETS
-yapi.installed
+xspace.installed
 static/dist
 server/app.js
 push.bat

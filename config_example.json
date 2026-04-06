@@ -4,7 +4,7 @@
 	"timeout": 120000,
 	"db": {
 		"servername": "127.0.0.1",
-		"DATABASE": "yapi",
+		"DATABASE": "xspace",
 		"port": 27017,
 		"user": "test1",
 		"pass": "test1",

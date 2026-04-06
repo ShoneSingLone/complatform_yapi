@@ -1,7 +1,7 @@
 {
 	"apps": [
 		{
-			"name": "yapi",
+			"name": "xspace",
 			"script": "npm",
 			"args": "start"
 		}

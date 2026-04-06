@@ -30,9 +30,9 @@
 
     ```bash
     # 检查 Toast UI Editor 相关文件
-    ls -la static/business_yapi/components/TuiEditor/
+    ls -la static/business_xspace/components/TuiEditor/
     # 检查编辑器配置
-    cat static/business_yapi/components/TuiEditor/TuiEditor.vue
+    cat static/business_xspace/components/TuiEditor/TuiEditor.vue
     ```
 
 4. **检查 UI 组件库**
@@ -53,13 +53,13 @@
 
     ```bash
     # 创建 DocFlow 组件目录
-    mkdir -p static/business_yapi/components/DocFlow/
+    mkdir -p static/business_xspace/components/DocFlow/
     # 创建 DocFlow 视图目录
-    mkdir -p static/business_yapi/views/docflow/
+    mkdir -p static/business_xspace/views/docflow/
     # 创建 AI 工具目录
-    mkdir -p static/business_yapi/utils/ai/
+    mkdir -p static/business_xspace/utils/ai/
     # 创建样式目录
-    mkdir -p static/business_yapi/styles/docflow/
+    mkdir -p static/business_xspace/styles/docflow/
     ```
 
 2. **创建临时工作目录**
@@ -131,16 +131,16 @@
 
     ```bash
     # 创建依赖目录
-    mkdir -p static/business_yapi/common/tiptap/
-    mkdir -p static/business_yapi/common/yjs/
-    mkdir -p static/business_yapi/common/prosemirror/
+    mkdir -p static/business_xspace/common/tiptap/
+    mkdir -p static/business_xspace/common/yjs/
+    mkdir -p static/business_xspace/common/prosemirror/
 
     # 复制 Tiptap 文件
-    cp tiptap-*.js static/business_yapi/common/tiptap/
+    cp tiptap-*.js static/business_xspace/common/tiptap/
     # 复制 Yjs 文件
-    cp y-*.js static/business_yapi/common/yjs/
+    cp y-*.js static/business_xspace/common/yjs/
     # 复制 ProseMirror 文件
-    cp prosemirror-*.js static/business_yapi/common/prosemirror/
+    cp prosemirror-*.js static/business_xspace/common/prosemirror/
     ```
 
 ## 2. 核心模块实现
@@ -153,7 +153,7 @@
 
     ```bash
     # 创建编辑器核心组件
-    touch static/business_yapi/components/DocFlow/Editor.vue
+    touch static/business_xspace/components/DocFlow/Editor.vue
     ```
 
     **文件内容：**
@@ -293,7 +293,7 @@
 
     ```bash
     # 创建编辑器工具函数
-    touch static/business_yapi/utils/docflow/editor.js
+    touch static/business_xspace/utils/docflow/editor.js
     ```
 
     **文件内容：**
@@ -340,7 +340,7 @@
 
     ```bash
     # 创建 AI 服务核心文件
-    touch static/business_yapi/utils/ai/ai.vue
+    touch static/business_xspace/utils/ai/ai.vue
     ```
 
     **文件内容：**
@@ -474,7 +474,7 @@
 
     ```bash
     # 创建 AI 助手视图
-    touch static/business_yapi/views/docflow/ai.vue
+    touch static/business_xspace/views/docflow/ai.vue
     ```
 
     **文件内容：**
@@ -881,7 +881,7 @@
 
     ```bash
     # 创建协作服务核心文件
-    touch static/business_yapi/components/DocFlow/Collaboration.vue
+    touch static/business_xspace/components/DocFlow/Collaboration.vue
     ```
 
     **文件内容：**
@@ -1038,7 +1038,7 @@
 
     ```bash
     # 创建 UI 组件工具文件
-    touch static/business_yapi/utils/docflow/ui.js
+    touch static/business_xspace/utils/docflow/ui.js
     ```
 
     **文件内容：**
@@ -1074,7 +1074,7 @@
 
     ```bash
     # 修改编辑器组件，添加 UI 组件支持
-    edit static/business_yapi/components/DocFlow/Editor.vue
+    edit static/business_xspace/components/DocFlow/Editor.vue
     ```
 
     **修改内容：**
@@ -1124,7 +1124,7 @@
 
     ```bash
     # 修改 AI 助手视图，添加 UI 组件支持
-    edit static/business_yapi/views/docflow/ai.vue
+    edit static/business_xspace/views/docflow/ai.vue
     ```
 
     **修改内容：**
@@ -1284,11 +1284,11 @@ export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, docu
 
     ```bash
     # 检查现有菜单配置
-    cat static/business_yapi/config/menu.js
+    cat static/business_xspace/config/menu.js
     # 备份菜单配置
-    cp static/business_yapi/config/menu.js static/business_yapi/config/menu.js.bak
+    cp static/business_xspace/config/menu.js static/business_xspace/config/menu.js.bak
     # 修改菜单配置
-    vi static/business_yapi/config/menu.js
+    vi static/business_xspace/config/menu.js
     ```
 
     **修改内容：**
@@ -1345,11 +1345,11 @@ export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, docu
 
     ```bash
     # 检查现有路由配置
-    cat static/business_yapi/config/routes.js
+    cat static/business_xspace/config/routes.js
     # 备份路由配置
-    cp static/business_yapi/config/routes.js static/business_yapi/config/routes.js.bak
+    cp static/business_xspace/config/routes.js static/business_xspace/config/routes.js.bak
     # 修改路由配置
-    vi static/business_yapi/config/routes.js
+    vi static/business_xspace/config/routes.js
     ```
 
     **修改内容：**
@@ -1415,7 +1415,7 @@ export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, docu
 
     ```bash
     # 创建图标注册文件
-    touch static/business_yapi/utils/icons.js
+    touch static/business_xspace/utils/icons.js
     ```
 
     **文件内容：**
@@ -1448,11 +1448,11 @@ export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, docu
 
     ```bash
     # 检查现有入口文件
-    cat static/business_yapi/entry.vue
+    cat static/business_xspace/entry.vue
     # 备份入口文件
-    cp static/business_yapi/entry.vue static/business_yapi/entry.vue.bak
+    cp static/business_xspace/entry.vue static/business_xspace/entry.vue.bak
     # 修改入口文件
-    vi static/business_yapi/entry.vue
+    vi static/business_xspace/entry.vue
     ```
 
     **修改内容：**
@@ -1515,13 +1515,13 @@ export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, docu
 
     ```bash
     # 创建主样式文件
-    touch static/business_yapi/styles/docflow/editor.scss
+    touch static/business_xspace/styles/docflow/editor.scss
     # 创建 AI 样式文件
-    touch static/business_yapi/styles/docflow/ai.scss
+    touch static/business_xspace/styles/docflow/ai.scss
     # 创建协作样式文件
-    touch static/business_yapi/styles/docflow/collaboration.scss
+    touch static/business_xspace/styles/docflow/collaboration.scss
     # 创建变量文件
-    touch static/business_yapi/styles/docflow/variables.scss
+    touch static/business_xspace/styles/docflow/variables.scss
     ```
 
     **变量文件内容：**
@@ -1625,11 +1625,11 @@ export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, docu
 
     ```bash
     # 检查现有主样式文件
-    cat static/business_yapi/styles/main.scss
+    cat static/business_xspace/styles/main.scss
     # 备份主样式文件
-    cp static/business_yapi/styles/main.scss static/business_yapi/styles/main.scss.bak
+    cp static/business_xspace/styles/main.scss static/business_xspace/styles/main.scss.bak
     # 修改主样式文件
-    vi static/business_yapi/styles/main.scss
+    vi static/business_xspace/styles/main.scss
     ```
 
     **修改内容：**
@@ -1665,9 +1665,9 @@ export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, docu
 
     ```bash
     # 创建图标目录
-    mkdir -p static/business_yapi/assets/icons/
+    mkdir -p static/business_xspace/assets/icons/
     # 创建 DocFlow 图标文件
-    touch static/business_yapi/assets/icons/docflow-icons.js
+    touch static/business_xspace/assets/icons/docflow-icons.js
     ```
 
     **文件内容：**
@@ -1849,7 +1849,7 @@ export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, docu
     # 复制构建结果
     cp -r dist/* deploy/docflow/
     # 复制配置文件
-    cp static/business_yapi/config/* deploy/docflow/config/
+    cp static/business_xspace/config/* deploy/docflow/config/
     ```
 
 2. **部署到服务器**
@@ -1923,5 +1923,5 @@ export default async function ({ PRIVATE_GLOBAL, closeModal, documentTitle, docu
     - 完善的文档
     - 可扩展的架构
 
-通过以上实施步骤，我们将成功将 DocFlow 的核心功能移植到 business_yapi 项目中，为用户提供更加现代化、高效的文档编辑与协作
-体验。
+通过以上实施步骤，我们将成功将 DocFlow 的核心功能移植到 business_xspace 项目中，为用户提供更加现代化、高效的文档编辑与协
+作体验。
