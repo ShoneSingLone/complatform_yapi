@@ -248,7 +248,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
   padding: 0 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
-  min-width: 400px;
+  min-width: 300px;
+  max-width: 800px;
+  width: 90%;
 
   &--dragging-over {
     background-color: rgba(255, 255, 255, 0.9);
@@ -312,20 +314,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      align-items: center;
-      justify-content: center;
+      gap: 4px;
 
       &__dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        transition: all 0.2s ease;
+        height: 4px;
+        border-radius: 9999px;
+        transition: all 0.3s ease;
 
         &--active {
+          width: 16px;
           background-color: #3182ce;
         }
 
         &--inactive {
+          width: 6px;
           background-color: rgba(0, 0, 0, 0.3);
         }
       }

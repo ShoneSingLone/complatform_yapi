@@ -1,0 +1,8 @@
+- [x] Checkpoint 1: 状态管理优化验证 - 打开/关闭窗口时 UI 正确更新，无需 $forceUpdate
+- [x] Checkpoint 2: Dock 栏指示器样式验证 - 活动应用显示蓝色胶囊状，非活动显示灰色短条
+- [ ] Checkpoint 3: 窗口拖拽功能验证 - 拖拽流畅，无卡顿，边界检测正确
+- [ ] Checkpoint 4: 代码规范验证 - 所有组件类名符合 BEM 规范
+- [ ] Checkpoint 5: 类型提示验证 - IDE 能提供正确的类型提示和自动补全
+- [ ] Checkpoint 6: 功能完整性验证 - 多桌面、背景设置、快捷键等功能正常工作
+- [ ] Checkpoint 7: 性能验证 - 打开多个窗口时无明显性能下降
+- [ ] Checkpoint 8: 响应式验证 - 窗口大小调整时布局正确适配

@@ -10,11 +10,11 @@
         !isResizing ? 'window--transition' : ''
       ]"
       :style="window.isMaximized ? { zIndex: window.zIndex } : { 
-        zIndex: window.zIndex, 
-        width: window.width + 'px', 
-        height: window.height + 'px',
-        transform: `translate(${x}px, ${y}px)`
-      }"
+					zIndex: window.zIndex, 
+					width: window.width + 'px', 
+					height: window.height + 'px',
+					transform: 'translate(' + x + 'px, ' + y + 'px)'
+				}"
       @mousedown="system.focusWindow(window.id)"
     >
       <!-- Resize Handles -->

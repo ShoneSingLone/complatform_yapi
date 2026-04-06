@@ -1,9 +1,9 @@
 <template>
   <div class="api-content">
     <!-- API 基本信息 -->
-    <div class="api-header">
-      <div class="api-method" :class="methodClass">{{ data.metadata?.method || 'GET' }}</div>
-      <div class="api-path">{{ data.metadata?.url || '/' }}</div>
+    <div class="api-header" v-if="data && data.metadata">
+      <div class="api-method" :class="methodClass">{{ data.metadata.method || 'GET' }}</div>
+      <div class="api-path">{{ data.metadata.url || '/' }}</div>
     </div>
 
     <!-- API 调试面板 -->
@@ -62,7 +62,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
     },
     computed: {
       methodClass() {
-        const method = this.data.metadata?.method || 'GET';
+        if (!this.data || !this.data.metadata) return 'get';
+        const method = this.data.metadata.method || 'GET';
         return method.toLowerCase();
       },
       sendBtnConfig() {

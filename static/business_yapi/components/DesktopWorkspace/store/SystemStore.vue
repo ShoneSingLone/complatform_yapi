@@ -1,122 +1,123 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-  // 应用列表
-  const apps = [
-    {
-      id: 'api',
-      name: 'API 管理',
-      icon: 'LayoutGrid',
-      color: '#3182ce',
-      component: 'ApiManager'
-    },
-    {
-      id: 'project',
-      name: '项目管理',
-      icon: 'Folder',
-      color: '#67c23a',
-      component: 'ProjectManager'
-    },
-    {
-      id: 'doc',
-      name: '文档管理',
-      icon: 'FileText',
-      color: '#e6a23c',
-      component: 'DocManager'
-    },
-    {
-      id: 'explore',
-      name: '资源浏览',
-      icon: 'Compass',
-      color: '#f56c6c',
-      component: 'Explore'
-    },
-    {
-      id: 'settings',
-      name: '系统设置',
-      icon: 'Settings',
-      color: '#909399',
-      component: 'Settings'
-    }
-  ];
-
-  // 初始窗口列表
-  const openWindows = [];
-
-  // 固定的应用
-  const pinnedApps = ['api', 'project', 'explore'];
-
-  // 桌面快捷方式
-  const shortcuts = [
-    {
-      id: 'shortcut-api',
-      appId: 'api',
-      name: 'API 管理',
-      icon: 'LayoutGrid',
-      color: '#3182ce',
-      data: null
-    },
-    {
-      id: 'shortcut-project',
-      appId: 'project',
-      name: '项目管理',
-      icon: 'Folder',
-      color: '#67c23a',
-      data: null
-    }
-  ];
-
-  // 多桌面
-  const desktops = [
-    {
-      id: 'desktop-1',
-      name: '桌面 1',
-      windows: [],
-      background: {
-        type: 'default',
-        url: '',
-        color: '#f0f2f5',
-        opacity: 1
-      }
-    }
-  ];
-
-  // 当前活动桌面
-  let currentDesktopId = 'desktop-1';
-
-  // 当前活动窗口 ID
-  let activeWindowId = null;
-
-  // 最后打开的应用 ID
-  let lastOpenedAppId = null;
-
+  // 确保 Vue 可用
+  const Vue = window.Vue;
+  
   // 生成唯一 ID
-  const generateId = () => {
+  const generateId = function() {
     return 'id-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
   };
 
-  // 初始化系统
-  const init = () => {
-    // 可以从本地存储或 API 加载之前的状态
-    loadState();
-  };
+  // 使用 Vue.observable 创建响应式状态
+  const state = Vue.observable({
+    // 应用列表
+    apps: [
+      {
+        id: 'api',
+        name: 'API 管理',
+        icon: 'LayoutGrid',
+        color: '#3182ce',
+        component: 'ApiManager'
+      },
+      {
+        id: 'project',
+        name: '项目管理',
+        icon: 'Folder',
+        color: '#67c23a',
+        component: 'ProjectManager'
+      },
+      {
+        id: 'doc',
+        name: '文档管理',
+        icon: 'FileText',
+        color: '#e6a23c',
+        component: 'DocManager'
+      },
+      {
+        id: 'explore',
+        name: '资源浏览',
+        icon: 'Compass',
+        color: '#f56c6c',
+        component: 'Explore'
+      },
+      {
+        id: 'settings',
+        name: '系统设置',
+        icon: 'Settings',
+        color: '#909399',
+        component: 'Settings'
+      }
+    ],
+
+    // 初始窗口列表
+    openWindows: [],
+
+    // 固定的应用
+    pinnedApps: ['api', 'project', 'explore'],
+
+    // 桌面快捷方式
+    shortcuts: [
+      {
+        id: 'shortcut-api',
+        appId: 'api',
+        name: 'API 管理',
+        icon: 'LayoutGrid',
+        color: '#3182ce',
+        data: null
+      },
+      {
+        id: 'shortcut-project',
+        appId: 'project',
+        name: '项目管理',
+        icon: 'Folder',
+        color: '#67c23a',
+        data: null
+      }
+    ],
+
+    // 多桌面
+    desktops: [
+      {
+        id: 'desktop-1',
+        name: '桌面 1',
+        windows: [],
+        background: {
+          type: 'default',
+          url: '',
+          color: '#f0f2f5',
+          opacity: 1
+        }
+      }
+    ],
+
+    // 当前活动桌面
+    currentDesktopId: 'desktop-1',
+
+    // 当前活动窗口 ID
+    activeWindowId: null,
+
+    // 最后打开的应用 ID
+    lastOpenedAppId: null
+  });
 
   // 保存状态
   const saveState = async () => {
     try {
-      const state = {
-        openWindows,
-        pinnedApps,
-        shortcuts,
-        desktops,
-        currentDesktopId,
-        activeWindowId
+      const stateToSave = {
+        openWindows: state.openWindows,
+        pinnedApps: state.pinnedApps,
+        shortcuts: state.shortcuts,
+        desktops: state.desktops,
+        currentDesktopId: state.currentDesktopId,
+        activeWindowId: state.activeWindowId
       };
       // 保存到本地存储作为备份
-      localStorage.setItem('desktop-workspace-state', JSON.stringify(state));
+      localStorage.setItem('desktop-workspace-state', JSON.stringify(stateToSave));
       // 保存到服务器
-      if (window._api && window._api.xspace && window._api.xspace.saveDesktopState) {
+      const api = _.$api;
+      if (api && api.xspace && api.xspace.saveDesktopState) {
         try {
-          await window._api.xspace.saveDesktopState(state);
+          await api.xspace.saveDesktopState(stateToSave);
         } catch (apiError) {
           console.error('API 保存状态失败，使用本地存储:', apiError);
         }
@@ -127,36 +128,33 @@ export default async function ({ PRIVATE_GLOBAL }) {
   };
 
   // 加载状态
-  const loadState = async () => {
+  const loadState = async function() {
     try {
       // 尝试从服务器加载
-      if (window._api && window._api.xspace && window._api.xspace.loadDesktopState) {
+      var api = _.$api;
+      if (api && api.xspace && api.xspace.loadDesktopState) {
         try {
-          const response = await window._api.xspace.loadDesktopState();
+          var response = await api.xspace.loadDesktopState();
           if (response && response.data) {
-            const state = response.data;
+            var loadedState = response.data;
             // 恢复状态
-            if (state.openWindows) {
-              openWindows.length = 0;
-              openWindows.push(...state.openWindows);
+            if (loadedState.openWindows) {
+              state.openWindows.splice(0, state.openWindows.length, ...loadedState.openWindows);
             }
-            if (state.pinnedApps) {
-              pinnedApps.length = 0;
-              pinnedApps.push(...state.pinnedApps);
+            if (loadedState.pinnedApps) {
+              state.pinnedApps.splice(0, state.pinnedApps.length, ...loadedState.pinnedApps);
             }
-            if (state.shortcuts) {
-              shortcuts.length = 0;
-              shortcuts.push(...state.shortcuts);
+            if (loadedState.shortcuts) {
+              state.shortcuts.splice(0, state.shortcuts.length, ...loadedState.shortcuts);
             }
-            if (state.desktops) {
-              desktops.length = 0;
-              desktops.push(...state.desktops);
+            if (loadedState.desktops) {
+              state.desktops.splice(0, state.desktops.length, ...loadedState.desktops);
             }
-            if (state.currentDesktopId) {
-              currentDesktopId = state.currentDesktopId;
+            if (loadedState.currentDesktopId) {
+              state.currentDesktopId = loadedState.currentDesktopId;
             }
-            if (state.activeWindowId) {
-              activeWindowId = state.activeWindowId;
+            if (loadedState.activeWindowId) {
+              state.activeWindowId = loadedState.activeWindowId;
             }
             return;
           }
@@ -166,31 +164,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
       }
       
       // 从本地存储加载
-      const savedState = localStorage.getItem('desktop-workspace-state');
+      var savedState = localStorage.getItem('desktop-workspace-state');
       if (savedState) {
-        const state = JSON.parse(savedState);
+        var loadedState = JSON.parse(savedState);
         // 恢复状态
-        if (state.openWindows) {
-          openWindows.length = 0;
-          openWindows.push(...state.openWindows);
+        if (loadedState.openWindows) {
+          state.openWindows.splice(0, state.openWindows.length, ...loadedState.openWindows);
         }
-        if (state.pinnedApps) {
-          pinnedApps.length = 0;
-          pinnedApps.push(...state.pinnedApps);
+        if (loadedState.pinnedApps) {
+          state.pinnedApps.splice(0, state.pinnedApps.length, ...loadedState.pinnedApps);
         }
-        if (state.shortcuts) {
-          shortcuts.length = 0;
-          shortcuts.push(...state.shortcuts);
+        if (loadedState.shortcuts) {
+          state.shortcuts.splice(0, state.shortcuts.length, ...loadedState.shortcuts);
         }
-        if (state.desktops) {
-          desktops.length = 0;
-          desktops.push(...state.desktops);
+        if (loadedState.desktops) {
+          state.desktops.splice(0, state.desktops.length, ...loadedState.desktops);
         }
-        if (state.currentDesktopId) {
-          currentDesktopId = state.currentDesktopId;
+        if (loadedState.currentDesktopId) {
+          state.currentDesktopId = loadedState.currentDesktopId;
         }
-        if (state.activeWindowId) {
-          activeWindowId = state.activeWindowId;
+        if (loadedState.activeWindowId) {
+          state.activeWindowId = loadedState.activeWindowId;
         }
       }
     } catch (error) {
@@ -199,15 +193,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
   };
 
   // 打开应用
-  const openApp = (appId, forceNew = false, data = null) => {
-    const app = apps.find(a => a.id === appId);
+  const openApp = function(appId, forceNew, data) {
+    if (forceNew === undefined) forceNew = false;
+    if (data === undefined) data = null;
+    
+    var app = state.apps.find(function(a) { return a.id === appId; });
     if (!app) return;
 
-    lastOpenedAppId = appId;
+    state.lastOpenedAppId = appId;
 
     // 如果不是强制打开新窗口，检查是否已有该应用的窗口
     if (!forceNew) {
-      const existingWindow = openWindows.find(win => win.appId === appId && (!data || JSON.stringify(win.data) === JSON.stringify(data)));
+      var existingWindow = state.openWindows.find(function(win) {
+        return win.appId === appId && (!data || JSON.stringify(win.data) === JSON.stringify(data));
+      });
       if (existingWindow) {
         focusWindow(existingWindow.id);
         return;
@@ -215,58 +214,58 @@ export default async function ({ PRIVATE_GLOBAL }) {
     }
 
     // 创建新窗口
-    const newWindow = {
+    var newWindow = {
       id: generateId(),
       appId: app.id,
-      title: app.name,
-      x: 100 + (openWindows.length * 20),
-      y: 100 + (openWindows.length * 20),
+      title: data ? data.name : app.name,
+      x: 100 + (state.openWindows.length * 20),
+      y: 100 + (state.openWindows.length * 20),
       width: 800,
       height: 600,
       isMinimized: false,
       isMaximized: false,
-      zIndex: openWindows.length + 1,
+      zIndex: state.openWindows.length + 1,
       data: data,
-      desktopId: currentDesktopId
+      desktopId: state.currentDesktopId
     };
 
-    openWindows.push(newWindow);
+    state.openWindows.push(newWindow);
     focusWindow(newWindow.id);
     saveState();
   };
 
   // 关闭窗口
-  const closeWindow = (windowId) => {
-    const index = openWindows.findIndex(win => win.id === windowId);
+  const closeWindow = function(windowId) {
+    var index = state.openWindows.findIndex(function(win) { return win.id === windowId; });
     if (index > -1) {
-      openWindows.splice(index, 1);
+      state.openWindows.splice(index, 1);
       // 如果关闭的是活动窗口，设置新的活动窗口
-      if (activeWindowId === windowId) {
-        activeWindowId = openWindows.length > 0 ? openWindows[openWindows.length - 1].id : null;
+      if (state.activeWindowId === windowId) {
+        state.activeWindowId = state.openWindows.length > 0 ? state.openWindows[state.openWindows.length - 1].id : null;
       }
       saveState();
     }
   };
 
   // 最小化窗口
-  const minimizeWindow = (windowId) => {
-    const window = openWindows.find(win => win.id === windowId);
+  const minimizeWindow = function(windowId) {
+    var window = state.openWindows.find(function(win) { return win.id === windowId; });
     if (window) {
       window.isMinimized = true;
       // 最小化后，设置其他窗口为活动窗口
-      const otherWindow = openWindows.find(win => win.id !== windowId && !win.isMinimized);
+      var otherWindow = state.openWindows.find(function(win) { return win.id !== windowId && !win.isMinimized; });
       if (otherWindow) {
         focusWindow(otherWindow.id);
       } else {
-        activeWindowId = null;
+        state.activeWindowId = null;
       }
       saveState();
     }
   };
 
   // 最大化窗口
-  const toggleMaximize = (windowId) => {
-    const window = openWindows.find(win => win.id === windowId);
+  const toggleMaximize = function(windowId) {
+    var window = state.openWindows.find(function(win) { return win.id === windowId; });
     if (window) {
       window.isMaximized = !window.isMaximized;
       saveState();
@@ -274,55 +273,55 @@ export default async function ({ PRIVATE_GLOBAL }) {
   };
 
   // 聚焦窗口
-  const focusWindow = (windowId) => {
-    const window = openWindows.find(win => win.id === windowId);
+  const focusWindow = function(windowId) {
+    var window = state.openWindows.find(function(win) { return win.id === windowId; });
     if (window) {
       // 将窗口置于最上层
-      const maxZIndex = Math.max(...openWindows.map(win => win.zIndex), 0);
+      var maxZIndex = Math.max.apply(null, state.openWindows.map(function(win) { return win.zIndex; }).concat([0]));
       window.zIndex = maxZIndex + 1;
       window.isMinimized = false;
-      activeWindowId = windowId;
+      state.activeWindowId = windowId;
       saveState();
     }
   };
 
   // 固定应用到任务栏
-  const pinApp = (appId) => {
-    if (!pinnedApps.includes(appId)) {
-      pinnedApps.push(appId);
+  const pinApp = function(appId) {
+    if (!state.pinnedApps.includes(appId)) {
+      state.pinnedApps.push(appId);
       saveState();
     }
   };
 
   // 取消固定应用
-  const unpinApp = (appId) => {
-    const index = pinnedApps.indexOf(appId);
+  const unpinApp = function(appId) {
+    var index = state.pinnedApps.indexOf(appId);
     if (index > -1) {
-      pinnedApps.splice(index, 1);
+      state.pinnedApps.splice(index, 1);
       saveState();
     }
   };
 
   // 添加快捷方式
-  const addShortcut = (shortcut) => {
-    shortcuts.push(shortcut);
+  const addShortcut = function(shortcut) {
+    state.shortcuts.push(shortcut);
     saveState();
   };
 
   // 移除快捷方式
-  const removeShortcut = (shortcutId) => {
-    const index = shortcuts.findIndex(s => s.id === shortcutId);
+  const removeShortcut = function(shortcutId) {
+    var index = state.shortcuts.findIndex(function(s) { return s.id === shortcutId; });
     if (index > -1) {
-      shortcuts.splice(index, 1);
+      state.shortcuts.splice(index, 1);
       saveState();
     }
   };
 
   // 创建新桌面
-  const createDesktop = () => {
-    const newDesktop = {
+  const createDesktop = function() {
+    var newDesktop = {
       id: generateId(),
-      name: `桌面 ${desktops.length + 1}`,
+      name: '桌面 ' + (state.desktops.length + 1),
       windows: [],
       background: {
         type: 'default',
@@ -331,24 +330,21 @@ export default async function ({ PRIVATE_GLOBAL }) {
         opacity: 1
       }
     };
-    desktops.push(newDesktop);
-    currentDesktopId = newDesktop.id;
+    state.desktops.push(newDesktop);
+    state.currentDesktopId = newDesktop.id;
     saveState();
     return newDesktop;
   };
 
   // 切换桌面
-  const switchDesktop = (desktopId) => {
-    const desktop = desktops.find(d => d.id === desktopId);
-    if (desktop) {
-      currentDesktopId = desktopId;
-      saveState();
-    }
+  const switchDesktop = function(desktopId) {
+    state.currentDesktopId = desktopId;
+    saveState();
   };
 
   // 重命名桌面
-  const renameDesktop = (desktopId, name) => {
-    const desktop = desktops.find(d => d.id === desktopId);
+  const renameDesktop = function(desktopId, name) {
+    var desktop = state.desktops.find(function(d) { return d.id === desktopId; });
     if (desktop) {
       desktop.name = name;
       saveState();
@@ -356,23 +352,23 @@ export default async function ({ PRIVATE_GLOBAL }) {
   };
 
   // 删除桌面
-  const deleteDesktop = (desktopId) => {
-    if (desktops.length > 1) {
-      const index = desktops.findIndex(d => d.id === desktopId);
+  const deleteDesktop = function(desktopId) {
+    if (state.desktops.length > 1) {
+      var index = state.desktops.findIndex(function(d) { return d.id === desktopId; });
       if (index > -1) {
         // 将该桌面的窗口移动到其他桌面
-        const desktopWindows = openWindows.filter(win => win.desktopId === desktopId);
-        const otherDesktop = desktops.find(d => d.id !== desktopId);
+        var desktopWindows = state.openWindows.filter(function(win) { return win.desktopId === desktopId; });
+        var otherDesktop = state.desktops.find(function(d) { return d.id !== desktopId; });
         if (otherDesktop) {
-          desktopWindows.forEach(win => {
+          desktopWindows.forEach(function(win) {
             win.desktopId = otherDesktop.id;
           });
         }
         // 删除桌面
-        desktops.splice(index, 1);
+        state.desktops.splice(index, 1);
         // 如果删除的是当前桌面，切换到其他桌面
-        if (currentDesktopId === desktopId) {
-          currentDesktopId = desktops[0].id;
+        if (state.currentDesktopId === desktopId) {
+          state.currentDesktopId = state.desktops[0].id;
         }
         saveState();
       }
@@ -380,17 +376,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
   };
 
   // 更新桌面背景
-  const updateDesktopBackground = (desktopId, background) => {
-    const desktop = desktops.find(d => d.id === desktopId);
+  const updateDesktopBackground = function(desktopId, background) {
+    var desktop = state.desktops.find(function(d) { return d.id === desktopId; });
     if (desktop) {
-      desktop.background = { ...desktop.background, ...background };
+      desktop.background = Object.assign({}, desktop.background, background);
       saveState();
     }
   };
 
-  // 为窗口添加groupId和projectId
-  const updateWindowGroupAndProject = (windowId, groupId, projectId) => {
-    const window = openWindows.find(win => win.id === windowId);
+  // 为窗口添加 groupId 和 projectId
+  const updateWindowGroupAndProject = function(windowId, groupId, projectId) {
+    var window = state.openWindows.find(function(win) { return win.id === windowId; });
     if (window) {
       window.groupId = groupId;
       window.projectId = projectId;
@@ -398,34 +394,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
     }
   };
 
-  // 导出系统状态管理对象
-  return {
-    apps,
-    openWindows,
-    pinnedApps,
-    shortcuts,
-    desktops,
-    currentDesktopId,
-    activeWindowId,
-    lastOpenedAppId,
-    init,
-    openApp,
-    closeWindow,
-    minimizeWindow,
-    toggleMaximize,
-    focusWindow,
-    pinApp,
-    unpinApp,
-    addShortcut,
-    removeShortcut,
-    createDesktop,
-    switchDesktop,
-    renameDesktop,
-    deleteDesktop,
-    updateDesktopBackground,
-    updateWindowGroupAndProject,
-    saveState,
-    loadState
+  // 初始化系统
+  const init = function() {
+    loadState();
   };
+
+  // 导出系统状态管理对象 - 将所有方法添加到 state 对象
+  state.init = init;
+  state.saveState = saveState;
+  state.loadState = loadState;
+  state.openApp = openApp;
+  state.closeWindow = closeWindow;
+  state.minimizeWindow = minimizeWindow;
+  state.toggleMaximize = toggleMaximize;
+  state.focusWindow = focusWindow;
+  state.pinApp = pinApp;
+  state.unpinApp = unpinApp;
+  state.addShortcut = addShortcut;
+  state.removeShortcut = removeShortcut;
+  state.createDesktop = createDesktop;
+  state.switchDesktop = switchDesktop;
+  state.renameDesktop = renameDesktop;
+  state.deleteDesktop = deleteDesktop;
+  state.updateDesktopBackground = updateDesktopBackground;
+  state.updateWindowGroupAndProject = updateWindowGroupAndProject;
+  
+  return state;
 }
 </script>

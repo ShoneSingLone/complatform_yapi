@@ -25,7 +25,7 @@
       <!-- Desktop Icons Grid -->
       <div class="desktop-workspace__desktop__icons">
         <DesktopIcon 
-          v-for="shortcut in system.shortcuts" 
+          v-for="shortcut in shortcuts" 
           :key="shortcut.id" 
           :app="shortcut" 
           @click="system.openApp(shortcut.appId, false, shortcut.data)"
@@ -77,6 +77,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
       };
     },
     computed: {
+      shortcuts() {
+        return this.system.shortcuts;
+      },
+      openWindows() {
+        return this.system.openWindows;
+      },
       desktopBackgroundStyle() {
         const currentDesktop = this.system.desktops.find(d => d.id === this.system.currentDesktopId);
         if (!currentDesktop || !currentDesktop.background) {
@@ -179,7 +185,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       display: grid;
       grid-template-columns: repeat(auto-fill, 80px);
       gap: 20px;
-      z-index: 10;
+      z-index: 1000;
     }
 
     &__windows {
