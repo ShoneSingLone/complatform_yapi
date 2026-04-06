@@ -319,13 +319,13 @@ module.exports = {
 							let dirOrFileArray = [];
 
 							if (
-								!xU._.some(yapi_configs.RESOURCE_ASSETS_REMOTE, item =>
+								!xU._.some(xspace_configs.RESOURCE_ASSETS_REMOTE, item =>
 									xU._.startsWith(path_full_string, item)
 								)
 							) {
 								/* 如果路径不在预设的路径中，则返回设定的根目录路径 */
 								dirOrFileArray = await asyncResolvePathFileOrDir({
-									fileOrDirPath: yapi_configs.RESOURCE_ASSETS_REMOTE,
+									fileOrDirPath: xspace_configs.RESOURCE_ASSETS_REMOTE,
 									relativePathArray: [],
 									search_key
 								});
@@ -373,7 +373,7 @@ module.exports = {
 							}
 							dirpath = dirpath.replace(/^\//, "");
 							let targetPath = path.resolve(
-								yapi_configs.CLOUD_DISK_ROOT,
+								xspace_configs.CLOUD_DISK_ROOT,
 								dirpath || ""
 							);
 
@@ -381,7 +381,7 @@ module.exports = {
 							if (stat.isDirectory()) {
 								const dirlsArray = await fs.promises.readdir(targetPath);
 								const dirname = path.dirname(targetPath);
-								const rootDirName = path.resolve(yapi_configs.CLOUD_DISK_ROOT);
+								const rootDirName = path.resolve(xspace_configs.CLOUD_DISK_ROOT);
 
 								let parentDir;
 								if (dirname.length < rootDirName.length) {
@@ -442,7 +442,7 @@ module.exports = {
 
 					if (uri) {
 						try {
-							const rootDirName = path.resolve(yapi_configs.CLOUD_DISK_ROOT);
+							const rootDirName = path.resolve(xspace_configs.CLOUD_DISK_ROOT);
 							resourcePath = path.resolve.apply(path, [
 								rootDirName,
 								...JSON.parse(uri)
@@ -529,7 +529,7 @@ module.exports = {
 						}
 					} else if (uri) {
 						try {
-							const rootDirName = path.resolve(yapi_configs.CLOUD_DISK_ROOT);
+							const rootDirName = path.resolve(xspace_configs.CLOUD_DISK_ROOT);
 							resourcePath = path.resolve.apply(path, [
 								rootDirName,
 								...JSON.parse(uri)

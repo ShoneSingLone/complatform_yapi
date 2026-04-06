@@ -6,6 +6,7 @@ export default async function () {
 		}
 	};
 	return [
+		_.$newRoute("/v1", "@/views/v1/ViewXspace.vue"),
 		_.$newRoute("/demo_test", "@/views/demo/test.vue"),
 		_.$newRoute("/cicd", "@/views/CiCd/ViewCiCd.vue", {
 			redirect: "/cicd/task_list",

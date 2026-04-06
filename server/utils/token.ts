@@ -40,16 +40,16 @@ const defaultSalt = "abcde";
 
 exports.getToken = function getToken(token, uid) {
 	if (!token) throw new Error("token 不能为空");
-	yapi_configs.passsalt = yapi_configs.passsalt || defaultSalt;
-	return aseEncode(uid + "|" + token, yapi_configs.passsalt);
+	xspace_configs.passsalt = xspace_configs.passsalt || defaultSalt;
+	return aseEncode(uid + "|" + token, xspace_configs.passsalt);
 };
 
 exports.parseToken = function parseToken(token) {
 	if (!token) throw new Error("token 不能为空");
-	yapi_configs.passsalt = yapi_configs.passsalt || defaultSalt;
+	xspace_configs.passsalt = xspace_configs.passsalt || defaultSalt;
 	let tokens;
 	try {
-		tokens = aseDecode(token, yapi_configs.passsalt);
+		tokens = aseDecode(token, xspace_configs.passsalt);
 	} catch (e) {}
 	if (tokens && typeof tokens === "string" && tokens.indexOf("|") > 0) {
 		tokens = tokens.split("|");

@@ -264,7 +264,7 @@ export default async function ({ groupInfo, onOk }) {
 																					configs: {
 																						label: "删除",
 																						onClick() {
-																							return _.$api.yapi.groupDeleteGroup(
+																							return _.$api.xspace.groupDeleteGroup(
 																								groupInfo.id
 																							);
 																						}

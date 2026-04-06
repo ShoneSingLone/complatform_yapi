@@ -9,13 +9,13 @@ const middlewareCORS = () => {
 			ctx.callme.push("middlewareCORS");
 			xU.applog.info(ctx.path, ctx.callme);
 
-			if (yapi_configs?.cors?.allow) {
+			if (xspace_configs?.cors?.allow) {
 				const url = String(
 					ctx.headers.origin || ctx.headers.referer || ctx.host
 				).toLowerCase();
 
 				const inCorsWhiteList = xU._.some(
-					yapi_configs.cors.allow,
+					xspace_configs.cors.allow,
 					allow => ~url.indexOf(String(allow).toLowerCase())
 				);
 

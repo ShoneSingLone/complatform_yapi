@@ -42,7 +42,7 @@ function appUseSwagger(app, swaggerJSON) {
 function appAddRoutes(app, routes) {
 	routes.forEach(route => {
 		const { url, method } = route;
-		const version = yapi_configs?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.version || "";
+		const version = xspace_configs?.isUsePlugin?.AutowareRoutes?.swaggerInfo?.version || "";
 		let url_path = `${version}${url}`;
 		const url_collection = RouteMap.get(url_path) || {};
 		url_collection[String(method).toLowerCase()] = route;
@@ -123,7 +123,7 @@ module.exports = async function (app) {
 	appAddRoutes(app, routes);
 
 	/*是否开启swagger: 用环境变量也可以，用配置文件也行，内网使用，一直开启也无妨，当然，默认是关闭*/
-	if (yapi_configs?.isUsePlugin?.AutowareRoutes?.isUseSwagger) {
+	if (xspace_configs?.isUsePlugin?.AutowareRoutes?.isUseSwagger) {
 		appUseSwagger(app, swaggerJSON);
 	}
 };

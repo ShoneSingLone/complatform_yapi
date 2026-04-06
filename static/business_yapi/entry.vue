@@ -107,9 +107,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						if (vm.$route.path === "/note") {
 							return;
 						}
-						await vm.ifUrlNoGroupIdGetAndAddIdToUrl();
-						if (vm.cptProjectId) {
-							await vm.updateGroupProjectList();
+						// 对v1路由特殊处理，不需要group_id
+						if (vm.$route.path !== "/v1") {
+							await vm.ifUrlNoGroupIdGetAndAddIdToUrl();
+							if (vm.cptProjectId) {
+								await vm.updateGroupProjectList();
+							}
 						}
 						if (vm.$route.path === "/login") {
 							vm.$router.push("/api/group");
@@ -252,7 +255,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					return;
 				}
 				if (!_.$isArrayFill(this.groupList)) {
-					this.updateGroupList();
+					await this.updateGroupList();
 				}
 				const ensureGroupId = () => {
 					if (!this.cptGroupId) {
@@ -263,6 +266,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						}
 					}
 				};
+				ensureGroupId();
 			},
 			async logoutActions() {
 				try {

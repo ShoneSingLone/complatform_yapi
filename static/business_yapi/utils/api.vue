@@ -435,6 +435,18 @@ export default async function () {
 				},
 				async apiCicdJobList(data) {
 					return _.$ajax.get(`/api/cicd/job_list`, { data });
+				},
+				/**
+				 *  保存桌面工作空间状态
+				 */
+				async saveDesktopState(data) {
+					return _.$ajax.post(`/api/desktop/save_state`, { data });
+				},
+				/**
+				 *  加载桌面工作空间状态
+				 */
+				async loadDesktopState() {
+					return _.$ajax.get(`/api/desktop/load_state`);
 				}
 			};
 		})();

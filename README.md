@@ -489,10 +489,10 @@ yapi/
 
 ### 配置文件
 
-创建 `yapi_configs.js` 文件（项目根目录外）：
+创建 `xspace_configs.js` 文件（项目根目录外）：
 
 ```js
-/* yapi_configs.js */
+/* xspace_configs.js */
 module.exports = {
 	CLOUD_DISK_ROOT: "********",
 	cors: {

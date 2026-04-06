@@ -40,8 +40,8 @@ global.orm = new Proxy(
 );
 
 const mail = (function () {
-	if (yapi_configs.mail) {
-		const transporter = nodemailer.createTransport(yapi_configs.mail);
+	if (global.xspace_configs && global.xspace_configs.mail) {
+		const transporter = nodemailer.createTransport(global.xspace_configs.mail);
 		// transporter.verify(function (error, success) { debugger; });
 		return transporter;
 	} else {
@@ -300,14 +300,19 @@ const STATIC_VAR = {
 	docHref: {
 		adv_mock_case: "https://hellosean1025.github.io/yapi/documents/mock.html",
 		adv_mock_script: "https://hellosean1025.github.io/yapi/documents/adv_mock.html"
-	}
+	},
+	UPLOADS: "uploads",
+	RESOURCE_ASSETS: "resource_assets"
 };
 
-const TARGET_PREFIX = path.join(
-	yapi_configs.CLOUD_DISK_ROOT,
-	STATIC_VAR.UPLOADS,
-	STATIC_VAR.RESOURCE_ASSETS
-);
+let TARGET_PREFIX;
+if (global.xspace_configs && global.xspace_configs.CLOUD_DISK_ROOT) {
+	TARGET_PREFIX = path.join(
+		global.xspace_configs.CLOUD_DISK_ROOT,
+		STATIC_VAR.UPLOADS,
+		STATIC_VAR.RESOURCE_ASSETS
+	);
+}
 
 async function getSystemDiskSize() {
 	if (getSystemDiskSize.total) {
@@ -598,7 +603,7 @@ function sendMail(options, cb) {
 	try {
 		xU.mail.sendMail(
 			{
-				from: yapi_configs.mail.from,
+				from: xspace_configs.mail.from,
 				to: options.to,
 				html: options.contents,
 				subject

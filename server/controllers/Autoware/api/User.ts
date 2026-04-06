@@ -332,7 +332,7 @@ module.exports = {
 					let result = await userInst.findByEmail(email);
 
 					async function sendNewVarifyCode() {
-						const code = xU.$hashCode(yapi_configs.passsalt + email);
+						const code = xU.$hashCode(xspace_configs.passsalt + email);
 
 						await verifyCodeInst.upsertOne({
 							email,
@@ -511,7 +511,7 @@ module.exports = {
 				},
 				async handler(ctx) {
 					//注册
-					if (yapi_configs.isCloseRegister) {
+					if (xspace_configs.isCloseRegister) {
 						return (ctx.body = xU.$response(null, 400, "禁止注册，请联系管理员"));
 					}
 					let userInst = orm.user;

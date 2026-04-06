@@ -14,7 +14,7 @@ function namespace_yapi({ app, ioUtils }) {
 	const appSocket = new KoaSocket("/yapi");
 	appSocket.attach(app);
 	global.APP.socket = global.APP.socket || {};
-	global.APP.socket.yapi = { socket: appSocket };
+	global.APP.socket.xspace = { socket: appSocket };
 	global._app_socket_yapi_connections = {
 		obj: [],
 		set(uid, socket) {

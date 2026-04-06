@@ -16,7 +16,7 @@ module.exports = async app => {
 		dirs.map(async dirname => {
 			const [pluginDirname, pluginName] =
 				String(dirname).match(/^plugin(.*)$/) || [];
-			if (pluginName && yapi_configs?.isUsePlugin?.[pluginName]) {
+			if (pluginName && xspace_configs?.isUsePlugin?.[pluginName]) {
 				const pluginPath = xU.path.resolve(
 					__dirname,
 					pluginDirname,
