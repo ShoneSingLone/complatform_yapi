@@ -26,7 +26,7 @@ async function main() {
 	await require("./assets")(app);
 	await require("./middleware/parseParams")(app);
 	/* middleware */
-	await require("./middleware/yapiDevHeaderInfo")(app);
+	await require("./middleware/xspaceDevHeaderInfo")(app);
 	await require("./middleware/websocket").appSetupWebsocket(app);
 	/* 跨域 */
 	await require("./middleware/cors")(app);
