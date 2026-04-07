@@ -1,13 +1,10 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-  const [useSystemStore] = await _.$importVue([
-    '@/store/index.js'
-  ]);
   
   return {
+    inject: ['system'],
     data() {
       return {
-        system: useSystemStore(),
         username: 'admin',
         password: 'password'
       };

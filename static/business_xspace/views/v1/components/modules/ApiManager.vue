@@ -189,6 +189,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		props: {
 			windowData: Object
 		},
+		inject: ['system'],
 		data() {
 			return {
 				mockApiData: mockApiData,
@@ -296,11 +297,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		},
 		// Methods
 		handleOpenNode(node) {
-		const appId = node.type === "api" ? "api_endpoint" : node.type;
-		if (window._?.system?.openApp) {
-			window._.system.openApp(appId, true, node);
-		}
-	},
+	const appId = node.type === "api" ? "api_endpoint" : node.type;
+	if (this.system?.openApp) {
+		this.system.openApp(appId, true, node);
+	}
+},
 		handleNavigateUp() {
 			if (this.activeNode.id === this.mockApiData.id) return;
 			const parent = this.findParentNode(this.mockApiData, this.activeNode.id);

@@ -1,9 +1,5 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-  const [useSystemStore] = await _.$importVue([
-    '@/store/index.js'
-  ]);
-  
   return {
     components: {
       ApiManager: () => _.$importVue('./modules/ApiManager.vue'),
@@ -12,9 +8,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
     props: {
       window: Object
     },
+    inject: ['system'],
     data() {
       return {
-        system: useSystemStore(),
         windowRef: null,
         handleRef: null,
         x: this.window.x,

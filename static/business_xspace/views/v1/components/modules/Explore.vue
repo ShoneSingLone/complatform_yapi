@@ -93,6 +93,7 @@ const mockFileSystem = {
 
 export default async function ({ PRIVATE_GLOBAL }) {
 	return {
+		inject: ['system'],
 		data() {
 			return {
 				mockFileSystem: mockFileSystem,
