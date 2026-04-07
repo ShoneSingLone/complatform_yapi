@@ -107,7 +107,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			</div>
 			<div
 				class="w-full h-full rounded-full flex items-center justify-center transition-colors duration-200 text-on-surface hover:bg-on-surface/8 active:bg-on-surface/12">
-				<xIcon name="layout-grid" size="24" />
+				<xIcon icon="layout-grid" size="24" />
 			</div>
 		</div>
 
@@ -137,7 +137,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								@click.stop="openNewWindow(app.id)"
 								class="p-1.5 hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors group/btn"
 								title="Open New Window">
-								<xIcon name="plus" size="16" class="text-on-surface-variant group-hover/btn:text-primary" />
+								<xIcon icon="plus" size="16" class="text-on-surface-variant group-hover/btn:text-primary" />
 							</button>
 						</div>
 
@@ -208,7 +208,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			</div>
 			<div
 				class="w-full h-full rounded-full flex items-center justify-center text-on-surface hover:bg-on-surface/8 active:bg-on-surface/12 transition-colors duration-200">
-				<xIcon name="settings" size="24" />
+				<xIcon icon="settings" size="24" />
 			</div>
 		</div>
 	</div>

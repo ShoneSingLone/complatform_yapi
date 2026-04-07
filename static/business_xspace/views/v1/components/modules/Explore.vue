@@ -288,7 +288,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						:class="
 							activeTabId === tab.id ? 'opacity-100 hover:bg-surface-variant' : ''
 						">
-						<xIcon type="x" :size="14" />
+						<xIcon icon="x" :size="14" />
 					</button>
 				</div>
 			</div>
@@ -297,10 +297,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			<div class="flex items-center px-4 py-2 gap-4">
 				<div class="flex items-center gap-1">
 					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
-						<xIcon type="chevron-left" :size="20" />
+						<xIcon icon="chevron-left" :size="20" />
 					</button>
 					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
-						<xIcon type="chevron-right" :size="20" />
+						<xIcon icon="chevron-right" :size="20" />
 					</button>
 					<button
 						@click="handleNavigateUp"
@@ -312,14 +312,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								: 'text-on-surface-variant/30 cursor-not-allowed'
 						"
 						title="Up">
-						<xIcon type="arrow-up" :size="20" />
+						<xIcon icon="arrow-up" :size="20" />
 					</button>
 				</div>
 
 				<div class="flex-1 max-w-2xl relative">
 					<div
 						class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-						<xIcon type="search" :size="16" class="text-on-surface-variant" />
+						<xIcon icon="search" :size="16" class="text-on-surface-variant" />
 					</div>
 					<input
 						type="text"
@@ -338,7 +338,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								: 'bg-surface-container-lowest border-outline-variant/50 text-on-surface-variant hover:bg-surface-container'
 						"
 						title="Toggle Preview Pane">
-						<xIcon type="panel-right" :size="20" />
+						<xIcon icon="panel-right" :size="20" />
 					</button>
 				</div>
 			</div>
@@ -451,7 +451,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 													<span
 														class="w-4 h-4 flex items-center justify-center mr-1"></span>
 													<span class="mr-2 text-blue-500">
-														<xIcon type="folder" :size="16" />
+														<xIcon icon="folder" :size="16" />
 													</span>
 													<span class="truncate">{{
 														subchild.name
@@ -562,7 +562,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					<div
 						v-if="filteredAndSortedFiles.length === 0"
 						class="flex flex-col items-center justify-center h-full text-on-surface-variant">
-						<xIcon type="folder" :size="48" class="text-outline-variant mb-2" />
+						<xIcon icon="folder" :size="48" class="text-outline-variant mb-2" />
 						<p>This folder is empty</p>
 					</div>
 					<div v-else class="py-1">
@@ -607,7 +607,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				<div
 					v-if="!selectedFile"
 					class="flex-1 flex flex-col items-center justify-center text-on-surface-variant p-6 text-center">
-					<xIcon type="info" :size="48" class="mb-4 text-outline-variant" />
+					<xIcon icon="info" :size="48" class="mb-4 text-outline-variant" />
 					<p>Select a file to preview</p>
 				</div>
 				<div v-else class="p-6">
@@ -620,7 +620,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							:src="selectedFile.url"
 							:alt="selectedFile.name"
 							class="object-contain w-full h-full" />
-						<xIcon v-else type="image" :size="64" class="text-outline-variant" />
+						<xIcon v-else icon="image" :size="64" class="text-outline-variant" />
 					</div>
 					<div
 						v-else-if="selectedFile.type === 'document' || selectedFile.type === 'code'"
@@ -633,12 +633,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					<div
 						v-else-if="selectedFile.type === 'folder'"
 						class="w-full aspect-square max-w-[160px] mx-auto bg-primary-container/30 rounded-2xl flex items-center justify-center mb-6 border border-primary/20">
-						<xIcon type="folder" :size="80" class="text-primary fill-primary/20" />
+						<xIcon icon="folder" :size="80" class="text-primary fill-primary/20" />
 					</div>
 					<div
 						v-else
 						class="w-full aspect-square max-w-[160px] mx-auto bg-surface-variant rounded-2xl flex items-center justify-center mb-6 border border-outline-variant/50">
-						<xIcon type="file" :size="80" class="text-on-surface-variant" />
+						<xIcon icon="file" :size="80" class="text-on-surface-variant" />
 					</div>
 
 					<!-- Metadata -->

@@ -34,16 +34,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
     <div class="flex items-center gap-4">
       <span class="font-bold">Workspace</span>
       <div class="flex items-center gap-2 text-on-surface-variant bg-surface-container px-2 py-1 rounded-full">
-        <xIcon name="search" size="12" />
+        <xIcon icon="search" size="12" />
         <input type="text" placeholder="Search..." class="bg-transparent outline-none w-32 placeholder:text-on-surface-variant/50" />
       </div>
     </div>
     
     <div class="flex items-center gap-4">
       <div class="flex items-center gap-3 text-on-surface-variant">
-        <xIcon name="wifi" size="14" />
-        <xIcon name="battery" size="14" />
-        <xIcon name="bell" size="14" />
+        <xIcon icon="wifi" size="14" />
+        <xIcon icon="battery" size="14" />
+        <xIcon icon="bell" size="14" />
       </div>
       <span>{{ time }}</span>
     </div>

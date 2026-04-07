@@ -141,22 +141,22 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						@click.stop="pinToDesktop"
 						class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors"
 						title="Pin to Desktop">
-						<xIcon name="pin" size="20" class="text-on-surface-variant" />
+						<xIcon icon="pin" size="20" class="text-on-surface-variant" />
 					</button>
 					<button
 						@click.stop="handleMinimize"
 						class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors">
-						<xIcon name="minus" size="20" class="text-on-surface-variant" />
+						<xIcon icon="minus" size="20" class="text-on-surface-variant" />
 					</button>
 					<button
 						@click.stop="handleMaximize"
 						class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors">
-						<xIcon :name="window.isMaximized ? 'copy' : 'square'" size="16" class="text-on-surface-variant" />
+						<xIcon :icon="window.isMaximized ? 'copy' : 'square'" size="16" class="text-on-surface-variant" />
 					</button>
 					<button
 						@click.stop="handleClose"
 						class="w-10 h-10 flex items-center justify-center hover:bg-error/10 active:bg-error/20 text-on-surface-variant hover:text-error rounded-full transition-colors">
-						<xIcon name="x" size="20" />
+						<xIcon icon="x" size="20" />
 					</button>
 				</div>
 			</div>
