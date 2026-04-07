@@ -167,7 +167,45 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				/* group */
 				groupList: [],
 				groupMemberList: [],
-				groupProjectList: []
+				groupProjectList: [],
+				
+					apps: [
+					  { id: 'api', name: 'API Manager', icon: 'Database', color: '#6750A4', component: 'ApiManager' },
+					  { id: 'cicd', name: 'CI/CD', icon: 'Repeat', color: '#625B71', component: 'CicdManager' },
+					  { id: 'note', name: 'Documents', icon: 'FileText', color: '#7D5260', component: 'NoteManager' },
+					  { id: 'im', name: 'Chat', icon: 'MessageSquare', color: '#006A6A', component: 'ImManager' },
+					  { id: 'rtc', name: 'Meeting', icon: 'Video', color: '#B3261E', component: 'RtcManager' },
+					  { id: 'office', name: 'Cloud Storage', icon: 'Cloud', color: '#0061A4', component: 'OfficeManager' },
+					  { id: 'hoppscotch', name: 'API Test', icon: 'Send', color: '#4F6600', component: 'Hoppscotch' },
+					  { id: 'explore', name: 'Explore', icon: 'Compass', color: '#984061', component: 'Explore' },
+					  { id: 'user', name: 'User', icon: 'User', color: '#006874', component: 'UserManager' },
+					  // Hidden apps for dynamic resource windows
+					  { id: 'group', name: 'Group', icon: 'Folder', color: '#6750A4', component: 'ApiManager', hidden: true },
+					  { id: 'project', name: 'Project', icon: 'Folder', color: '#6750A4', component: 'ApiManager', hidden: true },
+					  { id: 'api_folder', name: 'API Folder', icon: 'Folder', color: '#6750A4', component: 'ApiManager', hidden: true },
+					  { id: 'doc_folder', name: 'Doc Folder', icon: 'Folder', color: '#6750A4', component: 'ApiManager', hidden: true },
+					  { id: 'folder', name: 'Folder', icon: 'Folder', color: '#6750A4', component: 'ApiManager', hidden: true },
+					  { id: 'api_endpoint', name: 'API', icon: 'Code', color: '#6750A4', component: 'ApiManager', hidden: true },
+					  { id: 'doc', name: 'Document', icon: 'FileText', color: '#6750A4', component: 'ApiManager', hidden: true },
+					  { id: 'code', name: 'Code', icon: 'Code', color: '#6750A4', component: 'ApiManager', hidden: true },
+					  { id: 'member_list', name: 'Members', icon: 'Users', color: '#6750A4', component: 'ApiManager', hidden: true },
+					  { id: 'setting', name: 'Settings', icon: 'Settings', color: '#6750A4', component: 'ApiManager', hidden: true },
+					] ,
+					shortcuts: [
+					  { id: 'api', appId: 'api', name: 'API Manager', icon: 'Database', color: '#6750A4' },
+					  { id: 'explore', appId: 'explore', name: 'Explore', icon: 'Compass', color: '#984061' },
+					  { id: 'note', appId: 'note', name: 'Documents', icon: 'FileText', color: '#7D5260' },
+					] ,
+					openWindows: [] ,
+					activeWindowId: null ,
+					nextZIndex: 10,
+					theme: 'light' ,
+					lastOpenedAppId: null ,
+					pinnedApps: ['api', 'explore'],
+					isAuthenticated: false,
+					currentUser: null,
+				  
+
 			};
 		},
 		methods: {
@@ -358,6 +396,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 :root {
 	// --xItem-wrapper-width: 240px;
 }
+
+/* Global transitions */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
 
 .flash-when {
 	transition:

@@ -1,5 +1,49 @@
+<script>
+import { useSystemStore } from '@/store';
+import DesktopIcon from './components/DesktopIcon.vue';
+import Dock from './components/Dock.vue';
+import Window from './components/Window.vue';
+import AuthScreen from './components/AuthScreen.vue';
+import TopBar from './components/TopBar.vue';
+import { Monitor } from 'lucide-vue-next';
+
+export default {
+  components: {
+    DesktopIcon,
+    Dock,
+    Window,
+    AuthScreen,
+    TopBar,
+    Monitor
+  },
+  data() {
+    return {
+      system: useSystemStore()
+    };
+  },
+  methods: {
+    onDragOver(e) {
+      e.preventDefault();
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = 'move';
+      }
+    },
+    onDrop(e) {
+      e.preventDefault();
+      const action = e.dataTransfer?.getData('action');
+      const appId = e.dataTransfer?.getData('text/plain');
+      
+      if (action === 'unpin' && appId) {
+        this.system.unpinApp(appId);
+      }
+    }
+  }
+};
+</script>
+
 <template>
-<AuthScreen v-if="!system.isAuthenticated" />
+  <AuthScreen v-if="!system.isAuthenticated" />
+  
   <div 
     v-else
     class="relative w-screen h-screen overflow-hidden bg-background text-on-background select-none flex flex-col"
@@ -48,16 +92,12 @@
   </div>
 </template>
 
-<script lang="ts">
-export default async function ({ PRIVATE_GLOBAL }) {
-	const [DesktopWorkspace] = await _.$importVue([
-		"@/components/DesktopWorkspace/DesktopWorkspace.vue"
-	]);
-
-	return {
-		components: {
-			DesktopWorkspace
-		}
-	};
+<style>
+/* Global transitions */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
 }
-</script>
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+</style>

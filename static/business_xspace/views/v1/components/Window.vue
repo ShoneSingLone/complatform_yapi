@@ -1,0 +1,233 @@
+<script>
+import { useSystemStore } from "@/store";
+import { X, Minus, Square, Copy, Pin, HelpCircle } from "lucide-vue-next";
+import * as Icons from "lucide-vue-next";
+import ApiManager from "./modules/ApiManager.vue";
+import Explore from "./modules/Explore.vue";
+
+export default {
+	components: {
+		X,
+		Minus,
+		Square,
+		Copy,
+		Pin,
+		HelpCircle,
+		ApiManager,
+		Explore
+	},
+	props: {
+		window: Object
+	},
+	data() {
+		return {
+			system: useSystemStore(),
+			windowRef: null,
+			handleRef: null,
+			x: this.window.x,
+			y: this.window.y,
+			isDragging: false
+		};
+	},
+	computed: {
+		isActive() {
+			return this.system.activeWindowId === this.window.id;
+		}
+	},
+	methods: {
+		handleClose() {
+			this.system.closeWindow(this.window.id);
+		},
+		handleMinimize() {
+			this.system.minimizeWindow(this.window.id);
+		},
+		handleMaximize() {
+			this.system.toggleMaximize(this.window.id);
+		},
+		pinToDesktop() {
+			const app = this.system.apps.find(a => a.id === this.window.appId);
+			if (!app) return;
+			this.system.addShortcut({
+				id: this.window.data ? `shortcut-${this.window.data.id}` : `shortcut-${app.id}`,
+				appId: app.id,
+				name: this.window.title,
+				icon: app.icon,
+				color: app.color,
+				data: this.window.data
+			});
+		},
+		focusWindow() {
+			this.system.focusWindow(this.window.id);
+		}
+	},
+	mounted() {
+		// 简单的拖拽实现
+		let isDragging = false;
+		let startX = 0;
+		let startY = 0;
+		let startWindowX = 0;
+		let startWindowY = 0;
+
+		const handle = this.handleRef;
+		if (handle) {
+			handle.addEventListener("mousedown", e => {
+				if (this.window.isMaximized) return;
+
+				isDragging = true;
+				startX = e.clientX;
+				startY = e.clientY;
+				startWindowX = this.x;
+				startWindowY = this.y;
+				this.system.focusWindow(this.window.id);
+				this.isDragging = true;
+			});
+
+			document.addEventListener("mousemove", e => {
+				if (!isDragging || this.window.isMaximized) return;
+
+				const deltaX = e.clientX - startX;
+				const deltaY = e.clientY - startY;
+
+				this.x = startWindowX + deltaX;
+				this.y = startWindowY + deltaY;
+				this.window.x = this.x;
+				this.window.y = this.y;
+			});
+
+			document.addEventListener("mouseup", () => {
+				isDragging = false;
+				this.isDragging = false;
+			});
+		}
+	}
+};
+</script>
+
+<template>
+	<Transition name="hero">
+		<div
+			v-show="!window.isMinimized"
+			ref="windowRef"
+			class="absolute pointer-events-auto flex flex-col overflow-hidden bg-surface elevation-3"
+			:class="[
+				window.isMaximized
+					? '!inset-0 !w-full !h-full !translate-x-0 !translate-y-0 rounded-none'
+					: 'rounded-m3-large border border-outline-variant/50',
+				isActive ? 'z-30' : 'z-20',
+				!isDragging
+					? 'transition-[width,height,transform,opacity] duration-300 ease-out'
+					: ''
+			]"
+			:style="
+				window.isMaximized
+					? { zIndex: window.zIndex }
+					: {
+							zIndex: window.zIndex,
+							width: window.width + 'px',
+							height: window.height + 'px',
+							transform: `translate(${x}px, ${y}px)`
+					  }
+			"
+			@mousedown="system.focusWindow(window.id)">
+			<!-- Title Bar -->
+			<div
+				ref="handleRef"
+				class="h-14 flex items-center justify-between px-4 bg-surface-container border-b border-outline-variant cursor-default select-none">
+				<div class="flex items-center gap-3">
+					<div
+						class="w-8 h-8 rounded-m3-small flex items-center justify-center bg-surface-container-highest text-primary">
+						<component
+							:is="
+								Icons[
+									system.apps.find(a => a.id === window.appId)?.icon ||
+										'HelpCircle'
+								]
+							"
+							:size="18" />
+					</div>
+					<span class="text-sm font-medium text-on-surface">{{ window.title }}</span>
+				</div>
+
+				<div class="flex items-center gap-1">
+					<button
+						@click.stop="pinToDesktop"
+						class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors"
+						title="Pin to Desktop">
+						<Pin :size="20" class="text-on-surface-variant" />
+					</button>
+					<button
+						@click.stop="handleMinimize"
+						class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors">
+						<Minus :size="20" class="text-on-surface-variant" />
+					</button>
+					<button
+						@click.stop="handleMaximize"
+						class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors">
+						<component
+							:is="window.isMaximized ? Copy : Square"
+							:size="16"
+							class="text-on-surface-variant" />
+					</button>
+					<button
+						@click.stop="handleClose"
+						class="w-10 h-10 flex items-center justify-center hover:bg-error/10 active:bg-error/20 text-on-surface-variant hover:text-error rounded-full transition-colors">
+						<X :size="20" />
+					</button>
+				</div>
+			</div>
+
+			<!-- Content Area -->
+			<div class="flex-1 overflow-auto bg-surface">
+				<div class="h-full p-6">
+					<!-- Placeholder Content based on App ID -->
+					<div class="h-full">
+						<div
+							v-if="
+								[
+									'api',
+									'group',
+									'project',
+									'api_folder',
+									'doc_folder',
+									'folder',
+									'api_endpoint',
+									'doc',
+									'code',
+									'member_list',
+									'setting',
+									'cicd'
+								].includes(window.appId)
+							"
+							class="h-full">
+							<ApiManager :window-data="window.data" />
+						</div>
+						<div v-else-if="window.appId === 'explore'" class="h-full">
+							<Explore />
+						</div>
+
+						<div
+							v-else
+							class="h-full flex flex-col items-center justify-center text-center py-20">
+							<div
+								class="w-20 h-20 rounded-m3-large bg-secondary-container flex items-center justify-center text-on-secondary-container mb-6">
+								<component
+									:is="
+										Icons[
+											system.apps.find(a => a.id === window.appId)?.icon ||
+												'HelpCircle'
+										]
+									"
+									:size="40" />
+							</div>
+							<p class="text-on-surface-variant mb-6 text-lg"
+								>The <strong>{{ window.title }}</strong> module is currently under
+								development.</p
+							>
+							<button class="m3-button-primary">Request Feature</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</Transition>
+</template>
