@@ -65,6 +65,12 @@
         @mousedown="startDrag"
       >
         <div class="window__title-bar__left">
+          <!-- 返回按钮 -->
+          <button @click.stop="handleGoBack" class="window__title-bar__back" title="返回">
+            <svg class="icon" style="width: 20px; height: 20px; fill: currentColor;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+          </button>
           <div class="window__title-bar__left__icon">
              <svg class="icon" style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path v-if="appIcon === 'LayoutGrid'" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
@@ -79,9 +85,13 @@
         </div>
         
         <div class="window__title-bar__right">
-          <button @click.stop="pinToDesktop" class="window__title-bar__right__button" title="固定到桌面">
-            <svg class="icon" style="width: 20px; height: 20px; fill: currentColor;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 17c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2s-2 .9-2 2v6c0 1.1.9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6z"/>
+          <!-- 固定按钮 - 根据是否已固定显示不同图标 -->
+          <button @click.stop="pinToDesktop" class="window__title-bar__right__button window__title-bar__right__button--pin" :class="{ 'window__title-bar__right__button--pinned': isPinned }" title="固定到桌面">
+            <svg v-if="!isPinned" class="icon" style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/>
+            </svg>
+            <svg v-else class="icon" style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
           </button>
           <button @click.stop="handleMinimize" class="window__title-bar__right__button">
@@ -184,11 +194,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
         return this.system.activeWindowId === this.window.id;
       },
       appIcon() {
-        const app = this.system.apps.find(a => a.id === this.window.appId);
+        var app = this.system.apps.find(function(a) { return a.id === this.window.appId; }.bind(this));
         return app ? app.icon : 'HelpCircle';
+      },
+      isPinned() {
+        var shortcutId = this.window.data ? "shortcut-" + this.window.data.id : "shortcut-" + this.window.appId;
+        return this.system.shortcuts.some(function(s) { return s.id === shortcutId; });
       }
     },
     methods: {
+      handleGoBack() {
+        // 返回上一级视图
+        this.system.closeWindow(this.window.id);
+      },
       handleClose() {
         this.system.closeWindow(this.window.id);
       },
@@ -199,6 +217,30 @@ export default async function ({ PRIVATE_GLOBAL }) {
         this.system.toggleMaximize(this.window.id);
       },
       pinToDesktop() {
+        var app = this.system.apps.find(function(a) { return a.id === this.window.appId; }.bind(this));
+        if (!app) return;
+        
+        var shortcutId = this.window.data ? "shortcut-" + this.window.data.id : "shortcut-" + app.id;
+        
+        // 如果已经固定，则取消固定
+        if (this.isPinned) {
+          var index = this.system.shortcuts.findIndex(function(s) { return s.id === shortcutId; });
+          if (index > -1) {
+            this.system.shortcuts.splice(index, 1);
+          }
+        } else {
+          // 添加快捷方式
+          this.system.addShortcut({
+            id: shortcutId,
+            appId: app.id,
+            name: this.window.title,
+            icon: app.icon,
+            color: app.color,
+            data: this.window.data
+          });
+        }
+      },
+      startDrag(e) {
         const app = this.system.apps.find(a => a.id === this.window.appId);
         if (!app) return;
         this.system.addShortcut({
@@ -371,6 +413,26 @@ export default async function ({ PRIVATE_GLOBAL }) {
     padding: 0 12px;
     cursor: move;
 
+    &__back {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 4px;
+      color: var(--x-text-secondary, #86909C);
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--x-primary, #165DFF);
+      }
+    }
+
     &__left {
       display: flex;
       align-items: center;
@@ -410,6 +472,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
         &:hover {
           background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        &--pin {
+          &--pinned {
+            background-color: rgba(82, 196, 26, 0.1);
+            color: #52C41A;
+            
+            &:hover {
+              background-color: rgba(82, 196, 26, 0.2);
+            }
+          }
         }
 
         &--close {

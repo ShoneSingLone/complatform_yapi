@@ -38,25 +38,41 @@ export default async function ({ PRIVATE_GLOBAL }) {
           bold: {
             label: 'B',
             onClick: () => {
-              vm.editor.commands.toggleBold();
+              if (vm.editor) {
+                vm.editor.commands.toggleBold();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           },
           italic: {
             label: 'I',
             onClick: () => {
-              vm.editor.commands.toggleItalic();
+              if (vm.editor) {
+                vm.editor.commands.toggleItalic();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           },
           underline: {
             label: 'U',
             onClick: () => {
-              vm.editor.commands.toggleUnderline();
+              if (vm.editor) {
+                vm.editor.commands.toggleUnderline();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           },
           strike: {
             label: 'S',
             onClick: () => {
-              vm.editor.commands.toggleStrike();
+              if (vm.editor) {
+                vm.editor.commands.toggleStrike();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           }
         },
@@ -64,19 +80,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
           heading1: {
             label: 'H1',
             onClick: () => {
-              vm.editor.commands.toggleHeading({ level: 1 });
+              if (vm.editor) {
+                vm.editor.commands.toggleHeading({ level: 1 });
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           },
           heading2: {
             label: 'H2',
             onClick: () => {
-              vm.editor.commands.toggleHeading({ level: 2 });
+              if (vm.editor) {
+                vm.editor.commands.toggleHeading({ level: 2 });
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           },
           heading3: {
             label: 'H3',
             onClick: () => {
-              vm.editor.commands.toggleHeading({ level: 3 });
+              if (vm.editor) {
+                vm.editor.commands.toggleHeading({ level: 3 });
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           }
         },
@@ -84,19 +112,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
           bulletList: {
             label: '•',
             onClick: () => {
-              vm.editor.commands.toggleBulletList();
+              if (vm.editor) {
+                vm.editor.commands.toggleBulletList();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           },
           orderedList: {
             label: '1.',
             onClick: () => {
-              vm.editor.commands.toggleOrderedList();
+              if (vm.editor) {
+                vm.editor.commands.toggleOrderedList();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           },
           taskList: {
             label: '✓',
             onClick: () => {
-              vm.editor.commands.toggleTaskList();
+              if (vm.editor) {
+                vm.editor.commands.toggleTaskList();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           }
         },
@@ -104,19 +144,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
           image: {
             label: '图片',
             onClick: () => {
-              vm.insertImage();
+              if (vm.editor) {
+                vm.insertImage();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           },
           table: {
             label: '表格',
             onClick: () => {
-              vm.insertTable();
+              if (vm.editor) {
+                vm.insertTable();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           },
           code: {
             label: '代码',
             onClick: () => {
-              vm.insertCode();
+              if (vm.editor) {
+                vm.insertCode();
+              } else {
+                vm.showEditorNotLoadedMessage();
+              }
             }
           }
         }
@@ -129,21 +181,38 @@ export default async function ({ PRIVATE_GLOBAL }) {
       initEditor() {
         // 初始化 Tiptap 编辑器
         // 由于我们使用 CDN 或公共库引入，这里需要确保 Tiptap 已经加载
-        if (window.Tiptap) {
-          const { Editor } = window.Tiptap;
-          this.editor = new Editor({
-            element: this.$refs.editorContainer,
-            content: '<p>开始编辑文档...</p>',
-            extensions: [
-              window.TiptapStarterKit
-              // 其他扩展
-            ],
-            onUpdate: ({ editor }) => {
-              console.log('编辑器内容更新:', editor.getHTML());
-            }
-          });
+        if (window.Tiptap && window.TiptapStarterKit) {
+          try {
+            const { Editor } = window.Tiptap;
+            this.editor = new Editor({
+              element: this.$refs.editorContainer,
+              content: '<p>开始编辑文档...</p>',
+              extensions: [
+                window.TiptapStarterKit
+                // 其他扩展
+              ],
+              onUpdate: ({ editor }) => {
+                console.log('编辑器内容更新:', editor.getHTML());
+              }
+            });
+          } catch (error) {
+            console.error('初始化 Tiptap 编辑器失败:', error);
+            this.initFallbackEditor();
+          }
         } else {
-          console.error('Tiptap 未加载');
+          console.error('Tiptap 未加载，使用备选编辑器');
+          this.initFallbackEditor();
+        }
+      },
+      initFallbackEditor() {
+        // 备选编辑器：使用简单的 contenteditable 元素
+        const container = this.$refs.editorContainer;
+        container.innerHTML = '<div contenteditable="true" style="min-height: 400px; padding: 20px; font-size: 16px; line-height: 1.6;">开始编辑文档...</div>';
+        const editable = container.querySelector('[contenteditable]');
+        if (editable) {
+          editable.addEventListener('input', () => {
+            console.log('备选编辑器内容更新:', editable.innerHTML);
+          });
         }
       },
       insertImage() {
@@ -157,6 +226,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
       insertCode() {
         // 实现代码块插入逻辑
         console.log('插入代码块');
+      },
+      showEditorNotLoadedMessage() {
+        // 显示编辑器未加载的提示信息
+        if (window._ && window._.$message) {
+          window._.$message({
+            type: 'warning',
+            message: '编辑器未完全加载，部分功能可能不可用'
+          });
+        } else {
+          alert('编辑器未完全加载，部分功能可能不可用');
+        }
       }
     }
   };

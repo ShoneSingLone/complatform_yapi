@@ -10,6 +10,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
   // 使用 Vue.observable 创建响应式状态
   const state = Vue.observable({
+    // 全局环境
+    currentEnvironment: 'Development',
+    environments: [
+      { id: 'Development', name: 'Development', color: '#52C41A' },
+      { id: 'Test', name: 'Test', color: '#165DFF' },
+      { id: 'Staging', name: 'Staging', color: '#FAAD14' },
+      { id: 'Production', name: 'Production', color: '#FF4D4F' }
+    ],
+
     // 应用列表
     apps: [
       {
@@ -384,6 +393,64 @@ export default async function ({ PRIVATE_GLOBAL }) {
     }
   };
 
+  // 切换全局环境
+  const switchEnvironment = function(envId) {
+    var env = state.environments.find(function(e) { return e.id === envId; });
+    if (env) {
+      state.currentEnvironment = envId;
+      saveState();
+    }
+  };
+
+  // 获取当前环境信息
+  const getCurrentEnvironment = function() {
+    return state.environments.find(function(e) { return e.id === state.currentEnvironment; });
+  };
+
+  // 批量移动资源
+  const batchMoveResources = function(resourceIds, targetParentId) {
+    console.log('批量移动资源:', resourceIds, '到:', targetParentId);
+    saveState();
+    return true;
+  };
+
+  // 批量复制资源
+  const batchCopyResources = function(resourceIds) {
+    console.log('批量复制资源:', resourceIds);
+    saveState();
+    return true;
+  };
+
+  // 批量删除资源
+  const batchDeleteResources = function(resourceIds) {
+    console.log('批量删除资源:', resourceIds);
+    // 触发删除确认事件
+    if (typeof _ !== 'undefined' && _.$emit) {
+      _.$emit('batch-delete-resources', resourceIds);
+    }
+    saveState();
+    return true;
+  };
+
+  // 重新排序窗口（用于拖拽排序）
+  const reorderWindows = function(windowId, targetIndex) {
+    var currentIndex = -1;
+    for (var i = 0; i < state.openWindows.length; i++) {
+      if (state.openWindows[i].id === windowId) {
+        currentIndex = i;
+        break;
+      }
+    }
+    
+    if (currentIndex === -1 || currentIndex === targetIndex) return;
+    
+    var window = state.openWindows.splice(currentIndex, 1)[0];
+    var insertIndex = targetIndex > currentIndex ? targetIndex - 1 : targetIndex;
+    state.openWindows.splice(insertIndex, 0, window);
+    
+    saveState();
+  };
+
   // 为窗口添加 groupId 和 projectId
   const updateWindowGroupAndProject = function(windowId, groupId, projectId) {
     var window = state.openWindows.find(function(win) { return win.id === windowId; });
@@ -418,6 +485,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
   state.deleteDesktop = deleteDesktop;
   state.updateDesktopBackground = updateDesktopBackground;
   state.updateWindowGroupAndProject = updateWindowGroupAndProject;
+  state.switchEnvironment = switchEnvironment;
+  state.getCurrentEnvironment = getCurrentEnvironment;
+  state.batchMoveResources = batchMoveResources;
+  state.batchCopyResources = batchCopyResources;
+  state.batchDeleteResources = batchDeleteResources;
+  state.reorderWindows = reorderWindows;
   
   return state;
 }

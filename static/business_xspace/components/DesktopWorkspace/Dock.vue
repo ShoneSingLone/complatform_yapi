@@ -21,17 +21,27 @@
 
     <div class="dock__divider"></div>
 
-    <transition-group name="dock-item">
+    <transition-group name="dock-item" class="dock__apps">
       <div
-        v-for="app in activeApps" 
+        v-for="(app, index) in activeApps" 
         :key="app.id"
         class="dock__item"
+        :class="{
+          'dock__item--dragging': draggingAppId === app.id,
+          'dock__item--drag-over': dragOverIndex === index
+        }"
         draggable="true"
         @dragstart="onDragStart($event, app.id)"
+        @dragend="onDragEnd"
+        @dragover="onItemDragOver($event, index)"
+        @dragleave="onItemDragLeave"
+        @drop="onItemDrop($event, index)"
         @mouseenter="hoveredAppId = app.id"
         @mouseleave="hoveredAppId = null"
         @click="handleAppClick(app.id)"
       >
+        <!-- 拖拽占位符 -->
+        <div v-if="dragOverIndex === index && draggingAppId !== app.id" class="dock__item__drop-indicator"></div>
         <!-- Window Previews / Thumbnails -->
         <transition name="dock-preview">
           <div 
@@ -107,6 +117,14 @@
           </svg>
         </div>
 
+        <!-- Window Count Badge -->
+        <div 
+          v-if="app.windows && app.windows.length > 1"
+          class="dock__item__badge"
+        >
+          {{ app.windows.length }}
+        </div>
+
         <!-- Indicator Pill -->
         <div class="dock__item__indicator">
           <div 
@@ -141,11 +159,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
   ]);
 
   return {
-    data() {
+    data: function() {
       return {
         system: SystemStore,
         hoveredAppId: null,
-        isDraggingOver: false
+        isDraggingOver: false,
+        draggingAppId: null,
+        dragOverIndex: -1
       };
     },
     computed: {
@@ -229,9 +249,56 @@ export default async function ({ PRIVATE_GLOBAL }) {
       onDragStart(e, appId) {
         if (e.dataTransfer) {
           e.dataTransfer.setData('text/plain', appId);
-          e.dataTransfer.setData('action', 'unpin');
+          e.dataTransfer.setData('action', 'reorder');
           e.dataTransfer.effectAllowed = 'move';
         }
+        this.draggingAppId = appId;
+      },
+      onDragEnd() {
+        this.draggingAppId = null;
+        this.dragOverIndex = -1;
+      },
+      onItemDragOver(e, index) {
+        e.preventDefault();
+        if (this.draggingAppId) {
+          this.dragOverIndex = index;
+          if (e.dataTransfer) {
+            e.dataTransfer.dropEffect = 'move';
+          }
+        }
+      },
+      onItemDragLeave() {
+        // 不立即清除，需要判断是否真的离开
+      },
+      onItemDrop(e, targetIndex) {
+        e.preventDefault();
+        var sourceAppId = e.dataTransfer ? e.dataTransfer.getData('text/plain') : null;
+        if (sourceAppId && sourceAppId !== this.activeApps[targetIndex].id) {
+          this.reorderApps(sourceAppId, targetIndex);
+        }
+        this.draggingAppId = null;
+        this.dragOverIndex = -1;
+      },
+      reorderApps(sourceAppId, targetIndex) {
+        var currentIndex = -1;
+        var apps = this.system.apps;
+        
+        // 找到源应用的当前索引
+        for (var i = 0; i < apps.length; i++) {
+          if (apps[i].id === sourceAppId) {
+            currentIndex = i;
+            break;
+          }
+        }
+        
+        if (currentIndex === -1 || currentIndex === targetIndex) return;
+        
+        // 重新排序
+        var app = apps.splice(currentIndex, 1)[0];
+        var insertIndex = targetIndex > currentIndex ? targetIndex - 1 : targetIndex;
+        apps.splice(insertIndex, 0, app);
+        
+        this.system.saveState();
       }
     }
   };
@@ -239,41 +306,100 @@ export default async function ({ PRIVATE_GLOBAL }) {
 </script>
 
 <style lang="less">
+// X-Manager Design System Colors (from 交互原型规范手册)
+@primary-color: #165DFF;
+@success-color: #52C41A;
+@warning-color: #FAAD14;
+@danger-color: #FF4D4F;
+@bg-primary: #F5F7FA;
+@bg-hover: #F0F2F5;
+@text-primary: #1F2329;
+@text-secondary: #86909C;
+@border-color: #E5E6EB;
+@dock-bg: #1F2329;
+
 .dock {
   height: 60px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: @dock-bg;
   border-radius: 12px;
   display: flex;
   align-items: center;
   padding: 0 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
   min-width: 300px;
   max-width: 800px;
   width: 90%;
 
   &--dragging-over {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: lighten(@dock-bg, 5%);
   }
 
   &__divider {
     width: 1px;
     height: 32px;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.15);
     margin: 0 8px;
+  }
+
+  &__apps {
+    display: flex;
+    align-items: center;
   }
 
   &__item {
     position: relative;
     margin: 0 4px;
     cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+
+    &--dragging {
+      opacity: 0.5;
+      transform: scale(0.9);
+    }
+
+    &--drag-over {
+      .dock__item__icon {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 2px @primary-color;
+      }
+    }
+
+    &__drop-indicator {
+      position: absolute;
+      left: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 32px;
+      background-color: @primary-color;
+      border-radius: 2px;
+      z-index: 10;
+    }
+
+    &__badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 18px;
+      height: 18px;
+      background-color: @primary-color;
+      color: white;
+      border-radius: 9px;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      z-index: 10;
+    }
 
     &__tooltip {
       position: absolute;
       bottom: 70px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: rgba(0, 0, 0, 0.85);
       color: white;
       padding: 6px 12px;
       border-radius: 4px;
@@ -293,14 +419,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
       align-items: center;
       justify-content: center;
       transition: all 0.2s ease;
+      color: white;
 
       &:hover {
         transform: scale(1.1);
+        background-color: rgba(255, 255, 255, 0.1);
       }
 
       &--active {
-        background-color: rgba(49, 130, 206, 0.1);
-        color: #3182ce;
+        background-color: rgba(255, 255, 255, 0.2);
       }
 
       &--pulse {
@@ -323,12 +450,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
         &--active {
           width: 16px;
-          background-color: #3182ce;
+          background-color: white;
         }
 
         &--inactive {
           width: 6px;
-          background-color: rgba(0, 0, 0, 0.3);
+          background-color: rgba(255, 255, 255, 0.4);
         }
       }
     }
@@ -340,7 +467,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       transform: translateX(-50%);
       background-color: white;
       border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
       width: 300px;
       z-index: 1000;
 
@@ -358,7 +485,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       &__header {
         padding: 12px;
-        border-bottom: 1px solid #eaeaea;
+        border-bottom: 1px solid @border-color;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -380,7 +507,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
           justify-content: center;
 
           &:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: @bg-hover;
           }
         }
       }
@@ -391,13 +518,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
         &__window {
           padding: 12px;
-          border-bottom: 1px solid #f0f0f0;
+          border-bottom: 1px solid @bg-primary;
           display: flex;
           align-items: center;
           cursor: pointer;
 
           &:hover {
-            background-color: rgba(0, 0, 0, 0.02);
+            background-color: @bg-hover;
           }
 
           &__icon {
@@ -408,7 +535,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: @bg-primary;
           }
 
           &__info {
@@ -421,7 +548,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
             &__status {
               font-size: 12px;
-              color: #999;
+              color: @text-secondary;
             }
           }
         }

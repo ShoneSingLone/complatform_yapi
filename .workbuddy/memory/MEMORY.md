@@ -2,7 +2,7 @@
 
 ## 项目信息
 
-- **项目名称**：xspace-vendor（基于 XSpace 的接口管理平台）
+- **项目名称**：XSpace（基于 XSpace 的接口管理平台）
 - **项目位置**：d:\Users\SSL\Documents\GitHub\xspace
 - **Node 版本**：>= 16（使用 Volta 管理，配置为 24.12.0）
 - **包管理器**：pnpm
@@ -43,3 +43,29 @@
 - 使用 pnpm 管理依赖（禁止使用 npm 或 yarn）
 - 启动命令：`pnpm start`
 - 重部署命令：`pnpm redeploy`
+
+## DesktopWorkspace 组件系统（X-Manager 资源管理器 UI）
+
+### 组件位置
+`static/business_xspace/components/DesktopWorkspace/`
+
+### 核心组件
+- **DesktopWorkspace.vue**：主容器，管理多窗口
+- **Window.vue**：窗口组件，支持拖拽、缩放、最大化/最小化/关闭
+- **Dock.vue**：底部 Dock 栏，显示打开的应用和快捷方式
+- **MenuBar.vue**：顶部菜单栏
+- **ResourceTree.vue**：资源树形导航
+- **TreeNode.vue**：树形节点组件
+- **ApiContent.vue**：API 管理内容组件（包含 API 调试、成员管理、设置、文档编辑器）
+- **SystemStore.vue**：全局状态管理（Vue.observable）
+
+### 代码规则
+- Vue 文件结构：`export default async function ({ PRIVATE_GLOBAL })`
+- 使用 `_.$importVue()` 动态加载组件
+- 使用 `provide/inject` 进行状态管理
+- 模板中不可使用反引号，动态样式需用 computed/method
+- API 调用使用 `_api.xspace.methodName()` 形式
+- 优先使用 `/common/ui-x/` 组件库
+
+
+

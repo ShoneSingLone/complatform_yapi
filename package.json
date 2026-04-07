@@ -128,9 +128,7 @@
 		"swagger-client": "^3.34.0",
 		"tslib": "1.8.0",
 		"url": "0.11.0",
-		"vm2": "^3.9.19",
-		"xspace-plugin-qsso": "^1.1.1",
-		"xspace-vendor": "file:"
+		"vm2": "^3.9.19"
 	},
 	"engines": {
 		"node": ">= 7.6.0",
