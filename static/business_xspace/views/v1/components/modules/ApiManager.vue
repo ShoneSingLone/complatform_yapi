@@ -1,29 +1,5 @@
 <script>
-import { useSystemStore } from "@/store";
-import {
-	Folder,
-	File,
-	Users,
-	Settings,
-	FileText,
-	Code,
-	Activity,
-	Search,
-	PanelRight,
-	ChevronRight,
-	ChevronDown,
-	ArrowUp,
-	ArrowDown,
-	ChevronLeft,
-	Info,
-	Plus,
-	Edit,
-	Trash2,
-	Save,
-	Play,
-	Globe,
-	Loader2
-} from "lucide-vue-next";
+
 
 // Mock Data
 const mockApiData = {
@@ -208,58 +184,34 @@ const mockApiData = {
 	]
 };
 
-export default {
-	components: {
-		Folder,
-		File,
-		Users,
-		Settings,
-		FileText,
-		Code,
-		Activity,
-		Search,
-		PanelRight,
-		ChevronRight,
-		ChevronDown,
-		ArrowUp,
-		ArrowDown,
-		ChevronLeft,
-		Info,
-		Plus,
-		Edit,
-		Trash2,
-		Save,
-		Play,
-		Globe,
-		Loader2
-	},
-	props: {
-		windowData: Object
-	},
-	data() {
-		return {
-			system: useSystemStore(),
-			mockApiData: mockApiData,
-			// Global Environment State
-			environments: ["Development", "Test", "Staging", "Production"],
-			activeEnvironment: "Development",
-			// State
-			selectedFile: null,
-			searchQuery: "",
-			showPreview: true,
-			expandedFolders: new Set([mockApiData.id]),
-			// Sort State
-			sortField: "name",
-			sortDirection: "asc",
-			// API Execution State
-			isRequesting: false,
-			responseData: null,
-			responseStatus: null,
-			responseTime: null,
-			// Editors State
-			editingContent: null
-		};
-	},
+export default async function ({ PRIVATE_GLOBAL }) {
+	return {
+		props: {
+			windowData: Object
+		},
+		data() {
+			return {
+				mockApiData: mockApiData,
+				// Global Environment State
+				environments: ["Development", "Test", "Staging", "Production"],
+				activeEnvironment: "Development",
+				// State
+				selectedFile: null,
+				searchQuery: "",
+				showPreview: true,
+				expandedFolders: new Set([mockApiData.id]),
+				// Sort State
+				sortField: "name",
+				sortDirection: "asc",
+				// API Execution State
+				isRequesting: false,
+				responseData: null,
+				responseStatus: null,
+				responseTime: null,
+				// Editors State
+				editingContent: null
+			};
+		},
 	computed: {
 		activeNode() {
 			const node = this.windowData || this.mockApiData;
@@ -344,9 +296,11 @@ export default {
 		},
 		// Methods
 		handleOpenNode(node) {
-			const appId = node.type === "api" ? "api_endpoint" : node.type;
-			this.system.openApp(appId, true, node);
-		},
+		const appId = node.type === "api" ? "api_endpoint" : node.type;
+		if (window._?.system?.openApp) {
+			window._.system.openApp(appId, true, node);
+		}
+	},
 		handleNavigateUp() {
 			if (this.activeNode.id === this.mockApiData.id) return;
 			const parent = this.findParentNode(this.mockApiData, this.activeNode.id);
@@ -371,33 +325,33 @@ export default {
 			}
 		},
 		getIcon(type) {
-			switch (type) {
-				case "group":
-					return Folder;
-				case "project":
-					return Folder;
-				case "api_folder":
-					return Folder;
-				case "doc_folder":
-					return Folder;
-				case "folder":
-					return Folder;
-				case "api":
-					return Code;
-				case "doc":
-					return FileText;
-				case "code":
-					return Code;
-				case "member_list":
-					return Users;
-				case "setting":
-					return Settings;
-				case "cicd":
-					return Activity;
-				default:
-					return File;
-			}
-		},
+		switch (type) {
+			case "group":
+				return "folder";
+			case "project":
+				return "folder";
+			case "api_folder":
+				return "folder";
+			case "doc_folder":
+				return "folder";
+			case "folder":
+				return "folder";
+			case "api":
+				return "code";
+			case "doc":
+				return "file-text";
+			case "code":
+				return "code";
+			case "member_list":
+				return "users";
+			case "setting":
+				return "settings";
+			case "cicd":
+				return "activity";
+			default:
+				return "file";
+		}
+	},
 		getIconColor(type) {
 			switch (type) {
 				case "group":
@@ -500,10 +454,10 @@ export default {
 				}
 
 				this.responseData = JSON.stringify(mockResponse, null, 2);
-			}, 800 + Math.random() * 500);
+			}, 800 + Math.random() * 500);}
 		}
-	}
-};
+		};
+	};
 </script>
 
 <template>
@@ -514,10 +468,10 @@ export default {
 			<div class="flex items-center px-4 py-2 gap-4">
 				<div class="flex items-center gap-1">
 					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
-						<ChevronLeft :size="20" />
+						<xIcon type="chevron-left" :size="20" />
 					</button>
 					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
-						<ChevronRight :size="20" />
+						<xIcon type="chevron-right" :size="20" />
 					</button>
 					<button
 						@click="handleNavigateUp"
@@ -529,14 +483,14 @@ export default {
 								: 'text-on-surface-variant/30 cursor-not-allowed'
 						"
 						title="Up">
-						<ArrowUp :size="20" />
+						<xIcon type="arrow-up" :size="20" />
 					</button>
 				</div>
 
 				<div class="flex-1 max-w-2xl relative">
 					<div
 						class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-						<Search :size="16" class="text-on-surface-variant" />
+						<xIcon type="search" :size="16" class="text-on-surface-variant" />
 					</div>
 					<input
 						type="text"
@@ -549,7 +503,7 @@ export default {
 					<!-- Environment Switcher -->
 					<div
 						class="flex items-center bg-surface-container border border-outline-variant/50 rounded-md px-3 py-1.5 hover:bg-surface-container-high transition-colors">
-						<Globe :size="16" class="text-on-surface-variant mr-2" />
+						<xIcon type="globe" :size="16" class="text-on-surface-variant mr-2" />
 						<select
 							v-model="activeEnvironment"
 							class="bg-transparent text-sm font-medium text-on-surface focus:outline-none cursor-pointer">
@@ -570,7 +524,7 @@ export default {
 								: 'bg-surface-container-lowest border-outline-variant/50 text-on-surface-variant hover:bg-surface-container'
 						"
 						title="Toggle Preview Pane">
-						<PanelRight :size="20" />
+						<xIcon type="panel-right" :size="20" />
 					</button>
 				</div>
 			</div>
@@ -601,16 +555,20 @@ export default {
 							<span
 								class="w-4 h-4 flex items-center justify-center mr-1 text-on-surface-variant hover:text-on-surface"
 								@click="e => toggleFolder(mockApiData.id, e)">
-								<ChevronDown
-									v-if="expandedFolders.has(mockApiData.id)"
-									:size="14" />
-								<ChevronRight v-else :size="14" />
+								<xIcon 
+													type="chevron-down"
+													v-if="expandedFolders.has(mockApiData.id)"
+													:size="14" />
+												<xIcon 
+													type="chevron-right" 
+													v-else 
+													:size="14" />
 							</span>
 							<span class="mr-2">
-								<component
-									:is="getIcon(mockApiData.type)"
-									:size="16"
-									:class="getIconColor(mockApiData.type)" />
+								<xIcon 
+												:type="getIcon(mockApiData.type)"
+												:size="16"
+												:class="getIconColor(mockApiData.type)" />
 							</span>
 							<span class="truncate">{{ mockApiData.name }}</span>
 						</div>
@@ -636,17 +594,21 @@ export default {
 													isFolderType(child.type) &&
 													child.children?.length
 												">
-												<ChevronDown
-													v-if="expandedFolders.has(child.id)"
-													:size="14" />
-												<ChevronRight v-else :size="14" />
+												<xIcon 
+															type="chevron-down"
+															v-if="expandedFolders.has(child.id)"
+															:size="14" />
+														<xIcon 
+															type="chevron-right" 
+															v-else 
+															:size="14" />
 											</template>
 										</span>
 										<span class="mr-2">
-											<component
-												:is="getIcon(child.type)"
-												:size="16"
-												:class="getIconColor(child.type)" />
+											<xIcon 
+														:type="getIcon(child.type)"
+														:size="16"
+														:class="getIconColor(child.type)" />
 										</span>
 										<span class="truncate">{{ child.name }}</span>
 									</div>
@@ -674,19 +636,23 @@ export default {
 																isFolderType(subchild.type) &&
 																subchild.children?.length
 															">
-															<ChevronDown
-																v-if="
-																	expandedFolders.has(subchild.id)
-																"
-																:size="14" />
-															<ChevronRight v-else :size="14" />
+															<xIcon 
+																	type="chevron-down"
+																	v-if="
+																		expandedFolders.has(subchild.id)
+																	"
+																	:size="14" />
+																<xIcon 
+																	type="chevron-right" 
+																	v-else 
+																	:size="14" />
 														</template>
 													</span>
 													<span class="mr-2">
-														<component
-															:is="getIcon(subchild.type)"
-															:size="16"
-															:class="getIconColor(subchild.type)" />
+														<xIcon 
+																:type="getIcon(subchild.type)"
+																:size="16"
+																:class="getIconColor(subchild.type)" />
 													</span>
 													<span class="truncate">{{
 														subchild.name
@@ -731,31 +697,33 @@ export default {
 																			subsubchild.children
 																				?.length
 																		">
-																		<ChevronDown
-																			v-if="
-																				expandedFolders.has(
-																					subsubchild.id
-																				)
-																			"
-																			:size="14" />
-																		<ChevronRight
-																			v-else
-																			:size="14" />
+																		<xIcon 
+																				type="chevron-down"
+																				v-if="
+																					expandedFolders.has(
+																						subsubchild.id
+																					)
+																				"
+																				:size="14" />
+																			<xIcon 
+																				type="chevron-right"
+																				v-else
+																				:size="14" />
 																	</template>
 																</span>
 																<span class="mr-2">
-																	<component
-																		:is="
-																			getIcon(
-																				subsubchild.type
-																			)
-																		"
-																		:size="16"
-																		:class="
-																			getIconColor(
-																				subsubchild.type
-																			)
-																		" />
+																	<xIcon 
+																				:type="
+																					getIcon(
+																						subsubchild.type
+																					)
+																				"
+																				:size="16"
+																				:class="
+																					getIconColor(
+																						subsubchild.type
+																					)
+																				" />
 																</span>
 																<span class="truncate">{{
 																	subsubchild.name
@@ -790,8 +758,8 @@ export default {
 																			<span
 																				class="w-4 h-4 flex items-center justify-center mr-1"></span>
 																			<span class="mr-2">
-																				<component
-																					:is="
+																				<xIcon 
+																					:type="
 																						getIcon(
 																							leaf.type
 																						)
@@ -860,37 +828,46 @@ export default {
 							class="col-span-7 flex items-center cursor-pointer hover:text-on-surface transition-colors"
 							@click="handleSort('name')">
 							Name
-							<ArrowUp
-								v-if="sortField === 'name' && sortDirection === 'asc'"
-								:size="12"
-								class="ml-1" /><ArrowDown
-								v-if="sortField === 'name' && sortDirection === 'desc'"
-								:size="12"
-								class="ml-1" />
+							<xIcon 
+									type="arrow-up"
+									v-if="sortField === 'name' && sortDirection === 'asc'"
+									:size="12"
+									class="ml-1" />
+								<xIcon 
+									type="arrow-down"
+									v-if="sortField === 'name' && sortDirection === 'desc'"
+									:size="12"
+									class="ml-1" />
 						</div>
 						<div
 							class="col-span-3 flex items-center cursor-pointer hover:text-on-surface transition-colors"
 							@click="handleSort('updatedAt')">
 							Date Modified
-							<ArrowUp
-								v-if="sortField === 'updatedAt' && sortDirection === 'asc'"
-								:size="12"
-								class="ml-1" /><ArrowDown
-								v-if="sortField === 'updatedAt' && sortDirection === 'desc'"
-								:size="12"
-								class="ml-1" />
+							<xIcon 
+									type="arrow-up"
+									v-if="sortField === 'updatedAt' && sortDirection === 'asc'"
+									:size="12"
+									class="ml-1" />
+								<xIcon 
+									type="arrow-down"
+									v-if="sortField === 'updatedAt' && sortDirection === 'desc'"
+									:size="12"
+									class="ml-1" />
 						</div>
 						<div
 							class="col-span-2 flex items-center cursor-pointer hover:text-on-surface transition-colors"
 							@click="handleSort('type')">
 							Type
-							<ArrowUp
-								v-if="sortField === 'type' && sortDirection === 'asc'"
-								:size="12"
-								class="ml-1" /><ArrowDown
-								v-if="sortField === 'type' && sortDirection === 'desc'"
-								:size="12"
-								class="ml-1" />
+							<xIcon 
+									type="arrow-up"
+									v-if="sortField === 'type' && sortDirection === 'asc'"
+									:size="12"
+									class="ml-1" />
+								<xIcon 
+									type="arrow-down"
+									v-if="sortField === 'type' && sortDirection === 'desc'"
+									:size="12"
+									class="ml-1" />
 						</div>
 					</div>
 
@@ -899,7 +876,7 @@ export default {
 						<div
 							v-if="filteredAndSortedFiles.length === 0"
 							class="flex flex-col items-center justify-center h-full text-on-surface-variant">
-							<Folder :size="48" class="text-outline-variant mb-2" />
+							<xIcon type="folder" :size="48" class="text-outline-variant mb-2" />
 							<p>This folder is empty</p>
 						</div>
 						<div v-else class="py-1">
@@ -915,10 +892,10 @@ export default {
 										: ''
 								">
 								<div class="col-span-7 flex items-center gap-3 overflow-hidden">
-									<component
-										:is="getIcon(file.type)"
-										:size="20"
-										:class="getIconColor(file.type)" />
+									<xIcon 
+												:type="getIcon(file.type)"
+												:size="20"
+												:class="getIconColor(file.type)" />
 									<span class="truncate font-medium text-on-surface">{{
 										file.name
 									}}</span>
@@ -943,10 +920,10 @@ export default {
 							<div
 								class="px-6 py-4 border-b border-outline-variant/50 flex items-center justify-between bg-surface-container/30">
 								<div class="flex items-center gap-3">
-									<component
-										:is="getIcon(activeNode.type)"
-										:size="24"
-										:class="getIconColor(activeNode.type)" />
+									<xIcon 
+							:type="getIcon(activeNode.type)"
+							:size="24"
+							:class="getIconColor(activeNode.type)" />
 									<div>
 										<h2 class="text-lg font-bold text-on-surface">{{
 											activeNode.name
@@ -966,14 +943,14 @@ export default {
 										<button
 											@click="saveEditing"
 											class="px-4 py-1.5 text-sm font-medium bg-primary text-on-primary hover:bg-primary/90 rounded-md transition-colors flex items-center gap-2">
-											<Save :size="16" /> Save
+											<xIcon type="save" :size="16" /> Save
 										</button>
 									</template>
 									<template v-else>
 										<button
 											@click="startEditing"
 											class="px-4 py-1.5 text-sm font-medium border border-outline-variant/50 text-on-surface hover:bg-surface-variant rounded-md transition-colors flex items-center gap-2">
-											<Edit :size="16" /> Edit
+											<xIcon type="edit" :size="16" /> Edit
 										</button>
 									</template>
 								</div>
@@ -989,7 +966,7 @@ export default {
 											<button
 												v-if="editingContent"
 												class="text-sm text-primary flex items-center gap-1 hover:underline">
-												<Plus :size="16" /> Add Member
+												<xIcon type="plus" :size="16" /> Add Member
 											</button>
 										</div>
 										<div
@@ -1053,8 +1030,7 @@ export default {
 															class="px-4 py-3 text-right">
 															<button
 																class="text-error hover:bg-error/10 p-1 rounded"
-																><Trash2 :size="16"
-															/></button>
+																><xIcon type="trash-2" :size="16" /></button>
 														</td>
 													</tr>
 												</tbody>
@@ -1130,11 +1106,12 @@ export default {
 												@click="sendRequest"
 												:disabled="isRequesting"
 												class="flex items-center gap-2 px-6 py-2 bg-primary text-on-primary rounded-md text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-70 shadow-sm">
-												<Loader2
+												<xIcon 
+													type="loader-2"
 													v-if="isRequesting"
 													:size="16"
 													class="animate-spin" />
-												<Play v-else :size="16" />
+												<xIcon type="play" v-else :size="16" />
 												Send
 											</button>
 										</div>
@@ -1213,7 +1190,8 @@ export default {
 											<div
 												v-if="isRequesting"
 												class="flex flex-col items-center justify-center p-12 text-on-surface-variant bg-surface-container-lowest border border-outline-variant/50 rounded-md">
-												<Loader2
+												<xIcon 
+													type="loader-2"
 													class="w-8 h-8 animate-spin mb-3 text-primary" />
 												<p class="text-sm"
 													>Sending request to
@@ -1289,17 +1267,17 @@ export default {
 				<div
 					v-if="!selectedFile"
 					class="flex-1 flex flex-col items-center justify-center text-on-surface-variant p-6 text-center">
-					<Info :size="48" class="mb-4 text-outline-variant" />
+					<xIcon type="info" :size="48" class="mb-4 text-outline-variant" />
 					<p>Select a resource to preview</p>
 				</div>
 				<div v-else class="p-6">
 					<!-- Preview Content -->
 					<div
 						class="w-full aspect-square max-w-[120px] mx-auto bg-surface-variant rounded-2xl flex items-center justify-center mb-6 border border-outline-variant/50">
-						<component
-							:is="getIcon(selectedFile.type)"
-							:size="60"
-							:class="getIconColor(selectedFile.type)" />
+						<xIcon 
+										:type="getIcon(selectedFile.type)"
+										:size="60"
+										:class="getIconColor(selectedFile.type)" />
 					</div>
 
 					<!-- Metadata -->
