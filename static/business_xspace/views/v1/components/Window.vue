@@ -1,106 +1,100 @@
-<script>
-import { useSystemStore } from "@/store";
-import { X, Minus, Square, Copy, Pin, HelpCircle } from "lucide-vue-next";
-import * as Icons from "lucide-vue-next";
-import ApiManager from "./modules/ApiManager.vue";
-import Explore from "./modules/Explore.vue";
+<script lang="ts">
+export default async function ({ PRIVATE_GLOBAL }) {
+  const [useSystemStore] = await _.$importVue([
+    '@/store/index.js'
+  ]);
+  
+  return {
+    components: {
+      ApiManager: () => _.$importVue('./modules/ApiManager.vue'),
+      Explore: () => _.$importVue('./modules/Explore.vue')
+    },
+    props: {
+      window: Object
+    },
+    data() {
+      return {
+        system: useSystemStore(),
+        windowRef: null,
+        handleRef: null,
+        x: this.window.x,
+        y: this.window.y,
+        isDragging: false
+      };
+    },
+    computed: {
+      isActive() {
+        return this.system.activeWindowId === this.window.id;
+      }
+    },
+    methods: {
+      handleClose() {
+        this.system.closeWindow(this.window.id);
+      },
+      handleMinimize() {
+        this.system.minimizeWindow(this.window.id);
+      },
+      handleMaximize() {
+        this.system.toggleMaximize(this.window.id);
+      },
+      pinToDesktop() {
+        const app = this.system.apps.find(a => a.id === this.window.appId);
+        if (!app) return;
+        this.system.addShortcut({
+          id: this.window.data ? `shortcut-${this.window.data.id}` : `shortcut-${app.id}`,
+          appId: app.id,
+          name: this.window.title,
+          icon: app.icon,
+          color: app.color,
+          data: this.window.data
+        });
+      },
+      focusWindow() {
+        this.system.focusWindow(this.window.id);
+      }
+    },
+    mounted() {
+      // 简单的拖拽实现
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let startWindowX = 0;
+      let startWindowY = 0;
 
-export default {
-	components: {
-		X,
-		Minus,
-		Square,
-		Copy,
-		Pin,
-		HelpCircle,
-		ApiManager,
-		Explore
-	},
-	props: {
-		window: Object
-	},
-	data() {
-		return {
-			system: useSystemStore(),
-			windowRef: null,
-			handleRef: null,
-			x: this.window.x,
-			y: this.window.y,
-			isDragging: false
-		};
-	},
-	computed: {
-		isActive() {
-			return this.system.activeWindowId === this.window.id;
-		}
-	},
-	methods: {
-		handleClose() {
-			this.system.closeWindow(this.window.id);
-		},
-		handleMinimize() {
-			this.system.minimizeWindow(this.window.id);
-		},
-		handleMaximize() {
-			this.system.toggleMaximize(this.window.id);
-		},
-		pinToDesktop() {
-			const app = this.system.apps.find(a => a.id === this.window.appId);
-			if (!app) return;
-			this.system.addShortcut({
-				id: this.window.data ? `shortcut-${this.window.data.id}` : `shortcut-${app.id}`,
-				appId: app.id,
-				name: this.window.title,
-				icon: app.icon,
-				color: app.color,
-				data: this.window.data
-			});
-		},
-		focusWindow() {
-			this.system.focusWindow(this.window.id);
-		}
-	},
-	mounted() {
-		// 简单的拖拽实现
-		let isDragging = false;
-		let startX = 0;
-		let startY = 0;
-		let startWindowX = 0;
-		let startWindowY = 0;
+      const handle = this.handleRef;
+      if (handle) {
+        handle.addEventListener("mousedown", e => {
+          if (this.window.isMaximized) return;
 
-		const handle = this.handleRef;
-		if (handle) {
-			handle.addEventListener("mousedown", e => {
-				if (this.window.isMaximized) return;
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          startWindowX = this.x;
+          startWindowY = this.y;
+          this.system.focusWindow(this.window.id);
+          this.isDragging = true;
+        });
 
-				isDragging = true;
-				startX = e.clientX;
-				startY = e.clientY;
-				startWindowX = this.x;
-				startWindowY = this.y;
-				this.system.focusWindow(this.window.id);
-				this.isDragging = true;
-			});
+        document.addEventListener("mousemove", e => {
+          if (!isDragging || this.window.isMaximized) return;
 
-			document.addEventListener("mousemove", e => {
-				if (!isDragging || this.window.isMaximized) return;
+          const deltaX = e.clientX - startX;
+          const deltaY = e.clientY - startY;
 
-				const deltaX = e.clientX - startX;
-				const deltaY = e.clientY - startY;
+          this.x = startWindowX + deltaX;
+          this.y = startWindowY + deltaY;
+          this.window.x = this.x;
+          this.window.y = this.y;
+        });
 
-				this.x = startWindowX + deltaX;
-				this.y = startWindowY + deltaY;
-				this.window.x = this.x;
-				this.window.y = this.y;
-			});
-
-			document.addEventListener("mouseup", () => {
-				isDragging = false;
-				this.isDragging = false;
-			});
-		}
-	}
-};
+        document.addEventListener("mouseup", () => {
+          isDragging = false;
+          this.isDragging = false;
+        });
+      }
+    }
+  };
+}
 </script>
 
 <template>
@@ -117,7 +111,7 @@ export default {
 				!isDragging
 					? 'transition-[width,height,transform,opacity] duration-300 ease-out'
 					: ''
-			]"
+			]
 			:style="
 				window.isMaximized
 					? { zIndex: window.zIndex }
@@ -135,15 +129,9 @@ export default {
 				class="h-14 flex items-center justify-between px-4 bg-surface-container border-b border-outline-variant cursor-default select-none">
 				<div class="flex items-center gap-3">
 					<div
-						class="w-8 h-8 rounded-m3-small flex items-center justify-center bg-surface-container-highest text-primary">
-						<component
-							:is="
-								Icons[
-									system.apps.find(a => a.id === window.appId)?.icon ||
-										'HelpCircle'
-								]
-							"
-							:size="18" />
+						class="w-8 h-8 rounded-m3-small flex items-center justify-center bg-surface-container-highest text-primary"
+						:style="{ color: system.apps.find(a => a.id === window.appId)?.color }">
+						<div class="text-lg font-bold">{{ system.apps.find(a => a.id === window.appId)?.name.charAt(0) || '?' }}</div>
 					</div>
 					<span class="text-sm font-medium text-on-surface">{{ window.title }}</span>
 				</div>
@@ -153,25 +141,22 @@ export default {
 						@click.stop="pinToDesktop"
 						class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors"
 						title="Pin to Desktop">
-						<Pin :size="20" class="text-on-surface-variant" />
+						<xIcon name="pin" size="20" class="text-on-surface-variant" />
 					</button>
 					<button
 						@click.stop="handleMinimize"
 						class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors">
-						<Minus :size="20" class="text-on-surface-variant" />
+						<xIcon name="minus" size="20" class="text-on-surface-variant" />
 					</button>
 					<button
 						@click.stop="handleMaximize"
 						class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors">
-						<component
-							:is="window.isMaximized ? Copy : Square"
-							:size="16"
-							class="text-on-surface-variant" />
+						<xIcon :name="window.isMaximized ? 'copy' : 'square'" size="16" class="text-on-surface-variant" />
 					</button>
 					<button
 						@click.stop="handleClose"
 						class="w-10 h-10 flex items-center justify-center hover:bg-error/10 active:bg-error/20 text-on-surface-variant hover:text-error rounded-full transition-colors">
-						<X :size="20" />
+						<xIcon name="x" size="20" />
 					</button>
 				</div>
 			</div>
@@ -209,15 +194,9 @@ export default {
 							v-else
 							class="h-full flex flex-col items-center justify-center text-center py-20">
 							<div
-								class="w-20 h-20 rounded-m3-large bg-secondary-container flex items-center justify-center text-on-secondary-container mb-6">
-								<component
-									:is="
-										Icons[
-											system.apps.find(a => a.id === window.appId)?.icon ||
-												'HelpCircle'
-										]
-									"
-									:size="40" />
+								class="w-20 h-20 rounded-m3-large bg-secondary-container flex items-center justify-center text-on-secondary-container mb-6"
+								:style="{ color: system.apps.find(a => a.id === window.appId)?.color }">
+								<div class="text-3xl font-bold">{{ system.apps.find(a => a.id === window.appId)?.name.charAt(0) || '?' }}</div>
 							</div>
 							<p class="text-on-surface-variant mb-6 text-lg"
 								>The <strong>{{ window.title }}</strong> module is currently under

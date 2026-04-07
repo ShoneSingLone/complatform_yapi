@@ -1,20 +1,24 @@
-<script>
-import { useSystemStore } from '@/store';
-
-export default {
-  data() {
-    return {
-      system: useSystemStore(),
-      username: 'admin',
-      password: 'password'
-    };
-  },
-  methods: {
-    handleLogin() {
-      this.system.login({ username: this.username, email: 'admin@example.com' });
+<script lang="ts">
+export default async function ({ PRIVATE_GLOBAL }) {
+  const [useSystemStore] = await _.$importVue([
+    '@/store/index.js'
+  ]);
+  
+  return {
+    data() {
+      return {
+        system: useSystemStore(),
+        username: 'admin',
+        password: 'password'
+      };
+    },
+    methods: {
+      handleLogin() {
+        this.system.login({ username: this.username, email: 'admin@example.com' });
+      }
     }
-  }
-};
+  };
+}
 </script>
 
 <template>

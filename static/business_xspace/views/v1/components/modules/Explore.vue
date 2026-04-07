@@ -1,23 +1,4 @@
 <script>
-import {
-	Folder,
-	FolderOpen,
-	File,
-	Image as ImageIcon,
-	FileText,
-	Code,
-	Film,
-	Search,
-	X,
-	PanelRight,
-	ChevronRight,
-	ChevronDown,
-	ArrowUp,
-	ArrowDown,
-	ChevronLeft,
-	Info
-} from "lucide-vue-next";
-
 // Mock Data
 const mockFileSystem = {
 	id: "root",
@@ -110,192 +91,176 @@ const mockFileSystem = {
 	]
 };
 
-export default {
-	components: {
-		Folder,
-		FolderOpen,
-		File,
-		ImageIcon,
-		FileText,
-		Code,
-		Film,
-		Search,
-		X,
-		PanelRight,
-		ChevronRight,
-		ChevronDown,
-		ArrowUp,
-		ArrowDown,
-		ChevronLeft,
-		Info
-	},
-	data() {
-		return {
-			mockFileSystem: mockFileSystem,
-			// State
-			tabs: [mockFileSystem],
-			activeTabId: mockFileSystem.id,
-			selectedFile: null,
-			searchQuery: "",
-			showPreview: true,
-			expandedFolders: new Set([mockFileSystem.id]),
-			// Sort State
-			sortField: "name",
-			sortDirection: "asc"
-		};
-	},
-	computed: {
-		activeFolder() {
-			return this.tabs.find(t => t.id === this.activeTabId) || this.mockFileSystem;
+export default async function ({ PRIVATE_GLOBAL }) {
+	return {
+		data() {
+			return {
+				mockFileSystem: mockFileSystem,
+				// State
+				tabs: [mockFileSystem],
+				activeTabId: mockFileSystem.id,
+				selectedFile: null,
+				searchQuery: "",
+				showPreview: true,
+				expandedFolders: new Set([mockFileSystem.id]),
+				// Sort State
+				sortField: "name",
+				sortDirection: "asc"
+			};
 		},
-		filteredAndSortedFiles() {
-			let files = this.activeFolder.children || [];
+		computed: {
+			activeFolder() {
+				return this.tabs.find(t => t.id === this.activeTabId) || this.mockFileSystem;
+			},
+			filteredAndSortedFiles() {
+				let files = this.activeFolder.children || [];
 
-			if (this.searchQuery) {
-				const lowerQuery = this.searchQuery.toLowerCase();
-				files = files.filter(f => f.name.toLowerCase().includes(lowerQuery));
-			}
-
-			return [...files].sort((a, b) => {
-				let comparison = 0;
-
-				if ((this.sortField === "name" || this.sortField === "type") && a.type !== b.type) {
-					if (a.type === "folder") return -1;
-					if (b.type === "folder") return 1;
+				if (this.searchQuery) {
+					const lowerQuery = this.searchQuery.toLowerCase();
+					files = files.filter(f => f.name.toLowerCase().includes(lowerQuery));
 				}
 
-				switch (this.sortField) {
-					case "name":
-						comparison = a.name.localeCompare(b.name);
-						break;
-					case "updatedAt":
-						comparison =
-							new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
-						break;
-					case "size":
-						comparison = (a.size || 0) - (b.size || 0);
-						break;
-					case "type":
-						comparison = a.type.localeCompare(b.type);
-						break;
+				return [...files].sort((a, b) => {
+					let comparison = 0;
+
+					if ((this.sortField === "name" || this.sortField === "type") && a.type !== b.type) {
+						if (a.type === "folder") return -1;
+						if (b.type === "folder") return 1;
+					}
+
+					switch (this.sortField) {
+						case "name":
+							comparison = a.name.localeCompare(b.name);
+							break;
+						case "updatedAt":
+							comparison =
+								new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+							break;
+						case "size":
+							comparison = (a.size || 0) - (b.size || 0);
+							break;
+						case "type":
+							comparison = a.type.localeCompare(b.type);
+							break;
+					}
+
+					return this.sortDirection === "asc" ? comparison : -comparison;
+				});
+			},
+			canNavigateUp() {
+				return this.activeFolder.id !== this.mockFileSystem.id;
+			}
+		},
+		methods: {
+			// Utils
+			formatBytes(bytes, decimals = 2) {
+				if (bytes === undefined || bytes === null) return "--";
+				if (!+bytes) return "0 Bytes";
+				const k = 1024;
+				const dm = decimals < 0 ? 0 : decimals;
+				const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+				const i = Math.floor(Math.log(bytes) / Math.log(k));
+				return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+			},
+			formatDate(dateString) {
+				try {
+					const date = new Date(dateString);
+					return date.toLocaleString();
+				} catch (e) {
+					return dateString;
 				}
+			},
+			// Methods
+			handleOpenFolder(folder) {
+				if (folder.type !== "folder") return;
 
-				return this.sortDirection === "asc" ? comparison : -comparison;
-			});
-		},
-		canNavigateUp() {
-			return this.activeFolder.id !== this.mockFileSystem.id;
-		}
-	},
-	methods: {
-		// Utils
-		formatBytes(bytes, decimals = 2) {
-			if (bytes === undefined || bytes === null) return "--";
-			if (!+bytes) return "0 Bytes";
-			const k = 1024;
-			const dm = decimals < 0 ? 0 : decimals;
-			const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-			const i = Math.floor(Math.log(bytes) / Math.log(k));
-			return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-		},
-		formatDate(dateString) {
-			try {
-				const date = new Date(dateString);
-				return date.toLocaleString();
-			} catch (e) {
-				return dateString;
-			}
-		},
-		// Methods
-		handleOpenFolder(folder) {
-			if (folder.type !== "folder") return;
-
-			const existingTab = this.tabs.find(t => t.id === folder.id);
-			if (existingTab) {
-				this.activeTabId = folder.id;
-			} else {
-				this.tabs.push(folder);
-				this.activeTabId = folder.id;
-			}
-			this.selectedFile = null;
-			this.searchQuery = "";
-			this.expandedFolders.add(folder.id);
-		},
-		handleCloseTab(tabId, e) {
-			e.stopPropagation();
-			this.tabs = this.tabs.filter(t => t.id !== tabId);
-			if (this.tabs.length === 0) {
-				this.tabs = [this.mockFileSystem];
-				this.activeTabId = this.mockFileSystem.id;
-			} else if (this.activeTabId === tabId) {
-				this.activeTabId = this.tabs[this.tabs.length - 1].id;
-			}
-		},
-		findParentFolder(root, targetId) {
-			if (!root.children) return null;
-			for (const child of root.children) {
-				if (child.id === targetId) return root;
-				const found = this.findParentFolder(child, targetId);
-				if (found) return found;
-			}
-			return null;
-		},
-		handleNavigateUp() {
-			if (this.activeFolder.id === this.mockFileSystem.id) return;
-			const parent = this.findParentFolder(this.mockFileSystem, this.activeFolder.id);
-			if (parent) {
-				this.handleOpenFolder(parent);
-			}
-		},
-		handleSort(field) {
-			if (this.sortField === field) {
-				this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
-			} else {
-				this.sortField = field;
-				this.sortDirection = "asc";
-			}
-		},
-		toggleFolder(folderId, e) {
-			e.stopPropagation();
-			if (this.expandedFolders.has(folderId)) {
-				this.expandedFolders.delete(folderId);
-			} else {
-				this.expandedFolders.add(folderId);
-			}
-		},
-		getIcon(type) {
-			switch (type) {
-				case "folder":
-					return Folder;
-				case "image":
-					return ImageIcon;
-				case "document":
-					return FileText;
-				case "code":
-					return Code;
-				case "video":
-					return Film;
-				default:
-					return File;
-			}
-		},
-		getIconColor(type) {
-			switch (type) {
-				case "folder":
-					return "text-blue-500 fill-blue-100";
-				case "image":
-					return "text-purple-500";
-				case "document":
-					return "text-blue-600";
-				case "code":
-					return "text-yellow-600";
-				case "video":
-					return "text-red-500";
-				default:
-					return "text-gray-500";
+				const existingTab = this.tabs.find(t => t.id === folder.id);
+				if (existingTab) {
+					this.activeTabId = folder.id;
+				} else {
+					this.tabs.push(folder);
+					this.activeTabId = folder.id;
+				}
+				this.selectedFile = null;
+				this.searchQuery = "";
+				this.expandedFolders.add(folder.id);
+			},
+			handleCloseTab(tabId, e) {
+				e.stopPropagation();
+				this.tabs = this.tabs.filter(t => t.id !== tabId);
+				if (this.tabs.length === 0) {
+					this.tabs = [this.mockFileSystem];
+					this.activeTabId = this.mockFileSystem.id;
+				} else if (this.activeTabId === tabId) {
+					this.activeTabId = this.tabs[this.tabs.length - 1].id;
+				}
+			},
+			findParentFolder(root, targetId) {
+				if (!root.children) return null;
+				for (const child of root.children) {
+					if (child.id === targetId) return root;
+					const found = this.findParentFolder(child, targetId);
+					if (found) return found;
+				}
+				return null;
+			},
+			handleNavigateUp() {
+				if (this.activeFolder.id === this.mockFileSystem.id) return;
+				const parent = this.findParentFolder(this.mockFileSystem, this.activeFolder.id);
+				if (parent) {
+					this.handleOpenFolder(parent);
+				}
+			},
+			handleSort(field) {
+				if (this.sortField === field) {
+					this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+				} else {
+					this.sortField = field;
+					this.sortDirection = "asc";
+				}
+			},
+			toggleFolder(folderId, e) {
+				e.stopPropagation();
+				if (this.expandedFolders.has(folderId)) {
+					this.expandedFolders.delete(folderId);
+				} else {
+					this.expandedFolders.add(folderId);
+				}
+			},
+			getIcon(type) {
+				switch (type) {
+					case "folder":
+						return "folder";
+					case "image":
+						return "image";
+					case "document":
+						return "file-text";
+					case "code":
+						return "code";
+					case "video":
+						return "film";
+					default:
+						return "file";
+				}
+			},
+			getIconColor(type) {
+				switch (type) {
+					case "folder":
+						return "text-blue-500 fill-blue-100";
+					case "image":
+						return "text-purple-500";
+					case "document":
+						return "text-blue-600";
+					case "code":
+						return "text-yellow-600";
+					case "video":
+						return "text-red-500";
+					default:
+						return "text-gray-500";
+				}
 			}
 		}
-	}
+	};
 };
 </script>
 
@@ -323,7 +288,7 @@ export default {
 						:class="
 							activeTabId === tab.id ? 'opacity-100 hover:bg-surface-variant' : ''
 						">
-						<X :size="14" />
+						<xIcon type="x" :size="14" />
 					</button>
 				</div>
 			</div>
@@ -332,10 +297,10 @@ export default {
 			<div class="flex items-center px-4 py-2 gap-4">
 				<div class="flex items-center gap-1">
 					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
-						<ChevronLeft :size="20" />
+						<xIcon type="chevron-left" :size="20" />
 					</button>
 					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
-						<ChevronRight :size="20" />
+						<xIcon type="chevron-right" :size="20" />
 					</button>
 					<button
 						@click="handleNavigateUp"
@@ -347,14 +312,14 @@ export default {
 								: 'text-on-surface-variant/30 cursor-not-allowed'
 						"
 						title="Up">
-						<ArrowUp :size="20" />
+						<xIcon type="arrow-up" :size="20" />
 					</button>
 				</div>
 
 				<div class="flex-1 max-w-2xl relative">
 					<div
 						class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-						<Search :size="16" class="text-on-surface-variant" />
+						<xIcon type="search" :size="16" class="text-on-surface-variant" />
 					</div>
 					<input
 						type="text"
@@ -373,7 +338,7 @@ export default {
 								: 'bg-surface-container-lowest border-outline-variant/50 text-on-surface-variant hover:bg-surface-container'
 						"
 						title="Toggle Preview Pane">
-						<PanelRight :size="20" />
+						<xIcon type="panel-right" :size="20" />
 					</button>
 				</div>
 			</div>
@@ -403,16 +368,24 @@ export default {
 							<span
 								class="w-4 h-4 flex items-center justify-center mr-1 text-on-surface-variant hover:text-on-surface"
 								@click="e => toggleFolder(mockFileSystem.id, e)">
-								<ChevronDown
-									v-if="expandedFolders.has(mockFileSystem.id)"
-									:size="14" />
-								<ChevronRight v-else :size="14" />
+								<xIcon 
+													type="chevron-down"
+													v-if="expandedFolders.has(mockFileSystem.id)"
+													:size="14" />
+												<xIcon 
+													type="chevron-right" 
+													v-else 
+													:size="14" />
 							</span>
 							<span class="mr-2 text-blue-500">
-								<FolderOpen
-									v-if="expandedFolders.has(mockFileSystem.id)"
-									:size="16" />
-								<Folder v-else :size="16" />
+								<xIcon 
+													type="folder-open"
+													v-if="expandedFolders.has(mockFileSystem.id)"
+													:size="16" />
+												<xIcon 
+													type="folder" 
+													v-else 
+													:size="16" />
 							</span>
 							<span class="truncate">{{ mockFileSystem.name }}</span>
 						</div>
@@ -436,17 +409,25 @@ export default {
 												v-if="
 													child.children?.some(c => c.type === 'folder')
 												">
-												<ChevronDown
-													v-if="expandedFolders.has(child.id)"
-													:size="14" />
-												<ChevronRight v-else :size="14" />
+												<xIcon 
+															type="chevron-down"
+															v-if="expandedFolders.has(child.id)"
+															:size="14" />
+														<xIcon 
+															type="chevron-right" 
+															v-else 
+															:size="14" />
 											</template>
 										</span>
 										<span class="mr-2 text-blue-500">
-											<FolderOpen
-												v-if="expandedFolders.has(child.id)"
-												:size="16" />
-											<Folder v-else :size="16" />
+											<xIcon 
+														type="folder-open"
+														v-if="expandedFolders.has(child.id)"
+														:size="16" />
+													<xIcon 
+														type="folder" 
+														v-else 
+														:size="16" />
 										</span>
 										<span class="truncate">{{ child.name }}</span>
 									</div>
@@ -470,7 +451,7 @@ export default {
 													<span
 														class="w-4 h-4 flex items-center justify-center mr-1"></span>
 													<span class="mr-2 text-blue-500">
-														<Folder :size="16" />
+														<xIcon type="folder" :size="16" />
 													</span>
 													<span class="truncate">{{
 														subchild.name
@@ -518,49 +499,61 @@ export default {
 						class="col-span-6 flex items-center cursor-pointer hover:text-on-surface transition-colors"
 						@click="handleSort('name')">
 						Name
-						<ArrowUp
-							v-if="sortField === 'name' && sortDirection === 'asc'"
-							:size="12"
-							class="ml-1" /><ArrowDown
-							v-if="sortField === 'name' && sortDirection === 'desc'"
-							:size="12"
-							class="ml-1" />
+						<xIcon 
+									type="arrow-up"
+									v-if="sortField === 'name' && sortDirection === 'asc'"
+									:size="12"
+									class="ml-1" />
+								<xIcon 
+									type="arrow-down"
+									v-if="sortField === 'name' && sortDirection === 'desc'"
+									:size="12"
+									class="ml-1" />
 					</div>
 					<div
 						class="col-span-3 flex items-center cursor-pointer hover:text-on-surface transition-colors"
 						@click="handleSort('updatedAt')">
 						Date Modified
-						<ArrowUp
-							v-if="sortField === 'updatedAt' && sortDirection === 'asc'"
-							:size="12"
-							class="ml-1" /><ArrowDown
-							v-if="sortField === 'updatedAt' && sortDirection === 'desc'"
-							:size="12"
-							class="ml-1" />
+						<xIcon 
+									type="arrow-up"
+									v-if="sortField === 'updatedAt' && sortDirection === 'asc'"
+									:size="12"
+									class="ml-1" />
+								<xIcon 
+									type="arrow-down"
+									v-if="sortField === 'updatedAt' && sortDirection === 'desc'"
+									:size="12"
+									class="ml-1" />
 					</div>
 					<div
 						class="col-span-2 flex items-center cursor-pointer hover:text-on-surface transition-colors"
 						@click="handleSort('type')">
 						Type
-						<ArrowUp
-							v-if="sortField === 'type' && sortDirection === 'asc'"
-							:size="12"
-							class="ml-1" /><ArrowDown
-							v-if="sortField === 'type' && sortDirection === 'desc'"
-							:size="12"
-							class="ml-1" />
+						<xIcon 
+									type="arrow-up"
+									v-if="sortField === 'type' && sortDirection === 'asc'"
+									:size="12"
+									class="ml-1" />
+								<xIcon 
+									type="arrow-down"
+									v-if="sortField === 'type' && sortDirection === 'desc'"
+									:size="12"
+									class="ml-1" />
 					</div>
 					<div
 						class="col-span-1 flex items-center justify-end cursor-pointer hover:text-on-surface transition-colors"
 						@click="handleSort('size')">
 						Size
-						<ArrowUp
-							v-if="sortField === 'size' && sortDirection === 'asc'"
-							:size="12"
-							class="ml-1" /><ArrowDown
-							v-if="sortField === 'size' && sortDirection === 'desc'"
-							:size="12"
-							class="ml-1" />
+						<xIcon 
+									type="arrow-up"
+									v-if="sortField === 'size' && sortDirection === 'asc'"
+									:size="12"
+									class="ml-1" />
+								<xIcon 
+									type="arrow-down"
+									v-if="sortField === 'size' && sortDirection === 'desc'"
+									:size="12"
+									class="ml-1" />
 					</div>
 				</div>
 
@@ -569,7 +562,7 @@ export default {
 					<div
 						v-if="filteredAndSortedFiles.length === 0"
 						class="flex flex-col items-center justify-center h-full text-on-surface-variant">
-						<Folder :size="48" class="text-outline-variant mb-2" />
+						<xIcon type="folder" :size="48" class="text-outline-variant mb-2" />
 						<p>This folder is empty</p>
 					</div>
 					<div v-else class="py-1">
@@ -585,10 +578,10 @@ export default {
 									: ''
 							">
 							<div class="col-span-6 flex items-center gap-3 overflow-hidden">
-								<component
-									:is="getIcon(file.type)"
-									:size="20"
-									:class="getIconColor(file.type)" />
+								<xIcon 
+												:type="getIcon(file.type)"
+												:size="20"
+												:class="getIconColor(file.type)" />
 								<span class="truncate font-medium text-on-surface">{{
 									file.name
 								}}</span>
@@ -614,7 +607,7 @@ export default {
 				<div
 					v-if="!selectedFile"
 					class="flex-1 flex flex-col items-center justify-center text-on-surface-variant p-6 text-center">
-					<Info :size="48" class="mb-4 text-outline-variant" />
+					<xIcon type="info" :size="48" class="mb-4 text-outline-variant" />
 					<p>Select a file to preview</p>
 				</div>
 				<div v-else class="p-6">
@@ -627,7 +620,7 @@ export default {
 							:src="selectedFile.url"
 							:alt="selectedFile.name"
 							class="object-contain w-full h-full" />
-						<ImageIcon v-else :size="64" class="text-outline-variant" />
+						<xIcon v-else type="image" :size="64" class="text-outline-variant" />
 					</div>
 					<div
 						v-else-if="selectedFile.type === 'document' || selectedFile.type === 'code'"
@@ -640,12 +633,12 @@ export default {
 					<div
 						v-else-if="selectedFile.type === 'folder'"
 						class="w-full aspect-square max-w-[160px] mx-auto bg-primary-container/30 rounded-2xl flex items-center justify-center mb-6 border border-primary/20">
-						<Folder :size="80" class="text-primary fill-primary/20" />
+						<xIcon type="folder" :size="80" class="text-primary fill-primary/20" />
 					</div>
 					<div
 						v-else
 						class="w-full aspect-square max-w-[160px] mx-auto bg-surface-variant rounded-2xl flex items-center justify-center mb-6 border border-outline-variant/50">
-						<File :size="80" class="text-on-surface-variant" />
+						<xIcon type="file" :size="80" class="text-on-surface-variant" />
 					</div>
 
 					<!-- Metadata -->

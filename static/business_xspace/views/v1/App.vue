@@ -1,44 +1,48 @@
-<script>
-import { useSystemStore } from '@/store';
-import DesktopIcon from './components/DesktopIcon.vue';
-import Dock from './components/Dock.vue';
-import Window from './components/Window.vue';
-import AuthScreen from './components/AuthScreen.vue';
-import TopBar from './components/TopBar.vue';
-import { Monitor } from 'lucide-vue-next';
-
-export default {
-  components: {
-    DesktopIcon,
-    Dock,
-    Window,
-    AuthScreen,
-    TopBar,
-    Monitor
-  },
-  data() {
-    return {
-      system: useSystemStore()
-    };
-  },
-  methods: {
-    onDragOver(e) {
-      e.preventDefault();
-      if (e.dataTransfer) {
-        e.dataTransfer.dropEffect = 'move';
-      }
+<script lang="ts">
+export default async function ({ PRIVATE_GLOBAL }) {
+  const [useSystemStore] = await _.$importVue([
+    '@/store/index.js'
+  ]);
+  
+  return {
+    components: {
+      DesktopIcon: () => _.$importVue('./components/DesktopIcon.vue'),
+      Dock: () => _.$importVue('./components/Dock.vue'),
+      Window: () => _.$importVue('./components/Window.vue'),
+      AuthScreen: () => _.$importVue('./components/AuthScreen.vue'),
+      TopBar: () => _.$importVue('./components/TopBar.vue')
     },
-    onDrop(e) {
-      e.preventDefault();
-      const action = e.dataTransfer?.getData('action');
-      const appId = e.dataTransfer?.getData('text/plain');
-      
-      if (action === 'unpin' && appId) {
-        this.system.unpinApp(appId);
+    data() {
+      return {
+        system: useSystemStore(),
+        Monitor: null
+      };
+    },
+    mounted() {
+      // 动态加载图标组件
+      _.$importVue('/common/ui-x/xIcon.vue').then(({ default: xIcon }) => {
+        this.Monitor = xIcon;
+      });
+    },
+    methods: {
+      onDragOver(e) {
+        e.preventDefault();
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = 'move';
+        }
+      },
+      onDrop(e) {
+        e.preventDefault();
+        const action = e.dataTransfer?.getData('action');
+        const appId = e.dataTransfer?.getData('text/plain');
+        
+        if (action === 'unpin' && appId) {
+          this.system.unpinApp(appId);
+        }
       }
     }
-  }
-};
+  };
+}
 </script>
 
 <template>
@@ -59,7 +63,7 @@ export default {
     >
       <!-- Background Logo -->
       <div class="absolute inset-0 z-0 opacity-[0.03] pointer-events-none flex items-center justify-center">
-        <Monitor :size="400" class="text-on-background" />
+        <xIcon icon="Monitor" size="400" class="text-on-background" />
       </div>
 
       <!-- Desktop Icons Grid -->

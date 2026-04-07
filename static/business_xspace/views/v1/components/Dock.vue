@@ -1,95 +1,95 @@
-<script>
-import { useSystemStore } from "@/store";
-import * as Icons from "lucide-vue-next";
+<script lang="ts">
+export default async function ({ PRIVATE_GLOBAL }) {
+  const [useSystemStore] = await _.$importVue([
+    '@/store/index.js'
+  ]);
+  
+  return {
+    data() {
+      return {
+        system: useSystemStore(),
+        hoveredAppId: null,
+        isDraggingOver: false
+      };
+    },
+    computed: {
+      activeApps() {
+        return this.system.apps
+          .map(app => {
+            const windows = this.system.openWindows.filter(w => w.appId === app.id);
+            return {
+              ...app,
+              windows,
+              isOpen: windows.length > 0,
+              isPinned: this.system.pinnedApps.includes(app.id),
+              isActive:
+                this.system.activeWindowId &&
+                this.system.openWindows.find(w => w.id === this.system.activeWindowId)?.appId === app.id
+            };
+          })
+          .filter(app => app.isOpen || app.isPinned);
+      }
+    },
+    methods: {
+      handleAppClick(appId) {
+        this.system.openApp(appId);
+      },
+      focusSpecificWindow(windowId) {
+        const win = this.system.openWindows.find(w => w.id === windowId);
+        if (win) {
+          win.isMinimized = false;
+          this.system.focusWindow(windowId);
+        }
+      },
+      openNewWindow(appId) {
+        this.system.openApp(appId, true);
+      },
+      onDragOver(e) {
+        e.preventDefault();
+        this.isDraggingOver = true;
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = "copy";
+        }
+      },
+      onDragLeave(e) {
+        this.isDraggingOver = false;
+      },
+      onDrop(e) {
+        e.preventDefault();
+        this.isDraggingOver = false;
 
-export default {
-	data() {
-		return {
-			system: useSystemStore(),
-			hoveredAppId: null,
-			isDraggingOver: false
-		};
-	},
-	computed: {
-		activeApps() {
-			return this.system.apps
-				.map(app => {
-					const windows = this.system.openWindows.filter(w => w.appId === app.id);
-					return {
-						...app,
-						windows,
-						isOpen: windows.length > 0,
-						isPinned: this.system.pinnedApps.includes(app.id),
-						isActive:
-							this.system.activeWindowId &&
-							this.system.openWindows.find(w => w.id === this.system.activeWindowId)?.appId === app.id
-					};
-				})
-				.filter(app => app.isOpen || app.isPinned);
-		}
-	},
-	methods: {
-		getIcon(name) {
-			return Icons[name];
-		},
-		handleAppClick(appId) {
-			this.system.openApp(appId);
-		},
-		focusSpecificWindow(windowId) {
-			const win = this.system.openWindows.find(w => w.id === windowId);
-			if (win) {
-				win.isMinimized = false;
-				this.system.focusWindow(windowId);
-			}
-		},
-		openNewWindow(appId) {
-			this.system.openApp(appId, true);
-		},
-		onDragOver(e) {
-			e.preventDefault();
-			this.isDraggingOver = true;
-			if (e.dataTransfer) {
-				e.dataTransfer.dropEffect = "copy";
-			}
-		},
-		onDragLeave(e) {
-			this.isDraggingOver = false;
-		},
-		onDrop(e) {
-			e.preventDefault();
-			this.isDraggingOver = false;
+        // Handle internal app icons
+        const appId = e.dataTransfer?.getData("text/plain");
+        if (appId) {
+          this.system.pinApp(appId);
+          return;
+        }
 
-			// Handle internal app icons
-			const appId = e.dataTransfer?.getData("text/plain");
-			if (appId) {
-				this.system.pinApp(appId);
-				return;
-			}
-
-			// Handle external files
-			if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
-				const file = e.dataTransfer.files[0];
-				// Create a temporary app for the file
-				const fileAppId = "file-" + Date.now();
-				this.system.apps.push({
-					id: fileAppId,
-					name: file.name,
-					icon: "File",
-					color: "#888888",
-					component: "NoteManager" // Open in NoteManager by default
-				});
-				this.system.pinApp(fileAppId);
-			}
-		},
-		onDragStart(e, appId) {
-			if (e.dataTransfer) {
-				e.dataTransfer.setData("text/plain", appId);
-				e.dataTransfer.setData("action", "unpin");
-				e.dataTransfer.effectAllowed = "move";
-			}
-		}
-	}
-};
+        // Handle external files
+        if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+          const file = e.dataTransfer.files[0];
+          // Create a temporary app for the file
+          const fileAppId = "file-" + Date.now();
+          this.system.apps.push({
+            id: fileAppId,
+            name: file.name,
+            icon: "File",
+            color: "#888888",
+            component: "NoteManager" // Open in NoteManager by default
+          });
+          this.system.pinApp(fileAppId);
+        }
+      },
+      onDragStart(e, appId) {
+        if (e.dataTransfer) {
+          e.dataTransfer.setData("text/plain", appId);
+          e.dataTransfer.setData("action", "unpin");
+          e.dataTransfer.effectAllowed = "move";
+        }
+      }
+    }
+  };
+}
 </script>
 
 <template>
@@ -107,7 +107,7 @@ export default {
 			</div>
 			<div
 				class="w-full h-full rounded-full flex items-center justify-center transition-colors duration-200 text-on-surface hover:bg-on-surface/8 active:bg-on-surface/12">
-				<Icons.LayoutGrid :size="24" />
+				<xIcon name="layout-grid" size="24" />
 			</div>
 		</div>
 
@@ -137,9 +137,7 @@ export default {
 								@click.stop="openNewWindow(app.id)"
 								class="p-1.5 hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors group/btn"
 								title="Open New Window">
-								<Icons.Plus
-									:size="16"
-									class="text-on-surface-variant group-hover/btn:text-primary" />
+								<xIcon name="plus" size="16" class="text-on-surface-variant group-hover/btn:text-primary" />
 							</button>
 						</div>
 
@@ -151,8 +149,9 @@ export default {
 								class="flex items-center gap-3 p-2 rounded-m3-medium hover:bg-on-surface/5 active:bg-on-surface/10 cursor-pointer transition-colors group/item"
 								@click.stop="focusSpecificWindow(win.id)">
 								<div
-									class="w-10 h-10 rounded-m3-small flex items-center justify-center bg-surface-container-highest text-primary">
-									<component :is="getIcon(app.icon)" :size="20" />
+									class="w-10 h-10 rounded-m3-small flex items-center justify-center bg-surface-container-highest text-primary"
+									:style="{ color: app.color }">
+									<xIcon :icon="app.icon" size="20"/>
 								</div>
 								<div class="flex flex-col">
 									<span
@@ -184,7 +183,7 @@ export default {
 							: 'text-on-surface hover:bg-on-surface/8 active:bg-on-surface/12',
 						system.lastOpenedAppId === app.id ? 'animate-m3-scale-in' : ''
 					]">
-					<component :is="getIcon(app.icon)" :size="24" />
+					<xIcon :icon="app.icon" :size="24" />
 				</div>
 
 				<!-- Indicator Pill -->
@@ -209,7 +208,7 @@ export default {
 			</div>
 			<div
 				class="w-full h-full rounded-full flex items-center justify-center text-on-surface hover:bg-on-surface/8 active:bg-on-surface/12 transition-colors duration-200">
-				<Icons.Settings :size="24" />
+				<xIcon name="settings" size="24" />
 			</div>
 		</div>
 	</div>

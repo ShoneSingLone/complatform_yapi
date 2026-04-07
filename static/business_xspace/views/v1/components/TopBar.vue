@@ -1,35 +1,32 @@
-<script>
-import { useSystemStore } from '@/store';
-import { Search, Wifi, Battery, Bell } from 'lucide-vue-next';
-
-export default {
-  components: {
-    Search,
-    Wifi,
-    Battery,
-    Bell
-  },
-  data() {
-    return {
-      system: useSystemStore(),
-      time: '',
-      timer: null
-    };
-  },
-  methods: {
-    updateTime() {
-      const now = new Date();
-      this.time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+<script lang="ts">
+export default async function ({ PRIVATE_GLOBAL }) {
+  const [useSystemStore] = await _.$importVue([
+    '@/store/index.js'
+  ]);
+  
+  return {
+    data() {
+      return {
+        system: useSystemStore(),
+        time: '',
+        timer: null
+      };
+    },
+    methods: {
+      updateTime() {
+        const now = new Date();
+        this.time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+    },
+    mounted() {
+      this.updateTime();
+      this.timer = setInterval(this.updateTime, 1000);
+    },
+    beforeUnmount() {
+      clearInterval(this.timer);
     }
-  },
-  mounted() {
-    this.updateTime();
-    this.timer = setInterval(this.updateTime, 1000);
-  },
-  beforeUnmount() {
-    clearInterval(this.timer);
-  }
-};
+  };
+}
 </script>
 
 <template>
@@ -37,16 +34,16 @@ export default {
     <div class="flex items-center gap-4">
       <span class="font-bold">Workspace</span>
       <div class="flex items-center gap-2 text-on-surface-variant bg-surface-container px-2 py-1 rounded-full">
-        <Search :size="12" />
+        <xIcon name="search" size="12" />
         <input type="text" placeholder="Search..." class="bg-transparent outline-none w-32 placeholder:text-on-surface-variant/50" />
       </div>
     </div>
     
     <div class="flex items-center gap-4">
       <div class="flex items-center gap-3 text-on-surface-variant">
-        <Wifi :size="14" />
-        <Battery :size="14" />
-        <Bell :size="14" />
+        <xIcon name="wifi" size="14" />
+        <xIcon name="battery" size="14" />
+        <xIcon name="bell" size="14" />
       </div>
       <span>{{ time }}</span>
     </div>

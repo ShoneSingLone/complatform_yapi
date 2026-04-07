@@ -1,5 +1,5 @@
 <template>
-<AuthScreen v-if="!system.isAuthenticated" />
+  <AuthScreen v-if="!system.isAuthenticated" />
   <div 
     v-else
     class="relative w-screen h-screen overflow-hidden bg-background text-on-background select-none flex flex-col"
@@ -15,7 +15,7 @@
     >
       <!-- Background Logo -->
       <div class="absolute inset-0 z-0 opacity-[0.03] pointer-events-none flex items-center justify-center">
-        <Monitor :size="400" class="text-on-background" />
+        <xIocn icon="Monitor" size="400" class="text-on-background" />
       </div>
 
       <!-- Desktop Icons Grid -->
@@ -50,14 +50,40 @@
 
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-	const [DesktopWorkspace] = await _.$importVue([
-		"@/components/DesktopWorkspace/DesktopWorkspace.vue"
-	]);
-
-	return {
-		components: {
-			DesktopWorkspace
-		}
-	};
+  const [useSystemStore] = await _.$importVue([
+    '@/store/index.js'
+  ]);
+  
+  return {
+    components: {
+      AuthScreen: () => _.$importVue('./components/AuthScreen.vue'),
+      TopBar: () => _.$importVue('./components/TopBar.vue'),
+      DesktopIcon: () => _.$importVue('./components/DesktopIcon.vue'),
+      Window: () => _.$importVue('./components/Window.vue'),
+      Dock: () => _.$importVue('./components/Dock.vue')
+    },
+    data() {
+      return {
+        system: useSystemStore()
+      };
+    },
+    methods: {
+      onDragOver(e) {
+        e.preventDefault();
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = 'move';
+        }
+      },
+      onDrop(e) {
+        e.preventDefault();
+        const action = e.dataTransfer?.getData('action');
+        const appId = e.dataTransfer?.getData('text/plain');
+        
+        if (action === 'unpin' && appId) {
+          this.system.unpinApp(appId);
+        }
+      }
+    }
+  };
 }
 </script>
