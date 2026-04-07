@@ -1,5 +1,43 @@
 <template>
   <div class="api-content">
+    <!-- 左侧资源树 -->
+    <div class="api-content__sidebar">
+      <div class="api-content__sidebar__header">
+        <span class="api-content__sidebar__title">资源管理</span>
+        <button class="api-content__sidebar__btn" @click="refreshResources" title="刷新">
+          <svg class="icon" style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="api-content__sidebar__tree" v-loading="isLoading">
+        <TreeNode
+          v-for="resource in resourceTreeData"
+          :key="resource.id"
+          :resource="resource"
+          :expandedKeys="expandedKeys"
+          :selectedKey="selectedResource ? selectedResource.id : null"
+          :checkedKeys="checkedKeys"
+          :indeterminateKeys="indeterminateKeys"
+          :selectable="true"
+          :level="0"
+          @select="handleResourceSelect"
+          @toggle="handleResourceToggle"
+          @open="handleResourceOpen"
+          @checkchange="handleCheckChange"
+          @dragstart="handleDragStart"
+          @dragover="handleNodeDragOver"
+          @drop="handleNodeDrop"
+          @dragend="handleDragEnd"
+        />
+        <div v-if="!isLoading && resourceTreeData.length === 0" class="api-content__sidebar__empty">
+          <p>暂无资源</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧主内容区域 -->
+    <div class="api-content__main-area">
     <!-- 顶部工具栏 -->
     <div class="api-content__toolbar">
       <div class="api-content__toolbar__left">
@@ -396,6 +434,10 @@
         </div>
       </div>
     </div>
+    </div>
+
+    <!-- 右侧预览面板 -->
+    <div v-if="showPreview && selectedFile" class="api-content__preview">
 
     <!-- 右侧预览面板 -->
     <div v-if="showPreview && selectedFile" class="api-content__preview">
@@ -422,8 +464,9 @@
 
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-  const [TreeNode] = await _.$importVue([
-    "@/components/DesktopWorkspace/TreeNode.vue"
+  const [TreeNode, SystemStore] = await _.$importVue([
+    "@/components/DesktopWorkspace/TreeNode.vue",
+    "@/components/DesktopWorkspace/store/SystemStore.vue"
   ]);
 
   return {
@@ -568,6 +611,385 @@ export default async function ({ PRIVATE_GLOBAL }) {
       }
     },
     methods: {
+      // ========== 资源树相关方法 ==========
+      
+      // 加载资源树数据
+      async loadResourceTree() {
+        this.isLoading = true;
+        try {
+          // 获取分组列表
+          var groupsRes = await _.$api.xspace.groupMine();
+          if (groupsRes && groupsRes.data) {
+            var groups = groupsRes.data;
+            
+            // 转换成分组树节点
+            var groupNodes = [];
+            for (var i = 0; i < groups.length; i++) {
+              var group = groups[i];
+              var groupNode = {
+                id: 'group_' + group._id,
+                name: group.group_name || group.name,
+                type: 'group',
+                icon: 'folder',
+                parentId: null,
+                data: group,
+                children: []
+              };
+              groupNodes.push(groupNode);
+            }
+            
+            this.resourceTreeData = groupNodes;
+            
+            // 默认展开第一个分组
+            if (groupNodes.length > 0) {
+              this.expandGroup(groupNodes[0].id);
+            }
+          }
+        } catch (error) {
+          console.error('加载资源树失败:', error);
+          // 如果 API 失败，使用模拟数据
+          this.resourceTreeData = this.getMockResourceTree();
+        } finally {
+          this.isLoading = false;
+        }
+      },
+      
+      // 模拟资源树数据
+      getMockResourceTree: function() {
+        return [
+          {
+            id: 'group_1',
+            name: '我的分组',
+            type: 'group',
+            icon: 'folder',
+            parentId: null,
+            data: { _id: '1', name: '我的分组' },
+            children: [
+              {
+                id: 'project_1',
+                name: 'API 项目 A',
+                type: 'project',
+                icon: 'project',
+                parentId: 'group_1',
+                data: { _id: '1', name: 'API 项目 A' },
+                children: [
+                  {
+                    id: 'api_1',
+                    name: 'GET /users',
+                    type: 'api',
+                    icon: 'api',
+                    parentId: 'project_1',
+                    data: { _id: '1', name: 'GET /users', method: 'GET', path: '/users' }
+                  },
+                  {
+                    id: 'api_2',
+                    name: 'POST /users',
+                    type: 'api',
+                    icon: 'api',
+                    parentId: 'project_1',
+                    data: { _id: '2', name: 'POST /users', method: 'POST', path: '/users' }
+                  }
+                ]
+              },
+              {
+                id: 'project_2',
+                name: '文档项目',
+                type: 'project',
+                icon: 'project',
+                parentId: 'group_1',
+                data: { _id: '2', name: '文档项目' },
+                children: [
+                  {
+                    id: 'doc_1',
+                    name: 'API 文档',
+                    type: 'doc',
+                    icon: 'doc',
+                    parentId: 'project_2',
+                    data: { _id: '1', name: 'API 文档' }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'group_2',
+            name: '公共分组',
+            type: 'group',
+            icon: 'folder',
+            parentId: null,
+            data: { _id: '2', name: '公共分组' },
+            children: [
+              {
+                id: 'project_3',
+                name: '测试项目',
+                type: 'project',
+                icon: 'project',
+                parentId: 'group_2',
+                data: { _id: '3', name: '测试项目' },
+                children: []
+              }
+            ]
+          }
+        ];
+      },
+      
+      // 展开分组获取项目列表
+      async expandGroup(groupId) {
+        // 如果已经展开过，不再请求
+        if (this.expandedKeys.indexOf(groupId) > -1) return;
+        
+        // 添加到展开键
+        this.expandedKeys.push(groupId);
+        
+        // 查找分组节点
+        var groupNode = this.findNodeById(this.resourceTreeData, groupId);
+        if (!groupNode) return;
+        
+        // 获取项目列表
+        var groupData = groupNode.data;
+        if (!groupData || !groupData._id) return;
+        
+        try {
+          var projectsRes = await _.$api.xspace.getProjectByGroupId(groupData._id);
+          if (projectsRes && projectsRes.data) {
+            var projects = projectsRes.data;
+            groupNode.children = [];
+            
+            for (var i = 0; i < projects.length; i++) {
+              var project = projects[i];
+              var projectNode = {
+                id: 'project_' + project._id,
+                name: project.name,
+                type: 'project',
+                icon: 'project',
+                parentId: groupId,
+                data: project,
+                children: []
+              };
+              groupNode.children.push(projectNode);
+            }
+            
+            // 强制更新
+            this.resourceTreeData = [].concat(this.resourceTreeData);
+          }
+        } catch (error) {
+          console.error('加载项目列表失败:', error);
+        }
+      },
+      
+      // 展开项目获取接口列表
+      async expandProject(projectId) {
+        if (this.expandedKeys.indexOf(projectId) > -1) return;
+        this.expandedKeys.push(projectId);
+        
+        var projectNode = this.findNodeById(this.resourceTreeData, projectId);
+        if (!projectNode) return;
+        
+        var projectData = projectNode.data;
+        if (!projectData || !projectData._id) return;
+        
+        try {
+          var interfacesRes = await _.$api.xspace.apiInterfaceListMenu(projectData._id);
+          if (interfacesRes && interfacesRes.data) {
+            projectNode.children = [];
+            
+            var menuData = interfacesRes.data;
+            // 菜单数据可能是分类结构的
+            if (Array.isArray(menuData)) {
+              for (var i = 0; i < menuData.length; i++) {
+                var cat = menuData[i];
+                if (cat.list && cat.list.length > 0) {
+                  // 添加分类节点
+                  var catNode = {
+                    id: 'cat_' + cat._id,
+                    name: cat.name || '未分类',
+                    type: 'api_folder',
+                    icon: 'folder',
+                    parentId: projectId,
+                    data: cat,
+                    children: []
+                  };
+                  
+                  for (var j = 0; j < cat.list.length; j++) {
+                    var api = cat.list[j];
+                    var apiNode = {
+                      id: 'api_' + api._id,
+                      name: (api.method || 'GET') + ' ' + api.path,
+                      type: 'api',
+                      icon: 'api',
+                      parentId: 'cat_' + cat._id,
+                      data: api
+                    };
+                    catNode.children.push(apiNode);
+                  }
+                  projectNode.children.push(catNode);
+                }
+              }
+            }
+            
+            this.resourceTreeData = [].concat(this.resourceTreeData);
+          }
+        } catch (error) {
+          console.error('加载接口列表失败:', error);
+        }
+      },
+      
+      // 查找节点
+      findNodeById: function(nodes, id) {
+        for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[i];
+          if (node.id === id) return node;
+          if (node.children && node.children.length > 0) {
+            var found = this.findNodeById(node.children, id);
+            if (found) return found;
+          }
+        }
+        return null;
+      },
+      
+      // 处理资源选择
+      handleResourceSelect: function(resource) {
+        this.selectedResource = resource;
+        this.selectedFile = resource.data;
+        
+        // 更新视图类型
+        if (resource.type === 'project' || resource.type === 'group') {
+          this.viewType = 'folder';
+        } else if (resource.type === 'api') {
+          this.viewType = 'api';
+          // 更新 API 信息
+          if (resource.data) {
+            this.currentApi = {
+              method: resource.data.method || 'GET',
+              path: resource.data.path || '/',
+              description: resource.data.description || ''
+            };
+          }
+        } else if (resource.type === 'doc') {
+          this.viewType = 'doc';
+        } else if (resource.type === 'api_folder') {
+          this.viewType = 'folder';
+        }
+        
+        // 更新面包屑
+        this.updateBreadcrumbs(resource);
+      },
+      
+      // 更新面包屑
+      updateBreadcrumbs: function(resource) {
+        var breadcrumbs = [{ id: 'root', name: '资源管理' }];
+        var current = resource;
+        var path = [];
+        
+        // 构建路径
+        while (current) {
+          path.unshift({ id: current.id, name: current.name });
+          if (current.parentId) {
+            current = this.findNodeById(this.resourceTreeData, current.parentId);
+          } else {
+            current = null;
+          }
+        }
+        
+        this.breadcrumbs = breadcrumbs.concat(path);
+      },
+      
+      // 处理资源展开/折叠
+      handleResourceToggle: function(resource) {
+        var index = this.expandedKeys.indexOf(resource.id);
+        if (index > -1) {
+          this.expandedKeys.splice(index, 1);
+        } else {
+          if (resource.type === 'group') {
+            this.expandGroup(resource.id);
+          } else if (resource.type === 'project') {
+            this.expandProject(resource.id);
+          } else {
+            this.expandedKeys.push(resource.id);
+          }
+        }
+      },
+      
+      // 处理资源打开（双击）
+      handleResourceOpen: function(resource) {
+        // 根据资源类型打开对应的窗口
+        var windowData = {
+          id: resource.id,
+          name: resource.name,
+          type: resource.type,
+          data: resource.data
+        };
+        
+        // 获取应用 ID
+        var appId = 'api';
+        if (resource.type === 'group') {
+          appId = 'api';
+        } else if (resource.type === 'project') {
+          appId = 'api';
+        } else if (resource.type === 'api') {
+          appId = 'api';
+        } else if (resource.type === 'doc') {
+          appId = 'api';
+        }
+        
+        // 使用 SystemStore 打开窗口
+        if (SystemStore && SystemStore.openApp) {
+          SystemStore.openApp(appId, false, windowData);
+        } else {
+          console.log('打开资源:', resource);
+        }
+      },
+      
+      // 刷新资源
+      refreshResources: function() {
+        // 清空展开状态
+        this.expandedKeys = [];
+        // 重新加载
+        this.loadResourceTree();
+      },
+      
+      // 复选框变化处理
+      handleCheckChange: function(resource) {
+        var checkedIndex = this.checkedKeys.indexOf(resource.id);
+        var indeterminateIndex = this.indeterminateKeys.indexOf(resource.id);
+        
+        if (checkedIndex > -1) {
+          this.checkedKeys.splice(checkedIndex, 1);
+        } else if (indeterminateIndex > -1) {
+          this.indeterminateKeys.splice(indeterminateIndex, 1);
+          this.checkedKeys.push(resource.id);
+        } else {
+          this.checkedKeys.push(resource.id);
+        }
+      },
+      
+      // 拖拽相关方法
+      handleDragStart: function(e, resource) {
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", JSON.stringify({
+          id: resource.id,
+          type: resource.type,
+          parentId: resource.parentId
+        }));
+      },
+      
+      handleNodeDragOver: function(e, targetResource) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      },
+      
+      handleNodeDrop: function(e, targetResource, data) {
+        e.preventDefault();
+        console.log('移动资源:', data, '到:', targetResource);
+        // TODO: 实现资源移动逻辑
+      },
+      
+      handleDragEnd: function(e) {
+        // 拖拽结束清理
+      },
+      
+      // ========== 原有方法 ==========
+      
       formatDate(dateString) {
         return new Date(dateString).toLocaleString('zh-CN');
       },
@@ -741,6 +1163,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
       this.requestHeaders = [
         { name: 'Content-Type', value: 'application/json', required: true }
       ];
+      // 加载资源树
+      this.loadResourceTree();
     }
   };
 }
@@ -751,9 +1175,98 @@ export default async function ({ PRIVATE_GLOBAL }) {
 .api-content {
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   background-color: var(--x-bg-primary, #fff);
   color: var(--x-text-primary, #1F2329);
+
+  // 左侧资源树
+  &__sidebar {
+    width: 260px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--x-bg-secondary, #F5F7FA);
+    border-right: 1px solid var(--x-border, #E5E6EB);
+    flex-shrink: 0;
+
+    &__header {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--x-border, #E5E6EB);
+      background-color: var(--x-bg-primary, #fff);
+    }
+
+    &__title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--x-text-secondary, #86909C);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    &__btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--x-text-secondary, #86909C);
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: var(--x-bg-hover, #F0F2F5);
+        color: var(--x-primary, #165DFF);
+      }
+    }
+
+    &__tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 3px;
+      }
+    }
+
+    &__empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      color: var(--x-text-secondary, #86909C);
+
+      p {
+        margin-top: 12px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  // 右侧主内容区域
+  &__main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
 
   // 工具栏
   &__toolbar {

@@ -241,18 +241,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
         }
       },
       startDrag(e) {
-        const app = this.system.apps.find(a => a.id === this.window.appId);
-        if (!app) return;
-        this.system.addShortcut({
-          id: this.window.data ? `shortcut-${this.window.data.id}` : `shortcut-${app.id}`,
-          appId: app.id,
-          name: this.window.title,
-          icon: app.icon,
-          color: app.color,
-          data: this.window.data
-        });
-      },
-      startDrag(e) {
+        // 忽略标题栏右侧按钮的点击
         if (e.target.closest('.window__title-bar__right')) {
           return;
         }
@@ -262,6 +251,23 @@ export default async function ({ PRIVATE_GLOBAL }) {
         this.startY = e.clientY;
         this.startLeft = this.window.x;
         this.startTop = this.window.y;
+        
+        // 添加到快捷方式（如果还没有）
+        const app = this.system.apps.find(a => a.id === this.window.appId);
+        if (app) {
+          const shortcutId = this.window.data ? `shortcut-${this.window.data.id}` : `shortcut-${app.id}`;
+          const existingShortcut = this.system.shortcuts.find(s => s.id === shortcutId);
+          if (!existingShortcut) {
+            this.system.addShortcut({
+              id: shortcutId,
+              appId: app.id,
+              name: this.window.title,
+              icon: app.icon,
+              color: app.color,
+              data: this.window.data
+            });
+          }
+        }
         
         document.addEventListener('mousemove', this.onDrag);
         document.addEventListener('mouseup', this.stopDrag);
