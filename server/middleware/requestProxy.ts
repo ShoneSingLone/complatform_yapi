@@ -108,10 +108,21 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 				totallength += chunk.length;
 			};
 			const handleResponseOnEnd = () => {
+				const responseBody = Buffer.concat(chunks, totallength);
+				let parsedBody;
+
+				// 尝试解析响应体为JSON
+				try {
+					parsedBody = JSON.parse(responseBody.toString("utf-8"));
+				} catch (e) {
+					// 如果解析失败，保持原始Buffer
+					parsedBody = responseBody;
+				}
+
 				resolve({
 					httpRequestOptions: request_url_obj.headers,
 					headers: response.headers,
-					body: Buffer.concat(chunks, totallength),
+					body: parsedBody,
 					statusCode: response.statusCode
 				});
 			};
@@ -188,9 +199,11 @@ exports.execProxyRequest = function ({ ctx, headers, path, host, port }) {
 
 			HTTP_REQUEST.on("error", error => {
 				xU.applog.error("代理请求错误:", error);
+				// 返回系统错误信息，通过特殊标记让 mockServer.ts 识别这是系统错误
 				resolve({
 					headers,
-					body: { error, code: "Y_API_SERVER_500" }
+					body: { error: error.message, code: "Y_API_SERVER_500", isSystemError: true },
+					statusCode: 500
 				});
 			});
 

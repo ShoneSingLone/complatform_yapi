@@ -97,20 +97,37 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 		response = await execProxyRequest(ResponseThroghProxyOptions);
 	} catch (error) {
 		console.error(error);
-		/* 返回的原始数据 */
-		if (error.message) {
-			body.errorMessage = error.message;
-		} else if (error?.response?.data) {
-			const { data, status } = error.response;
-			body = data;
-			ctx.status = status || 500;
-		}
+		/* 本系统错误，返回本系统的错误信息 */
+		body = xU.$response(null, 500, `系统错误： ${error.message}`);
+		// 设置系统错误状态码
+		ctx.status = 500;
 	}
 
 	try {
 		if (response) {
-			body = response.body;
-			// console.log("response.body", response.body.toString('utf-8'));
+			// 检查是否是系统错误
+			if (response.body && typeof response.body === "object" && response.body.isSystemError) {
+				// 系统错误，返回本系统的错误信息
+				body = xU.$response(null, 500, `系统错误： ${response.body.error}`);
+				// 设置系统错误状态码
+				ctx.status = 500;
+			} else if (response.body && typeof response.body === "object" && response.body.error) {
+				// 代理返回错误，原样返回
+				body = response.body;
+				// 设置代理返回的状态码
+				if (response.statusCode) {
+					ctx.status = response.statusCode;
+				}
+			} else {
+				// 代理返回正常响应
+				body = response.body;
+				// 设置代理返回的状态码
+				if (response.statusCode) {
+					ctx.status = response.statusCode;
+				}
+			}
+
+			// 复制代理返回的headers
 			xU._.each(response.headers, (value, prop) => {
 				/* TODO: */
 				/* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding */
@@ -120,11 +137,6 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 				ctx.set(prop, value);
 			});
 
-			// 设置响应状态码为被代理服务器返回的状态码
-			if (response.statusCode) {
-				ctx.status = response.statusCode;
-			}
-
 			try {
 				/* xspace 接口请求参数 */
 				ctx.set("httpRequestOptions", JSON.stringify(response.httpRequestOptions));
@@ -133,7 +145,10 @@ async function setResponseByRunProxy(ctx, { ENV_VAR, project_id }) {
 			}
 		}
 	} catch (error) {
-		body = xU.$response(null, 555, `错误来自xspace服务器： ${error.message}`);
+		/* 本系统错误，返回本系统的错误信息 */
+		body = xU.$response(null, 555, `系统错误： ${error.message}`);
+		// 设置系统错误状态码
+		ctx.status = 555;
 	} finally {
 		ctx.body = body || {};
 		return ctx.body;
