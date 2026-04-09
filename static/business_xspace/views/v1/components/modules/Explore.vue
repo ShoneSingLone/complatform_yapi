@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 // Mock Data
 const mockFileSystem = {
 	id: "root",

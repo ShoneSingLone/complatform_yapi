@@ -29,16 +29,7 @@
         />
       </div>
 
-      <!-- Windows Layer -->
-      <div class="absolute inset-0 z-20 pointer-events-none">
-        <TransitionGroup name="hero">
-          <Window 
-            v-for="win in system.openWindows" 
-            :key="win.id" 
-            :window="win"
-          />
-        </TransitionGroup>
-      </div>
+
 
       <!-- Bottom Dock -->
       <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
@@ -55,7 +46,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
       AuthScreen: () => _.$importVue('@/views/v1/components/AuthScreen.vue'),
       TopBar: () => _.$importVue('@/views/v1/components/TopBar.vue'),
       DesktopIcon: () => _.$importVue('@/views/v1/components/DesktopIcon.vue'),
-      Window: () => _.$importVue('@/views/v1/components/Window.vue'),
       Dock: () => _.$importVue('@/views/v1/components/Dock.vue')
     },
     provide() {
@@ -159,7 +149,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
               title: data?.name || `${app.name} ${offset > 0 ? `(${Math.floor(offset/40) + 1})` : ''}`,
               zIndex: this.nextZIndex++,
               isMinimized: false,
-              isMaximized: true,
+              isMaximized: false,
               x: 100 + offset,
               y: 50 + offset,
               width: 800,
@@ -169,6 +159,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
             this.openWindows.push(newWindow);
             this.activeWindowId = id;
+
+            // Open window using _.openModal
+            _.$openModal({
+              title: newWindow.title,
+              url: '@/views/v1/components/WindowModal.vue',
+              parent: this,
+              window: newWindow
+            }, {
+              fullscreen: newWindow.isMaximized
+            });
           },
           focusWindow(id) {
             const win = this.openWindows.find(w => w.id === id);
