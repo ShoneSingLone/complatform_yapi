@@ -57,13 +57,17 @@
 </template>
 
 <script lang="ts">
-export default async function ({ PRIVATE_GLOBAL, window, closeModal }) {
+export default async function ({ PRIVATE_GLOBAL, window }) {
+  	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
+
   const [ApiManager, Explore] = await _.$importVue([
     '@/views/v1/components/modules/ApiManager.vue',
     '@/views/v1/components/modules/Explore.vue'
   ]);
 
   return {
+    		props: useDialogProps(),
+
     components: {
       ApiManager,
       Explore
@@ -73,7 +77,6 @@ export default async function ({ PRIVATE_GLOBAL, window, closeModal }) {
     data() {
       return {
         window,
-        closeModal
       };
     },
     computed: {

@@ -189,7 +189,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
         this.openWindows.push(newWindow);
         this.activeWindowId = id;
-
+debugger;
         // Open window using _.openModal
         _.$openModal({
           title: newWindow.title,

@@ -1,464 +1,495 @@
 <script lang="ts">
-
-// Mock Data
-const mockApiData = {
-	id: "root",
-	name: "API Workspaces",
-	type: "folder",
-	updatedAt: "2026-03-31T10:00:00Z",
-	path: "/API Workspaces",
-	children: [
-		{
-			id: "global_resources",
-			name: "Global Resources",
-			type: "folder",
-			updatedAt: "2026-04-01T10:00:00Z",
-			path: "/API Workspaces/Global Resources",
-			children: [
-				{
-					id: "gr_models",
-					name: "Data Models",
-					type: "doc_folder",
-					updatedAt: "2026-04-01T10:00:00Z",
-					path: "/API Workspaces/Global Resources/Data Models",
-					children: [
-						{
-							id: "gr_user_model",
-							name: "UserSchema.json",
-							type: "code",
-							updatedAt: "2026-04-01T10:00:00Z",
-							path: "/API Workspaces/Global Resources/Data Models/UserSchema.json",
-							content:
-								'{\n  "type": "object",\n  "properties": {\n    "id": { "type": "string" },\n    "name": { "type": "string" },\n    "email": { "type": "string", "format": "email" }\n  },\n  "required": ["id", "name"]\n}'
-						}
-					]
-				}
-			]
-		},
-		{
-			id: "group_backend",
-			name: "Backend Team",
-			type: "group",
-			updatedAt: "2026-03-31T10:00:00Z",
-			path: "/API Workspaces/Backend Team",
-			children: [
-				{
-					id: "gb_info",
-					name: "Group Info",
-					type: "setting",
-					updatedAt: "2026-03-31T10:00:00Z",
-					path: "/API Workspaces/Backend Team/Group Info",
-					content: {
-						description: "Core backend services team handling microservices.",
-						createdBy: "Admin",
-						createdAt: "2025-01-01"
-					}
-				},
-				{
-					id: "gb_members",
-					name: "Group Members",
-					type: "member_list",
-					updatedAt: "2026-03-31T10:00:00Z",
-					path: "/API Workspaces/Backend Team/Group Members",
-					content: [
-						{ id: 1, name: "Alice Smith", role: "Admin", email: "alice@example.com" },
-						{ id: 2, name: "Bob Jones", role: "Developer", email: "bob@example.com" }
-					]
-				},
-				{
-					id: "gb_docs",
-					name: "Group Docs",
-					type: "doc_folder",
-					updatedAt: "2026-03-31T10:00:00Z",
-					path: "/API Workspaces/Backend Team/Group Docs",
-					children: [
-						{
-							id: "gb_doc_1",
-							name: "Architecture.md",
-							type: "doc",
-							updatedAt: "2026-03-31T10:00:00Z",
-							path: "/API Workspaces/Backend Team/Group Docs/Architecture.md",
-							content:
-								"# Architecture\n\nOur system is based on Node.js microservices communicating via gRPC."
-						}
-					]
-				},
-				{
-					id: "gb_projects",
-					name: "Projects",
-					type: "folder",
-					updatedAt: "2026-03-31T10:00:00Z",
-					path: "/API Workspaces/Backend Team/Projects",
-					children: [
-						{
-							id: "proj_main",
-							name: "Main API",
-							type: "project",
-							updatedAt: "2026-03-31T10:00:00Z",
-							path: "/API Workspaces/Backend Team/Projects/Main API",
-							children: [
-								{
-									id: "pm_api",
-									name: "API Management",
-									type: "api_folder",
-									updatedAt: "2026-03-31T10:00:00Z",
-									path: "/API Workspaces/Backend Team/Projects/Main API/API Management",
-									children: [
-										{
-											id: "api_get_users",
-											name: "GET /users",
-											type: "api",
-											updatedAt: "2026-03-31T10:00:00Z",
-											path: "/API Workspaces/Backend Team/Projects/Main API/API Management/GET users",
-											content: {
-												method: "GET",
-												endpoint: "/users",
-												description: "Get a list of all users",
-												params: [
-													{ name: "page", type: "number", default: 1 }
-												]
-											}
-										},
-										{
-											id: "api_post_users",
-											name: "POST /users",
-											type: "api",
-											updatedAt: "2026-03-31T10:00:00Z",
-											path: "/API Workspaces/Backend Team/Projects/Main API/API Management/POST users",
-											content: {
-												method: "POST",
-												endpoint: "/users",
-												description: "Create a new user",
-												body: '{\n  "name": "string",\n  "email": "string"\n}'
-											}
-										}
-									]
-								},
-								{
-									id: "pm_docs",
-									name: "Documentation",
-									type: "doc_folder",
-									updatedAt: "2026-03-31T10:00:00Z",
-									path: "/API Workspaces/Backend Team/Projects/Main API/Documentation",
-									children: []
-								},
-								{
-									id: "pm_cicd",
-									name: "CI/CD Pipeline",
-									type: "cicd",
-									updatedAt: "2026-03-31T10:00:00Z",
-									path: "/API Workspaces/Backend Team/Projects/Main API/CI/CD Pipeline",
-									content: {
-										status: "passing",
-										lastRun: "2026-03-31T09:00:00Z",
-										stages: ["Build", "Test", "Deploy"]
-									}
-								},
-								{
-									id: "pm_settings",
-									name: "Project Settings",
-									type: "setting",
-									updatedAt: "2026-03-31T10:00:00Z",
-									path: "/API Workspaces/Backend Team/Projects/Main API/Project Settings",
-									content: {
-										env: "Production",
-										version: "1.2.0",
-										baseUrl: "https://api.example.com"
-									}
-								},
-								{
-									id: "pm_members",
-									name: "Project Members",
-									type: "member_list",
-									updatedAt: "2026-03-31T10:00:00Z",
-									path: "/API Workspaces/Backend Team/Projects/Main API/Project Members",
-									content: [{ id: 1, name: "Alice Smith", role: "Owner" }]
-								}
-							]
-						}
-					]
-				}
-			]
-		}
-	]
-};
-
 export default async function ({ PRIVATE_GLOBAL }) {
-	return {
-		props: {
-			windowData: Object
-		},
-		// system: v1 Desktop Workspace 局部状态（来自 ViewXspace）
-		inject: ['system'],
-		data() {
-			return {
-				mockApiData: mockApiData,
-				// Global Environment State
-				environments: ["Development", "Test", "Staging", "Production"],
-				activeEnvironment: "Development",
-				// State
-				selectedFile: null,
-				searchQuery: "",
-				showPreview: true,
-				expandedFolders: new Set([mockApiData.id]),
-				// Sort State
-				sortField: "name",
-				sortDirection: "asc",
-				// API Execution State
-				isRequesting: false,
-				responseData: null,
-				responseStatus: null,
-				responseTime: null,
-				// Editors State
-				editingContent: null
-			};
-		},
-	computed: {
-		activeNode() {
-			const node = this.windowData || this.mockApiData;
-			this.expandAncestors(node.id);
-			return node;
-		},
-		filteredAndSortedFiles() {
-			if (!this.isFolderType(this.activeNode.type)) return [];
+  const mockApiData = {
+    id: "root",
+    name: "API Workspaces",
+    type: "folder",
+    updatedAt: "2026-03-31T10:00:00Z",
+    path: "/API Workspaces",
+    children: [
+      {
+        id: "global_resources",
+        name: "Global Resources",
+        type: "folder",
+        updatedAt: "2026-04-01T10:00:00Z",
+        path: "/API Workspaces/Global Resources",
+        children: [
+          {
+            id: "gr_models",
+            name: "Data Models",
+            type: "doc_folder",
+            updatedAt: "2026-04-01T10:00:00Z",
+            path: "/API Workspaces/Global Resources/Data Models",
+            children: [
+              {
+                id: "gr_user_model",
+                name: "UserSchema.json",
+                type: "code",
+                updatedAt: "2026-04-01T10:00:00Z",
+                path: "/API Workspaces/Global Resources/Data Models/UserSchema.json",
+                content:
+                  '{\n  "type": "object",\n  "properties": {\n    "id": { "type": "string" },\n    "name": { "type": "string" },\n    "email": { "type": "string", "format": "email" }\n  },\n  "required": ["id", "name"]\n}',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "group_backend",
+        name: "Backend Team",
+        type: "group",
+        updatedAt: "2026-03-31T10:00:00Z",
+        path: "/API Workspaces/Backend Team",
+        children: [
+          {
+            id: "gb_info",
+            name: "Group Info",
+            type: "setting",
+            updatedAt: "2026-03-31T10:00:00Z",
+            path: "/API Workspaces/Backend Team/Group Info",
+            content: {
+              description: "Core backend services team handling microservices.",
+              createdBy: "Admin",
+              createdAt: "2025-01-01",
+            },
+          },
+          {
+            id: "gb_members",
+            name: "Group Members",
+            type: "member_list",
+            updatedAt: "2026-03-31T10:00:00Z",
+            path: "/API Workspaces/Backend Team/Group Members",
+            content: [
+              {
+                id: 1,
+                name: "Alice Smith",
+                role: "Admin",
+                email: "alice@example.com",
+              },
+              {
+                id: 2,
+                name: "Bob Jones",
+                role: "Developer",
+                email: "bob@example.com",
+              },
+            ],
+          },
+          {
+            id: "gb_docs",
+            name: "Group Docs",
+            type: "doc_folder",
+            updatedAt: "2026-03-31T10:00:00Z",
+            path: "/API Workspaces/Backend Team/Group Docs",
+            children: [
+              {
+                id: "gb_doc_1",
+                name: "Architecture.md",
+                type: "doc",
+                updatedAt: "2026-03-31T10:00:00Z",
+                path: "/API Workspaces/Backend Team/Group Docs/Architecture.md",
+                content:
+                  "# Architecture\n\nOur system is based on Node.js microservices communicating via gRPC.",
+              },
+            ],
+          },
+          {
+            id: "gb_projects",
+            name: "Projects",
+            type: "folder",
+            updatedAt: "2026-03-31T10:00:00Z",
+            path: "/API Workspaces/Backend Team/Projects",
+            children: [
+              {
+                id: "proj_main",
+                name: "Main API",
+                type: "project",
+                updatedAt: "2026-03-31T10:00:00Z",
+                path: "/API Workspaces/Backend Team/Projects/Main API",
+                children: [
+                  {
+                    id: "pm_api",
+                    name: "API Management",
+                    type: "api_folder",
+                    updatedAt: "2026-03-31T10:00:00Z",
+                    path: "/API Workspaces/Backend Team/Projects/Main API/API Management",
+                    children: [
+                      {
+                        id: "api_get_users",
+                        name: "GET /users",
+                        type: "api",
+                        updatedAt: "2026-03-31T10:00:00Z",
+                        path: "/API Workspaces/Backend Team/Projects/Main API/API Management/GET users",
+                        content: {
+                          method: "GET",
+                          endpoint: "/users",
+                          description: "Get a list of all users",
+                          params: [
+                            { name: "page", type: "number", default: 1 },
+                          ],
+                        },
+                      },
+                      {
+                        id: "api_post_users",
+                        name: "POST /users",
+                        type: "api",
+                        updatedAt: "2026-03-31T10:00:00Z",
+                        path: "/API Workspaces/Backend Team/Projects/Main API/API Management/POST users",
+                        content: {
+                          method: "POST",
+                          endpoint: "/users",
+                          description: "Create a new user",
+                          body: '{\n  "name": "string",\n  "email": "string"\n}',
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    id: "pm_docs",
+                    name: "Documentation",
+                    type: "doc_folder",
+                    updatedAt: "2026-03-31T10:00:00Z",
+                    path: "/API Workspaces/Backend Team/Projects/Main API/Documentation",
+                    children: [],
+                  },
+                  {
+                    id: "pm_cicd",
+                    name: "CI/CD Pipeline",
+                    type: "cicd",
+                    updatedAt: "2026-03-31T10:00:00Z",
+                    path: "/API Workspaces/Backend Team/Projects/Main API/CI/CD Pipeline",
+                    content: {
+                      status: "passing",
+                      lastRun: "2026-03-31T09:00:00Z",
+                      stages: ["Build", "Test", "Deploy"],
+                    },
+                  },
+                  {
+                    id: "pm_settings",
+                    name: "Project Settings",
+                    type: "setting",
+                    updatedAt: "2026-03-31T10:00:00Z",
+                    path: "/API Workspaces/Backend Team/Projects/Main API/Project Settings",
+                    content: {
+                      env: "Production",
+                      version: "1.2.0",
+                      baseUrl: "https://api.example.com",
+                    },
+                  },
+                  {
+                    id: "pm_members",
+                    name: "Project Members",
+                    type: "member_list",
+                    updatedAt: "2026-03-31T10:00:00Z",
+                    path: "/API Workspaces/Backend Team/Projects/Main API/Project Members",
+                    content: [{ id: 1, name: "Alice Smith", role: "Owner" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
 
-			let files = this.activeNode.children || [];
+  return {
+    props: {
+      windowData: Object,
+    },
+    // system: v1 Desktop Workspace 局部状态（来自 ViewXspace）
+    inject: ["system"],
+    data() {
+      return {
+        mockApiData: mockApiData,
+        // Global Environment State
+        environments: ["Development", "Test", "Staging", "Production"],
+        activeEnvironment: "Development",
+        // State
+        selectedFile: null,
+        searchQuery: "",
+        showPreview: true,
+        expandedFolders: new Set([mockApiData.id]),
+        // Sort State
+        sortField: "name",
+        sortDirection: "asc",
+        // API Execution State
+        isRequesting: false,
+        responseData: null,
+        responseStatus: null,
+        responseTime: null,
+        // Editors State
+        editingContent: null,
+      };
+    },
+    computed: {
+      activeNode() {
+        const node = this.windowData || this.mockApiData;
+        this.expandAncestors(node.id);
+        return node;
+      },
+      filteredAndSortedFiles() {
+        if (!this.isFolderType(this.activeNode.type)) return [];
 
-			if (this.searchQuery) {
-				const lowerQuery = this.searchQuery.toLowerCase();
-				files = files.filter(f => f.name.toLowerCase().includes(lowerQuery));
-			}
+        let files = this.activeNode.children || [];
 
-			return [...files].sort((a, b) => {
-				let comparison = 0;
+        if (this.searchQuery) {
+          const lowerQuery = this.searchQuery.toLowerCase();
+          files = files.filter((f) =>
+            f.name.toLowerCase().includes(lowerQuery),
+          );
+        }
 
-				if (
-					(this.sortField === "name" || this.sortField === "type") &&
-					this.isFolderType(a.type) !== this.isFolderType(b.type)
-				) {
-					if (this.isFolderType(a.type)) return -1;
-					if (this.isFolderType(b.type)) return 1;
-				}
+        return [...files].sort((a, b) => {
+          let comparison = 0;
 
-				switch (this.sortField) {
-					case "name":
-						comparison = a.name.localeCompare(b.name);
-						break;
-					case "updatedAt":
-						comparison =
-							new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
-						break;
-					case "type":
-						comparison = a.type.localeCompare(b.type);
-						break;
-				}
+          if (
+            (this.sortField === "name" || this.sortField === "type") &&
+            this.isFolderType(a.type) !== this.isFolderType(b.type)
+          ) {
+            if (this.isFolderType(a.type)) return -1;
+            if (this.isFolderType(b.type)) return 1;
+          }
 
-				return this.sortDirection === "asc" ? comparison : -comparison;
-			});
-		},
-		canNavigateUp() {
-			return this.activeNode.id !== this.mockApiData.id;
-		}
-	},
-	methods: {
-		// Utils
-		formatDate(dateString) {
-			try {
-				const date = new Date(dateString);
-				return date.toLocaleString();
-			} catch (e) {
-				return dateString;
-			}
-		},
-		isFolderType(type) {
-			return ["group", "project", "api_folder", "doc_folder", "folder"].includes(type);
-		},
-		findParentNode(root, targetId) {
-			if (!root.children) return null;
-			for (const child of root.children) {
-				if (child.id === targetId) return root;
-				const found = this.findParentNode(child, targetId);
-				if (found) return found;
-			}
-			return null;
-		},
-		// Auto-expand ancestors of activeNode
-		expandAncestors(nodeId) {
-			let currentId = nodeId;
-			while (currentId !== this.mockApiData.id) {
-				const parent = this.findParentNode(this.mockApiData, currentId);
-				if (parent) {
-					this.expandedFolders.add(parent.id);
-					currentId = parent.id;
-				} else {
-					break;
-				}
-			}
-		},
-		// Methods
-		handleOpenNode(node) {
-	const appId = node.type === "api" ? "api_endpoint" : node.type;
-	if (this.system?.openApp) {
-		this.system.openApp(appId, true, node);
-	}
-},
-		handleNavigateUp() {
-			if (this.activeNode.id === this.mockApiData.id) return;
-			const parent = this.findParentNode(this.mockApiData, this.activeNode.id);
-			if (parent) {
-				this.handleOpenNode(parent);
-			}
-		},
-		handleSort(field) {
-			if (this.sortField === field) {
-				this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
-			} else {
-				this.sortField = field;
-				this.sortDirection = "asc";
-			}
-		},
-		toggleFolder(folderId, e) {
-			e.stopPropagation();
-			if (this.expandedFolders.has(folderId)) {
-				this.expandedFolders.delete(folderId);
-			} else {
-				this.expandedFolders.add(folderId);
-			}
-		},
-		getIcon(type) {
-		switch (type) {
-			case "group":
-				return "folder";
-			case "project":
-				return "folder";
-			case "api_folder":
-				return "folder";
-			case "doc_folder":
-				return "folder";
-			case "folder":
-				return "folder";
-			case "api":
-				return "code";
-			case "doc":
-				return "file-text";
-			case "code":
-				return "code";
-			case "member_list":
-				return "users";
-			case "setting":
-				return "settings";
-			case "cicd":
-				return "activity";
-			default:
-				return "file";
-		}
-	},
-		getIconColor(type) {
-			switch (type) {
-				case "group":
-					return "text-blue-600 fill-blue-100";
-				case "project":
-					return "text-indigo-600 fill-indigo-100";
-				case "api_folder":
-					return "text-emerald-600 fill-emerald-100";
-				case "doc_folder":
-					return "text-amber-600 fill-amber-100";
-				case "folder":
-					return "text-gray-500 fill-gray-100";
-				case "api":
-					return "text-emerald-500";
-				case "doc":
-					return "text-amber-600";
-				case "code":
-					return "text-yellow-600";
-				case "member_list":
-					return "text-blue-500";
-				case "setting":
-					return "text-slate-500";
-				case "cicd":
-					return "text-purple-500";
-				default:
-					return "text-gray-500";
-			}
-		},
-		// Editors Methods
-		startEditing() {
-			this.editingContent = JSON.parse(JSON.stringify(this.activeNode.content || {}));
-		},
-		saveEditing() {
-			this.activeNode.content = this.editingContent;
-			this.editingContent = null;
-		},
-		cancelEditing() {
-			this.editingContent = null;
-		},
-		getMethodColor(method) {
-			switch (method?.toUpperCase()) {
-				case "GET":
-					return "bg-blue-100 text-blue-700";
-				case "POST":
-					return "bg-green-100 text-green-700";
-				case "PUT":
-					return "bg-amber-100 text-amber-700";
-				case "DELETE":
-					return "bg-red-100 text-red-700";
-				default:
-					return "bg-gray-100 text-gray-700";
-			}
-		},
-		// API Execution
-		sendRequest() {
-			this.isRequesting = true;
-			this.responseData = null;
-			this.responseStatus = null;
-			this.responseTime = null;
+          switch (this.sortField) {
+            case "name":
+              comparison = a.name.localeCompare(b.name);
+              break;
+            case "updatedAt":
+              comparison =
+                new Date(a.updatedAt).getTime() -
+                new Date(b.updatedAt).getTime();
+              break;
+            case "type":
+              comparison = a.type.localeCompare(b.type);
+              break;
+          }
 
-			const startTime = performance.now();
+          return this.sortDirection === "asc" ? comparison : -comparison;
+        });
+      },
+      canNavigateUp() {
+        return this.activeNode.id !== this.mockApiData.id;
+      },
+    },
+    methods: {
+      // Utils
+      formatDate(dateString) {
+        try {
+          const date = new Date(dateString);
+          return date.toLocaleString();
+        } catch (e) {
+          return dateString;
+        }
+      },
+      isFolderType(type) {
+        return [
+          "group",
+          "project",
+          "api_folder",
+          "doc_folder",
+          "folder",
+        ].includes(type);
+      },
+      findParentNode(root, targetId) {
+        if (!root.children) return null;
+        for (const child of root.children) {
+          if (child.id === targetId) return root;
+          const found = this.findParentNode(child, targetId);
+          if (found) return found;
+        }
+        return null;
+      },
+      // Auto-expand ancestors of activeNode
+      expandAncestors(nodeId) {
+        let currentId = nodeId;
+        while (currentId !== this.mockApiData.id) {
+          const parent = this.findParentNode(this.mockApiData, currentId);
+          if (parent) {
+            this.expandedFolders.add(parent.id);
+            currentId = parent.id;
+          } else {
+            break;
+          }
+        }
+      },
+      // Methods
+      handleOpenNode(node) {
+        const appId = node.type === "api" ? "api_endpoint" : node.type;
+        if (this.system?.openApp) {
+          this.system.openApp(appId, true, node);
+        }
+      },
+      handleNavigateUp() {
+        if (this.activeNode.id === this.mockApiData.id) return;
+        const parent = this.findParentNode(
+          this.mockApiData,
+          this.activeNode.id,
+        );
+        if (parent) {
+          this.handleOpenNode(parent);
+        }
+      },
+      handleSort(field) {
+        if (this.sortField === field) {
+          this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+        } else {
+          this.sortField = field;
+          this.sortDirection = "asc";
+        }
+      },
+      toggleFolder(folderId, e) {
+        e.stopPropagation();
+        if (this.expandedFolders.has(folderId)) {
+          this.expandedFolders.delete(folderId);
+        } else {
+          this.expandedFolders.add(folderId);
+        }
+      },
+      getIcon(type) {
+        switch (type) {
+          case "group":
+            return "folder";
+          case "project":
+            return "folder";
+          case "api_folder":
+            return "folder";
+          case "doc_folder":
+            return "folder";
+          case "folder":
+            return "folder";
+          case "api":
+            return "code";
+          case "doc":
+            return "file-text";
+          case "code":
+            return "code";
+          case "member_list":
+            return "users";
+          case "setting":
+            return "settings";
+          case "cicd":
+            return "activity";
+          default:
+            return "file";
+        }
+      },
+      getIconColor(type) {
+        switch (type) {
+          case "group":
+            return "text-blue-600 fill-blue-100";
+          case "project":
+            return "text-indigo-600 fill-indigo-100";
+          case "api_folder":
+            return "text-emerald-600 fill-emerald-100";
+          case "doc_folder":
+            return "text-amber-600 fill-amber-100";
+          case "folder":
+            return "text-gray-500 fill-gray-100";
+          case "api":
+            return "text-emerald-500";
+          case "doc":
+            return "text-amber-600";
+          case "code":
+            return "text-yellow-600";
+          case "member_list":
+            return "text-blue-500";
+          case "setting":
+            return "text-slate-500";
+          case "cicd":
+            return "text-purple-500";
+          default:
+            return "text-gray-500";
+        }
+      },
+      // Editors Methods
+      startEditing() {
+        this.editingContent = JSON.parse(
+          JSON.stringify(this.activeNode.content || {}),
+        );
+      },
+      saveEditing() {
+        this.activeNode.content = this.editingContent;
+        this.editingContent = null;
+      },
+      cancelEditing() {
+        this.editingContent = null;
+      },
+      getMethodColor(method) {
+        switch (method?.toUpperCase()) {
+          case "GET":
+            return "bg-blue-100 text-blue-700";
+          case "POST":
+            return "bg-green-100 text-green-700";
+          case "PUT":
+            return "bg-amber-100 text-amber-700";
+          case "DELETE":
+            return "bg-red-100 text-red-700";
+          default:
+            return "bg-gray-100 text-gray-700";
+        }
+      },
+      // API Execution
+      sendRequest() {
+        this.isRequesting = true;
+        this.responseData = null;
+        this.responseStatus = null;
+        this.responseTime = null;
 
-			// Simulate network request
-			setTimeout(() => {
-				this.isRequesting = false;
-				this.responseStatus = 200;
-				this.responseTime = Math.round(performance.now() - startTime);
+        const startTime = performance.now();
 
-				// Generate mock response based on endpoint
-				const endpoint = this.activeNode.content?.endpoint || "";
-				let mockResponse = {};
+        // Simulate network request
+        setTimeout(
+          () => {
+            this.isRequesting = false;
+            this.responseStatus = 200;
+            this.responseTime = Math.round(performance.now() - startTime);
 
-				if (endpoint.includes("users") && this.activeNode.content?.method === "GET") {
-					mockResponse = {
-						status: "success",
-						environment: this.activeEnvironment,
-						data: [
-							{ id: 1, name: "Alice Smith", email: "alice@example.com" },
-							{ id: 2, name: "Bob Jones", email: "bob@example.com" }
-						],
-						meta: { total: 2, page: 1 }
-					};
-				} else if (
-					endpoint.includes("users") &&
-					this.activeNode.content?.method === "POST"
-				) {
-					mockResponse = {
-						status: "success",
-						environment: this.activeEnvironment,
-						message: "User created successfully",
-						data: { id: 3, name: "New User", email: "new@example.com" }
-					};
-				} else {
-					mockResponse = {
-						status: "success",
-						environment: this.activeEnvironment,
-						message: "Request executed successfully",
-						timestamp: new Date().toISOString()
-					};
-				}
+            // Generate mock response based on endpoint
+            const endpoint = this.activeNode.content?.endpoint || "";
+            let mockResponse = {};
 
-				this.responseData = JSON.stringify(mockResponse, null, 2);
-			}, 800 + Math.random() * 500);}
-		}
-		};
-	};
+            if (
+              endpoint.includes("users") &&
+              this.activeNode.content?.method === "GET"
+            ) {
+              mockResponse = {
+                status: "success",
+                environment: this.activeEnvironment,
+                data: [
+                  { id: 1, name: "Alice Smith", email: "alice@example.com" },
+                  { id: 2, name: "Bob Jones", email: "bob@example.com" },
+                ],
+                meta: { total: 2, page: 1 },
+              };
+            } else if (
+              endpoint.includes("users") &&
+              this.activeNode.content?.method === "POST"
+            ) {
+              mockResponse = {
+                status: "success",
+                environment: this.activeEnvironment,
+                message: "User created successfully",
+                data: { id: 3, name: "New User", email: "new@example.com" },
+              };
+            } else {
+              mockResponse = {
+                status: "success",
+                environment: this.activeEnvironment,
+                message: "Request executed successfully",
+                timestamp: new Date().toISOString(),
+              };
+            }
+
+            this.responseData = JSON.stringify(mockResponse, null, 2);
+          },
+          800 + Math.random() * 500,
+        );
+      },
+    },
+  };
+
+}
+
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script lang="ts">
-// Mock Data
-const mockFileSystem = {
+export default async function ({ PRIVATE_GLOBAL }) {
+	const mockFileSystem = {
 	id: "root",
 	name: "Home",
 	type: "folder",
@@ -91,7 +91,6 @@ const mockFileSystem = {
 	]
 };
 
-export default async function ({ PRIVATE_GLOBAL }) {
 	return {
 		// system: v1 Desktop Workspace 局部状态（来自 ViewXspace）
 		inject: ['system'],
