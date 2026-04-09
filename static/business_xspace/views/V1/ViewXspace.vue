@@ -74,13 +74,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
     data() {
       return {
         apps: [
-          { id: 'api', name: 'API Manager', icon: 'database', color: '#6750A4', component: 'ApiManager' },
-          { id: 'cicd', name: 'CI/CD', icon: 'ci', color: '#625B71', component: 'CicdManager' },
-          { id: 'note', name: 'Documents', icon: 'icon_article', color: '#7D5260', component: 'NoteManager' },
-          { id: 'im', name: 'Chat', icon: 'icon_contact', color: '#006A6A', component: 'ImManager' },
-          { id: 'rtc', name: 'Meeting', icon: 'webrtc', color: '#B3261E', component: 'RtcManager' },
-          { id: 'office', name: 'Cloud Storage', icon: 'cloud-o', color: '#0061A4', component: 'OfficeManager' },
-          { id: 'hoppscotch', name: 'API Test', icon: 'hoppscotch', color: '#4F6600', component: 'Hoppscotch' },
+          { id: 'api', name: 'API Manager', icon: '_database', color: '#6750A4', component: 'ApiManager' },
+          { id: 'cicd', name: 'CI/CD', icon: '_ci', color: '#625B71', component: 'CicdManager' },
+          { id: 'note', name: 'Documents', icon: '_article', color: '#7D5260', component: 'NoteManager' },
+          { id: 'im', name: 'Chat', icon: '_contact', color: '#006A6A', component: 'ImManager' },
+          { id: 'rtc', name: 'Meeting', icon: '_webrtc', color: '#B3261E', component: 'RtcManager' },
+          { id: 'office', name: 'Cloud Storage', icon: '_cloud_o', color: '#0061A4', component: 'OfficeManager' },
+          { id: 'hoppscotch', name: 'API Test', icon: '_hoppscotch', color: '#4F6600', component: 'Hoppscotch' },
           { id: 'explore', name: 'Explore', icon: 'search', color: '#984061', component: 'Explore' },
           { id: 'user', name: 'User', icon: 'user', color: '#006874', component: 'UserManager' },
           { id: 'group', name: 'Group', icon: 'folder', color: '#6750A4', component: 'ApiManager', hidden: true },
@@ -88,16 +88,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
           { id: 'api_folder', name: 'API Folder', icon: 'folder', color: '#6750A4', component: 'ApiManager', hidden: true },
           { id: 'doc_folder', name: 'Doc Folder', icon: 'folder', color: '#6750A4', component: 'ApiManager', hidden: true },
           { id: 'folder', name: 'Folder', icon: 'folder', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'api_endpoint', name: 'API', icon: 'code-o', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'doc', name: 'Document', icon: 'icon_article', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'code', name: 'Code', icon: 'code-o', color: '#6750A4', component: 'ApiManager', hidden: true },
+          { id: 'api_endpoint', name: 'API', icon: '_code_o', color: '#6750A4', component: 'ApiManager', hidden: true },
+          { id: 'doc', name: 'Document', icon: '_article', color: '#6750A4', component: 'ApiManager', hidden: true },
+          { id: 'code', name: 'Code', icon: '_code_o', color: '#6750A4', component: 'ApiManager', hidden: true },
           { id: 'member_list', name: 'Members', icon: 'team', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'setting', name: 'Settings', icon: 'SettingOutlined', color: '#6750A4', component: 'ApiManager', hidden: true }
+          { id: 'setting', name: 'Settings', icon: '_setting_outlined', color: '#6750A4', component: 'ApiManager', hidden: true }
         ],
         shortcuts: [
-          { id: 'api', appId: 'api', name: 'API Manager', icon: 'database', color: '#6750A4' },
+          { id: 'api', appId: 'api', name: 'API Manager', icon: '_database', color: '#6750A4' },
           { id: 'explore', appId: 'explore', name: 'Explore', icon: 'search', color: '#984061' },
-          { id: 'note', appId: 'note', name: 'Documents', icon: 'icon_article', color: '#7D5260' }
+          { id: 'note', appId: 'note', name: 'Documents', icon: '_article', color: '#7D5260' }
         ],
         openWindows: [],
         activeWindowId: null,

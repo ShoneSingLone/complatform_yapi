@@ -66,6 +66,47 @@
 - 模板中不可使用反引号，动态样式需用 computed/method
 - API 调用使用 `_api.xspace.methodName()` 形式
 - 优先使用 `/common/ui-x/` 组件库
+- UI 组件（xForm, xItem, xBtn, xIcon）在 entry.vue 中通过 useXui.vue 全局注册，子组件无需 import
+
+## v1 Desktop Workspace 登录功能
+
+### 文件位置
+`static/business_xspace/views/v1/`
+
+### 核心文件
+- **ViewXspace.vue**：主容器，提供 v1 局部状态
+- **AuthScreen.vue**：登录页，调用 `_api.xspace.userLogin()` 实现真实登录
+- **TopBar.vue**：顶部状态栏
+- **Dock.vue**：底部 Dock 栏
+- **Window.vue**：窗口组件
+- **WindowModal.vue**：窗口模态框
+
+### 状态管理架构（APP 和 system 完全独立）
+```
+entry.vue (根组件)
+└── provide: { APP: this }  ← 全局状态（用户信息、登录状态等）
+
+ViewXspace.vue
+├── inject: ['APP']  ← 获取全局状态
+└── provide: {
+      system: {     ← v1 桌面局部状态（与 APP 完全独立）
+        apps, shortcuts, openWindows, pinnedApps...
+        openApp(), pinApp(), removeShortcut()...
+      }
+    }
+
+子组件：
+├── AuthScreen: inject: ['APP']  ← 只需要全局状态（登录页）
+├── TopBar: inject: ['APP', 'system']  ← 两者都需要
+├── Dock, Window, WindowModal, Explore, ApiManager: inject: ['system']  ← 只需要局部状态
+```
+
+### 登录流程
+1. 用户输入 email + password
+2. 调用 `_api.xspace.userLogin({ email, password })`
+3. 保存 token: `_.$lStorage.x_token = res.data.x_token`
+4. 调用 `this.APP.refreshUserInfo()` 刷新用户状态
+5. 登出调用 `this.APP.logoutActions()`
 
 
 

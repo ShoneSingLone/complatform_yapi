@@ -13,7 +13,7 @@
       </div>
       <div
         class="w-full h-full rounded-m3-small flex items-center justify-center transition-colors duration-200 text-on-surface hover:bg-on-surface/8 active:bg-on-surface/12">
-        <xIcon icon="layout-grid" size="20" />
+        <xIcon icon="_layout_grid" size="20" />
       </div>
     </div>
 
@@ -106,7 +106,7 @@
       </div>
       <div
         class="w-full h-full rounded-m3-small flex items-center justify-center text-on-surface hover:bg-on-surface/8 active:bg-on-surface/12 transition-colors duration-200">
-        <xIcon icon="settings" size="20" />
+        <xIcon icon="_settings" size="20" />
       </div>
     </div>
   </div>
