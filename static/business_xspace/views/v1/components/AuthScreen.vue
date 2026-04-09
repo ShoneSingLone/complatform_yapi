@@ -1,17 +1,43 @@
 <template>
   <div class="w-screen h-screen flex items-center justify-center bg-surface">
     <div class="p-8 bg-surface-container-high rounded-m3-large elevation-3 w-96">
-      <h1 class="text-2xl font-bold mb-6 text-center text-on-surface">Login</h1>
+      <h1 class="text-2xl font-bold mb-6 text-center text-on-surface">XSpace Login</h1>
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-on-surface-variant mb-1">Username</label>
-          <input v-model="username" type="text" class="w-full px-3 py-2 bg-surface rounded-m3-small border border-outline-variant focus:border-primary outline-none" />
+          <label class="block text-sm font-medium text-on-surface-variant mb-1">Email</label>
+          <input 
+            v-model="email" 
+            type="email" 
+            class="w-full px-3 py-2 bg-surface rounded-m3-small border border-outline-variant focus:border-primary outline-none"
+            placeholder="admin@example.com"
+            autocomplete="email"
+            @keypress.enter="handleLogin"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium text-on-surface-variant mb-1">Password</label>
-          <input v-model="password" type="password" class="w-full px-3 py-2 bg-surface rounded-m3-small border border-outline-variant focus:border-primary outline-none" />
+          <input 
+            v-model="password" 
+            type="password" 
+            class="w-full px-3 py-2 bg-surface rounded-m3-small border border-outline-variant focus:border-primary outline-none"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            @keypress.enter="handleLogin"
+          />
         </div>
-        <button @click="handleLogin" class="w-full m3-button-primary mt-4">Login</button>
+        <!-- 错误提示 -->
+        <div v-if="errorMessage" class="text-sm text-error mt-2">
+          {{ errorMessage }}
+        </div>
+        <!-- 登录按钮 -->
+        <button 
+          @click="handleLogin" 
+          class="w-full m3-button-primary mt-4 flex items-center justify-center gap-2"
+          :disabled="isLoading"
+        >
+          <span v-if="isLoading" class="loading-spinner"></span>
+          <span>{{ isLoading ? 'Logging in...' : 'Login' }}</span>
+        </button>
       </div>
     </div>
   </div>
@@ -20,16 +46,61 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
   return {
-    inject: ['system'],
+    inject: ['APP'],
     data() {
       return {
-        username: 'admin',
-        password: 'password'
+        email: _.$lStorage.email || '',
+        password: '',
+        errorMessage: '',
+        isLoading: false
       };
     },
     methods: {
-      handleLogin() {
-        this.system.login({ username: this.username, email: 'admin@example.com' });
+      async handleLogin() {
+        const vm = this;
+        
+        // 重置错误
+        vm.errorMessage = '';
+        
+        // 表单验证
+        if (!vm.email) {
+          vm.errorMessage = 'Please enter your email';
+          return;
+        }
+        if (!vm.password) {
+          vm.errorMessage = 'Please enter your password';
+          return;
+        }
+        
+        vm.isLoading = true;
+        
+        try {
+          // 调用后端登录 API
+          const res = await _api.xspace.userLogin({
+            email: vm.email,
+            password: vm.password
+          });
+          
+          if (res?.data?.x_token) {
+            // 存储 Token
+            _.$lStorage.x_token = res.data.x_token;
+            // 记住邮箱
+            _.$lStorage.email = vm.email;
+            
+            // 刷新用户信息（entry.vue 中已实现）
+            await vm.APP.refreshUserInfo();
+            
+            _.$msg('Login successful!');
+          } else {
+            vm.errorMessage = res?.data?.errmsg || 'Login failed';
+          }
+        } catch (e) {
+          console.error('Login error:', e);
+          vm.errorMessage = e.message || 'Network error, please try again';
+          _.$msgError(vm.errorMessage);
+        } finally {
+          vm.isLoading = false;
+        }
       }
     }
   };
@@ -191,5 +262,31 @@ body.app-mobile {
   .w-96 {
     width: 90%;
   }
+}
+
+/* 加载动画 */
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 禁用状态 */
+.m3-button-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.text-error {
+  color: var(--color-error);
 }
 </style>

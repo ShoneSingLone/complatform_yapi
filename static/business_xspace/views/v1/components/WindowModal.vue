@@ -68,6 +68,7 @@ export default async function ({ PRIVATE_GLOBAL, window, closeModal }) {
       ApiManager,
       Explore
     },
+    // system: v1 Desktop Workspace 局部状态（来自 ViewXspace）
     inject: ['system'],
     data() {
       return {

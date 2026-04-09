@@ -22,7 +22,9 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
   return {
-    inject: ['system'],
+    // APP: 全局状态（来自 entry.vue）
+    // system: v1 Desktop Workspace 局部状态（来自 ViewXspace）
+    inject: ['APP', 'system'],
     data() {
       return {
         time: '',

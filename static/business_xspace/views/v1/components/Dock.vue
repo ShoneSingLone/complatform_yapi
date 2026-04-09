@@ -115,6 +115,7 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
   return {
+    // system: v1 Desktop Workspace 局部状态（来自 ViewXspace）
     inject: ['system'],
     data() {
       return {
