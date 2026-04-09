@@ -48,7 +48,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		/*通用下拉项*/
 		"@/utils/opts.vue",
 		/* 项目独有样式 */
-		"@/Xspace.defaul.style.vue"
+		"@/xspace.defaul.style.vue"
 	]);
 	/* app entry  */
 	const router = new VueRouter({ routes });

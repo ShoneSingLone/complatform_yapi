@@ -85,12 +85,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
             { id: 'doc', name: 'Document', icon: 'FileText', color: '#6750A4', component: 'ApiManager', hidden: true },
             { id: 'code', name: 'Code', icon: 'Code', color: '#6750A4', component: 'ApiManager', hidden: true },
             { id: 'member_list', name: 'Members', icon: 'Users', color: '#6750A4', component: 'ApiManager', hidden: true },
-            { id: 'setting', name: 'Settings', icon: 'Settings', color: '#6750A4', component: 'ApiManager', hidden: true },
+            { id: 'setting', name: 'Settings', icon: 'Settings', color: '#6750A4', component: 'ApiManager', hidden: true }
           ],
           shortcuts: [
             { id: 'api', appId: 'api', name: 'API Manager', icon: 'Database', color: '#6750A4' },
             { id: 'explore', appId: 'explore', name: 'Explore', icon: 'Compass', color: '#984061' },
-            { id: 'note', appId: 'note', name: 'Documents', icon: 'FileText', color: '#7D5260' },
+            { id: 'note', appId: 'note', name: 'Documents', icon: 'FileText', color: '#7D5260' }
           ],
           openWindows: [],
           activeWindowId: null,
@@ -164,7 +164,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
               y: 50 + offset,
               width: 800,
               height: 600,
-              data,
+              data
             };
 
             this.openWindows.push(newWindow);
@@ -214,3 +214,397 @@ export default async function ({ PRIVATE_GLOBAL }) {
   };
 }
 </script>
+
+<style lang="less">
+/* 基础样式重置 */
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: currentColor;
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+}
+
+body {
+  margin: 0;
+  line-height: inherit;
+}
+
+/* 根变量定义 */
+:root {
+  --color-primary: #0061a4;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #d1e4ff;
+  --color-on-primary-container: #001d36;
+  --color-secondary: #535f70;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #d7e3f7;
+  --color-on-secondary-container: #101c2b;
+  --color-tertiary: #6b5778;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #f2daff;
+  --color-on-tertiary-container: #251431;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #410002;
+  --color-background: #fdfcff;
+  --color-on-background: #1a1c1e;
+  --color-surface: #fdfcff;
+  --color-on-surface: #1a1c1e;
+  --color-surface-variant: #dfe2eb;
+  --color-on-surface-variant: #43474e;
+  --color-outline: #73777f;
+  --color-outline-variant: #c3c7cf;
+  --color-shadow: #000000;
+  --color-scrim: #000000;
+  --color-inverse-surface: #2f3033;
+  --color-inverse-on-surface: #f1f0f4;
+  --color-inverse-primary: #9ecaef;
+  --color-surface-dim: #ded8e1;
+  --color-surface-bright: #fdfcff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f7f2fa;
+  --color-surface-container: #f3edf7;
+  --color-surface-container-high: #ece6f0;
+  --color-surface-container-highest: #e6e0e9;
+  
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* 工具类样式 */
+.w-screen {
+  width: 100vw;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.select-none {
+  user-select: none;
+}
+
+.z-0 {
+  z-index: 0;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.z-20 {
+  z-index: 20;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.z-100 {
+  z-index: 100;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.bottom-8 {
+  bottom: 32px;
+}
+
+.left-12 {
+  left: 50%;
+}
+
+.-translate-x-12 {
+  transform: translateX(-50%);
+}
+
+.p-4 {
+  padding: 16px;
+}
+
+.p-10 {
+  padding: 40px;
+}
+
+.px-4 {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.py-1 {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.gap-4 {
+  gap: 16px;
+}
+
+.opacity-003 {
+  opacity: 0.03;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.group-hover\:opacity-100:hover {
+  opacity: 1;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.pointer-events-auto {
+  pointer-events: auto;
+}
+
+.bg-background {
+  background-color: var(--color-background);
+}
+
+.bg-surface-container-highest {
+  background-color: var(--color-surface-container-highest);
+}
+
+.bg-surface-container {
+  background-color: var(--color-surface-container);
+}
+
+.bg-error {
+  background-color: var(--color-error);
+}
+
+.text-on-background {
+  color: var(--color-on-background);
+}
+
+.text-on-surface-variant {
+  color: var(--color-on-surface-variant);
+}
+
+.text-on-error {
+  color: var(--color-on-error);
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.rounded-m3-medium {
+  border-radius: 12px;
+}
+
+.rounded-m3-large {
+  border-radius: 16px;
+}
+
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.group-hover\:shadow-md:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-opacity {
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-shadow {
+  transition-property: box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.duration-200 {
+  transition-duration: 200ms;
+}
+
+.grid {
+  display: grid;
+}
+
+.grid-cols-\[repeat\(auto-fill\,100px\)\] {
+  grid-template-columns: repeat(auto-fill, 100px);
+}
+
+.grid-rows-\[repeat\(auto-fill\,110px\)\] {
+  grid-template-rows: repeat(auto-fill, 110px);
+}
+
+.content-start {
+  align-content: start;
+}
+
+.h-8 {
+  height: 32px;
+}
+
+.w-32 {
+  width: 128px;
+}
+
+.w-16 {
+  width: 64px;
+}
+
+.h-16 {
+  height: 64px;
+}
+
+.hover\:bg-on-surface\/5:hover {
+  background-color: rgba(26, 28, 30, 0.05);
+}
+
+.active\:bg-on-surface\/10:active {
+  background-color: rgba(26, 28, 30, 0.1);
+}
+
+.outline-none {
+  outline: none;
+}
+
+.placeholder\:text-on-surface-variant\/50::placeholder {
+  color: rgba(67, 71, 78, 0.5);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 组件样式 */
+.m3-button-primary {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.m3-button-primary:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.m3-button-primary:active {
+  background-color: rgba(0, 97, 164, 0.9);
+}
+
+.m3-card {
+  background-color: var(--color-surface-container-low);
+  border-radius: 1rem;
+  border: 1px solid rgba(195, 199, 207, 0.3);
+}
+
+/* 窗口过渡动画 */
+.hero-enter-active,
+.hero-leave-active {
+  transition: all 0.3s ease;
+}
+
+.hero-enter-from,
+.hero-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+</style>
