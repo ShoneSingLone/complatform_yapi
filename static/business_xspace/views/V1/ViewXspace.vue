@@ -5,104 +5,224 @@
     class="v1-desktop"
   >
     <!-- Top Bar -->
-    <v1-desktop__topbar class="v1-desktop__topbar" />
+    <div class="v1-desktop__topbar">
+      <div class="v1-desktop__topbar-left">
+        <div class="v1-desktop__logo">
+          <xIcon icon="xspace" size="24" />
+          <span class="v1-desktop__logo-text">XSpace</span>
+        </div>
+      </div>
+      <div class="v1-desktop__topbar-center">
+        <div class="v1-desktop__breadcrumb">
+          <xIcon icon="folder" size="16" />
+          <span>Desktop Workspace</span>
+        </div>
+      </div>
+      <div class="v1-desktop__topbar-right">
+        <div class="v1-desktop__user-info">
+          <xIcon icon="user" size="20" />
+          <span>{{ APP?.user?.name || 'User' }}</span>
+        </div>
+      </div>
+    </div>
 
-    <!-- Desktop Area -->
-    <div 
-      class="v1-desktop__area"
-      @dragover="onDragOver"
-      @drop="onDrop"
-    >
-      <!-- Background Logo -->
-      <v1-desktop__logo class="v1-desktop__logo">
-        <xIcon icon="Monitor" size="400" />
-      </v1-desktop__logo>
+    <!-- Main Content Area -->
+    <div class="v1-desktop__main">
+      <!-- Left Sidebar -->
+      <div class="v1-desktop__sidebar">
+        <div class="v1-desktop__sidebar-section">
+          <div class="v1-desktop__sidebar-title">
+            <xIcon icon="folder" size="16" />
+            <span>Quick Access</span>
+          </div>
+          <div class="v1-desktop__sidebar-items">
+            <div 
+              v-for="item in quickAccessItems" 
+              :key="item.id"
+              class="v1-desktop__sidebar-item"
+              @click="handleQuickAccessClick(item)">
+              <xIcon :icon="item.icon" size="18" :color="item.color" />
+              <span>{{ item.name }}</span>
+            </div>
+          </div>
+        </div>
 
-      <!-- Desktop Icons Grid -->
-      <v1-desktop__icons class="v1-desktop__icons">
-        <DesktopIcon 
-          v-for="shortcut in shortcuts" 
-          :key="shortcut.id" 
-          :app="shortcut" 
-          @click="openApp(shortcut.appId, false, shortcut.data)"
-          @unpin="removeShortcut(shortcut.id)"
-        />
-      </v1-desktop__icons>
+        <div class="v1-desktop__sidebar-section">
+          <div class="v1-desktop__sidebar-title">
+            <xIcon icon="team" size="16" />
+            <span>Workspaces</span>
+          </div>
+          <div class="v1-desktop__sidebar-items">
+            <div 
+              v-for="workspace in workspaces" 
+              :key="workspace.id"
+              class="v1-desktop__sidebar-item"
+              @click="handleWorkspaceClick(workspace)">
+              <xIcon :icon="workspace.icon" size="18" :color="workspace.color" />
+              <span>{{ workspace.name }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <!-- Bottom Dock -->
-      <v1-desktop__dock class="v1-desktop__dock">
-        <Dock />
-      </v1-desktop__dock>
+      <!-- Center Content -->
+      <div class="v1-desktop__content">
+        <!-- Toolbar -->
+        <div class="v1-desktop__toolbar">
+          <div class="v1-desktop__toolbar-left">
+            <xBtn 
+              :configs="{
+                icon: 'arrow_back',
+                tooltip: 'Back'
+              }"
+              size="small" />
+            <xBtn 
+              :configs="{
+                icon: 'arrow_forward',
+                tooltip: 'Forward'
+              }"
+              size="small" />
+            <xBtn 
+              :configs="{
+                icon: 'refresh',
+                tooltip: 'Refresh'
+              }"
+              size="small" />
+          </div>
+          <div class="v1-desktop__toolbar-center">
+            <div class="v1-desktop__search">
+              <xIcon icon="search" size="18" />
+              <input 
+                type="text" 
+                placeholder="Search files and apps..."
+                v-model="searchQuery" />
+            </div>
+          </div>
+          <div class="v1-desktop__toolbar-right">
+            <xBtn 
+              :configs="{
+                icon: 'grid_view',
+                tooltip: 'Grid View'
+              }"
+              size="small"
+              :active="viewMode === 'grid'"
+              @click="viewMode = 'grid'" />
+            <xBtn 
+              :configs="{
+                icon: 'list',
+                tooltip: 'List View'
+              }"
+              size="small"
+              :active="viewMode === 'list'"
+              @click="viewMode = 'list'" />
+          </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="v1-desktop__content-area">
+          <div class="v1-desktop__content-grid" v-if="viewMode === 'grid'">
+            <div 
+              v-for="item in desktopItems" 
+              :key="item.id"
+              class="v1-desktop__grid-item"
+              @dblclick="handleItemOpen(item)"
+              @click="handleItemClick(item)">
+              <div class="v1-desktop__grid-item-icon" :style="{ backgroundColor: item.color + '20' }">
+                <xIcon :icon="item.icon" size="32" :color="item.color" />
+              </div>
+              <span class="v1-desktop__grid-item-label">{{ item.name }}</span>
+            </div>
+          </div>
+
+          <div class="v1-desktop__content-list" v-else>
+            <div 
+              v-for="item in desktopItems" 
+              :key="item.id"
+              class="v1-desktop__list-item"
+              @dblclick="handleItemOpen(item)"
+              @click="handleItemClick(item)">
+              <div class="v1-desktop__list-item-icon" :style="{ backgroundColor: item.color + '20' }">
+                <xIcon :icon="item.icon" size="24" :color="item.color" />
+              </div>
+              <span class="v1-desktop__list-item-name">{{ item.name }}</span>
+              <span class="v1-desktop__list-item-type">{{ item.type }}</span>
+              <span class="v1-desktop__list-item-date">{{ item.updatedAt }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel (Properties) -->
+      <div class="v1-desktop__properties" v-if="selectedItem">
+        <div class="v1-desktop__properties-header">
+          <span>Properties</span>
+          <xBtn 
+            :configs="{
+              icon: 'close',
+              tooltip: 'Close'
+            }"
+            size="small"
+            @click="selectedItem = null" />
+        </div>
+        <div class="v1-desktop__properties-content">
+          <div class="v1-desktop__property-item">
+            <span class="v1-desktop__property-label">Name:</span>
+            <span class="v1-desktop__property-value">{{ selectedItem.name }}</span>
+          </div>
+          <div class="v1-desktop__property-item">
+            <span class="v1-desktop__property-label">Type:</span>
+            <span class="v1-desktop__property-value">{{ selectedItem.type }}</span>
+          </div>
+          <div class="v1-desktop__property-item">
+            <span class="v1-desktop__property-label">Updated:</span>
+            <span class="v1-desktop__property-value">{{ selectedItem.updatedAt }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Dock -->
+    <div class="v1-desktop__dock">
+      <Dock />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
+  const [Dock] = await _.$importVue('@/views/v1/components/Dock.vue');
+
   return {
     inject: ['APP'],
     components: {
       AuthScreen: () => _.$importVue('@/views/v1/components/AuthScreen.vue'),
-      TopBar: () => _.$importVue('@/views/v1/components/TopBar.vue'),
-      DesktopIcon: () => _.$importVue('@/views/v1/components/DesktopIcon.vue'),
-      Dock: () => _.$importVue('@/views/v1/components/Dock.vue')
-    },
-    provide() {
-      return {
-        // v1 Desktop Workspace 特有的局部状态（与全局 APP 完全独立）
-        system: {
-          apps: this.apps,
-          shortcuts: this.shortcuts,
-          openWindows: this.openWindows,
-          activeWindowId: this.activeWindowId,
-          pinnedApps: this.pinnedApps,
-          // 方法
-          pinApp: this.pinApp,
-          unpinApp: this.unpinApp,
-          addShortcut: this.addShortcut,
-          removeShortcut: this.removeShortcut,
-          openApp: this.openApp,
-          focusWindow: this.focusWindow,
-          closeWindow: this.closeWindow,
-          minimizeWindow: this.minimizeWindow,
-          toggleMaximize: this.toggleMaximize
-        }
-      };
+      Dock
     },
     data() {
       return {
-        apps: [
-          { id: 'api', name: 'API Manager', icon: '_database', color: '#6750A4', component: 'ApiManager' },
-          { id: 'cicd', name: 'CI/CD', icon: '_ci', color: '#625B71', component: 'CicdManager' },
-          { id: 'note', name: 'Documents', icon: '_article', color: '#7D5260', component: 'NoteManager' },
-          { id: 'im', name: 'Chat', icon: '_contact', color: '#006A6A', component: 'ImManager' },
-          { id: 'rtc', name: 'Meeting', icon: '_webrtc', color: '#B3261E', component: 'RtcManager' },
-          { id: 'office', name: 'Cloud Storage', icon: '_cloud_o', color: '#0061A4', component: 'OfficeManager' },
-          { id: 'hoppscotch', name: 'API Test', icon: '_hoppscotch', color: '#4F6600', component: 'Hoppscotch' },
-          { id: 'explore', name: 'Explore', icon: 'search', color: '#984061', component: 'Explore' },
-          { id: 'user', name: 'User', icon: 'user', color: '#006874', component: 'UserManager' },
-          { id: 'group', name: 'Group', icon: 'folder', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'project', name: 'Project', icon: 'folder', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'api_folder', name: 'API Folder', icon: 'folder', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'doc_folder', name: 'Doc Folder', icon: 'folder', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'folder', name: 'Folder', icon: 'folder', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'api_endpoint', name: 'API', icon: '_code_o', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'doc', name: 'Document', icon: '_article', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'code', name: 'Code', icon: '_code_o', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'member_list', name: 'Members', icon: 'team', color: '#6750A4', component: 'ApiManager', hidden: true },
-          { id: 'setting', name: 'Settings', icon: '_setting_outlined', color: '#6750A4', component: 'ApiManager', hidden: true }
+        searchQuery: '',
+        viewMode: 'grid', // 'grid' or 'list'
+        selectedItem: null,
+        quickAccessItems: [
+          { id: 'recent', name: 'Recent', icon: 'history', color: '#6750A4' },
+          { id: 'documents', name: 'Documents', icon: 'article', color: '#7D5260' },
+          { id: 'downloads', name: 'Downloads', icon: 'download', color: '#006A6A' },
+          { id: 'trash', name: 'Trash', icon: 'delete', color: '#B3261E' }
         ],
-        shortcuts: [
-          { id: 'api', appId: 'api', name: 'API Manager', icon: '_database', color: '#6750A4' },
-          { id: 'explore', appId: 'explore', name: 'Explore', icon: 'search', color: '#984061' },
-          { id: 'note', appId: 'note', name: 'Documents', icon: '_article', color: '#7D5260' }
+        workspaces: [
+          { id: 'api', name: 'API Manager', icon: 'database', color: '#6750A4' },
+          { id: 'cicd', name: 'CI/CD', icon: 'ci', color: '#625B71' },
+          { id: 'note', name: 'Documents', icon: 'article', color: '#7D5260' },
+          { id: 'im', name: 'Chat', icon: 'contact', color: '#006A6A' },
+          { id: 'rtc', name: 'Meeting', icon: 'webrtc', color: '#B3261E' }
         ],
-        openWindows: [],
-        activeWindowId: null,
-        nextZIndex: 10,
-        theme: 'light',
-        lastOpenedAppId: null,
-        pinnedApps: ['api', 'explore']
+        desktopItems: [
+          { id: 'api', name: 'API Manager', type: 'Application', icon: 'database', color: '#6750A4', updatedAt: '2026-04-12' },
+          { id: 'explore', name: 'Explore', type: 'Application', icon: 'search', color: '#984061', updatedAt: '2026-04-12' },
+          { id: 'note', name: 'Documents', type: 'Application', icon: 'article', color: '#7D5260', updatedAt: '2026-04-11' },
+          { id: 'file1', name: 'Project Specs', type: 'Document', icon: 'description', color: '#0061A4', updatedAt: '2026-04-10' },
+          { id: 'file2', name: 'API Design', type: 'Document', icon: 'description', color: '#0061A4', updatedAt: '2026-04-09' }
+        ]
       };
     },
     computed: {
@@ -111,119 +231,18 @@ export default async function ({ PRIVATE_GLOBAL }) {
       }
     },
     methods: {
-      onDragOver(e) {
-        e.preventDefault();
-        if (e.dataTransfer) {
-          e.dataTransfer.dropEffect = 'move';
-        }
+      handleQuickAccessClick(item) {
+        console.log('Quick access:', item);
       },
-      onDrop(e) {
-        e.preventDefault();
-        const action = e.dataTransfer?.getData('action');
-        const appId = e.dataTransfer?.getData('text/plain');
-        
-        if (action === 'unpin' && appId) {
-          this.unpinApp(appId);
-        }
+      handleWorkspaceClick(workspace) {
+        console.log('Workspace:', workspace);
       },
-      pinApp(appId) {
-        if (!this.pinnedApps.includes(appId)) {
-          this.pinnedApps.push(appId);
-        }
+      handleItemClick(item) {
+        this.selectedItem = item;
       },
-      unpinApp(appId) {
-        this.pinnedApps = this.pinnedApps.filter(id => id !== appId);
-      },
-      addShortcut(shortcut) {
-        if (!this.shortcuts.find(s => s.id === shortcut.id)) {
-          this.shortcuts.push(shortcut);
-        }
-      },
-      removeShortcut(id) {
-        const index = this.shortcuts.findIndex(s => s.id === id);
-        if (index > -1) {
-          this.shortcuts.splice(index, 1);
-        }
-      },
-      openApp(appId, forceNew = false, data) {
-        this.lastOpenedAppId = appId;
-        setTimeout(() => {
-          if (this.lastOpenedAppId === appId) this.lastOpenedAppId = null;
-        }, 1000);
-
-        const existing = this.openWindows.find(w => w.appId === appId && (!data || w.data?.id === data.id));
-        
-        if (!forceNew && existing) {
-          const lastActive = [...this.openWindows]
-            .reverse()
-            .find(w => w.appId === appId && (!data || w.data?.id === data.id) && !w.isMinimized);
-          
-          if (lastActive) {
-            this.focusWindow(lastActive.id);
-            return;
-          }
-          
-          existing.isMinimized = false;
-          this.focusWindow(existing.id);
-          return;
-        }
-
-        const app = this.apps.find(a => a.id === appId);
-        if (!app) return;
-
-        const id = Math.random().toString(36).substring(7);
-        const offset = this.openWindows.filter(w => w.appId === appId).length * 40;
-        
-        const newWindow = {
-          id,
-          appId,
-          title: data?.name || `${app.name} ${offset > 0 ? `(${Math.floor(offset/40) + 1})` : ''}`,
-          zIndex: this.nextZIndex++,
-          isMinimized: false,
-          isMaximized: false,
-          x: 100 + offset,
-          y: 50 + offset,
-          width: 800,
-          height: 600,
-          data
-        };
-
-        this.openWindows.push(newWindow);
-        this.activeWindowId = id;
-
-        // Open window using _.openModal
-        _.$openModal({
-          title: newWindow.title,
-          url: '@/views/v1/components/WindowModal.vue',
-          parent: this,
-          window: newWindow
-        }, {
-          fullscreen: newWindow.isMaximized
-        });
-      },
-      focusWindow(id) {
-        const win = this.openWindows.find(w => w.id === id);
-        if (win) {
-          win.zIndex = this.nextZIndex++;
-          this.activeWindowId = id;
-        }
-      },
-      closeWindow(id) {
-        const index = this.openWindows.findIndex(w => w.id === id);
-        if (index > -1) {
-          this.openWindows.splice(index, 1);
-        }
-        if (this.activeWindowId === id) {
-          this.activeWindowId = this.openWindows.length > 0 ? this.openWindows[this.openWindows.length - 1].id : null;
-        }
-      },
-      minimizeWindow(id) {
-        const win = this.openWindows.find(w => w.id === id);
-        if (win) win.isMinimized = true;
-      },
-      toggleMaximize(id) {
-        const win = this.openWindows.find(w => w.id === id);
-        if (win) win.isMaximized = !win.isMaximized;
+      handleItemOpen(item) {
+        console.log('Open item:', item);
+        // TODO: Open corresponding app or file
       }
     }
   };
@@ -237,95 +256,327 @@ export default async function ({ PRIVATE_GLOBAL }) {
   overflow: hidden;
   background-color: var(--color-background);
   color: var(--color-on-background);
-  user-select: none;
   display: flex;
   flex-direction: column;
   position: relative;
 
   &__topbar {
-    position: relative;
-    z-index: 100;
-  }
+    height: 48px;
+    background-color: var(--color-surface-container);
+    border-bottom: 1px solid var(--color-outline-variant);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    flex-shrink: 0;
 
-  &__area {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
+    &-left,
+    &-center,
+    &-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
   }
 
   &__logo {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.03;
-    pointer-events: none;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--color-primary);
+
+    &-text {
+      color: var(--color-on-surface);
+    }
   }
 
-  &__icons {
-    position: absolute;
-    inset: 0;
-    z-index: 10;
-    padding: 40px;
+  &__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background-color: var(--color-surface-container-high);
+    border-radius: 8px;
+    color: var(--color-on-surface-variant);
+    font-size: 14px;
+  }
+
+  &__user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background-color: var(--color-surface-container-high);
+    border-radius: 9999px;
+    color: var(--color-on-surface);
+    font-size: 14px;
+  }
+
+  &__main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  &__sidebar {
+    width: 240px;
+    background-color: var(--color-surface-container-low);
+    border-right: 1px solid var(--color-outline-variant);
+    overflow-y: auto;
+    flex-shrink: 0;
+
+    &-section {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--color-outline-variant);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    &-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    &-items {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      color: var(--color-on-surface);
+      font-size: 14px;
+
+      &:hover {
+        background-color: var(--color-surface-container-high);
+      }
+
+      &.active {
+        background-color: var(--color-secondary-container);
+        color: var(--color-on-secondary-container);
+      }
+    }
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--color-surface);
+  }
+
+  &__toolbar {
+    height: 40px;
+    background-color: var(--color-surface-container);
+    border-bottom: 1px solid var(--color-outline-variant);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    flex-shrink: 0;
+
+    &-left,
+    &-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    &-center {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  &__search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-outline-variant);
+    border-radius: 8px;
+    width: 400px;
+
+    input {
+      border: none;
+      outline: none;
+      background: transparent;
+      flex: 1;
+      font-size: 14px;
+      color: var(--color-on-surface);
+
+      &::placeholder {
+        color: var(--color-on-surface-variant);
+      }
+    }
+  }
+
+  &__content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  &__content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 100px);
-    grid-template-rows: repeat(auto-fill, 110px);
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 16px;
-    align-content: start;
-    pointer-events: auto;
+  }
+
+  &__grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--color-surface-container-high);
+    }
+
+    &.selected {
+      background-color: var(--color-secondary-container);
+    }
+
+    &-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &-label {
+      font-size: 13px;
+      text-align: center;
+      color: var(--color-on-surface);
+      word-break: break-word;
+      line-height: 1.4;
+    }
+  }
+
+  &__content-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__list-item {
+    display: grid;
+    grid-template-columns: 40px 1fr 150px 120px;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: var(--color-on-surface);
+    font-size: 14px;
+
+    &:hover {
+      background-color: var(--color-surface-container-high);
+    }
+
+    &.selected {
+      background-color: var(--color-secondary-container);
+    }
+
+    &-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &-name {
+      font-weight: 500;
+    }
+
+    &-type {
+      color: var(--color-on-surface-variant);
+      font-size: 13px;
+    }
+
+    &-date {
+      color: var(--color-on-surface-variant);
+      font-size: 13px;
+      text-align: right;
+    }
+  }
+
+  &__properties {
+    width: 280px;
+    background-color: var(--color-surface-container-low);
+    border-left: 1px solid var(--color-outline-variant);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__properties-header {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--color-outline-variant);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-on-surface);
+  }
+
+  &__properties-content {
+    padding: 16px;
+  }
+
+  &__property-item {
+    margin-bottom: 16px;
+  }
+
+  &__property-label {
+    display: block;
+    font-size: 12px;
+    color: var(--color-on-surface-variant);
+    margin-bottom: 4px;
+  }
+
+  &__property-value {
+    display: block;
+    font-size: 14px;
+    color: var(--color-on-surface);
+    word-break: break-word;
   }
 
   &__dock {
     position: absolute;
-    bottom: 32px;
+    bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 50;
-    pointer-events: auto;
+    z-index: 100;
   }
-}
-
-// 基础样式重置
-*,
-::before,
-::after {
-  box-sizing: border-box;
-  border-width: 0;
-  border-style: solid;
-  border-color: currentColor;
-}
-
-::before,
-::after {
-  --tw-content: '';
-}
-
-html {
-  line-height: 1.5;
-  -webkit-text-size-adjust: 100%;
-  -moz-tab-size: 4;
-  tab-size: 4;
-  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-feature-settings: normal;
-  font-variation-settings: normal;
-}
-
-body {
-  margin: 0;
-  line-height: inherit;
-}
-
-// 窗口过渡动画
-.hero-enter-active,
-.hero-leave-active {
-  transition: all 0.3s ease;
-}
-
-.hero-enter-from,
-.hero-leave-to {
-  opacity: 0;
-  transform: scale(0.95);
 }
 </style>
