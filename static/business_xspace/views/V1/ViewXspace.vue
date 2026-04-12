@@ -142,7 +142,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
         }
       },
       removeShortcut(id) {
-        this.shortcuts = this.shortcuts.filter(s => s.id !== id);
+        const index = this.shortcuts.findIndex(s => s.id === id);
+        if (index > -1) {
+          this.shortcuts.splice(index, 1);
+        }
       },
       openApp(appId, forceNew = false, data) {
         this.lastOpenedAppId = appId;
@@ -189,7 +192,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
         this.openWindows.push(newWindow);
         this.activeWindowId = id;
-debugger;
+
         // Open window using _.openModal
         _.$openModal({
           title: newWindow.title,
@@ -208,7 +211,10 @@ debugger;
         }
       },
       closeWindow(id) {
-        this.openWindows = this.openWindows.filter(w => w.id !== id);
+        const index = this.openWindows.findIndex(w => w.id === id);
+        if (index > -1) {
+          this.openWindows.splice(index, 1);
+        }
         if (this.activeWindowId === id) {
           this.activeWindowId = this.openWindows.length > 0 ? this.openWindows[this.openWindows.length - 1].id : null;
         }
