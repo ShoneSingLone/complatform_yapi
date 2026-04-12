@@ -1,39 +1,39 @@
 <template>
   <div class="window-modal">
     <!-- Title Bar -->
-    <div class="window-modal-titlebar">
-      <div class="window-modal-title">
+    <div class="window-modal__titlebar">
+      <div class="window-modal__title">
         <div 
-          class="window-modal-icon" 
+          class="window-modal__title-icon" 
           :style="{ color: appColor }">
           {{ appIcon }}
         </div>
         <span>{{ window.title }}</span>
       </div>
-      <div class="window-modal-controls">
+      <div class="window-modal__controls">
         <button 
           @click="handleMinimize" 
           title="Minimize"
-          class="window-modal-control-btn">
-          <xIcon icon="minus" size="20" class="text-on-surface-variant" />
+          class="window-modal__control-btn">
+          <xIcon icon="minus" size="20" />
         </button>
         <button 
           @click="handleMaximize" 
           title="Maximize"
-          class="window-modal-control-btn">
-          <xIcon :icon="window.isMaximized ? 'copy' : 'square'" size="16" class="text-on-surface-variant" />
+          class="window-modal__control-btn">
+          <xIcon :icon="window.isMaximized ? 'copy' : 'square'" size="16" />
         </button>
         <button 
           @click="handleClose" 
           title="Close"
-          class="window-modal-control-btn window-modal-close-btn">
-          <xIcon icon="x" size="20" class="text-on-surface-variant" />
+          class="window-modal__control-btn window-modal__control-btn--close">
+          <xIcon icon="x" size="20" />
         </button>
       </div>
     </div>
     
     <!-- Content Area -->
-    <div class="window-modal-content">
+    <div class="window-modal__content">
       <!-- App-specific content -->
       <div v-if="isApiManagerApp" class="h-full">
         <ApiManager :window-data="window.data" />
@@ -41,16 +41,16 @@
       <div v-else-if="isExploreApp" class="h-full">
         <Explore />
       </div>
-      <div v-else class="window-modal-placeholder">
+      <div v-else class="window-modal__placeholder">
         <div 
-          class="window-modal-placeholder-icon" 
+          class="window-modal__placeholder-icon" 
           :style="{ color: appColor }">
           {{ appIcon }}
         </div>
-        <p class="text-on-surface-variant mb-6 text-lg">
+        <p class="window-modal__placeholder-text">
           The <strong>{{ window.title }}</strong> module is currently under development.
         </p>
-        <button class="m3-button-primary">Request Feature</button>
+        <button class="window-modal__placeholder-btn">Request Feature</button>
       </div>
     </div>
   </div>
@@ -120,7 +120,6 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
 </script>
 
 <style lang="less">
-/* Window Modal Styles */
 .window-modal {
   display: flex;
   flex-direction: column;
@@ -128,152 +127,141 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
   background-color: var(--color-surface);
   border-radius: var(--border-radius--mini);
   overflow: hidden;
-}
 
-.window-modal-titlebar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  height: 56px;
-  background-color: var(--color-surface-container);
-  border-bottom: 1px solid var(--color-outline-variant);
-  cursor: default;
-  user-select: none;
-}
-
-.window-modal-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.window-modal-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background-color: var(--color-surface-container-highest);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.window-modal-title span {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-on-surface);
-}
-
-.window-modal-controls {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.window-modal-control-btn {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: transparent;
-  border-radius: 9999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background-color: rgba(26, 28, 30, 0.08);
+  &__titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 56px;
+    background-color: var(--color-surface-container);
+    border-bottom: 1px solid var(--color-outline-variant);
+    cursor: default;
+    user-select: none;
   }
 
-  &:active {
-    background-color: rgba(26, 28, 30, 0.12);
-  }
-}
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 
-.window-modal-close-btn {
-  &:hover {
-    background-color: rgba(186, 26, 26, 0.1);
+    &-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background-color: var(--color-surface-container-highest);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
 
-    .text-on-surface-variant {
-      color: var(--color-error);
+    span {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-on-surface);
     }
   }
 
-  &:active {
-    background-color: rgba(186, 26, 26, 0.2);
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__control-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: rgba(26, 28, 30, 0.08);
+    }
+
+    &:active {
+      background-color: rgba(26, 28, 30, 0.12);
+    }
+
+    &--close {
+      &:hover {
+        background-color: rgba(186, 26, 26, 0.1);
+        color: var(--color-error);
+      }
+
+      &:active {
+        background-color: rgba(186, 26, 26, 0.2);
+      }
+    }
+  }
+
+  &__content {
+    flex: 1;
+    overflow: auto;
+    padding: 24px;
+    background-color: var(--color-surface);
+  }
+
+  &__placeholder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 0;
+
+    &-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      background-color: var(--color-secondary-container);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--color-on-secondary-container);
+      margin-bottom: 24px;
+    }
+
+    &-text {
+      color: var(--color-on-surface-variant);
+      margin-bottom: 24px;
+      font-size: 1.125rem;
+    }
+
+    &-btn {
+      padding: 0.625rem 1.5rem;
+      background-color: var(--color-primary);
+      color: var(--color-on-primary);
+      border-radius: 9999px;
+      font-weight: 500;
+      font-size: 0.875rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      }
+
+      &:active {
+        background-color: rgba(0, 97, 164, 0.9);
+      }
+    }
   }
 }
 
-.window-modal-content {
-  flex: 1;
-  overflow: auto;
-  padding: 24px;
-  background-color: var(--color-surface);
-}
-
-.window-modal-placeholder {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 80px 0;
-}
-
-.window-modal-placeholder-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 16px;
-  background-color: var(--color-secondary-container);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--color-on-secondary-container);
-  margin-bottom: 24px;
-}
-
-.m3-button-primary {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  border-radius: 9999px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-  border: none;
-  cursor: pointer;
-
-  &:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  }
-
-  &:active {
-    background-color: rgba(0, 97, 164, 0.9);
-  }
-}
-
-.text-on-surface-variant {
-  color: var(--color-on-surface-variant);
-}
-
-.mb-6 {
-  margin-bottom: 24px;
-}
-
-.text-lg {
-  font-size: 1.125rem;
-}
-
+// 复用项目通用样式类
 .h-full {
   height: 100%;
 }
