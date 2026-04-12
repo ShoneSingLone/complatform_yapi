@@ -71,7 +71,7 @@
   - `human-judgment` TR-4.1: 验证窗口拖拽功能正常
   - `human-judgment` TR-4.2: 验证窗口动画正常
 
-## [ ] 任务 5: 创建 AuthScreen 组件语义化样式
+## [x] 任务 5: 创建 AuthScreen 组件语义化样式
 - **优先级**: P2
 - **依赖**: 任务 0
 - **描述**:

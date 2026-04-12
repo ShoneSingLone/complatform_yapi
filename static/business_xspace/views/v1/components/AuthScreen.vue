@@ -1,41 +1,41 @@
 <template>
-  <div class="w-screen h-screen flex items-center justify-center bg-surface">
-    <div class="p-8 bg-surface-container-high rounded-m3-large elevation-3 w-96">
-      <h1 class="text-2xl font-bold mb-6 text-center text-on-surface">XSpace Login</h1>
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-on-surface-variant mb-1">Email</label>
+  <div class="auth-screen">
+    <div class="auth-screen__container">
+      <h1 class="auth-screen__title">XSpace Login</h1>
+      <div class="auth-screen__form">
+        <div class="auth-screen__form-item">
+          <label class="auth-screen__label">Email</label>
           <input 
             v-model="email" 
             type="email" 
-            class="w-full px-3 py-2 bg-surface rounded-m3-small border border-outline-variant focus:border-primary outline-none"
+            class="auth-screen__input"
             placeholder="admin@example.com"
             autocomplete="email"
             @keypress.enter="handleLogin"
           />
         </div>
-        <div>
-          <label class="block text-sm font-medium text-on-surface-variant mb-1">Password</label>
+        <div class="auth-screen__form-item">
+          <label class="auth-screen__label">Password</label>
           <input 
             v-model="password" 
             type="password" 
-            class="w-full px-3 py-2 bg-surface rounded-m3-small border border-outline-variant focus:border-primary outline-none"
+            class="auth-screen__input"
             placeholder="••••••••"
             autocomplete="current-password"
             @keypress.enter="handleLogin"
           />
         </div>
         <!-- 错误提示 -->
-        <div v-if="errorMessage" class="text-sm text-error mt-2">
+        <div v-if="errorMessage" class="auth-screen__error">
           {{ errorMessage }}
         </div>
         <!-- 登录按钮 -->
         <button 
           @click="handleLogin" 
-          class="w-full m3-button-primary mt-4 flex items-center justify-center gap-2"
+          class="auth-screen__button"
           :disabled="isLoading"
         >
-          <span v-if="isLoading" class="loading-spinner"></span>
+          <span v-if="isLoading" class="auth-screen__loading"></span>
           <span>{{ isLoading ? 'Logging in...' : 'Login' }}</span>
         </button>
       </div>
@@ -108,185 +108,120 @@ export default async function ({ PRIVATE_GLOBAL }) {
 </script>
 
 <style lang="less">
-/* 登录页面样式 */
-.w-screen {
+.auth-screen {
   width: 100vw;
-}
-
-.h-screen {
   height: 100vh;
-}
-
-.flex {
   display: flex;
-}
-
-.items-center {
   align-items: center;
-}
-
-.justify-center {
   justify-content: center;
-}
-
-.bg-surface {
   background-color: var(--color-surface);
 }
 
-.bg-surface-container-high {
+.auth-screen__container {
+  padding: 32px;
   background-color: var(--color-surface-container-high);
-}
-
-.rounded-m3-large {
-  border-radius: 16px;
-}
-
-.elevation-3 {
+  border-radius: var(--border-radius--large);
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
-}
-
-.w-96 {
   width: 384px;
 }
 
-.p-8 {
-  padding: 32px;
-}
-
-.text-2xl {
+.auth-screen__title {
   font-size: 1.5rem;
-}
-
-.font-bold {
   font-weight: 700;
-}
-
-.mb-6 {
   margin-bottom: 24px;
-}
-
-.text-center {
   text-align: center;
-}
-
-.text-on-surface {
   color: var(--color-on-surface);
 }
 
-.space-y-4 {
+.auth-screen__form {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
 }
 
-.block {
+.auth-screen__form-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-screen__label {
   display: block;
-}
-
-.text-sm {
   font-size: 0.875rem;
-}
-
-.font-medium {
   font-weight: 500;
-}
-
-.text-on-surface-variant {
+  margin-bottom: 4px;
   color: var(--color-on-surface-variant);
 }
 
-.mb-1 {
-  margin-bottom: 4px;
-}
-
-.w-full {
+.auth-screen__input {
   width: 100%;
-}
-
-.px-3 {
-  padding-left: 12px;
-  padding-right: 12px;
-}
-
-.py-2 {
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-.rounded-m3-small {
-  border-radius: 8px;
-}
-
-.border {
-  border: 1px solid;
-}
-
-.border-outline-variant {
-  border-color: var(--color-outline-variant);
-}
-
-.focus\:border-primary:focus {
-  border-color: var(--color-primary);
-}
-
-.outline-none {
+  padding: 8px 12px;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius--small);
+  border: 1px solid var(--color-outline-variant);
   outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: var(--color-primary);
+  }
 }
 
-.m3-button-primary {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
+.auth-screen__error {
+  font-size: 0.875rem;
+  color: var(--color-error);
+  margin-top: 8px;
+}
+
+.auth-screen__button {
+  width: 100%;
+  padding: 0.625rem 1.5rem;
+  margin-top: 16px;
   background-color: var(--color-primary);
   color: var(--color-on-primary);
   border-radius: 9999px;
   font-weight: 500;
   font-size: 0.875rem;
-  transition: all 0.2s;
   border: none;
   cursor: pointer;
-}
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 
-.m3-button-primary:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-}
+  &:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  }
 
-.m3-button-primary:active {
-  background-color: rgba(0, 97, 164, 0.9);
-}
+  &:active {
+    background-color: rgba(0, 97, 164, 0.9);
+  }
 
-.mt-4 {
-  margin-top: 16px;
-}
-
-body.app-mobile {
-  .w-96 {
-    width: 90%;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
-/* 加载动画 */
-.loading-spinner {
+.auth-screen__loading {
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: #fff;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: auth-screen__spin 0.8s linear infinite;
 }
 
-@keyframes spin {
+@keyframes auth-screen__spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* 禁用状态 */
-.m3-button-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.text-error {
-  color: var(--color-error);
+// 移动端适配
+body.app-mobile {
+  .auth-screen__container {
+    width: 90%;
+  }
 }
 </style>
