@@ -177,7 +177,7 @@ module.exports = {
 							if (xU._.isArray(uri_array)) {
 								let resource_path = path.resolve.apply(path, uri_array);
 								if (preview) {
-									const preview_resource_path = path.resolve(xU.var.APP_ROOT_SERVER_DIR, xU.var.UPLOADS, "preview", xU.$hashCode(resource_path));
+									const preview_resource_path = path.resolve(xU.var.APP_ROOT_SERVER_DIR, xU.var.UPLOADS, "preview", resource_path.replace(/^\//, "")) + ".preview.png";
 									if (xU.fileExist(preview_resource_path)) {
 										return returnFileByPath(preview_resource_path, {
 											path: preview_resource_path
@@ -188,15 +188,18 @@ module.exports = {
 										await _n.asyncSafeMakeDir(path.dirname(preview_resource_path));
 										const input_path = path.resolve(resource_path);
 										const mimeType = getType(input_path) || "";
+										xU.applog.info(`[Preview] Processing: ${input_path}, mimeType: ${mimeType}`);
 										if (isImageType(mimeType)) {
 											const image = await Jimp.Jimp.read(input_path);
 											await image.resize({ w: 80 });
 											await image.write(path.resolve(preview_resource_path + ".png"));
 											await xU.fs.promises.rename(preview_resource_path + ".png", preview_resource_path);
 											return returnFileByPath(preview_resource_path, { path: preview_resource_path });
-										} else if (isVideoType(mimeType)) {
+										} else if (isVideoType(mimeType) || mimeType === "video/x-matroska" || input_path.toLowerCase().endsWith(".mkv")) {
+											xU.applog.info(`[Preview] Detected video type, checking FFmpeg...`);
 											try {
 												if (ffmpegAvailable === null) {
+													xU.applog.info(`[Preview] FFmpeg availability unknown, testing...`);
 													try {
 														await xU.executeCommand(
 															"ffmpeg",
@@ -205,19 +208,40 @@ module.exports = {
 															() => {}
 														);
 														ffmpegAvailable = true;
+														xU.applog.info(`[Preview] FFmpeg is available.`);
 													} catch (e) {
 														ffmpegAvailable = false;
+														xU.applog.warn(`[Preview] FFmpeg not found: ${e.message}`);
 													}
 												}
 
 												if (ffmpegAvailable) {
+													xU.applog.info(`[Preview] Running FFmpeg command...`);
+													let duration = 0;
+													try {
+														let output = "";
+														await xU.executeCommand(
+															"ffprobe",
+															["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", input_path],
+															{},
+															msg => (output += msg)
+														);
+														duration = parseFloat(output.trim()) || 0;
+													} catch (e) {
+														xU.applog.warn(`[Preview] Failed to get duration: ${e.message}`);
+													}
+
+													const seekTime = duration > 0 ? Math.floor(duration / 2) : 1;
+													xU.applog.info(`[Preview] Video duration: ${duration}s, seeking to: ${seekTime}s`);
+
 													await xU.executeCommand(
 														"ffmpeg",
-														["-ss", "00:00:01", "-i", input_path, "-frames:v", "1", "-vf", "scale=80:-1", "-q:v", "2", "-y", preview_resource_path + ".jpg"],
+														["-ss", seekTime.toString(), "-i", input_path, "-frames:v", "1", "-vf", "scale=80:-1", "-q:v", "2", "-y", preview_resource_path + ".jpg"],
 														{},
-														msg => console.log(`[FFmpeg] ${msg}`)
+														msg => xU.applog.info(`[FFmpeg] ${msg}`)
 													);
 													await xU.fs.promises.rename(preview_resource_path + ".jpg", preview_resource_path);
+													xU.applog.info(`[Preview] Success: ${preview_resource_path}`);
 													return returnFileByPath(preview_resource_path, { path: preview_resource_path });
 												} else {
 													console.warn("[FFmpeg] ffmpeg is not installed or not in PATH, skipping video preview generation.");
@@ -277,7 +301,9 @@ module.exports = {
 						xU.applog.info("targetPath", targetPath);
 						ctx.status = 200;
 						let contentType = mime.lookup(targetResource.path);
-						if (targetPath.endsWith(".preview")) {
+						if (targetPath.includes("/uploads/preview/")) {
+							contentType = "image/png";
+						} else if (targetPath.endsWith(".preview")) {
 							contentType = "image/jpeg";
 						} else if (!contentType && targetResource.path.toLowerCase().endsWith(".flv")) {
 							contentType = "video/x-flv";

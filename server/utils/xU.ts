@@ -1115,13 +1115,17 @@ const xU = new Proxy(
 
 				const cmd = spawn(command, args, options);
 
-				cmd.stdout.on("data", data => {
-					emit(`${data}`);
-				});
+				if (cmd.stdout) {
+					cmd.stdout.on("data", data => {
+						emit(`${data}`);
+					});
+				}
 
-				cmd.stderr.on("data", data => {
-					emit(`${data}`);
-				});
+				if (cmd.stderr) {
+					cmd.stderr.on("data", data => {
+						emit(`${data}`);
+					});
+				}
 
 				cmd.on("close", code => {
 					if (code !== 0) {
