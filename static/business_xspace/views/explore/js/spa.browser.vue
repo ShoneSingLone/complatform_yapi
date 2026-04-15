@@ -80,7 +80,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     var getIcon = function (type, file) {
       var fallback = spa.util.getSvg(type || "file", "icon-md");
       if (file && (type === "image" || type === "video")) {
-        var previewUrl = file.url + "&preview=true";
+        var previewUrl = file.previewUrl;
         return '<img class="file-item__preview" src="' + previewUrl + '" loading="lazy" onerror="$(this).hide().next().show();">' + 
                '<div style="display:none">' + fallback + '</div>';
       }
@@ -272,7 +272,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       });
 
       $container.on("click", ".filter-btn", function () {
-        stateMap.filter = $(this).data("filter");
+        stateMap.filter = $(this).attr("data-type") || "all";
         render();
       });
 

@@ -828,6 +828,36 @@ body {
   display: none !important;
 }
 
+.viewer-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.viewer-image__img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  transition: transform 0.1s ease-out;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.viewer-image__img:active {
+  cursor: grabbing;
+}
+
+.viewer-image__img.zoom-mode-1-1 {
+  max-width: none;
+  max-height: none;
+}
+
 .viewer__index {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
@@ -1234,39 +1264,39 @@ body {
 
 /* --- Grid / Waterfall View Styles --- */
 .file-browser--grid .file-browser__list {
-  display: block !important;
-  column-count: 2 !important;
-  column-gap: 12px !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
   padding: 12px !important;
 }
 
 @media (min-width: 600px) {
   .file-browser--grid .file-browser__list {
-    column-count: 3 !important;
+    grid-template-columns: repeat(3, 1fr) !important;
   }
 }
 
 @media (min-width: 900px) {
   .file-browser--grid .file-browser__list {
-    column-count: 4 !important;
+    grid-template-columns: repeat(4, 1fr) !important;
   }
 }
 
 @media (min-width: 1200px) {
   .file-browser--grid .file-browser__list {
-    column-count: 5 !important;
+    grid-template-columns: repeat(5, 1fr) !important;
   }
 }
 
 .file-browser--grid .file-item {
   display: flex !important;
   flex-direction: column !important;
-  break-inside: avoid !important;
-  margin-bottom: 12px !important;
+  margin-bottom: 0 !important; /* Grid manages gap */
   padding: 8px !important;
   text-align: center !important;
   gap: 6px !important;
   height: auto !important;
+  align-self: start !important; /* 关键：确保项高度自适应且不对齐行高 */
   border: 1px solid rgba(0, 0, 0, 0.05) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) !important;
 }
@@ -1325,6 +1355,13 @@ body {
   transform: translateX(-50%);
   z-index: 60;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.viewer-image__bottom-controls--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(20px);
 }
 
 .viewer-image__group {

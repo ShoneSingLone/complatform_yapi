@@ -24,132 +24,81 @@ async function asyncResolvePathFileOrDir({
 	relativePathArray = [],
 	search_key = ""
 }) {
-	async function just_show_list_of_files_and_directories({
-		fileOrDirPath,
-		relativePathArray
-	}) {
-		const absolutePath = path.resolve.apply(path, [...relativePathArray, fileOrDirPath]); // 将基础路径和目录名解析为绝对路径
-		let stat;
+	const safeSearchKey = String(search_key || "").toLowerCase();
+
+	async function getFileInfo(itemName, parentPathArray) {
+		const absolutePath = path.resolve.apply(path, [...parentPathArray, itemName]);
 		try {
-			stat = await fs.promises.stat(absolutePath); // 尝试获取绝对路径的文件状态
-		} catch (error) {} // 忽略可能发生的错误，如果没有找到文件或目录，则stat将为undefined
+			const stat = await fs.promises.stat(absolutePath);
+			if (absolutePath.includes(".preview")) return null;
 
-		if (!stat) {
-			return; // 如果无法获取文件状态，函数直接返回undefined
-		}
-
-		// 判断目标是目录还是文件，并返回相应的信息
-		if (stat.isDirectory()) {
-			return {
-				type: "directory",
-				path: [...relativePathArray, fileOrDirPath],
-				name: fileOrDirPath
-			};
-		}
-		if (stat.isFile()) {
-			/* 排除.preview */
-			if (absolutePath.includes(".preview")) {
+			let type = "file";
+			if (stat.isDirectory()) {
+				type = "directory";
+			} else if (stat.isFile()) {
+				const mimeType = getType(absolutePath);
+				if (isAudioType(mimeType)) type = "audio";
+				else if (isVideoType(mimeType)) type = "video";
+				else if (isImageType(mimeType)) type = "img";
+			} else {
 				return null;
 			}
-			const type = getType(absolutePath); // 获取文件类型
-			let fileType = "file";
-			if (isAudioType(type)) {
-				fileType = "audio";
-			} else if (isVideoType(type)) {
-				fileType = "video";
-			} else if (isImageType(type)) {
-				fileType = "img";
-			}
 
-			asyncResolvePathFileOrDir.types[type] = type;
-
-			// 返回所有文件类型的信息
 			return {
-				type: fileType,
-				path: [...relativePathArray, fileOrDirPath],
-				name: fileOrDirPath
+				type,
+				path: [...parentPathArray, itemName],
+				name: path.basename(itemName),
+				size: stat.size,
+				mtime: stat.mtime
 			};
+		} catch (error) {
+			return null;
 		}
-
-		return null; // 如果不是目录也不是文件，则返回null
 	}
 
-	async function search_list_of_files_and_directories({
-		fileOrDirPath,
-		relativePathArray,
-		search_key = ""
-	}) {
-		let result = [];
-		const safeSearchKey = String(search_key).toLowerCase();
+	async function walk(itemName, parentPathArray, depth = 0) {
+		const info = await getFileInfo(itemName, parentPathArray);
+		if (!info) return [];
 
-		// 获取当前项信息
-		const currentItem = await just_show_list_of_files_and_directories({
-			fileOrDirPath,
-			relativePathArray
-		});
-
-		if (!currentItem) {
-			return result;
+		let matches = [];
+		// 如果有搜索词，检查名称是否匹配
+		if (safeSearchKey) {
+			if (info.name.toLowerCase().includes(safeSearchKey)) {
+				matches.push(info);
+			}
+		} else {
+			// 如果没有搜索词，直接添加（列表模式）
+			matches.push(info);
 		}
 
-		// 如果当前项名称包含搜索关键词，添加到结果中
-		// 使用 toLowerCase 替代 _.lowerCase，以支持更准确的文件名搜索
-		if (String(currentItem.name).toLowerCase().includes(safeSearchKey)) {
-			result.push(currentItem);
-		}
-
-		// 如果是目录，递归处理其子项
-		if (currentItem.type === "directory") {
-			const absolutePath = path.resolve.apply(path, [...relativePathArray, fileOrDirPath]);
-			let items = [];
+		// 如果是目录且（处于搜索模式 OR 是顶层列表项），则继续递归
+		// 注意：列表模式通常只列出当前层级，但 asyncResolvePathFileOrDir 的原有逻辑在列表模式下是由外部循环调用的
+		if (info.type === "directory" && safeSearchKey && depth < 10) {
+			const absolutePath = path.resolve.apply(path, [...parentPathArray, itemName]);
 			try {
-				items = await fs.promises.readdir(absolutePath);
+				const items = await fs.promises.readdir(absolutePath);
+				for (const subItem of items) {
+					const subMatches = await walk(subItem, [...parentPathArray, itemName], depth + 1);
+					matches.push(...subMatches);
+				}
 			} catch (error) {
-				return result;
-			}
-
-			for (const item of items) {
-				const subResults = await search_list_of_files_and_directories({
-					fileOrDirPath: item,
-					relativePathArray: [...relativePathArray, fileOrDirPath],
-					search_key: safeSearchKey
-				});
-				result.push(...subResults);
+				// 忽略读取失败的目录
 			}
 		}
 
-		return result;
+		return matches;
 	}
 
-	if (Array.isArray(fileOrDirPath)) {
-		// 如果fileOrDirPath是数组，遍历处理每个路径
-		let result = [];
-		for (const path of fileOrDirPath) {
-			const pathResult = await asyncResolvePathFileOrDir({
-				fileOrDirPath: path,
-				relativePathArray,
-				search_key
-			});
-			result = [...result, ...pathResult];
-		}
-		// 搜索结果需要去重，因为递归过程中可能存在重复添加（例如目录匹配时）
-		return xU._.uniqBy(result, item => JSON.stringify(item.path));
-	} else if (search_key) {
-		// 如果有search_key，使用search_list_of_files_and_directories函数
-		return await search_list_of_files_and_directories({
-			fileOrDirPath,
-			relativePathArray,
-			search_key
-		});
-	} else {
-		// 如果没有search_key，使用just_show_list_of_files_and_directories函数
-		const result = await just_show_list_of_files_and_directories({
-			fileOrDirPath,
-			relativePathArray
-		});
-		// 确保始终返回数组，并使用字符串化的 path 进行去重
-		return xU._.uniqBy(result ? [result] : [], item => JSON.stringify(item.path));
+	let finalResults = [];
+	const itemsToProcess = Array.isArray(fileOrDirPath) ? fileOrDirPath : [fileOrDirPath];
+
+	for (const item of itemsToProcess) {
+		const results = await walk(item, relativePathArray, 0);
+		finalResults.push(...results);
 	}
+
+	// 统一去重处理
+	return xU._.uniqBy(finalResults, item => JSON.stringify(item.path));
 }
 asyncResolvePathFileOrDir.types = {};
 

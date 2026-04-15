@@ -8,11 +8,13 @@ const Jimp = require("jimp");
 const { _n } = require("@ventose/utils-node");
 const { getType } = require("mime");
 const { TARGET_PREFIX } = xU;
-const { returnBase64Body, isAudioType, asyncResolvePathFileOrDir } = require("./Resource.service");
+const { returnBase64Body, isAudioType, isImageType, isVideoType, asyncResolvePathFileOrDir } = require("./Resource.service");
 
 let types = {};
 
 let DEFAULT_NOT_FOUND_IMG;
+
+let ffmpegAvailable = null;
 
 module.exports = {
 	definitions: {
@@ -175,80 +177,64 @@ module.exports = {
 							if (xU._.isArray(uri_array)) {
 								let resource_path = path.resolve.apply(path, uri_array);
 								if (preview) {
-									///* 获取压缩图片 */
-									const preview_resource_path = resource_path + ".preview";
-									let isExist = xU.fileExist(preview_resource_path);
-									if (isExist) {
-										/* 返回文件形式存储的文件 */
+									const preview_resource_path = path.resolve(xU.var.APP_ROOT_SERVER_DIR, xU.var.UPLOADS, "preview", xU.$hashCode(resource_path));
+									if (xU.fileExist(preview_resource_path)) {
 										return returnFileByPath(preview_resource_path, {
 											path: preview_resource_path
 										});
-									} else {
-										try {
-											const input_path = path.resolve(resource_path);
-											const type = getType(input_path) || "";
-											if (type.startsWith("image/")) {
-												/* 没有预览图，需要先生成40*40的图片 */
-												// 使用jimp库生成40*40的预览图
-												console.log("🚀 ~ input_path:", input_path);
-												const image = await Jimp.Jimp.read(input_path);
-												await image.resize({ w: 80 });
-												await image.write(
-													path.resolve(preview_resource_path + ".png")
-												);
-												/* 文件改名 */
-												await xU.fs.promises.rename(
-													preview_resource_path + ".png",
-													preview_resource_path
-												);
-												/* 返回生成的预览图 */
-												return returnFileByPath(preview_resource_path, {
-													path: preview_resource_path
-												});
-											} else if (type.startsWith("video/") || input_path.toLowerCase().endsWith(".flv")) {
-												/* 视频封面生成逻辑 - 保持与图片预览一致的尺寸 */
-												try {
+									}
+
+									try {
+										await _n.asyncSafeMakeDir(path.dirname(preview_resource_path));
+										const input_path = path.resolve(resource_path);
+										const mimeType = getType(input_path) || "";
+										if (isImageType(mimeType)) {
+											const image = await Jimp.Jimp.read(input_path);
+											await image.resize({ w: 80 });
+											await image.write(path.resolve(preview_resource_path + ".png"));
+											await xU.fs.promises.rename(preview_resource_path + ".png", preview_resource_path);
+											return returnFileByPath(preview_resource_path, { path: preview_resource_path });
+										} else if (isVideoType(mimeType)) {
+											try {
+												if (ffmpegAvailable === null) {
+													try {
+														await xU.executeCommand(
+															"ffmpeg",
+															["-version"],
+															{ stdio: "ignore" },
+															() => {}
+														);
+														ffmpegAvailable = true;
+													} catch (e) {
+														ffmpegAvailable = false;
+													}
+												}
+
+												if (ffmpegAvailable) {
 													await xU.executeCommand(
 														"ffmpeg",
-														[
-															"-ss", "00:00:01",
-															"-i", input_path,
-															"-frames:v", "1",
-															"-vf", "scale=80:-1",
-															"-q:v", "2",
-															"-y",
-															preview_resource_path + ".jpg"
-														],
+														["-ss", "00:00:01", "-i", input_path, "-frames:v", "1", "-vf", "scale=80:-1", "-q:v", "2", "-y", preview_resource_path + ".jpg"],
 														{},
-														(msg) => console.log(`[FFmpeg] ${msg}`)
+														msg => console.log(`[FFmpeg] ${msg}`)
 													);
-
-													/* 文件改名 */
-													await xU.fs.promises.rename(
-														preview_resource_path + ".jpg",
-														preview_resource_path
-													);
-
-													/* 返回生成的预览图 */
-													return returnFileByPath(preview_resource_path, {
-														path: preview_resource_path
-													});
-												} catch (ffmpegError) {
-													console.error("FFmpeg thumbnail generation failed:", ffmpegError);
+													await xU.fs.promises.rename(preview_resource_path + ".jpg", preview_resource_path);
+													return returnFileByPath(preview_resource_path, { path: preview_resource_path });
+												} else {
+													console.warn("[FFmpeg] ffmpeg is not installed or not in PATH, skipping video preview generation.");
 												}
+											} catch (e) {
+												console.error("[FFmpeg] Failed to generate video preview:", e);
 											}
-										} catch (error) {
-											console.error(error);
 										}
+									} catch (error) {
+										console.error("Preview generation failed:", error);
 									}
+									// 如果预览生成失败或不支持，返回默认占位图
+									return returnDefautNotFoundImage();
 								}
 
-								let isExist = xU.fileExist(resource_path);
-								if (isExist) {
-									/* 返回文件形式存储的文件 */
-									return returnFileByPath(resource_path, {
-										path: resource_path
-									});
+								if (xU.fileExist(resource_path)) {
+									return returnFileByPath(resource_path, { path: resource_path });
 								}
 							}
 						}
@@ -291,7 +277,9 @@ module.exports = {
 						xU.applog.info("targetPath", targetPath);
 						ctx.status = 200;
 						let contentType = mime.lookup(targetResource.path);
-						if (!contentType && targetResource.path.toLowerCase().endsWith(".flv")) {
+						if (targetPath.endsWith(".preview")) {
+							contentType = "image/jpeg";
+						} else if (!contentType && targetResource.path.toLowerCase().endsWith(".flv")) {
 							contentType = "video/x-flv";
 						}
 						ctx.set("Content-Type", contentType || "application/octet-stream");
@@ -352,6 +340,7 @@ module.exports = {
 					try {
 						if (this.$user?.role === "admin") {
 							let { path: pathStack, search_key } = ctx.payload;
+							xU.applog.info("[/resource/ls] start:", { pathStack, search_key });
 							pathStack = xU._.isArray(pathStack) ? pathStack : [];
 							const path_full_string = pathStack.join(path.sep);
 
@@ -363,12 +352,14 @@ module.exports = {
 								)
 							) {
 								/* 如果路径不在预设的路径中，则返回设定的根目录路径 */
+								xU.applog.info("[/resource/ls] path not in preset, returning root dirs");
 								dirOrFileArray = await asyncResolvePathFileOrDir({
 									fileOrDirPath: xspace_configs.RESOURCE_ASSETS_REMOTE,
 									relativePathArray: [],
 									search_key
 								});
 							} else {
+								xU.applog.info("[/resource/ls] reading dir:", path_full_string);
 								let dirlsArray = await fs.promises.readdir(path_full_string);
 
 								dirOrFileArray = await asyncResolvePathFileOrDir({
@@ -378,15 +369,15 @@ module.exports = {
 								});
 							}
 
-							ctx.body = xU.$response(
-								xU._.filter(dirOrFileArray, item => item?.type)
-							);
+							const filteredResult = xU._.filter(dirOrFileArray, item => item?.type);
+							xU.applog.info("[/resource/ls] finished, count:", filteredResult.length);
+							ctx.body = xU.$response(filteredResult);
 						} else {
 							throw new Error("auth");
 						}
 					} catch (e) {
 						ctx.body = xU.$response(null, 404, "not found");
-						xU.applog.error(e.message);
+						xU.applog.error("[/resource/ls] error:", e.message);
 					}
 				}
 			}
@@ -550,7 +541,7 @@ module.exports = {
 				async handler(ctx) {
 					const { headers, payload } = ctx;
 					const { id, uri } = payload;
-					let resourcePath = [];
+					let resourcePath = "";
 					let response_not_found = xU.$response(
 						{
 							msg: "not found"

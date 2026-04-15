@@ -176,7 +176,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
           .map(function (opt) {
             var indicator = getIndicator(opt.value);
             return [
-              '<button class="modal__action" data-field="',
+              '<button class="modal__action sort-action" data-field="',
               opt.value,
               '">',
               '<span class="modal__action-label">',

@@ -118,11 +118,21 @@ export default async function ({ PRIVATE_GLOBAL }) {
             } catch (error) {}
             return list;
           }
-          _.$msgError(res.errmsg || "获取资源失败");
+          
+          var errmsg = String(res.errmsg || "").toLowerCase();
+          if (errmsg !== "not found" && res.errcode !== 404) {
+            _.$msgError(res.errmsg || "获取资源失败");
+          }
           return [];
         } catch (error) {
           console.error(error);
-          _.$msgError(error && error.message ? error.message : error);
+          var errObj = error || {};
+          var errCode = errObj.errcode || errObj.code || (errObj.status);
+          var errMsg = String(errObj.errmsg || errObj.message || errObj || "").toLowerCase();
+          
+          if (errCode !== 404 && errMsg !== "not found" && errMsg.indexOf("404") === -1 && errMsg !== "[object object]") {
+            _.$msgError(errObj.errmsg || errObj.message || "获取资源失败");
+          }
           return [];
         } finally {
           stateMap.isLoading = false;
