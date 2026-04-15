@@ -62,6 +62,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
       var $timeCurrent = $player.find(".player-time-current");
       var $timeDuration = $player.find(".player-time-duration");
 
+      var hideTimer = null;
+      var showControls = function () {
+        $player.removeClass("viewer-player--hidden");
+        if (hideTimer) {
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+        if (type === "video" && !media.paused) {
+          hideTimer = setTimeout(function () {
+            if (!media.paused) $player.addClass("viewer-player--hidden");
+          }, 3000);
+        }
+      };
+
       media.addEventListener("ended", handlers.onNext);
 
       $playBtn.on("click", function () {
@@ -103,11 +117,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
         $playBtn.html(spa.util.getSvg("pause"));
         if (type === "audio") $(".viewer__record").addClass("viewer__record--playing");
         handlers.onPlay();
+        showControls();
       });
 
       $media.on("pause", function () {
         $playBtn.html(spa.util.getSvg("play"));
         if (type === "audio") $(".viewer__record").removeClass("viewer__record--playing");
+        showControls();
       });
 
       $media.on("timeupdate", function () {
@@ -117,16 +133,21 @@ export default async function ({ PRIVATE_GLOBAL }) {
         $timeDuration.text(formatTime(media.duration || 0));
       });
 
+      $media.on("click touchstart mousemove", showControls);
+      $player.on("click touchstart mousemove", showControls);
+
       $progress.on("click", function (e) {
         var rect = this.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var percent = x / rect.width;
         media.currentTime = percent * media.duration;
+        showControls();
       });
 
       $player.find(".viewer-player__progress-container").on("click", function (e) {
         var rect = this.getBoundingClientRect();
         media.currentTime = ((e.pageX - rect.left) / rect.width) * media.duration;
+        showControls();
       });
 
       if (type === "video") {
@@ -135,6 +156,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
         });
       }
 
+      showControls();
       return $player;
     };
 

@@ -666,6 +666,51 @@ body {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
+.viewer__media {
+  display: block;
+  max-width: 90%;
+  max-height: 80%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+}
+
+.viewer-seek-tip {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 70;
+  pointer-events: none;
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+  .viewer-seek-tip {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .viewer--video .viewer__media {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 180px);
+  }
+}
+
 .viewer-image__controls {
   position: absolute;
   bottom: 100px;
@@ -1022,6 +1067,13 @@ body {
   transform: translateX(-50%);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   z-index: 60;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.viewer-player--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(10px);
 }
 
 .viewer-player__media {
@@ -1243,15 +1295,15 @@ body {
 </template>
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
-	await _.$importVue("@/views/explore_jq/js/spa.util.vue");
-	await _.$importVue("@/views/explore_jq/js/spa.model.vue");
-	await _.$importVue("@/views/explore_jq/js/spa.viewer.list.vue");
-	await _.$importVue("@/views/explore_jq/js/spa.viewer.image.vue");
-	await _.$importVue("@/views/explore_jq/js/spa.viewer.player.vue");
-	await _.$importVue("@/views/explore_jq/js/spa.viewer.vue");
-	await _.$importVue("@/views/explore_jq/js/spa.browser.vue");
-	await _.$importVue("@/views/explore_jq/js/spa.shell.vue");
-	await _.$importVue("@/views/explore_jq/js/spa.vue");
+	await _.$importVue("@/views/explore/js/spa.util.vue");
+	await _.$importVue("@/views/explore/js/spa.model.vue");
+	await _.$importVue("@/views/explore/js/spa.viewer.list.vue");
+	await _.$importVue("@/views/explore/js/spa.viewer.image.vue");
+	await _.$importVue("@/views/explore/js/spa.viewer.player.vue");
+	await _.$importVue("@/views/explore/js/spa.viewer.vue");
+	await _.$importVue("@/views/explore/js/spa.browser.vue");
+	await _.$importVue("@/views/explore/js/spa.shell.vue");
+	await _.$importVue("@/views/explore/js/spa.vue");
 
 	return {
 		mounted(){

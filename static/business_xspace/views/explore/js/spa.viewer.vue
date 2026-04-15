@@ -62,6 +62,91 @@ export default async function ({ PRIVATE_GLOBAL }) {
       ].join(""),
     };
 
+    var clamp = function (value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    };
+
+    var formatTime = function (seconds) {
+      var safe = Number(seconds) || 0;
+      var min = Math.floor(safe / 60);
+      var sec = Math.floor(safe % 60);
+      return (min < 10 ? "0" + min : "" + min) + ":" + (sec < 10 ? "0" + sec : "" + sec);
+    };
+
+    var setupSwipeSeek = function ($media, $content) {
+      var media = $media && $media[0];
+      if (!media) return;
+      if (!("ontouchstart" in window)) return;
+
+      var tipId = "spa-viewer-seek-tip";
+      $content.find("#" + tipId).remove();
+      var $tip = $('<div id="' + tipId + '" class="viewer-seek-tip hidden"></div>');
+      $content.append($tip);
+
+      var startX = 0;
+      var startY = 0;
+      var startTime = 0;
+      var isActive = false;
+      var hasMoved = false;
+      var targetTime = 0;
+
+      var threshold = 8;
+
+      var onStart = function (e) {
+        if (!e.touches || e.touches.length !== 1) return;
+        var t = e.touches[0];
+        startX = t.clientX;
+        startY = t.clientY;
+        startTime = media.currentTime || 0;
+        isActive = false;
+        hasMoved = false;
+        targetTime = startTime;
+        $tip.addClass("hidden");
+      };
+
+      var onMove = function (e) {
+        if (!e.touches || e.touches.length !== 1) return;
+        var t = e.touches[0];
+        var dx = t.clientX - startX;
+        var dy = t.clientY - startY;
+
+        if (!isActive) {
+          if (Math.abs(dx) < threshold) return;
+          if (Math.abs(dx) < Math.abs(dy)) return;
+          isActive = true;
+        }
+
+        e.preventDefault();
+
+        var duration = media.duration || 0;
+        if (!duration) return;
+
+        var rect = media.getBoundingClientRect();
+        var width = rect.width || window.innerWidth || 1;
+        var ratio = dx / width;
+        var offsetSeconds = ratio * duration * 0.6;
+        targetTime = clamp(startTime + offsetSeconds, 0, duration);
+        hasMoved = true;
+
+        var label = offsetSeconds >= 0 ? "快进" : "快退";
+        $tip.removeClass("hidden");
+        $tip.text(label + " " + formatTime(startTime) + " → " + formatTime(targetTime));
+      };
+
+      var onEnd = function () {
+        if (hasMoved && !isNaN(targetTime)) {
+          media.currentTime = targetTime;
+        }
+        $tip.addClass("hidden");
+      };
+
+      media.style.touchAction = "pan-y";
+      media.addEventListener("touchstart", onStart, { passive: true });
+      media.addEventListener("touchmove", onMove, { passive: false });
+      media.addEventListener("touchend", onEnd, { passive: true });
+      media.addEventListener("touchcancel", onEnd, { passive: true });
+    };
+
     var nextFile, prevFile, stopSlideshow;
 
     var updateNavigation = function () {
@@ -130,6 +215,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
           $video.attr("src", file.url);
           var $videoPlayer = spa.viewer.player.create($video, "video", handlers);
           $content.append($video).append($videoPlayer);
+          setupSwipeSeek($video, $content);
           
           var videoEl = $video[0];
           var playPromise = videoEl.play();
