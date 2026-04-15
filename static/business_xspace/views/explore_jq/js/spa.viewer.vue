@@ -29,14 +29,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
         '<div class="viewer__title-wrapper">',
         '<h2 class="viewer__title" id="spa-viewer-title"></h2>',
         '<div class="viewer__index"></div>',
-        "</>",
+        "</div>",
         "</div>",
         '<div class="viewer__header-right">',
-        '<button id="spa-viewer-list-toggle" class="spa-shell__btn spa-shell__btn--viewer" title="Show List">',
-        spa.util.getSvg("list"),
-        "</button>",
         '<button id="spa-viewer-slideshow" class="spa-shell__btn spa-shell__btn--viewer" title="Slideshow">',
         spa.util.getSvg("play"),
+        "</button>",
+        '<button id="spa-viewer-toggle-list" class="spa-shell__btn spa-shell__btn--viewer" title="Show List">',
+        spa.util.getSvg("list"),
         "</button>",
         '<button id="spa-viewer-info" class="spa-shell__btn spa-shell__btn--viewer">',
         spa.util.getSvg("info"),
@@ -54,8 +54,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
         spa.util.getSvg("chevron-right"),
         "</button>",
         "</div>",
-        '<div id="spa-viewer-list" class="viewer__list hidden">',
-        '<div class="viewer__list-inner no-scrollbar"></div>',
+        '<div id="spa-viewer-list" class="viewer__drawer hidden">',
+        '<div class="viewer__drawer-header">',
+        '<h3 class="viewer__drawer-title">播放列表</h3>',
+        '<button id="spa-viewer-close-list" class="viewer__btn">',
+        spa.util.getSvg("x"),
+        "</button>",
+        "</div>",
+        '<div class="viewer__drawer-content no-scrollbar"></div>',
         "</div>",
         '<footer id="spa-viewer-footer" class="viewer__footer hidden"></footer>',
         "</div>",
@@ -92,7 +98,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       $content
         .find(
-          ".viewer__media, .viewer__media--image, .viewer__image-container, .viewer__audio-player, .viewer__zoom-controls, .fallback"
+          ".viewer__media, .viewer__media--image, .viewer-image, .viewer-player, .viewer__audio-player, .viewer-image__controls, .viewer__fallback"
         )
         .remove();
       $footer.addClass("hidden");
@@ -119,9 +125,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
           break;
         case "video":
           $footer.removeClass("hidden");
-          var $video = $(
-            '<video class="viewer__media max-w-[90%] max-h-[80%] object-contain shadow-2xl" autoplay></video>'
-          );
+          var $video = $('<video class="viewer__media max-w-[90%] max-h-[80%] object-contain shadow-2xl hidden" autoplay></video>');
           $video.attr("src", file.url);
           var $videoPlayer = spa.viewer.player.create($video, "video", handlers);
           $content.append($video).append($videoPlayer);
@@ -313,6 +317,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
         } else {
           startSlideshow();
         }
+      });
+
+      $("#spa-viewer-toggle-list").on("click", function () {
+        $("#spa-viewer-list").removeClass("hidden");
+      });
+
+      $("#spa-viewer-close-list").on("click", function () {
+        $("#spa-viewer-list").addClass("hidden");
       });
 
       $(document).on("spa-file-open", function (e, data) {

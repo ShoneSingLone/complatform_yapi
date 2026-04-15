@@ -18,25 +18,29 @@ export default async function ({ PRIVATE_GLOBAL }) {
       var $player = $(
         [
           '<div class="viewer-player">',
-          '<div class="viewer-player__row viewer-player__row--top">',
-          '<div class="viewer-player__time player-time-current">00:00</div>',
+          type === "audio" ? "" : '<div class="viewer-player__media"><video src="' + $media.attr("src") + '" class="viewer-player__video" autoplay></video></div>',
+          '<div class="viewer-player__controls">',
+          '<div class="viewer-player__progress">',
+          '<span class="viewer-player__time player-time-current">00:00</span>',
           '<div class="viewer-player__progress-container">',
-          '<div class="viewer-player__progress-bar"></div>',
+          '<div class="viewer-player__progress-bar">',
+          '<div class="viewer-player__progress-fill"></div>',
           "</div>",
-          '<div class="viewer-player__time player-time-duration">00:00</div>',
           "</div>",
-          '<div class="viewer-player__row viewer-player__row--middle">',
-          '<button class="player-nav-btn player-prev" title="Previous">',
+          '<span class="viewer-player__time player-time-duration">00:00</span>',
+          "</div>",
+          '<div class="viewer-player__main-controls">',
+          '<button class="viewer-player__btn player-prev">',
           spa.util.getSvg("skip-back"),
           "</button>",
-          '<button class="player-play-btn player-play" title="Play/Pause">',
+          '<button class="viewer-player__btn viewer-player__btn--play player-play">',
           spa.util.getSvg("play"),
           "</button>",
-          '<button class="player-nav-btn player-next" title="Next">',
+          '<button class="viewer-player__btn player-next">',
           spa.util.getSvg("skip-forward"),
           "</button>",
           "</div>",
-          '<div class="viewer-player__row viewer-player__row--bottom">',
+          '<div class="viewer-player__bottom-controls">',
           '<div class="viewer-player__setting">',
           '<span class="viewer-player__speed-label">Speed</span>',
           '<span class="viewer-player__speed-value">1x</span>',
@@ -46,15 +50,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
           '<input type="range" class="viewer-player__volume-slider" min="0" max="1" step="0.1" value="1">',
           "</div>",
           "</div>",
+          "</div>",
+          "</div>",
         ].join("")
       );
 
       var media = $media[0];
       var $playBtn = $player.find(".player-play");
-      var $progress = $player.find(".viewer-player__progress-bar");
+      var $progress = $player.find(".viewer-player__progress-container");
+      var $progressFill = $player.find(".viewer-player__progress-fill");
       var $timeCurrent = $player.find(".player-time-current");
       var $timeDuration = $player.find(".player-time-duration");
-      var $loopBtn = $player.find(".player-loop");
+
+      media.addEventListener("ended", handlers.onNext);
 
       $playBtn.on("click", function () {
         if (media.paused) {
@@ -89,9 +97,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       $media.on("timeupdate", function () {
         var percent = (media.currentTime / media.duration) * 100;
-        $progress.css("width", percent + "%");
+        $progressFill.css("width", percent + "%");
         $timeCurrent.text(formatTime(media.currentTime));
         $timeDuration.text(formatTime(media.duration || 0));
+      });
+
+      $progress.on("click", function (e) {
+        var rect = this.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var percent = x / rect.width;
+        media.currentTime = percent * media.duration;
       });
 
       $player.find(".viewer-player__progress-container").on("click", function (e) {
