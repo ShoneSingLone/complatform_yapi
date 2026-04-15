@@ -18,7 +18,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
       var $player = $(
         [
           '<div class="viewer-player">',
-          type === "audio" ? "" : '<div class="viewer-player__media"><video src="' + $media.attr("src") + '" class="viewer-player__video" autoplay></video></div>',
           '<div class="viewer-player__controls">',
           '<div class="viewer-player__progress">',
           '<span class="viewer-player__time player-time-current">00:00</span>',
@@ -46,8 +45,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
           '<span class="viewer-player__speed-value">1x</span>',
           "</div>",
           '<div class="viewer-player__setting">',
-          '<span class="viewer-player__volume-label">Vol</span>',
-          '<input type="range" class="viewer-player__volume-slider" min="0" max="1" step="0.1" value="1">',
+          '<button class="viewer-player__btn player-fullscreen">',
+          spa.util.getSvg("maximize"),
+          "</button>",
           "</div>",
           "</div>",
           "</div>",
@@ -79,9 +79,24 @@ export default async function ({ PRIVATE_GLOBAL }) {
         media.playbackRate = parseFloat($(this).val());
       });
 
-      $loopBtn.on("click", function () {
-        media.loop = !media.loop;
-        $(this).toggleClass("text-primary", media.loop);
+      $player.find(".player-fullscreen").on("click", function () {
+        if (!document.fullscreenElement) {
+          if (media.requestFullscreen) {
+            media.requestFullscreen();
+          } else if (media.webkitRequestFullscreen) { /* Safari */
+            media.webkitRequestFullscreen();
+          } else if (media.msRequestFullscreen) { /* IE11 */
+            media.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+          }
+        }
       });
 
       $media.on("play", function () {

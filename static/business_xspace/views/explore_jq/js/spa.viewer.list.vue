@@ -7,41 +7,49 @@ export default async function ({ PRIVATE_GLOBAL }) {
     "use strict";
 
     var render = function (fileList, currentFile, handlers) {
-      var $listInner = $(".viewer__list-inner");
+      var $list = $("#spa-viewer-list");
+      var $listInner = $list.find(".viewer__drawer-content");
       if ($listInner.length === 0) return;
 
       var html = "";
       fileList.forEach(function (file) {
-        var currentClass = file.id === currentFile.id ? "viewer-list__item--active" : "";
+        var currentClass = file.id === currentFile.id ? "viewer-drawer__item--active" : "";
         var content = "";
 
         if (file.type === "image") {
           content = [
             '<img src="',
             file.previewUrl || file.url,
-            '" class="viewer-list__item-img" referrerPolicy="no-referrer">'
+            '" class="viewer-drawer__item-img" referrerPolicy="no-referrer">'
           ].join("");
         } else {
           content = [
-            '<div class="viewer-list__item-icon">',
-            spa.util.getSvg(file.type === "video" ? "video" : "music", "icon-large"),
+            '<div class="viewer-drawer__item-icon">',
+            spa.util.getSvg(file.type === "video" ? "video" : "music"),
             "</div>",
           ].join("");
         }
 
         html += [
-          '<button class="viewer-list__item ',
+          '<button class="viewer-drawer__item ',
           currentClass,
           '" data-id="',
           file.id,
           '">',
+          '<div class="viewer-drawer__item-media">',
           content,
+          "</div>",
+          '<div class="viewer-drawer__item-info">',
+          '<div class="viewer-drawer__item-name">',
+          file.name,
+          "</div>",
+          "</div>",
           "</button>",
         ].join("");
       });
       $listInner.html(html);
 
-      var $active = $listInner.find(".active");
+      var $active = $listInner.find(".viewer-drawer__item--active");
       if ($active.length) {
         var scrollLeft =
           $active.position().left +
@@ -52,13 +60,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
       }
 
       $listInner
-        .off("click", ".viewer__list-item")
-        .on("click", ".viewer__list-item", function () {
+        .off("click", ".viewer-drawer__item")
+        .on("click", ".viewer-drawer__item", function () {
           var id = $(this).data("id");
           var file = fileList.find(function (f) {
-            return f.id == id;
+            return f.id === id;
           });
-          if (file && file.id !== currentFile.id) {
+          if (file && handlers.onSelect) {
             handlers.onSelect(file);
           }
         });

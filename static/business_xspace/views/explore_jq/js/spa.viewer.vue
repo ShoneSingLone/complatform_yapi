@@ -32,14 +32,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
         "</div>",
         "</div>",
         '<div class="viewer__header-right">',
-        '<button id="spa-viewer-slideshow" class="spa-shell__btn spa-shell__btn--viewer" title="Slideshow">',
-        spa.util.getSvg("play"),
-        "</button>",
         '<button id="spa-viewer-toggle-list" class="spa-shell__btn spa-shell__btn--viewer" title="Show List">',
         spa.util.getSvg("list"),
-        "</button>",
-        '<button id="spa-viewer-info" class="spa-shell__btn spa-shell__btn--viewer">',
-        spa.util.getSvg("info"),
         "</button>",
         '<button id="spa-viewer-download" class="spa-shell__btn spa-shell__btn--viewer">',
         spa.util.getSvg("download"),
@@ -76,10 +70,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
       $index.text(index + 1 + " / " + stateMap.fileList.length);
 
       spa.viewer.list.render(stateMap.fileList, stateMap.currentFile, {
+        onPlay: function () {
+          if (stateMap.isSlideshow) stopSlideshow();
+        },
         onSelect: function (file) {
           stateMap.currentFile = file;
           $("#spa-viewer-title").text(file.name);
           renderPreview(file);
+          // Auto close drawer on select in mobile
+          if (window.innerWidth < 768) {
+            $("#spa-viewer-list").addClass("hidden");
+          }
         },
       });
     };
@@ -125,10 +126,18 @@ export default async function ({ PRIVATE_GLOBAL }) {
           break;
         case "video":
           $footer.removeClass("hidden");
-          var $video = $('<video class="viewer__media max-w-[90%] max-h-[80%] object-contain shadow-2xl hidden" autoplay></video>');
+          var $video = $('<video class="viewer__media max-w-[90%] max-h-[80%] object-contain shadow-2xl" autoplay playsinline></video>');
           $video.attr("src", file.url);
           var $videoPlayer = spa.viewer.player.create($video, "video", handlers);
           $content.append($video).append($videoPlayer);
+          
+          var videoEl = $video[0];
+          var playPromise = videoEl.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(function(error) {
+              console.log("Auto-play prevented by browser:", error);
+            });
+          }
           break;
         case "audio":
           $footer.removeClass("hidden");
@@ -146,11 +155,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
             ].join("")
           );
 
-          var $audio = $("<audio autoplay></audio>");
+          var $audio = $("<audio autoplay playsinline></audio>");
           $audio.attr("src", file.url);
           var $audioControls = spa.viewer.player.create($audio, "audio", handlers);
           $audioPlayer.append($audioControls);
           $content.append($audioPlayer).append($audio);
+
+          var audioEl = $audio[0];
+          var audioPlayPromise = audioEl.play();
+          if (audioPlayPromise !== undefined) {
+            audioPlayPromise.catch(function(error) {
+              console.log("Auto-play prevented by browser:", error);
+            });
+          }
           break;
         default:
           $content.append(
