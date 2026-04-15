@@ -201,7 +201,7 @@ function isImageType(type) {
 exports.isImageType = isImageType;
 
 function isVideoType(type) {
-	return /^video/.test(type) || ["video/mp4"].includes(type);
+	return /^video/.test(type) || ["video/mp4", "video/x-flv", "video/flv", "video/x-pn-realvideo", "application/vnd.rn-realmedia"].includes(type);
 }
 
 exports.isVideoType = isVideoType;

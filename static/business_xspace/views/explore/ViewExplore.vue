@@ -158,6 +158,53 @@ body {
   padding-bottom: 80px;
 }
 
+.file-browser--grid .file-browser__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.file-browser--grid .file-item {
+  flex-direction: column;
+  padding: 12px;
+  text-align: center;
+  gap: 8px;
+  height: auto;
+  min-height: 160px;
+}
+
+.file-browser--grid .file-item__icon-wrap {
+  margin-right: 0;
+  width: 100%;
+  aspect-ratio: 1;
+  height: auto;
+}
+
+.file-browser--grid .file-item__info {
+  width: 100%;
+}
+
+.file-browser--grid .file-item__name {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: center;
+}
+
+.file-browser--grid .file-item__action {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(255, 255, 255, 0.8);
+  opacity: 0;
+}
+
+.file-browser--grid .file-item:hover .file-item__action {
+  opacity: 1;
+}
+
 .file-list {
   display: flex;
   flex-direction: column;
@@ -174,6 +221,19 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   animation: fadeIn 0.4s ease-out forwards;
+  position: relative;
+}
+
+.file-item__preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.file-item__icon-wrap i {
+  width: 24px;
+  height: 24px;
 }
 
 @keyframes fadeIn {
@@ -202,6 +262,7 @@ body {
   justify-content: center;
   margin-right: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .file-item__info {
@@ -214,9 +275,9 @@ body {
   font-size: 15px;
   line-height: 1.2;
   margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--color-text);
+  word-break: break-all;
+  white-space: normal; /* Allow wrap */
 }
 
 .file-item__meta {

@@ -19,6 +19,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       searchQuery: "",
       renderToken: 0,
       sortConfig: defaultSortConfig.slice(),
+      isLoading: false,
     };
 
     var loadSortConfig = function () {
@@ -156,7 +157,33 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       $("#spa-shell-breadcrumb-bar").html(breadcrumbsHtml);
 
-      var files = await spa.model.getFiles(stateMap.currentPath, stateMap.searchQuery);
+      var showLoading = function() {
+        var skeletonHtml = '<div class="file-browser__list">';
+        for (var i = 0; i < 5; i++) {
+          skeletonHtml += [
+            '<div class="file-item file-item--skeleton" style="opacity: 0.5; pointer-events: none;">',
+            '<div class="file-item__icon-wrap" style="background: #eee;"></div>',
+            '<div class="file-item__info">',
+            '<div class="file-item__name" style="width: 60%; height: 16px; background: #eee; border-radius: 4px; margin-bottom: 8px;"></div>',
+            '<div class="file-item__meta" style="width: 40%; height: 12px; background: #eee; border-radius: 4px;"></div>',
+            "</div>",
+            "</div>",
+          ].join("");
+        }
+        skeletonHtml += "</div>";
+        stateMap.$container.html(skeletonHtml);
+      };
+
+      stateMap.isLoading = true;
+      showLoading();
+
+      var files = [];
+      try {
+        files = await spa.model.getFiles(stateMap.currentPath, stateMap.searchQuery);
+      } finally {
+        stateMap.isLoading = false;
+      }
+      
       if (token !== stateMap.renderToken) return;
 
       if (stateMap.filter !== "all") {

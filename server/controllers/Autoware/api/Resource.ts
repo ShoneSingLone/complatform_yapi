@@ -184,24 +184,30 @@ module.exports = {
 										});
 									} else {
 										try {
-											/* 没有预览图，需要先生成40*40的图片 */
-											// 使用jimp库生成40*40的预览图
 											const input_path = path.resolve(resource_path);
-											console.log("🚀 ~ input_path:", input_path);
-											const image = await Jimp.Jimp.read(input_path);
-											await image.resize({ w: 80 });
-											await image.write(
-												path.resolve(preview_resource_path + ".png")
-											);
-											/* 文件改名 */
-											await xU.fs.promises.rename(
-												preview_resource_path + ".png",
-												preview_resource_path
-											);
-											/* 返回生成的预览图 */
-											return returnFileByPath(preview_resource_path, {
-												path: preview_resource_path
-											});
+											const type = getType(input_path) || "";
+											if (type.startsWith("image/")) {
+												/* 没有预览图，需要先生成40*40的图片 */
+												// 使用jimp库生成40*40的预览图
+												console.log("🚀 ~ input_path:", input_path);
+												const image = await Jimp.Jimp.read(input_path);
+												await image.resize({ w: 80 });
+												await image.write(
+													path.resolve(preview_resource_path + ".png")
+												);
+												/* 文件改名 */
+												await xU.fs.promises.rename(
+													preview_resource_path + ".png",
+													preview_resource_path
+												);
+												/* 返回生成的预览图 */
+												return returnFileByPath(preview_resource_path, {
+													path: preview_resource_path
+												});
+											} else if (type.startsWith("video/") || input_path.toLowerCase().endsWith(".flv")) {
+												/* 视频封面生成逻辑 - 如果没有 ffmpeg，目前返回默认图或跳过 */
+												// TODO: 后续集成 ffmpeg 后实现视频抽帧
+											}
 										} catch (error) {
 											console.error(error);
 										}
@@ -255,7 +261,11 @@ module.exports = {
 					function returnFileByPath(targetPath, targetResource) {
 						xU.applog.info("targetPath", targetPath);
 						ctx.status = 200;
-						ctx.set("Content-Type", mime.lookup(targetResource.path));
+						let contentType = mime.lookup(targetResource.path);
+						if (!contentType && targetResource.path.toLowerCase().endsWith(".flv")) {
+							contentType = "video/x-flv";
+						}
+						ctx.set("Content-Type", contentType || "application/octet-stream");
 						ctx.body = xU.fs.createReadStream(targetPath);
 					}
 
@@ -544,7 +554,11 @@ module.exports = {
 						await fs.promises.access(resourcePath, fs.constants.R_OK);
 
 						// 设置响应头，包括Content-Type和Content-Length（可选）
-						const contentType = getType(resourcePath) || "video/mp4";
+						let contentType = getType(resourcePath);
+						if (!contentType && resourcePath.toLowerCase().endsWith(".flv")) {
+							contentType = "video/x-flv";
+						}
+						contentType = contentType || "video/mp4";
 						ctx.set("Content-Type", contentType);
 
 						const total = await new Promise((resolve, reject) => {

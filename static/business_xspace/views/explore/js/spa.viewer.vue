@@ -134,7 +134,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       };
 
       var onEnd = function () {
-        if (hasMoved && !isNaN(targetTime)) {
+        if (hasMoved && isFinite(targetTime) && isFinite(media.duration)) {
           media.currentTime = targetTime;
         }
         $tip.addClass("hidden");
@@ -170,12 +170,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
       });
     };
 
-    var renderPreview = function (file) {
+    var cleanupContent = function () {
       var $content = $("#spa-viewer-content");
-      var $footer = $("#spa-viewer-footer");
-      var $viewer = $("#spa-viewer");
-
       $content.find("video, audio").each(function () {
+        if (this._flvPlayer) {
+          try {
+            this._flvPlayer.destroy();
+          } catch (e) {}
+          this._flvPlayer = null;
+        }
         this.pause();
         this.src = "";
         this.load();
@@ -187,6 +190,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
           ".viewer__media, .viewer__media--image, .viewer-image, .viewer-player, .viewer__audio-player, .viewer-image__controls, .viewer__fallback"
         )
         .remove();
+    };
+
+    var renderPreview = function (file) {
+      var $content = $("#spa-viewer-content");
+      var $footer = $("#spa-viewer-footer");
+      var $viewer = $("#spa-viewer");
+
+      cleanupContent();
+
       $footer.addClass("hidden");
       $viewer.removeClass("viewer--image viewer--video viewer--audio");
       $viewer.addClass("viewer--" + file.type);
@@ -210,19 +222,103 @@ export default async function ({ PRIVATE_GLOBAL }) {
           spa.viewer.image.render(file, $content, handlers);
           break;
         case "video":
+          var isRmvb = file.name.toLowerCase().endsWith(".rmvb") || file.name.toLowerCase().endsWith(".rm") || file.rawType === "rmvb";
+          if (isRmvb) {
+            $content.append(
+              [
+                '<div class="viewer__fallback">',
+                '<div class="viewer__fallback-icon">',
+                spa.util.getSvg("video", "icon-large"),
+                "</div>",
+                '<div class="viewer__fallback-text">RMVB 格式暂不支持网页直接播放</div>',
+                '<button id="spa-viewer-download" class="viewer__btn viewer__btn--primary">',
+                "下载文件",
+                "</button>",
+                "</div>",
+              ].join("")
+            );
+            return;
+          }
+
           $footer.removeClass("hidden");
-          var $video = $('<video class="viewer__media max-w-[90%] max-h-[80%] object-contain shadow-2xl" autoplay playsinline></video>');
-          $video.attr("src", file.url);
+          var $video = $('<video class="viewer__media max-w-[90%] max-h-[80%] object-contain shadow-2xl" playsinline></video>');
           var $videoPlayer = spa.viewer.player.create($video, "video", handlers);
           $content.append($video).append($videoPlayer);
           setupSwipeSeek($video, $content);
+
+          var isFlv = file.name.toLowerCase().endsWith(".flv") || file.rawType === "flv" || file.rawType === "video/x-flv";
           
-          var videoEl = $video[0];
-          var playPromise = videoEl.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(function(error) {
-              console.log("Auto-play prevented by browser:", error);
+          var playVideo = function() {
+            var videoEl = $video[0];
+            var playPromise = videoEl.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(function(error) {
+                console.log("Auto-play blocked, muted and retrying...", error);
+                videoEl.muted = true;
+                videoEl.play();
+                _.$msg("由于浏览器政策，视频已静音自动播放，请手动开启声音");
+              });
+            }
+          };
+
+          if (isFlv) {
+            var loadFlvJs = function() {
+              return new Promise(function(resolve, reject) {
+                if (window.flvjs) return resolve(window.flvjs);
+                var scriptId = "flv-js-script";
+                if (document.getElementById(scriptId)) {
+                  var timer = setInterval(function() {
+                    if (window.flvjs) {
+                      clearInterval(timer);
+                      resolve(window.flvjs);
+                    }
+                  }, 100);
+                  return;
+                }
+                var script = document.createElement("script");
+                script.id = scriptId;
+                script.src = "https://cdn.bootcdn.net/ajax/libs/flv.js/1.6.2/flv.min.js";
+                script.onload = function() { resolve(window.flvjs); };
+                script.onerror = function() { reject(new Error("Failed to load flv.js")); };
+                document.head.appendChild(script);
+              });
+            };
+
+            loadFlvJs().then(function(flvjs) {
+              if (flvjs.isSupported()) {
+                var flvPlayer = flvjs.createPlayer({
+                  type: "flv",
+                  url: file.url,
+                  isLive: false,
+                  hasAudio: true,
+                  hasVideo: true
+                }, {
+                  enableWorker: true,
+                  stashInitialSize: 128,
+                  enableStashBuffer: false
+                });
+                
+                flvPlayer.on(flvjs.Events.ERROR, function(errType, errDetail) {
+                  console.error("FLV Player Error:", errType, errDetail);
+                  _.$msgError("FLV 播放出错: " + errType);
+                });
+
+                flvPlayer.attachMediaElement($video[0]);
+                flvPlayer.load();
+                playVideo();
+                $video[0]._flvPlayer = flvPlayer;
+              } else {
+                _.$msgError("您的浏览器不支持 MSE，无法播放 FLV 视频");
+                $video.attr("src", file.url);
+                playVideo();
+              }
+            }).catch(function(err) {
+              _.$msgError("加载 flv.js 失败");
+              console.error(err);
             });
+          } else {
+            $video.attr("src", file.url);
+            playVideo();
           }
           break;
         case "audio":
@@ -286,7 +382,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       $("#spa-viewer-close").on("click", function () {
         $viewer.addClass("hidden");
-        $("#spa-viewer-content").empty();
+        cleanupContent();
         $("#spa-viewer-list").addClass("hidden");
         stopSlideshow();
       });

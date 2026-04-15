@@ -41,8 +41,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
           "</div>",
           '<div class="viewer-player__bottom-controls">',
           '<div class="viewer-player__setting">',
+          '<button class="viewer-player__btn player-volume-btn">',
+          spa.util.getSvg("volume-2"),
+          "</button>",
+          '<input type="range" class="viewer-player__volume-slider player-volume-slider" min="0" max="1" step="0.1" value="1">',
+          "</div>",
+          '<div class="viewer-player__setting">',
           '<span class="viewer-player__speed-label">Speed</span>',
-          '<span class="viewer-player__speed-value">1x</span>',
+          '<span class="viewer-player__speed-value player-speed-value">1x</span>',
           "</div>",
           '<div class="viewer-player__setting">',
           '<button class="viewer-player__btn player-fullscreen">',
@@ -89,8 +95,46 @@ export default async function ({ PRIVATE_GLOBAL }) {
       $player.find(".player-prev").on("click", handlers.onPrev);
       $player.find(".player-next").on("click", handlers.onNext);
 
-      $player.find(".player-speed").on("change", function () {
-        media.playbackRate = parseFloat($(this).val());
+      var $volumeBtn = $player.find(".player-volume-btn");
+      var $volumeSlider = $player.find(".player-volume-slider");
+      var lastVolume = 1;
+
+      $volumeBtn.on("click", function () {
+        if (media.muted || media.volume === 0) {
+          media.muted = false;
+          media.volume = lastVolume || 1;
+          $volumeSlider.val(media.volume);
+          $volumeBtn.html(spa.util.getSvg("volume-2"));
+        } else {
+          lastVolume = media.volume;
+          media.muted = true;
+          media.volume = 0;
+          $volumeSlider.val(0);
+          $volumeBtn.html(spa.util.getSvg("volume-x"));
+        }
+      });
+
+      $volumeSlider.on("input", function () {
+        var val = parseFloat($(this).val());
+        media.volume = val;
+        media.muted = val === 0;
+        if (val === 0) {
+          $volumeBtn.html(spa.util.getSvg("volume-x"));
+        } else if (val < 0.5) {
+          $volumeBtn.html(spa.util.getSvg("volume-1"));
+        } else {
+          $volumeBtn.html(spa.util.getSvg("volume-2"));
+        }
+      });
+
+      var $speedValue = $player.find(".player-speed-value");
+      $player.find(".viewer-player__setting").on("click", ".player-speed-value", function() {
+        var speeds = [0.5, 1.0, 1.25, 1.5, 2.0];
+        var current = media.playbackRate;
+        var nextIdx = (speeds.indexOf(current) + 1) % speeds.length;
+        var nextSpeed = speeds[nextIdx];
+        media.playbackRate = nextSpeed;
+        $speedValue.text(nextSpeed + "x");
       });
 
       $player.find(".player-fullscreen").on("click", function () {
@@ -137,6 +181,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       $player.on("click touchstart mousemove", showControls);
 
       $progress.on("click", function (e) {
+        if (!isFinite(media.duration)) return;
         var rect = this.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var percent = x / rect.width;
@@ -144,7 +189,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
         showControls();
       });
 
-      $player.find(".viewer-player__progress-container").on("click", function (e) {
+      // Remove redundant listener or keep it with check
+      $player.find(".viewer-player__progress-container").off("click").on("click", function (e) {
+        if (!isFinite(media.duration)) return;
         var rect = this.getBoundingClientRect();
         media.currentTime = ((e.pageX - rect.left) / rect.width) * media.duration;
         showControls();

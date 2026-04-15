@@ -13,6 +13,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
       currentSearchKey: "",
       resourceList: [],
       resourceMap: {},
+      isLoading: false,
+      pendingPromise: null,
+      pendingPath: null,
+      pendingSearchKey: null,
     };
 
     var getKeyByPath = function (path) {
@@ -22,7 +26,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     var normalizeType = function (type) {
       if (type === "directory" || type === "folder") return "folder";
       if (type === "img") return "image";
-      if (type === "video") return "video";
+      if (type === "video" || type === "flv" || type === "rmvb" || type === "realmedia") return "video";
       if (type === "audio") return "audio";
       return "other";
     };
@@ -83,35 +87,53 @@ export default async function ({ PRIVATE_GLOBAL }) {
     var fetchFiles = async function (path, searchKey) {
       var safePath = _.isArray(path) ? path : [];
       var safeSearchKey = searchKey || "";
-      _.$loading(true);
-      try {
-        var res = await _api.xspace.resourceLs({
-          path: safePath,
-          search_key: safeSearchKey,
-        });
-        if (!res.errcode) {
-          var list = (res.data || []).map(toViewFile);
-          stateMap.currentPath = safePath;
-          stateMap.currentSearchKey = safeSearchKey;
-          stateMap.resourceList = list;
-          rebuildMap(list);
-          try {
-            if (_.$lStorage) {
-              _.$lStorage[PATH_STACK_STORAGE_KEY] = safePath;
-              _.$lStorage[RESOURCE_STORAGE_KEY] = res.data || [];
-            }
-          } catch (error) {}
-          return list;
-        }
-        _.$msgError(res.errmsg || "获取资源失败");
-        return [];
-      } catch (error) {
-        console.error(error);
-        _.$msgError(error && error.message ? error.message : error);
-        return [];
-      } finally {
-        _.$loading(false);
+
+      // If we are already fetching the EXACT same thing, return the existing promise
+      if (stateMap.isLoading && _.isEqual(safePath, stateMap.pendingPath) && safeSearchKey === stateMap.pendingSearchKey) {
+        return stateMap.pendingPromise;
       }
+
+      stateMap.pendingPath = safePath;
+      stateMap.pendingSearchKey = safeSearchKey;
+      stateMap.isLoading = true;
+
+      stateMap.pendingPromise = (async function () {
+        _.$loading(true);
+        try {
+          var res = await _api.xspace.resourceLs({
+            path: safePath,
+            search_key: safeSearchKey,
+          });
+          if (!res.errcode) {
+            var list = (res.data || []).map(toViewFile);
+            stateMap.currentPath = safePath;
+            stateMap.currentSearchKey = safeSearchKey;
+            stateMap.resourceList = list;
+            rebuildMap(list);
+            try {
+              if (_.$lStorage) {
+                _.$lStorage[PATH_STACK_STORAGE_KEY] = safePath;
+                _.$lStorage[RESOURCE_STORAGE_KEY] = res.data || [];
+              }
+            } catch (error) {}
+            return list;
+          }
+          _.$msgError(res.errmsg || "获取资源失败");
+          return [];
+        } catch (error) {
+          console.error(error);
+          _.$msgError(error && error.message ? error.message : error);
+          return [];
+        } finally {
+          stateMap.isLoading = false;
+          stateMap.pendingPromise = null;
+          stateMap.pendingPath = null;
+          stateMap.pendingSearchKey = null;
+          _.$loading(false);
+        }
+      })();
+
+      return stateMap.pendingPromise;
     };
 
     var getFiles = async function (path, searchKey) {

@@ -5,6 +5,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
   window.spa.shell = (function () {
     "use strict";
 
+    var VIEW_MODE_STORAGE_KEY = "VIEW_EXPLORE_MODE";
     var SORT_STORAGE_KEY = "VIEW_EXPLORE_SORT_CONFIG";
     var PATH_STACK_STORAGE_KEY = "VIEW_EXPLORE_PATH_STACK";
     var sortOptions = [
@@ -20,6 +21,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
         '<header class="spa-shell__header">',
         '<h1 class="spa-shell__title">Files</h1>',
         '<div class="spa-shell__actions">',
+        '<button id="spa-shell-view-toggle" class="spa-shell__btn">',
+        spa.util.getSvg("layout-grid"),
+        "</button>",
         '<button id="spa-shell-sort" class="spa-shell__btn">',
         spa.util.getSvg("arrow-up-down"),
         "</button>",
@@ -127,6 +131,22 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       $container.find("#spa-shell-add-folder").on("click", function () {
         _.$msg("当前版本暂不支持新建目录");
+      });
+
+      var $viewToggleBtn = $container.find("#spa-shell-view-toggle");
+      var updateViewToggleIcon = function() {
+        var mode = _.$lStorage && _.$lStorage[VIEW_MODE_STORAGE_KEY] || "list";
+        $viewToggleBtn.html(spa.util.getSvg(mode === "list" ? "layout-grid" : "list"));
+      };
+      
+      updateViewToggleIcon();
+
+      $viewToggleBtn.on("click", function() {
+        var mode = _.$lStorage && _.$lStorage[VIEW_MODE_STORAGE_KEY] || "list";
+        var nextMode = mode === "list" ? "grid" : "list";
+        if (_.$lStorage) _.$lStorage[VIEW_MODE_STORAGE_KEY] = nextMode;
+        updateViewToggleIcon();
+        $(document).trigger("spa-view-mode-change", [nextMode]);
       });
 
       $container.find("#spa-shell-sort").on("click", function () {
