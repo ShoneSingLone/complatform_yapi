@@ -19,11 +19,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
     };
 
     var render = function (file, $content, handlers) {
-      var $imgContainer = $('<div class="viewer__image-container"></div>');
+      var $imgContainer = $('<div class="viewer-image"></div>');
       var $img = $(
         '<img src="' +
           file.url +
-          '" class="viewer__media--image" referrerPolicy="no-referrer">'
+          '" class="viewer-image__img" referrerPolicy="no-referrer">'
       );
       $imgContainer.append($img);
       $content.append($imgContainer);
@@ -47,15 +47,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       var $zoomControls = $(
         [
-          '<div class="viewer__zoom-controls">',
-          '<button class="spa-shell__btn spa-shell__btn--viewer zoom-out">',
-          spa.util.getSvg("zoom-out"),
+          '<div class="viewer-image__controls">',
+          '<button class="viewer-image__btn zoom-out">',
+          spa.util.getSvg("minus"),
           "</button>",
-          '<span class="zoom-level flex items-center min-w-[40px] justify-center text-sm font-medium">100%</span>',
-          '<button class="spa-shell__btn spa-shell__btn--viewer zoom-in">',
-          spa.util.getSvg("zoom-in"),
+          '<span class="viewer-image__level">100%</span>',
+          '<button class="viewer-image__btn zoom-in">',
+          spa.util.getSvg("plus"),
           "</button>",
-          '<button class="spa-shell__btn spa-shell__btn--viewer zoom-reset">',
+          '<div class="viewer-image__divider"></div>',
+          '<button class="viewer-image__btn zoom-reset">',
           spa.util.getSvg("maximize"),
           "</button>",
           "</div>",

@@ -5,6 +5,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
   window.spa.model = (function () {
     "use strict";
 
+    var PATH_STACK_STORAGE_KEY = "VIEW_EXPLORE_PATH_STACK";
+    var RESOURCE_STORAGE_KEY = "VIEW_EXPLORE_RESOURCE";
+
     var stateMap = {
       currentPath: [],
       currentSearchKey: "",
@@ -92,6 +95,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
           stateMap.currentSearchKey = safeSearchKey;
           stateMap.resourceList = list;
           rebuildMap(list);
+          try {
+            if (_.$lStorage) {
+              _.$lStorage[PATH_STACK_STORAGE_KEY] = safePath;
+              _.$lStorage[RESOURCE_STORAGE_KEY] = res.data || [];
+            }
+          } catch (error) {}
           return list;
         }
         _.$msgError(res.errmsg || "获取资源失败");

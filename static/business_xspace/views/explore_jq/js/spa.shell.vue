@@ -6,6 +6,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     "use strict";
 
     var SORT_STORAGE_KEY = "VIEW_EXPLORE_SORT_CONFIG";
+    var PATH_STACK_STORAGE_KEY = "VIEW_EXPLORE_PATH_STACK";
     var sortOptions = [
       { label: "名称", value: "name", icon: "type" },
       { label: "类型", value: "type", icon: "folder" },
@@ -82,6 +83,22 @@ export default async function ({ PRIVATE_GLOBAL }) {
       stateMap.jqueryMap.$modal.addClass("hidden");
     };
 
+    var loadSavedPathStack = function () {
+      try {
+        var saved = _.$lStorage && _.$lStorage[PATH_STACK_STORAGE_KEY];
+        if (!saved) return [];
+        if (saved === "undefined") return [];
+        if (_.isArray(saved)) return saved;
+        if (typeof saved === "string") {
+          var parsed = JSON.parse(saved);
+          if (_.isArray(parsed)) return parsed;
+        }
+        return [];
+      } catch (error) {
+        return [];
+      }
+    };
+
     var initModule = function ($container) {
       stateMap.$container = $container;
       $container.html(configMap.main_html);
@@ -91,7 +108,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       window.spa.viewer.initModule($container);
 
       stateMap.jqueryMap.$breadcrumbs.on("click", ".breadcrumb-item", function () {
-        var encodedPath = $(this).data("path") || "";
+        var encodedPath = $(this).attr("data-path") || "";
         var path = [];
         try {
           path = JSON.parse(decodeURIComponent(encodedPath));
@@ -99,7 +116,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
           path = [];
         }
         stateMap.currentPath = _.isArray(path) ? path : [];
-        $(document).trigger("spa-navigate", stateMap.currentPath);
+        $(document).trigger("spa-navigate", [stateMap.currentPath]);
       });
 
       $container.find("#spa-shell-search-toggle").on("click", toggleSearch);
@@ -139,15 +156,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
           .map(function (opt) {
             var indicator = getIndicator(opt.value);
             return [
-              '<button class="sort-action w-full text-left p-3 hover:bg-black/5 rounded-[12px] flex items-center justify-between gap-3" data-field="',
+              '<button class="modal__action" data-field="',
               opt.value,
               '">',
-              '<span class="flex items-center gap-3">',
-              spa.util.getSvg(opt.icon, "w-5 h-5"),
+              '<span class="modal__action-label">',
+              spa.util.getSvg(opt.icon, "icon"),
               " ",
               opt.label,
               "</span>",
-              '<span class="text-xs opacity-60 font-mono">',
+              '<span class="modal__action-indicator">',
               indicator,
               "</span>",
               "</button>",
@@ -158,8 +175,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
         showModal(
           [
             '<h3 class="modal__title">排序</h3>',
-            '<div class="text-xs opacity-60 text-center mb-3">点击字段切换升/降序；最多支持两个字段组合排序</div>',
-            '<div class="flex flex-col gap-1">',
+            '<div class="modal__desc">点击字段切换升/降序；最多支持两个字段组合排序</div>',
+            '<div class="modal__list">',
             actionsHtml,
             "</div>",
           ].join("")
@@ -167,19 +184,26 @@ export default async function ({ PRIVATE_GLOBAL }) {
       });
 
       stateMap.jqueryMap.$modal.on("click", ".sort-action", function () {
-        var field = $(this).data("field");
-        $(document).trigger("spa-sort", field);
+        var field = $(this).attr("data-field");
+        $(document).trigger("spa-sort", [field]);
         hideModal();
       });
 
-      stateMap.jqueryMap.$modal.on("click", "#modal-cancel", hideModal);
+      stateMap.jqueryMap.$modal.on("click", function (e) {
+        if (e.target === this) {
+          hideModal();
+        }
+      });
+
+      stateMap.jqueryMap.$modal.on("click", "#modal-cancel, .modal__close-btn", hideModal);
 
       $(document).on("spa-folder-open", function (e, folder) {
         stateMap.currentPath = folder.path || [];
-        $(document).trigger("spa-navigate", stateMap.currentPath);
+        $(document).trigger("spa-navigate", [stateMap.currentPath]);
       });
 
-      $(document).trigger("spa-navigate", []);
+      stateMap.currentPath = loadSavedPathStack();
+      $(document).trigger("spa-navigate", [stateMap.currentPath]);
 
       if (window.lucide) {
         window.lucide.createIcons();

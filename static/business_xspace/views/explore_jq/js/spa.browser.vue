@@ -6,6 +6,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     "use strict";
 
     var SORT_STORAGE_KEY = "VIEW_EXPLORE_SORT_CONFIG";
+    var PATH_STACK_STORAGE_KEY = "VIEW_EXPLORE_PATH_STACK";
     var defaultSortConfig = [
       { field: "type", order: "asc" },
       { field: "name", order: "asc" },
@@ -170,27 +171,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       if (stateMap.searchQuery) {
         html += [
-          '<div class="p-4 flex gap-2 overflow-x-auto no-scrollbar border-b border-black/5">',
-          '<button class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium ',
-          stateMap.filter === "all" ? "bg-primary text-white" : "bg-black/5 text-black",
-          '" data-filter="all">All</button>',
-          '<button class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium ',
-          stateMap.filter === "image" ? "bg-primary text-white" : "bg-black/5 text-black",
-          '" data-filter="image">Images</button>',
-          '<button class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium ',
-          stateMap.filter === "video" ? "bg-primary text-white" : "bg-black/5 text-black",
-          '" data-filter="video">Videos</button>',
-          '<button class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium ',
-          stateMap.filter === "audio" ? "bg-primary text-white" : "bg-black/5 text-black",
-          '" data-filter="audio">Audio</button>',
+          '<div class="file-browser__filter">',
+          '<button class="filter-btn" data-type="all">All</button>',
+          '<button class="filter-btn" data-type="image">Images</button>',
+          '<button class="filter-btn" data-type="video">Videos</button>',
+          '<button class="filter-btn" data-type="audio">Audio</button>',
+          '<button class="filter-btn" data-type="file">Documents</button>',
           "</div>",
         ].join("");
       }
 
-      html += '<div class="file-list">';
+      html += '<div class="file-browser__list">';
 
       if (files.length === 0) {
-        html += '<div class="p-12 text-center opacity-60">No files found</div>';
+        html += '<div class="file-browser__empty">No files found</div>';
       } else {
         files.forEach(function (file) {
           html += [
@@ -233,20 +227,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
       $container.on("click", ".file-item", function (e) {
         if ($(e.target).closest(".file-menu-btn").length) return;
 
-        var id = String($(this).data("id"));
+        var id = String($(this).attr("data-id"));
         var file = spa.model.getFileById(id);
         if (!file) return;
         var files = spa.model.getCurrentFiles();
 
         if (file.type === "folder") {
-          $(document).trigger("spa-folder-open", file);
+          $(document).trigger("spa-folder-open", [file]);
         } else {
-          $(document).trigger("spa-file-open", {
+          $(document).trigger("spa-file-open", [{
             file: file,
             list: files.filter(function (f) {
               return f.type !== "folder" && f.type === file.type;
             }),
-          });
+          }]);
         }
       });
 
@@ -257,14 +251,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       $container.on("click", ".file-menu-btn", function (e) {
         e.stopPropagation();
-        var id = String($(this).data("id"));
-        $(document).trigger("spa-file-menu", id);
+        var id = String($(this).attr("data-id"));
+        $(document).trigger("spa-file-menu", [id]);
       });
 
       $(document).on("spa-navigate", function (e, path) {
         stateMap.currentPath = _.isArray(path) ? path : [];
         stateMap.searchQuery = "";
         stateMap.filter = "all";
+        try {
+          if (_.$lStorage) _.$lStorage[PATH_STACK_STORAGE_KEY] = stateMap.currentPath;
+        } catch (error) {}
         render();
       });
 

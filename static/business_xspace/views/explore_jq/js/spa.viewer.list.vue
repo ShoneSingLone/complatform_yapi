@@ -12,21 +12,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
       var html = "";
       fileList.forEach(function (file) {
-        var isActive = file.id === currentFile.id;
+        var currentClass = file.id === currentFile.id ? "viewer-list__item--active" : "";
+        var content = "";
+
+        if (file.type === "image") {
+          content = [
+            '<img src="',
+            file.previewUrl || file.url,
+            '" class="viewer-list__item-img" referrerPolicy="no-referrer">'
+          ].join("");
+        } else {
+          content = [
+            '<div class="viewer-list__item-icon">',
+            spa.util.getSvg(file.type === "video" ? "video" : "music", "icon-large"),
+            "</div>",
+          ].join("");
+        }
+
         html += [
-          '<div class="viewer__list-item ',
-          isActive ? "active" : "",
+          '<button class="viewer-list__item ',
+          currentClass,
           '" data-id="',
           file.id,
           '">',
-          file.type === "image"
-            ? '<img src="' +
-              file.url +
-              '" class="w-full h-full object-cover rounded-lg" referrerPolicy="no-referrer">'
-            : '<div class="w-full h-full flex items-center justify-center bg-white/10 rounded-lg">' +
-              spa.util.getSvg(file.type === "audio" ? "music" : "video", "w-6 h-6") +
-              "</div>",
-          "</div>",
+          content,
+          "</button>",
         ].join("");
       });
       $listInner.html(html);

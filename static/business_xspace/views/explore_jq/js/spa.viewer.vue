@@ -21,15 +21,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
     var configMap = {
       main_html: [
         '<div id="spa-viewer" class="viewer hidden">',
-        '<header class="viewer__header">',
-        '<div class="flex items-center gap-2">',
+        '<div class="viewer__header">',
+        '<div class="viewer__header-left">',
         '<button id="spa-viewer-close" class="spa-shell__btn spa-shell__btn--viewer">',
         spa.util.getSvg("x"),
         "</button>",
-        '<div class="viewer__index text-xs opacity-50 font-mono ml-2"></div>',
+        '<div class="viewer__title-wrapper">',
+        '<h2 class="viewer__title" id="spa-viewer-title"></h2>',
+        '<div class="viewer__index"></div>',
+        "</>",
         "</div>",
-        '<div class="spa-shell__title truncate max-w-[40%]" id="spa-viewer-title"></div>',
-        '<div class="spa-shell__actions">',
+        '<div class="viewer__header-right">',
         '<button id="spa-viewer-list-toggle" class="spa-shell__btn spa-shell__btn--viewer" title="Show List">',
         spa.util.getSvg("list"),
         "</button>",
@@ -43,7 +45,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
         spa.util.getSvg("download"),
         "</button>",
         "</div>",
-        "</header>",
+        "</div>",
         '<div id="spa-viewer-content" class="viewer__content">',
         '<button id="spa-viewer-prev" class="viewer__nav viewer__nav--prev">',
         spa.util.getSvg("chevron-left"),
@@ -149,9 +151,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
         default:
           $content.append(
             [
-              '<div class="flex flex-col items-center gap-4 text-white/60 fallback">',
-              '<i data-lucide="file-text" class="w-24 h-24"></i>',
-              "<p>Preview not available for this file type</p>",
+              '<div class="viewer__fallback">',
+              '<div class="viewer__fallback-icon">',
+              spa.util.getSvg(file.type === "video" ? "video" : "music", "icon-large"),
+              "</div>",
+              '<div class="viewer__fallback-text">Preview not available</div>',
+              '<button id="spa-viewer-download" class="viewer__btn viewer__btn--primary">',
+              "Download File",
+              "</button>",
               "</div>",
             ].join("")
           );
@@ -258,34 +265,35 @@ export default async function ({ PRIVATE_GLOBAL }) {
         var file = stateMap.currentFile;
         var infoHtml = [
           '<h3 class="modal__title">File Info</h3>',
-          '<div class="flex flex-col gap-3 text-sm">',
-          '<div class="flex justify-between border-b border-black/5 pb-2">',
-          '<span class="opacity-60">Name</span>',
-          '<span class="font-medium">',
+          '<div class="modal__info-list">',
+          '<div class="modal__info-item">',
+          '<span class="modal__info-label">Name</span>',
+          '<span class="modal__info-value">',
           file.name,
           "</span>",
           "</div>",
-          '<div class="flex justify-between border-b border-black/5 pb-2">',
-          '<span class="opacity-60">Type</span>',
-          '<span class="font-medium">',
+          '<div class="modal__info-item">',
+          '<span class="modal__info-label">Type</span>',
+          '<span class="modal__info-value">',
           file.type,
           "</span>",
           "</div>",
-          '<div class="flex justify-between border-b border-black/5 pb-2">',
-          '<span class="opacity-60">Size</span>',
-          '<span class="font-medium">',
+          '<div class="modal__info-item">',
+          '<span class="modal__info-label">Size</span>',
+          '<span class="modal__info-value">',
           file.size,
           "</span>",
           "</div>",
-          '<div class="flex justify-between">',
-          '<span class="opacity-60">Date</span>',
-          '<span class="font-medium">',
+          '<div class="modal__info-item">',
+          '<span class="modal__info-label">Date</span>',
+          '<span class="modal__info-value">',
           file.date,
           "</span>",
           "</div>",
           "</div>",
+          '<button class="modal__close-btn">关闭</button>',
         ].join("");
-        $(document).trigger("spa-show-modal", infoHtml);
+        $(document).trigger("spa-show-modal", [infoHtml]);
       });
 
       $("#spa-viewer-download").on("click", function () {
@@ -322,29 +330,40 @@ export default async function ({ PRIVATE_GLOBAL }) {
         if (!file) return;
 
         var menuHtml = [
-          '<h3 class="modal__title truncate">',
+          '<h3 class="modal__title modal__title--truncate">',
           file.name,
           "</h3>",
-          '<div class="flex flex-col gap-2 text-sm">',
-          '<div class="flex justify-between border-b border-black/5 pb-2"><span class="opacity-60">类型</span><span class="font-medium">',
+          '<div class="modal__info-list">',
+          '<div class="modal__info-item">',
+          '<span class="modal__info-label">类型</span>',
+          '<span class="modal__info-value">',
           file.rawType || file.type,
           "</span></div>",
-          '<div class="flex justify-between border-b border-black/5 pb-2"><span class="opacity-60">大小</span><span class="font-medium">',
+          '<div class="modal__info-item">',
+          '<span class="modal__info-label">大小</span>',
+          '<span class="modal__info-value">',
           file.size || "--",
           "</span></div>",
-          '<div class="flex justify-between border-b border-black/5 pb-2"><span class="opacity-60">mtime</span><span class="font-medium">',
+          '<div class="modal__info-item">',
+          '<span class="modal__info-label">mtime</span>',
+          '<span class="modal__info-value">',
           file.mtime || "--",
           "</span></div>",
-          '<div class="opacity-60 break-all">path（数组）：',
+          '<div class="modal__info-item modal__info-item--block">',
+          '<span class="modal__info-label">path（数组）：</span>',
+          '<div class="modal__info-value modal__info-value--break">',
           JSON.stringify(file.path || []),
-          "</div>",
-          '<div class="opacity-60 break-all">path（连接）：',
+          "</div></div>",
+          '<div class="modal__info-item modal__info-item--block">',
+          '<span class="modal__info-label">path（连接）：</span>',
+          '<div class="modal__info-value modal__info-value--break">',
           (file.path || []).join("/"),
+          "</div></div>",
           "</div>",
-          "</div>",
+          '<button class="modal__close-btn">关闭</button>',
         ].join("");
 
-        $(document).trigger("spa-show-modal", menuHtml);
+        $(document).trigger("spa-show-modal", [menuHtml]);
       });
 
       $(document).on("spa-show-modal", function (e, html) {
