@@ -26,8 +26,7 @@ async function asyncResolvePathFileOrDir({
 }) {
 	async function just_show_list_of_files_and_directories({
 		fileOrDirPath,
-		relativePathArray,
-		listOnly = false
+		relativePathArray
 	}) {
 		const absolutePath = path.resolve.apply(path, [...relativePathArray, fileOrDirPath]); // 将基础路径和目录名解析为绝对路径
 		let stat;
@@ -37,23 +36,6 @@ async function asyncResolvePathFileOrDir({
 
 		if (!stat) {
 			return; // 如果无法获取文件状态，函数直接返回undefined
-		}
-
-		// 如果是listOnly模式，返回目录下的所有子项
-		if (stat.isDirectory() && listOnly) {
-			const items = await fs.promises.readdir(absolutePath);
-			const result = [];
-			for (const item of items) {
-				const itemPath = path.join(absolutePath, item);
-				const itemStat = await fs.promises.stat(itemPath);
-				const itemInfo = {
-					name: item,
-					type: itemStat.isDirectory() ? "directory" : "file",
-					path: [...relativePathArray, fileOrDirPath, item]
-				};
-				result.push(itemInfo);
-			}
-			return result;
 		}
 
 		// 判断目标是目录还是文件，并返回相应的信息
@@ -98,58 +80,41 @@ async function asyncResolvePathFileOrDir({
 		search_key = ""
 	}) {
 		let result = [];
+		const safeSearchKey = String(search_key).toLowerCase();
 
-		// 使用 just_show_list_of_files_and_directories 获取当前项信息
+		// 获取当前项信息
 		const currentItem = await just_show_list_of_files_and_directories({
 			fileOrDirPath,
 			relativePathArray
 		});
 
-		// 确保currentItem存在
 		if (!currentItem) {
 			return result;
 		}
 
-		// 如果当前项名称包含搜索关键词，则添加到结果中
-		if (xU._.lowerCase(currentItem.name).includes(xU._.lowerCase(search_key))) {
+		// 如果当前项名称包含搜索关键词，添加到结果中
+		// 使用 toLowerCase 替代 _.lowerCase，以支持更准确的文件名搜索
+		if (String(currentItem.name).toLowerCase().includes(safeSearchKey)) {
 			result.push(currentItem);
 		}
 
-		// 如果是目录，则递归处理其子项
+		// 如果是目录，递归处理其子项
 		if (currentItem.type === "directory") {
-			// 使用 just_show_list_of_files_and_directories 获取目录下的所有子项
-			const subItems = await just_show_list_of_files_and_directories({
-				fileOrDirPath,
-				relativePathArray,
-				listOnly: true
-			});
+			const absolutePath = path.resolve.apply(path, [...relativePathArray, fileOrDirPath]);
+			let items = [];
+			try {
+				items = await fs.promises.readdir(absolutePath);
+			} catch (error) {
+				return result;
+			}
 
-			// 确保subItems是数组
-			if (Array.isArray(subItems)) {
-				// 遍历所有子项
-				for (const subItem of subItems) {
-					// 直接检查子项名称是否包含搜索关键词
-					if (xU._.lowerCase(subItem.name).includes(xU._.lowerCase(search_key))) {
-						// 获取子项的完整信息
-						const subItemInfo = await just_show_list_of_files_and_directories({
-							fileOrDirPath: subItem.name,
-							relativePathArray: [...relativePathArray, fileOrDirPath]
-						});
-						if (subItemInfo) {
-							result.push(subItemInfo);
-						}
-					}
-
-					// 如果子项是目录，递归处理
-					if (subItem.type === "directory") {
-						const subResults = await search_list_of_files_and_directories({
-							fileOrDirPath: subItem.name,
-							relativePathArray: [...relativePathArray, fileOrDirPath],
-							search_key
-						});
-						result.push(...subResults);
-					}
-				}
+			for (const item of items) {
+				const subResults = await search_list_of_files_and_directories({
+					fileOrDirPath: item,
+					relativePathArray: [...relativePathArray, fileOrDirPath],
+					search_key: safeSearchKey
+				});
+				result.push(...subResults);
 			}
 		}
 
@@ -167,7 +132,8 @@ async function asyncResolvePathFileOrDir({
 			});
 			result = [...result, ...pathResult];
 		}
-		return result;
+		// 搜索结果需要去重，因为递归过程中可能存在重复添加（例如目录匹配时）
+		return xU._.uniqBy(result, item => JSON.stringify(item.path));
 	} else if (search_key) {
 		// 如果有search_key，使用search_list_of_files_and_directories函数
 		return await search_list_of_files_and_directories({
@@ -181,8 +147,8 @@ async function asyncResolvePathFileOrDir({
 			fileOrDirPath,
 			relativePathArray
 		});
-		// 确保始终返回数组
-		return xU._.uniqBy(result ? [result] : [], "path");
+		// 确保始终返回数组，并使用字符串化的 path 进行去重
+		return xU._.uniqBy(result ? [result] : [], item => JSON.stringify(item.path));
 	}
 }
 asyncResolvePathFileOrDir.types = {};

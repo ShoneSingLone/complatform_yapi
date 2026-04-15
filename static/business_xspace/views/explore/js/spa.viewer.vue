@@ -417,12 +417,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
         return false;
       };
 
-      var startSlideshow = function () {
+      var isSlideshow = function () {
+        return stateMap.isSlideshow;
+      };
+
+      var startSlideshow = function (interval) {
+        if (stateMap.slideshowTimer) clearInterval(stateMap.slideshowTimer);
         stateMap.isSlideshow = true;
         $("#spa-viewer-slideshow").addClass("spa-shell__btn--primary");
         stateMap.slideshowTimer = setInterval(function () {
           if (!nextFile()) stopSlideshow();
-        }, 3000);
+        }, interval || 3000);
       };
 
       stopSlideshow = function () {
@@ -433,6 +438,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
           stateMap.slideshowTimer = null;
         }
       };
+
+      viewer.isSlideshow = isSlideshow;
+      viewer.startSlideshow = startSlideshow;
+      viewer.stopSlideshow = stopSlideshow;
 
       $("#spa-viewer-prev").on("click", function () {
         stopSlideshow();

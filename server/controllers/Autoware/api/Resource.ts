@@ -1,4 +1,5 @@
 const { getAudioDetail } = require("./Audio.service");
+const { execSync } = require("child_process");
 const mime = require("mime-types");
 const dayjs = require("dayjs");
 const fs = require("fs");
@@ -205,8 +206,36 @@ module.exports = {
 													path: preview_resource_path
 												});
 											} else if (type.startsWith("video/") || input_path.toLowerCase().endsWith(".flv")) {
-												/* 视频封面生成逻辑 - 如果没有 ffmpeg，目前返回默认图或跳过 */
-												// TODO: 后续集成 ffmpeg 后实现视频抽帧
+												/* 视频封面生成逻辑 - 保持与图片预览一致的尺寸 */
+												try {
+													await xU.executeCommand(
+														"ffmpeg",
+														[
+															"-ss", "00:00:01",
+															"-i", input_path,
+															"-frames:v", "1",
+															"-vf", "scale=80:-1",
+															"-q:v", "2",
+															"-y",
+															preview_resource_path + ".jpg"
+														],
+														{},
+														(msg) => console.log(`[FFmpeg] ${msg}`)
+													);
+
+													/* 文件改名 */
+													await xU.fs.promises.rename(
+														preview_resource_path + ".jpg",
+														preview_resource_path
+													);
+
+													/* 返回生成的预览图 */
+													return returnFileByPath(preview_resource_path, {
+														path: preview_resource_path
+													});
+												} catch (ffmpegError) {
+													console.error("FFmpeg thumbnail generation failed:", ffmpegError);
+												}
 											}
 										} catch (error) {
 											console.error(error);
@@ -310,7 +339,7 @@ module.exports = {
 						path: {
 							description: "文件夹路径",
 							type: "array",
-							items: "strig"
+							items: "string"
 						},
 						search_key: {
 							description: "搜索关键词",

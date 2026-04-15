@@ -22,7 +22,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
         '<h1 class="spa-shell__title">Files</h1>',
         '<div class="spa-shell__actions">',
         '<button id="spa-shell-view-toggle" class="spa-shell__btn">',
-        spa.util.getSvg("layout-grid"),
+        spa.util.getSvg("grid"),
         "</button>",
         '<button id="spa-shell-sort" class="spa-shell__btn">',
         spa.util.getSvg("arrow-up-down"),
@@ -136,7 +136,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       var $viewToggleBtn = $container.find("#spa-shell-view-toggle");
       var updateViewToggleIcon = function() {
         var mode = _.$lStorage && _.$lStorage[VIEW_MODE_STORAGE_KEY] || "list";
-        $viewToggleBtn.html(spa.util.getSvg(mode === "list" ? "layout-grid" : "list"));
+        $viewToggleBtn.html(spa.util.getSvg(mode === "list" ? "grid" : "list"));
       };
       
       updateViewToggleIcon();

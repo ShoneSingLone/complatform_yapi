@@ -28,6 +28,115 @@ export default async function ({ PRIVATE_GLOBAL }) {
       $imgContainer.append($img);
       $content.append($imgContainer);
 
+      var $footer = $("#spa-viewer-footer");
+      $footer.empty().removeClass("hidden");
+
+      var $controls = $(
+        [
+          '<div class="viewer-image__bottom-controls">',
+          '<div class="viewer-image__group">',
+          '<button class="viewer-image__btn player-prev" title="上一个">',
+          spa.util.getSvg("chevron-left"),
+          "</button>",
+          '<button class="viewer-image__btn player-next" title="下一个">',
+          spa.util.getSvg("chevron-right"),
+          "</button>",
+          "</div>",
+          '<div class="viewer-image__divider"></div>',
+          '<div class="viewer-image__group">',
+          '<button class="viewer-image__btn zoom-out" title="缩小">',
+          spa.util.getSvg("minus"),
+          "</button>",
+          '<span class="viewer-image__level zoom-level">100%</span>',
+          '<button class="viewer-image__btn zoom-in" title="放大">',
+          spa.util.getSvg("plus"),
+          "</button>",
+          "</div>",
+          '<div class="viewer-image__divider"></div>',
+          '<div class="viewer-image__group">',
+          '<button class="viewer-image__btn zoom-fit" title="合适">',
+          spa.util.getSvg("minimize"),
+          "</button>",
+          '<button class="viewer-image__btn zoom-1-1" title="1:1">',
+          "1:1",
+          "</button>",
+          "</div>",
+          '<div class="viewer-image__divider"></div>',
+          '<div class="viewer-image__group">',
+          '<button class="viewer-image__btn slideshow-toggle" title="幻灯片">',
+          spa.util.getSvg("play"),
+          "</button>",
+          '<input type="number" class="viewer-image__interval slideshow-interval" value="3" min="1" max="60" title="间隔(秒)">',
+          '<span class="viewer-image__unit">s</span>',
+          "</div>",
+          "</div>",
+        ].join("")
+      );
+
+      $footer.append($controls);
+
+      stateMap.imageScale = 1.0;
+      
+      var updateImageTransform = function () {
+        $img.css("transform", "scale(" + stateMap.imageScale + ")");
+        $controls.find(".zoom-level").text(Math.round(stateMap.imageScale * 100) + "%");
+      };
+
+      $controls.find(".zoom-in").on("click", function () {
+        stateMap.imageScale = Math.min(stateMap.imageScale + 0.2, 5.0);
+        updateImageTransform();
+      });
+      $controls.find(".zoom-out").on("click", function () {
+        stateMap.imageScale = Math.max(stateMap.imageScale - 0.2, 0.1);
+        updateImageTransform();
+      });
+      $controls.find(".zoom-reset, .zoom-fit").on("click", function () {
+        stateMap.imageScale = 1.0;
+        $img.css({
+          "max-width": "90%",
+          "max-height": "90%",
+          "width": "auto",
+          "height": "auto",
+          "object-fit": "contain"
+        });
+        updateImageTransform();
+      });
+      $controls.find(".zoom-1-1").on("click", function () {
+        stateMap.imageScale = 1.0;
+        $img.css({
+          "max-width": "none",
+          "max-height": "none",
+          "width": "auto",
+          "height": "auto"
+        });
+        updateImageTransform();
+      });
+
+      $controls.find(".player-prev").on("click", handlers.onPrev);
+      $controls.find(".player-next").on("click", handlers.onNext);
+
+      // Slideshow logic (bridging to spa.viewer)
+      var $slideshowBtn = $controls.find(".slideshow-toggle");
+      var updateSlideshowUI = function() {
+        var isRunning = spa.viewer.isSlideshow();
+        $slideshowBtn.html(spa.util.getSvg(isRunning ? "pause" : "play"));
+        $slideshowBtn.toggleClass("viewer-image__btn--active", isRunning);
+      };
+
+      $slideshowBtn.on("click", function() {
+        var interval = parseInt($controls.find(".slideshow-interval").val()) * 1000;
+        if (spa.viewer.isSlideshow()) {
+          spa.viewer.stopSlideshow();
+        } else {
+          spa.viewer.startSlideshow(interval);
+        }
+        updateSlideshowUI();
+      });
+
+      // Initial UI state
+      updateSlideshowUI();
+
+      // Swipe support
       var touchStartX = 0;
       var touchEndX = 0;
       $imgContainer.on("touchstart", function (e) {
@@ -43,41 +152,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
             handlers.onPrev();
           }
         }
-      });
-
-      var $zoomControls = $(
-        [
-          '<div class="viewer-image__controls">',
-          '<button class="viewer-image__btn zoom-out">',
-          spa.util.getSvg("minus"),
-          "</button>",
-          '<span class="viewer-image__level">100%</span>',
-          '<button class="viewer-image__btn zoom-in">',
-          spa.util.getSvg("plus"),
-          "</button>",
-          '<div class="viewer-image__divider"></div>',
-          '<button class="viewer-image__btn zoom-reset">',
-          spa.util.getSvg("maximize"),
-          "</button>",
-          "</div>",
-        ].join("")
-      );
-
-      $content.append($zoomControls);
-      stateMap.imageScale = 1.0;
-      updateImageTransform();
-
-      $zoomControls.find(".zoom-in").on("click", function () {
-        stateMap.imageScale = Math.min(stateMap.imageScale + 0.2, 3.0);
-        updateImageTransform();
-      });
-      $zoomControls.find(".zoom-out").on("click", function () {
-        stateMap.imageScale = Math.max(stateMap.imageScale - 0.2, 0.5);
-        updateImageTransform();
-      });
-      $zoomControls.find(".zoom-reset").on("click", function () {
-        stateMap.imageScale = 1.0;
-        updateImageTransform();
       });
     };
 

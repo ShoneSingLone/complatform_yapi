@@ -75,19 +75,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
       saveSortConfig();
     };
 
-    var getIcon = function (type) {
-      switch (type) {
-        case "folder":
-          return spa.util.getSvg("folder");
-        case "image":
-          return spa.util.getSvg("image");
-        case "video":
-          return spa.util.getSvg("video");
-        case "audio":
-          return spa.util.getSvg("music");
-        default:
-          return spa.util.getSvg("file-text");
+    var VIEW_MODE_STORAGE_KEY = "VIEW_EXPLORE_MODE";
+
+    var getIcon = function (type, file) {
+      var fallback = spa.util.getSvg(type || "file", "icon-md");
+      if (file && (type === "image" || type === "video")) {
+        var previewUrl = file.url + "&preview=true";
+        return '<img class="file-item__preview" src="' + previewUrl + '" loading="lazy" onerror="$(this).hide().next().show();">' + 
+               '<div style="display:none">' + fallback + '</div>';
       }
+      return fallback;
     };
 
     var getSortValue = function (file, field) {
@@ -137,7 +134,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
       return 0;
     };
 
-    var render = async function () {
+    var render = async function (targetMode) {
+      var mode = targetMode || (_.$lStorage && _.$lStorage[VIEW_MODE_STORAGE_KEY]) || "list";
+      stateMap.$container.removeClass("file-browser--list file-browser--grid").addClass("file-browser--" + mode);
+
       var token = ++stateMap.renderToken;
       var path = spa.model.getPath(stateMap.currentPath);
       var breadcrumbsHtml = "";
@@ -219,7 +219,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
             file.id,
             '">',
             '<div class="file-item__icon-wrap">',
-            getIcon(file.type),
+            getIcon(file.type, file),
             "</div>",
             '<div class="file-item__info">',
             '<div class="file-item__name">',
@@ -304,6 +304,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
       });
 
       $(document).on("spa-model-update", render);
+
+      $(document).on("spa-view-mode-change", function(e, mode) {
+        stateMap.$container.removeClass("file-browser--list file-browser--grid").addClass("file-browser--" + mode);
+        render(mode);
+      });
 
       $(document).on("spa-add-folder", function (e, data) {
         spa.model.addFolder(data.name, data.parentId);
