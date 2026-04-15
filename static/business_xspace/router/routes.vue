@@ -42,7 +42,6 @@ export default async function () {
 		}),
 		_.$newRoute("/hoppscotch", "@/views/hoppscotch/ViewHoppscotch.vue"),
 		_.$newRoute("/explore", "@/views/explore/ViewExplore.vue"),
-		_.$newRoute("/explore_jq", "@/views/explore_jq/ViewExplore.vue"),
 		_.$newRoute("/login", "@/views/Login/Login.vue"),
 		_.$newRoute("/docflow", "@/views/DocFlow/ViewDocFlow.vue", {
 			redirect: "/docflow/list",
