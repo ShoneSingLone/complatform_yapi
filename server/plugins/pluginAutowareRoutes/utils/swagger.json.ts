@@ -2,7 +2,7 @@ exports.newSwaggerJSON = (customInfo = {}) => {
 	return Object.assign(
 		{
 			tags: [],
-			schemes: ["http"],
+			schemes: ["https", "http"],
 			paths: {},
 			definitions: {}
 		},

@@ -63,7 +63,8 @@ module.exports = async function () {
 	 * commonJS不以后缀为判断依据
 	 * "type":"module"则严格需要后缀
 	 */
-	require.extensions[".ts"] = require.extensions[".js"];
+	// 使用 ts-node/register 替代已弃用的 require.extensions
+	require("ts-node/register");
 	/* ********************************************************************************  */
 	const xspace_configs = require("../../../xspace_configs.js");
 	const { isUsePlugin } = require("../plugins/isUsePlugin");
