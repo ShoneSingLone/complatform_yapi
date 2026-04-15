@@ -792,21 +792,22 @@ body {
 	    <div id="spa"></div>
 </template>
 <script lang="ts">
-export default async function () {
-	await _.$appendScript("@/views/explore_jq/js/spa.js");
-	await _.$appendScript("@/views/explore_jq/js/spa.util.js");
-	await _.$appendScript("@/views/explore_jq/js/spa.model.js");
-	await _.$appendScript("@/views/explore_jq/js/spa.viewer.js");
-	await _.$appendScript("@/views/explore_jq/js/spa.viewer.image.js");
-	await _.$appendScript("@/views/explore_jq/js/spa.viewer.player.js");
-	await _.$appendScript("@/views/explore_jq/js/spa.viewer.list.js");
-	await _.$appendScript("@/views/explore_jq/js/spa.browser.js");
-	await _.$appendScript("@/views/explore_jq/js/spa.shell.js");
+export default async function ({ PRIVATE_GLOBAL }) {
+	await _.$importVue("@/views/explore_jq/js/spa.util.vue");
+	await _.$importVue("@/views/explore_jq/js/spa.model.vue");
+	await _.$importVue("@/views/explore_jq/js/spa.viewer.list.vue");
+	await _.$importVue("@/views/explore_jq/js/spa.viewer.image.vue");
+	await _.$importVue("@/views/explore_jq/js/spa.viewer.player.vue");
+	await _.$importVue("@/views/explore_jq/js/spa.viewer.vue");
+	await _.$importVue("@/views/explore_jq/js/spa.browser.vue");
+	await _.$importVue("@/views/explore_jq/js/spa.shell.vue");
+	await _.$importVue("@/views/explore_jq/js/spa.vue");
 
-	return defineComponent({
+	return {
 		mounted(){
-			window.spa.initModule($('#spa'));
+			var $ = window.$ || window.jQuery;
+			window.spa.initModule($(this.$el));
 		}
-	});
+	};
 }
 </script>
