@@ -289,9 +289,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
       });
 
       $("#spa-viewer-download").on("click", function () {
-        if (stateMap.currentFile && stateMap.currentFile.url) {
+        if (stateMap.currentFile && (stateMap.currentFile.downloadUrl || stateMap.currentFile.url)) {
           var link = document.createElement("a");
-          link.href = stateMap.currentFile.url;
+          link.href = stateMap.currentFile.downloadUrl || stateMap.currentFile.url;
           link.download = stateMap.currentFile.name;
           document.body.appendChild(link);
           link.click();
@@ -325,17 +325,22 @@ export default async function ({ PRIVATE_GLOBAL }) {
           '<h3 class="modal__title truncate">',
           file.name,
           "</h3>",
-          '<div class="flex flex-col gap-1">',
-          '<button class="menu-action w-full text-left p-3 hover:bg-black/5 rounded-[12px] flex items-center gap-3" data-action="rename" data-id="',
-          id,
-          '">',
-          '<i data-lucide="edit-2" class="w-5 h-5"></i> Rename',
-          "</button>",
-          '<button class="menu-action w-full text-left p-3 hover:bg-black/5 rounded-[12px] flex items-center gap-3 text-red-600" data-action="delete" data-id="',
-          id,
-          '">',
-          '<i data-lucide="trash-2" class="w-5 h-5"></i> Delete',
-          "</button>",
+          '<div class="flex flex-col gap-2 text-sm">',
+          '<div class="flex justify-between border-b border-black/5 pb-2"><span class="opacity-60">类型</span><span class="font-medium">',
+          file.rawType || file.type,
+          "</span></div>",
+          '<div class="flex justify-between border-b border-black/5 pb-2"><span class="opacity-60">大小</span><span class="font-medium">',
+          file.size || "--",
+          "</span></div>",
+          '<div class="flex justify-between border-b border-black/5 pb-2"><span class="opacity-60">mtime</span><span class="font-medium">',
+          file.mtime || "--",
+          "</span></div>",
+          '<div class="opacity-60 break-all">path（数组）：',
+          JSON.stringify(file.path || []),
+          "</div>",
+          '<div class="opacity-60 break-all">path（连接）：',
+          (file.path || []).join("/"),
+          "</div>",
           "</div>",
         ].join("");
 
@@ -346,40 +351,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
         spa.shell.showModal(html);
       });
 
-      $(document).on("click", ".menu-action", function () {
-        var action = $(this).data("action");
-        var id = $(this).data("id");
-
-        if (action === "delete") {
-          spa.model.deleteFile(id);
-          spa.shell.hideModal();
-        } else if (action === "rename") {
-          var file = spa.model.getFileById(id);
-          if (!file) return;
-          var newHtml = [
-            '<h3 class="modal__title">Rename</h3>',
-            '<input type="text" id="rename-input" value="',
-            file.name,
-            '" class="modal__input">',
-            '<div class="modal__actions">',
-            '<button id="modal-cancel" class="modal__btn modal__btn--cancel">Cancel</button>',
-            '<button id="rename-confirm" class="modal__btn modal__btn--confirm" data-id="',
-            id,
-            '">Save</button>',
-            "</div>",
-          ].join("");
-          spa.shell.showModal(newHtml);
-        }
-      });
-
-      $(document).on("click", "#rename-confirm", function () {
-        var id = $(this).data("id");
-        var newName = $("#rename-input").val();
-        if (newName) {
-          spa.model.renameFile(id, newName);
-          spa.shell.hideModal();
-        }
-      });
+      $(document).off("click", ".menu-action");
+      $(document).off("click", "#rename-confirm");
     };
 
     viewer.initModule = initModule;
