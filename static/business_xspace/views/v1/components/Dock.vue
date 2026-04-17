@@ -1,7 +1,6 @@
 <template>
   <div
-    class="dock"
-    @mouseleave="closePreview">
+    class="dock">
     <div class="dock__left">
       <button
         class="dock__launcher"
@@ -14,93 +13,95 @@
       <div class="dock__separator" aria-hidden="true"></div>
 
       <div class="dock__items">
-        <div
+        <xPopover
           v-for="app in dockApps"
           :key="app.id"
-          class="dock__item-wrapper"
-          @mouseenter="openPreview(app.id)">
-          <button
-            class="dock__item"
-            :class="itemClass(app)"
-            :title="app.name"
-            @click="handleAppClick(app)">
-            <span class="dock__item-icon">
-              <xIcon :icon="app.icon || 'grid'" size="22" />
-            </span>
-            <span class="dock__tooltip">{{ app.name }}</span>
-            <span
-              v-if="getAppWindows(app.id).length"
-              class="dock__indicator"
-              :class="{ 'dock__indicator--active': isAppActive(app.id) }"></span>
-            <span
-              v-if="getAppWindows(app.id).length > 1"
-              class="dock__window-count">
-              {{ getAppWindows(app.id).length }}
-            </span>
-          </button>
-
-          <transition name="dock-preview">
-            <div
-              v-if="previewAppId === app.id"
-              class="dock__preview"
-              @mouseenter="openPreview(app.id)">
-              <div class="dock__preview-header">
-                <div class="dock__preview-title">
-                  <span>{{ app.name }}</span>
-                  <small>{{ getAppWindows(app.id).length ? getAppWindows(app.id).length + ' 个窗口' : '已固定应用' }}</small>
-                </div>
-                <button
-                  class="dock__pin-toggle"
-                  :title="isPinned(app.id) ? '从 Dock 取消固定' : '固定到 Dock'"
-                  @click.stop="togglePinned(app.id)">
-                  <xIcon icon="star" size="14" />
-                </button>
+          trigger="hover"
+          placement="top"
+          :openDelay="120"
+          :closeDelay="240"
+          :width="320"
+          :visibleArrow="false"
+          popperClass="dock__preview-popper">
+          <div class="dock__preview">
+            <div class="dock__preview-header">
+              <div class="dock__preview-title">
+                <span>{{ app.name }}</span>
+                <small>{{ getAppWindows(app.id).length ? getAppWindows(app.id).length + ' 个窗口' : '已固定应用' }}</small>
               </div>
-
-              <div v-if="getAppWindows(app.id).length" class="dock__preview-list">
-                <div
-                  v-for="win in getAppWindows(app.id)"
-                  :key="win.id"
-                  class="dock__preview-item"
-                  :class="{ 'dock__preview-item--active': system.activeWindowId === win.id && !win.isMinimized }"
-                  role="button"
-                  tabindex="0"
-                  @click.stop="activateWindow(win.id)">
-                  @keydown.enter.stop.prevent="activateWindow(win.id)"
-                  @keydown.space.stop.prevent="activateWindow(win.id)">
-                  <span class="dock__preview-item-meta">
-                    <span class="dock__preview-item-title">{{ win.title }}</span>
-                    <span class="dock__preview-item-subtitle">
-                      {{ win.isMinimized ? '最小化' : (system.activeWindowId === win.id ? '当前窗口' : '已打开') }}
-                    </span>
-                  </span>
-                  <span class="dock__preview-item-actions">
-                    <button
-                      class="dock__preview-action"
-                      title="最小化"
-                      @click.stop="minimizeWindow(win.id)">
-                      <xIcon icon="minus" size="14" />
-                    </button>
-                    <button
-                      class="dock__preview-action dock__preview-action--danger"
-                      title="关闭"
-                      @click.stop="closeWindow(win.id)">
-                      <xIcon icon="close" size="14" />
-                    </button>
-                  </span>
-                </div>
-              </div>
-
               <button
-                v-else
-                class="dock__preview-empty"
-                @click.stop="system.openApp(app.id)">
-                <span class="dock__preview-empty-title">启动 {{ app.name }}</span>
-                <span class="dock__preview-empty-subtitle">当前没有活动窗口</span>
+                class="dock__pin-toggle"
+                :title="isPinned(app.id) ? '从 Dock 取消固定' : '固定到 Dock'"
+                @click.stop="togglePinned(app.id)">
+                <xIcon icon="star" size="14" />
               </button>
             </div>
-          </transition>
-        </div>
+
+            <div v-if="getAppWindows(app.id).length" class="dock__preview-list">
+              <div
+                v-for="win in getAppWindows(app.id)"
+                :key="win.id"
+                class="dock__preview-item"
+                :class="{ 'dock__preview-item--active': system.activeWindowId === win.id && !win.isMinimized }"
+                role="button"
+                tabindex="0"
+                @click.stop="activateWindow(win.id)">
+                @keydown.enter.stop.prevent="activateWindow(win.id)"
+                @keydown.space.stop.prevent="activateWindow(win.id)">
+                <span class="dock__preview-item-meta">
+                  <span class="dock__preview-item-title">{{ win.title }}</span>
+                  <span class="dock__preview-item-subtitle">
+                    {{ win.isMinimized ? '最小化' : (system.activeWindowId === win.id ? '当前窗口' : '已打开') }}
+                  </span>
+                </span>
+                <span class="dock__preview-item-actions">
+                  <button
+                    class="dock__preview-action"
+                    title="最小化"
+                    @click.stop="minimizeWindow(win.id)">
+                    <xIcon icon="minus" size="14" />
+                  </button>
+                  <button
+                    class="dock__preview-action dock__preview-action--danger"
+                    title="关闭"
+                    @click.stop="closeWindow(win.id)">
+                    <xIcon icon="close" size="14" />
+                  </button>
+                </span>
+              </div>
+            </div>
+
+            <button
+              v-else
+              class="dock__preview-empty"
+              @click.stop="system.openApp(app.id)">
+              <span class="dock__preview-empty-title">启动 {{ app.name }}</span>
+              <span class="dock__preview-empty-subtitle">当前没有活动窗口</span>
+            </button>
+          </div>
+
+          <div slot="reference" class="dock__item-wrapper">
+            <button
+              class="dock__item"
+              :class="itemClass(app)"
+              :title="app.name"
+              @click="handleAppClick(app)">
+              <span class="dock__item-icon">
+                <xIcon :icon="app.icon || 'grid'" size="22" />
+              </span>
+              <span class="dock__tooltip">{{ app.name }}</span>
+              <span
+                v-if="getAppWindows(app.id).length"
+                class="dock__indicator"
+                :class="{ 'dock__indicator--active': isAppActive(app.id) }"></span>
+              <span
+                v-if="getAppWindows(app.id).length > 1"
+                class="dock__window-count">
+                {{ getAppWindows(app.id).length }}
+              </span>
+            </button>
+          </div>
+        </xPopover>
       </div>
     </div>
 
@@ -119,11 +120,6 @@
 export default async function ({ PRIVATE_GLOBAL }) {
   return {
     inject: ['system'],
-    data() {
-      return {
-        previewAppId: null
-      };
-    },
     computed: {
       dockApps() {
         const apps = this.system && this.system.apps ? this.system.apps : [];
@@ -175,32 +171,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
         const activeWindow = this.getAppWindows(appId).find(win => win.id === activeWindowId);
         return !!activeWindow && !activeWindow.isMinimized;
       },
-      openPreview(appId) {
-        this.previewAppId = appId;
-      },
-      closePreview() {
-        this.previewAppId = null;
-      },
       handleAppClick(app) {
         const windows = this.getAppWindows(app.id);
 
         if (!windows.length) {
           this.system.openApp(app.id);
-          this.previewAppId = app.id;
           return;
         }
 
-        if (windows.length === 1) {
-          const win = windows[0];
-          if (this.system.activeWindowId === win.id && !win.isMinimized) {
-            this.system.minimizeWindow(win.id);
-          } else {
-            this.activateWindow(win.id);
-          }
-          return;
+        const win = windows[0];
+        if (this.system.activeWindowId === win.id && !win.isMinimized) {
+          this.system.minimizeWindow(win.id);
+        } else {
+          this.activateWindow(win.id);
         }
-
-        this.previewAppId = this.previewAppId === app.id ? null : app.id;
       },
       activateWindow(windowId) {
         const win = (this.system.openWindows || []).find(item => item.id === windowId);
@@ -214,11 +198,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
       },
       closeWindow(windowId) {
         this.system.closeWindow(windowId);
-
-        const stillVisible = this.previewAppId && this.getAppWindows(this.previewAppId).length;
-        if (!stillVisible) {
-          this.previewAppId = null;
-        }
       },
       togglePinned(appId) {
         if (this.isPinned(appId)) {
@@ -433,17 +412,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
   }
 
   &__preview {
-    position: absolute;
-    left: 50%;
-    bottom: 54px;
-    width: 280px;
+    width: 100%;
     padding: 10px;
+  }
+
+  &__preview-popper {
+    padding: 0;
     border-radius: 18px;
     border: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
     background: rgba(255, 255, 255, 0.94);
     box-shadow: var(--v1-shell-shadow, var(--el-box-shadow));
     backdrop-filter: blur(20px);
-    transform: translateX(-50%);
   }
 
   &__preview-header {
@@ -583,16 +562,5 @@ export default async function ({ PRIVATE_GLOBAL }) {
     flex-direction: column;
     align-items: flex-start;
   }
-}
-
-.dock-preview-enter-active,
-.dock-preview-leave-active {
-  transition: opacity 160ms ease, transform 160ms ease;
-}
-
-.dock-preview-enter-from,
-.dock-preview-leave-to {
-  opacity: 0;
-  transform: translateX(-50%) translateY(10px);
 }
 </style>
