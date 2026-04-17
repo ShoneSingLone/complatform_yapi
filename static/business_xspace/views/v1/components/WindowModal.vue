@@ -104,7 +104,7 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
       },
       appColor() {
         const app = this.system.apps.find(a => a.id === this.window.appId);
-        return app ? app.color : '#0061a4';
+        return app ? app.color : 'var(--color-primary)';
       },
       windowSubtitle() {
         if (this.isApiManagerApp) {
@@ -148,27 +148,31 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
 
 <style lang="less">
 .window-modal {
+  --window-surface: var(--color-surface);
+  --window-surface-alt: var(--color-surface-container-lowest);
+  --window-surface-header: color-mix(in srgb, var(--color-surface-container) 92%, white 8%);
+  --window-outline: color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+  --window-outline-strong: color-mix(in srgb, var(--color-outline-variant) 75%, transparent);
+  --window-shadow: 0 20px 48px rgba(15, 23, 42, 0.16), 0 10px 24px rgba(15, 23, 42, 0.1);
+
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: linear-gradient(180deg, #f7f8fb 0%, #eef1f6 100%);
-  border-radius: 28px;
+  background: var(--window-surface);
+  border-radius: 24px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow:
-    0 18px 48px rgba(31, 41, 55, 0.14),
-    0 6px 18px rgba(31, 41, 55, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--window-outline);
+  box-shadow: var(--window-shadow);
 
   &__titlebar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px 0 22px;
-    min-height: 72px;
-    background: rgba(250, 251, 253, 0.92);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
-    backdrop-filter: blur(16px);
+    min-height: 64px;
+    background: var(--window-surface-header);
+    border-bottom: 1px solid var(--window-outline-strong);
+    backdrop-filter: blur(14px);
     cursor: default;
     user-select: none;
   }
@@ -182,16 +186,14 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
       width: 40px;
       height: 40px;
       border-radius: 14px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.98) 100%);
+      background: color-mix(in srgb, var(--color-surface-container-highest) 90%, white 10%);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.125rem;
       font-weight: 700;
       color: var(--window-accent, var(--color-primary));
-      box-shadow:
-        0 8px 18px rgba(148, 163, 184, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
     }
 
     &-copy {
@@ -203,14 +205,14 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
     &-text {
       font-size: 0.98rem;
       font-weight: 600;
-      color: #18212f;
+      color: var(--color-on-surface);
       letter-spacing: 0.01em;
     }
 
     &-meta {
       font-size: 0.76rem;
       font-weight: 500;
-      color: #7b8798;
+      color: var(--color-on-surface-variant);
     }
   }
 
@@ -221,40 +223,35 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
   }
 
   &__control-btn {
-    width: 38px;
-    height: 38px;
-    border: 1px solid rgba(148, 163, 184, 0.16);
-    background: rgba(255, 255, 255, 0.72);
-    color: #4a5565;
-    border-radius: 14px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    background: transparent;
+    color: var(--color-on-surface-variant);
+    border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 8px 18px rgba(148, 163, 184, 0.14);
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 
     &:hover {
-      transform: translateY(-1px);
-      background-color: rgba(255, 255, 255, 0.96);
-      box-shadow: 0 12px 24px rgba(148, 163, 184, 0.18);
+      background: rgba(0, 0, 0, 0.06);
     }
 
     &:active {
-      transform: translateY(0);
-      background-color: rgba(241, 245, 249, 0.96);
-      box-shadow: 0 6px 14px rgba(148, 163, 184, 0.16);
+      background: rgba(0, 0, 0, 0.1);
+      transform: scale(0.96);
     }
 
     &--close {
       &:hover {
-        background-color: rgba(255, 235, 238, 0.96);
-        border-color: rgba(244, 114, 182, 0.18);
-        color: #c2416b;
+        background: color-mix(in srgb, var(--el-color-danger-light-9) 92%, white 8%);
+        color: var(--el-color-danger);
       }
 
       &:active {
-        background-color: rgba(255, 228, 230, 1);
+        background: color-mix(in srgb, var(--el-color-danger-light-8) 92%, white 8%);
       }
     }
   }
@@ -263,18 +260,16 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
     flex: 1;
     overflow: auto;
     padding: 18px;
-    background: linear-gradient(180deg, rgba(245, 247, 251, 0.9) 0%, rgba(238, 241, 246, 0.92) 100%);
+    background: var(--window-surface-alt);
   }
 
   &__stage {
     height: 100%;
-    border-radius: 22px;
+    border-radius: 20px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.58);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.72),
-      0 8px 24px rgba(148, 163, 184, 0.12);
+    background: var(--window-surface);
+    border: 1px solid var(--window-outline);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 
     &--embedded {
       min-height: 100%;
@@ -289,18 +284,16 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
     justify-content: center;
     text-align: center;
     padding: 56px 24px;
-    border-radius: 22px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.76) 0%, rgba(248, 250, 252, 0.95) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.84);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      0 12px 28px rgba(148, 163, 184, 0.12);
+    border-radius: 20px;
+    background: var(--window-surface);
+    border: 1px solid var(--window-outline);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
 
     &-icon {
       width: 92px;
       height: 92px;
       border-radius: 26px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(238, 244, 248, 0.96) 100%);
+      background: color-mix(in srgb, var(--color-surface-container-highest) 90%, white 10%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -308,9 +301,7 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
       font-weight: 700;
       color: var(--window-accent, var(--color-primary));
       margin-bottom: 20px;
-      box-shadow:
-        0 12px 28px rgba(148, 163, 184, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.92);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
     }
 
     &-badge {
@@ -321,9 +312,9 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
       padding: 0 14px;
       margin-bottom: 16px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      color: #708094;
+      background: var(--window-surface-alt);
+      border: 1px solid var(--window-outline);
+      color: var(--color-on-surface-variant);
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.04em;
@@ -335,13 +326,13 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
       font-size: 1.5rem;
       line-height: 1.2;
       font-weight: 700;
-      color: #16202d;
+      color: var(--color-on-surface);
     }
 
     &-text {
       max-width: 540px;
       margin: 0 0 28px;
-      color: #6d7b8d;
+      color: var(--color-on-surface-variant);
       font-size: 1rem;
       line-height: 1.7;
     }
@@ -358,31 +349,30 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
       min-width: 148px;
       min-height: 46px;
       padding: 0 20px;
-      background: linear-gradient(180deg, var(--window-accent, var(--color-primary)) 0%, #3a6fb4 100%);
-      color: #ffffff;
+      background: var(--el-color-primary);
+      color: var(--color-on-primary);
       border-radius: 999px;
       font-weight: 600;
       font-size: 0.875rem;
       border: none;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 14px 30px rgba(58, 111, 180, 0.22);
+      transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
       &:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 18px 32px rgba(58, 111, 180, 0.26);
+        background: var(--el-color-primary-hover);
+        box-shadow: var(--el-box-shadow-light);
       }
 
       &:active {
-        transform: translateY(0);
-        box-shadow: 0 10px 20px rgba(58, 111, 180, 0.22);
+        background: var(--el-color-primary-active);
+        transform: scale(0.98);
       }
 
       &--ghost {
-        background: rgba(255, 255, 255, 0.76);
-        color: #445163;
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        box-shadow: 0 10px 24px rgba(148, 163, 184, 0.12);
+        background: var(--window-surface-alt);
+        color: var(--color-on-surface);
+        border: 1px solid var(--window-outline);
+        box-shadow: none;
       }
     }
   }

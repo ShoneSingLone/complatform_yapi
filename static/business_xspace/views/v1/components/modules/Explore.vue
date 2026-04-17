@@ -247,17 +247,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			getIconColor(type) {
 				switch (type) {
 					case "folder":
-						return "text-blue-500 fill-blue-100";
+						return "explore__icon explore__icon--folder";
 					case "image":
-						return "text-purple-500";
+						return "explore__icon explore__icon--image";
 					case "document":
-						return "text-blue-600";
+						return "explore__icon explore__icon--document";
 					case "code":
-						return "text-yellow-600";
+						return "explore__icon explore__icon--code";
 					case "video":
-						return "text-red-500";
+						return "explore__icon explore__icon--video";
 					default:
-						return "text-gray-500";
+						return "explore__icon explore__icon--default";
 				}
 			}
 		}
@@ -266,7 +266,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 </script>
 
 <template>
-	<div class="flex flex-col h-full bg-surface text-on-surface font-sans overflow-hidden -m-6">
+	<div class="explore v1-module flex flex-col h-full bg-surface text-on-surface font-sans overflow-hidden -m-6">
 		<!-- Top Bar -->
 		<div class="flex flex-col border-b border-outline-variant/50 bg-surface-container-lowest">
 			<!-- Tabs Row -->
@@ -297,21 +297,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			<!-- Toolbar Row -->
 			<div class="flex items-center px-4 py-2 gap-4">
 				<div class="flex items-center gap-1">
-					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
+					<button class="explore__toolbar-btn explore__toolbar-btn--disabled" type="button">
 						<xIcon icon="chevron-left" :size="20" />
 					</button>
-					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
+					<button class="explore__toolbar-btn explore__toolbar-btn--disabled" type="button">
 						<xIcon icon="chevron-right" :size="20" />
 					</button>
 					<button
 						@click="handleNavigateUp"
 						:disabled="!canNavigateUp"
-						class="p-1.5 rounded-md transition-colors"
-						:class="
-							canNavigateUp
-								? 'text-on-surface-variant hover:bg-surface-variant'
-								: 'text-on-surface-variant/30 cursor-not-allowed'
-						"
+						class="explore__toolbar-btn"
+						:class="{ 'explore__toolbar-btn--disabled': !canNavigateUp }"
 						title="Up">
 						<xIcon icon="arrow-up" :size="20" />
 					</button>
@@ -326,18 +322,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						type="text"
 						placeholder="Search files..."
 						v-model="searchQuery"
-						class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant/50 rounded-md leading-5 bg-surface-container-lowest placeholder-on-surface-variant/70 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-shadow" />
+						class="explore__search-input block w-full pl-10 pr-3 py-1.5" />
 				</div>
 
 				<div class="flex items-center gap-2 ml-auto">
 					<button
 						@click="showPreview = !showPreview"
-						class="p-1.5 rounded-md border transition-colors"
-						:class="
-							showPreview
-								? 'bg-primary-container border-primary/20 text-on-primary-container'
-								: 'bg-surface-container-lowest border-outline-variant/50 text-on-surface-variant hover:bg-surface-container'
-						"
+						class="explore__toggle-btn"
+						:class="{ 'explore__toggle-btn--active': showPreview }"
 						title="Toggle Preview Pane">
 						<xIcon icon="panel-right" :size="20" />
 					</button>
@@ -562,7 +554,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				<div class="flex-1 overflow-y-auto" @click="selectedFile = null">
 					<div
 						v-if="filteredAndSortedFiles.length === 0"
-						class="flex flex-col items-center justify-center h-full text-on-surface-variant">
+							class="explore__empty-state flex flex-col items-center justify-center h-full">
 						<xIcon icon="folder" :size="48" class="text-outline-variant mb-2" />
 						<p>This folder is empty</p>
 					</div>
@@ -625,7 +617,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					</div>
 					<div
 						v-else-if="selectedFile.type === 'document' || selectedFile.type === 'code'"
-						class="w-full bg-surface-container-lowest rounded-lg border border-outline-variant/50 p-4 mb-6 shadow-sm overflow-hidden">
+						class="explore__preview-code w-full p-4 mb-6 overflow-hidden">
 						<pre
 							class="text-xs text-on-surface whitespace-pre-wrap font-mono overflow-y-auto max-h-64"
 							>{{ selectedFile.content || "No content available." }}</pre
@@ -633,12 +625,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					</div>
 					<div
 						v-else-if="selectedFile.type === 'folder'"
-						class="w-full aspect-square max-w-[160px] mx-auto bg-primary-container/30 rounded-2xl flex items-center justify-center mb-6 border border-primary/20">
-						<xIcon icon="folder" :size="80" class="text-primary fill-primary/20" />
+						class="explore__preview-folder w-full aspect-square max-w-[160px] mx-auto flex items-center justify-center mb-6">
+						<xIcon icon="folder" :size="80" class="explore__icon explore__icon--folder" />
 					</div>
 					<div
 						v-else
-						class="w-full aspect-square max-w-[160px] mx-auto bg-surface-variant rounded-2xl flex items-center justify-center mb-6 border border-outline-variant/50">
+						class="explore__preview-generic w-full aspect-square max-w-[160px] mx-auto flex items-center justify-center mb-6">
 						<xIcon icon="file" :size="80" class="text-on-surface-variant" />
 					</div>
 
@@ -687,3 +679,94 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		</div>
 	</div>
 </template>
+
+<style lang="less">
+.explore {
+  &__toolbar-btn,
+  &__toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 32px;
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+    border-radius: 10px;
+    background: var(--color-surface-container-lowest);
+    color: var(--color-on-surface-variant);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: var(--color-surface-container);
+    }
+  }
+
+  &__toolbar-btn--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &__toggle-btn--active {
+    background: var(--color-primary-container);
+    border-color: color-mix(in srgb, var(--color-primary) 22%, transparent);
+    color: var(--color-on-primary-container);
+  }
+
+  &__search-input {
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+    border-radius: 10px;
+    background: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+      border-color: var(--el-color-primary);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--el-color-primary) 16%, transparent);
+    }
+  }
+
+  &__empty-state {
+    color: var(--color-on-surface-variant);
+  }
+
+  &__preview-code,
+  &__preview-folder,
+  &__preview-generic {
+    border-radius: 18px;
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+    background: var(--color-surface-container-lowest);
+  }
+
+  &__preview-folder {
+    background: color-mix(in srgb, var(--color-primary-container) 42%, var(--color-surface-container-lowest));
+    border-color: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  }
+
+  &__preview-generic {
+    background: var(--color-surface-variant);
+  }
+
+  &__icon--folder,
+  &__icon--document {
+    color: var(--el-color-primary);
+  }
+
+  &__icon--image {
+    color: var(--el-color-info-dark-2);
+  }
+
+  &__icon--code {
+    color: var(--el-color-warning-dark-2);
+  }
+
+  &__icon--video {
+    color: var(--el-color-danger);
+  }
+
+  &__icon--default {
+    color: var(--color-on-surface-variant);
+  }
+}
+</style>

@@ -376,29 +376,29 @@ export default async function ({ PRIVATE_GLOBAL }) {
       getIconColor(type) {
         switch (type) {
           case "group":
-            return "text-blue-600 fill-blue-100";
+            return "api-manager__icon api-manager__icon--group";
           case "project":
-            return "text-indigo-600 fill-indigo-100";
+            return "api-manager__icon api-manager__icon--project";
           case "api_folder":
-            return "text-emerald-600 fill-emerald-100";
+            return "api-manager__icon api-manager__icon--api-folder";
           case "doc_folder":
-            return "text-amber-600 fill-amber-100";
+            return "api-manager__icon api-manager__icon--doc-folder";
           case "folder":
-            return "text-gray-500 fill-gray-100";
+            return "api-manager__icon api-manager__icon--folder";
           case "api":
-            return "text-emerald-500";
+            return "api-manager__icon api-manager__icon--api";
           case "doc":
-            return "text-amber-600";
+            return "api-manager__icon api-manager__icon--doc";
           case "code":
-            return "text-yellow-600";
+            return "api-manager__icon api-manager__icon--code";
           case "member_list":
-            return "text-blue-500";
+            return "api-manager__icon api-manager__icon--member-list";
           case "setting":
-            return "text-slate-500";
+            return "api-manager__icon api-manager__icon--setting";
           case "cicd":
-            return "text-purple-500";
+            return "api-manager__icon api-manager__icon--cicd";
           default:
-            return "text-gray-500";
+            return "api-manager__icon api-manager__icon--default";
         }
       },
       // Editors Methods
@@ -417,16 +417,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
       getMethodColor(method) {
         switch (method?.toUpperCase()) {
           case "GET":
-            return "bg-blue-100 text-blue-700";
+            return "api-manager__method-badge api-manager__method-badge--get";
           case "POST":
-            return "bg-green-100 text-green-700";
+            return "api-manager__method-badge api-manager__method-badge--post";
           case "PUT":
-            return "bg-amber-100 text-amber-700";
+            return "api-manager__method-badge api-manager__method-badge--put";
           case "DELETE":
-            return "bg-red-100 text-red-700";
+            return "api-manager__method-badge api-manager__method-badge--delete";
           default:
-            return "bg-gray-100 text-gray-700";
+            return "api-manager__method-badge api-manager__method-badge--default";
         }
+      },
+      handlePlainTextInput(event) {
+        this.editingContent = event.target.value;
       },
       // API Execution
       sendRequest() {
@@ -493,27 +496,23 @@ export default async function ({ PRIVATE_GLOBAL }) {
 </script>
 
 <template>
-	<div class="flex flex-col h-full bg-surface text-on-surface font-sans overflow-hidden -m-6">
+	<div class="api-manager v1-module flex flex-col h-full bg-surface text-on-surface font-sans overflow-hidden -m-6">
 		<!-- Top Bar -->
 		<div class="flex flex-col border-b border-outline-variant/50 bg-surface-container-lowest">
 			<!-- Toolbar Row -->
 			<div class="flex items-center px-4 py-2 gap-4">
 				<div class="flex items-center gap-1">
-					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
+					<button class="api-manager__toolbar-btn api-manager__toolbar-btn--disabled" type="button">
 						<xIcon icon="chevron-left" :size="20" />
 					</button>
-					<button class="p-1.5 rounded-md text-on-surface-variant/50 cursor-not-allowed">
+					<button class="api-manager__toolbar-btn api-manager__toolbar-btn--disabled" type="button">
 						<xIcon icon="chevron-right" :size="20" />
 					</button>
 					<button
 						@click="handleNavigateUp"
 						:disabled="!canNavigateUp"
-						class="p-1.5 rounded-md transition-colors"
-						:class="
-							canNavigateUp
-								? 'text-on-surface-variant hover:bg-surface-variant'
-								: 'text-on-surface-variant/30 cursor-not-allowed'
-						"
+						class="api-manager__toolbar-btn"
+						:class="{ 'api-manager__toolbar-btn--disabled': !canNavigateUp }"
 						title="Up">
 						<xIcon icon="arrow-up" :size="20" />
 					</button>
@@ -528,17 +527,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						type="text"
 						placeholder="Search resources..."
 						v-model="searchQuery"
-						class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant/50 rounded-md leading-5 bg-surface-container-lowest placeholder-on-surface-variant/70 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-shadow" />
+						class="api-manager__search-input block w-full pl-10 pr-3 py-1.5" />
 				</div>
 
 				<div class="flex items-center gap-3 ml-auto">
 					<!-- Environment Switcher -->
-					<div
-						class="flex items-center bg-surface-container border border-outline-variant/50 rounded-md px-3 py-1.5 hover:bg-surface-container-high transition-colors">
+					<div class="api-manager__select-shell flex items-center px-3 py-1.5">
 						<xIcon icon="globe" :size="16" class="text-on-surface-variant mr-2" />
 						<select
 							v-model="activeEnvironment"
-							class="bg-transparent text-sm font-medium text-on-surface focus:outline-none cursor-pointer">
+							class="api-manager__select text-sm font-medium">
 							<option v-for="env in environments" :key="env" :value="env">{{
 								env
 							}}</option>
@@ -549,12 +547,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 					<button
 						@click="showPreview = !showPreview"
-						class="p-1.5 rounded-md border transition-colors"
-						:class="
-							showPreview
-								? 'bg-primary-container border-primary/20 text-on-primary-container'
-								: 'bg-surface-container-lowest border-outline-variant/50 text-on-surface-variant hover:bg-surface-container'
-						"
+						class="api-manager__toggle-btn"
+						:class="{ 'api-manager__toggle-btn--active': showPreview }"
 						title="Toggle Preview Pane">
 						<xIcon icon="panel-right" :size="20" />
 					</button>
@@ -907,7 +901,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					<div class="flex-1 overflow-y-auto" @click="selectedFile = null">
 						<div
 							v-if="filteredAndSortedFiles.length === 0"
-							class="flex flex-col items-center justify-center h-full text-on-surface-variant">
+							class="api-manager__empty-state flex flex-col items-center justify-center h-full">
 							<xIcon icon="folder" :size="48" class="text-outline-variant mb-2" />
 							<p>This folder is empty</p>
 						</div>
@@ -947,7 +941,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				<template v-else>
 					<div class="flex-1 overflow-y-auto p-6 bg-surface">
 						<div
-							class="max-w-4xl mx-auto bg-surface-container-lowest rounded-xl border border-outline-variant/50 shadow-sm overflow-hidden">
+							class="api-manager__editor-card max-w-4xl mx-auto overflow-hidden">
 							<!-- Editor Header -->
 							<div
 								class="px-6 py-4 border-b border-outline-variant/50 flex items-center justify-between bg-surface-container/30">
@@ -969,19 +963,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
 									<template v-if="editingContent">
 										<button
 											@click="cancelEditing"
-											class="px-4 py-1.5 text-sm font-medium text-on-surface-variant hover:bg-surface-variant rounded-md transition-colors"
+											class="api-manager__action-btn api-manager__action-btn--ghost"
 											>Cancel</button
 										>
 										<button
 											@click="saveEditing"
-											class="px-4 py-1.5 text-sm font-medium bg-primary text-on-primary hover:bg-primary/90 rounded-md transition-colors flex items-center gap-2">
+											class="api-manager__action-btn api-manager__action-btn--primary flex items-center gap-2">
 											<xIcon icon="save" :size="16" /> Save
 										</button>
 									</template>
 									<template v-else>
 										<button
 											@click="startEditing"
-											class="px-4 py-1.5 text-sm font-medium border border-outline-variant/50 text-on-surface hover:bg-surface-variant rounded-md transition-colors flex items-center gap-2">
+											class="api-manager__action-btn api-manager__action-btn--secondary flex items-center gap-2">
 											<xIcon icon="edit" :size="16" /> Edit
 										</button>
 									</template>
@@ -1028,14 +1022,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 															<input
 																v-if="editingContent"
 																v-model="member.name"
-																class="bg-transparent border-b border-outline-variant/50 focus:border-primary outline-none w-full" />
+																class="api-manager__field-input api-manager__field-input--inline" />
 															<span v-else>{{ member.name }}</span>
 														</td>
 														<td class="px-4 py-3">
 															<select
 																v-if="editingContent"
 																v-model="member.role"
-																class="bg-transparent border-b border-outline-variant/50 focus:border-primary outline-none w-full">
+																class="api-manager__field-input api-manager__field-input--inline">
 																<option>Admin</option>
 																<option>Developer</option>
 																<option>Viewer</option>
@@ -1043,7 +1037,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 															</select>
 															<span
 																v-else
-																class="px-2 py-1 bg-surface-variant rounded text-xs"
+																class="api-manager__inline-badge"
 																>{{ member.role }}</span
 															>
 														</td>
@@ -1052,7 +1046,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 															<input
 																v-if="editingContent"
 																v-model="member.email"
-																class="bg-transparent border-b border-outline-variant/50 focus:border-primary outline-none w-full" />
+																class="api-manager__field-input api-manager__field-input--inline" />
 															<span v-else>{{
 																member.email || "--"
 															}}</span>
@@ -1061,7 +1055,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 															v-if="editingContent"
 															class="px-4 py-3 text-right">
 															<button
-																class="text-error hover:bg-error/10 p-1 rounded"
+																class="api-manager__icon-action"
 																><xIcon icon="trash-2" :size="16" /></button>
 														</td>
 													</tr>
@@ -1091,10 +1085,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												<input
 													v-if="editingContent"
 													v-model="editingContent[key]"
-													class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/50 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" />
+													class="api-manager__field-input w-full px-3 py-2" />
 												<div
 													v-else
-													class="px-3 py-2 bg-surface-container rounded-md text-sm text-on-surface"
+													class="api-manager__field-value px-3 py-2 text-sm"
 													>{{ val }}</div
 												>
 											</div>
@@ -1109,7 +1103,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 											<select
 												v-if="editingContent"
 												v-model="editingContent.method"
-												class="px-3 py-2 font-bold rounded-md bg-surface-container border border-outline-variant/50">
+												class="api-manager__field-input px-3 py-2 font-bold">
 												<option>GET</option
 												><option>POST</option
 												><option>PUT</option
@@ -1125,7 +1119,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 											<input
 												v-if="editingContent"
 												v-model="editingContent.endpoint"
-												class="flex-1 px-3 py-2 font-mono bg-surface-container-lowest border border-outline-variant/50 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" />
+												class="api-manager__field-input api-manager__field-input--code flex-1 px-3 py-2 font-mono" />
 											<span
 												v-else
 												class="text-lg font-mono text-on-surface flex-1"
@@ -1137,7 +1131,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												v-if="!editingContent"
 												@click="sendRequest"
 												:disabled="isRequesting"
-												class="flex items-center gap-2 px-6 py-2 bg-primary text-on-primary rounded-md text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-70 shadow-sm">
+												class="api-manager__action-btn api-manager__action-btn--primary flex items-center gap-2">
 												<xIcon 
 													type="loader-2"
 													v-if="isRequesting"
@@ -1157,7 +1151,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												v-if="editingContent"
 												v-model="editingContent.description"
 												rows="2"
-												class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/50 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"></textarea>
+												class="api-manager__field-input w-full px-3 py-2"></textarea>
 											<p v-else class="text-on-surface text-sm">{{
 												activeNode.content?.description
 											}}</p>
@@ -1172,7 +1166,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												>Parameters</label
 											>
 											<div
-												class="bg-surface-container rounded-md p-4 font-mono text-sm">
+												class="api-manager__code-block p-4 font-mono text-sm">
 												<pre>{{
 													JSON.stringify(
 														editingContent?.params ||
@@ -1191,7 +1185,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												>Request Body</label
 											>
 											<div
-												class="bg-surface-container rounded-md p-4 font-mono text-sm">
+												class="api-manager__code-block p-4 font-mono text-sm">
 												<pre>{{
 													editingContent?.body || activeNode.content?.body
 												}}</pre>
@@ -1208,7 +1202,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 													Response
 													<span
 														v-if="responseStatus"
-														class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded">
+														class="api-manager__status-badge">
 														{{ responseStatus }} OK
 													</span>
 												</h3>
@@ -1221,7 +1215,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 											<div
 												v-if="isRequesting"
-												class="flex flex-col items-center justify-center p-12 text-on-surface-variant bg-surface-container-lowest border border-outline-variant/50 rounded-md">
+												class="api-manager__state-panel flex flex-col items-center justify-center p-12">
 												<xIcon 
 													type="loader-2"
 													class="w-8 h-8 animate-spin mb-3 text-primary" />
@@ -1232,14 +1226,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 											</div>
 											<div
 												v-else-if="responseData"
-												class="bg-surface-container-lowest border border-outline-variant/50 rounded-md p-4 font-mono text-sm overflow-x-auto shadow-inner">
+												class="api-manager__state-panel api-manager__state-panel--code p-4 font-mono text-sm overflow-x-auto">
 												<pre class="text-on-surface">{{
 													responseData
 												}}</pre>
 											</div>
 											<div
 												v-else
-												class="flex items-center justify-center p-12 text-on-surface-variant border border-dashed border-outline-variant/50 rounded-md bg-surface-container-lowest/50">
+												class="api-manager__state-panel api-manager__state-panel--dashed flex items-center justify-center p-12">
 												Click "Send" to execute the request
 											</div>
 										</div>
@@ -1255,10 +1249,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 										<textarea
 											v-if="editingContent"
 											v-model="editingContent"
-											class="w-full h-full min-h-[300px] p-4 font-mono text-sm bg-surface-container-lowest border border-outline-variant/50 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 resize-y"></textarea>
+											class="api-manager__field-input api-manager__field-input--code w-full h-full min-h-[300px] p-4 font-mono text-sm resize-y"></textarea>
 										<div v-else class="prose prose-sm max-w-none">
 											<pre
-												class="whitespace-pre-wrap font-mono text-sm bg-surface-container-lowest p-4 rounded-md border border-outline-variant/50"
+												class="api-manager__code-block whitespace-pre-wrap font-mono text-sm p-4"
 												>{{ activeNode.content }}</pre
 											>
 										</div>
@@ -1274,11 +1268,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												? editingContent
 												: JSON.stringify(editingContent, null, 2)
 										"
-										@input="e => editingContent = (e.target as HTMLTextAreaElement).value"
-										class="w-full h-64 p-4 font-mono text-sm bg-surface-container-lowest border border-outline-variant/50 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"></textarea>
+										@input="handlePlainTextInput"
+										class="api-manager__field-input api-manager__field-input--code w-full h-64 p-4 font-mono text-sm"></textarea>
 									<pre
 										v-else
-										class="bg-surface-container p-4 rounded-md font-mono text-sm overflow-x-auto"
+										class="api-manager__code-block p-4 font-mono text-sm overflow-x-auto"
 										>{{
 											typeof activeNode.content === "string"
 												? activeNode.content
@@ -1350,7 +1344,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								Quick Preview
 							</h4>
 							<div
-								class="bg-surface-container-lowest p-3 rounded-md border border-outline-variant/50 max-h-40 overflow-y-auto">
+								class="api-manager__code-block p-3 max-h-40 overflow-y-auto">
 								<pre
 									class="text-xs font-mono text-on-surface whitespace-pre-wrap"
 									>{{
@@ -1365,7 +1359,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						<button
 							v-if="!isFolderType(selectedFile.type)"
 							@click="handleOpenNode(selectedFile)"
-							class="w-full mt-4 py-2 bg-primary text-on-primary rounded-md text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm">
+							class="api-manager__action-btn api-manager__action-btn--primary api-manager__preview-action w-full mt-4">
 							Open Editor
 						</button>
 					</div>
@@ -1374,3 +1368,264 @@ export default async function ({ PRIVATE_GLOBAL }) {
 		</div>
 	</div>
 </template>
+
+<style lang="less">
+.api-manager {
+  &__toolbar-btn,
+  &__toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 32px;
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+    border-radius: 10px;
+    background: var(--color-surface-container-lowest);
+    color: var(--color-on-surface-variant);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: var(--color-surface-container);
+    }
+  }
+
+  &__toolbar-btn--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &__toggle-btn--active {
+    background: var(--color-primary-container);
+    border-color: color-mix(in srgb, var(--color-primary) 22%, transparent);
+    color: var(--color-on-primary-container);
+  }
+
+  &__search-input,
+  &__field-input,
+  &__select-shell {
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+    border-radius: 10px;
+    background: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+
+  &__search-input,
+  &__field-input {
+    outline: none;
+
+    &:focus {
+      border-color: var(--el-color-primary);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--el-color-primary) 16%, transparent);
+    }
+  }
+
+  &__field-input--inline {
+    padding: 0 0 4px;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  &__field-input--code {
+    line-height: 1.6;
+  }
+
+  &__select-shell {
+    background: var(--color-surface-container);
+  }
+
+  &__select {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--color-on-surface);
+    cursor: pointer;
+    outline: none;
+  }
+
+  &__editor-card {
+    background: var(--color-surface-container-lowest);
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+    border-radius: 16px;
+    box-shadow: var(--el-box-shadow);
+  }
+
+  &__action-btn {
+    min-height: 36px;
+    padding: 0 16px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  &__action-btn--primary {
+    background: var(--el-color-primary);
+    color: var(--color-on-primary);
+    box-shadow: var(--el-box-shadow-light);
+
+    &:hover {
+      background: var(--el-color-primary-hover);
+    }
+  }
+
+  &__action-btn--secondary {
+    background: var(--color-surface-container-lowest);
+    border-color: color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+    color: var(--color-on-surface);
+
+    &:hover {
+      background: var(--color-surface-variant);
+    }
+  }
+
+  &__action-btn--ghost {
+    background: transparent;
+    color: var(--color-on-surface-variant);
+
+    &:hover {
+      background: var(--color-surface-variant);
+      color: var(--color-on-surface);
+    }
+  }
+
+  &__preview-action {
+    justify-content: center;
+  }
+
+  &__inline-badge,
+  &__status-badge,
+  &__method-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  &__inline-badge {
+    padding: 4px 10px;
+    background: var(--color-surface-variant);
+    color: var(--color-on-surface-variant);
+    font-size: 12px;
+  }
+
+  &__status-badge,
+  &__method-badge {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+
+  &__method-badge--get,
+  &__icon--group,
+  &__icon--member-list {
+    color: var(--el-color-primary);
+  }
+
+  &__method-badge--get {
+    background: var(--el-color-primary-light-9);
+  }
+
+  &__method-badge--post,
+  &__icon--api-folder,
+  &__icon--api {
+    color: var(--el-color-success-dark-2);
+  }
+
+  &__method-badge--post {
+    background: var(--el-color-success-light-9);
+  }
+
+  &__method-badge--put,
+  &__icon--doc-folder,
+  &__icon--doc {
+    color: var(--el-color-warning-dark-2);
+  }
+
+  &__method-badge--put {
+    background: var(--el-color-warning-light-9);
+  }
+
+  &__method-badge--delete {
+    background: var(--el-color-danger-light-9);
+    color: var(--el-color-danger);
+  }
+
+  &__method-badge--default,
+  &__icon--folder,
+  &__icon--setting,
+  &__icon--default {
+    background: var(--el-fill-color-light);
+    color: var(--color-on-surface-variant);
+  }
+
+  &__icon--project {
+    color: var(--el-color-primary-dark-2);
+  }
+
+  &__icon--code {
+    color: var(--el-color-warning-dark-2);
+  }
+
+  &__icon--cicd {
+    color: var(--el-color-info-dark-2);
+  }
+
+  &__status-badge {
+    background: var(--el-color-success-light-9);
+    color: var(--el-color-success-dark-2);
+  }
+
+  &__state-panel,
+  &__code-block,
+  &__field-value {
+    background: var(--color-surface-container-lowest);
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+    border-radius: 12px;
+  }
+
+  &__state-panel {
+    color: var(--color-on-surface-variant);
+  }
+
+  &__state-panel--code {
+    box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.08);
+  }
+
+  &__state-panel--dashed {
+    border-style: dashed;
+  }
+
+  &__empty-state {
+    color: var(--color-on-surface-variant);
+  }
+
+  &__icon-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--el-color-danger);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--el-color-danger-light-9);
+    }
+  }
+}
+</style>
