@@ -326,7 +326,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     padding:
       32px
       24px
-      calc(156px + env(safe-area-inset-bottom, 0px))
+      calc(112px + env(safe-area-inset-bottom, 0px))
       calc(28px + env(safe-area-inset-left, 0px));
     display: grid;
     grid-template-columns: repeat(auto-fill, 96px);
@@ -338,17 +338,23 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
   &__dock-wrapper {
     position: absolute;
-    left: 50%;
-    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 50;
-    width: fit-content;
-    max-width: calc(100% - 32px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 64px;
     padding:
       0
       calc(12px + env(safe-area-inset-right, 0px))
-      0
+      env(safe-area-inset-bottom, 0px)
       calc(12px + env(safe-area-inset-left, 0px));
-    transform: translateX(-50%);
+    background:
+      linear-gradient(180deg, rgba(6, 10, 18, 0) 0%, rgba(10, 14, 24, 0.76) 18%, rgba(10, 14, 24, 0.92) 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px);
     pointer-events: auto;
   }
 }

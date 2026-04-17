@@ -1,104 +1,115 @@
 <template>
-  <div
-    class="dock"
-    :class="{ 'dock--dragging': isDraggingOver }"
-    @dragover="onDragOver"
-    @dragleave="onDragLeave"
-    @drop="onDrop">
-    <div class="dock__item dock__launcher group">
-      <div class="dock__tooltip">
-        Menu
+  <div class="dock-shell">
+    <div
+      class="dock"
+      :class="{ 'dock--dragging': isDraggingOver }"
+      @dragover="onDragOver"
+      @dragleave="onDragLeave"
+      @drop="onDrop">
+      <div class="dock__item dock__launcher group" @click="handleLauncherClick">
+        <div class="dock__tooltip">
+          Start
+        </div>
+        <div class="dock__item-content dock__item-content--system">
+          <xIcon icon="_layout_grid" size="18" />
+        </div>
       </div>
-      <div class="dock__item-content">
-        <xIcon icon="_layout_grid" size="20" />
+
+      <div class="dock__item dock__search group" @click="handleSearchClick">
+        <div class="dock__tooltip">
+          Search
+        </div>
+        <div class="dock__item-content dock__item-content--system">
+          <xIcon icon="search" size="18" />
+        </div>
       </div>
-    </div>
 
-    <div class="dock__separator"></div>
+      <div class="dock__separator"></div>
 
-    <TransitionGroup name="hero">
-      <div
-        v-for="app in activeApps"
-        :key="app.id"
-        class="dock__item group"
-        :class="{
-          'dock__item--active': app.isActive,
-          'dock__item--pinned': app.isPinned,
-          'dock__item--animate': system.lastOpenedAppId === app.id
-        }"
-        draggable="true"
-        @dragstart="onDragStart($event, app.id)"
-        @mouseenter="hoveredAppId = app.id"
-        @mouseleave="hoveredAppId = null"
-        @click="handleAppClick(app.id)">
-        <Transition name="hero">
-          <div
-            v-if="hoveredAppId === app.id && app.isOpen"
-            class="dock__preview">
-            <div class="dock__preview-header">
-              <span class="dock__preview-title">{{ app.name }}</span>
-              <button
-                @click.stop="openNewWindow(app.id)"
-                class="dock__preview-add-btn"
-                title="Open New Window">
-                <xIcon icon="plus" size="14" />
-              </button>
-            </div>
+      <TransitionGroup name="hero">
+        <div
+          v-for="app in activeApps"
+          :key="app.id"
+          class="dock__item group"
+          :class="{
+            'dock__item--active': app.isActive,
+            'dock__item--pinned': app.isPinned,
+            'dock__item--animate': system.lastOpenedAppId === app.id
+          }"
+          draggable="true"
+          @dragstart="onDragStart($event, app.id)"
+          @mouseenter="hoveredAppId = app.id"
+          @mouseleave="hoveredAppId = null"
+          @click="handleAppClick(app.id)">
+          <Transition name="hero">
+            <div
+              v-if="hoveredAppId === app.id && app.isOpen"
+              class="dock__preview">
+              <div class="dock__preview-header">
+                <span class="dock__preview-title">{{ app.name }}</span>
+                <button
+                  @click.stop="openNewWindow(app.id)"
+                  class="dock__preview-add-btn"
+                  title="Open New Window">
+                  <xIcon icon="plus" size="14" />
+                </button>
+              </div>
 
-            <div class="dock__preview-list">
-              <div
-                v-for="win in app.windows"
-                :key="win.id"
-                class="dock__preview-item"
-                @click.stop="focusSpecificWindow(win.id)">
+              <div class="dock__preview-list">
                 <div
-                  class="dock__preview-item-icon"
-                  :style="{ color: app.color }">
-                  <xIcon :icon="app.icon" size="16"/>
-                </div>
-                <div class="dock__preview-item-content">
-                  <span class="dock__preview-item-title">{{ win.title }}</span>
-                  <span class="dock__preview-item-status">{{ win.isMinimized ? "Minimized" : "Active" }}</span>
+                  v-for="win in app.windows"
+                  :key="win.id"
+                  class="dock__preview-item"
+                  @click.stop="focusSpecificWindow(win.id)">
+                  <div
+                    class="dock__preview-item-icon"
+                    :style="{ color: app.color }">
+                    <xIcon :icon="app.icon" size="16"/>
+                  </div>
+                  <div class="dock__preview-item-content">
+                    <span class="dock__preview-item-title">{{ win.title }}</span>
+                    <span class="dock__preview-item-status">{{ win.isMinimized ? "Minimized" : "Active" }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Transition>
+          </Transition>
 
-        <div
-          v-if="!app.isOpen"
-          class="dock__tooltip">
-          {{ app.name }}
-        </div>
-
-        <div
-          class="dock__item-content"
-          :class="{
-            'dock__item-content--active': app.isActive
-          }">
-          <xIcon :icon="app.icon" :size="20" />
-        </div>
-
-        <div class="dock__indicator">
           <div
-            v-if="app.isOpen"
-            class="dock__indicator-dot"
+            v-if="!app.isOpen"
+            class="dock__tooltip">
+            {{ app.name }}
+          </div>
+
+          <div
+            class="dock__item-content"
             :class="{
-              'dock__indicator-dot--active': app.isActive
+              'dock__item-content--active': app.isActive
             }">
+            <xIcon :icon="app.icon" :size="18" />
+          </div>
+
+          <div class="dock__indicator">
+            <div
+              v-if="app.isOpen"
+              class="dock__indicator-dot"
+              :class="{
+                'dock__indicator-dot--active': app.isActive
+              }">
+            </div>
           </div>
         </div>
-      </div>
-    </TransitionGroup>
+      </TransitionGroup>
 
-    <div class="dock__separator"></div>
+      <div class="dock__separator"></div>
 
-    <div class="dock__item dock__settings group">
-      <div class="dock__tooltip">
-        Settings
-      </div>
-      <div class="dock__item-content">
-        <xIcon icon="_settings" size="20" />
+      <div class="dock__item dock__settings group" @click="handleSettingsClick">
+        <div class="dock__tooltip">
+          Settings
+        </div>
+        <div class="dock__item-content dock__item-content--system">
+          <xIcon icon="_settings" size="18" />
+        </div>
       </div>
     </div>
   </div>
@@ -134,6 +145,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
       }
     },
     methods: {
+      handleLauncherClick() {
+        this.system.openApp("api");
+      },
+      handleSearchClick() {
+        this.system.openApp("explore");
+      },
+      handleSettingsClick() {
+        this.system.openApp("setting");
+      },
       handleAppClick(appId) {
         this.system.openApp(appId);
       },
@@ -196,48 +216,50 @@ export default async function ({ PRIVATE_GLOBAL }) {
 </script>
 
 <style lang="less">
+.dock-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 64px;
+}
+
 .dock {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.58) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 8px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   position: relative;
-  backdrop-filter: blur(18px) saturate(140%);
-  box-shadow:
-    0 18px 50px rgba(2, 6, 23, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: none;
+  box-shadow: none;
   transition:
     transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
     border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
 
   &--dragging {
-    transform: translateY(-2px);
-    border-color: rgba(96, 165, 250, 0.36);
-    box-shadow:
-      0 22px 54px rgba(2, 6, 23, 0.42),
-      0 0 0 2px rgba(96, 165, 250, 0.18),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
   }
 }
 
 .dock__item {
-  width: 46px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
 
   &--active {
     .dock__item-content {
       color: #ffffff;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.16),
-        0 16px 24px rgba(37, 99, 235, 0.22);
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        0 8px 18px rgba(15, 23, 42, 0.26);
     }
   }
 
@@ -254,15 +276,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 .dock__item-content {
   width: 100%;
-  height: 46px;
-  border-radius: 16px;
+  height: 100%;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(226, 232, 240, 0.88);
+  color: rgba(241, 245, 249, 0.92);
   border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.04);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   transition:
     transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
     background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -271,28 +293,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
     border-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
 
   &:not(&--active):hover {
-    transform: translateY(-3px);
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.08);
   }
 
   &:not(&--active):active {
-    transform: translateY(-1px) scale(0.98);
+    transform: scale(0.98);
     background: rgba(255, 255, 255, 0.12);
   }
 
   &--active {
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.44) 0%, rgba(37, 99, 235, 0.24) 100%);
-    border-color: rgba(147, 197, 253, 0.32);
-    color: #eff6ff;
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+  }
+
+  &--system {
+    background: rgba(255, 255, 255, 0.05);
   }
 }
 
 .dock__separator {
   width: 1px;
-  height: 28px;
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0) 0%, rgba(148, 163, 184, 0.45) 50%, rgba(148, 163, 184, 0) 100%);
-  margin: 0 2px;
+  height: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0) 100%);
+  margin: 0 4px;
   align-self: center;
 }
 
@@ -324,7 +349,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 .dock__preview {
   position: absolute;
-  bottom: 72px;
+  bottom: 54px;
   left: 50%;
   transform: translateX(-50%);
   padding: 10px;
@@ -460,7 +485,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 .dock__indicator {
   position: absolute;
-  bottom: 0;
+  bottom: -6px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -471,12 +496,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
   height: 3px;
   border-radius: 999px;
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: rgba(226, 232, 240, 0.44);
+  background-color: rgba(255, 255, 255, 0.34);
 
   &--active {
-    width: 14px;
-    background-color: #93c5fd;
-    box-shadow: 0 0 12px rgba(147, 197, 253, 0.7);
+    width: 18px;
+    background-color: #60a5fa;
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.62);
   }
 
   &:not(&--active) {
