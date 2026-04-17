@@ -241,16 +241,30 @@ export default async function ({ PRIVATE_GLOBAL }) {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin: 0 auto 16px;
-  padding: 8px 10px;
-  min-height: 62px;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+  padding: 8px 14px;
+  min-height: 64px;
+  width: auto;
   border: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: var(--v1-shell-shadow, var(--el-box-shadow));
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 
+    0 8px 32px rgba(49, 130, 206, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(20px);
   pointer-events: auto;
+  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 
+      0 12px 40px rgba(49, 130, 206, 0.16),
+      0 6px 16px rgba(0, 0, 0, 0.06);
+  }
 
   &__items {
     display: inline-flex;

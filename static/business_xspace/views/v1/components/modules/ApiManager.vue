@@ -496,12 +496,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 </script>
 
 <template>
-	<div class="api-manager v1-module flex flex-col h-full bg-surface text-on-surface font-sans overflow-hidden -m-6">
+	<div class="api-manager">
 		<!-- Top Bar -->
-		<div class="flex flex-col border-b border-outline-variant/50 bg-surface-container-lowest">
+		<div class="api-manager__topbar">
 			<!-- Toolbar Row -->
-			<div class="flex items-center px-4 py-2 gap-4">
-				<div class="flex items-center gap-1">
+			<div class="api-manager__toolbar">
+				<div class="api-manager__nav">
 					<button class="api-manager__toolbar-btn api-manager__toolbar-btn--disabled" type="button">
 						<xIcon icon="left" :size="20" />
 					</button>
@@ -518,32 +518,31 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					</button>
 				</div>
 
-				<div class="flex-1 max-w-2xl relative">
-					<div
-						class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-						<xIcon icon="search" :size="16" class="text-on-surface-variant" />
+				<div class="api-manager__search">
+					<div class="api-manager__search-icon" aria-hidden="true">
+						<xIcon icon="search" :size="16" />
 					</div>
 					<input
 						type="text"
 						placeholder="Search resources..."
 						v-model="searchQuery"
-						class="api-manager__search-input block w-full pl-10 pr-3 py-1.5" />
+						class="api-manager__search-input" />
 				</div>
 
-				<div class="flex items-center gap-3 ml-auto">
+				<div class="api-manager__toolbar-right">
 					<!-- Environment Switcher -->
-					<div class="api-manager__select-shell flex items-center px-3 py-1.5">
-						<xIcon icon="tools" :size="16" class="text-on-surface-variant mr-2" />
+					<div class="api-manager__select-shell api-manager__select-shell--toolbar">
+						<xIcon icon="tools" :size="16" class="api-manager__select-icon" />
 						<select
 							v-model="activeEnvironment"
-							class="api-manager__select text-sm font-medium">
+							class="api-manager__select">
 							<option v-for="env in environments" :key="env" :value="env">{{
 								env
 							}}</option>
 						</select>
 					</div>
 
-					<div class="w-px h-6 bg-outline-variant/50"></div>
+					<div class="api-manager__divider" aria-hidden="true"></div>
 
 					<button
 						@click="showPreview = !showPreview"
@@ -556,30 +555,26 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			</div>
 		</div>
 
-		<div class="flex flex-1 overflow-hidden">
+		<div class="api-manager__body">
 			<!-- Sidebar (Tree) -->
 			<div
-				class="w-64 flex-shrink-0 border-r border-outline-variant/50 bg-surface-container overflow-y-auto">
-				<div class="p-2">
+				class="api-manager__sidebar">
+				<div class="api-manager__sidebar-inner">
 					<h2
-						class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2 px-2">
+						class="api-manager__sidebar-title">
 						API Explorer
 					</h2>
 
 					<!-- Recursive Tree Component inline simulation -->
-					<div class="select-none">
+					<div class="api-manager__tree">
 						<!-- Root -->
 						<div
-							class="flex items-center py-1 px-2 cursor-pointer rounded-md text-sm transition-colors"
-							:class="
-								activeNode.id === mockApiData.id
-									? 'bg-primary-container text-on-primary-container font-medium'
-									: 'text-on-surface hover:bg-surface-variant'
-							"
+							class="api-manager__tree-item"
+							:class="{ 'api-manager__tree-item--active': activeNode.id === mockApiData.id }"
 							style="padding-left: 8px"
 							@click="handleOpenNode(mockApiData)">
 							<span
-								class="w-4 h-4 flex items-center justify-center mr-1 text-on-surface-variant hover:text-on-surface"
+								class="api-manager__tree-toggle"
 								@click="e => toggleFolder(mockApiData.id, e)">
 								<xIcon 
 													type="chevron-down"
@@ -590,30 +585,26 @@ export default async function ({ PRIVATE_GLOBAL }) {
 													v-else 
 													:size="14" />
 							</span>
-							<span class="mr-2">
+							<span class="api-manager__tree-icon">
 								<xIcon 
 												:type="getIcon(mockApiData.type)"
 												:size="16"
 												:class="getIconColor(mockApiData.type)" />
 							</span>
-							<span class="truncate">{{ mockApiData.name }}</span>
+							<span class="api-manager__tree-label">{{ mockApiData.name }}</span>
 						</div>
 
 						<!-- Level 1 -->
 						<div v-if="expandedFolders.has(mockApiData.id)">
 							<template v-for="child in mockApiData.children" :key="child.id">
-								<div class="select-none">
+								<div>
 									<div
-										class="flex items-center py-1 px-2 cursor-pointer rounded-md text-sm transition-colors"
-										:class="
-											activeNode.id === child.id
-												? 'bg-primary-container text-on-primary-container font-medium'
-												: 'text-on-surface hover:bg-surface-variant'
-										"
+										class="api-manager__tree-item"
+										:class="{ 'api-manager__tree-item--active': activeNode.id === child.id }"
 										style="padding-left: 20px"
 										@click="handleOpenNode(child)">
 										<span
-											class="w-4 h-4 flex items-center justify-center mr-1 text-on-surface-variant hover:text-on-surface"
+											class="api-manager__tree-toggle"
 											@click="e => toggleFolder(child.id, e)">
 											<template
 												v-if="
@@ -630,13 +621,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 															:size="14" />
 											</template>
 										</span>
-										<span class="mr-2">
+										<span class="api-manager__tree-icon">
 											<xIcon 
 														:type="getIcon(child.type)"
 														:size="16"
 														:class="getIconColor(child.type)" />
 										</span>
-										<span class="truncate">{{ child.name }}</span>
+										<span class="api-manager__tree-label">{{ child.name }}</span>
 									</div>
 
 									<!-- Level 2 -->
@@ -644,18 +635,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 										<template
 											v-for="subchild in child.children"
 											:key="subchild.id">
-											<div class="select-none">
+											<div>
 												<div
-													class="flex items-center py-1 px-2 cursor-pointer rounded-md text-sm transition-colors"
-													:class="
-														activeNode.id === subchild.id
-															? 'bg-primary-container text-on-primary-container font-medium'
-															: 'text-on-surface hover:bg-surface-variant'
-													"
+													class="api-manager__tree-item"
+													:class="{ 'api-manager__tree-item--active': activeNode.id === subchild.id }"
 													style="padding-left: 32px"
 													@click="handleOpenNode(subchild)">
 													<span
-														class="w-4 h-4 flex items-center justify-center mr-1 text-on-surface-variant hover:text-on-surface"
+														class="api-manager__tree-toggle"
 														@click="e => toggleFolder(subchild.id, e)">
 														<template
 															v-if="
@@ -674,15 +661,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
 																	:size="14" />
 														</template>
 													</span>
-													<span class="mr-2">
+													<span class="api-manager__tree-icon">
 														<xIcon 
 																:type="getIcon(subchild.type)"
 																:size="16"
 																:class="getIconColor(subchild.type)" />
 													</span>
-													<span class="truncate">{{
-														subchild.name
-													}}</span>
+													<span class="api-manager__tree-label">{{ subchild.name }}</span>
 												</div>
 
 												<!-- Level 3 -->
@@ -694,20 +679,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 													<template
 														v-for="subsubchild in subchild.children"
 														:key="subsubchild.id">
-														<div class="select-none">
+														<div>
 															<div
-																class="flex items-center py-1 px-2 cursor-pointer rounded-md text-sm transition-colors"
-																:class="
-																	activeNode.id === subsubchild.id
-																		? 'bg-primary-container text-on-primary-container font-medium'
-																		: 'text-on-surface hover:bg-surface-variant'
-																"
+																class="api-manager__tree-item"
+																:class="{ 'api-manager__tree-item--active': activeNode.id === subsubchild.id }"
 																style="padding-left: 44px"
 																@click="
 																	handleOpenNode(subsubchild)
 																">
 																<span
-																	class="w-4 h-4 flex items-center justify-center mr-1 text-on-surface-variant hover:text-on-surface"
+																	class="api-manager__tree-toggle"
 																	@click="
 																		e =>
 																			toggleFolder(
@@ -737,7 +718,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 																				:size="14" />
 																	</template>
 																</span>
-																<span class="mr-2">
+																<span class="api-manager__tree-icon">
 																	<xIcon 
 																				:type="
 																					getIcon(
@@ -751,9 +732,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 																					)
 																				" />
 																</span>
-																<span class="truncate">{{
-																	subsubchild.name
-																}}</span>
+																<span class="api-manager__tree-label">{{ subsubchild.name }}</span>
 															</div>
 
 															<!-- Level 4 -->
@@ -766,15 +745,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 																<template
 																	v-for="leaf in subsubchild.children"
 																	:key="leaf.id">
-																	<div class="select-none">
+																	<div>
 																		<div
-																			class="flex items-center py-1 px-2 cursor-pointer rounded-md text-sm transition-colors"
-																			:class="
-																				activeNode.id ===
-																				leaf.id
-																					? 'bg-primary-container text-on-primary-container font-medium'
-																					: 'text-on-surface hover:bg-surface-variant'
-																			"
+																			class="api-manager__tree-item"
+																			:class="{ 'api-manager__tree-item--active': activeNode.id === leaf.id }"
 																			style="
 																				padding-left: 56px;
 																			"
@@ -782,8 +756,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 																				handleOpenNode(leaf)
 																			">
 																			<span
-																				class="w-4 h-4 flex items-center justify-center mr-1"></span>
-																			<span class="mr-2">
+																				class="api-manager__tree-toggle api-manager__tree-toggle--spacer"
+																				aria-hidden="true"></span>
+																			<span class="api-manager__tree-icon">
 																				<xIcon 
 																					:type="
 																						getIcon(
@@ -797,12 +772,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 																						)
 																					" />
 																			</span>
-																			<span
-																				class="truncate"
-																				>{{
-																					leaf.name
-																				}}</span
-																			>
+																			<span class="api-manager__tree-label">{{ leaf.name }}</span>
 																		</div>
 																	</div>
 																</template>
@@ -821,25 +791,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			</div>
 
 			<!-- Main Area -->
-			<div class="flex-1 flex flex-col bg-surface-container-lowest overflow-hidden">
+			<div class="api-manager__main">
 				<!-- Breadcrumb -->
-				<div
-					class="px-4 py-2 border-b border-outline-variant/50 text-sm text-on-surface-variant bg-surface-container flex items-center">
+				<div class="api-manager__breadcrumb">
 					<template
 						v-for="(part, index) in activeNode.path.split('/').filter(Boolean)"
 						:key="index">
 						<span
-							class="hover:text-primary cursor-pointer transition-colors"
-							:class="
-								index === activeNode.path.split('/').filter(Boolean).length - 1
-									? 'font-semibold text-on-surface'
-									: ''
-							">
+							class="api-manager__breadcrumb-part"
+							:class="{ 'api-manager__breadcrumb-part--current': index === activeNode.path.split('/').filter(Boolean).length - 1 }">
 							{{ part }}
 						</span>
 						<span
 							v-if="index < activeNode.path.split('/').filter(Boolean).length - 1"
-							class="mx-2 text-on-surface-variant/50"
+							class="api-manager__breadcrumb-sep"
 							>/</span
 						>
 					</template>
@@ -848,88 +813,83 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				<!-- Folder View -->
 				<template v-if="isFolderType(activeNode.type)">
 					<!-- Table Header -->
-					<div
-						class="grid grid-cols-12 gap-4 px-4 py-2 border-b border-outline-variant/50 text-xs font-medium text-on-surface-variant uppercase tracking-wider bg-surface-container select-none">
+					<div class="api-manager__table-header">
 						<div
-							class="col-span-7 flex items-center cursor-pointer hover:text-on-surface transition-colors"
+							class="api-manager__table-header-cell api-manager__table-header-cell--name"
 							@click="handleSort('name')">
 							Name
 							<xIcon 
 									type="arrow-up"
 									v-if="sortField === 'name' && sortDirection === 'asc'"
 									:size="12"
-									class="ml-1" />
+									class="api-manager__sort-icon" />
 								<xIcon 
 									type="arrow-down"
 									v-if="sortField === 'name' && sortDirection === 'desc'"
 									:size="12"
-									class="ml-1" />
+									class="api-manager__sort-icon" />
 						</div>
 						<div
-							class="col-span-3 flex items-center cursor-pointer hover:text-on-surface transition-colors"
+							class="api-manager__table-header-cell api-manager__table-header-cell--date"
 							@click="handleSort('updatedAt')">
 							Date Modified
 							<xIcon 
 									type="arrow-up"
 									v-if="sortField === 'updatedAt' && sortDirection === 'asc'"
 									:size="12"
-									class="ml-1" />
+									class="api-manager__sort-icon" />
 								<xIcon 
 									type="arrow-down"
 									v-if="sortField === 'updatedAt' && sortDirection === 'desc'"
 									:size="12"
-									class="ml-1" />
+									class="api-manager__sort-icon" />
 						</div>
 						<div
-							class="col-span-2 flex items-center cursor-pointer hover:text-on-surface transition-colors"
+							class="api-manager__table-header-cell api-manager__table-header-cell--type"
 							@click="handleSort('type')">
 							Type
 							<xIcon 
 									type="arrow-up"
 									v-if="sortField === 'type' && sortDirection === 'asc'"
 									:size="12"
-									class="ml-1" />
+									class="api-manager__sort-icon" />
 								<xIcon 
 									type="arrow-down"
 									v-if="sortField === 'type' && sortDirection === 'desc'"
 									:size="12"
-									class="ml-1" />
+									class="api-manager__sort-icon" />
 						</div>
 					</div>
 
 					<!-- File List -->
-					<div class="flex-1 overflow-y-auto" @click="selectedFile = null">
+					<div class="api-manager__file-list" @click="selectedFile = null">
 						<div
 							v-if="filteredAndSortedFiles.length === 0"
-							class="api-manager__empty-state flex flex-col items-center justify-center h-full">
-							<xIcon icon="folder" :size="48" class="text-outline-variant mb-2" />
+							class="api-manager__empty-state">
+							<xIcon icon="folder" :size="48" class="api-manager__empty-icon" />
 							<p>This folder is empty</p>
 						</div>
-						<div v-else class="py-1">
+						<div v-else class="api-manager__file-list-inner">
 							<div
 								v-for="file in filteredAndSortedFiles"
 								:key="file.id"
 								@click.stop="selectedFile = file"
 								@dblclick.stop="handleOpenNode(file)"
-								class="grid grid-cols-12 gap-4 px-4 py-2 text-sm items-center cursor-pointer border-b border-transparent hover:bg-surface-variant/50 select-none transition-colors"
-								:class="
-									selectedFile?.id === file.id
-										? 'bg-primary-container/50 border-primary/10'
-										: ''
-								">
-								<div class="col-span-7 flex items-center gap-3 overflow-hidden">
+								class="api-manager__file-row"
+								:class="{ 'api-manager__file-row--selected': selectedFile?.id === file.id }">
+								<div class="api-manager__file-cell api-manager__file-cell--name">
 									<xIcon 
 												:type="getIcon(file.type)"
 												:size="20"
 												:class="getIconColor(file.type)" />
-									<span class="truncate font-medium text-on-surface">{{
+									<span class="api-manager__file-name">{{
 										file.name
 									}}</span>
 								</div>
-								<div class="col-span-3 text-on-surface-variant truncate">
+								<div class="api-manager__file-cell api-manager__file-cell--date">
 									{{ formatDate(file.updatedAt) }}
 								</div>
-								<div class="col-span-2 text-on-surface-variant capitalize truncate">
+								<div class="api-manager__file-cell api-manager__file-cell--type">
 									{{ file.type.replace("_", " ") }}
 								</div>
 							</div>
@@ -939,27 +899,25 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 				<!-- File Editor View -->
 				<template v-else>
-					<div class="flex-1 overflow-y-auto p-6 bg-surface">
-						<div
-							class="api-manager__editor-card max-w-4xl mx-auto overflow-hidden">
+					<div class="api-manager__editor-wrap">
+						<div class="api-manager__editor-card api-manager__editor-card--wide">
 							<!-- Editor Header -->
-							<div
-								class="px-6 py-4 border-b border-outline-variant/50 flex items-center justify-between bg-surface-container/30">
-								<div class="flex items-center gap-3">
+							<div class="api-manager__editor-header">
+								<div class="api-manager__editor-header-left">
 									<xIcon 
 							:type="getIcon(activeNode.type)"
 							:size="24"
 							:class="getIconColor(activeNode.type)" />
-									<div>
-										<h2 class="text-lg font-bold text-on-surface">{{
+									<div class="api-manager__editor-header-copy">
+										<h2 class="api-manager__editor-title">{{
 											activeNode.name
 										}}</h2>
-										<p class="text-xs text-on-surface-variant capitalize">{{
+										<p class="api-manager__editor-subtitle">{{
 											activeNode.type.replace("_", " ")
 										}}</p>
 									</div>
 								</div>
-								<div class="flex gap-2">
+								<div class="api-manager__editor-header-actions">
 									<template v-if="editingContent">
 										<button
 											@click="cancelEditing"
@@ -968,14 +926,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 										>
 										<button
 											@click="saveEditing"
-											class="api-manager__action-btn api-manager__action-btn--primary flex items-center gap-2">
+											class="api-manager__action-btn api-manager__action-btn--primary api-manager__action-btn--with-icon">
 											<xIcon icon="save" :size="16" /> Save
 										</button>
 									</template>
 									<template v-else>
 										<button
 											@click="startEditing"
-											class="api-manager__action-btn api-manager__action-btn--secondary flex items-center gap-2">
+											class="api-manager__action-btn api-manager__action-btn--secondary api-manager__action-btn--with-icon">
 											<xIcon icon="edit" :size="16" /> Edit
 										</button>
 									</template>
@@ -983,30 +941,30 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							</div>
 
 							<!-- Editor Content -->
-							<div class="p-6">
+							<div class="api-manager__editor-body">
 								<!-- Member List Editor -->
 								<template v-if="activeNode.type === 'member_list'">
-									<div class="space-y-4">
-										<div class="flex justify-between items-center mb-4">
-											<h3 class="font-medium text-on-surface">Members</h3>
+									<div class="api-manager__section">
+										<div class="api-manager__section-header">
+											<h3 class="api-manager__section-title">Members</h3>
 											<button
 												v-if="editingContent"
-												class="text-sm text-primary flex items-center gap-1 hover:underline">
+												class="api-manager__link-btn api-manager__link-btn--with-icon">
 												<xIcon icon="plus" :size="16" /> Add Member
 											</button>
 										</div>
 										<div
-											class="border border-outline-variant/50 rounded-lg overflow-hidden">
-											<table class="w-full text-sm text-left">
+											class="api-manager__table-shell">
+											<table class="api-manager__table">
 												<thead
-													class="bg-surface-container text-on-surface-variant text-xs uppercase">
+													class="api-manager__table-head">
 													<tr>
-														<th class="px-4 py-3">Name</th>
-														<th class="px-4 py-3">Role</th>
-														<th class="px-4 py-3">Email</th>
+														<th class="api-manager__th">Name</th>
+														<th class="api-manager__th">Role</th>
+														<th class="api-manager__th">Email</th>
 														<th
 															v-if="editingContent"
-															class="px-4 py-3 text-right"
+															class="api-manager__th api-manager__th--right"
 															>Actions</th
 														>
 													</tr>
@@ -1016,16 +974,16 @@ export default async function ({ PRIVATE_GLOBAL }) {
 														v-for="(member, idx) in editingContent ||
 														activeNode.content"
 														:key="idx"
-														class="border-b border-outline-variant/50 last:border-0 hover:bg-surface-variant/30">
+														class="api-manager__tr">
 														<td
-															class="px-4 py-3 font-medium text-on-surface">
+															class="api-manager__td api-manager__td--strong">
 															<input
 																v-if="editingContent"
 																v-model="member.name"
 																class="api-manager__field-input api-manager__field-input--inline" />
 															<span v-else>{{ member.name }}</span>
 														</td>
-														<td class="px-4 py-3">
+														<td class="api-manager__td">
 															<select
 																v-if="editingContent"
 																v-model="member.role"
@@ -1042,7 +1000,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 															>
 														</td>
 														<td
-															class="px-4 py-3 text-on-surface-variant">
+															class="api-manager__td api-manager__td--muted">
 															<input
 																v-if="editingContent"
 																v-model="member.email"
@@ -1053,7 +1011,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 														</td>
 														<td
 															v-if="editingContent"
-															class="px-4 py-3 text-right">
+															class="api-manager__td api-manager__td--right">
 															<button
 																class="api-manager__icon-action"
 																><xIcon icon="delete" :size="16" /></button>
@@ -1067,28 +1025,28 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 								<!-- Settings Editor -->
 								<template v-else-if="activeNode.type === 'setting'">
-									<div class="space-y-6 max-w-2xl">
+									<div class="api-manager__settings">
 										<div
 											v-for="(val, key) in editingContent ||
 											activeNode.content"
 											:key="key"
-											class="grid grid-cols-3 gap-4 items-center">
+											class="api-manager__setting-row">
 											<label
-												class="text-sm font-medium text-on-surface-variant capitalize"
+												class="api-manager__setting-label"
 												>{{
 													String(key)
 														.replace(/([A-Z])/g, " $1")
 														.trim()
 												}}</label
 											>
-											<div class="col-span-2">
+											<div class="api-manager__setting-control">
 												<input
 													v-if="editingContent"
 													v-model="editingContent[key]"
-													class="api-manager__field-input w-full px-3 py-2" />
+													class="api-manager__field-input api-manager__field-input--block" />
 												<div
 													v-else
-													class="api-manager__field-value px-3 py-2 text-sm"
+													class="api-manager__field-value"
 													>{{ val }}</div
 												>
 											</div>
@@ -1098,12 +1056,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 								<!-- API Editor -->
 								<template v-else-if="activeNode.type === 'api'">
-									<div class="space-y-6">
-										<div class="flex items-center gap-4">
+									<div class="api-manager__api-editor">
+										<div class="api-manager__api-row">
 											<select
 												v-if="editingContent"
 												v-model="editingContent.method"
-												class="api-manager__field-input px-3 py-2 font-bold">
+												class="api-manager__field-input api-manager__method-select">
 												<option>GET</option
 												><option>POST</option
 												><option>PUT</option
@@ -1111,7 +1069,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
 											</select>
 											<span
 												v-else
-												class="px-3 py-1 text-sm font-bold rounded-md"
 												:class="getMethodColor(activeNode.content?.method)">
 												{{ activeNode.content?.method }}
 											</span>
@@ -1119,10 +1076,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 											<input
 												v-if="editingContent"
 												v-model="editingContent.endpoint"
-												class="api-manager__field-input api-manager__field-input--code flex-1 px-3 py-2 font-mono" />
+												class="api-manager__field-input api-manager__field-input--code api-manager__endpoint-input" />
 											<span
 												v-else
-												class="text-lg font-mono text-on-surface flex-1"
+												class="api-manager__endpoint-text"
 												>{{ activeNode.content?.endpoint }}</span
 											>
 
@@ -1131,28 +1088,28 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												v-if="!editingContent"
 												@click="sendRequest"
 												:disabled="isRequesting"
-												class="api-manager__action-btn api-manager__action-btn--primary flex items-center gap-2">
+												class="api-manager__action-btn api-manager__action-btn--primary api-manager__action-btn--with-icon">
 												<xIcon 
 													type="loader-2"
 													v-if="isRequesting"
 													:size="16"
-													class="animate-spin" />
+													class="api-manager__spinner" />
 												<xIcon icon="video-play" v-else :size="16" />
 												Send
 											</button>
 										</div>
 
-										<div>
+										<div class="api-manager__field">
 											<label
-												class="block text-sm font-medium text-on-surface-variant mb-1"
+												class="api-manager__field-label"
 												>Description</label
 											>
 											<textarea
 												v-if="editingContent"
 												v-model="editingContent.description"
 												rows="2"
-												class="api-manager__field-input w-full px-3 py-2"></textarea>
-											<p v-else class="text-on-surface text-sm">{{
+												class="api-manager__field-input api-manager__field-input--textarea"></textarea>
+											<p v-else class="api-manager__field-text">{{
 												activeNode.content?.description
 											}}</p>
 										</div>
@@ -1162,11 +1119,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												editingContent?.params || activeNode.content?.params
 											">
 											<label
-												class="block text-sm font-medium text-on-surface-variant mb-2"
+												class="api-manager__field-label api-manager__field-label--spaced"
 												>Parameters</label
 											>
 											<div
-												class="api-manager__code-block p-4 font-mono text-sm">
+												class="api-manager__code-block">
 												<pre>{{
 													JSON.stringify(
 														editingContent?.params ||
@@ -1181,11 +1138,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
 										<div
 											v-if="editingContent?.body || activeNode.content?.body">
 											<label
-												class="block text-sm font-medium text-on-surface-variant mb-2"
+												class="api-manager__field-label api-manager__field-label--spaced"
 												>Request Body</label
 											>
 											<div
-												class="api-manager__code-block p-4 font-mono text-sm">
+												class="api-manager__code-block">
 												<pre>{{
 													editingContent?.body || activeNode.content?.body
 												}}</pre>
@@ -1195,10 +1152,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 										<!-- Response Section -->
 										<div
 											v-if="!editingContent"
-											class="mt-8 border-t border-outline-variant/50 pt-6">
-											<div class="flex items-center justify-between mb-4">
+											class="api-manager__response">
+											<div class="api-manager__response-header">
 												<h3
-													class="text-base font-bold text-on-surface flex items-center gap-2">
+													class="api-manager__response-title">
 													Response
 													<span
 														v-if="responseStatus"
@@ -1208,32 +1165,32 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												</h3>
 												<span
 													v-if="responseTime"
-													class="text-xs text-on-surface-variant font-mono"
+													class="api-manager__response-meta"
 													>{{ responseTime }} ms</span
 												>
 											</div>
 
 											<div
 												v-if="isRequesting"
-												class="api-manager__state-panel flex flex-col items-center justify-center p-12">
+												class="api-manager__state-panel api-manager__state-panel--loading">
 												<xIcon 
 													type="loader-2"
-													class="w-8 h-8 animate-spin mb-3 text-primary" />
-												<p class="text-sm"
+													class="api-manager__spinner api-manager__spinner--lg" />
+												<p class="api-manager__state-text"
 													>Sending request to
 													{{ activeEnvironment }}...</p
 												>
 											</div>
 											<div
 												v-else-if="responseData"
-												class="api-manager__state-panel api-manager__state-panel--code p-4 font-mono text-sm overflow-x-auto">
-												<pre class="text-on-surface">{{
+												class="api-manager__state-panel api-manager__state-panel--code">
+												<pre>{{
 													responseData
 												}}</pre>
 											</div>
 											<div
 												v-else
-												class="api-manager__state-panel api-manager__state-panel--dashed flex items-center justify-center p-12">
+												class="api-manager__state-panel api-manager__state-panel--dashed">
 												Click "Send" to execute the request
 											</div>
 										</div>
@@ -1245,14 +1202,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
 									v-else-if="
 										activeNode.type === 'doc' || activeNode.type === 'code'
 									">
-									<div class="h-full min-h-[300px]">
+									<div class="api-manager__doc-editor">
 										<textarea
 											v-if="editingContent"
 											v-model="editingContent"
-											class="api-manager__field-input api-manager__field-input--code w-full h-full min-h-[300px] p-4 font-mono text-sm resize-y"></textarea>
-										<div v-else class="prose prose-sm max-w-none">
+											class="api-manager__field-input api-manager__field-input--code api-manager__doc-textarea"></textarea>
+										<div v-else class="api-manager__doc-preview">
 											<pre
-												class="api-manager__code-block whitespace-pre-wrap font-mono text-sm p-4"
+												class="api-manager__code-block api-manager__code-block--wrap"
 												>{{ activeNode.content }}</pre
 											>
 										</div>
@@ -1269,10 +1226,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												: JSON.stringify(editingContent, null, 2)
 										"
 										@input="handlePlainTextInput"
-										class="api-manager__field-input api-manager__field-input--code w-full h-64 p-4 font-mono text-sm"></textarea>
+										class="api-manager__field-input api-manager__field-input--code api-manager__json-textarea"></textarea>
 									<pre
 										v-else
-										class="api-manager__code-block p-4 font-mono text-sm overflow-x-auto"
+										class="api-manager__code-block api-manager__code-block--scroll"
 										>{{
 											typeof activeNode.content === "string"
 												? activeNode.content
@@ -1289,17 +1246,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			<!-- Preview Pane (Only for Folders) -->
 			<div
 				v-if="showPreview && isFolderType(activeNode.type)"
-				class="w-80 flex-shrink-0 border-l border-outline-variant/50 bg-surface-container flex flex-col overflow-y-auto">
+				class="api-manager__preview">
 				<div
 					v-if="!selectedFile"
-					class="flex-1 flex flex-col items-center justify-center text-on-surface-variant p-6 text-center">
-					<xIcon icon="info-filled" :size="48" class="mb-4 text-outline-variant" />
+					class="api-manager__preview-empty">
+					<xIcon icon="info-filled" :size="48" class="api-manager__preview-empty-icon" />
 					<p>Select a resource to preview</p>
 				</div>
-				<div v-else class="p-6">
+				<div v-else class="api-manager__preview-inner">
 					<!-- Preview Content -->
 					<div
-						class="w-full aspect-square max-w-[120px] mx-auto bg-surface-variant rounded-2xl flex items-center justify-center mb-6 border border-outline-variant/50">
+						class="api-manager__preview-hero">
 						<xIcon 
 										:type="getIcon(selectedFile.type)"
 										:size="60"
@@ -1307,29 +1264,29 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					</div>
 
 					<!-- Metadata -->
-					<h3 class="text-lg font-semibold text-on-surface mb-1 break-words text-center">
+					<h3 class="api-manager__preview-title">
 						{{ selectedFile.name }}
 					</h3>
-					<p class="text-sm text-on-surface-variant capitalize mb-6 text-center">{{
+					<p class="api-manager__preview-subtitle">{{
 						selectedFile.type.replace("_", " ")
 					}}</p>
 
-					<div class="space-y-4">
-						<div class="border-t border-outline-variant/50 pt-4">
+					<div class="api-manager__preview-meta">
+						<div class="api-manager__preview-section">
 							<h4
-								class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+								class="api-manager__preview-section-title">
 								Information
 							</h4>
-							<dl class="space-y-3 text-sm">
-								<div class="grid grid-cols-3 gap-2">
-									<dt class="text-on-surface-variant">Modified</dt>
-									<dd class="col-span-2 text-on-surface font-medium">
+							<dl class="api-manager__preview-dl">
+								<div class="api-manager__preview-dl-row">
+									<dt class="api-manager__preview-dt">Modified</dt>
+									<dd class="api-manager__preview-dd">
 										{{ formatDate(selectedFile.updatedAt) }}
 									</dd>
 								</div>
-								<div class="grid grid-cols-3 gap-2">
-									<dt class="text-on-surface-variant">Path</dt>
-									<dd class="col-span-2 text-on-surface font-medium break-all">
+								<div class="api-manager__preview-dl-row">
+									<dt class="api-manager__preview-dt">Path</dt>
+									<dd class="api-manager__preview-dd api-manager__preview-dd--break">
 										{{ selectedFile.path }}
 									</dd>
 								</div>
@@ -1338,15 +1295,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 						<div
 							v-if="selectedFile.content"
-							class="border-t border-outline-variant/50 pt-4">
+							class="api-manager__preview-section">
 							<h4
-								class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+								class="api-manager__preview-section-title">
 								Quick Preview
 							</h4>
 							<div
-								class="api-manager__code-block p-3 max-h-40 overflow-y-auto">
+								class="api-manager__code-block api-manager__code-block--preview">
 								<pre
-									class="text-xs font-mono text-on-surface whitespace-pre-wrap"
+									class="api-manager__preview-code"
 									>{{
 										typeof selectedFile.content === "string"
 											? selectedFile.content
@@ -1359,7 +1316,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						<button
 							v-if="!isFolderType(selectedFile.type)"
 							@click="handleOpenNode(selectedFile)"
-							class="api-manager__action-btn api-manager__action-btn--primary api-manager__preview-action w-full mt-4">
+							class="api-manager__action-btn api-manager__action-btn--primary api-manager__preview-action">
 							Open Editor
 						</button>
 					</div>
@@ -1371,6 +1328,821 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 <style lang="less">
 .api-manager {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+
+  &__topbar {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    background: var(--color-surface-container-lowest);
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 16px;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__search {
+    flex: 1;
+    max-width: 42rem;
+    position: relative;
+  }
+
+  &__search-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__search-input {
+    width: 100%;
+    padding: 6px 12px 6px 40px;
+  }
+
+  &__toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+  }
+
+  &__select-shell--toolbar {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+  }
+
+  &__select-icon {
+    margin-right: 8px;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__divider {
+    width: 1px;
+    height: 24px;
+    background: color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+  }
+
+  &__body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    background: var(--color-surface-container-lowest);
+  }
+
+  &__sidebar {
+    width: 256px;
+    flex-shrink: 0;
+    border-right: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    background: var(--color-surface-container);
+    overflow-y: auto;
+  }
+
+  &__sidebar-inner {
+    padding: 8px;
+  }
+
+  &__sidebar-title {
+    padding: 0 8px;
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__tree {
+    user-select: none;
+  }
+
+  &__tree-item {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 4px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--color-on-surface);
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: var(--color-surface-variant);
+    }
+  }
+
+  &__tree-item--active {
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+
+    &:hover {
+      background: var(--color-primary-container);
+    }
+  }
+
+  &__tree-toggle {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 4px;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__tree-item:hover &__tree-toggle {
+    color: var(--color-on-surface);
+  }
+
+  &__tree-toggle--spacer {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  &__tree-icon {
+    margin-right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__tree-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--color-surface-container-lowest);
+  }
+
+  &__breadcrumb {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    background: var(--color-surface-container);
+    font-size: 14px;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__breadcrumb-part {
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+
+  &__breadcrumb-part--current {
+    cursor: default;
+    font-weight: 600;
+    color: var(--color-on-surface);
+
+    &:hover {
+      color: var(--color-on-surface);
+    }
+  }
+
+  &__breadcrumb-sep {
+    margin: 0 8px;
+    color: color-mix(in srgb, var(--color-on-surface-variant) 55%, transparent);
+  }
+
+  &__table-header {
+    display: grid;
+    grid-template-columns: 7fr 3fr 2fr;
+    gap: 16px;
+    padding: 8px 16px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    background: var(--color-surface-container);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    user-select: none;
+  }
+
+  &__table-header-cell {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--color-on-surface);
+    }
+  }
+
+  &__sort-icon {
+    margin-left: 4px;
+  }
+
+  &__file-list {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__file-list-inner {
+    padding: 4px 0;
+  }
+
+  &__file-row {
+    display: grid;
+    grid-template-columns: 7fr 3fr 2fr;
+    gap: 16px;
+    padding: 8px 16px;
+    font-size: 14px;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      background: color-mix(in srgb, var(--color-surface-variant) 50%, transparent);
+    }
+  }
+
+  &__file-row--selected {
+    background: color-mix(in srgb, var(--color-primary-container) 50%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  }
+
+  &__file-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__file-cell--name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-on-surface);
+  }
+
+  &__file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  &__empty-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__empty-icon {
+    margin-bottom: 8px;
+    color: var(--color-outline-variant);
+  }
+
+  &__editor-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    background: var(--color-surface);
+  }
+
+  &__editor-card--wide {
+    max-width: 60rem;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  &__editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    background: color-mix(in srgb, var(--color-surface-container) 30%, transparent);
+  }
+
+  &__editor-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__editor-header-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__editor-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--color-on-surface);
+  }
+
+  &__editor-subtitle {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-on-surface-variant);
+    text-transform: capitalize;
+  }
+
+  &__editor-header-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__editor-body {
+    padding: 24px;
+  }
+
+  &__action-btn--with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__section-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-on-surface);
+  }
+
+  &__link-btn {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: var(--color-primary);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  &__link-btn--with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__link-btn:hover {
+    text-decoration: underline;
+  }
+
+  &__table-shell {
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: var(--color-on-surface);
+  }
+
+  &__table-head {
+    background: var(--color-surface-container);
+    color: var(--color-on-surface-variant);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__th,
+  &__td {
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  &__th--right,
+  &__td--right {
+    text-align: right;
+  }
+
+  &__td--strong {
+    font-weight: 600;
+    color: var(--color-on-surface);
+  }
+
+  &__td--muted {
+    color: var(--color-on-surface-variant);
+  }
+
+  &__tr {
+    border-bottom: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: color-mix(in srgb, var(--color-surface-variant) 30%, transparent);
+    }
+  }
+
+  &__settings {
+    max-width: 42rem;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__setting-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 16px;
+    align-items: center;
+  }
+
+  &__setting-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-surface-variant);
+    text-transform: capitalize;
+  }
+
+  &__field-input--block {
+    width: 100%;
+    padding: 8px 12px;
+  }
+
+  &__field-value {
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: var(--color-surface-container-lowest);
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 55%, transparent);
+    font-size: 14px;
+    color: var(--color-on-surface);
+  }
+
+  &__api-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__api-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  &__method-select {
+    padding: 8px 12px;
+    font-weight: 800;
+  }
+
+  &__endpoint-input {
+    flex: 1;
+    min-width: 240px;
+    padding: 8px 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  &__endpoint-text {
+    flex: 1;
+    min-width: 240px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__spinner {
+    animation: api-manager-spin 1s linear infinite;
+  }
+
+  &__spinner--lg {
+    font-size: 32px;
+  }
+
+  @keyframes api-manager-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__field-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__field-label--spaced {
+    margin-bottom: 8px;
+  }
+
+  &__field-input--textarea {
+    width: 100%;
+    padding: 8px 12px;
+    resize: vertical;
+  }
+
+  &__field-text {
+    font-size: 14px;
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  &__code-block {
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--color-surface-container);
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 45%, transparent);
+    overflow-x: auto;
+    font-size: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    pre {
+      margin: 0;
+      white-space: pre;
+    }
+  }
+
+  &__code-block--wrap pre {
+    white-space: pre-wrap;
+  }
+
+  &__code-block--preview {
+    max-height: 160px;
+    overflow-y: auto;
+  }
+
+  &__response {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+  }
+
+  &__response-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  &__response-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-on-surface);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__response-meta {
+    font-size: 12px;
+    color: var(--color-on-surface-variant);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  &__state-panel {
+    border-radius: 14px;
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    background: var(--color-surface-container-lowest);
+    padding: 24px;
+  }
+
+  &__state-panel--loading,
+  &__state-panel--dashed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 140px;
+    color: var(--color-on-surface-variant);
+    text-align: center;
+  }
+
+  &__state-panel--dashed {
+    border-style: dashed;
+  }
+
+  &__state-panel--code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 14px;
+    overflow-x: auto;
+
+    pre {
+      margin: 0;
+      white-space: pre;
+    }
+  }
+
+  &__state-text {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  &__doc-editor {
+    min-height: 300px;
+  }
+
+  &__doc-textarea {
+    width: 100%;
+    min-height: 300px;
+    padding: 12px;
+    resize: vertical;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 14px;
+  }
+
+  &__json-textarea {
+    width: 100%;
+    height: 16rem;
+    padding: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 14px;
+  }
+
+  &__preview {
+    width: 320px;
+    flex-shrink: 0;
+    border-left: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    background: var(--color-surface-container);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  &__preview-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    color: var(--color-on-surface-variant);
+    gap: 12px;
+  }
+
+  &__preview-empty-icon {
+    margin-bottom: 4px;
+    color: var(--color-outline-variant);
+  }
+
+  &__preview-inner {
+    padding: 24px;
+  }
+
+  &__preview-hero {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 24px;
+    border-radius: 18px;
+    background: var(--color-surface-variant);
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__preview-title {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-on-surface);
+    text-align: center;
+    word-break: break-word;
+  }
+
+  &__preview-subtitle {
+    margin: 0 0 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-surface-variant);
+    text-transform: capitalize;
+    text-align: center;
+  }
+
+  &__preview-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__preview-section {
+    padding-top: 16px;
+    border-top: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+  }
+
+  &__preview-section-title {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__preview-dl {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  &__preview-dl-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 8px;
+    align-items: start;
+  }
+
+  &__preview-dt {
+    color: var(--color-on-surface-variant);
+  }
+
+  &__preview-dd {
+    margin: 0;
+    font-weight: 600;
+    color: var(--color-on-surface);
+  }
+
+  &__preview-dd--break {
+    word-break: break-all;
+  }
+
+  &__preview-code {
+    margin: 0;
+    font-size: 12px;
+    white-space: pre-wrap;
+    color: var(--color-on-surface);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  &__preview-action {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+  }
+
   &__toolbar-btn,
   &__toggle-btn {
     display: inline-flex;
