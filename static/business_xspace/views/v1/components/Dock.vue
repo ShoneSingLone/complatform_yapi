@@ -1,617 +1,576 @@
 <template>
-  <div class="dock-shell">
-    <div class="dock-shell__spacer"></div>
-    <div
-      class="dock"
-      :class="{ 'dock--dragging': isDraggingOver }"
-      @dragover="onDragOver"
-      @dragleave="onDragLeave"
-      @drop="onDrop">
-      <div class="dock__item dock__launcher group" @click="handleLauncherClick">
-        <div class="dock__tooltip">
-          Start
-        </div>
-        <div class="dock__item-content dock__item-content--system">
-          <xIcon icon="_layout_grid" size="18" />
-        </div>
-      </div>
+  <div
+    class="dock"
+    @mouseleave="closePreview">
+    <button
+      class="dock__launcher"
+      title="Open Launcher"
+      @click="handleLauncherClick">
+      <span class="dock__launcher-orb"></span>
+      <xIcon icon="grid" size="18" />
+    </button>
 
-      <div class="dock__item dock__search group" @click="handleSearchClick">
-        <div class="dock__tooltip">
-          Search
-        </div>
-        <div class="dock__item-content dock__item-content--system">
-          <xIcon icon="search" size="18" />
-        </div>
-      </div>
+    <div class="dock__separator" aria-hidden="true"></div>
 
-      <div class="dock__separator"></div>
+    <div class="dock__items">
+      <div
+        v-for="app in dockApps"
+        :key="app.id"
+        class="dock__item-wrapper"
+        @mouseenter="openPreview(app.id)">
+        <button
+          class="dock__item"
+          :class="itemClass(app)"
+          :title="app.name"
+          @click="handleAppClick(app)">
+          <span
+            class="dock__item-icon"
+            :style="{ color: app.color || defaultColor }">
+            <xIcon :icon="app.icon || 'grid'" size="22" />
+          </span>
+          <span class="dock__tooltip">{{ app.name }}</span>
+          <span
+            v-if="getAppWindows(app.id).length"
+            class="dock__indicator"
+            :class="{ 'dock__indicator--active': isAppActive(app.id) }"></span>
+          <span
+            v-if="getAppWindows(app.id).length > 1"
+            class="dock__window-count">
+            {{ getAppWindows(app.id).length }}
+          </span>
+        </button>
 
-      <TransitionGroup name="hero">
-        <div
-          v-for="app in activeApps"
-          :key="app.id"
-          class="dock__item group"
-          :class="{
-            'dock__item--active': app.isActive,
-            'dock__item--pinned': app.isPinned,
-            'dock__item--animate': system.lastOpenedAppId === app.id
-          }"
-          draggable="true"
-          @dragstart="onDragStart($event, app.id)"
-          @mouseenter="hoveredAppId = app.id"
-          @mouseleave="hoveredAppId = null"
-          @click="handleAppClick(app.id)">
-          <Transition name="hero">
-            <div
-              v-if="hoveredAppId === app.id && app.isOpen"
-              class="dock__preview">
-              <div class="dock__preview-header">
-                <span class="dock__preview-title">{{ app.name }}</span>
-                <button
-                  @click.stop="openNewWindow(app.id)"
-                  class="dock__preview-add-btn"
-                  title="Open New Window">
-                  <xIcon icon="plus" size="14" />
-                </button>
+        <transition name="dock-preview">
+          <div
+            v-if="previewAppId === app.id"
+            class="dock__preview"
+            @mouseenter="openPreview(app.id)">
+            <div class="dock__preview-header">
+              <div class="dock__preview-title">
+                <span>{{ app.name }}</span>
+                <small>{{ getAppWindows(app.id).length ? getAppWindows(app.id).length + ' windows' : 'Pinned app' }}</small>
               </div>
+              <button
+                class="dock__pin-toggle"
+                :title="isPinned(app.id) ? 'Unpin from Dock' : 'Pin to Dock'"
+                @click.stop="togglePinned(app.id)">
+                <xIcon icon="pin" size="14" />
+              </button>
+            </div>
 
-              <div class="dock__preview-list">
-                <div
-                  v-for="win in app.windows"
-                  :key="win.id"
-                  class="dock__preview-item"
-                  @click.stop="focusSpecificWindow(win.id)">
-                  <div
-                    class="dock__preview-item-icon"
-                    :style="{ color: app.color }">
-                    <xIcon :icon="app.icon" size="16"/>
-                  </div>
-                  <div class="dock__preview-item-content">
-                    <span class="dock__preview-item-title">{{ win.title }}</span>
-                    <span class="dock__preview-item-status">{{ win.isMinimized ? "Minimized" : "Active" }}</span>
-                  </div>
-                </div>
+            <div v-if="getAppWindows(app.id).length" class="dock__preview-list">
+              <div
+                v-for="win in getAppWindows(app.id)"
+                :key="win.id"
+                class="dock__preview-item"
+                :class="{ 'dock__preview-item--active': system.activeWindowId === win.id && !win.isMinimized }"
+                role="button"
+                tabindex="0"
+                @click.stop="activateWindow(win.id)">
+                @keydown.enter.stop.prevent="activateWindow(win.id)"
+                @keydown.space.stop.prevent="activateWindow(win.id)">
+                <span class="dock__preview-item-meta">
+                  <span class="dock__preview-item-title">{{ win.title }}</span>
+                  <span class="dock__preview-item-subtitle">
+                    {{ win.isMinimized ? 'Minimized' : (system.activeWindowId === win.id ? 'Active' : 'Open') }}
+                  </span>
+                </span>
+                <span class="dock__preview-item-actions">
+                  <button
+                    class="dock__preview-action"
+                    title="Minimize"
+                    @click.stop="minimizeWindow(win.id)">
+                    <xIcon icon="minus" size="14" />
+                  </button>
+                  <button
+                    class="dock__preview-action dock__preview-action--danger"
+                    title="Close"
+                    @click.stop="closeWindow(win.id)">
+                    <xIcon icon="x" size="14" />
+                  </button>
+                </span>
               </div>
             </div>
-          </Transition>
 
-          <div
-            v-if="!app.isOpen"
-            class="dock__tooltip">
-            {{ app.name }}
+            <button
+              v-else
+              class="dock__preview-empty"
+              @click.stop="system.openApp(app.id)">
+              <span class="dock__preview-empty-title">Launch {{ app.name }}</span>
+              <span class="dock__preview-empty-subtitle">No active window</span>
+            </button>
           </div>
-
-          <div
-            class="dock__item-content"
-            :class="{
-              'dock__item-content--active': app.isActive
-            }">
-            <xIcon :icon="app.icon" :size="18" />
-          </div>
-
-          <div class="dock__indicator">
-            <div
-              v-if="app.isOpen"
-              class="dock__indicator-dot"
-              :class="{
-                'dock__indicator-dot--active': app.isActive
-              }">
-            </div>
-          </div>
-        </div>
-      </TransitionGroup>
-
-      <div class="dock__separator"></div>
-
-      <div class="dock__item dock__settings group" @click="handleSettingsClick">
-        <div class="dock__tooltip">
-          Settings
-        </div>
-        <div class="dock__item-content dock__item-content--system">
-          <xIcon icon="_settings" size="18" />
-        </div>
+        </transition>
       </div>
     </div>
-    <div class="dock-tray">
-      <button type="button" class="dock-tray__control">
-        <xIcon icon="_contact" size="14" />
-      </button>
-      <button type="button" class="dock-tray__control">
-        <xIcon icon="_setting_outlined" size="14" />
-      </button>
-      <div class="dock-tray__clock">
-        <span class="dock-tray__time">{{ time }}</span>
-        <span class="dock-tray__date">{{ dateLabel }}</span>
-      </div>
-    </div>
+
+    <div class="dock__separator" aria-hidden="true"></div>
+
+    <button
+      class="dock__settings"
+      title="Open Settings"
+      @click="handleSettingsClick">
+      <xIcon icon="_setting_outlined" size="18" />
+    </button>
   </div>
 </template>
 
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
   return {
-    // system: v1 Desktop Workspace 局部状态（来自 ViewXspace）
     inject: ['system'],
     data() {
       return {
-        hoveredAppId: null,
-        isDraggingOver: false,
-        time: "",
-        dateLabel: "",
-        timer: null
+        previewAppId: null,
+        defaultColor: '#dbe4ff'
       };
     },
     computed: {
-      activeApps() {
-        return this.system.apps
-          .map(app => {
-            const windows = this.system.openWindows.filter(w => w.appId === app.id);
-            return {
-              ...app,
-              windows,
-              isOpen: windows.length > 0,
-              isPinned: this.system.pinnedApps.includes(app.id),
-              isActive:
-                this.system.activeWindowId &&
-                this.system.openWindows.find(w => w.id === this.system.activeWindowId)?.appId === app.id
-            };
-          })
-          .filter(app => app.isOpen || app.isPinned);
+      dockApps() {
+        const apps = this.system && this.system.apps ? this.system.apps : [];
+        const pinnedApps = this.system && this.system.pinnedApps ? this.system.pinnedApps : [];
+        const openWindows = this.system && this.system.openWindows ? this.system.openWindows : [];
+        const seen = {};
+        const orderedIds = [];
+
+        pinnedApps.forEach(appId => {
+          if (!seen[appId]) {
+            seen[appId] = true;
+            orderedIds.push(appId);
+          }
+        });
+
+        openWindows.forEach(win => {
+          if (!seen[win.appId]) {
+            seen[win.appId] = true;
+            orderedIds.push(win.appId);
+          }
+        });
+
+        return orderedIds
+          .map(appId => apps.find(app => app.id === appId))
+          .filter(app => app && !app.hidden);
       }
     },
     methods: {
-      updateClock() {
-        const now = new Date();
-        this.time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        this.dateLabel = now.toLocaleDateString([], { month: "2-digit", day: "2-digit" });
+      itemClass(app) {
+        return {
+          'dock__item--active': this.isAppActive(app.id),
+          'dock__item--running': this.getAppWindows(app.id).length > 0,
+          'dock__item--pinned': this.isPinned(app.id)
+        };
       },
-      handleLauncherClick() {
-        this.system.openApp("api");
+      getAppWindows(appId) {
+        const openWindows = this.system && this.system.openWindows ? this.system.openWindows : [];
+        return openWindows
+          .filter(win => win.appId === appId)
+          .slice()
+          .sort((a, b) => b.zIndex - a.zIndex);
       },
-      handleSearchClick() {
-        this.system.openApp("explore");
+      isPinned(appId) {
+        const pinnedApps = this.system && this.system.pinnedApps ? this.system.pinnedApps : [];
+        return pinnedApps.includes(appId);
       },
-      handleSettingsClick() {
-        this.system.openApp("setting");
+      isAppActive(appId) {
+        const activeWindowId = this.system ? this.system.activeWindowId : null;
+        const activeWindow = this.getAppWindows(appId).find(win => win.id === activeWindowId);
+        return !!activeWindow && !activeWindow.isMinimized;
       },
-      handleAppClick(appId) {
-        this.system.openApp(appId);
+      openPreview(appId) {
+        this.previewAppId = appId;
       },
-      focusSpecificWindow(windowId) {
-        const win = this.system.openWindows.find(w => w.id === windowId);
-        if (win) {
-          win.isMinimized = false;
-          this.system.focusWindow(windowId);
-        }
+      closePreview() {
+        this.previewAppId = null;
       },
-      openNewWindow(appId) {
-        this.system.openApp(appId, true);
-      },
-      onDragOver(e) {
-        e.preventDefault();
-        this.isDraggingOver = true;
-        if (e.dataTransfer) {
-          e.dataTransfer.dropEffect = "copy";
-        }
-      },
-      onDragLeave(e) {
-        this.isDraggingOver = false;
-      },
-      onDrop(e) {
-        e.preventDefault();
-        this.isDraggingOver = false;
+      handleAppClick(app) {
+        const windows = this.getAppWindows(app.id);
 
-        // Handle internal app icons
-        const appId = e.dataTransfer?.getData("text/plain");
-        if (appId) {
-          this.system.pinApp(appId);
+        if (!windows.length) {
+          this.system.openApp(app.id);
+          this.previewAppId = app.id;
           return;
         }
 
-        // Handle external files
-        if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
-          const file = e.dataTransfer.files[0];
-          // Create a temporary app for the file
-          const fileAppId = "file-" + Date.now();
-          this.system.apps.push({
-            id: fileAppId,
-            name: file.name,
-            icon: "File",
-            color: "#888888",
-            component: "NoteManager" // Open in NoteManager by default
-          });
-          this.system.pinApp(fileAppId);
+        if (windows.length === 1) {
+          const win = windows[0];
+          if (this.system.activeWindowId === win.id && !win.isMinimized) {
+            this.system.minimizeWindow(win.id);
+          } else {
+            this.activateWindow(win.id);
+          }
+          return;
+        }
+
+        this.previewAppId = this.previewAppId === app.id ? null : app.id;
+      },
+      activateWindow(windowId) {
+        const win = (this.system.openWindows || []).find(item => item.id === windowId);
+        if (!win) return;
+
+        win.isMinimized = false;
+        this.system.focusWindow(windowId);
+      },
+      minimizeWindow(windowId) {
+        this.system.minimizeWindow(windowId);
+      },
+      closeWindow(windowId) {
+        this.system.closeWindow(windowId);
+
+        const stillVisible = this.previewAppId && this.getAppWindows(this.previewAppId).length;
+        if (!stillVisible) {
+          this.previewAppId = null;
         }
       },
-      onDragStart(e, appId) {
-        if (e.dataTransfer) {
-          e.dataTransfer.setData("text/plain", appId);
-          e.dataTransfer.setData("action", "unpin");
-          e.dataTransfer.effectAllowed = "move";
+      togglePinned(appId) {
+        if (this.isPinned(appId)) {
+          this.system.unpinApp(appId);
+        } else {
+          this.system.pinApp(appId);
         }
+      },
+      handleLauncherClick() {
+        this.system.openApp('explore');
+      },
+      handleSettingsClick() {
+        this.system.openApp('setting');
       }
-    },
-    mounted() {
-      this.updateClock();
-      this.timer = setInterval(this.updateClock, 1000);
-    },
-    beforeDestroy() {
-      clearInterval(this.timer);
     }
   };
 }
 </script>
 
 <style lang="less">
-.dock-shell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 64px;
-  position: relative;
-}
-
-.dock-shell__spacer {
-  flex: 1 1 0;
-}
-
 .dock {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 48px;
-  padding: 0 8px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
   position: relative;
-  backdrop-filter: none;
-  box-shadow: none;
-  transition:
-    transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  &--dragging {
-    transform: translateY(-1px);
-  }
-}
-
-.dock-tray {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-.dock-tray__control {
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(241, 245, 249, 0.9);
-  background: transparent;
-  cursor: pointer;
-  transition: background-color 0.18s ease, transform 0.18s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.08);
-  }
-
-  &:active {
-    transform: scale(0.96);
-    background: rgba(255, 255, 255, 0.12);
-  }
-}
-
-.dock-tray__clock {
-  min-width: 78px;
-  padding: 0 8px;
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: flex-end;
-  justify-content: center;
-  color: rgba(241, 245, 249, 0.92);
-  line-height: 1.1;
-}
-
-.dock-tray__time {
-  font-size: 0.74rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.dock-tray__date {
-  margin-top: 2px;
-  font-size: 0.67rem;
-  color: rgba(226, 232, 240, 0.72);
-  font-variant-numeric: tabular-nums;
-}
-
-.dock__item {
-  width: 44px;
-  height: 44px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &--active {
-    .dock__item-content {
-      color: #ffffff;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.14),
-        0 8px 18px rgba(15, 23, 42, 0.26);
-    }
-  }
-
-  &--pinned {
-    .dock__item-content {
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-  }
-
-  &--animate {
-    animation: dock-scale 0.2s ease-out;
-  }
-}
-
-.dock__item-content {
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(241, 245, 249, 0.92);
-  border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.03);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  transition:
-    transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
-    color 180ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 180ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  &:not(&--active):hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.08);
-  }
-
-  &:not(&--active):active {
-    transform: scale(0.98);
-    background: rgba(255, 255, 255, 0.12);
-  }
-
-  &--active {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: rgba(255, 255, 255, 0.14);
-    color: #ffffff;
-  }
-
-  &--system {
-    background: rgba(255, 255, 255, 0.05);
-  }
-}
-
-.dock__separator {
-  width: 1px;
-  height: 24px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0) 100%);
-  margin: 0 4px;
-  align-self: center;
-}
-
-.dock__tooltip {
-  position: absolute;
-  top: -42px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 6px 10px;
-  background: rgba(15, 23, 42, 0.9);
-  color: #e2e8f0;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border-radius: 10px;
-  opacity: 0;
+  gap: 12px;
+  margin: 0 auto 12px;
+  padding: 12px 14px;
+  border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition:
-    opacity 180ms cubic-bezier(0.4, 0, 0.2, 1),
-    transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-  white-space: nowrap;
-  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.28);
+  background:
+    linear-gradient(180deg, rgba(23, 31, 49, 0.92) 0%, rgba(10, 14, 24, 0.96) 100%);
+  box-shadow:
+    0 22px 48px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  pointer-events: auto;
 
-  .group:hover & {
-    opacity: 1;
-    transform: translateX(-50%) translateY(-2px);
-  }
-}
-
-.dock__preview {
-  position: absolute;
-  bottom: 54px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px;
-  background: rgba(15, 23, 42, 0.92);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.34);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  z-index: 100;
-  min-width: 220px;
-  backdrop-filter: blur(20px);
-}
-
-.dock__preview-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 8px 8px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
-}
-
-.dock__preview-title {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: rgba(226, 232, 240, 0.9);
-}
-
-.dock__preview-add-btn {
-  padding: 4px;
-  border-radius: 9999px;
-  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-
-    .xIcon {
-      color: #93c5fd;
-    }
+  &__items {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 10px;
   }
 
-  &:active {
-    background-color: rgba(255, 255, 255, 0.12);
+  &__item-wrapper {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
   }
 
-  .xIcon {
-    color: rgba(226, 232, 240, 0.82);
-  }
-}
-
-.dock__preview-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-height: 250px;
-  overflow-y: auto;
-  padding-right: 4px;
-
-  &::-webkit-scrollbar {
-    width: 3px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.26);
-    border-radius: 6px;
+  &__item,
+  &__launcher,
+  &__settings {
+    position: relative;
+    width: 58px;
+    height: 58px;
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+    color: #f8fafc;
+    cursor: pointer;
+    transition:
+      transform 180ms cubic-bezier(0.2, 0.9, 0.3, 1.2),
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 14px 26px rgba(0, 0, 0, 0.2);
 
     &:hover {
-      background: rgba(148, 163, 184, 0.4);
+      transform: translateY(-8px) scale(1.08);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        0 18px 34px rgba(0, 0, 0, 0.28);
+    }
+
+    &:active {
+      transform: translateY(-3px) scale(0.98);
     }
   }
-}
 
-.dock__preview-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  &__item {
+    &--running {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(120, 144, 255, 0.12) 100%);
+    }
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    &--active {
+      background:
+        linear-gradient(180deg, rgba(147, 197, 253, 0.28) 0%, rgba(96, 165, 250, 0.14) 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        0 20px 36px rgba(59, 130, 246, 0.18);
+    }
+
+    &--pinned::after {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 17px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+    }
   }
 
-  &:active {
-    background-color: rgba(255, 255, 255, 0.08);
+  &__item-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
   }
-}
 
-.dock__preview-item-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--color-primary);
-}
+  &__launcher {
+    overflow: hidden;
+  }
 
-.dock__preview-item-content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-.dock__preview-item-title {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #f8fafc;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dock__preview-item-status {
-  font-size: 0.75rem;
-  color: rgba(203, 213, 225, 0.72);
-}
-
-.dock__indicator {
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 4px;
-}
-
-.dock__indicator-dot {
-  height: 3px;
-  border-radius: 999px;
-  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: rgba(255, 255, 255, 0.34);
-
-  &--active {
+  &__launcher-orb {
+    position: absolute;
+    inset: auto auto 8px 8px;
     width: 18px;
-    background-color: #60a5fa;
-    box-shadow: 0 0 10px rgba(96, 165, 250, 0.62);
+    height: 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #7c9cff 0%, #69f0d6 100%);
+    filter: blur(1px);
+    opacity: 0.9;
   }
 
-  &:not(&--active) {
-    width: 4px;
+  &__settings {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(148, 163, 184, 0.1) 100%);
+  }
+
+  &__indicator {
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(226, 232, 240, 0.56);
+    transform: translateX(-50%);
+    box-shadow: 0 0 0 4px rgba(226, 232, 240, 0.08);
+
+    &--active {
+      background: #7dd3fc;
+      box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.14);
+    }
+  }
+
+  &__window-count {
+    position: absolute;
+    top: -6px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(59, 130, 246, 0.9);
+    color: #eff6ff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+  }
+
+  &__tooltip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 12px);
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.94);
+    color: #e2e8f0;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    transform: translateX(-50%) translateY(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+
+  &__item:hover &__tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  &__separator {
+    width: 1px;
+    height: 42px;
+    align-self: center;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.18) 50%, rgba(255, 255, 255, 0) 100%);
+  }
+
+  &__preview {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 16px);
+    width: 280px;
+    padding: 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+      linear-gradient(180deg, rgba(20, 28, 42, 0.97) 0%, rgba(10, 14, 24, 0.98) 100%);
+    box-shadow:
+      0 18px 44px rgba(0, 0, 0, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(16px);
+    transform: translateX(-50%);
+  }
+
+  &__preview-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  &__preview-title {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 600;
+
+    small {
+      color: rgba(226, 232, 240, 0.56);
+      font-size: 11px;
+      font-weight: 500;
+    }
+  }
+
+  &__pin-toggle,
+  &__preview-action {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: background-color 160ms ease, transform 160ms ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.14);
+      transform: translateY(-1px);
+    }
+  }
+
+  &__preview-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__preview-item,
+  &__preview-empty {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+  }
+
+  &__preview-item {
+    &--active {
+      background: rgba(96, 165, 250, 0.14);
+      border-color: rgba(125, 211, 252, 0.2);
+    }
+  }
+
+  &__preview-item-meta {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    text-align: left;
+  }
+
+  &__preview-item-title,
+  &__preview-empty-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #f8fafc;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__preview-item-subtitle,
+  &__preview-empty-subtitle {
+    font-size: 11px;
+    color: rgba(226, 232, 240, 0.58);
+  }
+
+  &__preview-item-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  &__preview-action--danger:hover {
+    background: rgba(239, 68, 68, 0.16);
+    color: #fecaca;
+  }
+
+  &__preview-empty {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
-@keyframes dock-scale {
-  0% {
-    transform: translateY(3px) scale(0.92);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+.dock-preview-enter-active,
+.dock-preview-leave-active {
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.dock-preview-enter-from,
+.dock-preview-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
 }
 </style>
