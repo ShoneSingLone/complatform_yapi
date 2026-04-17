@@ -244,8 +244,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
   height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(circle at 10% 6%, rgba(49, 130, 206, 0.14) 0%, rgba(49, 130, 206, 0) 34%),
-    radial-gradient(circle at 84% 0%, rgba(99, 179, 237, 0.12) 0%, rgba(99, 179, 237, 0) 28%),
+    radial-gradient(circle at 10% 6%, color-mix(in srgb, var(--v1-shell-primary) 14%, transparent) 0%, transparent 34%),
+    radial-gradient(circle at 84% 0%, color-mix(in srgb, var(--el-color-primary-hover, var(--v1-shell-primary)) 12%, transparent) 0%, transparent 28%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.18) 100%),
     var(--v1-shell-bg);
   color: var(--v1-shell-text);
@@ -264,10 +264,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
     overflow: hidden;
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.52) 100%),
-      linear-gradient(90deg, rgba(49, 130, 206, 0.03) 1px, transparent 1px),
-      linear-gradient(rgba(49, 130, 206, 0.03) 1px, transparent 1px),
-      radial-gradient(circle at 16% 12%, rgba(49, 130, 206, 0.12) 0%, rgba(49, 130, 206, 0) 32%),
-      radial-gradient(circle at 82% 16%, rgba(99, 179, 237, 0.12) 0%, rgba(99, 179, 237, 0) 24%),
+      linear-gradient(90deg, color-mix(in srgb, var(--v1-shell-primary) 3%, transparent) 1px, transparent 1px),
+      linear-gradient(color-mix(in srgb, var(--v1-shell-primary) 3%, transparent) 1px, transparent 1px),
+      radial-gradient(circle at 16% 12%, color-mix(in srgb, var(--v1-shell-primary) 12%, transparent) 0%, transparent 32%),
+      radial-gradient(circle at 82% 16%, color-mix(in srgb, var(--el-color-primary-hover, var(--v1-shell-primary)) 12%, transparent) 0%, transparent 24%),
       var(--v1-shell-bg-soft);
     background-size:
       auto,
@@ -305,7 +305,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       left: -80px;
       width: 420px;
       height: 420px;
-      background: radial-gradient(circle, rgba(49, 130, 206, 0.22) 0%, rgba(49, 130, 206, 0.08) 38%, rgba(49, 130, 206, 0) 72%);
+      background: radial-gradient(circle, color-mix(in srgb, var(--v1-shell-primary) 22%, transparent) 0%, color-mix(in srgb, var(--v1-shell-primary) 8%, transparent) 38%, transparent 72%);
     }
 
     &--right {
@@ -321,7 +321,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       bottom: -240px;
       width: 760px;
       height: 420px;
-      background: radial-gradient(circle, rgba(49, 130, 206, 0.18) 0%, rgba(49, 130, 206, 0.05) 32%, rgba(49, 130, 206, 0) 72%);
+      background: radial-gradient(circle, color-mix(in srgb, var(--v1-shell-primary) 18%, transparent) 0%, color-mix(in srgb, var(--v1-shell-primary) 5%, transparent) 32%, transparent 72%);
       transform: translateX(-50%);
       filter: blur(40px);
       opacity: 0.56;
