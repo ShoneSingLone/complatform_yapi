@@ -2,13 +2,21 @@
   <div
     class="dock">
     <div class="dock__left">
-      <button
-        class="dock__launcher"
-        title="打开应用台"
-        @click="handleLauncherClick">
-        <span class="dock__launcher-orb"></span>
-        <xIcon icon="grid" size="18" />
-      </button>
+      <xDropdown trigger="click" placement="top-start">
+        <button
+          class="dock__launcher"
+          type="button"
+          title="打开应用台">
+          <span class="dock__launcher-orb"></span>
+          <xIcon icon="grid" size="18" />
+        </button>
+        <xDropdownMenu slot="dropdown">
+          <div class="dock__launcher-menu">
+            <xBtn preset="text" @click="openAppById('api')">API 管理</xBtn>
+            <xBtn preset="text" @click="openAppById('explore')">资源管理</xBtn>
+          </div>
+        </xDropdownMenu>
+      </xDropdown>
 
       <div class="dock__separator" aria-hidden="true"></div>
 
@@ -203,6 +211,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
         const number = Number(value) || 0;
         return number < 10 ? `0${number}` : `${number}`;
       },
+      openAppById(appId) {
+        if (!appId) return;
+        this.system.openApp(appId);
+      },
       itemClass(app) {
         return {
           'dock__item--active': this.isAppActive(app.id),
@@ -262,10 +274,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
         }
       },
       handleLauncherClick() {
-        this.system.openApp('explore');
+        this.openAppById('explore');
       },
       handleSettingsClick() {
-        this.system.openApp('setting');
+        this.openAppById('setting');
       }
     }
   };
@@ -442,6 +454,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
   &__launcher {
     overflow: hidden;
     background: rgba(49, 130, 206, 0.08);
+  }
+
+  &__launcher-menu {
+    min-width: 180px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.94);
   }
 
   &__launcher-orb {
