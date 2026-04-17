@@ -6,6 +6,12 @@
 
     <!-- Desktop Area -->
     <div class="v1-workspace__desktop" @dragover="onDragOver" @drop="onDrop">
+      <div class="v1-workspace__backdrop" aria-hidden="true">
+        <div class="v1-workspace__glow v1-workspace__glow--left"></div>
+        <div class="v1-workspace__glow v1-workspace__glow--right"></div>
+        <div class="v1-workspace__glow v1-workspace__glow--bottom"></div>
+      </div>
+
       <!-- Background Logo -->
       <div class="v1-workspace__bg-logo">
         <xIcon icon="Monitor" size="400" />
@@ -225,7 +231,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: var(--color-background);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(98, 122, 255, 0.18) 0%, rgba(98, 122, 255, 0) 34%),
+    radial-gradient(circle at 88% 14%, rgba(72, 214, 199, 0.12) 0%, rgba(72, 214, 199, 0) 28%),
+    linear-gradient(180deg, #0f1729 0%, #0b1220 45%, #09101b 100%);
+  background-color: #09101b;
   color: var(--color-on-background);
   user-select: none;
   display: flex;
@@ -240,17 +250,66 @@ export default async function ({ PRIVATE_GLOBAL }) {
     flex: 1;
     position: relative;
     overflow: hidden;
+    background:
+      radial-gradient(circle at 20% 16%, rgba(112, 139, 255, 0.12) 0%, rgba(112, 139, 255, 0) 32%),
+      radial-gradient(circle at 78% 18%, rgba(82, 214, 183, 0.08) 0%, rgba(82, 214, 183, 0) 26%),
+      radial-gradient(circle at 50% 100%, rgba(120, 78, 255, 0.1) 0%, rgba(120, 78, 255, 0) 36%);
+  }
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  &__glow {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(24px);
+    opacity: 0.8;
+    transform: translateZ(0);
+
+    &--left {
+      top: -120px;
+      left: -80px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(106, 132, 255, 0.38) 0%, rgba(106, 132, 255, 0.14) 34%, rgba(106, 132, 255, 0) 70%);
+    }
+
+    &--right {
+      top: 48px;
+      right: -140px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(83, 215, 190, 0.26) 0%, rgba(83, 215, 190, 0.1) 38%, rgba(83, 215, 190, 0) 72%);
+    }
+
+    &--bottom {
+      left: 50%;
+      bottom: -240px;
+      width: 760px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(140, 92, 255, 0.2) 0%, rgba(140, 92, 255, 0.08) 32%, rgba(140, 92, 255, 0) 72%);
+      transform: translateX(-50%);
+      filter: blur(40px);
+      opacity: 0.7;
+    }
   }
 
   &__bg-logo {
     position: absolute;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.03;
+    right: clamp(40px, 8vw, 140px);
+    bottom: clamp(88px, 16vh, 180px);
+    z-index: 1;
+    opacity: 0.022;
     pointer-events: none;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-end;
+    justify-content: flex-end;
+    filter: blur(1px);
 
     .xIcon {
       color: var(--color-on-background);
@@ -259,23 +318,37 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
   &__icons {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(520px, 100%);
     z-index: 10;
-    padding: 40px;
+    padding:
+      32px
+      24px
+      calc(156px + env(safe-area-inset-bottom, 0px))
+      calc(28px + env(safe-area-inset-left, 0px));
     display: grid;
-    grid-template-columns: repeat(auto-fill, 100px);
-    grid-template-rows: repeat(auto-fill, 110px);
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, 96px);
+    grid-auto-rows: 110px;
+    gap: 18px 14px;
     align-content: start;
     pointer-events: auto;
   }
 
   &__dock-wrapper {
     position: absolute;
-    bottom: 32px;
     left: 50%;
-    transform: translateX(-50%);
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     z-index: 50;
+    width: fit-content;
+    max-width: calc(100% - 32px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    padding:
+      0
+      calc(12px + env(safe-area-inset-right, 0px))
+      0
+      calc(12px + env(safe-area-inset-left, 0px));
+    transform: translateX(-50%);
     pointer-events: auto;
   }
 }
