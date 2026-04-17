@@ -12,8 +12,22 @@
         </button>
         <xDropdownMenu slot="dropdown">
           <div class="dock__launcher-menu">
-            <xBtn preset="text" @click="openAppById('api')">API 管理</xBtn>
-            <xBtn preset="text" @click="openAppById('explore')">资源管理</xBtn>
+            <xBtn preset="text" class="dock__launcher-menu-btn" @click="openAppById('api')">
+              <span class="dock__launcher-menu-btn-content">
+                <span class="dock__launcher-menu-icon" :style="{ color: getAppColor('api') }">
+                  <xIcon :icon="getAppIcon('api')" size="16" />
+                </span>
+                <span class="dock__launcher-menu-label">API 管理</span>
+              </span>
+            </xBtn>
+            <xBtn preset="text" class="dock__launcher-menu-btn" @click="openAppById('explore')">
+              <span class="dock__launcher-menu-btn-content">
+                <span class="dock__launcher-menu-icon" :style="{ color: getAppColor('explore') }">
+                  <xIcon :icon="getAppIcon('explore')" size="16" />
+                </span>
+                <span class="dock__launcher-menu-label">资源管理</span>
+              </span>
+            </xBtn>
           </div>
         </xDropdownMenu>
       </xDropdown>
@@ -210,6 +224,20 @@ export default async function ({ PRIVATE_GLOBAL }) {
       pad2(value) {
         const number = Number(value) || 0;
         return number < 10 ? `0${number}` : `${number}`;
+      },
+      getAppById(appId) {
+        const apps = this.system && this.system.apps ? this.system.apps : [];
+        return apps.find(app => app.id === appId) || null;
+      },
+      getAppIcon(appId) {
+        const app = this.getAppById(appId);
+        if (app && app.icon) return app.icon;
+        return 'grid';
+      },
+      getAppColor(appId) {
+        const app = this.getAppById(appId);
+        if (app && app.color) return app.color;
+        return 'var(--v1-shell-text-secondary, var(--el-text-color-regular))';
       },
       openAppById(appId) {
         if (!appId) return;
@@ -463,6 +491,34 @@ export default async function ({ PRIVATE_GLOBAL }) {
     flex-direction: column;
     gap: 4px;
     background: rgba(255, 255, 255, 0.94);
+  }
+
+  &__launcher-menu-btn {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  &__launcher-menu-btn-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  &__launcher-menu-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(49, 130, 206, 0.08);
+  }
+
+  &__launcher-menu-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--v1-shell-text, var(--el-text-color-primary));
   }
 
   &__launcher-orb {
