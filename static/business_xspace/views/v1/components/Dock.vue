@@ -2,114 +2,116 @@
   <div
     class="dock"
     @mouseleave="closePreview">
-    <button
-      class="dock__launcher"
-      title="打开应用台"
-      @click="handleLauncherClick">
-      <span class="dock__launcher-orb"></span>
-      <xIcon icon="grid" size="18" />
-    </button>
+    <div class="dock__left">
+      <button
+        class="dock__launcher"
+        title="打开应用台"
+        @click="handleLauncherClick">
+        <span class="dock__launcher-orb"></span>
+        <xIcon icon="grid" size="18" />
+      </button>
 
-    <div class="dock__separator" aria-hidden="true"></div>
+      <div class="dock__separator" aria-hidden="true"></div>
 
-    <div class="dock__items">
-      <div
-        v-for="app in dockApps"
-        :key="app.id"
-        class="dock__item-wrapper"
-        @mouseenter="openPreview(app.id)">
-        <button
-          class="dock__item"
-          :class="itemClass(app)"
-          :title="app.name"
-          @click="handleAppClick(app)">
-          <span class="dock__item-icon">
-            <xIcon :icon="app.icon || 'grid'" size="22" />
-          </span>
-          <span class="dock__tooltip">{{ app.name }}</span>
-          <span
-            v-if="getAppWindows(app.id).length"
-            class="dock__indicator"
-            :class="{ 'dock__indicator--active': isAppActive(app.id) }"></span>
-          <span
-            v-if="getAppWindows(app.id).length > 1"
-            class="dock__window-count">
-            {{ getAppWindows(app.id).length }}
-          </span>
-        </button>
+      <div class="dock__items">
+        <div
+          v-for="app in dockApps"
+          :key="app.id"
+          class="dock__item-wrapper"
+          @mouseenter="openPreview(app.id)">
+          <button
+            class="dock__item"
+            :class="itemClass(app)"
+            :title="app.name"
+            @click="handleAppClick(app)">
+            <span class="dock__item-icon">
+              <xIcon :icon="app.icon || 'grid'" size="22" />
+            </span>
+            <span class="dock__tooltip">{{ app.name }}</span>
+            <span
+              v-if="getAppWindows(app.id).length"
+              class="dock__indicator"
+              :class="{ 'dock__indicator--active': isAppActive(app.id) }"></span>
+            <span
+              v-if="getAppWindows(app.id).length > 1"
+              class="dock__window-count">
+              {{ getAppWindows(app.id).length }}
+            </span>
+          </button>
 
-        <transition name="dock-preview">
-          <div
-            v-if="previewAppId === app.id"
-            class="dock__preview"
-            @mouseenter="openPreview(app.id)">
-            <div class="dock__preview-header">
-              <div class="dock__preview-title">
-                <span>{{ app.name }}</span>
-                <small>{{ getAppWindows(app.id).length ? getAppWindows(app.id).length + ' 个窗口' : '已固定应用' }}</small>
+          <transition name="dock-preview">
+            <div
+              v-if="previewAppId === app.id"
+              class="dock__preview"
+              @mouseenter="openPreview(app.id)">
+              <div class="dock__preview-header">
+                <div class="dock__preview-title">
+                  <span>{{ app.name }}</span>
+                  <small>{{ getAppWindows(app.id).length ? getAppWindows(app.id).length + ' 个窗口' : '已固定应用' }}</small>
+                </div>
+                <button
+                  class="dock__pin-toggle"
+                  :title="isPinned(app.id) ? '从 Dock 取消固定' : '固定到 Dock'"
+                  @click.stop="togglePinned(app.id)">
+                  <xIcon icon="star" size="14" />
+                </button>
               </div>
+
+              <div v-if="getAppWindows(app.id).length" class="dock__preview-list">
+                <div
+                  v-for="win in getAppWindows(app.id)"
+                  :key="win.id"
+                  class="dock__preview-item"
+                  :class="{ 'dock__preview-item--active': system.activeWindowId === win.id && !win.isMinimized }"
+                  role="button"
+                  tabindex="0"
+                  @click.stop="activateWindow(win.id)">
+                  @keydown.enter.stop.prevent="activateWindow(win.id)"
+                  @keydown.space.stop.prevent="activateWindow(win.id)">
+                  <span class="dock__preview-item-meta">
+                    <span class="dock__preview-item-title">{{ win.title }}</span>
+                    <span class="dock__preview-item-subtitle">
+                      {{ win.isMinimized ? '最小化' : (system.activeWindowId === win.id ? '当前窗口' : '已打开') }}
+                    </span>
+                  </span>
+                  <span class="dock__preview-item-actions">
+                    <button
+                      class="dock__preview-action"
+                      title="最小化"
+                      @click.stop="minimizeWindow(win.id)">
+                      <xIcon icon="minus" size="14" />
+                    </button>
+                    <button
+                      class="dock__preview-action dock__preview-action--danger"
+                      title="关闭"
+                      @click.stop="closeWindow(win.id)">
+                      <xIcon icon="close" size="14" />
+                    </button>
+                  </span>
+                </div>
+              </div>
+
               <button
-                class="dock__pin-toggle"
-                :title="isPinned(app.id) ? '从 Dock 取消固定' : '固定到 Dock'"
-                @click.stop="togglePinned(app.id)">
-                <xIcon icon="star" size="14" />
+                v-else
+                class="dock__preview-empty"
+                @click.stop="system.openApp(app.id)">
+                <span class="dock__preview-empty-title">启动 {{ app.name }}</span>
+                <span class="dock__preview-empty-subtitle">当前没有活动窗口</span>
               </button>
             </div>
-
-            <div v-if="getAppWindows(app.id).length" class="dock__preview-list">
-              <div
-                v-for="win in getAppWindows(app.id)"
-                :key="win.id"
-                class="dock__preview-item"
-                :class="{ 'dock__preview-item--active': system.activeWindowId === win.id && !win.isMinimized }"
-                role="button"
-                tabindex="0"
-                @click.stop="activateWindow(win.id)">
-                @keydown.enter.stop.prevent="activateWindow(win.id)"
-                @keydown.space.stop.prevent="activateWindow(win.id)">
-                <span class="dock__preview-item-meta">
-                  <span class="dock__preview-item-title">{{ win.title }}</span>
-                  <span class="dock__preview-item-subtitle">
-                    {{ win.isMinimized ? '最小化' : (system.activeWindowId === win.id ? '当前窗口' : '已打开') }}
-                  </span>
-                </span>
-                <span class="dock__preview-item-actions">
-                  <button
-                    class="dock__preview-action"
-                    title="最小化"
-                    @click.stop="minimizeWindow(win.id)">
-                    <xIcon icon="minus" size="14" />
-                  </button>
-                  <button
-                    class="dock__preview-action dock__preview-action--danger"
-                    title="关闭"
-                    @click.stop="closeWindow(win.id)">
-                    <xIcon icon="close" size="14" />
-                  </button>
-                </span>
-              </div>
-            </div>
-
-            <button
-              v-else
-              class="dock__preview-empty"
-              @click.stop="system.openApp(app.id)">
-              <span class="dock__preview-empty-title">启动 {{ app.name }}</span>
-              <span class="dock__preview-empty-subtitle">当前没有活动窗口</span>
-            </button>
-          </div>
-        </transition>
+          </transition>
+        </div>
       </div>
     </div>
 
-    <div class="dock__separator" aria-hidden="true"></div>
-
-    <button
-      class="dock__settings"
-      title="打开设置"
-      @click="handleSettingsClick">
-      <xIcon icon="_setting_outlined" size="18" />
-    </button>
+    <div class="dock__right">
+      <button
+        class="dock__settings"
+        title="打开设置"
+        @click="handleSettingsClick">
+        <xIcon icon="_setting_outlined" size="18" />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -239,37 +241,36 @@ export default async function ({ PRIVATE_GLOBAL }) {
 <style lang="less">
 .dock {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin: 0;
-  padding: 8px 14px;
-  min-height: 64px;
-  width: auto;
-  border: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: 
-    0 8px 32px rgba(49, 130, 206, 0.12),
-    0 4px 12px rgba(0, 0, 0, 0.04);
-  backdrop-filter: blur(20px);
+  width: 100%;
+  height: 56px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.78);
+  border-top: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
+  backdrop-filter: blur(18px);
   pointer-events: auto;
-  transform: translateY(0);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-  &:hover {
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 
-      0 12px 40px rgba(49, 130, 206, 0.16),
-      0 6px 16px rgba(0, 0, 0, 0.06);
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
   }
 
   &__items {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 4px;
+    min-width: 0;
   }
 
   &__item-wrapper {
@@ -359,7 +360,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
   }
 
   &__settings {
-    background: rgba(255, 255, 255, 0.46);
+    background: transparent;
   }
 
   &__indicator {
@@ -426,7 +427,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
   &__separator {
     width: 1px;
-    height: 24px;
+    height: 28px;
     align-self: center;
     background: linear-gradient(180deg, rgba(220, 223, 230, 0) 0%, rgba(220, 223, 230, 1) 50%, rgba(220, 223, 230, 0) 100%);
   }

@@ -354,18 +354,18 @@ export default async function ({ PRIVATE_GLOBAL }) {
     bottom: 0;
     z-index: 50;
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
+    justify-content: stretch;
+    align-items: stretch;
     width: 100%;
-    min-height: 100px;
-    padding-bottom: 24px;
-    background: linear-gradient(180deg, rgba(244, 249, 253, 0) 0%, rgba(244, 249, 253, 0.42) 40%, rgba(244, 249, 253, 0.8) 100%);
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: rgba(255, 255, 255, 0.6);
     pointer-events: none;
-    border-top: none;
-    backdrop-filter: none;
+    backdrop-filter: blur(18px);
 
     & > * {
       pointer-events: auto;
+      width: 100%;
     }
   }
 }
