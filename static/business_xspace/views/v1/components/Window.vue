@@ -3,108 +3,68 @@
     <div
       v-show="!window.isMinimized"
       ref="windowRef"
-      class="absolute pointer-events-auto flex flex-col overflow-hidden bg-surface elevation-3"
-      :class="[
-        window.isMaximized
-          ? '!inset-0 !w-full !h-full !translate-x-0 !translate-y-0 rounded-none'
-          : 'rounded-m3-large border border-outline-variant-50',
-        isActive ? 'z-30' : 'z-20',
-        !isDragging
-          ? 'transition-[width,height,transform,opacity] duration-300 ease-out'
-          : ''
-      ]"
-      :style="
-        window.isMaximized
-          ? { zIndex: window.zIndex }
-          : {
-              zIndex: window.zIndex,
-              width: window.width + 'px',
-              height: window.height + 'px',
-              transform: `translate(${x}px, ${y}px)`
-            }
-      "
+      class="v1-window"
+      :class="windowClassList"
+      :style="windowStyle"
       @mousedown="system.focusWindow(window.id)">
-      <!-- Title Bar -->
-      <div
-        ref="handleRef"
-        class="h-14 flex items-center justify-between px-4 bg-surface-container border-b border-outline-variant cursor-default select-none">
-        <div class="flex items-center gap-3">
-          <div
-            class="w-8 h-8 rounded-m3-small flex items-center justify-center bg-surface-container-highest text-primary"
-            :style="{ color: system.apps.find(a => a.id === window.appId)?.color }">
-            <div class="text-lg font-bold">{{ system.apps.find(a => a.id === window.appId)?.name.charAt(0) || '?' }}</div>
+      <div ref="handleRef" class="v1-window__titlebar">
+        <div class="v1-window__title">
+          <div class="v1-window__app-icon" :style="{ color: appColor }">
+            <div class="v1-window__app-letter">{{ appIcon }}</div>
           </div>
-          <span class="text-sm font-medium text-on-surface">{{ window.title }}</span>
+          <div class="v1-window__title-copy">
+            <span class="v1-window__title-text">{{ window.title }}</span>
+            <span class="v1-window__title-meta">{{ windowSubtitle }}</span>
+          </div>
         </div>
 
-        <div class="flex items-center gap-1">
+        <div class="v1-window__controls">
           <button
-            @click.stop="pinToDesktop"
-            class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors"
-            title="Pin to Desktop">
-            <xIcon icon="pin" size="20" class="text-on-surface-variant" />
+            type="button"
+            class="v1-window__control-btn"
+            title="Pin to Desktop"
+            @click.stop="pinToDesktop">
+            <xIcon icon="star" size="20" />
           </button>
           <button
-            @click.stop="handleMinimize"
-            class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors">
-            <xIcon icon="minus" size="20" class="text-on-surface-variant" />
+            type="button"
+            class="v1-window__control-btn"
+            title="Minimize"
+            @click.stop="handleMinimize">
+            <xIcon icon="minus" size="20" />
           </button>
           <button
-            @click.stop="handleMaximize"
-            class="w-10 h-10 flex items-center justify-center hover:bg-on-surface/8 active:bg-on-surface/12 rounded-full transition-colors">
-            <xIcon :icon="window.isMaximized ? 'copy' : 'square'" size="16" class="text-on-surface-variant" />
+            type="button"
+            class="v1-window__control-btn"
+            title="Maximize"
+            @click.stop="handleMaximize">
+            <xIcon :icon="window.isMaximized ? 'copy-document' : 'scale-to-original'" size="16" />
           </button>
           <button
-            @click.stop="handleClose"
-            class="w-10 h-10 flex items-center justify-center hover:bg-error/10 active:bg-error/20 text-on-surface-variant hover:text-error rounded-full transition-colors">
-            <xIcon icon="x" size="20" />
+            type="button"
+            class="v1-window__control-btn v1-window__control-btn--close"
+            title="Close"
+            @click.stop="handleClose">
+            <xIcon icon="close" size="20" />
           </button>
         </div>
       </div>
 
-      <!-- Content Area -->
-      <div class="flex-1 overflow-auto bg-surface">
-        <div class="h-full p-6">
-          <!-- Placeholder Content based on App ID -->
-          <div class="h-full">
-            <div
-              v-if="
-                [
-                  'api',
-                  'group',
-                  'project',
-                  'api_folder',
-                  'doc_folder',
-                  'folder',
-                  'api_endpoint',
-                  'doc',
-                  'code',
-                  'member_list',
-                  'setting',
-                  'cicd'
-                ].includes(window.appId)
-              "
-              class="h-full">
-              <ApiManager :window-data="window.data" />
-            </div>
-            <div v-else-if="window.appId === 'explore'" class="h-full">
-              <Explore />
-            </div>
-
-            <div
-              v-else
-              class="h-full flex flex-col items-center justify-center text-center py-20">
-              <div
-                class="w-20 h-20 rounded-m3-large bg-secondary-container flex items-center justify-center text-on-secondary-container mb-6"
-                :style="{ color: system.apps.find(a => a.id === window.appId)?.color }">
-                <div class="text-3xl font-bold">{{ system.apps.find(a => a.id === window.appId)?.name.charAt(0) || '?' }}</div>
-              </div>
-              <p class="text-on-surface-variant mb-6 text-lg">
-                The <strong>{{ window.title }}</strong> module is currently under development.
-              </p>
-              <button class="m3-button-primary">Request Feature</button>
-            </div>
+      <div class="v1-window__content">
+        <div v-if="isApiManagerApp" class="v1-window__stage">
+          <ApiManager :window-data="window.data" />
+        </div>
+        <div v-else-if="isExploreApp" class="v1-window__stage">
+          <Explore />
+        </div>
+        <div v-else class="v1-window__placeholder">
+          <div class="v1-window__placeholder-icon" :style="{ color: appColor }">
+            <div class="v1-window__placeholder-letter">{{ appIcon }}</div>
           </div>
+          <p class="v1-window__placeholder-text">
+            The <strong>{{ window.title }}</strong> module is currently under development.
+          </p>
+          <button type="button" class="v1-window__placeholder-btn">Request Feature</button>
         </div>
       </div>
     </div>
@@ -135,6 +95,66 @@ export default async function ({ PRIVATE_GLOBAL }) {
     computed: {
       isActive() {
         return this.system.activeWindowId === this.window.id;
+      },
+      appInfo() {
+        return this.system.apps.find(a => a.id === this.window.appId) || {};
+      },
+      appIcon() {
+        const name = this.appInfo.name || this.window.title || '?';
+        return name.charAt(0) || '?';
+      },
+      appColor() {
+        return this.appInfo.color || 'var(--color-primary)';
+      },
+      windowSubtitle() {
+        if (this.isApiManagerApp) {
+          return 'Project workspace';
+        }
+        if (this.isExploreApp) {
+          return 'Explore content';
+        }
+        return 'Feature preview';
+      },
+      isApiManagerApp() {
+        return [
+          'api',
+          'group',
+          'project',
+          'api_folder',
+          'doc_folder',
+          'folder',
+          'api_endpoint',
+          'doc',
+          'code',
+          'member_list',
+          'setting',
+          'cicd'
+        ].includes(this.window.appId);
+      },
+      isExploreApp() {
+        return this.window.appId === 'explore';
+      },
+      windowClassList() {
+        return {
+          'v1-window--maximized': this.window.isMaximized,
+          'v1-window--active': this.isActive,
+          'v1-window--inactive': !this.isActive,
+          'v1-window--animating': !this.isDragging
+        };
+      },
+      windowStyle() {
+        if (this.window.isMaximized) {
+          return {
+            zIndex: this.window.zIndex
+          };
+        }
+
+        return {
+          zIndex: this.window.zIndex,
+          width: this.window.width + 'px',
+          height: this.window.height + 'px',
+          transform: `translate(${this.x}px, ${this.y}px)`
+        };
       }
     },
     methods: {
@@ -208,288 +228,211 @@ export default async function ({ PRIVATE_GLOBAL }) {
 </script>
 
 <style lang="less">
-/* 窗口样式 */
-.absolute {
+.v1-window {
   position: absolute;
-}
-
-.pointer-events-auto {
-  pointer-events: auto;
-}
-
-.flex {
+  inset: auto;
   display: flex;
-}
-
-.flex-col {
   flex-direction: column;
-}
-
-.overflow-hidden {
   overflow: hidden;
-}
+  pointer-events: auto;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+  border-radius: 24px;
+  box-shadow: var(--el-box-shadow-dark);
 
-.bg-surface {
-  background-color: var(--color-surface);
-}
+  &--active {
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.18), 0 10px 24px rgba(15, 23, 42, 0.12);
+  }
 
-.elevation-3 {
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
-}
+  &--inactive {
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.1), 0 6px 16px rgba(15, 23, 42, 0.08);
+  }
 
-.rounded-m3-large {
-  border-radius: 16px;
-}
+  &--animating {
+    transition: width 0.3s ease-out, height 0.3s ease-out, transform 0.3s ease-out,
+      opacity 0.3s ease-out;
+  }
 
-.border {
-  border: 1px solid;
-}
+  &--maximized {
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    transform: translate(0, 0) !important;
+    border-radius: 0;
+    border-width: 0;
+  }
 
-.border-outline-variant-50 {
-  border-color: rgba(195, 199, 207, 0.5);
-}
+  &__titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 64px;
+    padding: 0 20px 0 22px;
+    background: color-mix(in srgb, var(--color-surface-container) 92%, white 8%);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-outline-variant) 72%, transparent);
+    backdrop-filter: blur(14px);
+    cursor: default;
+    user-select: none;
+  }
 
-.z-20 {
-  z-index: 20;
-}
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+  }
 
-.z-30 {
-  z-index: 30;
-}
+  &__app-icon,
+  &__placeholder-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--color-surface-container-highest) 90%, white 10%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
 
-.transition-\[width\,height\,transform\,opacity\] {
-  transition-property: width, height, transform, opacity;
-}
+  &__app-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+  }
 
-.duration-300 {
-  transition-duration: 300ms;
-}
+  &__app-letter,
+  &__placeholder-letter {
+    font-weight: 700;
+    line-height: 1;
+  }
 
-.ease-out {
-  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-}
+  &__app-letter {
+    font-size: 18px;
+  }
 
-.h-14 {
-  height: 56px;
-}
+  &__title-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
 
-.items-center {
-  align-items: center;
-}
+  &__title-text {
+    overflow: hidden;
+    color: var(--color-on-surface);
+    font-size: 15px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.justify-between {
-  justify-content: space-between;
-}
+  &__title-meta {
+    color: var(--color-on-surface-variant);
+    font-size: 12px;
+    font-weight: 500;
+  }
 
-.px-4 {
-  padding-left: 16px;
-  padding-right: 16px;
-}
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
 
-.bg-surface-container {
-  background-color: var(--color-surface-container);
-}
+  &__control-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-on-surface-variant);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 
-.border-b {
-  border-bottom: 1px solid;
-}
+    &:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
 
-.border-outline-variant {
-  border-color: var(--color-outline-variant);
-}
+    &:active {
+      background: rgba(0, 0, 0, 0.1);
+      transform: scale(0.96);
+    }
 
-.cursor-default {
-  cursor: default;
-}
+    &--close:hover {
+      background: color-mix(in srgb, var(--el-color-danger-light-9) 92%, white 8%);
+      color: var(--el-color-danger);
+    }
 
-.select-none {
-  user-select: none;
-}
+    &--close:active {
+      background: color-mix(in srgb, var(--el-color-danger-light-8) 92%, white 8%);
+    }
+  }
 
-.gap-3 {
-  gap: 12px;
-}
+  &__content {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    background: var(--color-surface);
+  }
 
-.w-8 {
-  width: 32px;
-}
+  &__stage {
+    height: 100%;
+  }
 
-.h-8 {
-  height: 32px;
-}
+  &__placeholder {
+    height: 100%;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+  }
 
-.rounded-m3-small {
-  border-radius: 8px;
-}
+  &__placeholder-icon {
+    width: 88px;
+    height: 88px;
+    border-radius: 28px;
+    margin-bottom: 24px;
+  }
 
-.bg-surface-container-highest {
-  background-color: var(--color-surface-container-highest);
-}
+  &__placeholder-letter {
+    font-size: 30px;
+  }
 
-.text-primary {
-  color: var(--color-primary);
-}
+  &__placeholder-text {
+    max-width: 480px;
+    margin: 0 0 24px;
+    color: var(--color-on-surface-variant);
+    font-size: 16px;
+    line-height: 1.7;
+  }
 
-.text-lg {
-  font-size: 1.125rem;
-}
+  &__placeholder-btn {
+    min-width: 148px;
+    min-height: 44px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--el-color-primary);
+    color: var(--color-on-primary);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
-.font-bold {
-  font-weight: 700;
-}
+    &:hover {
+      background: var(--el-color-primary-hover);
+      box-shadow: var(--el-box-shadow-light);
+    }
 
-.text-sm {
-  font-size: 0.875rem;
-}
-
-.font-medium {
-  font-weight: 500;
-}
-
-.text-on-surface {
-  color: var(--color-on-surface);
-}
-
-.gap-1 {
-  gap: 4px;
-}
-
-.w-10 {
-  width: 40px;
-}
-
-.h-10 {
-  height: 40px;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.hover\:bg-on-surface\/8:hover {
-  background-color: rgba(26, 28, 30, 0.08);
-}
-
-.active\:bg-on-surface\/12:active {
-  background-color: rgba(26, 28, 30, 0.12);
-}
-
-.rounded-full {
-  border-radius: 9999px;
-}
-
-.transition-colors {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-.text-on-surface-variant {
-  color: var(--color-on-surface-variant);
-}
-
-.hover\:bg-error\/10:hover {
-  background-color: rgba(186, 26, 26, 0.1);
-}
-
-.active\:bg-error\/20:active {
-  background-color: rgba(186, 26, 26, 0.2);
-}
-
-.hover\:text-error:hover {
-  color: var(--color-error);
-}
-
-.flex-1 {
-  flex: 1;
-}
-
-.overflow-auto {
-  overflow: auto;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.p-6 {
-  padding: 24px;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.py-20 {
-  padding-top: 80px;
-  padding-bottom: 80px;
-}
-
-.w-20 {
-  width: 80px;
-}
-
-.h-20 {
-  height: 80px;
-}
-
-.bg-secondary-container {
-  background-color: var(--color-secondary-container);
-}
-
-.text-on-secondary-container {
-  color: var(--color-on-secondary-container);
-}
-
-.mb-6 {
-  margin-bottom: 24px;
-}
-
-.text-3xl {
-  font-size: 1.875rem;
-}
-
-.text-on-surface-variant {
-  color: var(--color-on-surface-variant);
-}
-
-.text-lg {
-  font-size: 1.125rem;
-}
-
-.m3-button-primary {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  border-radius: 9999px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-  border: none;
-  cursor: pointer;
-}
-
-.m3-button-primary:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-}
-
-.m3-button-primary:active {
-  background-color: rgba(0, 97, 164, 0.9);
+    &:active {
+      background: var(--el-color-primary-active);
+      transform: scale(0.98);
+    }
+  }
 }
 
 /* 窗口过渡动画 */

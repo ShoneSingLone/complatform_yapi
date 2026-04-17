@@ -6,9 +6,15 @@
 
     <!-- Desktop Area -->
     <div class="v1-workspace__desktop" @dragover="onDragOver" @drop="onDrop">
+      <div class="v1-workspace__backdrop" aria-hidden="true">
+        <div class="v1-workspace__glow v1-workspace__glow--left"></div>
+        <div class="v1-workspace__glow v1-workspace__glow--right"></div>
+        <div class="v1-workspace__glow v1-workspace__glow--bottom"></div>
+      </div>
+
       <!-- Background Logo -->
       <div class="v1-workspace__bg-logo">
-        <xIcon icon="Monitor" size="400" />
+        <xIcon icon="monitor" size="400" />
       </div>
 
       <!-- Desktop Icons Grid -->
@@ -222,11 +228,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 <style lang="less">
 .v1-workspace {
+  --v1-shell-bg: var(--body-bg-color, #f4f9fd);
+  --v1-shell-bg-soft: var(--bg-color, #f5f8f7);
+  --v1-shell-surface: var(--el-fill-color-blank, #ffffff);
+  --v1-shell-surface-muted: var(--dialog-bg-color, #ffffff);
+  --v1-shell-border: var(--el-border-color-lighter, #ebeef5);
+  --v1-shell-border-strong: var(--el-border-color, #dcdfe6);
+  --v1-shell-text: var(--el-text-color-primary, #303133);
+  --v1-shell-text-secondary: var(--el-text-color-regular, #606266);
+  --v1-shell-text-muted: var(--el-text-color-secondary, #909399);
+  --v1-shell-primary: var(--el-color-primary, #3182ce);
+  --v1-shell-primary-soft: var(--el-color-primary-light-9, #eff6ff);
+  --v1-shell-shadow: var(--el-box-shadow);
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: var(--color-background);
-  color: var(--color-on-background);
+  background:
+    radial-gradient(circle at 10% 6%, color-mix(in srgb, var(--v1-shell-primary) 14%, transparent) 0%, transparent 34%),
+    radial-gradient(circle at 84% 0%, color-mix(in srgb, var(--el-color-primary-hover, var(--v1-shell-primary)) 12%, transparent) 0%, transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.18) 100%),
+    var(--v1-shell-bg);
+  color: var(--v1-shell-text);
   user-select: none;
   display: flex;
   flex-direction: column;
@@ -240,43 +262,426 @@ export default async function ({ PRIVATE_GLOBAL }) {
     flex: 1;
     position: relative;
     overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.52) 100%),
+      linear-gradient(90deg, color-mix(in srgb, var(--v1-shell-primary) 3%, transparent) 1px, transparent 1px),
+      linear-gradient(color-mix(in srgb, var(--v1-shell-primary) 3%, transparent) 1px, transparent 1px),
+      radial-gradient(circle at 16% 12%, color-mix(in srgb, var(--v1-shell-primary) 12%, transparent) 0%, transparent 32%),
+      radial-gradient(circle at 82% 16%, color-mix(in srgb, var(--el-color-primary-hover, var(--v1-shell-primary)) 12%, transparent) 0%, transparent 24%),
+      var(--v1-shell-bg-soft);
+    background-size:
+      auto,
+      64px 64px,
+      64px 64px,
+      auto,
+      auto,
+      auto;
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0;
+  }
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  &__glow {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(32px);
+    opacity: 0.72;
+    transform: translateZ(0);
+
+    &--left {
+      top: -120px;
+      left: -80px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, color-mix(in srgb, var(--v1-shell-primary) 22%, transparent) 0%, color-mix(in srgb, var(--v1-shell-primary) 8%, transparent) 38%, transparent 72%);
+    }
+
+    &--right {
+      top: 48px;
+      right: -140px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(99, 179, 237, 0.22) 0%, rgba(99, 179, 237, 0.08) 38%, rgba(99, 179, 237, 0) 72%);
+    }
+
+    &--bottom {
+      left: 50%;
+      bottom: -240px;
+      width: 760px;
+      height: 420px;
+      background: radial-gradient(circle, color-mix(in srgb, var(--v1-shell-primary) 18%, transparent) 0%, color-mix(in srgb, var(--v1-shell-primary) 5%, transparent) 32%, transparent 72%);
+      transform: translateX(-50%);
+      filter: blur(40px);
+      opacity: 0.56;
+    }
   }
 
   &__bg-logo {
     position: absolute;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.03;
+    right: clamp(40px, 8vw, 140px);
+    bottom: clamp(88px, 16vh, 180px);
+    z-index: 1;
+    opacity: 0.05;
     pointer-events: none;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-end;
+    justify-content: flex-end;
+    filter: none;
 
     .xIcon {
-      color: var(--color-on-background);
+      color: var(--v1-shell-primary);
     }
   }
 
   &__icons {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(520px, 100%);
     z-index: 10;
-    padding: 40px;
+    padding:
+      28px
+      24px
+      calc(112px + env(safe-area-inset-bottom, 0px))
+      calc(28px + env(safe-area-inset-left, 0px));
     display: grid;
-    grid-template-columns: repeat(auto-fill, 100px);
-    grid-template-rows: repeat(auto-fill, 110px);
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, 92px);
+    grid-auto-rows: 112px;
+    gap: 18px 12px;
     align-content: start;
     pointer-events: auto;
   }
 
   &__dock-wrapper {
     position: absolute;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 50;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 64px;
+    padding:
+      0
+      calc(12px + env(safe-area-inset-right, 0px))
+      env(safe-area-inset-bottom, 0px)
+      calc(12px + env(safe-area-inset-left, 0px));
+    background:
+      linear-gradient(180deg, rgba(244, 249, 253, 0) 0%, rgba(244, 249, 253, 0.82) 24%, rgba(244, 249, 253, 0.94) 100%);
+    border-top: 1px solid var(--v1-shell-border);
+    backdrop-filter: blur(18px);
     pointer-events: auto;
+  }
+
+  .v1-module {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .h-full {
+      height: 100%;
+    }
+
+    .flex-1 {
+      flex: 1;
+    }
+
+    .flex-shrink-0 {
+      flex-shrink: 0;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .justify-center {
+      justify-content: center;
+    }
+
+    .gap-1 {
+      gap: 4px;
+    }
+
+    .gap-2 {
+      gap: 8px;
+    }
+
+    .gap-3 {
+      gap: 12px;
+    }
+
+    .gap-4 {
+      gap: 16px;
+    }
+
+    .overflow-hidden {
+      overflow: hidden;
+    }
+
+    .overflow-x-auto {
+      overflow-x: auto;
+    }
+
+    .overflow-y-auto {
+      overflow-y: auto;
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    .pointer-events-none {
+      pointer-events: none;
+    }
+
+    .inset-y-0 {
+      top: 0;
+      bottom: 0;
+    }
+
+    .left-0 {
+      left: 0;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    .w-64 {
+      width: 16rem;
+    }
+
+    .max-w-2xl {
+      max-width: 42rem;
+    }
+
+    .p-2 {
+      padding: 8px;
+    }
+
+    .p-6 {
+      padding: 24px;
+    }
+
+    .px-2 {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+
+    .px-3 {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    .px-4 {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .px-6 {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .pt-2 {
+      padding-top: 8px;
+    }
+
+    .py-1 {
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .py-2 {
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+
+    .py-4 {
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
+
+    .pl-3 {
+      padding-left: 12px;
+    }
+
+    .pl-10 {
+      padding-left: 40px;
+    }
+
+    .pr-3 {
+      padding-right: 12px;
+    }
+
+    .mr-1 {
+      margin-right: 4px;
+    }
+
+    .mr-2 {
+      margin-right: 8px;
+    }
+
+    .mb-2 {
+      margin-bottom: 8px;
+    }
+
+    .mb-4 {
+      margin-bottom: 16px;
+    }
+
+    .ml-auto {
+      margin-left: auto;
+    }
+
+    .truncate {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .text-xs {
+      font-size: 12px;
+    }
+
+    .text-sm {
+      font-size: 14px;
+    }
+
+    .text-lg {
+      font-size: 18px;
+    }
+
+    .font-medium {
+      font-weight: 500;
+    }
+
+    .font-semibold {
+      font-weight: 600;
+    }
+
+    .font-bold {
+      font-weight: 700;
+    }
+
+    .uppercase {
+      text-transform: uppercase;
+    }
+
+    .border-b {
+      border-bottom: 1px solid var(--color-outline-variant);
+    }
+
+    .border-r {
+      border-right: 1px solid var(--color-outline-variant);
+    }
+
+    .bg-surface {
+      background: var(--color-surface);
+    }
+
+    .bg-surface-container-lowest {
+      background: var(--color-surface-container-lowest);
+    }
+
+    .bg-surface-container {
+      background: var(--color-surface-container);
+    }
+
+    .bg-surface-variant {
+      background: var(--color-surface-variant);
+    }
+
+    .text-on-surface {
+      color: var(--color-on-surface);
+    }
+
+    .text-on-surface-variant {
+      color: var(--color-on-surface-variant);
+    }
+
+    .text-outline-variant {
+      color: var(--color-outline-variant);
+    }
+
+    .text-primary {
+      color: var(--color-primary);
+    }
+
+    .bg-primary-container {
+      background: var(--color-primary-container);
+    }
+
+    .text-on-primary-container {
+      color: var(--color-on-primary-container);
+    }
+
+    .border-outline-variant\\/50 {
+      border-color: color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
+    }
+
+    .text-on-surface-variant\\/50 {
+      color: color-mix(in srgb, var(--color-on-surface-variant) 50%, transparent);
+    }
+
+    .bg-surface-container\\/30 {
+      background: color-mix(in srgb, var(--color-surface-container) 30%, transparent);
+    }
+
+    .hover\\:underline:hover {
+      text-decoration: underline;
+    }
+
+    .py-1\\.5 {
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+
+    .p-0\\.5 {
+      padding: 2px;
+    }
+
+    .rounded-md {
+      border-radius: 10px;
+    }
+
+    .rounded-lg {
+      border-radius: 14px;
+    }
+
+    .rounded-t-md {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
   }
 }
 

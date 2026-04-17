@@ -1,44 +1,13 @@
 <template>
   <div class="auth-screen">
     <div class="auth-screen__container">
-      <h1 class="auth-screen__title">XSpace Login</h1>
-      <div class="auth-screen__form">
-        <div class="auth-screen__form-item">
-          <label class="auth-screen__label">Email</label>
-          <input 
-            v-model="email" 
-            type="email" 
-            class="auth-screen__input"
-            placeholder="admin@example.com"
-            autocomplete="email"
-            @keypress.enter="handleLogin"
-          />
-        </div>
-        <div class="auth-screen__form-item">
-          <label class="auth-screen__label">Password</label>
-          <input 
-            v-model="password" 
-            type="password" 
-            class="auth-screen__input"
-            placeholder="••••••••"
-            autocomplete="current-password"
-            @keypress.enter="handleLogin"
-          />
-        </div>
-        <!-- 错误提示 -->
-        <div v-if="errorMessage" class="auth-screen__error">
-          {{ errorMessage }}
-        </div>
-        <!-- 登录按钮 -->
-        <button 
-          @click="handleLogin" 
-          class="auth-screen__button"
-          :disabled="isLoading"
-        >
-          <span v-if="isLoading" class="auth-screen__loading"></span>
-          <span>{{ isLoading ? 'Logging in...' : 'Login' }}</span>
-        </button>
+      <div class="auth-screen__brand">
+        <span class="auth-screen__brand-dot"></span>
+        <span class="auth-screen__brand-text">xspace</span>
       </div>
+      <h1 class="auth-screen__title">欢迎登录工作台</h1>
+      <p class="auth-screen__subtitle">使用现有账号进入 v1 桌面壳层。</p>
+      <LoginForm class="auth-screen__form" />
     </div>
   </div>
 </template>
@@ -46,62 +15,8 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
   return {
-    inject: ['APP'],
-    data() {
-      return {
-        email: _.$lStorage.email || '',
-        password: '',
-        errorMessage: '',
-        isLoading: false
-      };
-    },
-    methods: {
-      async handleLogin() {
-        const vm = this;
-        
-        // 重置错误
-        vm.errorMessage = '';
-        
-        // 表单验证
-        if (!vm.email) {
-          vm.errorMessage = 'Please enter your email';
-          return;
-        }
-        if (!vm.password) {
-          vm.errorMessage = 'Please enter your password';
-          return;
-        }
-        
-        vm.isLoading = true;
-        
-        try {
-          // 调用后端登录 API
-          const res = await _api.xspace.userLogin({
-            email: vm.email,
-            password: vm.password
-          });
-          
-          if (res?.data?.x_token) {
-            // 存储 Token
-            _.$lStorage.x_token = res.data.x_token;
-            // 记住邮箱
-            _.$lStorage.email = vm.email;
-            
-            // 刷新用户信息（entry.vue 中已实现）
-            await vm.APP.refreshUserInfo();
-            
-            _.$msg('Login successful!');
-          } else {
-            vm.errorMessage = res?.data?.errmsg || 'Login failed';
-          }
-        } catch (e) {
-          console.error('Login error:', e);
-          vm.errorMessage = e.message || 'Network error, please try again';
-          _.$msgError(vm.errorMessage);
-        } finally {
-          vm.isLoading = false;
-        }
-      }
+    components: {
+      LoginForm: () => _.$importVue('@/views/Login/LoginForm.vue')
     }
   };
 }
@@ -114,114 +29,70 @@ export default async function ({ PRIVATE_GLOBAL }) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-surface);
+  padding: 24px;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(49, 130, 206, 0.16) 0%, rgba(49, 130, 206, 0) 34%),
+    radial-gradient(circle at 84% 10%, rgba(99, 179, 237, 0.14) 0%, rgba(99, 179, 237, 0) 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.2) 100%),
+    var(--body-bg-color, #f4f9fd);
 }
 
 .auth-screen__container {
+  width: 100%;
+  max-width: 420px;
   padding: 32px;
-  background-color: var(--color-surface-container-high);
-  border-radius: var(--border-radius--large);
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
-  width: 384px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--el-border-color-lighter, #ebeef5);
+  border-radius: 20px;
+  box-shadow: var(--el-box-shadow);
+  backdrop-filter: blur(20px);
+}
+
+.auth-screen__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.auth-screen__brand-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--el-color-primary, #3182ce);
+  box-shadow: 0 0 0 6px var(--el-color-primary-light-9, #eff6ff);
+}
+
+.auth-screen__brand-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--el-text-color-regular, #606266);
 }
 
 .auth-screen__title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 24px;
-  text-align: center;
-  color: var(--color-on-surface);
+  margin-bottom: 8px;
+  color: var(--el-text-color-primary, #303133);
+}
+
+.auth-screen__subtitle {
+  margin: 0 0 24px;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--el-text-color-secondary, #909399);
 }
 
 .auth-screen__form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.auth-screen__form-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.auth-screen__label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 4px;
-  color: var(--color-on-surface-variant);
-}
-
-.auth-screen__input {
-  width: 100%;
-  padding: 8px 12px;
-  background-color: var(--color-surface);
-  border-radius: var(--border-radius--small);
-  border: 1px solid var(--color-outline-variant);
-  outline: none;
-  transition: border-color 0.2s;
-
-  &:focus {
-    border-color: var(--color-primary);
-  }
-}
-
-.auth-screen__error {
-  font-size: 0.875rem;
-  color: var(--color-error);
-  margin-top: 8px;
-}
-
-.auth-screen__button {
-  width: 100%;
-  padding: 0.625rem 1.5rem;
-  margin-top: 16px;
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  border-radius: 9999px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  &:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  }
-
-  &:active {
-    background-color: rgba(0, 97, 164, 0.9);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.auth-screen__loading {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: auth-screen__spin 0.8s linear infinite;
-}
-
-@keyframes auth-screen__spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 // 移动端适配
 body.app-mobile {
   .auth-screen__container {
-    width: 90%;
+    padding: 24px;
   }
 }
 </style>
