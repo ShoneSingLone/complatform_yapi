@@ -289,7 +289,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						:class="
 							activeTabId === tab.id ? 'opacity-100 hover:bg-surface-variant' : ''
 						">
-						<xIcon icon="x" :size="14" />
+						<xIcon icon="close" :size="14" />
 					</button>
 				</div>
 			</div>
@@ -298,10 +298,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			<div class="flex items-center px-4 py-2 gap-4">
 				<div class="flex items-center gap-1">
 					<button class="explore__toolbar-btn explore__toolbar-btn--disabled" type="button">
-						<xIcon icon="chevron-left" :size="20" />
+						<xIcon icon="left" :size="20" />
 					</button>
 					<button class="explore__toolbar-btn explore__toolbar-btn--disabled" type="button">
-						<xIcon icon="chevron-right" :size="20" />
+						<xIcon icon="right" :size="20" />
 					</button>
 					<button
 						@click="handleNavigateUp"
@@ -309,7 +309,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						class="explore__toolbar-btn"
 						:class="{ 'explore__toolbar-btn--disabled': !canNavigateUp }"
 						title="Up">
-						<xIcon icon="arrow-up" :size="20" />
+						<xIcon icon="top" :size="20" />
 					</button>
 				</div>
 
@@ -331,7 +331,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						class="explore__toggle-btn"
 						:class="{ 'explore__toggle-btn--active': showPreview }"
 						title="Toggle Preview Pane">
-						<xIcon icon="panel-right" :size="20" />
+						<xIcon icon="view" :size="20" />
 					</button>
 				</div>
 			</div>
@@ -361,24 +361,24 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							<span
 								class="w-4 h-4 flex items-center justify-center mr-1 text-on-surface-variant hover:text-on-surface"
 								@click="e => toggleFolder(mockFileSystem.id, e)">
-								<xIcon 
-													type="chevron-down"
-													v-if="expandedFolders.has(mockFileSystem.id)"
-													:size="14" />
-												<xIcon 
-													type="chevron-right" 
-													v-else 
-													:size="14" />
+								<xIcon
+									icon="_CaretDownOutlined"
+									v-if="expandedFolders.has(mockFileSystem.id)"
+									:size="14" />
+								<xIcon
+									icon="_CaretRightOutlined"
+									v-else
+									:size="14" />
 							</span>
 							<span class="mr-2 text-blue-500">
-								<xIcon 
-													type="folder-open"
-													v-if="expandedFolders.has(mockFileSystem.id)"
-													:size="16" />
-												<xIcon 
-													type="folder" 
-													v-else 
-													:size="16" />
+								<xIcon
+									icon="folder-opened"
+									v-if="expandedFolders.has(mockFileSystem.id)"
+									:size="16" />
+								<xIcon
+									icon="folder"
+									v-else
+									:size="16" />
 							</span>
 							<span class="truncate">{{ mockFileSystem.name }}</span>
 						</div>
@@ -402,25 +402,25 @@ export default async function ({ PRIVATE_GLOBAL }) {
 												v-if="
 													child.children?.some(c => c.type === 'folder')
 												">
-												<xIcon 
-															type="chevron-down"
-															v-if="expandedFolders.has(child.id)"
-															:size="14" />
-														<xIcon 
-															type="chevron-right" 
-															v-else 
-															:size="14" />
+												<xIcon
+													icon="_CaretDownOutlined"
+													v-if="expandedFolders.has(child.id)"
+													:size="14" />
+												<xIcon
+													icon="_CaretRightOutlined"
+													v-else
+													:size="14" />
 											</template>
 										</span>
 										<span class="mr-2 text-blue-500">
-											<xIcon 
-														type="folder-open"
-														v-if="expandedFolders.has(child.id)"
-														:size="16" />
-													<xIcon 
-														type="folder" 
-														v-else 
-														:size="16" />
+											<xIcon
+												icon="folder-opened"
+												v-if="expandedFolders.has(child.id)"
+												:size="16" />
+											<xIcon
+												icon="folder"
+												v-else
+												:size="16" />
 										</span>
 										<span class="truncate">{{ child.name }}</span>
 									</div>
@@ -600,7 +600,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				<div
 					v-if="!selectedFile"
 					class="flex-1 flex flex-col items-center justify-center text-on-surface-variant p-6 text-center">
-					<xIcon icon="info" :size="48" class="mb-4 text-outline-variant" />
+						<xIcon icon="info-filled" :size="48" class="mb-4 text-outline-variant" />
 					<p>Select a file to preview</p>
 				</div>
 				<div v-else class="p-6">
@@ -613,7 +613,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							:src="selectedFile.url"
 							:alt="selectedFile.name"
 							class="object-contain w-full h-full" />
-						<xIcon v-else icon="image" :size="64" class="text-outline-variant" />
+						<xIcon v-else icon="picture" :size="64" class="text-outline-variant" />
 					</div>
 					<div
 						v-else-if="selectedFile.type === 'document' || selectedFile.type === 'code'"
@@ -631,7 +631,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					<div
 						v-else
 						class="explore__preview-generic w-full aspect-square max-w-[160px] mx-auto flex items-center justify-center mb-6">
-						<xIcon icon="file" :size="80" class="text-on-surface-variant" />
+						<xIcon icon="files" :size="80" class="text-on-surface-variant" />
 					</div>
 
 					<!-- Metadata -->

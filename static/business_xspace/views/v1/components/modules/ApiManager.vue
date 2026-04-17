@@ -503,10 +503,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			<div class="flex items-center px-4 py-2 gap-4">
 				<div class="flex items-center gap-1">
 					<button class="api-manager__toolbar-btn api-manager__toolbar-btn--disabled" type="button">
-						<xIcon icon="chevron-left" :size="20" />
+						<xIcon icon="left" :size="20" />
 					</button>
 					<button class="api-manager__toolbar-btn api-manager__toolbar-btn--disabled" type="button">
-						<xIcon icon="chevron-right" :size="20" />
+						<xIcon icon="right" :size="20" />
 					</button>
 					<button
 						@click="handleNavigateUp"
@@ -514,7 +514,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						class="api-manager__toolbar-btn"
 						:class="{ 'api-manager__toolbar-btn--disabled': !canNavigateUp }"
 						title="Up">
-						<xIcon icon="arrow-up" :size="20" />
+						<xIcon icon="top" :size="20" />
 					</button>
 				</div>
 
@@ -533,7 +533,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				<div class="flex items-center gap-3 ml-auto">
 					<!-- Environment Switcher -->
 					<div class="api-manager__select-shell flex items-center px-3 py-1.5">
-						<xIcon icon="globe" :size="16" class="text-on-surface-variant mr-2" />
+						<xIcon icon="tools" :size="16" class="text-on-surface-variant mr-2" />
 						<select
 							v-model="activeEnvironment"
 							class="api-manager__select text-sm font-medium">
@@ -550,7 +550,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 						class="api-manager__toggle-btn"
 						:class="{ 'api-manager__toggle-btn--active': showPreview }"
 						title="Toggle Preview Pane">
-						<xIcon icon="panel-right" :size="20" />
+						<xIcon icon="view" :size="20" />
 					</button>
 				</div>
 			</div>
@@ -1056,7 +1056,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 															class="px-4 py-3 text-right">
 															<button
 																class="api-manager__icon-action"
-																><xIcon icon="trash-2" :size="16" /></button>
+																><xIcon icon="delete" :size="16" /></button>
 														</td>
 													</tr>
 												</tbody>
@@ -1137,7 +1137,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 													v-if="isRequesting"
 													:size="16"
 													class="animate-spin" />
-												<xIcon icon="play" v-else :size="16" />
+												<xIcon icon="video-play" v-else :size="16" />
 												Send
 											</button>
 										</div>
@@ -1293,7 +1293,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				<div
 					v-if="!selectedFile"
 					class="flex-1 flex flex-col items-center justify-center text-on-surface-variant p-6 text-center">
-					<xIcon icon="info" :size="48" class="mb-4 text-outline-variant" />
+					<xIcon icon="info-filled" :size="48" class="mb-4 text-outline-variant" />
 					<p>Select a resource to preview</p>
 				</div>
 				<div v-else class="p-6">

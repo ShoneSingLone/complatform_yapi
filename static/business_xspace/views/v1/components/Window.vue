@@ -24,7 +24,7 @@
             class="v1-window__control-btn"
             title="Pin to Desktop"
             @click.stop="pinToDesktop">
-            <xIcon icon="pin" size="20" />
+            <xIcon icon="star" size="20" />
           </button>
           <button
             type="button"
@@ -38,14 +38,14 @@
             class="v1-window__control-btn"
             title="Maximize"
             @click.stop="handleMaximize">
-            <xIcon :icon="window.isMaximized ? 'copy' : 'square'" size="16" />
+            <xIcon :icon="window.isMaximized ? 'copy-document' : 'scale-to-original'" size="16" />
           </button>
           <button
             type="button"
             class="v1-window__control-btn v1-window__control-btn--close"
             title="Close"
             @click.stop="handleClose">
-            <xIcon icon="x" size="20" />
+            <xIcon icon="close" size="20" />
           </button>
         </div>
       </div>

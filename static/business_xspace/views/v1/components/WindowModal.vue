@@ -26,14 +26,14 @@
           type="button"
           title="Maximize"
           class="window-modal__control-btn">
-          <xIcon :icon="window.isMaximized ? 'copy' : 'square'" size="16" />
+          <xIcon :icon="window.isMaximized ? 'copy-document' : 'scale-to-original'" size="16" />
         </button>
         <button 
           @click="handleClose" 
           type="button"
           title="Close"
           class="window-modal__control-btn window-modal__control-btn--close">
-          <xIcon icon="x" size="20" />
+          <xIcon icon="close" size="20" />
         </button>
       </div>
     </div>
@@ -41,10 +41,10 @@
     <!-- Content Area -->
     <div class="window-modal__content">
       <!-- App-specific content -->
-      <div v-if="isApiManagerApp" class="window-modal__stage window-modal__stage--embedded h-full">
+      <div v-if="isApiManagerApp" class="window-modal__stage window-modal__stage--embedded">
         <ApiManager :window-data="window.data" />
       </div>
-      <div v-else-if="isExploreApp" class="window-modal__stage window-modal__stage--embedded h-full">
+      <div v-else-if="isExploreApp" class="window-modal__stage window-modal__stage--embedded">
         <Explore />
       </div>
       <div v-else class="window-modal__placeholder">
@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-export default async function ({ PRIVATE_GLOBAL, window }) {
+export default async function ({ PRIVATE_GLOBAL, closeModal, window }) {
   	const { useDialogProps } = await _.$importVue("/common/utils/hooks.vue");
 
   const [ApiManager, Explore] = await _.$importVue([
@@ -129,16 +129,16 @@ export default async function ({ PRIVATE_GLOBAL, window }) {
     methods: {
       handleClose() {
         this.system.closeWindow(this.window.id);
-        this.closeModal();
+        closeModal();
       },
       handleMinimize() {
         this.system.minimizeWindow(this.window.id);
-        this.closeModal();
+        closeModal();
       },
       handleMaximize() {
         this.system.toggleMaximize(this.window.id);
         // For maximize, we need to refresh the modal
-        this.closeModal();
+        closeModal();
         this.system.openApp(this.window.appId, false, this.window.data);
       }
     }
