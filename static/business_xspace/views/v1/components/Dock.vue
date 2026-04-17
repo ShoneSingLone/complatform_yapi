@@ -23,9 +23,7 @@
           :class="itemClass(app)"
           :title="app.name"
           @click="handleAppClick(app)">
-          <span
-            class="dock__item-icon"
-            :style="{ color: app.color || defaultColor }">
+          <span class="dock__item-icon">
             <xIcon :icon="app.icon || 'grid'" size="22" />
           </span>
           <span class="dock__tooltip">{{ app.name }}</span>
@@ -121,8 +119,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     inject: ['system'],
     data() {
       return {
-        previewAppId: null,
-        defaultColor: '#dbe4ff'
+        previewAppId: null
       };
     },
     computed: {
@@ -243,30 +240,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
 .dock {
   position: relative;
   display: inline-flex;
-  align-items: flex-end;
-  gap: 12px;
-  margin: 0 auto 12px;
-  padding: 12px 14px;
-  border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    linear-gradient(180deg, rgba(23, 31, 49, 0.92) 0%, rgba(10, 14, 24, 0.96) 100%);
-  box-shadow:
-    0 22px 48px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px);
+  align-items: center;
+  gap: 6px;
+  margin: 0 auto 10px;
+  padding: 0 8px;
+  min-height: 48px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
   pointer-events: auto;
 
   &__items {
     display: inline-flex;
-    align-items: flex-end;
-    gap: 10px;
+    align-items: center;
+    gap: 4px;
   }
 
   &__item-wrapper {
     position: relative;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
   }
 
@@ -274,58 +268,51 @@ export default async function ({ PRIVATE_GLOBAL }) {
   &__launcher,
   &__settings {
     position: relative;
-    width: 58px;
-    height: 58px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     border: 0;
-    border-radius: 18px;
+    border-radius: 12px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
-    color: #f8fafc;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-inverse-on-surface);
     cursor: pointer;
     transition:
-      transform 180ms cubic-bezier(0.2, 0.9, 0.3, 1.2),
-      box-shadow 180ms ease,
-      border-color 180ms ease,
+      transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
       background-color 180ms ease;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      0 14px 26px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 
     &:hover {
-      transform: translateY(-8px) scale(1.08);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.14),
-        0 18px 34px rgba(0, 0, 0, 0.28);
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.08);
     }
 
     &:active {
-      transform: translateY(-3px) scale(0.98);
+      transform: scale(0.98);
+      background: rgba(255, 255, 255, 0.12);
     }
   }
 
   &__item {
     &--running {
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(120, 144, 255, 0.12) 100%);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     &--active {
-      background:
-        linear-gradient(180deg, rgba(147, 197, 253, 0.28) 0%, rgba(96, 165, 250, 0.14) 100%);
+      background: var(--color-primary);
+      color: var(--color-on-primary);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.16),
-        0 20px 36px rgba(59, 130, 246, 0.18);
+        0 8px 18px rgba(15, 23, 42, 0.26);
     }
 
     &--pinned::after {
       content: '';
       position: absolute;
       inset: 1px;
-      border-radius: 17px;
+      border-radius: 11px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       pointer-events: none;
     }
@@ -337,6 +324,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     justify-content: center;
     width: 100%;
     height: 100%;
+    color: inherit;
   }
 
   &__launcher {
@@ -346,40 +334,40 @@ export default async function ({ PRIVATE_GLOBAL }) {
   &__launcher-orb {
     position: absolute;
     inset: auto auto 8px 8px;
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #7c9cff 0%, #69f0d6 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-tertiary) 100%);
     filter: blur(1px);
-    opacity: 0.9;
+    opacity: 0.78;
   }
 
   &__settings {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(148, 163, 184, 0.1) 100%);
+    background: rgba(255, 255, 255, 0.05);
   }
 
   &__indicator {
     position: absolute;
     left: 50%;
-    bottom: 5px;
-    width: 8px;
-    height: 8px;
+    bottom: -4px;
+    width: 4px;
+    height: 4px;
     border-radius: 999px;
-    background: rgba(226, 232, 240, 0.56);
+    background: rgba(255, 255, 255, 0.34);
     transform: translateX(-50%);
-    box-shadow: 0 0 0 4px rgba(226, 232, 240, 0.08);
+    transition: all 180ms ease;
 
     &--active {
-      background: #7dd3fc;
-      box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.14);
+      width: 16px;
+      background: var(--color-primary);
+      box-shadow: 0 0 10px rgba(0, 97, 164, 0.46);
     }
   }
 
   &__window-count {
     position: absolute;
-    top: -6px;
-    right: -4px;
+    top: -4px;
+    right: -2px;
     min-width: 18px;
     height: 18px;
     padding: 0 5px;
@@ -387,26 +375,29 @@ export default async function ({ PRIVATE_GLOBAL }) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(59, 130, 246, 0.9);
-    color: #eff6ff;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
     font-size: 10px;
     font-weight: 700;
     line-height: 1;
-    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.22);
   }
 
   &__tooltip {
     position: absolute;
     left: 50%;
-    bottom: calc(100% + 12px);
+    top: -42px;
     padding: 6px 10px;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.94);
-    color: #e2e8f0;
+    border-radius: 10px;
+    background: var(--color-inverse-surface);
+    color: var(--color-inverse-on-surface);
     font-size: 12px;
+    font-weight: 500;
     line-height: 1;
     white-space: nowrap;
-    transform: translateX(-50%) translateY(6px);
+    border: 1px solid var(--color-outline-variant);
+    box-shadow: 0 12px 24px rgba(2, 6, 23, 0.28);
+    transform: translateX(-50%);
     opacity: 0;
     pointer-events: none;
     transition: opacity 150ms ease, transform 150ms ease;
@@ -414,30 +405,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
   &__item:hover &__tooltip {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(-2px);
   }
 
   &__separator {
     width: 1px;
-    height: 42px;
+    height: 24px;
     align-self: center;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.18) 50%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0) 100%);
   }
 
   &__preview {
     position: absolute;
     left: 50%;
-    bottom: calc(100% + 16px);
-    width: 280px;
-    padding: 12px;
-    border-radius: 20px;
+    bottom: 54px;
+    width: 260px;
+    padding: 10px;
+    border-radius: 18px;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background:
-      linear-gradient(180deg, rgba(20, 28, 42, 0.97) 0%, rgba(10, 14, 24, 0.98) 100%);
-    box-shadow:
-      0 18px 44px rgba(0, 0, 0, 0.34),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(16px);
+    background: var(--color-inverse-surface);
+    box-shadow: 0 20px 40px rgba(2, 6, 23, 0.34);
+    backdrop-filter: blur(20px);
     transform: translateX(-50%);
   }
 
@@ -446,7 +434,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+    padding: 4px 8px 8px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
   }
 
   &__preview-title {
@@ -454,12 +444,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
     flex-direction: column;
     gap: 3px;
     min-width: 0;
-    color: #f8fafc;
-    font-size: 13px;
-    font-weight: 600;
+    color: var(--color-inverse-on-surface);
+    font-size: 12px;
+    font-weight: 500;
 
     small {
-      color: rgba(226, 232, 240, 0.56);
+      color: rgba(241, 240, 244, 0.72);
       font-size: 11px;
       font-weight: 500;
     }
@@ -471,17 +461,17 @@ export default async function ({ PRIVATE_GLOBAL }) {
     height: 28px;
     padding: 0;
     border: 0;
-    border-radius: 10px;
+    border-radius: 999px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.08);
-    color: #e2e8f0;
+    background: transparent;
+    color: var(--color-inverse-on-surface);
     cursor: pointer;
     transition: background-color 160ms ease, transform 160ms ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
       transform: translateY(-1px);
     }
   }
@@ -489,35 +479,50 @@ export default async function ({ PRIVATE_GLOBAL }) {
   &__preview-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 4px;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.26);
+      border-radius: 6px;
+    }
   }
 
   &__preview-item,
   &__preview-empty {
     width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.04);
-    color: #f8fafc;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-inverse-on-surface);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 8px;
+    padding: 6px;
     cursor: pointer;
     transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
       transform: translateY(-1px);
     }
   }
 
   &__preview-item {
     &--active {
-      background: rgba(96, 165, 250, 0.14);
-      border-color: rgba(125, 211, 252, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.08);
     }
   }
 
@@ -531,9 +536,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
   &__preview-item-title,
   &__preview-empty-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-inverse-on-surface);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -541,8 +546,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
   &__preview-item-subtitle,
   &__preview-empty-subtitle {
-    font-size: 11px;
-    color: rgba(226, 232, 240, 0.58);
+    font-size: 12px;
+    color: rgba(241, 240, 244, 0.72);
   }
 
   &__preview-item-actions {
@@ -553,8 +558,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
   }
 
   &__preview-action--danger:hover {
-    background: rgba(239, 68, 68, 0.16);
-    color: #fecaca;
+    background: var(--color-error-container);
+    color: var(--color-on-error-container);
   }
 
   &__preview-empty {
