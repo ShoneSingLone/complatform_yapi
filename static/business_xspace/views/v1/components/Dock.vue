@@ -1,11 +1,10 @@
 <template>
   <div
-    class="dock elevation-2"
+    class="dock"
     :class="{ 'dock--dragging': isDraggingOver }"
     @dragover="onDragOver"
     @dragleave="onDragLeave"
     @drop="onDrop">
-    <!-- Launcher Button -->
     <div class="dock__item dock__launcher group">
       <div class="dock__tooltip">
         Menu
@@ -32,7 +31,6 @@
         @mouseenter="hoveredAppId = app.id"
         @mouseleave="hoveredAppId = null"
         @click="handleAppClick(app.id)">
-        <!-- Window Previews -->
         <Transition name="hero">
           <div
             v-if="hoveredAppId === app.id && app.isOpen"
@@ -67,14 +65,12 @@
           </div>
         </Transition>
 
-        <!-- Tooltip -->
         <div
           v-if="!app.isOpen"
           class="dock__tooltip">
           {{ app.name }}
         </div>
 
-        <!-- Icon Container -->
         <div
           class="dock__item-content"
           :class="{
@@ -83,7 +79,6 @@
           <xIcon :icon="app.icon" :size="20" />
         </div>
 
-        <!-- Indicator Pill -->
         <div class="dock__indicator">
           <div
             v-if="app.isOpen"
@@ -98,7 +93,6 @@
 
     <div class="dock__separator"></div>
 
-    <!-- Settings Icon -->
     <div class="dock__item dock__settings group">
       <div class="dock__tooltip">
         Settings
@@ -205,33 +199,52 @@ export default async function ({ PRIVATE_GLOBAL }) {
 .dock {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background-color: var(--color-surface-container);
-  border-radius: 12px;
+  gap: 10px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.58) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
   position: relative;
-  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow:
+    0 18px 50px rgba(2, 6, 23, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition:
+    transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
 
   &--dragging {
-    background-color: var(--color-surface-container-high);
-    box-shadow: 0 0 0 2px rgba(0, 97, 164, 0.5);
+    transform: translateY(-2px);
+    border-color: rgba(96, 165, 250, 0.36);
+    box-shadow:
+      0 22px 54px rgba(2, 6, 23, 0.42),
+      0 0 0 2px rgba(96, 165, 250, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 }
 
 .dock__item {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 56px;
   position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 
   &--active {
     .dock__item-content {
-      background-color: var(--color-secondary-container);
-      color: var(--color-on-secondary-container);
+      color: #ffffff;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        0 16px 24px rgba(37, 99, 235, 0.22);
     }
   }
 
   &--pinned {
-    // 固定状态的样式扩展点
+    .dock__item-content {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
   }
 
   &--animate {
@@ -241,88 +254,104 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 .dock__item-content {
   width: 100%;
-  height: 100%;
-  border-radius: 8px;
+  height: 46px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-on-surface);
-  transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1), color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgba(226, 232, 240, 0.88);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  transition:
+    transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
 
   &:not(&--active):hover {
-    background-color: rgba(26, 28, 30, 0.08);
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.08);
   }
 
   &:not(&--active):active {
-    background-color: rgba(26, 28, 30, 0.12);
+    transform: translateY(-1px) scale(0.98);
+    background: rgba(255, 255, 255, 0.12);
   }
 
   &--active {
-    background-color: var(--color-secondary-container);
-    color: var(--color-on-secondary-container);
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.44) 0%, rgba(37, 99, 235, 0.24) 100%);
+    border-color: rgba(147, 197, 253, 0.32);
+    color: #eff6ff;
   }
 }
 
 .dock__separator {
   width: 1px;
-  height: 24px;
-  background-color: var(--color-outline-variant);
-  margin: 0 4px;
+  height: 28px;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0) 0%, rgba(148, 163, 184, 0.45) 50%, rgba(148, 163, 184, 0) 100%);
+  margin: 0 2px;
   align-self: center;
 }
 
 .dock__tooltip {
   position: absolute;
-  top: -40px;
+  top: -42px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 4px 8px;
-  background-color: var(--color-surface-variant);
-  color: var(--color-on-surface-variant);
+  padding: 6px 10px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e2e8f0;
   font-size: 0.75rem;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: 10px;
   opacity: 0;
-  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition:
+    opacity 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
   white-space: nowrap;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.28);
 
   .group:hover & {
     opacity: 1;
+    transform: translateX(-50%) translateY(-2px);
   }
 }
 
 .dock__preview {
   position: absolute;
-  bottom: 64px;
+  bottom: 72px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 8px;
-  background-color: var(--color-surface-container-high);
-  border-radius: 12px;
-  elevation: 3;
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  background: rgba(15, 23, 42, 0.92);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.34);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   z-index: 100;
-  min-width: 180px;
+  min-width: 220px;
+  backdrop-filter: blur(20px);
 }
 
 .dock__preview-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 8px;
-  padding-bottom: 4px;
-  border-bottom: 1px solid var(--color-outline-variant);
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
 }
 
 .dock__preview-title {
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--color-on-surface-variant);
+  color: rgba(226, 232, 240, 0.9);
 }
 
 .dock__preview-add-btn {
@@ -337,19 +366,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
   justify-content: center;
 
   &:hover {
-    background-color: rgba(26, 28, 30, 0.08);
+    background-color: rgba(255, 255, 255, 0.08);
 
     .xIcon {
-      color: var(--color-primary);
+      color: #93c5fd;
     }
   }
 
   &:active {
-    background-color: rgba(26, 28, 30, 0.12);
+    background-color: rgba(255, 255, 255, 0.12);
   }
 
   .xIcon {
-    color: var(--color-on-surface-variant);
+    color: rgba(226, 232, 240, 0.82);
   }
 }
 
@@ -370,11 +399,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(148, 163, 184, 0.26);
     border-radius: 6px;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(148, 163, 184, 0.4);
     }
   }
 }
@@ -389,22 +418,22 @@ export default async function ({ PRIVATE_GLOBAL }) {
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    background-color: rgba(26, 28, 30, 0.05);
+    background-color: rgba(255, 255, 255, 0.05);
   }
 
   &:active {
-    background-color: rgba(26, 28, 30, 0.1);
+    background-color: rgba(255, 255, 255, 0.08);
   }
 }
 
 .dock__preview-item-icon {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-surface-container-highest);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--color-primary);
 }
 
@@ -418,7 +447,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 .dock__preview-item-title {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-on-surface);
+  color: #f8fafc;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -426,12 +455,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 .dock__preview-item-status {
   font-size: 0.75rem;
-  color: var(--color-on-surface-variant);
+  color: rgba(203, 213, 225, 0.72);
 }
 
 .dock__indicator {
   position: absolute;
-  bottom: -2px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -439,14 +468,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 }
 
 .dock__indicator-dot {
-  height: 4px;
-  border-radius: 4px;
+  height: 3px;
+  border-radius: 999px;
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: var(--color-on-surface-variant);
+  background-color: rgba(226, 232, 240, 0.44);
 
   &--active {
-    width: 12px;
-    background-color: var(--color-primary);
+    width: 14px;
+    background-color: #93c5fd;
+    box-shadow: 0 0 12px rgba(147, 197, 253, 0.7);
   }
 
   &:not(&--active) {
@@ -454,14 +484,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
   }
 }
 
-.dock__launcher,
-.dock__settings {
-  // 启动器和设置按钮的特殊样式（如需要）
-}
-
 @keyframes dock-scale {
   0% {
-    transform: scale(0.9);
+    transform: translateY(3px) scale(0.92);
     opacity: 0.8;
   }
   100% {
