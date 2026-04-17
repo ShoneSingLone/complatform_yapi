@@ -15,7 +15,7 @@
         @click="handleUnpin"
         class="desktop-icon__remove"
         title="从桌面移除">
-        <xIcon icon="X" size="12" />
+        <xIcon icon="close" size="12" />
       </button>
     </div>
   </div>

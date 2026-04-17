@@ -52,7 +52,7 @@
                 class="dock__pin-toggle"
                 :title="isPinned(app.id) ? '从 Dock 取消固定' : '固定到 Dock'"
                 @click.stop="togglePinned(app.id)">
-                <xIcon icon="pin" size="14" />
+                <xIcon icon="star" size="14" />
               </button>
             </div>
 
@@ -84,7 +84,7 @@
                     class="dock__preview-action dock__preview-action--danger"
                     title="关闭"
                     @click.stop="closeWindow(win.id)">
-                    <xIcon icon="x" size="14" />
+                    <xIcon icon="close" size="14" />
                   </button>
                 </span>
               </div>
