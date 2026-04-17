@@ -81,25 +81,27 @@
           </div>
 
           <div slot="reference" class="dock__item-wrapper">
-            <button
-              class="dock__item"
-              :class="itemClass(app)"
-              :title="app.name"
-              @click="handleAppClick(app)">
-              <span class="dock__item-icon">
-                <xIcon :icon="app.icon || 'grid'" size="22" />
-              </span>
-              <span class="dock__tooltip">{{ app.name }}</span>
-              <span
-                v-if="getAppWindows(app.id).length"
-                class="dock__indicator"
-                :class="{ 'dock__indicator--active': isAppActive(app.id) }"></span>
-              <span
-                v-if="getAppWindows(app.id).length > 1"
-                class="dock__window-count">
-                {{ getAppWindows(app.id).length }}
-              </span>
-            </button>
+            <xTooltip effect="dark" placement="top">
+              <div slot="content">{{ app.name }}</div>
+              <button
+                class="dock__item"
+                :class="itemClass(app)"
+                :title="app.name"
+                @click="handleAppClick(app)">
+                <span class="dock__item-icon">
+                  <xIcon :icon="app.icon || 'grid'" size="22" />
+                </span>
+                <span
+                  v-if="getAppWindows(app.id).length"
+                  class="dock__indicator"
+                  :class="{ 'dock__indicator--active': isAppActive(app.id) }"></span>
+                <span
+                  v-if="getAppWindows(app.id).length > 1"
+                  class="dock__window-count">
+                  {{ getAppWindows(app.id).length }}
+                </span>
+              </button>
+            </xTooltip>
           </div>
         </xPopover>
       </div>
@@ -377,31 +379,6 @@ export default async function ({ PRIVATE_GLOBAL }) {
     font-weight: 700;
     line-height: 1;
     box-shadow: 0 6px 12px rgba(49, 130, 206, 0.2);
-  }
-
-  &__tooltip {
-    position: absolute;
-    left: 50%;
-    top: -42px;
-    padding: 6px 10px;
-    border-radius: 10px;
-    background: var(--v1-shell-text, var(--el-text-color-primary));
-    color: #ffffff;
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1;
-    white-space: nowrap;
-    border: 1px solid rgba(48, 49, 51, 0.08);
-    box-shadow: 0 12px 24px rgba(48, 49, 51, 0.18);
-    transform: translateX(-50%);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 150ms ease, transform 150ms ease;
-  }
-
-  &__item:hover &__tooltip {
-    opacity: 1;
-    transform: translateX(-50%) translateY(-2px);
   }
 
   &__separator {
