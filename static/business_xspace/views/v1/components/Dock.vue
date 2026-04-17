@@ -108,12 +108,32 @@
     </div>
 
     <div class="dock__right">
-      <button
-        class="dock__settings"
-        title="打开设置"
-        @click="handleSettingsClick">
-        <xIcon icon="_setting_outlined" size="18" />
-      </button>
+      <xDropdown trigger="click" placement="top-end">
+        <button class="dock__tray" type="button" title="任务栏菜单">
+          <span class="dock__tray-time">{{ cptTime }}</span>
+          <span class="dock__tray-date">{{ cptDate }}</span>
+        </button>
+        <xDropdownMenu slot="dropdown">
+          <div class="dock__tray-menu">
+            <div class="dock__tray-menu-title">{{ cptDate }}</div>
+            <div class="dock__tray-menu-time">{{ cptTime }}</div>
+            <div class="dock__tray-menu-actions">
+              <xBtn preset="text" @click="handleSettingsClick">设置</xBtn>
+              <xBtn preset="text" @click="handleLauncherClick">应用台</xBtn>
+            </div>
+          </div>
+        </xDropdownMenu>
+      </xDropdown>
+
+      <xTooltip effect="dark" placement="top">
+        <div slot="content">设置</div>
+        <button
+          class="dock__settings"
+          title="打开设置"
+          @click="handleSettingsClick">
+          <xIcon icon="_setting_outlined" size="18" />
+        </button>
+      </xTooltip>
     </div>
   </div>
 </template>
@@ -122,7 +142,36 @@
 export default async function ({ PRIVATE_GLOBAL }) {
   return {
     inject: ['system'],
+    data() {
+      return {
+        nowTs: Date.now(),
+        nowTimer: null
+      };
+    },
+    mounted() {
+      this.nowTimer = setInterval(() => {
+        this.nowTs = Date.now();
+      }, 30 * 1000);
+    },
+    beforeDestroy() {
+      if (this.nowTimer) {
+        clearInterval(this.nowTimer);
+        this.nowTimer = null;
+      }
+    },
     computed: {
+      cptTime() {
+        const date = new Date(this.nowTs);
+        const hour = this.pad2(date.getHours());
+        const minute = this.pad2(date.getMinutes());
+        return `${hour}:${minute}`;
+      },
+      cptDate() {
+        const date = new Date(this.nowTs);
+        const month = this.pad2(date.getMonth() + 1);
+        const day = this.pad2(date.getDate());
+        return `${month}/${day}`;
+      },
       dockApps() {
         const apps = this.system && this.system.apps ? this.system.apps : [];
         const pinnedApps = this.system && this.system.pinnedApps ? this.system.pinnedApps : [];
@@ -150,6 +199,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
       }
     },
     methods: {
+      pad2(value) {
+        const number = Number(value) || 0;
+        return number < 10 ? `0${number}` : `${number}`;
+      },
       itemClass(app) {
         return {
           'dock__item--active': this.isAppActive(app.id),
@@ -245,6 +298,68 @@ export default async function ({ PRIVATE_GLOBAL }) {
     align-items: center;
     gap: 10px;
     flex-shrink: 0;
+  }
+
+  &__tray {
+    border: 0;
+    background: transparent;
+    padding: 0 10px;
+    height: 44px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    color: var(--v1-shell-text-secondary, var(--el-text-color-regular));
+    transition: background-color 160ms ease;
+
+    &:hover {
+      background: rgba(49, 130, 206, 0.08);
+    }
+  }
+
+  &__tray-time {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--v1-shell-text, var(--el-text-color-primary));
+  }
+
+  &__tray-date {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--v1-shell-text-muted, var(--el-text-color-secondary));
+  }
+
+  &__tray-menu {
+    min-width: 220px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  &__tray-menu-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--v1-shell-text-muted, var(--el-text-color-secondary));
+    margin-bottom: 2px;
+  }
+
+  &__tray-menu-time {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--v1-shell-text, var(--el-text-color-primary));
+    margin-bottom: 8px;
+  }
+
+  &__tray-menu-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    border-top: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
+    padding-top: 8px;
   }
 
   &__items {
