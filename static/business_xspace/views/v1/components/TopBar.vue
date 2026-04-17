@@ -82,14 +82,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  height: 38px;
+  height: 30px;
   padding: 0 14px;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 500;
-  color: var(--color-on-surface);
-  background: rgba(255, 255, 255, 0.48);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(18px);
+  color: rgba(241, 245, 249, 0.88);
+  background: rgba(7, 11, 20, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
   user-select: none;
 
   &__left {
@@ -132,7 +132,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
   }
 
   &__title {
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.04em;
     white-space: nowrap;
   }
@@ -143,18 +143,18 @@ export default async function ({ PRIVATE_GLOBAL }) {
     gap: 6px;
     width: 100%;
     max-width: 180px;
-    padding: 4px 10px;
-    background: rgba(255, 255, 255, 0.32);
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 3px 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 9999px;
-    color: var(--color-on-surface-variant);
-    opacity: 0.72;
+    color: rgba(226, 232, 240, 0.72);
+    opacity: 0.58;
     transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 
     &:focus-within {
       opacity: 1;
-      background: rgba(255, 255, 255, 0.56);
-      border-color: rgba(103, 80, 164, 0.2);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.12);
     }
 
     &-icon {
@@ -171,7 +171,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       color: inherit;
 
       &::placeholder {
-        color: rgba(67, 71, 78, 0.48);
+        color: rgba(226, 232, 240, 0.4);
       }
     }
   }
@@ -203,19 +203,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: var(--color-on-surface-variant);
+    color: rgba(226, 232, 240, 0.72);
   }
 
   &__datetime {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--color-on-surface-variant);
+    color: rgba(226, 232, 240, 0.72);
     flex-shrink: 0;
   }
 
   &__date {
-    opacity: 0.72;
+    opacity: 0.6;
   }
 
   &__time {

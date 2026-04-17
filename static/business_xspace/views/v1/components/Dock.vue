@@ -1,5 +1,6 @@
 <template>
   <div class="dock-shell">
+    <div class="dock-shell__spacer"></div>
     <div
       class="dock"
       :class="{ 'dock--dragging': isDraggingOver }"
@@ -112,6 +113,18 @@
         </div>
       </div>
     </div>
+    <div class="dock-tray">
+      <button type="button" class="dock-tray__control">
+        <xIcon icon="_contact" size="14" />
+      </button>
+      <button type="button" class="dock-tray__control">
+        <xIcon icon="_setting_outlined" size="14" />
+      </button>
+      <div class="dock-tray__clock">
+        <span class="dock-tray__time">{{ time }}</span>
+        <span class="dock-tray__date">{{ dateLabel }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -123,7 +136,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
     data() {
       return {
         hoveredAppId: null,
-        isDraggingOver: false
+        isDraggingOver: false,
+        time: "",
+        dateLabel: "",
+        timer: null
       };
     },
     computed: {
@@ -145,6 +161,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
       }
     },
     methods: {
+      updateClock() {
+        const now = new Date();
+        this.time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        this.dateLabel = now.toLocaleDateString([], { month: "2-digit", day: "2-digit" });
+      },
       handleLauncherClick() {
         this.system.openApp("api");
       },
@@ -210,6 +231,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
           e.dataTransfer.effectAllowed = "move";
         }
       }
+    },
+    mounted() {
+      this.updateClock();
+      this.timer = setInterval(this.updateClock, 1000);
+    },
+    beforeDestroy() {
+      clearInterval(this.timer);
     }
   };
 }
@@ -222,6 +250,11 @@ export default async function ({ PRIVATE_GLOBAL }) {
   justify-content: center;
   width: 100%;
   min-height: 64px;
+  position: relative;
+}
+
+.dock-shell__spacer {
+  flex: 1 1 0;
 }
 
 .dock {
@@ -244,6 +277,68 @@ export default async function ({ PRIVATE_GLOBAL }) {
   &--dragging {
     transform: translateY(-1px);
   }
+}
+
+.dock-tray {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.dock-tray__control {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(241, 245, 249, 0.9);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &:active {
+    transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
+
+.dock-tray__clock {
+  min-width: 78px;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  color: rgba(241, 245, 249, 0.92);
+  line-height: 1.1;
+}
+
+.dock-tray__time {
+  font-size: 0.74rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.dock-tray__date {
+  margin-top: 2px;
+  font-size: 0.67rem;
+  color: rgba(226, 232, 240, 0.72);
+  font-variant-numeric: tabular-nums;
 }
 
 .dock__item {
