@@ -3,7 +3,7 @@
     <div class="top-bar__left">
       <div class="top-bar__brand">
         <span class="top-bar__brand-dot"></span>
-        <span class="top-bar__title">YApi Workspace</span>
+        <span class="top-bar__title">xspace</span>
       </div>
     </div>
 
@@ -13,7 +13,7 @@
         <input
           v-model="searchKeyword"
           type="text"
-          placeholder="搜索"
+          placeholder="搜索工作台"
           class="top-bar__search-input"
         />
       </div>
@@ -82,13 +82,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  height: 30px;
-  padding: 0 14px;
+  height: 42px;
+  padding: 0 18px;
   font-size: 0.6875rem;
   font-weight: 500;
-  color: rgba(241, 245, 249, 0.88);
-  background: rgba(7, 11, 20, 0.14);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--v1-shell-text-secondary, var(--el-text-color-regular));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.72) 100%);
+  border-bottom: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(12px);
   user-select: none;
 
@@ -126,8 +127,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
     width: 8px;
     height: 8px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #6750a4, #8b7cc6);
-    box-shadow: 0 0 0 3px rgba(103, 80, 164, 0.14);
+    background: var(--v1-shell-primary, var(--el-color-primary));
+    box-shadow: 0 0 0 4px var(--v1-shell-primary-soft, var(--el-color-primary-light-9));
     flex-shrink: 0;
   }
 
@@ -135,6 +136,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     font-weight: 600;
     letter-spacing: 0.04em;
     white-space: nowrap;
+    color: var(--v1-shell-text, var(--el-text-color-primary));
   }
 
   &__search {
@@ -142,19 +144,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
     align-items: center;
     gap: 6px;
     width: 100%;
-    max-width: 180px;
-    padding: 3px 10px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    max-width: 220px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
     border-radius: 9999px;
-    color: rgba(226, 232, 240, 0.72);
-    opacity: 0.58;
+    color: var(--v1-shell-text-muted, var(--el-text-color-secondary));
+    opacity: 1;
     transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
 
     &:focus-within {
-      opacity: 1;
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.12);
+      background: var(--v1-shell-surface, var(--el-fill-color-blank));
+      border-color: var(--v1-shell-primary, var(--el-color-primary));
     }
 
     &-icon {
@@ -171,7 +173,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       color: inherit;
 
       &::placeholder {
-        color: rgba(226, 232, 240, 0.4);
+        color: var(--v1-shell-text-muted, var(--el-text-color-secondary));
       }
     }
   }
@@ -181,7 +183,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
     align-items: center;
     gap: 8px;
     min-width: 0;
-    padding: 2px 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.5);
   }
 
   &__user-avatar {
@@ -191,8 +196,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: rgba(103, 80, 164, 0.12);
-    color: #6750a4;
+    background: var(--v1-shell-primary-soft, var(--el-color-primary-light-9));
+    color: var(--v1-shell-primary, var(--el-color-primary));
     font-size: 11px;
     font-weight: 700;
     flex-shrink: 0;
@@ -203,19 +208,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: rgba(226, 232, 240, 0.72);
+    color: var(--v1-shell-text-secondary, var(--el-text-color-regular));
   }
 
   &__datetime {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: rgba(226, 232, 240, 0.72);
+    color: var(--v1-shell-text-secondary, var(--el-text-color-regular));
     flex-shrink: 0;
   }
 
   &__date {
-    opacity: 0.6;
+    opacity: 0.72;
   }
 
   &__time {

@@ -4,7 +4,7 @@
     @mouseleave="closePreview">
     <button
       class="dock__launcher"
-      title="Open Launcher"
+      title="打开应用台"
       @click="handleLauncherClick">
       <span class="dock__launcher-orb"></span>
       <xIcon icon="grid" size="18" />
@@ -46,11 +46,11 @@
             <div class="dock__preview-header">
               <div class="dock__preview-title">
                 <span>{{ app.name }}</span>
-                <small>{{ getAppWindows(app.id).length ? getAppWindows(app.id).length + ' windows' : 'Pinned app' }}</small>
+                <small>{{ getAppWindows(app.id).length ? getAppWindows(app.id).length + ' 个窗口' : '已固定应用' }}</small>
               </div>
               <button
                 class="dock__pin-toggle"
-                :title="isPinned(app.id) ? 'Unpin from Dock' : 'Pin to Dock'"
+                :title="isPinned(app.id) ? '从 Dock 取消固定' : '固定到 Dock'"
                 @click.stop="togglePinned(app.id)">
                 <xIcon icon="pin" size="14" />
               </button>
@@ -70,19 +70,19 @@
                 <span class="dock__preview-item-meta">
                   <span class="dock__preview-item-title">{{ win.title }}</span>
                   <span class="dock__preview-item-subtitle">
-                    {{ win.isMinimized ? 'Minimized' : (system.activeWindowId === win.id ? 'Active' : 'Open') }}
+                    {{ win.isMinimized ? '最小化' : (system.activeWindowId === win.id ? '当前窗口' : '已打开') }}
                   </span>
                 </span>
                 <span class="dock__preview-item-actions">
                   <button
                     class="dock__preview-action"
-                    title="Minimize"
+                    title="最小化"
                     @click.stop="minimizeWindow(win.id)">
                     <xIcon icon="minus" size="14" />
                   </button>
                   <button
                     class="dock__preview-action dock__preview-action--danger"
-                    title="Close"
+                    title="关闭"
                     @click.stop="closeWindow(win.id)">
                     <xIcon icon="x" size="14" />
                   </button>
@@ -94,8 +94,8 @@
               v-else
               class="dock__preview-empty"
               @click.stop="system.openApp(app.id)">
-              <span class="dock__preview-empty-title">Launch {{ app.name }}</span>
-              <span class="dock__preview-empty-subtitle">No active window</span>
+              <span class="dock__preview-empty-title">启动 {{ app.name }}</span>
+              <span class="dock__preview-empty-subtitle">当前没有活动窗口</span>
             </button>
           </div>
         </transition>
@@ -106,7 +106,7 @@
 
     <button
       class="dock__settings"
-      title="Open Settings"
+      title="打开设置"
       @click="handleSettingsClick">
       <xIcon icon="_setting_outlined" size="18" />
     </button>
@@ -242,13 +242,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin: 0 auto 10px;
-  padding: 0 8px;
-  min-height: 48px;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
+  margin: 0 auto 16px;
+  padding: 8px 10px;
+  min-height: 62px;
+  border: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: var(--v1-shell-shadow, var(--el-box-shadow));
+  backdrop-filter: blur(20px);
   pointer-events: auto;
 
   &__items {
@@ -272,48 +273,48 @@ export default async function ({ PRIVATE_GLOBAL }) {
     height: 44px;
     padding: 0;
     border: 0;
-    border-radius: 12px;
+    border-radius: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--color-inverse-on-surface);
+    background: transparent;
+    color: var(--v1-shell-text-secondary, var(--el-text-color-regular));
     cursor: pointer;
     transition:
       transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
-      background-color 180ms ease;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      background-color 180ms ease,
+      box-shadow 180ms ease;
 
     &:hover {
       transform: translateY(-1px);
-      background: rgba(255, 255, 255, 0.08);
+      background: var(--v1-shell-primary-soft, var(--el-color-primary-light-9));
     }
 
     &:active {
       transform: scale(0.98);
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(49, 130, 206, 0.12);
     }
   }
 
   &__item {
     &--running {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(49, 130, 206, 0.08);
     }
 
     &--active {
-      background: var(--color-primary);
-      color: var(--color-on-primary);
+      background: var(--v1-shell-primary, var(--el-color-primary));
+      color: #ffffff;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.16),
-        0 8px 18px rgba(15, 23, 42, 0.26);
+        0 10px 22px rgba(49, 130, 206, 0.26);
     }
 
     &--pinned::after {
       content: '';
       position: absolute;
       inset: 1px;
-      border-radius: 11px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 13px;
+      border: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
       pointer-events: none;
     }
   }
@@ -329,6 +330,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
   &__launcher {
     overflow: hidden;
+    background: rgba(49, 130, 206, 0.08);
   }
 
   &__launcher-orb {
@@ -337,13 +339,13 @@ export default async function ({ PRIVATE_GLOBAL }) {
     width: 14px;
     height: 14px;
     border-radius: 999px;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-tertiary) 100%);
+    background: linear-gradient(135deg, var(--v1-shell-primary, var(--el-color-primary)) 0%, var(--el-color-primary-light-5, #93c5fd) 100%);
     filter: blur(1px);
     opacity: 0.78;
   }
 
   &__settings {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.46);
   }
 
   &__indicator {
@@ -353,14 +355,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
     width: 4px;
     height: 4px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.34);
+    background: rgba(96, 98, 102, 0.38);
     transform: translateX(-50%);
     transition: all 180ms ease;
 
     &--active {
       width: 16px;
-      background: var(--color-primary);
-      box-shadow: 0 0 10px rgba(0, 97, 164, 0.46);
+      background: var(--v1-shell-primary, var(--el-color-primary));
+      box-shadow: 0 0 10px rgba(49, 130, 206, 0.3);
     }
   }
 
@@ -375,12 +377,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-primary);
-    color: var(--color-on-primary);
+    background: var(--v1-shell-primary, var(--el-color-primary));
+    color: #ffffff;
     font-size: 10px;
     font-weight: 700;
     line-height: 1;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 6px 12px rgba(49, 130, 206, 0.2);
   }
 
   &__tooltip {
@@ -389,14 +391,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
     top: -42px;
     padding: 6px 10px;
     border-radius: 10px;
-    background: var(--color-inverse-surface);
-    color: var(--color-inverse-on-surface);
+    background: var(--v1-shell-text, var(--el-text-color-primary));
+    color: #ffffff;
     font-size: 12px;
     font-weight: 500;
     line-height: 1;
     white-space: nowrap;
-    border: 1px solid var(--color-outline-variant);
-    box-shadow: 0 12px 24px rgba(2, 6, 23, 0.28);
+    border: 1px solid rgba(48, 49, 51, 0.08);
+    box-shadow: 0 12px 24px rgba(48, 49, 51, 0.18);
     transform: translateX(-50%);
     opacity: 0;
     pointer-events: none;
@@ -412,19 +414,19 @@ export default async function ({ PRIVATE_GLOBAL }) {
     width: 1px;
     height: 24px;
     align-self: center;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(180deg, rgba(220, 223, 230, 0) 0%, rgba(220, 223, 230, 1) 50%, rgba(220, 223, 230, 0) 100%);
   }
 
   &__preview {
     position: absolute;
     left: 50%;
     bottom: 54px;
-    width: 260px;
+    width: 280px;
     padding: 10px;
     border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: var(--color-inverse-surface);
-    box-shadow: 0 20px 40px rgba(2, 6, 23, 0.34);
+    border: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--v1-shell-shadow, var(--el-box-shadow));
     backdrop-filter: blur(20px);
     transform: translateX(-50%);
   }
@@ -436,7 +438,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     gap: 12px;
     margin-bottom: 6px;
     padding: 4px 8px 8px;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    border-bottom: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
   }
 
   &__preview-title {
@@ -444,12 +446,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
     flex-direction: column;
     gap: 3px;
     min-width: 0;
-    color: var(--color-inverse-on-surface);
+    color: var(--v1-shell-text, var(--el-text-color-primary));
     font-size: 12px;
     font-weight: 500;
 
     small {
-      color: rgba(241, 240, 244, 0.72);
+      color: var(--v1-shell-text-muted, var(--el-text-color-secondary));
       font-size: 11px;
       font-weight: 500;
     }
@@ -466,12 +468,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
     align-items: center;
     justify-content: center;
     background: transparent;
-    color: var(--color-inverse-on-surface);
+    color: var(--v1-shell-text-secondary, var(--el-text-color-regular));
     cursor: pointer;
     transition: background-color 160ms ease, transform 160ms ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.08);
+      background: var(--v1-shell-primary-soft, var(--el-color-primary-light-9));
       transform: translateY(-1px);
     }
   }
@@ -493,7 +495,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
     }
 
     &::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.26);
+      background: rgba(144, 147, 153, 0.3);
       border-radius: 6px;
     }
   }
@@ -502,9 +504,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
   &__preview-empty {
     width: 100%;
     border: 1px solid transparent;
-    border-radius: 8px;
+    border-radius: 10px;
     background: transparent;
-    color: var(--color-inverse-on-surface);
+    color: var(--v1-shell-text, var(--el-text-color-primary));
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -514,15 +516,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
     transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(49, 130, 206, 0.06);
       transform: translateY(-1px);
     }
   }
 
   &__preview-item {
     &--active {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.08);
+      background: var(--v1-shell-primary-soft, var(--el-color-primary-light-9));
+      border-color: rgba(49, 130, 206, 0.12);
     }
   }
 
@@ -538,7 +540,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
   &__preview-empty-title {
     font-size: 14px;
     font-weight: 500;
-    color: var(--color-inverse-on-surface);
+    color: var(--v1-shell-text, var(--el-text-color-primary));
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -547,7 +549,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
   &__preview-item-subtitle,
   &__preview-empty-subtitle {
     font-size: 12px;
-    color: rgba(241, 240, 244, 0.72);
+    color: var(--v1-shell-text-muted, var(--el-text-color-secondary));
   }
 
   &__preview-item-actions {
@@ -558,8 +560,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
   }
 
   &__preview-action--danger:hover {
-    background: var(--color-error-container);
-    color: var(--color-on-error-container);
+    background: rgba(245, 108, 108, 0.12);
+    color: var(--el-color-danger, #f56c6c);
   }
 
   &__preview-empty {

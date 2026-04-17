@@ -228,15 +228,27 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 <style lang="less">
 .v1-workspace {
+  --v1-shell-bg: var(--body-bg-color, #f4f9fd);
+  --v1-shell-bg-soft: var(--bg-color, #f5f8f7);
+  --v1-shell-surface: var(--el-fill-color-blank, #ffffff);
+  --v1-shell-surface-muted: var(--dialog-bg-color, #ffffff);
+  --v1-shell-border: var(--el-border-color-lighter, #ebeef5);
+  --v1-shell-border-strong: var(--el-border-color, #dcdfe6);
+  --v1-shell-text: var(--el-text-color-primary, #303133);
+  --v1-shell-text-secondary: var(--el-text-color-regular, #606266);
+  --v1-shell-text-muted: var(--el-text-color-secondary, #909399);
+  --v1-shell-primary: var(--el-color-primary, #3182ce);
+  --v1-shell-primary-soft: var(--el-color-primary-light-9, #eff6ff);
+  --v1-shell-shadow: var(--el-box-shadow);
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(circle at 12% 10%, rgba(98, 122, 255, 0.18) 0%, rgba(98, 122, 255, 0) 34%),
-    radial-gradient(circle at 88% 14%, rgba(72, 214, 199, 0.12) 0%, rgba(72, 214, 199, 0) 28%),
-    linear-gradient(180deg, #0f1729 0%, #0b1220 45%, #09101b 100%);
-  background-color: #09101b;
-  color: var(--color-on-background);
+    radial-gradient(circle at 10% 6%, rgba(49, 130, 206, 0.14) 0%, rgba(49, 130, 206, 0) 34%),
+    radial-gradient(circle at 84% 0%, rgba(99, 179, 237, 0.12) 0%, rgba(99, 179, 237, 0) 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.18) 100%),
+    var(--v1-shell-bg);
+  color: var(--v1-shell-text);
   user-select: none;
   display: flex;
   flex-direction: column;
@@ -251,9 +263,26 @@ export default async function ({ PRIVATE_GLOBAL }) {
     position: relative;
     overflow: hidden;
     background:
-      radial-gradient(circle at 20% 16%, rgba(112, 139, 255, 0.12) 0%, rgba(112, 139, 255, 0) 32%),
-      radial-gradient(circle at 78% 18%, rgba(82, 214, 183, 0.08) 0%, rgba(82, 214, 183, 0) 26%),
-      radial-gradient(circle at 50% 100%, rgba(120, 78, 255, 0.1) 0%, rgba(120, 78, 255, 0) 36%);
+      linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.52) 100%),
+      linear-gradient(90deg, rgba(49, 130, 206, 0.03) 1px, transparent 1px),
+      linear-gradient(rgba(49, 130, 206, 0.03) 1px, transparent 1px),
+      radial-gradient(circle at 16% 12%, rgba(49, 130, 206, 0.12) 0%, rgba(49, 130, 206, 0) 32%),
+      radial-gradient(circle at 82% 16%, rgba(99, 179, 237, 0.12) 0%, rgba(99, 179, 237, 0) 24%),
+      var(--v1-shell-bg-soft);
+    background-size:
+      auto,
+      64px 64px,
+      64px 64px,
+      auto,
+      auto,
+      auto;
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0;
   }
 
   &__backdrop {
@@ -267,8 +296,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
   &__glow {
     position: absolute;
     border-radius: 999px;
-    filter: blur(24px);
-    opacity: 0.8;
+    filter: blur(32px);
+    opacity: 0.72;
     transform: translateZ(0);
 
     &--left {
@@ -276,7 +305,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       left: -80px;
       width: 420px;
       height: 420px;
-      background: radial-gradient(circle, rgba(106, 132, 255, 0.38) 0%, rgba(106, 132, 255, 0.14) 34%, rgba(106, 132, 255, 0) 70%);
+      background: radial-gradient(circle, rgba(49, 130, 206, 0.22) 0%, rgba(49, 130, 206, 0.08) 38%, rgba(49, 130, 206, 0) 72%);
     }
 
     &--right {
@@ -284,7 +313,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
       right: -140px;
       width: 420px;
       height: 420px;
-      background: radial-gradient(circle, rgba(83, 215, 190, 0.26) 0%, rgba(83, 215, 190, 0.1) 38%, rgba(83, 215, 190, 0) 72%);
+      background: radial-gradient(circle, rgba(99, 179, 237, 0.22) 0%, rgba(99, 179, 237, 0.08) 38%, rgba(99, 179, 237, 0) 72%);
     }
 
     &--bottom {
@@ -292,10 +321,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
       bottom: -240px;
       width: 760px;
       height: 420px;
-      background: radial-gradient(circle, rgba(140, 92, 255, 0.2) 0%, rgba(140, 92, 255, 0.08) 32%, rgba(140, 92, 255, 0) 72%);
+      background: radial-gradient(circle, rgba(49, 130, 206, 0.18) 0%, rgba(49, 130, 206, 0.05) 32%, rgba(49, 130, 206, 0) 72%);
       transform: translateX(-50%);
       filter: blur(40px);
-      opacity: 0.7;
+      opacity: 0.56;
     }
   }
 
@@ -304,15 +333,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
     right: clamp(40px, 8vw, 140px);
     bottom: clamp(88px, 16vh, 180px);
     z-index: 1;
-    opacity: 0.022;
+    opacity: 0.05;
     pointer-events: none;
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
-    filter: blur(1px);
+    filter: none;
 
     .xIcon {
-      color: var(--color-on-background);
+      color: var(--v1-shell-primary);
     }
   }
 
@@ -324,14 +353,14 @@ export default async function ({ PRIVATE_GLOBAL }) {
     width: min(520px, 100%);
     z-index: 10;
     padding:
-      32px
+      28px
       24px
       calc(112px + env(safe-area-inset-bottom, 0px))
       calc(28px + env(safe-area-inset-left, 0px));
     display: grid;
-    grid-template-columns: repeat(auto-fill, 96px);
-    grid-auto-rows: 110px;
-    gap: 18px 14px;
+    grid-template-columns: repeat(auto-fill, 92px);
+    grid-auto-rows: 112px;
+    gap: 18px 12px;
     align-content: start;
     pointer-events: auto;
   }
@@ -352,8 +381,8 @@ export default async function ({ PRIVATE_GLOBAL }) {
       env(safe-area-inset-bottom, 0px)
       calc(12px + env(safe-area-inset-left, 0px));
     background:
-      linear-gradient(180deg, rgba(6, 10, 18, 0) 0%, rgba(10, 14, 24, 0.76) 18%, rgba(10, 14, 24, 0.92) 100%);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+      linear-gradient(180deg, rgba(244, 249, 253, 0) 0%, rgba(244, 249, 253, 0.82) 24%, rgba(244, 249, 253, 0.94) 100%);
+    border-top: 1px solid var(--v1-shell-border);
     backdrop-filter: blur(18px);
     pointer-events: auto;
   }

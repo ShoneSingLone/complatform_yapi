@@ -5,19 +5,16 @@
     @dragstart="onDragStart"
     @click="handleClick">
     <div class="desktop-icon__content">
-      <div class="desktop-icon__icon" :style="{ color: app.color }">
-        <xIcon :icon="app.icon || app.name.charAt(0)" size="22" />
+      <div class="desktop-icon__icon-shell">
+        <div class="desktop-icon__icon" :style="{ '--desktop-icon-color': app.color }">
+          <xIcon :icon="app.icon || app.name.charAt(0)" size="24" />
+        </div>
       </div>
-      <div class="desktop-icon__meta">
-        <span class="desktop-icon__eyebrow">Launcher</span>
-        <span class="desktop-icon__label">
-          {{ app.name }}
-        </span>
-      </div>
+      <span class="desktop-icon__label">{{ app.name }}</span>
       <button
         @click="handleUnpin"
         class="desktop-icon__remove"
-        title="Unpin from Desktop">
+        title="从桌面移除">
         <xIcon icon="X" size="12" />
       </button>
     </div>
@@ -54,109 +51,100 @@ export default async function ({ PRIVATE_GLOBAL }) {
 .desktop-icon {
   position: relative;
   display: flex;
-  width: 100%;
-  min-height: 74px;
-  grid-column: span 2;
-  border-radius: 20px;
+  width: 92px;
+  min-height: 112px;
+  border-radius: 18px;
   cursor: pointer;
   transition:
     transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 180ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    linear-gradient(135deg, rgba(17, 24, 39, 0.74) 0%, rgba(10, 14, 24, 0.9) 100%);
-  box-shadow:
-    0 14px 30px rgba(3, 7, 18, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(14px);
+    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
 
   &:hover {
-    transform: translateX(4px);
-    border-color: rgba(255, 255, 255, 0.16);
-    box-shadow:
-      0 18px 40px rgba(3, 7, 18, 0.34),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.46);
+    box-shadow: 0 12px 24px rgba(49, 130, 206, 0.1);
   }
 
   &:active {
-    transform: translateX(1px) scale(0.99);
+    transform: translateY(0) scale(0.98);
   }
 
   &__content {
     position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 14px;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
     min-height: inherit;
-    padding: 14px 16px 14px 14px;
+    padding: 10px 8px 12px;
   }
 
-  &__icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
+  &__icon-shell {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     background:
-      linear-gradient(135deg, fade(#ffffff, 14%) 0%, fade(#ffffff, 4%) 100%);
-    color: var(--color-primary);
-    flex-shrink: 0;
+      linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(245, 248, 247, 0.92) 100%);
+    border: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 10px 20px rgba(0, 0, 0, 0.22);
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      0 10px 24px rgba(49, 130, 206, 0.12);
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--desktop-icon-color, var(--v1-shell-primary, var(--el-color-primary)));
+    color: #ffffff;
     transition:
       transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
       box-shadow 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 18px rgba(49, 130, 206, 0.18);
 
     .desktop-icon:hover & {
-      transform: scale(1.04);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        0 14px 26px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px) scale(1.04);
+      box-shadow: 0 14px 24px rgba(49, 130, 206, 0.22);
     }
   }
 
-  &__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__eyebrow {
-    font-size: 0.6875rem;
-    line-height: 1;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: rgba(226, 232, 240, 0.56);
-  }
-
   &__label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.25;
-    color: #f8fafc;
+    display: -webkit-box;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--v1-shell-text, var(--el-text-color-primary));
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    text-align: center;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   &__remove {
     position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
+    top: 4px;
+    right: 4px;
+    transform: scale(0.9);
+    width: 24px;
+    height: 24px;
     padding: 0;
-    background: rgba(239, 68, 68, 0.14);
-    color: #fca5a5;
-    border-radius: 9999px;
-    border: 1px solid rgba(248, 113, 113, 0.16);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.82);
+    color: #f56c6c;
+    border-radius: 999px;
+    border: 1px solid var(--v1-shell-border, var(--el-border-color-lighter));
+    box-shadow: 0 8px 18px rgba(48, 49, 51, 0.12);
     opacity: 0;
     display: flex;
     align-items: center;
@@ -168,15 +156,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
     .desktop-icon:hover & {
       opacity: 1;
-      transform: translateY(-50%) scale(1);
+      transform: scale(1);
     }
 
     &:hover {
-      background: rgba(239, 68, 68, 0.22);
+      background: #ffffff;
     }
 
     &:active {
-      transform: translateY(-50%) scale(0.96);
+      transform: scale(0.96);
     }
   }
 }
