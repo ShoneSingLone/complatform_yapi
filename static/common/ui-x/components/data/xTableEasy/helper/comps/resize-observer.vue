@@ -18,6 +18,7 @@ export default async function () {
 		},
 		methods: {
 			resizeListener(contentRect) {
+				if (!contentRect) return;
 				const { left, top, width, height } = contentRect;
 				this.$emit("on-dom-resize-change", {
 					key: this.id,
@@ -34,8 +35,8 @@ export default async function () {
 		destroyed() {
 			removeResizeListener(this.$el, this.resizeListener);
 		},
-		render() {
-			return h(this.tagName, this.$slots.default);
+		render(h) {
+			return h(this.tagName, this.$data, this.$slots.default);
 		}
 	});
 }

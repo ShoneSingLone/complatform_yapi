@@ -15,6 +15,21 @@
 		$$clean: obj => _.omitBy(obj, v => _.isUndefined(v) || _.isNull(v))
 	});
 
+	_.$ifelse = (a, b) => {
+		if (_.isUndefined(a)) {
+			return b;
+		} else {
+			return a;
+		}
+	};
+
+	_.$onBeforeUnmountRemoveStyle = ({ vm }) => {
+		Vue.onBeforeUnmount(() => {
+			const styleId = _.$$toDomIdStr(vm?.$vnode?.FILE_URL, "style");
+			$(`#${styleId}`).remove();
+		});
+	};
+
 	/**
 	 * 获取数组中所有相同字符串的对应索引（全部分组）
 	 * @param {Array} arr 原数组(字符串数组)
@@ -38,10 +53,10 @@
 	 * @param {Number} count
 	 * @param {Object} callerInfo
 	 */
-	_.$ensure_inner_print = _.throttle(function (count, callerInfo) {
-		console.groupCollapsed(`_.$ensure_inner_print:${count}
-${callerInfo.message}:`);
-		console.log(callerInfo);
+	_.$ensure_inner_print = _.throttle(function ({ count, info, handler }) {
+		console.groupCollapsed(`ensure something ...`);
+		_.isFunction(handler.louder) && handler.louder();
+		console.log(count, info);
 		console.groupEnd();
 	}, 3000);
 
@@ -1749,6 +1764,8 @@ ${callerInfo.message}:`);
 		} else {
 			closeLoading(selector);
 		}
+
+		_.$single.win.trigger("LOADING_COUNT_CHANGE", _.$loading.count);
 		/* try { throw new Error(); } catch (error) { try { const msg = error.stack .split("\n") .map(row => { const res = /at (.[^\(\[]*) \(/.exec(row); if (res && res[1]) { return res[1]; } }) .filter(row => !!row); console.log(isLoading ? "open x-loading" : "close x-loading", msg.join("\n=>")); } catch (error) {} } */
 	};
 
@@ -2077,7 +2094,10 @@ ${callerInfo.message}:`);
 					`with ({...PRIVATE_GLOBAL,..._,...Vue,}){${innerCode};}`
 				);
 			} catch (e) {
+				console.groupCollapsed("RESOURCE ERROR:::::::::::" + resolvedURL);
 				console.error(e);
+				console.error(innerCode);
+				console.groupEnd();
 			}
 			const fnPayload = new Proxy(payload, {
 				get(obj, prop) {
@@ -2117,7 +2137,10 @@ ${callerInfo.message}:`);
 					component = await scfObjAsyncFn(fnPayload, PRIVATE_GLOBAL);
 					templateSourceCode = "";
 				} else {
-					console.error(e);
+					console.groupCollapsed("RESOURCE ERROR:::::::::::" + resolvedURL);
+					console.error(error);
+					console.error(innerCode);
+					console.groupEnd();
 				}
 			}
 			/* 可以不返回对象，只执行外层 wrapper层的function */
@@ -2671,11 +2694,13 @@ ${callerInfo.message}:`);
 
 						/* 被隐藏项无需处理 */
 						const isHide = _.isFunction(cfg.isHide) ? cfg.isHide() : !!cfg.isHide;
-
+						/* 被隐藏项无需等待 */
 						if (is_value_default_first || _.$isInput(value) || !isHide) {
 							/* 需要等待下拉数据 */
-							await _.$ensure(({ exeCount }) => {
-								!(exeCount % 100) && console.log(cfg);
+							await _.$ensure(({ handler }) => {
+								handler.louder = () => {
+									console.log(`等待字段: ${prop}`, cfg, value);
+								};
 								return cfg?.options?.length;
 							});
 						}
@@ -2740,9 +2765,12 @@ ${callerInfo.message}:`);
 		 * @returns
 		 */
 		_.$xItemSelected = function (xItemConfigs, vModelValue = "") {
-			let defaultValue = { value: "", label: "", labelKey: "" };
+			if (!_.isObject(xItemConfigs)) {
+				return null;
+			}
+			let { options, value } = xItemConfigs;
+			let defaultValue = _.isArray(value) ? [] : { value: "", label: "", labelKey: "" };
 			try {
-				let { options, value } = xItemConfigs;
 				value = _.$isInput(value) ? value : vModelValue;
 				if (_.$isArrayFill(options) && _.$isInput(value)) {
 					if (_.isArray(value)) {

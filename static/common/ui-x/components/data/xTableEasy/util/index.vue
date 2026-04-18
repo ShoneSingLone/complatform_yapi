@@ -1,16 +1,23 @@
 <script lang="ts">
 export default async function () {
-	const [
-		{ PREFIX_CLS, CONTEXTMENU_NODE_TYPES, COLUMN_FIXED_TYPE, AUTOFILLING_DIRECTION },
-		{ MOUSE_EVENT_CLICK_TYPE },
-		{ isEmptyValue, isEmptyArray },
-		{ getRandomId }
-	] = await _.$importVue([
-		"/common/ui-x/components/data/xTableEasy/util/constant.vue",
-		"/common/ui-x/components/data/xTableEasy/utils/constant.vue",
-		"/common/ui-x/components/data/xTableEasy/utils/index.vue",
+	// util/constant.vue
+	const { PREFIX_CLS, CONTEXTMENU_NODE_TYPES, COLUMN_FIXED_TYPE, AUTOFILLING_DIRECTION } =
+		await _.$importVue("/common/ui-x/components/data/xTableEasy/util/constant.vue");
+
+	// utils/constant.vue
+	const { MOUSE_EVENT_CLICK_TYPE } = await _.$importVue(
+		"/common/ui-x/components/data/xTableEasy/utils/constant.vue"
+	);
+
+	// utils/index.vue
+	const { isEmptyValue, isEmptyArray } = await _.$importVue(
+		"/common/ui-x/components/data/xTableEasy/utils/index.vue"
+	);
+
+	// utils/random.vue
+	const { getRandomId } = await _.$importVue(
 		"/common/ui-x/components/data/xTableEasy/utils/random.vue"
-	]);
+	);
 
 	/**
 	 * @clsName
@@ -440,22 +447,22 @@ export default async function () {
 			});
 
 			const rightFixedColKeys = getColKeysByFixedType({
-			fixedType: COLUMN_FIXED_TYPE.RIGHT,
-			colgroups,
-			isExcludeOperationColumn: true
-		});
-
-		if (_.isFunction(beforeShow)) {
-			beforeShow({
-				isWholeColSelection,
-				selectionRangeKeys,
-				selectionRangeIndexes
+				fixedType: COLUMN_FIXED_TYPE.RIGHT,
+				colgroups,
+				isExcludeOperationColumn: true
 			});
-		}
 
-		const headerContextmenuOptionCollection = getHeaderContextmenuOptionCollection(t);
+			if (_.isFunction(beforeShow)) {
+				beforeShow({
+					isWholeColSelection,
+					selectionRangeKeys,
+					selectionRangeIndexes
+				});
+			}
 
-		contextmenus.forEach(contextmenu => {
+			const headerContextmenuOptionCollection = getHeaderContextmenuOptionCollection(t);
+
+			contextmenus.forEach(contextmenu => {
 				const contentmenuCollectionItem = headerContextmenuOptionCollection.find(
 					x => x.type === contextmenu.type
 				);
@@ -562,15 +569,15 @@ export default async function () {
 			const { contextmenus, beforeShow } = contextmenuBodyOption;
 
 			const isWholeRowSelection = !isEmptyValue(bodyIndicatorRowKeys.startRowKey);
-		if (_.isFunction(beforeShow)) {
-			beforeShow({
-				isWholeRowSelection,
-				selectionRangeKeys,
-				selectionRangeIndexes
-			});
-		}
+			if (_.isFunction(beforeShow)) {
+				beforeShow({
+					isWholeRowSelection,
+					selectionRangeKeys,
+					selectionRangeIndexes
+				});
+			}
 
-		const bodyContextmenuOptionCollection = getBodyContextmenuOptionCollection(t);
+			const bodyContextmenuOptionCollection = getBodyContextmenuOptionCollection(t);
 
 			contextmenus.forEach(contextmenu => {
 				const contentmenuCollectionItem = bodyContextmenuOptionCollection.find(

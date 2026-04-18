@@ -1,10 +1,9 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
 	// 使用 _.$importVue() 加载依赖
-	const [{ COMPS_NAME, COLUMN_TYPES }, { clsName }, VeIcon, { ICON_NAMES }] = await Promise.all([
+	const [{ COMPS_NAME, COLUMN_TYPES }, { clsName }, { ICON_NAMES }] = await Promise.all([
 		_.$importVue("/common/ui-x/components/data/xTableEasy/util/constant.vue"),
 		_.$importVue("/common/ui-x/components/data/xTableEasy/util/index.vue"),
-		_.$importVue("vue-easytable/packages/ve-icon"),
 		_.$importVue("/common/ui-x/components/data/xTableEasy/utils/constant.vue")
 	]);
 
@@ -81,7 +80,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 							}
 						}
 					},
-					[h(VeIcon, { props: { name: ICON_NAMES.RIGHT_ARROW } })]
+					[h("xIcon", { props: { icon: ICON_NAMES.RIGHT_ARROW } })]
 				);
 			}
 			return content;

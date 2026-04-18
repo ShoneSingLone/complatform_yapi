@@ -1,19 +1,13 @@
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
 	// 使用 _.$importVue() 加载依赖
-	const [
-		VeDropdown,
-		{ COMPS_NAME, EMIT_EVENTS, LOCALE_COMP_NAME },
-		{ clsName },
-		VeIcon,
-		{ ICON_NAMES }
-	] = await Promise.all([
-		_.$importVue("vue-easytable/packages/ve-dropdown"),
-		_.$importVue("/common/ui-x/components/data/xTableEasy/util/constant.vue"),
-		_.$importVue("/common/ui-x/components/data/xTableEasy/util/index.vue"),
-		_.$importVue("vue-easytable/packages/ve-icon"),
-		_.$importVue("/common/ui-x/components/data/xTableEasy/utils/constant.vue")
-	]);
+	const [xDropdown, { COMPS_NAME, EMIT_EVENTS, LOCALE_COMP_NAME }, { clsName }, { ICON_NAMES }] =
+		await Promise.all([
+			_.$importVue("/common/ui-x/components/navigation/xDropdown/xDropdown.vue"),
+			_.$importVue("/common/ui-x/components/data/xTableEasy/util/constant.vue"),
+			_.$importVue("/common/ui-x/components/data/xTableEasy/util/index.vue"),
+			_.$importVue("/common/ui-x/components/data/xTableEasy/utils/constant.vue")
+		]);
 
 	return {
 		name: COMPS_NAME.VE_TABLE_HEADER_FILTER_CONTENT,
@@ -62,9 +56,9 @@ export default async function ({ PRIVATE_GLOBAL }) {
 					result = filterIcon(h);
 				} else {
 					// 使用 h 函数替代 JSX
-					result = h(VeIcon, {
+					result = h("xIcon", {
 						props: {
-							name: ICON_NAMES.FILTER
+							icon: ICON_NAMES.FILTER
 						}
 					});
 				}
@@ -76,30 +70,15 @@ export default async function ({ PRIVATE_GLOBAL }) {
 
 			const compProps = {
 				props: {
-					value: filterList,
-					showOperation: true,
-					isMultiple: isMultiple,
-					showRadio: true, // when single selection
-					confirmFilterText: i18n("confirmFilter"),
-					resetFilterText: i18n("resetFilter"),
 					beforeVisibleChange: beforeVisibleChange
 				},
 				on: {
-					[EMIT_EVENTS.HEADER_FILTER_CONFIRM]: this.filterConfirm,
-					[EMIT_EVENTS.HEADER_FILTER_RESET]: this.filterReset,
-					// v-model
-					input: val => {
-						this.filterList = val;
-					}
+					"visible-change": () => {}
 				}
 			};
 
-			if (typeof maxHeight === "number") {
-				compProps.props.maxHeight = maxHeight;
-			}
-
 			// 使用 h 函数替代 JSX
-			return h(VeDropdown, compProps, [
+			return h(xDropdown, compProps, [
 				// icon
 				h(
 					"span",
@@ -113,6 +92,97 @@ export default async function ({ PRIVATE_GLOBAL }) {
 								class: clsName("filter-icon")
 							},
 							[this.getIcon(h)]
+						)
+					]
+				),
+				// filter content
+				h(
+					"div",
+					{
+						slot: "dropdown"
+					},
+					[
+						h(
+							"div",
+							{
+								class: clsName("filter-content")
+							},
+							[
+								// filter items
+								filterList.map(item =>
+									h(
+										"div",
+										{
+											class: clsName("filter-item"),
+											on: {
+												click: () => {
+													if (isMultiple) {
+														const index = this.filterList.indexOf(
+															item.value
+														);
+														if (index > -1) {
+															this.filterList.splice(index, 1);
+														} else {
+															this.filterList.push(item.value);
+														}
+													} else {
+														this.filterList = [item.value];
+													}
+												}
+											}
+										},
+										[
+											h("input", {
+												attrs: {
+													type: isMultiple ? "checkbox" : "radio",
+													name: "filter",
+													checked: this.filterList.includes(item.value)
+												}
+											}),
+											h(
+												"span",
+												{ class: clsName("filter-item-label") },
+												item.label
+											)
+										]
+									)
+								),
+								// operations
+								h(
+									"div",
+									{
+										class: clsName("filter-operations")
+									},
+									[
+										h(
+											"button",
+											{
+												class: clsName(
+													"filter-button",
+													"filter-button-reset"
+												),
+												on: {
+													click: this.filterReset
+												}
+											},
+											i18n("resetFilter")
+										),
+										h(
+											"button",
+											{
+												class: clsName(
+													"filter-button",
+													"filter-button-confirm"
+												),
+												on: {
+													click: this.filterConfirm
+												}
+											},
+											i18n("confirmFilter")
+										)
+									]
+								)
+							]
 						)
 					]
 				)

@@ -159,7 +159,7 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	] = await Promise.all([
 		_.$importVue("/common/utils/hooks.vue"),
 		_.$importVue("/common/utils/utils.vue"),
-		_.$importVue("/common/ui-x/directive/clickoutside.vue"),
+		_.$importVue("/common/ui-x/directives/clickoutside.vue"),
 		_.$importVue("/common/ui-x/components/form/xSelect/navigationMixin.vue")
 	]);
 
@@ -364,6 +364,10 @@ export default async function ({ PRIVATE_GLOBAL }) {
 			popperAppendToBody: {
 				type: Boolean,
 				default: true
+			},
+			mustAppendToBody: {
+				type: Boolean,
+				default: false
 			}
 		},
 
@@ -993,10 +997,26 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 			});
 			this.setSelected();
+
+			// 定时检测popperAppendToBody
+			if (this.mustAppendToBody) {
+				const setPopperAppendToBody = () => {
+					if (!this.popperAppendToBody) {
+						console.log("popperAppendToBody", this.popperAppendToBody);
+						this.popperAppendToBody = true;
+					}
+				};
+				this._appendToBodyTimer = setInterval(setPopperAppendToBody, 1000);
+				setPopperAppendToBody();
+			}
 		},
 
 		beforeDestroy() {
 			if (this.$el && this.handleResize) removeResizeListener(this.$el, this.handleResize);
+			// 清除定时器
+			if (this._appendToBodyTimer) {
+				clearInterval(this._appendToBodyTimer);
+			}
 		}
 	});
 }
