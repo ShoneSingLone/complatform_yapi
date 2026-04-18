@@ -249,8 +249,16 @@ export default async function ({
 						_sortedKeys = sortedKeys && sortedKeys({ rows });
 					}
 
-					// Group rows by current prop
-					const groups = _groupBy(rows, prop);
+					// Group rows by current prop, ensuring null values are grouped together
+					const groups = _groupBy(rows, row => {
+						if (typeof prop === "function") {
+							const value = prop(row);
+							return value === null || value === undefined ? "null" : value;
+						} else {
+							const value = row[prop];
+							return value === null || value === undefined ? "null" : value;
+						}
+					});
 					_sortedKeys = _sortedKeys || _.sortBy(Object.keys(groups), sortBy);
 					// Process each group
 					const result = _.flatMap(_sortedKeys, key => {
@@ -283,12 +291,12 @@ export default async function ({
 	await Promise.all(
 		_.map(
 			[
-				"/common/ui-x/directive/directive.install.vue",
-				"/common/ui-x/directive/xtips/xtips.vue",
-				"/common/ui-x/directive/ripple.vue",
-				"/common/ui-x/directive/infinitescroll.vue",
-				"/common/ui-x/directive/xloading.vue",
-				"/common/ui-x/directive/xmove.vue"
+				"/common/ui-x/directives/directive.install.vue",
+				"/common/ui-x/directives/xtips/xtips.vue",
+				"/common/ui-x/directives/ripple.vue",
+				"/common/ui-x/directives/infinitescroll.vue",
+				"/common/ui-x/directives/xloading.vue",
+				"/common/ui-x/directives/xmove.vue"
 			],
 
 			url => _.$importVue(url)
@@ -865,6 +873,7 @@ export default async function ({
 	left: 0;
 	opacity: 0.5;
 	background: #000;
+	transition: opacity 0.4s ease;
 }
 
 .el-image__error,

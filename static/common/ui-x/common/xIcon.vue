@@ -30,6 +30,7 @@
 </template>
 <script lang="ts">
 export default async function ({ PRIVATE_GLOBAL }) {
+	/* TODO: 针对不同主题，加载对应主题下的图片目录划分保持不变 */
 	const _xIcon_cached_img = _.reduce(
 		PRIVATE_GLOBAL._xIcon_cached_img || _.$lStorage._xIcon_cached_img || {},
 		(_xIcon_cached_img, value, key) => {
@@ -356,5 +357,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 	display: inline-block;
 	width: var(--xIcon-width, 16px);
 	height: var(--xIcon-height, 16px);
+}
+
+.el-button--small {
+	& > .xbtn-contnet-wrapper {
+		--xIcon-width: 12px;
+		--xIcon-height: 12px;
+	}
 }
 </style>
