@@ -9,6 +9,14 @@
 						<xRender :render="cpt_title" />
 					</span>
 					<button
+						v-if="cpt_on_minimize"
+						type="button"
+						aria-label="Close"
+						class="x-dialog__headerbtn minimize"
+						@click="cpt_on_minimize({ isClickMinimizeIcon: true })">
+						<xIcon icon="minus" class="el-dialog__minimize" />
+					</button>
+					<button
 						v-if="isShowFullScreen"
 						type="button"
 						aria-label="Close"
@@ -301,7 +309,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			};
 		},
 		methods: {
-			deviceSupportInstall() {},
+			deviceSupportInstall() { },
 			async closeModal(options) {
 				options = options || {};
 				const { isClickCloseIcon } = options;
@@ -324,6 +332,13 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			}
 		},
 		computed: {
+			cpt_on_minimize() {
+				debugger
+				if (_.isFunction(modalConfigs.onMinimize)) {
+					return modalConfigs.onMinimize
+				}
+				return false;
+			},
 			cptCloseIcon() {
 				return PRIVATE_GLOBAL.x_modal_close_icon;
 			},
@@ -509,7 +524,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 		// backdrop-filter: blur(1px);
 	}
 
-	> .el-dialog {
+	>.el-dialog {
 		width: auto;
 		margin: auto;
 		overflow: hidden;
@@ -537,7 +552,7 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 			height: 100vh;
 		}
 
-		> .el-dialog__header {
+		>.el-dialog__header {
 			padding: var(--ui-one);
 			border-bottom: 1px solid #eee;
 
@@ -561,6 +576,10 @@ export default async function ({ PRIVATE_GLOBAL, options, modalConfigs }) {
 				outline: 0;
 				cursor: pointer;
 				font-size: 16px;
+
+				&.minimize {
+					right: 62px;
+				}
 
 				&.fullscreen {
 					right: 36px;
