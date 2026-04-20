@@ -997,9 +997,12 @@ export default async function ({ PRIVATE_GLOBAL }) {
 				}
 			});
 			this.setSelected();
-
 			// 定时检测popperAppendToBody
-			if (this.mustAppendToBody) {
+			if (
+				this.mustAppendToBody ||
+				this.$attrs?.popperAppendToBody ||
+				this.$attrs?.cpt_configs?.mustAppendToBody
+			) {
 				const setPopperAppendToBody = () => {
 					if (!this.popperAppendToBody) {
 						console.log("popperAppendToBody", this.popperAppendToBody);
